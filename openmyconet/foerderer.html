@@ -10,73 +10,73 @@
 <link href="fonts.css" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background-color:#0a0f0a; color:#d8e8d0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; }
+body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; }
 nav {
   display:flex; justify-content:space-between; align-items:center;
-  padding:1rem 2rem; background-color:rgba(10,15,10,0.95);
-  border-bottom:1px solid #1e2e1e;
+  padding:1rem 2rem; background-color:rgba(1,30,20,0.97);
+  border-bottom:1px solid #0a6040;
 }
-.nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#7ec87e; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
-.nav-logo span { color:#e8a84a; }
+.nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
+.nav-logo span { color:#f0b84a; }
 .main { max-width:900px; margin:0 auto; padding:5rem 2rem 4rem; }
-.section-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#c8882a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
-h1 { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:400; color:#f0f8f0; margin-bottom:1.5rem; line-height:1.2; }
-h1 em { font-style:italic; color:#7ec87e; }
-h2 { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#7ec87e; letter-spacing:0.12em; text-transform:uppercase; margin-top:2.5rem; margin-bottom:0.75rem; padding-bottom:0.5rem; border-bottom:1px solid #1e2e1e; }
-p { color:#6a8a6a; margin-bottom:0.75rem; font-size:1rem; }
-p strong { color:#d8e8d0; }
-a { color:#7ec87e; text-decoration:none; }
+.section-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#f0b84a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
+h1 { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:400; color:#ffffff; margin-bottom:1.5rem; line-height:1.2; }
+h1 em { font-style:italic; color:#6ee87e; }
+h2 { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee87e; letter-spacing:0.12em; text-transform:uppercase; margin-top:2.5rem; margin-bottom:0.75rem; padding-bottom:0.5rem; border-bottom:1px solid #0a6040; }
+p { color:#b0d4b0; margin-bottom:0.75rem; font-size:1rem; }
+p strong { color:#e8f5e0; }
+a { color:#6ee87e; text-decoration:none; }
 a:hover { text-decoration:underline; }
 
 /* Vorteile */
 .vorteile { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
-.vorteil { flex:1 1 250px; padding:1.5rem; background-color:#0f160f; border-left:3px solid #2d6a2d; }
+.vorteil { flex:1 1 250px; padding:1.5rem; background-color:rgba(0,0,0,0.25); border-left:3px solid #3a9e5a; }
 .vorteil-icon { font-size:1.6rem; margin-bottom:0.5rem; display:block; }
-.vorteil h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:#f0f8f0; margin-bottom:0.4rem; }
-.vorteil p { font-size:0.9rem; color:#6a8a6a; }
+.vorteil h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:#ffffff; margin-bottom:0.4rem; }
+.vorteil p { font-size:0.9rem; color:#b0d4b0; }
 
 /* Preistabelle */
 .preise { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
-.preis-box { flex:1 1 200px; padding:1.8rem; background-color:#0f160f; border:1px solid #1e2e1e; border-top:3px solid #c8882a; text-align:center; }
-.preis-box.highlight { border-top-color:#4a9e4a; background-color:#0d180d; }
-.preis-num { font-family:'Playfair Display',serif; font-size:2.2rem; color:#e8a84a; line-height:1; margin-bottom:0.3rem; }
-.preis-box.highlight .preis-num { color:#7ec87e; }
-.preis-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#6a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
+.preis-box { flex:1 1 200px; padding:1.8rem; background-color:rgba(0,0,0,0.25); border:1px solid #0a6040; border-top:3px solid #f0b84a; text-align:center; }
+.preis-box.highlight { border-top-color:#6ee87e; background-color:rgba(0,0,0,0.35); }
+.preis-num { font-family:'Playfair Display',serif; font-size:2.2rem; color:#f0b84a; line-height:1; margin-bottom:0.3rem; }
+.preis-box.highlight .preis-num { color:#6ee87e; }
+.preis-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#b0d4b0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
 .preis-box ul { list-style:none; text-align:left; }
-.preis-box ul li { font-size:0.9rem; color:#6a8a6a; padding:0.3rem 0; border-bottom:1px solid #1e2e1e; }
+.preis-box ul li { font-size:0.9rem; color:#b0d4b0; padding:0.3rem 0; border-bottom:1px solid #0a6040; }
 .preis-box ul li:last-child { border-bottom:none; }
-.preis-box ul li::before { content:"✓ "; color:#4a9e4a; }
+.preis-box ul li::before { content:"✓ "; color:#6ee87e; }
 
 /* Fördererliste */
 .foerderer-grid { display:flex; flex-wrap:wrap; gap:1.5rem; margin:2rem 0; }
-.foerderer-card { flex:1 1 260px; padding:1.5rem; background-color:#0f160f; border:1px solid #1e2e1e; transition:border-color 0.2s; }
-.foerderer-card:hover { border-color:#2d6a2d; }
-.foerderer-badge { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#4a9e4a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
-.foerderer-name { font-family:'Playfair Display',serif; font-size:1.2rem; color:#f0f8f0; margin-bottom:0.4rem; }
-.foerderer-desc { font-size:0.9rem; color:#6a8a6a; line-height:1.6; margin-bottom:0.75rem; }
-.foerderer-link { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#7ec87e; }
+.foerderer-card { flex:1 1 260px; padding:1.5rem; background-color:rgba(0,0,0,0.25); border:1px solid #0a6040; transition:border-color 0.2s; }
+.foerderer-card:hover { border-color:#6ee87e; }
+.foerderer-badge { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
+.foerderer-name { font-family:'Playfair Display',serif; font-size:1.2rem; color:#ffffff; margin-bottom:0.4rem; }
+.foerderer-desc { font-size:0.9rem; color:#b0d4b0; line-height:1.6; margin-bottom:0.75rem; }
+.foerderer-link { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; }
 
 /* Placeholder */
-.placeholder { padding:3rem; background-color:#0f160f; border:1px dashed #1e2e1e; text-align:center; margin:2rem 0; }
-.placeholder p { color:#2d6a2d; font-style:italic; }
+.placeholder { padding:3rem; background-color:rgba(0,0,0,0.2); border:1px dashed #0a6040; text-align:center; margin:2rem 0; }
+.placeholder p { color:#6ee87e; font-style:italic; }
 
 /* Formular */
 .form-wrap { max-width:620px; margin-top:2rem; }
 .form-group { margin-bottom:1.3rem; }
-label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#6a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
-input, select, textarea { width:100%; padding:0.8rem 1rem; background-color:#ffffff; border:1px solid #1e2e1e; color:#1a1a1a; font-family:'Lora',serif; font-size:1rem; outline:none; -webkit-appearance:none; appearance:none; }
-select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a9e4a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer; }
-input:focus, select:focus, textarea:focus { border-color:#4a9e4a; }
+label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#b0d4b0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
+input, select, textarea { width:100%; padding:0.8rem 1rem; background-color:#ffffff; border:1px solid #0a6040; color:#1a1a1a; font-family:'Lora',serif; font-size:1rem; outline:none; -webkit-appearance:none; appearance:none; }
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236ee87e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer; }
+input:focus, select:focus, textarea:focus { border-color:#6ee87e; }
 textarea { height:90px; resize:vertical; }
-.btn { display:inline-block; padding:0.85rem 2rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; background-color:#2d6a2d; color:#f0f8f0; }
-.btn:hover { background-color:#4a9e4a; }
-.btn-amber { background-color:transparent; color:#e8a84a; border:1px solid #c8882a; }
-.btn-amber:hover { background-color:rgba(200,136,42,0.1); }
-.form-note { margin-top:0.8rem; font-size:0.85rem; color:#6a8a6a; font-style:italic; }
-.back { display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6a8a6a; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #1e2e1e; padding-bottom:2px; }
-.back:hover { color:#7ec87e; border-color:#7ec87e; }
-footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
-.footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#6a8a6a; line-height:2; }
+.btn { display:inline-block; padding:0.85rem 2rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; background-color:#0a6040; color:#ffffff; }
+.btn:hover { background-color:#3a9e5a; }
+.btn-amber { background-color:transparent; color:#f0b84a; border:1px solid #f0b84a; }
+.btn-amber:hover { background-color:rgba(240,184,74,0.1); }
+.form-note { margin-top:0.8rem; font-size:0.85rem; color:#b0d4b0; font-style:italic; }
+.back { display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#b0d4b0; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #0a6040; padding-bottom:2px; }
+.back:hover { color:#6ee87e; border-color:#6ee87e; }
+footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
+.footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#b0d4b0; line-height:2; }
 @media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } h1 { font-size:2rem; } }
 </style>
 <link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html">
@@ -91,7 +91,27 @@ footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
 
 <nav>
   <a href="index.html" class="nav-logo">Open<span>MycoNet</span></a>
+  <a href="index.html" style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#00e5e5; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Startseite</a>
 </nav>
+
+<!-- Schwebende Sprachauswahl -->
+<div style="position:fixed; right:1.2rem; top:50%; transform:translateY(-50%); z-index:999; display:flex; flex-direction:column; gap:0.4rem;">
+  <a href="foerderer.html" title="Deutsch" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.4); border:1px solid #6ee87e; border-radius:4px; text-decoration:none; opacity:1;">
+    <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>
+  </a>
+  <a href="foerderer-en.html" title="English" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+    <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>
+  </a>
+  <a href="foerderer-nl.html" title="Nederlands" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+    <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>
+  </a>
+  <a href="foerderer-fr.html" title="Français" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+    <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>
+  </a>
+  <a href="foerderer-es.html" title="Español" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+    <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>
+  </a>
+</div>
 
 <div class="main">
   <p class="section-label">Partnerschaft</p>
@@ -141,79 +161,44 @@ footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
   <strong>Alle Förderer erhalten dieselbe Sichtbarkeit</strong> —
   unabhängig vom gewählten Betrag.</p>
 
-  <div style="margin:2rem 0; max-width:460px;">
-    <label style="display:block; font-family:'JetBrains Mono',monospace; font-size:0.7rem;
-                  color:#6a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem;">
-      Ihr Jahresbeitrag (Minimum 50 €)
-    </label>
-
-    <!-- Slider -->
-    <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1rem;">
-      <input type="range" id="beitrag-slider" min="50" max="1000" step="10" value="150"
-        style="flex:1; accent-color:#4a9e4a; height:4px; cursor:pointer; background:#1e2e1e;">
-      <div style="display:flex; align-items:center; gap:0.4rem; min-width:120px;">
-        <input type="number" id="beitrag-num" min="50" value="150"
-          style="width:80px; padding:0.5rem; background:#ffffff; border:1px solid #1e2e1e;
-                 color:#1a1a1a; font-family:'JetBrains Mono',monospace; font-size:1.1rem;
-                 text-align:right; outline:none;">
-        <span style="color:#6a8a6a; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">€ / Jahr</span>
-      </div>
-    </div>
-
-    <!-- Schnellauswahl -->
-    <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-      <button onclick="setBeitrag(50)"  class="quick-btn">50 €</button>
-      <button onclick="setBeitrag(100)" class="quick-btn">100 €</button>
-      <button onclick="setBeitrag(150)" class="quick-btn active">150 €</button>
-      <button onclick="setBeitrag(250)" class="quick-btn">250 €</button>
-      <button onclick="setBeitrag(500)" class="quick-btn">500 €</button>
-    </div>
-
-    <p style="margin-top:1.2rem; font-size:0.85rem; color:#6a8a6a; font-style:italic;">
-      Der Beitrag wird erst nach Prüfung und Bestätigung Ihrer Anfrage fällig —
-      bequem per PayPal oder Überweisung.
-    </p>
-  </div>
-
   <style>
-  .quick-btn {
-    padding:0.4rem 1rem; background:#0f160f; border:1px solid #1e2e1e;
-    color:#6a8a6a; font-family:'JetBrains Mono',monospace; font-size:0.75rem;
+  .quick-btn2 {
+    padding:0.4rem 1rem; background:rgba(0,0,0,0.2); border:1px solid #0a6040;
+    color:#b0d4b0; font-family:'JetBrains Mono',monospace; font-size:0.75rem;
     cursor:pointer; transition:all 0.2s;
   }
-  .quick-btn:hover, .quick-btn.active {
-    border-color:#c8882a; color:#e8a84a; background:rgba(200,136,42,0.08);
+  .quick-btn2:hover, .quick-btn2.active2 {
+    border-color:#f0b84a; color:#f0b84a; background:rgba(240,184,74,0.1);
   }
   </style>
 
   <script>
-  var slider = document.getElementById('beitrag-slider');
-  var numInput = document.getElementById('beitrag-num');
+  document.addEventListener('DOMContentLoaded', function() {
+    var slider = document.getElementById('beitrag-slider2');
+    var numInput = document.getElementById('beitrag-num2');
+    var formBeitrag = document.getElementById('form-beitrag');
+    var formAnzeige = document.getElementById('form-beitrag-anzeige');
 
-  slider.addEventListener('input', function() {
-    numInput.value = slider.value;
-    updateQuickBtns(parseInt(slider.value));
-  });
+    function setVal(val) {
+      val = Math.max(50, Math.min(1000, parseInt(val) || 50));
+      slider.value = val;
+      numInput.value = val;
+      if (formBeitrag) formBeitrag.value = val;
+      if (formAnzeige) formAnzeige.textContent = val;
+      document.querySelectorAll('.quick-btn2').forEach(function(b) {
+        b.classList.toggle('active2', parseInt(b.dataset.val) === val);
+      });
+    }
 
-  numInput.addEventListener('input', function() {
-    var val = Math.max(50, parseInt(numInput.value) || 50);
-    numInput.value = val;
-    slider.value = Math.min(val, 1000);
-    updateQuickBtns(val);
-  });
+    slider.addEventListener('input', function() { setVal(parseInt(slider.value)); });
+    numInput.addEventListener('input', function() { setVal(parseInt(numInput.value)); });
 
-  function setBeitrag(val) {
-    slider.value = Math.min(val, 1000);
-    numInput.value = val;
-    updateQuickBtns(val);
-  }
-
-  function updateQuickBtns(val) {
-    document.querySelectorAll('.quick-btn').forEach(function(b) {
-      b.classList.remove('active');
-      if (parseInt(b.textContent) === val) b.classList.add('active');
+    document.querySelectorAll('.quick-btn2').forEach(function(b) {
+      b.addEventListener('click', function() { setVal(parseInt(b.dataset.val)); });
     });
-  }
+
+    setVal(150); // Startwert
+  });
   </script>
 
   <!-- Ablauf -->
@@ -226,30 +211,21 @@ footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
 
   <!-- Aktuelle Förderer -->
   <h2>Aktuelle Förderer</h2>
-  <p>So sieht Ihr Eintrag aus:</p>
 
-  <!-- Beispiel-Eintrag -->
-  <div class="foerderer-grid" style="margin-bottom:0.5rem;">
-    <div class="foerderer-card" style="opacity:0.5; border-style:dashed;">
-      <div class="foerderer-badge">★ Offizieller Förderer ★ &nbsp;|&nbsp; Beispiel-Eintrag</div>
-      <div class="foerderer-name">Ihr Unternehmensname</div>
+  <div class="foerderer-grid">
+    <div class="foerderer-card">
+      <div class="foerderer-badge">★ Offizieller Förderer ★</div>
+      <div class="foerderer-name">GPG-Projekt GmbH</div>
       <div class="foerderer-desc">
-        Hier erscheint eine kurze Beschreibung Ihres Unternehmens — was Sie machen,
-        warum Sie OpenMycoNet unterstützen und was Sie mit dem Thema Mykologie verbindet.
-        Ca. 2-3 Sätze.
+        GPG-Projekt GmbH unterstützt OpenMycoNet als einer der ersten gewerblichen Förderer
+        und begleitet die Entwicklung des BioComm-Sensorsystems für die Anwendung in
+        Forstwirtschaft und Präzisionslandwirtschaft.
       </div>
-      <a href="#" class="foerderer-link" onclick="return false;">www.ihre-website.de</a>
+      <a href="https://www.gpg-projekt.de" class="foerderer-link" target="_blank" rel="noopener">www.gpg-projekt.de</a>
     </div>
   </div>
-  <p style="font-size:0.85rem; font-style:italic; margin-bottom:2rem;">
-    Premium-Förderer erhalten zusätzlich eine hervorgehobene Position und ihr Logo im Eintrag.
-    Nach Ihrer Anfrage erhalten Sie einen Fragebogen für Ihren persönlichen Eintrag inkl. Logo-Upload.
-  </p>
 
-  <div class="placeholder">
-    <p>✶ Hier erscheinen die ersten Förderer von OpenMycoNet ✶</p>
-    <p style="margin-top:0.5rem; font-size:0.85rem;">Werden Sie der Erste.</p>
-  </div>
+  <p style="font-size:1.1rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem;">Seien Sie der Nächste.</p>
 
   <!-- Anfrageformular -->
   <h2>Förderpartnerschaft anfragen</h2>
@@ -284,9 +260,31 @@ footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
     <div class="form-group">
       <label>Gewünschter Jahresbeitrag</label>
       <input type="hidden" name="beitrag" id="form-beitrag" value="150">
-      <p style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#e8a84a; margin:0;">
-        <span id="form-beitrag-anzeige">150</span> € / Jahr
-        <span style="color:#6a8a6a; font-size:0.75rem;"> — oben anpassbar</span>
+
+      <!-- Betragsauswahl direkt hier -->
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+          <input type="range" id="beitrag-slider2" min="50" max="1000" step="10" value="150"
+            style="flex:1; accent-color:#f0b84a; height:4px; cursor:pointer; background:rgba(240,184,74,0.25);">
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <input type="number" id="beitrag-num2" min="50" value="150"
+              style="width:80px; padding:0.5rem; background:#ffffff; border:1px solid #1e2e1e;
+                     color:#1a1a1a; font-family:'JetBrains Mono',monospace; font-size:1.1rem;
+                     text-align:right; outline:none;">
+            <span style="color:#6a8a6a; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">€ / Jahr</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+          <button type="button" class="quick-btn2" data-val="50">50 €</button>
+          <button type="button" class="quick-btn2" data-val="100">100 €</button>
+          <button type="button" class="quick-btn2" data-val="150">150 €</button>
+          <button type="button" class="quick-btn2" data-val="250">250 €</button>
+          <button type="button" class="quick-btn2" data-val="500">500 €</button>
+        </div>
+      </div>
+
+      <p style="font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:bold; color:#f0b84a; margin:0.5rem 0 0; background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); display:inline-block; padding:0.4rem 1rem;">
+        Ausgewählt: <span id="form-beitrag-anzeige">150</span> € / Jahr
       </p>
     </div>
     <div class="form-group">
@@ -300,7 +298,7 @@ footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
     </p>
   </form>
 
-  <a href="index.html" class="back">← Zurück zur Startseite</a>
+  <a href="index.html" style="display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#00e5e5; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Zurück zur Startseite</a>
 </div>
 
 <footer>
@@ -312,22 +310,6 @@ footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
 </footer>
 
 <script>
-// Beitrag aus Slider in Formular synchronisieren
-  document.addEventListener('DOMContentLoaded', function() {
-    var s = document.getElementById('beitrag-slider');
-    var n = document.getElementById('beitrag-num');
-    var fb = document.getElementById('form-beitrag');
-    var fa = document.getElementById('form-beitrag-anzeige');
-    if (!s || !fb) return;
-    function sync() {
-      var val = n.value || s.value;
-      fb.value = val;
-      if (fa) fa.textContent = val;
-    }
-    s.addEventListener('input', sync);
-    n.addEventListener('input', sync);
-  });
-
 function handleFoerderer(e) {
   e.preventDefault();
   var btn = document.getElementById('foerderer-btn');
@@ -354,5 +336,7 @@ function handleFoerderer(e) {
     });
 }
 </script>
+<script src="/biocomm-chat.js"></script>
+
 </body>
 </html>
