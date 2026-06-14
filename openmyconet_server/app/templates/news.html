@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenMycoNet — News</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
+        h1 { color: #4caf50; }
+        .artikel { border-bottom: 1px solid #1a2a1a; padding: 24px 0; }
+        .artikel h2 { color: #4caf50; margin: 0 0 6px 0; font-size: 1.3em; }
+        .datum { color: #666; font-size: 0.85em; margin-bottom: 12px; }
+        .inhalt { line-height: 1.7; color: #ccc; white-space: pre-wrap; }
+        .leer { color: #666; margin-top: 40px; }
+        nav { margin-bottom: 30px; }
+        a { color: #4caf50; }
+        .sprache-filter { margin-bottom: 20px; }
+        select { background: #1a2a1a; color: #eee; border: 1px solid #4caf50; padding: 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🍄 OpenMycoNet News</h1>
+
+    <form method="GET" class="sprache-filter">
+        <label>Sprache: </label>
+        <select name="sprache" onchange="this.form.submit()">
+            <option value="">Alle</option>
+            <option value="de" {% if filter_sprache == 'de' %}selected{% endif %}>Deutsch</option>
+            <option value="en" {% if filter_sprache == 'en' %}selected{% endif %}>English</option>
+            <option value="nl" {% if filter_sprache == 'nl' %}selected{% endif %}>Nederlands</option>
+            <option value="fr" {% if filter_sprache == 'fr' %}selected{% endif %}>Français</option>
+            <option value="es" {% if filter_sprache == 'es' %}selected{% endif %}>Español</option>
+        </select>
+    </form>
+
+     {% if news_liste %}
+        {% for news in news_liste %}
+        <div class="artikel">
+            <h2>{{ news.titel }}</h2>
+            <p class="datum">{{ news.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ news.sprache }}</p>
+            <div class="inhalt">{{ news.inhalt }}</div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="leer">Noch keine News vorhanden.</p>
+    {% endif %}
+</body>
+</html>

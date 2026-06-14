@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="de" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>OpenMycoNet — Listen to the Forest</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.svg">
+<meta name="theme-color" content="#141f14">
+<meta id="meta-description" name="description" content="Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza- und Pilznetzwerken. Mitmachen, Daten teilen, die Wissenschaft voranbringen.">
+<meta id="meta-keywords" name="keywords" content="Mykorrhiza Sensor, Pilznetzwerk messen, Citizen Science Boden, bioelektrische Signale Pflanze, OpenMycoNet, BioComm Arduino">
+<meta name="author" content="Robert Jank">
+<meta name="robots" content="index, follow">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/">
+<meta property="og:type" content="website">
+<meta id="og-url" property="og:url" content="https://www.openmyconet.de/">
+<meta property="og:title" content="OpenMycoNet — Listen to the Forest">
+<meta id="og-description" property="og:description" content="Weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza-Netzwerken.">
+<meta property="og:image" content="https://www.openmyconet.de/og-image.png">
+<meta id="og-locale" property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OpenMycoNet — Listen to the Forest">
+<meta id="twitter-description" name="twitter:description" content="Citizen Science für Mykorrhiza-Netzwerke. Bioelektrische Signale erfassen, teilen, verstehen.">
+<meta name="twitter:image" content="https://www.openmyconet.de/og-image.png">
+<script type="application/ld+json" id="schema-json">
+{
+  "@context": "https://schema.org",
+  "@type": "ResearchProject",
+  "name": "OpenMycoNet",
+  "alternateName": "BioComm Community Network",
+  "description": "Weltweites Citizen-Science-Netzwerk zur Erfassung und Analyse bioelektrischer Signale aus substratgebundenen biologischen Netzwerken, insbesondere Mykorrhiza-Pilznetzwerken.",
+  "url": "https://www.openmyconet.de",
+  "founder": {
+    "@type": "Person",
+    "name": "Robert Jank",
+    "address": { "@type": "PostalAddress", "addressLocality": "Maintal", "addressCountry": "DE" }
+  },
+  "keywords": "Mykorrhiza, Pilznetzwerk, Citizen Science, Biosignale, Elektrophysiologie",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "contactPoint": { "@type": "ContactPoint", "email": "kontakt@openmyconet.de", "contactType": "general" }
+}
+</script>
+<link href="fonts.css" rel="stylesheet">
+<!-- hreflang — single canonical URL with ?lang= param -->
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/">
+<style>
+/* Farben direkt — keine CSS-Variablen für maximale iOS-Kompatibilität */
+* { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; overflow-x:hidden; }
+body { background-color:#141f14; color:#d8e8d0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; overflow-x:hidden; -webkit-text-size-adjust:100%; }
+
+/* ── Navigation ── */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(20,31,20,0.95); border-bottom:1px solid #2d422d; }
+.nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#7ec87e; letter-spacing:0.1em; text-transform:uppercase; }
+.nav-logo span { color:#e8a84a; }
+nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1.5rem; }
+nav a { color:#8faa8f; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.2s; }
+nav a:hover { color:#e8a84a; }
+nav a.nav-active { color:#e8a84a; border-bottom:1px solid #c8882a; padding-bottom:2px; }
+/* Sprachauswahl Desktop-Sidebar */
+#lang-sidebar { display:none; position:fixed; right:42px; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #2d422d; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
+#lang-flags-nav { display:none !important; }
+section > *:not(.section-full):not(.hero-img-wrap) { max-width:860px; margin-left:auto; margin-right:auto; }
+.hero-img-wrap { max-width:none !important; margin-left:0 !important; margin-right:0 !important; }
+section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem); }
+
+/* ── Hero ── */
+.hero { background-color:#141f14; position:relative; }
+.hero-img-wrap { position:relative; width:100%; height:60vw; min-height:300px; max-height:560px; overflow:hidden; max-width:none !important; margin-left:0 !important; margin-right:0 !important; }
+.hero-content { position:relative; z-index:1; margin-top:-7rem; padding-bottom:4rem; max-width:860px; }
+.hero-tag { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#c8882a; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:1.5rem; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; font-weight:400; line-height:1.1; color:#f0f8f0; max-width:800px; margin-bottom:1.5rem; }
+.hero h1 em { font-style:italic; color:#7ec87e; }
+.hero-sub { font-size:1.15rem; color:#d8e8d0; max-width:780px; font-weight:400; line-height:1.85; margin-bottom:2rem; }
+.live-badge { display:-webkit-inline-box; display:-webkit-inline-flex; display:inline-flex; -webkit-box-align:center; -webkit-align-items:center; align-items:center; gap:0.6rem; padding:0.5rem 1.2rem; background-color:rgba(45,106,45,0.2); border:1px solid #2d6a2d; margin-bottom:2rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#7ec87e; }
+.live-dot { width:8px; height:8px; background-color:#7ec87e; border-radius:50%; -webkit-animation:pulse 1.5s ease-in-out infinite; animation:pulse 1.5s ease-in-out infinite; }
+.hero-buttons { display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; -webkit-flex-wrap:wrap; flex-wrap:wrap; }
+
+/* ── Buttons ── */
+.btn { display:inline-block; padding:0.85rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; -webkit-border-radius:0; border-radius:0; -webkit-transition:background-color 0.2s,color 0.2s; transition:background-color 0.2s,color 0.2s; }
+.btn-green { background-color:#2d6a2d; color:#f0f8f0; }
+.btn-green:hover { background-color:#4a9e4a; }
+.btn-amber { background-color:transparent; color:#e8a84a; border:1px solid #c8882a; }
+.btn-amber:hover { background-color:rgba(200,136,42,0.12); }
+
+/* ── Sections ── */
+section { padding:5rem 0; }
+.section-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#c8882a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
+h2 { font-family:'Playfair Display',serif; font-size:2.4rem; font-weight:400; color:#f0f8f0; line-height:1.2; margin-bottom:1.2rem; }
+h2 em { font-style:italic; color:#7ec87e; }
+.section-desc { color:#8faa8f; max-width:560px; margin-bottom:2.5rem; font-size:1.05rem; }
+
+/* ── Cards ── */
+.bg-dark { background-color:#1a231a; }
+.border-t { border-top:1px solid #2d422d; }
+.border-b { border-bottom:1px solid #2d422d; }
+.cards-grid { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:1.5rem; }
+.card { -webkit-box-flex:1; -webkit-flex:1 1 260px; flex:1 1 260px; padding:1.8rem; background-color:#1f2d1f; border:1px solid #2d422d; border-left:3px solid #2d6a2d; }
+.card-icon { font-size:1.8rem; margin-bottom:0.75rem; display:block; }
+.card h3 { font-family:'Playfair Display',serif; font-size:1.2rem; color:#f0f8f0; margin-bottom:0.6rem; }
+.card p { color:#8faa8f; font-size:0.95rem; line-height:1.6; }
+
+/* ── Steps ── */
+.steps-grid { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:1.5rem; counter-reset:steps; }
+.step { -webkit-box-flex:1; -webkit-flex:1 1 200px; flex:1 1 200px; padding:1.8rem; background-color:#1a231a; border:1px solid #2d422d; border-top:3px solid #c8882a; counter-increment:steps; position:relative; }
+.step-num { font-family:'JetBrains Mono',monospace; font-size:2rem; color:#2d422d; position:absolute; top:1rem; right:1.2rem; line-height:1; }
+.step h3 { font-family:'Playfair Display',serif; font-size:1.15rem; color:#e8a84a; margin-bottom:0.6rem; }
+.step p { color:#8faa8f; font-size:0.9rem; line-height:1.6; }
+.step-cost { margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#7ec87e; }
+
+/* ── Datenfluss ── */
+.flow-row { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-align:center; -webkit-align-items:center; align-items:center; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:0.75rem; margin-top:2.5rem; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; }
+.flow-node { padding:1.2rem 1.5rem; background-color:#1f2d1f; border:1px solid #2d422d; text-align:center; min-width:130px; }
+.flow-node-icon { font-size:1.8rem; display:block; margin-bottom:0.4rem; }
+.flow-node h4 { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#7ec87e; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.3rem; }
+.flow-node p { font-size:0.8rem; color:#8faa8f; }
+.flow-arrow { color:#c8882a; font-size:1.3rem; font-family:'JetBrains Mono',monospace; }
+
+/* ── Spenden ── */
+.donate-box { padding:2.5rem; background-color:#1a231a; border:1px solid #2d422d; border-top:3px solid #c8882a; max-width:680px; }
+.donate-box p { color:#8faa8f; margin-bottom:1.8rem; font-size:1rem; }
+.amounts { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.8rem; }
+.amt-btn { padding:0.55rem 1.3rem; background-color:#1f2d1f; border:1px solid #2d422d; color:#d8e8d0; font-family:'JetBrains Mono',monospace; font-size:0.8rem; cursor:pointer; -webkit-appearance:none; }
+.amt-btn.active { border-color:#c8882a; color:#e8a84a; background-color:rgba(200,136,42,0.1); }
+.donate-buttons { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:1rem; margin-bottom:1rem; }
+.donate-note { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#8faa8f; line-height:1.8; }
+
+/* ── Bewerbungsformular ── */
+.apply-badge { display:inline-flex; align-items:center; gap:0.5rem; padding:0.4rem 1rem; background-color:rgba(200,136,42,0.1); border:1px solid #c8882a; font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#e8a84a; letter-spacing:0.08em; margin-bottom:1.5rem; }
+.form-wrap { max-width:580px; margin-top:2.5rem; }
+.form-group { margin-bottom:1.3rem; }
+label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#8faa8f; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
+input, select, textarea { width:100%; padding:0.8rem 1rem; background-color:#1a231a; border:1px solid #2d422d; color:#d8e8d0; font-family:'Lora',serif; font-size:1rem; outline:none; -webkit-border-radius:0; border-radius:0; -webkit-appearance:none; -moz-appearance:none; appearance:none; }
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a9e4a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer; }
+input:focus, select:focus, textarea:focus { border-color:#4a9e4a; }
+textarea { height:100px; resize:vertical; }
+.form-note { margin-top:0.8rem; font-size:0.85rem; color:#8faa8f; font-style:italic; }
+
+/* ── Über ── */
+.about-grid { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:3rem; margin-top:2.5rem; }
+.about-text { -webkit-flex:1 1 300px; flex:1 1 300px; }
+.about-text p { color:#8faa8f; margin-bottom:1.2rem; font-size:1rem; }
+.about-text strong { color:#d8e8d0; }
+.facts { -webkit-flex:1 1 260px; flex:1 1 260px; }
+.fact { padding:1.3rem; background-color:#1f2d1f; border-left:3px solid #2d6a2d; margin-bottom:1rem; }
+.fact-num { font-family:'Playfair Display',serif; font-size:2.2rem; color:#7ec87e; line-height:1; margin-bottom:0.2rem; }
+.fact p { color:#8faa8f; font-size:0.9rem; }
+
+/* ── Footer ── */
+footer { padding:2.5rem 0; border-top:1px solid #2d422d; background-color:#141f14; }
+.footer-logo { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#7ec87e; margin-bottom:0.5rem; }
+.footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#8faa8f; line-height:2; }
+.footer-info a { color:#7ec87e; text-decoration:none; }
+
+/* ── Animationen ── */
+@-webkit-keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+/* ── Hamburger ── */
+.hamburger { display:none; -webkit-flex-direction:column; flex-direction:column; gap:5px; cursor:pointer; padding:6px 4px; background:none; border:none; z-index:101; }
+.hamburger span { display:block; width:26px; height:2px; background:#d8e8d0; border-radius:2px; }
+
+/* ── Layout ── */
+.page-wrap { max-width:860px; margin:0 auto; padding:0 clamp(1.5rem,5vw,5rem); }
+.section-inner { max-width:1100px; margin:0 auto; }
+.mobile-menu { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(20,31,20,0.97); z-index:999; -webkit-flex-direction:column; flex-direction:column; -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center; gap:1.8rem; }
+.mobile-menu a { font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:#d8e8d0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
+.mobile-menu a:hover { color:#7ec87e; }
+.mobile-menu-close { position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#d8e8d0; font-size:1.8rem; cursor:pointer; line-height:1; }
+.mobile-lang { display:flex; gap:0.6rem; margin-top:1rem; align-items:center; }
+
+/* ── Förderer-Hint ── */
+.foerderer-hint-box { display:none; margin-top:0.75rem; padding:1rem; background-color:#1a231a; border-left:3px solid #c8882a; }
+
+/* ── Broschüre Block ── */
+.broschuere-section { position:relative; overflow:hidden; }
+.broschuere-img { width:100%; height:480px; object-fit:cover; object-position:center 30%; display:block; filter:brightness(0.85) saturate(1.0); }
+.broschuere-overlay { position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem clamp(1.5rem,5vw,5rem); background:linear-gradient(to bottom, rgba(20,31,20,0.3) 0%, rgba(20,31,20,0.6) 100%); }
+.broschuere-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#c8882a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
+.broschuere-captions { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem; }
+.broschuere-captions span { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#7ec87e; letter-spacing:0.08em; }
+.broschuere-captions span::before { content:"·"; margin-right:0.5rem; color:#4a9e4a; }
+.broschuere-captions span:first-child::before { content:""; margin-right:0; }
+.broschuere-tagline { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:400; color:#f0f8f0; line-height:1.3; margin-bottom:2rem; max-width:620px; }
+.broschuere-tagline em { font-style:italic; color:#7ec87e; }
+.broschuere-btn { display:inline-flex; align-items:center; gap:0.6rem; padding:0.9rem 2rem; background-color:#2d6a2d; color:#f0f8f0; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; transition:background-color 0.2s; margin-bottom:0.8rem; }
+.broschuere-btn:hover { background-color:#4a9e4a; }
+.broschuere-note { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#8faa8f; letter-spacing:0.05em; }
+@media (min-width:601px) {
+  #lang-sidebar { display:flex; }
+}
+@media (max-width:600px) {
+  .broschuere-img { height:320px; }
+  .broschuere-tagline { font-size:1.4rem; }
+  .broschuere-captions { gap:0.8rem; flex-direction:column; align-items:center; }
+}
+
+/* ── Social Sharing Floating Bar ── */
+.social-bar {
+  position:fixed;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:200;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.social-bar a {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  background-color:rgba(20,31,20,0.92);
+  border:1px solid #2d422d;
+  border-right:none;
+  color:#8faa8f;
+  text-decoration:none;
+  transition:background-color 0.2s, color 0.2s;
+  position:relative;
+}
+.social-bar a:first-child { border-top-left-radius:4px; }
+.social-bar a:last-child  { border-bottom-left-radius:4px; }
+.social-bar a:hover { background-color:#2d422d; color:#7ec87e; }
+.social-bar a svg { width:18px; height:18px; fill:currentColor; }
+.social-bar a .tip {
+  position:absolute;
+  right:48px;
+  background:#2d422d;
+  color:#d8e8d0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.65rem;
+  padding:3px 8px;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 0.15s;
+}
+.social-bar a:hover .tip { opacity:1; }
+
+/* ── Checkbox fix ── */
+input[type="checkbox"], input[type="radio"] {
+  -webkit-appearance:auto;
+  appearance:auto;
+}
+
+/* ── Node panel req list ── */
+#node-req-list li {
+  display:flex;
+  align-items:flex-start;
+  gap:0.6rem;
+  color:#8faa8f;
+  font-size:0.95rem;
+  line-height:1.6;
+}
+#node-req-list li::before {
+  content:"✓";
+  color:#4a9e4a;
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.8rem;
+  margin-top:3px;
+  flex-shrink:0;
+}
+
+/* ── Mobile ── */
+@media (max-width:600px) {
+  nav ul { display:none !important; }
+  nav { padding:0.9rem 1.2rem; }
+  .hamburger { display:-webkit-flex !important; display:flex !important; }
+  .hero h1 { font-size:2.2rem; }
+  .hero-img-wrap { height:72vw; min-height:220px; }
+  .hero-content { margin-top:-4.5rem; padding:0 0 3rem; max-width:100%; }
+  .page-wrap { margin-left:1.2rem; }
+  h2 { font-size:1.9rem; }
+  section { padding:3.5rem 1.2rem; }
+  .flow-row { -webkit-flex-direction:column; flex-direction:column; }
+  .flow-arrow { -webkit-transform:rotate(90deg); transform:rotate(90deg); }
+  .social-bar { top:auto; bottom:0; right:0; left:0; transform:none; flex-direction:row; justify-content:center; border-top:1px solid #2d422d; }
+  .social-bar a { width:48px; height:44px; border:none; border-right:1px solid #2d422d; border-radius:0; }
+  .social-bar a:first-child { border-top-left-radius:0; }
+  .social-bar a:last-child  { border-bottom-left-radius:0; border-right:none; }
+  .social-bar a .tip { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">Open<span>MycoNet</span></div>
+  <ul>
+    <li><a href="#warum" data-i18n="nav_warum">Warum</a></li>
+    <li><a href="#mitmachen" data-i18n="nav_mitmachen">Mitmachen</a></li>
+    <li><a href="#spenden" data-i18n="nav_spenden">Unterstützen</a></li>
+    <li><a href="#anmelden" data-i18n="nav_anmelden">Anmelden</a></li>
+    <li><a href="#ueber" data-i18n="nav_ueber">Über</a></li>
+    <li><a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a></li>
+    <li><a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a></li>
+    <li id="lang-flags-nav" style="margin-left:0.5rem; display:flex; align-items:center; gap:0.35rem;">
+      <!-- Flags injected by JS -->
+    </li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Sprach-Sidebar (Desktop) -->
+<div id="lang-sidebar">
+  <!-- Flags injected by JS -->
+</div>
+
+<!-- Mobile Overlay-Menü -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileClose">✕</button>
+  <a href="#warum" data-i18n="nav_warum">Warum</a>
+  <a href="#mitmachen" data-i18n="nav_mitmachen">Mitmachen</a>
+  <a href="#spenden" data-i18n="nav_spenden">Unterstützen</a>
+  <a href="#anmelden" data-i18n="nav_anmelden">Anmelden</a>
+  <a href="#ueber" data-i18n="nav_ueber">Über</a>
+  <a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a>
+  <a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a>
+  <div class="mobile-lang" id="lang-flags-mobile"></div>
+</div>
+
+<!-- Hero -->
+<section class="hero" style="padding:0; background-color:#141f14;">
+  <div class="hero-img-wrap">
+    <img src="hero_bg.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.72) saturate(0.9);">
+    <div style="position:absolute; bottom:0; left:0; right:0; height:180px; background:linear-gradient(to top, #141f14 0%, transparent 100%);"></div>
+  </div>
+  <div class="page-wrap"><div class="hero-content">
+  <p class="hero-tag">BioComm Community Network · openmyconet.de</p>
+  <h1>Listen to<br>the <em>Forest</em></h1>
+  <p class="hero-sub" data-i18n="hero_sub">Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza- und Pilznetzwerken. Die Signale existieren — die Frage ist, was sie bedeuten.</p>
+  <div class="live-badge">
+    <div class="live-dot"></div>
+    <span id="node-count">1</span>&nbsp;<span data-i18n="live_badge">aktiver Knoten — werde der nächste</span>
+  </div>
+  <div style="width:100%; max-width:100%; height:160px; position:relative; margin-bottom:1.5rem; overflow:hidden;">
+    <canvas id="mcHero" style="width:100%; height:100%; display:block; max-width:100%;"></canvas>
+  </div>
+  <div class="hero-buttons">
+    <a href="#anmelden" class="btn btn-green" data-i18n="btn_join">Jetzt mitmachen</a>
+    <a href="#spenden" class="btn btn-amber" data-i18n="btn_support">Projekt unterstützen</a>
+    <button onclick="document.getElementById('omn-fab').click()" class="btn btn-amber" data-i18n="btn_fragen" style="cursor:pointer;border:1px solid #4DE0FF;color:#4DE0FF;background:transparent;">&#11044; Offene Fragen?</button>
+  </div>
+  </div></div>
+</section>
+
+<!-- Broschüre -->
+<section class="broschuere-section" style="border-top:1px solid #2d422d;">
+  <img src="Bild_Broschuere.png" alt="" class="broschuere-img">
+  <div class="broschuere-overlay">
+    <p class="broschuere-label" id="broschuere-label">Broschüre</p>
+    <div class="broschuere-captions">
+      <span id="broschuere-c1">Das Wissen ist da.</span>
+      <span id="broschuere-c2">Es wird geteilt.</span>
+      <span id="broschuere-c3">Es weckt Neugier.</span>
+    </div>
+    <p class="broschuere-tagline" id="broschuere-tagline">Was wir machen, <em>verständlich</em> für jeden.</p>
+    <a href="OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3.pdf" download class="broschuere-btn" id="broschuere-btn">↓ Broschüre herunterladen</a>
+    <p class="broschuere-note" id="broschuere-note">PDF · kostenlos · frei weiterzugeben (CC BY-NC-SA 4.0)</p>
+    <div id="broschuere-flags" style="display:flex; gap:0.6rem; align-items:center; margin-top:0.8rem; flex-wrap:wrap; justify-content:center;">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Vision -->
+<section id="vision" style="background-color:#141f14; border-top:1px solid #2d422d;">
+  <div style="position:relative; overflow:hidden; height:280px;">
+    <img src="vision_bg.png" alt="" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block; filter:brightness(0.55) saturate(0.9);">
+    <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+      <p class="section-label" data-i18n="label_vision">Die größere Frage</p>
+      <h2 data-i18n-html="h2_vision" style="margin-bottom:0;">Was möglich wird, wenn wir <em>verstehen</em></h2>
+    </div>
+  </div>
+  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+    <p style="color:#d8e8d0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p1">Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde.</p>
+    <p style="color:#8faa8f; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">OpenMycoNet stellt die einfache aber weitreichende Frage.</p>
+    <p style="color:#8faa8f; font-size:1.05rem; line-height:1.85; margin-bottom:2.5rem;" data-i18n="vision_p3">Das sind keine spekulativen Fragen.</p>
+    <div id="vision-apps" style="display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:1rem;"></div>
+    <div style="margin-top:3rem; padding:2rem; border-top:1px solid #2d422d;">
+      <p style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:400; color:#f0f8f0; line-height:1.5; font-style:italic;" data-i18n="vision_quote">„Das Netzwerk sendet. Wir haben gerade erst angefangen zuzuhören."</p>
+      <p style="margin-top:1rem; color:#8faa8f; font-size:0.9rem;" data-i18n="vision_closing">Jeder BioComm-Knoten der weltweit in Betrieb geht bringt uns einen Schritt näher an das Verständnis — für alle.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Warum -->
+<section id="warum" style="background-color:#141f14; border-top:1px solid #2d422d; border-bottom:1px solid #2d422d;">
+  <div style="position:relative; overflow:hidden; height:280px;">
+    <img src="warum_bg.png" alt="" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.50) saturate(0.85);">
+    <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+      <p class="section-label" data-i18n="label_warum">Das Warum</p>
+      <h2 data-i18n-html="h2_warum" style="margin-bottom:0;">Ein Netzwerk das<br><em>zuhört</em></h2>
+    </div>
+  </div>
+  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+    <p class="section-desc" data-i18n="desc_warum">Mykorrhiza-Pilze verbinden über 90 % aller Landpflanzen.</p>
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+</section>
+
+<!-- Mitmachen -->
+<section id="mitmachen" style="background-color:#141f14;">
+  <div style="position:relative; overflow:hidden; height:280px;">
+    <img src="mitmachen_bg.png" alt="" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.52) saturate(0.9);">
+    <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+      <p class="section-label" data-i18n="label_mitmachen">So funktioniert es</p>
+      <h2 data-i18n-html="h2_mitmachen" style="margin-bottom:0;">In vier Schritten<br>zum eigenen <em>Knoten</em></h2>
+    </div>
+  </div>
+  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+    <div class="steps-grid" id="steps-grid"></div>
+    <div style="margin-top:2.5rem;">
+      <a href="#anmelden" class="btn btn-green" data-i18n="btn_register">Jetzt registrieren</a>
+    </div>
+  </div>
+</section>
+
+<!-- Datenfluss -->
+<section id="daten" style="background-color:#141f14; border-top:1px solid #2d422d; border-bottom:1px solid #2d422d;">
+  <div style="position:relative; overflow:hidden; height:280px;">
+    <img src="daten_bg.png" alt="" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.52) saturate(0.9);">
+    <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+      <p class="section-label" data-i18n="label_daten">Transparenz</p>
+      <h2 data-i18n-html="h2_daten" style="margin-bottom:0;">Wie deine Daten<br><em>fließen</em></h2>
+    </div>
+  </div>
+  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+    <p class="section-desc" data-i18n="desc_daten">GPS-Koordinaten werden auf 10×10 km vergröbert.</p>
+    <div class="flow-row" id="flow-row"></div>
+  </div>
+</section>
+
+<!-- Spenden -->
+<section id="spenden" style="padding-top:5rem; padding-bottom:5rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+  <p class="section-label" data-i18n="label_spenden">Unterstützung</p>
+  <h2 data-i18n-html="h2_spenden">Das Projekt<br><em>unterstützen</em></h2>
+  <div class="donate-box">
+    <p data-i18n="donate_p">OpenMycoNet ist ein unabhängiges Citizen-Science-Projekt ohne institutionelle Förderung.</p>
+    <div class="amounts">
+      <button class="amt-btn" onclick="selectAmt(this)">5 €</button>
+      <button class="amt-btn active" onclick="selectAmt(this)">15 €</button>
+      <button class="amt-btn" onclick="selectAmt(this)">35 €</button>
+      <button class="amt-btn" onclick="selectAmt(this)">50 €</button>
+      <button class="amt-btn" onclick="selectAmt(this)">100 €</button>
+    </div>
+    <div class="donate-buttons">
+      <a href="https://paypal.me/openmyconet" class="btn btn-amber" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8a84a" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> PayPal</a>
+    </div>
+    <p class="donate-note" data-i18n="donate_note">15 € = Serverkosten für einen Monat<br>5 € = Dankeschön</p>
+  </div>
+</section>
+
+<!-- Buch: Das letzte Korn -->
+<section id="buch" style="position:relative; overflow:hidden; border-top:1px solid #2d422d;">
+  <img src="buch_bg.png" alt="" style="width:100%; height:480px; object-fit:cover; object-position:center center; display:block; filter:brightness(0.50) saturate(0.9);">
+  <div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem clamp(1.5rem,5vw,5rem); background:linear-gradient(to bottom, rgba(20,31,20,0.2) 0%, rgba(20,31,20,0.55) 100%);">
+    <p class="section-label" id="buch-label" data-i18n="buch_label">Gratisdownload</p>
+    <h2 style="font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3rem); color:#f0f8f0; font-weight:400; margin-bottom:1rem;">
+      <em>Das letzte Korn</em>
+    </h2>
+    <p style="color:#8faa8f; font-size:1.1rem; line-height:1.7; margin-bottom:2.5rem;" data-i18n="buch_desc">Eine Geschichte über die Symbiose der dritten Art</p>
+    <a href="Das letzte Korn_Komplett_down.pdf" download class="btn btn-amber" style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.8rem;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span data-i18n="buch_btn">↓ Roman herunterladen</span>
+    </a>
+    <p style="margin-top:1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6a8a6a; letter-spacing:0.05em;" data-i18n="buch_note">PDF · kostenlos · Robert Jank · 2026</p>
+  </div>
+</section>
+
+<!-- Anmelden / Registrierung -->
+<section id="anmelden" class="bg-dark border-t" style="padding-top:5rem; padding-bottom:5rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+  <p class="section-label" id="reg-section-label">Registrierung</p>
+  <h2 id="reg-h2">Teil des <em>Netzwerks</em> werden</h2>
+  <p class="section-desc" id="reg-intro">Registriere dich — du erhältst projektrelevante Neuigkeiten per Mail.</p>
+
+  <form class="form-wrap" id="reg-form" onsubmit="handleReg(event)" novalidate>
+    <!-- Name -->
+    <div class="form-group">
+      <label id="lbl-name">Name (optional)</label>
+      <input type="text" id="inp-name" autocomplete="name" name="name">
+    </div>
+    <!-- Email -->
+    <div class="form-group">
+      <label id="lbl-email">E-Mail-Adresse *</label>
+      <input type="email" id="inp-email" required autocomplete="email" name="email">
+    </div>
+    <!-- Role -->
+    <div class="form-group">
+      <label id="lbl-role">Ich interessiere mich als</label>
+      <select name="rolle" id="reg-role" onchange="checkRegRole(this)">
+        <!-- Options rendered by JS -->
+      </select>
+      <!-- Förderer redirect hint -->
+      <div class="foerderer-hint-box" id="foerderer-hint">
+        <p id="foerderer-hint-text" style="color:#e8a84a; font-family:'JetBrains Mono',monospace; font-size:0.8rem; margin-bottom:0.5rem;"></p>
+        <a href="foerderer.html" id="foerderer-hint-link" style="display:inline-block; padding:0.6rem 1.4rem; background:transparent; color:#e8a84a; border:1px solid #c8882a; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none;"></a>
+        <p id="foerderer-hint-note" style="color:#8faa8f; font-size:0.8rem; margin-top:0.5rem; font-style:italic;"></p>
+      </div>
+    </div>
+    <!-- Message -->
+    <div class="form-group">
+      <label id="lbl-msg">Nachricht (optional)</label>
+      <textarea id="inp-msg" name="nachricht" style="height:80px;"></textarea>
+    </div>
+
+    <!-- Node question — shown for all except foerderer -->
+    <div class="form-group node-question-wrap" id="node-question-wrap" style="padding:1.2rem; background-color:#1a231a; border:1px solid #2d422d; border-left:3px solid #7ec87e;">
+      <p id="node-q-text" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#7ec87e; margin-bottom:0.9rem;">Möchtest du einen eigenen BioComm-Knoten betreiben?</p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.9rem; color:#d8e8d0; text-transform:none; letter-spacing:0;">
+          <input type="radio" name="node_interest" value="ja" id="node-yes" onchange="showNodePanel(true)" style="width:auto; accent-color:#4a9e4a;">
+          <span id="node-yes-label">Ja, ich bewerbe mich für einen Knoten</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.9rem; color:#d8e8d0; text-transform:none; letter-spacing:0;">
+          <input type="radio" name="node_interest" value="nein" id="node-no" onchange="showNodePanel(false)" style="width:auto; accent-color:#4a9e4a;" checked>
+          <span id="node-no-label">Nein</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- DSGVO + Newsletter -->
+    <div class="form-group" style="margin-top:1rem;">
+      <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#8faa8f;">
+        <input type="checkbox" name="newsletter" id="inp-newsletter" style="width:auto; margin-top:3px; accent-color:#4a9e4a; flex-shrink:0;">
+        <span id="newsletter-label">Ja, ich möchte per E-Mail über alle Neuigkeiten informiert werden.</span>
+      </label>
+    </div>
+    <div class="form-group">
+      <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#8faa8f;">
+        <input type="checkbox" name="privacy" id="inp-privacy" required style="width:auto; margin-top:3px; accent-color:#4a9e4a; flex-shrink:0;">
+        <span id="privacy-label">Ich habe die <a href="datenschutz.html" style="color:#7ec87e;">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten zur Bearbeitung meiner Anfrage zu. Keine Weitergabe an Dritte. *</span>
+      </label>
+    </div>
+
+    <div style="margin:1rem 0 1.2rem; padding:0.8rem 1rem; background-color:#141f14; border-left:2px solid #2d6a2d;">
+      <p id="privacy-notice" style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#8faa8f; line-height:1.7;">Deine Daten werden ausschließlich zur Bearbeitung deiner Anfrage gespeichert. Kein Tracking, kein Newsletter ohne deine explizite Zustimmung, keine Weitergabe.</p>
+    </div>
+
+    <button type="submit" class="btn btn-green" id="reg-btn">Registrieren</button>
+  </form>
+</section>
+
+<!-- Node-Bewerbungs-Panel (Overlay) -->
+<div id="node-panel" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000; background:rgba(20,31,20,0.97); overflow-y:auto; padding:2rem clamp(1.5rem,5vw,4rem);">
+  <button onclick="closeNodePanel()" style="position:fixed; top:1.2rem; right:1.4rem; background:none; border:none; color:#d8e8d0; font-size:1.8rem; cursor:pointer; z-index:1001; line-height:1;">✕</button>
+
+  <div style="max-width:680px; margin:0 auto; padding-top:3rem;">
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#c8882a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:0.8rem;" id="node-panel-label">Bewerbung</p>
+    <h2 id="node-panel-title" style="margin-bottom:2rem;">Eigener BioComm-Knoten</h2>
+
+    <!-- Geo + Hardware info -->
+    <div style="padding:1.2rem 1.4rem; background-color:#1a231a; border-left:3px solid #c8882a; margin-bottom:1.2rem;">
+      <p id="node-info-geo" style="color:#d8e8d0; font-size:0.95rem; line-height:1.7;"></p>
+    </div>
+    <div style="padding:1.2rem 1.4rem; background-color:#1a231a; border-left:3px solid #e8a84a; margin-bottom:2rem;">
+      <p id="node-info-hw" style="color:#d8e8d0; font-size:0.95rem; line-height:1.7;"></p>
+    </div>
+
+    <!-- Requirements -->
+    <div style="margin-bottom:2rem;">
+      <p id="node-req-title" style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#c8882a; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:1rem;"></p>
+      <ul id="node-req-list" style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.5rem;"></ul>
+      <div style="margin-top:1rem; padding:0.8rem 1rem; background-color:#1a231a; border-left:3px solid #2d6a2d;">
+        <p id="node-info-feedback" style="color:#7ec87e; font-size:0.9rem; font-family:'JetBrains Mono',monospace;"></p>
+      </div>
+    </div>
+
+    <!-- Node application form -->
+    <form id="node-form" onsubmit="handleNodeApply(event)" novalidate>
+      <input type="hidden" name="type" value="node_bewerbung">
+
+      <div class="form-group">
+        <label id="node-lbl-profession"></label>
+        <input type="text" id="node-inp-profession" name="profession">
+      </div>
+      <div class="form-group">
+        <label id="node-lbl-substrat"></label>
+        <input type="text" id="node-inp-substrat" name="node_substrat" required>
+      </div>
+      <div class="form-group">
+        <label id="node-lbl-motivation"></label>
+        <textarea id="node-inp-motivation" name="motivation" required style="height:130px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#8faa8f;">
+          <input type="checkbox" name="loan_terms" id="node-inp-loan" required style="width:auto; margin-top:3px; accent-color:#4a9e4a; flex-shrink:0;">
+          <span id="node-lbl-loan"></span>
+        </label>
+      </div>
+      <div class="form-group">
+        <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#8faa8f;">
+          <input type="checkbox" name="node_privacy" id="node-inp-privacy" required style="width:auto; margin-top:3px; accent-color:#4a9e4a; flex-shrink:0;">
+          <span id="node-privacy-label">Ich habe die <a href="datenschutz.html" style="color:#7ec87e;">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Bewerberdaten zu. *</span>
+        </label>
+      </div>
+
+      <div style="margin:1rem 0 1.5rem; padding:0.8rem 1rem; background-color:#141f14; border-left:2px solid #2d6a2d;">
+        <p id="node-privacy-notice" style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#8faa8f; line-height:1.7;"></p>
+      </div>
+
+      <button type="submit" class="btn btn-green" id="node-submit-btn" style="width:100%;">Bewerbung absenden</button>
+    </form>
+  </div>
+</div>
+
+<!-- Über -->
+<section id="ueber" class="bg-dark border-t" style="padding-top:5rem; padding-bottom:5rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+  <p class="section-label" data-i18n="label_ueber">Das Projekt</p>
+  <h2 data-i18n-html="h2_ueber">Unabhängige Wissenschaft<br>von <em>unten</em></h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p data-i18n="about_p1">OpenMycoNet wurde von <strong>Robert Jank</strong>, unabhängigem Erfinder aus Maintal bei Frankfurt, initiiert.</p>
+      <p data-i18n="about_p2">Das zugrundeliegende System BioComm ist durch ein <strong>Gebrauchsmuster beim DPMA</strong> geschützt.</p>
+      <p data-i18n="about_p3">Prinzip: <strong>Proprietary Intelligence, Open Data</strong>.</p>
+      <div style="margin-top:1.5rem;">
+        <a href="mailto:kontakt@openmyconet.de" class="btn btn-amber" data-i18n="btn_contact">Kontakt</a>
+      </div>
+    </div>
+    <div class="facts" id="facts-grid"></div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem); text-align:center;">
+  <div class="footer-logo">OpenMycoNet</div>
+  <div class="footer-info">
+    Robert Jank · Maintal, Deutschland · 2026<br>
+    Gebrauchsmuster DE 20 [Nr.] ·
+    <a href="impressum.html">Impressum</a> ·
+    <a href="datenschutz.html">Datenschutz</a> ·
+    <a href="quellennachweise.html">Quellennachweise</a>
+  </div>
+</footer>
+
+<script src="translations.js"></script>
+<script>
+// ─── SVG flags ───────────────────────────────────────────────
+var FLAGS = {
+  de: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>',
+  en: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>',
+  nl: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>',
+  fr: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>',
+  es: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>'
+};
+var FLAG_TITLES = {de:'Deutsch',en:'English',nl:'Nederlands',fr:'Français',es:'Español'};
+var LANG_NAMES = ['de','en','nl','fr','es'];
+
+// ─── Language detection ───────────────────────────────────────
+function getLang() {
+  var p = new URLSearchParams(window.location.search).get('lang');
+  if (p && LANG_NAMES.indexOf(p) !== -1) return p;
+  var stored = localStorage.getItem('omn_lang');
+  if (stored && LANG_NAMES.indexOf(stored) !== -1) return stored;
+  var bl = (navigator.language || navigator.userLanguage || 'de').split('-')[0].toLowerCase();
+  return LANG_NAMES.indexOf(bl) !== -1 ? bl : 'de';
+}
+
+var currentLang = getLang();
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  // Update URL without reload
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); }
+  else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyTranslations(lang);
+  updateMeta(lang);
+  updateFlags(lang);
+  renderDynamicSections(lang);
+  renderRegForm(lang);
+  renderBroschuere(lang);
+}
+
+// ─── Meta updates ─────────────────────────────────────────────
+var META_DESCRIPTIONS = {
+  de: 'Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza- und Pilznetzwerken. Mitmachen, Daten teilen, die Wissenschaft voranbringen.',
+  en: 'A global citizen science network recording bioelectrical signals from mycorrhizal and fungal networks. Join, share data, advance science.',
+  nl: 'Een wereldwijd citizen science-netwerk voor het meten van bio-elektrische signalen uit mycorrhiza- en schimmelnetwerken. Doe mee, deel gegevens, bevorder de wetenschap.',
+  fr: 'Un réseau mondial de science citoyenne enregistrant les signaux bioélectriques des réseaux mycorhiziens et fongiques. Participez, partagez des données, faites avancer la science.',
+  es: 'Una red mundial de ciencia ciudadana que registra señales bioeléctricas de redes micorrícicas y fúngicas. Únete, comparte datos, avanza en la ciencia.'
+};
+var OG_LOCALES = {de:'de_DE',en:'en_US',nl:'nl_NL',fr:'fr_FR',es:'es_ES'};
+
+function updateMeta(lang) {
+  var desc = META_DESCRIPTIONS[lang] || META_DESCRIPTIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.getElementById('meta-description').setAttribute('content', desc);
+  document.getElementById('og-description').setAttribute('content', desc);
+  document.getElementById('twitter-description').setAttribute('content', desc);
+  document.getElementById('og-locale').setAttribute('content', OG_LOCALES[lang] || 'de_DE');
+  var url = lang === 'de' ? 'https://www.openmyconet.de/' : 'https://www.openmyconet.de/?lang=' + lang;
+  document.getElementById('canonical').setAttribute('href', url);
+  document.getElementById('og-url').setAttribute('content', url);
+}
+
+// ─── Flag rendering ───────────────────────────────────────────
+function renderFlags(containerId, size) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = LANG_NAMES.map(function(l) {
+    var active = l === currentLang ? '1' : '0.45';
+    var svgStr = FLAGS[l].replace('width="20" height="14"',
+      'width="' + (size||20) + '" height="' + (size ? Math.round(size*0.7) : 14) + '"');
+    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" onclick="setLang(\'' + l + '\')" style="opacity:' + active + '; display:inline-flex; cursor:pointer;">' + svgStr + '</a>';
+  }).join('');
+}
+function updateFlags(lang) {
+  currentLang = lang;
+  renderFlags('lang-flags-nav', 20);
+  renderFlags('lang-flags-mobile', 28);
+  renderFlags('lang-sidebar', 22);
+  // Sidebar auf Desktop sichtbar machen
+  var sb = document.getElementById('lang-sidebar');
+  if (sb && window.innerWidth > 600) sb.style.display = 'flex';
+}
+
+// ─── Static text replacement ──────────────────────────────────
+function applyTranslations(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  // data-i18n: text content
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key]) el.textContent = T[key];
+  });
+  // data-i18n-html: innerHTML (for em tags in h2)
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key]) el.innerHTML = T[key];
+  });
+}
+
+// ─── Dynamic section rendering ────────────────────────────────
+var FLOW_SVGS = [
+  '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24 C14 24 6 14 6 9 C6 5 9.5 2 14 2 C18.5 2 22 5 22 9 C22 14 14 24 14 24z" stroke="#4a9e4a" stroke-width="1.5" fill="#0f2a0f"/><path d="M10 10 Q14 7 18 10" stroke="#4a9e4a" stroke-width="1" fill="none"/><line x1="14" y1="14" x2="14" y2="24" stroke="#2d6a2d" stroke-width="1.2"/></svg>',
+  '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="22" height="14" rx="2" stroke="#4a9e4a" stroke-width="1.5" fill="#0f2a0f"/><line x1="1" y1="23" x2="27" y2="23" stroke="#4a9e4a" stroke-width="1.5"/><line x1="10" y1="19" x2="18" y2="19" stroke="#2d6a2d" stroke-width="1.5"/><polyline points="7,11 10,14 7,17" stroke="#7ec87e" stroke-width="1" fill="none"/><line x1="12" y1="17" x2="17" y2="17" stroke="#7ec87e" stroke-width="1"/></svg>',
+  '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 20 C4 20 2 18 2 15.5 C2 13 4 11 6.5 11 C6.5 7.5 9.5 5 13 5 C16 5 18.5 7 19 10 C19.5 10 20 10 20.5 10 C23 10 25 12 25 14.5 C25 17 23 19 20.5 19 Z" stroke="#4a9e4a" stroke-width="1.5" fill="#0f2a0f"/></svg>',
+  '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="13" width="14" height="10" rx="2" stroke="#4a9e4a" stroke-width="1.5" fill="#0f2a0f"/><path d="M10 13 L10 8 C10 5.8 11.8 4 14 4 C16.2 4 18 5.8 18 8" stroke="#4a9e4a" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="14" cy="18" r="2" fill="#7ec87e"/></svg>',
+  '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 14 C5 9 9 5 14 5 C17 5 20 6.5 21.5 9" stroke="#4a9e4a" stroke-width="1.5" fill="none" stroke-linecap="round"/><polyline points="19,6 22,9 19,12" stroke="#4a9e4a" stroke-width="1.5" fill="none"/><path d="M23 14 C23 19 19 23 14 23 C11 23 8 21.5 6.5 19" stroke="#4a9e4a" stroke-width="1.5" fill="none" stroke-linecap="round"/><polyline points="9,22 6,19 9,16" stroke="#4a9e4a" stroke-width="1.5" fill="none"/></svg>'
+];
+
+var CARD_SVGS = [
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" stroke="#4a9e4a" stroke-width="1.5"/><circle cx="16" cy="16" r="6" fill="#2d6a2d"/><ellipse cx="16" cy="16" rx="14" ry="6" stroke="#4a9e4a" stroke-width="1" stroke-dasharray="2 2"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="2,16 6,16 8,8 10,24 12,12 14,20 16,16 18,10 20,22 22,16 30,16" stroke="#4a9e4a" stroke-width="1.5" fill="none"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="16" height="16" rx="3" stroke="#4a9e4a" stroke-width="1.5"/><circle cx="16" cy="16" r="4" fill="#2d6a2d"/><line x1="16" y1="2" x2="16" y2="8" stroke="#4a9e4a" stroke-width="1.5"/><line x1="16" y1="24" x2="16" y2="30" stroke="#4a9e4a" stroke-width="1.5"/><line x1="2" y1="16" x2="8" y2="16" stroke="#4a9e4a" stroke-width="1.5"/><line x1="24" y1="16" x2="30" y2="16" stroke="#4a9e4a" stroke-width="1.5"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="13" stroke="#4a9e4a" stroke-width="1.5"/><path d="M20 12a6 6 0 100 8" stroke="#4a9e4a" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="14" y1="16" x2="20" y2="16" stroke="#4a9e4a" stroke-width="1.5"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 28 C16 28 6 20 6 13 a10 10 0 0 1 20 0 C26 20 16 28 16 28z" stroke="#4a9e4a" stroke-width="1.5" fill="#1a231a"/><circle cx="16" cy="13" r="3" fill="#4a9e4a"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="16" r="3" fill="#2d6a2d"/><circle cx="24" cy="8" r="3" fill="#2d6a2d"/><circle cx="24" cy="24" r="3" fill="#2d6a2d"/><circle cx="16" cy="16" r="3" fill="#4a9e4a"/><line x1="8" y1="16" x2="16" y2="16" stroke="#4a9e4a" stroke-width="1"/><line x1="16" y1="16" x2="24" y2="8" stroke="#4a9e4a" stroke-width="1"/><line x1="16" y1="16" x2="24" y2="24" stroke="#4a9e4a" stroke-width="1"/></svg>'
+];
+
+function renderDynamicSections(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  
+  // Vision apps
+  var appsEl = document.getElementById('vision-apps');
+  if (appsEl && T.vision_apps) {
+    appsEl.innerHTML = T.vision_apps.map(function(app, i) {
+      var borderColor = i === 5 ? '#4a9e4a' : '#2d6a2d';
+      var italicColor = i === 5 ? '#7ec87e' : '#8faa8f';
+      return '<div style="flex:1 1 340px; padding:1.5rem; background-color:#1a231a; border-left:3px solid ' + borderColor + ';">' +
+        '<p style="font-family:\'JetBrains Mono\',monospace; font-size:0.7rem; color:#c8882a; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.75rem;">' + app.label + '</p>' +
+        '<p style="color:#d8e8d0; font-size:1rem; line-height:1.7; margin-bottom:0.5rem;">' + app.text + '</p>' +
+        '<p style="color:' + italicColor + '; font-size:0.9rem; font-style:italic;">' + app.italic + '</p>' +
+        '</div>';
+    }).join('');
+  }
+  
+  // Cards
+  var cardsEl = document.getElementById('cards-grid');
+  if (cardsEl && T.cards) {
+    cardsEl.innerHTML = T.cards.map(function(c, i) {
+      return '<div class="card"><span class="card-icon">' + (CARD_SVGS[i] || '') + '</span><h3>' + c.h + '</h3><p>' + c.p + '</p></div>';
+    }).join('');
+  }
+  
+  // Steps
+  var stepsEl = document.getElementById('steps-grid');
+  if (stepsEl && T.steps) {
+    var nums = ['01','02','03','04'];
+    stepsEl.innerHTML = T.steps.map(function(s, i) {
+      return '<div class="step"><span class="step-num">' + nums[i] + '</span><h3>' + s.h + '</h3><p>' + s.p + '</p><p class="step-cost">' + s.cost + '</p></div>';
+    }).join('');
+  }
+  
+  // Flow nodes
+  var flowEl = document.getElementById('flow-row');
+  if (flowEl && T.flow_nodes) {
+    var parts = [];
+    T.flow_nodes.forEach(function(n, i) {
+      parts.push('<div class="flow-node"><span class="flow-node-icon">' + (FLOW_SVGS[i] || '') + '</span><h4>' + n.h + '</h4><p>' + n.p + '</p></div>');
+      if (i < T.flow_nodes.length - 1) parts.push('<div class="flow-arrow">→</div>');
+    });
+    flowEl.innerHTML = parts.join('');
+  }
+  
+  // Facts
+  var factsEl = document.getElementById('facts-grid');
+  if (factsEl && T.facts) {
+    factsEl.innerHTML = T.facts.map(function(f) {
+      return '<div class="fact"><div class="fact-num">' + f.num + '</div><p>' + f.text + '</p></div>';
+    }).join('');
+  }
+}
+
+// ─── Apply form rendering ─────────────────────────────────────
+function renderApplyForm(lang) {
+  var A = APPLY_TRANS[lang] || APPLY_TRANS.de;
+  
+  document.getElementById('apply-section-label').textContent = A.section_label;
+  document.getElementById('apply-h2').innerHTML = A.h2;
+  document.getElementById('apply-badge-text').textContent = A.badge;
+  document.getElementById('apply-intro').textContent = A.intro;
+  
+  document.getElementById('lbl-name').textContent = A.lbl_name;
+  document.getElementById('lbl-email').textContent = A.lbl_email;
+  document.getElementById('lbl-role').textContent = A.lbl_role;
+  document.getElementById('lbl-background').textContent = A.lbl_background;
+  document.getElementById('lbl-substrat').textContent = A.lbl_substrat;
+  document.getElementById('lbl-motivation').textContent = A.lbl_motivation;
+  document.getElementById('lbl-msg').textContent = A.lbl_msg;
+  
+  document.getElementById('inp-name').placeholder = A.ph_name;
+  document.getElementById('inp-email').placeholder = A.ph_email;
+  document.getElementById('inp-background').placeholder = A.ph_background;
+  document.getElementById('inp-substrat').placeholder = A.ph_substrat;
+  document.getElementById('inp-motivation').placeholder = A.ph_motivation;
+  document.getElementById('inp-msg').placeholder = A.ph_msg;
+  
+  // Role options
+  var roleMap = [
+    {val:'teilnehmer', key:'opt_teilnehmer'},
+    {val:'wissenschaftler', key:'opt_wissenschaftler'},
+    {val:'entwickler', key:'opt_entwickler'},
+    {val:'unterstuetzer', key:'opt_unterstuetzer'},
+    {val:'foerderer', key:'opt_foerderer'}
+  ];
+  var sel = document.getElementById('apply-role');
+  sel.innerHTML = roleMap.map(function(o) {
+    return '<option value="' + o.val + '">' + A[o.key] + '</option>';
+  }).join('');
+  
+  // Förderer hint
+  document.getElementById('foerderer-hint-text').textContent = A.foerderer_hint;
+  document.getElementById('foerderer-hint-link').textContent = A.foerderer_link;
+  document.getElementById('foerderer-hint-note').textContent = A.foerderer_note;
+  
+  document.getElementById('apply-btn').textContent = A.submit;
+  document.getElementById('apply-note').textContent = A.note;
+}
+
+function checkApplyRole(sel) {
+  var isF = sel.value === 'foerderer';
+  var hint = document.getElementById('foerderer-hint');
+  var form = document.getElementById('apply-form');
+  hint.style.display = isF ? 'block' : 'none';
+  var fields = form.querySelectorAll('input:not([type=submit]), textarea');
+  var btn = document.getElementById('apply-btn');
+  if (isF) {
+    fields.forEach(function(el){ el.style.opacity='0.3'; el.disabled=true; });
+    btn.style.opacity='0.3'; btn.disabled=true;
+  } else {
+    fields.forEach(function(el){ el.style.opacity='1'; el.disabled=false; });
+    btn.style.opacity='1'; btn.disabled=false;
+  }
+}
+
+function handleApply(e) {
+  e.preventDefault();
+  var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
+  var btn = document.getElementById('apply-btn');
+  var form = document.getElementById('apply-form');
+  var data = new FormData(form);
+  data.append('lang', currentLang);
+  data.append('type', 'bewerbung');
+  btn.textContent = A.sending;
+  btn.disabled = true;
+  fetch('contact.php', { method:'POST', body:data })
+    .then(function(r){ return r.text(); })
+    .then(function(resp) {
+      if (resp.trim() === 'ok') {
+        btn.textContent = A.success;
+        btn.style.backgroundColor = '#4a9e4a';
+      } else {
+        btn.textContent = A.error;
+        btn.style.backgroundColor = '#8b2020';
+        btn.disabled = false;
+      }
+    })
+    .catch(function() {
+      btn.textContent = A.error;
+      btn.style.backgroundColor = '#8b2020';
+      btn.disabled = false;
+    });
+}
+
+// ─── Donate ───────────────────────────────────────────────────
+function selectAmt(btn) {
+  document.querySelectorAll('.amt-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+// ─── Active nav highlight (scroll-based) ─────────────────────
+(function() {
+  var sections = ['warum','mitmachen','spenden','anmelden','ueber'];
+  var navLinks = document.querySelectorAll('nav ul a[href^="#"]');
+  function updateActive() {
+    var scrollY = window.scrollY + 120;
+    var current = '';
+    sections.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) current = id;
+    });
+    navLinks.forEach(function(a) {
+      var href = a.getAttribute('href').replace('#','');
+      if (href === current) a.classList.add('nav-active');
+      else a.classList.remove('nav-active');
+    });
+  }
+  window.addEventListener('scroll', updateActive, {passive:true});
+  updateActive();
+})();
+
+// ─── Mobile menu ──────────────────────────────────────────────
+(function() {
+  var menu = document.getElementById('mobileMenu');
+  var btn  = document.getElementById('hamburger');
+  var cls  = document.getElementById('mobileClose');
+  if (!menu || !btn) return;
+  function openMenu()  { menu.style.display='-webkit-flex'; menu.style.display='flex'; }
+  function closeMenu() { menu.style.display='none'; }
+  btn.addEventListener('click', openMenu);
+  cls.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e){ if(e.target===menu) closeMenu(); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+  window.closeMobileMenu = closeMenu;
+})();
+
+// ─── Registration form ────────────────────────────────────────
+function renderRegForm(lang) {
+  var A = APPLY_TRANS[lang] || APPLY_TRANS.de;
+
+  document.getElementById('reg-section-label').textContent = A.section_label;
+  document.getElementById('reg-h2').innerHTML = A.h2;
+  document.getElementById('reg-intro').textContent = A.intro;
+  document.getElementById('lbl-name').textContent = A.lbl_name;
+  document.getElementById('lbl-email').textContent = A.lbl_email;
+  document.getElementById('lbl-role').textContent = A.lbl_role;
+  document.getElementById('lbl-msg').textContent = A.lbl_msg;
+  document.getElementById('inp-name').placeholder = A.ph_name;
+  document.getElementById('inp-email').placeholder = A.ph_email;
+  document.getElementById('inp-msg').placeholder = A.ph_msg;
+  document.getElementById('node-q-text').textContent = A.node_question;
+  document.getElementById('node-yes-label').textContent = A.node_yes;
+  document.getElementById('node-no-label').textContent = A.node_no;
+  document.getElementById('newsletter-label').textContent = A.newsletter_label;
+  document.getElementById('privacy-notice').textContent = A.privacy_notice;
+  document.getElementById('reg-btn').textContent = A.submit;
+
+  // Privacy label — keep the link intact, update surrounding text
+  var privSpan = document.getElementById('privacy-label');
+  privSpan.innerHTML = A.privacy_label.replace('[Datenschutzerklärung]','<a href="datenschutz.html" style="color:#7ec87e;">Datenschutzerklärung</a>').replace('[Privacy Policy]','<a href="datenschutz.html" style="color:#7ec87e;">Privacy Policy</a>').replace('[Privacybeleid]','<a href="datenschutz.html" style="color:#7ec87e;">Privacybeleid</a>').replace('[Politique de confidentialité]','<a href="datenschutz.html" style="color:#7ec87e;">Politique de confidentialité</a>').replace('[Política de privacidad]','<a href="datenschutz.html" style="color:#7ec87e;">Política de privacidad</a>') + ' *';
+
+  // Role options
+  var roleMap = [
+    {val:'interessent',     key:'opt_interessent'},
+    {val:'wissenschaftler', key:'opt_wissenschaftler'},
+    {val:'entwickler',      key:'opt_entwickler'},
+    {val:'unterstuetzer',   key:'opt_unterstuetzer'},
+    {val:'foerderer',       key:'opt_foerderer'}
+  ];
+  var sel = document.getElementById('reg-role');
+  sel.innerHTML = roleMap.map(function(o) {
+    return '<option value="' + o.val + '">' + A[o.key] + '</option>';
+  }).join('');
+
+  // Förderer hint
+  document.getElementById('foerderer-hint-text').textContent = A.foerderer_hint;
+  document.getElementById('foerderer-hint-link').textContent = A.foerderer_link;
+  document.getElementById('foerderer-hint-note').textContent = A.foerderer_note;
+
+  // Node panel texts
+  document.getElementById('node-panel-title').textContent = A.node_panel_title;
+  document.getElementById('node-info-geo').textContent = A.node_info_geo;
+  document.getElementById('node-info-hw').textContent = A.node_info_hw;
+  document.getElementById('node-req-title').textContent = A.node_req_title;
+  document.getElementById('node-info-feedback').textContent = A.node_info_feedback;
+  document.getElementById('node-lbl-profession').textContent = A.node_lbl_profession;
+  document.getElementById('node-inp-profession').placeholder = A.node_ph_profession;
+  document.getElementById('node-lbl-substrat').textContent = A.node_lbl_substrat;
+  document.getElementById('node-inp-substrat').placeholder = A.node_ph_substrat;
+  document.getElementById('node-lbl-motivation').textContent = A.node_lbl_motivation;
+  document.getElementById('node-inp-motivation').placeholder = A.node_ph_motivation;
+  document.getElementById('node-lbl-loan').textContent = A.node_lbl_loan;
+  document.getElementById('node-privacy-notice').textContent = A.privacy_notice;
+  document.getElementById('node-submit-btn').textContent = A.node_submit;
+
+  // Requirements list
+  var reqList = document.getElementById('node-req-list');
+  var reqKeys = ['node_req_1','node_req_2','node_req_3','node_req_4','node_req_5','node_req_6','node_req_7'];
+  reqList.innerHTML = reqKeys.map(function(k) {
+    return '<li>' + A[k] + '</li>';
+  }).join('');
+}
+
+function checkRegRole(sel) {
+  var isF = sel.value === 'foerderer';
+  var hint = document.getElementById('foerderer-hint');
+  var nodeWrap = document.getElementById('node-question-wrap');
+  var form = document.getElementById('reg-form');
+  var btn = document.getElementById('reg-btn');
+
+  hint.style.display = isF ? 'block' : 'none';
+  nodeWrap.style.display = isF ? 'none' : 'block';
+
+  if (isF) {
+    form.querySelectorAll('input:not([type=radio]):not([type=checkbox]), textarea').forEach(function(el){ el.style.opacity='0.3'; el.disabled=true; });
+    btn.style.opacity='0.3'; btn.disabled=true;
+  } else {
+    form.querySelectorAll('input, textarea').forEach(function(el){ el.style.opacity='1'; el.disabled=false; });
+    btn.style.opacity='1'; btn.disabled=false;
+  }
+  // Reset node panel if hidden
+  if (isF) { showNodePanel(false); document.getElementById('node-no').checked = true; }
+}
+
+function showNodePanel(show) {
+  var panel = document.getElementById('node-panel');
+  if (show) {
+    panel.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    panel.scrollTop = 0;
+  } else {
+    panel.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+function closeNodePanel() {
+  showNodePanel(false);
+  document.getElementById('node-no').checked = true;
+}
+
+function handleReg(e) {
+  e.preventDefault();
+  var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
+  var btn = document.getElementById('reg-btn');
+  var privacyCb = document.getElementById('inp-privacy');
+  if (!privacyCb.checked) { privacyCb.focus(); return; }
+  var form = document.getElementById('reg-form');
+  var data = new FormData(form);
+  data.append('lang', currentLang);
+  data.append('type', 'registrierung');
+  btn.textContent = A.sending;
+  btn.disabled = true;
+  fetch('contact.php', { method:'POST', body:data })
+    .then(function(r){ return r.text(); })
+    .then(function(resp) {
+      if (resp.trim() === 'ok') {
+        btn.textContent = A.success;
+        btn.style.backgroundColor = '#4a9e4a';
+      } else {
+        btn.textContent = A.error;
+        btn.style.backgroundColor = '#8b2020';
+        btn.disabled = false;
+      }
+    })
+    .catch(function() {
+      btn.textContent = A.error;
+      btn.style.backgroundColor = '#8b2020';
+      btn.disabled = false;
+    });
+}
+
+function handleNodeApply(e) {
+  e.preventDefault();
+  var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
+  var btn = document.getElementById('node-submit-btn');
+  var form = document.getElementById('node-form');
+  // Copy main form data (name, email, rolle)
+  var data = new FormData(form);
+  data.append('lang', currentLang);
+  data.append('name', document.getElementById('inp-name').value);
+  data.append('email', document.getElementById('inp-email').value);
+  data.append('rolle', document.getElementById('reg-role').value);
+  data.append('type', 'node_bewerbung');
+  btn.textContent = A.node_sending;
+  btn.disabled = true;
+  fetch('contact.php', { method:'POST', body:data })
+    .then(function(r){ return r.text(); })
+    .then(function(resp) {
+      if (resp.trim() === 'ok') {
+        btn.textContent = A.node_success;
+        btn.style.backgroundColor = '#4a9e4a';
+        btn.style.fontSize = '0.75rem';
+        btn.style.height = 'auto';
+        btn.style.whiteSpace = 'normal';
+        btn.style.lineHeight = '1.5';
+        btn.style.padding = '1rem';
+      } else {
+        btn.textContent = A.node_error;
+        btn.style.backgroundColor = '#8b2020';
+        btn.disabled = false;
+      }
+    })
+    .catch(function() {
+      btn.textContent = A.node_error;
+      btn.style.backgroundColor = '#8b2020';
+      btn.disabled = false;
+    });
+}
+
+// ─── Social Sharing ────────────────────────────────────────────
+var SHARE_TEXTS = {
+  de: 'OpenMycoNet — Citizen Science für Mykorrhiza-Netzwerke. Bioelektrische Signale messen, teilen, verstehen.',
+  en: 'OpenMycoNet — Citizen Science for mycorrhizal networks. Measure, share and decode bioelectrical signals.',
+  nl: 'OpenMycoNet — Citizen science voor mycorrhizanetwerken. Meet, deel en ontcijfer bio-elektrische signalen.',
+  fr: 'OpenMycoNet — Science citoyenne pour les réseaux mycorhiziens. Mesurez, partagez et décodez les signaux bioélectriques.',
+  es: 'OpenMycoNet — Ciencia ciudadana para redes micorrícicas. Mide, comparte y descifra señales bioeléctricas.'
+};
+
+function getShareUrl() {
+  var url = 'https://www.openmyconet.de/';
+  if (currentLang !== 'de') url += '?lang=' + currentLang;
+  return encodeURIComponent(url);
+}
+function getShareText() {
+  return encodeURIComponent(SHARE_TEXTS[currentLang] || SHARE_TEXTS.de);
+}
+
+function shareSocial(network) {
+  var url = getShareUrl();
+  var text = getShareText();
+  var target = '';
+  if (network === 'facebook')  target = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
+  if (network === 'x')         target = 'https://x.com/intent/tweet?text=' + text + '&url=' + url;
+  if (network === 'reddit')    target = 'https://www.reddit.com/submit?url=' + url + '&title=' + text;
+  if (network === 'linkedin')  target = 'https://www.linkedin.com/sharing/share-offsite/?url=' + url;
+  if (network === 'whatsapp')  target = 'https://wa.me/?text=' + text + '%20' + url;
+  if (network === 'mastodon') {
+    var inst = prompt('Mastodon instance (e.g. mastodon.social):');
+    if (!inst) return;
+    target = 'https://' + inst.trim() + '/share?text=' + text + '%20' + decodeURIComponent(url);
+  }
+  if (target) window.open(target, '_blank', 'noopener,width=600,height=500');
+}
+
+// ─── Broschüre ────────────────────────────────────────────────
+var BROSCHUERE_TRANS = {"de": {"label": "Broschüre", "caption_1": "Das Wissen ist da.", "caption_2": "Es wird geteilt.", "caption_3": "Es weckt Neugier.", "tagline": "Was wir machen, verständlich für jeden.", "btn": "↓ Broschüre herunterladen", "note": "PDF · kostenlos · frei weiterzugeben (CC BY-NC-SA 4.0)"}, "en": {"label": "Brochure", "caption_1": "The knowledge is there.", "caption_2": "It is being shared.", "caption_3": "It sparks curiosity.", "tagline": "What we do — explained for everyone.", "btn": "↓ Download brochure", "note": "PDF · free · free to share (CC BY-NC-SA 4.0)"}, "nl": {"label": "Brochure", "caption_1": "De kennis is er.", "caption_2": "Ze wordt gedeeld.", "caption_3": "Ze wekt nieuwsgierigheid.", "tagline": "Wat we doen — begrijpelijk voor iedereen.", "btn": "↓ Brochure downloaden", "note": "PDF · gratis · vrij te delen (CC BY-NC-SA 4.0)"}, "fr": {"label": "Brochure", "caption_1": "Le savoir est là.", "caption_2": "Il est partagé.", "caption_3": "Il éveille la curiosité.", "tagline": "Ce que nous faisons — compréhensible pour tous.", "btn": "↓ Télécharger la brochure", "note": "PDF · gratuit · libre de partage (CC BY-NC-SA 4.0)"}, "es": {"label": "Folleto", "caption_1": "El conocimiento existe.", "caption_2": "Se comparte.", "caption_3": "Despierta curiosidad.", "tagline": "Lo que hacemos — explicado para todos.", "btn": "↓ Descargar folleto", "note": "PDF · gratuito · libre para compartir (CC BY-NC-SA 4.0)"}};
+
+var PDF_FILES = {
+  de: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3.pdf',
+  en: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3en-GB.pdf',
+  nl: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3nl-NL.pdf',
+  fr: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3fr-FR.pdf',
+  es: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3es-ES.pdf'
+};
+
+function renderBroschuere(lang) {
+  var B = BROSCHUERE_TRANS[lang] || BROSCHUERE_TRANS.de;
+  document.getElementById('broschuere-label').textContent = B.label;
+  document.getElementById('broschuere-c1').textContent = B.caption_1;
+  document.getElementById('broschuere-c2').textContent = B.caption_2;
+  document.getElementById('broschuere-c3').textContent = B.caption_3;
+  document.getElementById('broschuere-tagline').innerHTML = B.tagline.replace('verständlich','<em>verständlich</em>').replace('explained','<em>explained</em>').replace('begrijpelijk','<em>begrijpelijk</em>').replace('compréhensible','<em>compréhensible</em>').replace('explicado','<em>explicado</em>');
+  // Auto: main button follows active language
+  var btn = document.getElementById('broschuere-btn');
+  btn.textContent = B.btn;
+  btn.setAttribute('href', PDF_FILES[lang] || PDF_FILES.de);
+  document.getElementById('broschuere-note').textContent = B.note;
+  // Manual: flag links for all languages
+  var flagsEl = document.getElementById('broschuere-flags');
+  if (flagsEl) {
+    var otherLabel = { de: 'Andere Sprache:', en: 'Other language:', nl: 'Andere taal:', fr: 'Autre\u00a0langue\u00a0:', es: 'Otro idioma:' };
+    var labelStyle = 'font-family:monospace; font-size:0.65rem; color:#8faa8f; letter-spacing:0.05em;';
+    var langStyle = 'font-family:monospace; font-size:0.6rem; color:#d8e8d0; margin-left:2px;';
+    var out = '<span style="' + labelStyle + '">' + (otherLabel[lang] || otherLabel.de) + '</span>';
+    LANG_NAMES.forEach(function(l) {
+      var active = l === lang ? 'opacity:1; border-bottom:1px solid #7ec87e;' : 'opacity:0.5;';
+      var linkStyle = 'display:inline-flex; align-items:center; gap:3px; cursor:pointer; text-decoration:none; ' + active;
+      out += '<a href="' + (PDF_FILES[l] || PDF_FILES.de) + '" download title="' + FLAG_TITLES[l] + '" style="' + linkStyle + '">';
+      out += FLAGS[l];
+      out += '<span style="' + langStyle + '">' + l.toUpperCase() + '</span></a>';
+    });
+    flagsEl.innerHTML = out;
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  updateFlags(currentLang);
+  applyTranslations(currentLang);
+  updateMeta(currentLang);
+  renderDynamicSections(currentLang);
+  renderRegForm(currentLang);
+  renderBroschuere(currentLang);
+});
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg){ console.log('SW registriert:', reg.scope); })
+      .catch(function(err){ console.log('SW Fehler:', err); });
+  });
+}
+</script>
+
+<!-- Myzel Canvas Animation -->
+<script>
+(function(){
+  var c=document.getElementById('mcHero');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var W,H,nodes=[],edges=[],pulses=[],t=0,maxN=22;
+  function resize(){W=c.offsetWidth;H=c.offsetHeight;c.width=W;c.height=H;}
+  resize();
+  window.addEventListener('resize',function(){resize();seed();});
+  function seed(){nodes=[{x:W*0.5,y:H*0.5,r:4,born:0,origin:true}];edges=[];pulses=[];}
+  seed();
+  function addNode(parent){
+    var a=Math.random()*Math.PI*2,d=35+Math.random()*55;
+    var nx=parent.x+Math.cos(a)*d,ny=parent.y+Math.sin(a)*d;
+    if(nx<15||nx>W-15||ny<15||ny>H-15)return null;
+    var n={x:nx,y:ny,r:1.5+Math.random()*1.8,born:t};
+    nodes.push(n);edges.push({a:parent,b:n,born:t,al:0});return n;
+  }
+  function addPulse(e){pulses.push({e:e,p:0,s:0.004+Math.random()*0.003});}
+  function draw(){
+    t+=0.5;
+    ctx.fillStyle='rgba(10,15,10,0.15)';ctx.fillRect(0,0,W,H);
+    if(nodes.length<maxN&&Math.random()<0.04){
+      var par=nodes[Math.floor(Math.random()*nodes.length)];
+      var nn=addNode(par);
+      if(nn&&Math.random()<0.5)addPulse(edges[edges.length-1]);
+    }
+    if(Math.random()<0.025&&edges.length>0)addPulse(edges[Math.floor(Math.random()*edges.length)]);
+    for(var i=0;i<edges.length;i++){
+      var e=edges[i];if(e.al<1)e.al+=0.012;
+      ctx.beginPath();ctx.moveTo(e.a.x,e.a.y);ctx.lineTo(e.b.x,e.b.y);
+      ctx.strokeStyle='rgba(45,106,45,'+(e.al*0.45)+')';ctx.lineWidth=0.8;ctx.stroke();
+    }
+    for(var p=pulses.length-1;p>=0;p--){
+      var pu=pulses[p];pu.p+=pu.s;
+      if(pu.p>=1){pulses.splice(p,1);continue;}
+      var px=pu.e.a.x+(pu.e.b.x-pu.e.a.x)*pu.p,py=pu.e.a.y+(pu.e.b.y-pu.e.a.y)*pu.p;
+      var f=Math.sin(pu.p*Math.PI);
+      ctx.beginPath();ctx.arc(px,py,2.2,0,Math.PI*2);ctx.fillStyle='rgba(126,200,126,'+f+')';ctx.fill();
+    }
+    for(var n=0;n<nodes.length;n++){
+      var nd=nodes[n],age=Math.min((t-nd.born)/30,1),pulse=0.55+0.15*Math.sin(t*0.04+n*1.3);
+      ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r,0,Math.PI*2);
+      if(nd.origin){
+        var rp=0.7+0.3*Math.sin(t*0.06);
+        ctx.fillStyle='rgba(180,50,50,'+rp+')';ctx.fill();
+        ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r+3,0,Math.PI*2);
+        ctx.strokeStyle='rgba(200,60,60,'+(rp*0.4)+')';ctx.lineWidth=1;ctx.stroke();
+      } else {
+        ctx.fillStyle='rgba(74,158,74,'+(age*pulse)+')';ctx.fill();
+      }
+    }
+    if(nodes.length>=maxN&&Math.random()<0.003)seed();
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+<!-- Social Sharing Floating Bar -->
+<div class="social-bar" id="social-bar">
+  <!-- Facebook -->
+  <a href="#" onclick="shareSocial('facebook');return false;" aria-label="Facebook">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    <span class="tip">Facebook</span>
+  </a>
+  <!-- X / Twitter -->
+  <a href="#" onclick="shareSocial('x');return false;" aria-label="X">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    <span class="tip">X / Twitter</span>
+  </a>
+  <!-- Instagram -->
+  <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+    <span class="tip">Instagram</span>
+  </a>
+  <!-- Reddit -->
+  <a href="#" onclick="shareSocial('reddit');return false;" aria-label="Reddit">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 12a2 2 0 0 0-3.37-1.45A10.06 10.06 0 0 0 12 9a10.06 10.06 0 0 0-4.63 1.55A2 2 0 1 0 5 13.1 4.94 4.94 0 0 0 5 14c0 2.76 3.13 5 7 5s7-2.24 7-5a4.94 4.94 0 0 0 0-.9A2 2 0 0 0 20 12z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/><path d="M9.5 17a4 4 0 0 0 5 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="16.5" cy="4.5" r="1.5"/><path d="M14 4.5h2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="tip">Reddit</span>
+  </a>
+  <!-- LinkedIn -->
+  <a href="#" onclick="shareSocial('linkedin');return false;" aria-label="LinkedIn">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+    <span class="tip">LinkedIn</span>
+  </a>
+  <!-- WhatsApp -->
+  <a href="#" onclick="shareSocial('whatsapp');return false;" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.986-1.401A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    <span class="tip">WhatsApp</span>
+  </a>
+  <!-- Mastodon -->
+  <a href="#" onclick="shareSocial('mastodon');return false;" aria-label="Mastodon">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.545-1.357 1.62v5.099H6.026V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.409 2.405 1.228l.518.869.519-.869c.533-.819 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg>
+    <span class="tip">Mastodon</span>
+  </a>
+</div>
+<script src="/biocomm-chat.js"></script>
+
+</body>
+</html>

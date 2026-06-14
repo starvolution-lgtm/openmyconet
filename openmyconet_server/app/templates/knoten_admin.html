@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenMycoNet — Knoten verwalten</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
+        h1, h2 { color: #4caf50; }
+        label { display: block; margin-top: 16px; color: #aaa; font-size: 0.9em; }
+        input, select { width: 100%; padding: 8px; margin: 6px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; box-sizing: border-box; }
+        button { background: #4caf50; color: #000; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; }
+        .msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        .err { color: #f44336; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #1a2a1a; color: #4caf50; padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #1a2a1a; font-size: 0.9em; }
+        .aktiv { color: #4caf50; }
+        nav { margin-bottom: 30px; }
+        a { color: #4caf50; }
+        hr { border-color: #1a2a1a; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <nav><a href="/admin">← Admin</a></nav>
+    <h1>🍄 Knoten verwalten</h1>
+
+    {% if nachricht %}
+        <p class="msg">{{ nachricht }}</p>
+    {% endif %}
+    {% if fehler %}
+        <p class="err">{{ fehler }}</p>
+    {% endif %}
+
+    <h2>Neuen Knoten anlegen</h2>
+    <form method="POST">
+        <label>Knoten-ID (z.B. DE-001)</label>
+        <input type="text" name="knoten_id" required placeholder="DE-001">
+
+        <label>Nutzer</label>
+        <select name="nutzer_email">
+            {% for nutzer in nutzer_liste %}
+            <option value="{{ nutzer.email }}">{{ nutzer.name }} — {{ nutzer.email }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Substrat</label>
+        <input type="text" name="substrat" placeholder="z.B. Mykorrhiza-Erde, Kompost, Waldboden">
+
+        <button type="submit">Knoten anlegen</button>
+    </form>
+
+    <hr>
+    <h2>Registrierte Knoten</h2>
+    <table>
+        <tr>
+            <th>Knoten-ID</th>
+            <th>Nutzer</th>
+            <th>Substrat</th>
+            <th>Aktiv</th>
+            <th>Angelegt</th>
+            <th>Messungen</th>
+        </tr>
+        {% for knoten in knoten_liste %}
+        <tr>
+            <td>{{ knoten.knoten_id }}</td>
+            <td>{{ knoten.nutzer.name }}</td>
+            <td>{{ knoten.substrat }}</td>
+            <td class="aktiv">{{ '✓' if knoten.aktiv else '✗' }}</td>
+            <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
+            <td>{{ knoten.messungen|length }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

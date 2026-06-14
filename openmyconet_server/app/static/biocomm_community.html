@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MycoNet Open — Listen to the Forest</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0f0a;
+    --bg2:       #0f160f;
+    --bg3:       #141e14;
+    --green:     #2d6a2d;
+    --green-l:   #4a9e4a;
+    --green-xl:  #7ec87e;
+    --amber:     #c8882a;
+    --amber-l:   #e8a84a;
+    --text:      #d8e8d0;
+    --dim:       #6a8a6a;
+    --border:    #1e2e1e;
+    --white:     #f0f8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Myzel-Hintergrund ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(45,106,45,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(45,106,45,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(200,136,42,0.04) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Navigation ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 4rem;
+    background: rgba(10,15,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green-xl);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .nav-logo span { color: var(--amber-l); }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  nav a {
+    color: var(--dim);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  nav a:hover { color: var(--green-xl); }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--amber);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--white);
+    max-width: 900px;
+    animation: fadeUp 1s ease 0.15s both;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--green-xl);
+  }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.25rem;
+    color: var(--dim);
+    max-width: 600px;
+    font-weight: 300;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    animation: fadeUp 1s ease 0.45s both;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.9rem 2.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: var(--white);
+  }
+
+  .btn-primary:hover {
+    background: var(--green-l);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--amber-l);
+    border: 1px solid var(--amber);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(200,136,42,0.1);
+    transform: translateY(-2px);
+  }
+
+  /* ── Signal-Animation ── */
+  .signal-vis {
+    position: absolute;
+    right: 4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+    height: 280px;
+    opacity: 0.6;
+    animation: fadeUp 1.5s ease 0.6s both;
+  }
+
+  .signal-vis svg { width: 100%; height: 100%; }
+
+  /* ── Sections allgemein ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 4rem;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--amber);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 em { font-style: italic; color: var(--green-xl); }
+
+  /* ── Warum Mitmachen ── */
+  .why {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .why-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    background: var(--bg3);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .why-card:hover {
+    border-left-color: var(--green-xl);
+    transform: translateY(-4px);
+  }
+
+  .why-card .icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .why-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+
+  .why-card p {
+    color: var(--dim);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* ── Mitmachen ── */
+  .join-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+    counter-reset: steps;
+  }
+
+  .step {
+    counter-increment: steps;
+    padding: 2rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--amber);
+    position: relative;
+  }
+
+  .step::before {
+    content: "0" counter(steps);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    color: var(--border);
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    line-height: 1;
+  }
+
+  .step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--amber-l);
+    margin-bottom: 0.75rem;
+  }
+
+  .step p { color: var(--dim); font-size: 0.95rem; line-height: 1.6; }
+
+  .step .cost {
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--green-xl);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Datenfluss ── */
+  .flow {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-node {
+    padding: 1.5rem 2rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    text-align: center;
+    min-width: 160px;
+  }
+
+  .flow-node .fn-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+
+  .flow-node h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green-xl);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .flow-node p { font-size: 0.85rem; color: var(--dim); }
+
+  .flow-arrow {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--amber);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Spenden ── */
+  .donate-box {
+    margin-top: 3rem;
+    padding: 3rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--amber);
+    max-width: 700px;
+  }
+
+  .donate-box p {
+    color: var(--dim);
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+  }
+
+  .donate-amounts {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .amount-btn {
+    padding: 0.6rem 1.5rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .amount-btn:hover, .amount-btn.active {
+    border-color: var(--amber);
+    color: var(--amber-l);
+    background: rgba(200,136,42,0.08);
+  }
+
+  .donate-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Anmeldung ── */
+  .signup-form {
+    margin-top: 3rem;
+    max-width: 600px;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+    border-radius: 0;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--green-l);
+  }
+
+  select option { background: var(--bg2); }
+
+  textarea { height: 100px; resize: vertical; }
+
+  .form-note {
+    font-size: 0.85rem;
+    color: var(--dim);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  /* ── Über das Projekt ── */
+  .about {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--dim);
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+  }
+
+  .about-text p strong { color: var(--text); }
+
+  .about-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .fact {
+    padding: 1.5rem;
+    background: var(--bg3);
+    border-left: 3px solid var(--green);
+  }
+
+  .fact .fact-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--green-xl);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .fact p { color: var(--dim); font-size: 0.95rem; }
+
+  /* ── Footer ── */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 1rem;
+  }
+
+  .footer-left {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dim);
+    line-height: 1.8;
+  }
+
+  .footer-left a { color: var(--green-xl); text-decoration: none; }
+
+  .footer-signal {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--border);
+    letter-spacing: 0.05em;
+    max-width: 300px;
+    text-align: right;
+  }
+
+  /* ── Animiertes Signal im Hero ── */
+  @keyframes drawSignal {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .sig-line {
+    stroke-dasharray: 1000;
+    animation: drawSignal 3s ease forwards;
+  }
+
+  .sig-dot { animation: pulse 2s ease-in-out infinite; }
+
+  /* ── Scroll-Animationen ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Live-Counter ── */
+  .live-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1.2rem;
+    background: rgba(45,106,45,0.15);
+    border: 1px solid var(--green);
+    margin-top: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--green-xl);
+    animation: fadeUp 1s ease 0.6s both;
+  }
+
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--green-xl);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    nav ul { display: none; }
+    .hero { padding: 6rem 1.5rem 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .signal-vis { display: none; }
+    .about-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+    .footer-signal { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">Myco<span>Net</span> Open</div>
+  <ul>
+    <li><a href="#warum">Warum</a></li>
+    <li><a href="#mitmachen">Mitmachen</a></li>
+    <li><a href="#daten">Daten</a></li>
+    <li><a href="#spenden">Spenden</a></li>
+    <li><a href="#anmelden">Anmelden</a></li>
+    <li><a href="#ueber">Über</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-tag">BioComm Community Network — MycoNet Open</div>
+  <h1>Listen to<br>the <em>Forest</em></h1>
+  <p class="hero-sub">
+    Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale
+    aus Mykorrhiza- und Pilznetzwerken. Die Signale existieren nachweislich.
+    Die Frage ist: was bedeuten sie?
+  </p>
+
+  <div class="live-counter">
+    <div class="live-dot"></div>
+    <span id="node-count">0</span> aktive Knoten weltweit
+  </div>
+
+  <div class="hero-cta">
+    <a href="#anmelden" class="btn btn-primary">Jetzt mitmachen</a>
+    <a href="#spenden" class="btn btn-secondary">Projekt unterstützen</a>
+  </div>
+
+  <!-- Signal-Visualisierung -->
+  <div class="signal-vis">
+    <svg viewBox="0 0 380 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Myzel-Netz Hintergrund -->
+      <g opacity="0.15" stroke="#4a9e4a" stroke-width="0.5" fill="none">
+        <line x1="0" y1="140" x2="380" y2="140"/>
+        <line x1="190" y1="0" x2="190" y2="280"/>
+        <circle cx="190" cy="140" r="80" opacity="0.3"/>
+        <circle cx="190" cy="140" r="140" opacity="0.15"/>
+        <line x1="50" y1="30" x2="330" y2="250" opacity="0.3"/>
+        <line x1="330" y1="30" x2="50" y2="250" opacity="0.3"/>
+        <line x1="100" y1="10" x2="280" y2="270" opacity="0.2"/>
+        <line x1="10" y1="100" x2="370" y2="180" opacity="0.2"/>
+      </g>
+      <!-- Hauptsignal Kanal 1 -->
+      <polyline class="sig-line" points="
+        0,140 20,140 30,140 40,100 50,180 60,90 70,190 80,140 
+        100,140 110,130 120,110 130,170 140,140
+        160,140 165,80 170,200 175,60 180,220 185,140
+        200,140 210,135 220,145 230,130 240,150 250,140
+        270,140 280,120 290,160 300,140
+        320,140 330,130 340,150 350,138 360,142 380,140
+      " fill="none" stroke="#4a9e4a" stroke-width="1.5" opacity="0.8"/>
+      <!-- Kanal 2 -->
+      <polyline class="sig-line" points="
+        0,180 30,180 40,175 50,185 60,170 70,195 80,180
+        110,180 120,170 130,190 140,180
+        165,180 170,160 175,200 180,175 185,185 190,180
+        220,180 230,175 240,185 250,180
+        280,180 290,170 300,190 310,180 380,180
+      " fill="none" stroke="#2d6a2d" stroke-width="1" opacity="0.5"
+        style="animation-delay: 0.5s"/>
+      <!-- Spike-Markierungen -->
+      <circle class="sig-dot" cx="60" cy="90" r="3" fill="#7ec87e" opacity="0.8"/>
+      <circle class="sig-dot" cx="175" cy="60" r="4" fill="#7ec87e" opacity="0.9"
+        style="animation-delay: 0.3s"/>
+      <circle class="sig-dot" cx="280" cy="120" r="3" fill="#7ec87e" opacity="0.7"
+        style="animation-delay: 0.7s"/>
+      <!-- Labels -->
+      <text x="5" y="135" fill="#2d6a2d" font-family="monospace" font-size="9">CH1</text>
+      <text x="5" y="175" fill="#1e4a1e" font-family="monospace" font-size="9">CH2</text>
+      <text x="160" y="55" fill="#7ec87e" font-family="monospace" font-size="8">SPIKE</text>
+      <line x1="175" y1="60" x2="175" y2="45" stroke="#7ec87e" stroke-width="0.8" opacity="0.6"/>
+    </svg>
+  </div>
+</section>
+
+<!-- Warum Mitmachen -->
+<section id="warum" class="why">
+  <div class="section-label">Das Warum</div>
+  <h2>Ein Netzwerk das<br><em>zuhört</em></h2>
+  <p style="max-width: 600px; color: var(--dim);">
+    Mykorrhiza-Pilze verbinden über 90 % aller Landpflanzen. Sie senden elektrische Signale —
+    messbar, reproduzierbar, rätselhaft. Kein Labor der Welt kann alleine verstehen was diese
+    Signale bedeuten. Aber gemeinsam können wir es herausfinden.
+  </p>
+
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <span class="icon">🌍</span>
+      <h3>Globale Datenbasis</h3>
+      <p>Deine Messung in Maintal, eine andere in Osaka, eine in São Paulo —
+         zusammen entsteht ein Datensatz den kein einzelnes Forschungsinstitut erzeugen könnte.</p>
+    </div>
+    <div class="why-card reveal">
+      <span class="icon">🔬</span>
+      <h3>Echte Wissenschaft</h3>
+      <p>Die Signale existieren nachweislich (Adamatzky et al., 2022).
+         Die Frage ist nicht ob — sondern was sie bedeuten. Du hilfst dabei, das herauszufinden.</p>
+    </div>
+    <div class="why-card reveal">
+      <span class="icon">🤖</span>
+      <h3>KI die dazulernt</h3>
+      <p>Jede Messung verbessert das gemeinsame KI-Modell.
+         Je mehr Teilnehmer, desto klüger das System — für alle.</p>
+    </div>
+    <div class="why-card reveal">
+      <span class="icon">🔓</span>
+      <h3>Offene Daten</h3>
+      <p>Alle Messdaten werden unter Creative Commons CC BY 4.0 veröffentlicht —
+         frei für Wissenschaft, Forschung und jeden neugierigen Menschen.</p>
+    </div>
+    <div class="why-card reveal">
+      <span class="icon">🌱</span>
+      <h3>Geringer Aufwand</h3>
+      <p>Elektroden in den Blumentopf, BioComm starten, fertig.
+         Das System läuft im Hintergrund — du musst nichts weiter tun.</p>
+    </div>
+    <div class="why-card reveal">
+      <span class="icon">🤝</span>
+      <h3>Citizen Science</h3>
+      <p>Wie SETI@home — nur mit dem entscheidenden Unterschied:
+         die Signale die wir suchen, sind bereits da.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Mitmachen -->
+<section id="mitmachen">
+  <div class="section-label">So funktioniert es</div>
+  <h2>In vier Schritten<br>zum eigenen <em>Knoten</em></h2>
+
+  <div class="join-steps">
+    <div class="step reveal">
+      <h3>Hardware bestellen</h3>
+      <p>Arduino UNO R4 WiFi, ein paar dünne Edelstahlnadeln als Elektroden,
+         optional ein Piezo-Element für Schwingungsstimulation.</p>
+      <div class="cost">≈ 35 – 50 € einmalig</div>
+    </div>
+    <div class="step reveal">
+      <h3>BioComm herunterladen</h3>
+      <p>Die BioComm.exe kostenlos herunterladen — keine Installation,
+         kein Python, kein Quellcode. Einfach starten.</p>
+      <div class="cost">Kostenlos</div>
+    </div>
+    <div class="step reveal">
+      <h3>Elektroden setzen</h3>
+      <p>Nadeln in den Boden, Blumentopf oder Kompost mit Pilz- oder
+         Mykorrhiza-Substrat stecken. Anleitung liegt bei.</p>
+      <div class="cost">5 Minuten</div>
+    </div>
+    <div class="step reveal">
+      <h3>Messen &amp; teilen</h3>
+      <p>BioComm verbindet sich automatisch und lädt Daten hoch.
+         Du siehst in Echtzeit was dein Netzwerk sendet.</p>
+      <div class="cost">Automatisch</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 3rem;" class="reveal">
+    <a href="#anmelden" class="btn btn-primary">Jetzt registrieren</a>
+    &nbsp;&nbsp;
+    <a href="#" class="btn btn-secondary">BioComm.exe herunterladen</a>
+  </div>
+</section>
+
+<!-- Datenfluss -->
+<section id="daten" class="flow">
+  <div class="section-label">Transparenz</div>
+  <h2>Wie deine Daten<br><em>fließen</em></h2>
+  <p style="max-width: 600px; color: var(--dim); margin-bottom: 1rem;">
+    Dein Standort wird auf ein 10×10 km Raster vergröbert — keine exakten Koordinaten.
+    Keine personenbezogenen Daten. Alle Rohdaten sind öffentlich und frei zugänglich.
+  </p>
+
+  <div class="flow-diagram">
+    <div class="flow-node reveal">
+      <span class="fn-icon">🌿</span>
+      <h4>Dein Knoten</h4>
+      <p>Elektroden im Substrat</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node reveal">
+      <span class="fn-icon">💻</span>
+      <h4>BioComm.exe</h4>
+      <p>Lokale Analyse &amp; Anonymisierung</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node reveal">
+      <span class="fn-icon">☁️</span>
+      <h4>MycoNet Server</h4>
+      <p>Aggregation &amp; KI-Training</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node reveal">
+      <span class="fn-icon">🔓</span>
+      <h4>Open Data</h4>
+      <p>CC BY 4.0 — frei für alle</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node reveal">
+      <span class="fn-icon">🔄</span>
+      <h4>KI-Update</h4>
+      <p>Zurück an alle Knoten</p>
+    </div>
+  </div>
+</section>
+
+<!-- Spenden -->
+<section id="spenden">
+  <div class="section-label">Unterstützung</div>
+  <h2>Das Projekt<br><em>am Leben</em> halten</h2>
+
+  <div class="donate-box reveal">
+    <p>
+      BioComm Community ist ein unabhängiges Citizen-Science-Projekt ohne institutionelle
+      Förderung. Serverkosten, Weiterentwicklung und Community-Infrastruktur werden durch
+      freiwillige Spenden finanziert. Jeder Betrag hilft.
+    </p>
+
+    <div class="donate-amounts">
+      <button class="amount-btn" onclick="selectAmount(this, 5)">5 €</button>
+      <button class="amount-btn active" onclick="selectAmount(this, 15)">15 €</button>
+      <button class="amount-btn" onclick="selectAmount(this, 35)">35 €</button>
+      <button class="amount-btn" onclick="selectAmount(this, 50)">50 €</button>
+      <button class="amount-btn" onclick="selectAmount(this, 100)">100 €</button>
+    </div>
+
+    <a href="https://ko-fi.com" class="btn btn-secondary" target="_blank">
+      ☕ Über Ko-fi spenden
+    </a>
+    &nbsp;&nbsp;
+    <a href="https://paypal.me" class="btn btn-secondary" target="_blank">
+      💳 Über PayPal spenden
+    </a>
+
+    <p class="donate-note" style="margin-top: 1.5rem;">
+      35 € = Hardware für einen neuen Teilnehmer &nbsp;·&nbsp;
+      15 € = Serverkosten für einen Monat &nbsp;·&nbsp;
+      5 € = Dankeschön
+    </p>
+  </div>
+</section>
+
+<!-- Anmeldung -->
+<section id="anmelden" style="background: var(--bg2); border-top: 1px solid var(--border);">
+  <div class="section-label">Registrierung</div>
+  <h2>Werde Teil des<br><em>Netzwerks</em></h2>
+  <p style="max-width: 500px; color: var(--dim);">
+    Trag dich ein — wir informieren dich wenn BioComm Community offiziell startet
+    und schicken dir die Hardware-Anleitung.
+  </p>
+
+  <form class="signup-form reveal" onsubmit="handleSignup(event)">
+    <div class="form-group">
+      <label>Vorname / Name (optional)</label>
+      <input type="text" placeholder="Robert Jank" id="signup-name">
+    </div>
+    <div class="form-group">
+      <label>E-Mail-Adresse *</label>
+      <input type="email" placeholder="deine@email.de" id="signup-email" required>
+    </div>
+    <div class="form-group">
+      <label>Ich bin interessiert als</label>
+      <select id="signup-role">
+        <option value="participant">Teilnehmer — eigenen Knoten betreiben</option>
+        <option value="scientist">Wissenschaftler — Daten nutzen / kooperieren</option>
+        <option value="supporter">Unterstützer — Spende / Bekanntmachung</option>
+        <option value="developer">Entwickler — an BioComm mitarbeiten</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Substrat / Standort (optional)</label>
+      <input type="text" placeholder="z.B. Gartenerde mit Mykorrhiza, Wald, Blumentopf...">
+    </div>
+    <div class="form-group">
+      <label>Nachricht (optional)</label>
+      <textarea placeholder="Fragen, Anmerkungen, Ideen..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Anmelden</button>
+    <p class="form-note">
+      Keine Werbung. Keine Weitergabe. Nur projektrelevante Infos.
+      Abmeldung jederzeit möglich.
+    </p>
+  </form>
+</section>
+
+<!-- Über das Projekt -->
+<section id="ueber" class="about">
+  <div class="section-label">Das Projekt</div>
+  <h2>Unabhängige Wissenschaft<br>von <em>unten</em></h2>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>
+        BioComm wurde von <strong>Robert Jank</strong>, unabhängigem Erfinder aus Maintal,
+        entwickelt — ohne Institutszugehörigkeit, ohne Forschungsbudget, mit dem Ziel
+        zu verstehen was Mykorrhiza-Netzwerke elektrisch kommunizieren.
+      </p>
+      <p>
+        Das System ist durch ein <strong>Gebrauchsmuster beim DPMA</strong> geschützt.
+        Die Software wird als portable .exe ohne Quellcode bereitgestellt.
+        Die Messdaten gehören der Gemeinschaft.
+      </p>
+      <p>
+        MycoNet Open folgt dem Prinzip: <strong>proprietary intelligence, open data</strong> —
+        das KI-Modell ist geschützt, die Daten die es trainieren sind frei.
+        Wie SETI@home — aber für das Leben unter unseren Füßen.
+      </p>
+      <div style="margin-top: 2rem;">
+        <a href="mailto:kontakt@beispiel.de" class="btn btn-secondary">Kontakt aufnehmen</a>
+      </div>
+    </div>
+
+    <div class="about-facts">
+      <div class="fact reveal">
+        <div class="fact-num">400M</div>
+        <p>Jahre alt — so lange existieren Mykorrhiza-Netzwerke auf der Erde</p>
+      </div>
+      <div class="fact reveal">
+        <div class="fact-num">90%</div>
+        <p>aller Landpflanzen sind mit Mykorrhiza-Pilzen verbunden</p>
+      </div>
+      <div class="fact reveal">
+        <div class="fact-num">8</div>
+        <p>Messkanäle erfasst BioComm gleichzeitig, bis zu 10.000 Hz</p>
+      </div>
+      <div class="fact reveal">
+        <div class="fact-num">~35 €</div>
+        <p>Hardwarekosten für einen vollständigen BioComm-Knoten</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-left">
+    <strong style="color: var(--green-xl);">MycoNet Open</strong> — BioComm Community Network<br>
+    Robert Jank · Maintal, Deutschland · 2026<br>
+    Gebrauchsmuster DE 20 [Nr.] · <a href="#">Datenschutz</a> · <a href="#">Impressum</a>
+  </div>
+  <div class="footer-signal">
+    01001101 01111001 01100011 01100101 01101100<br>
+    01101001 01110101 01101101 00100000 01101110<br>
+    — signals from the underground —
+  </div>
+</footer>
+
+<script>
+// Scroll-Animationen
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Spenden-Buttons
+function selectAmount(btn, amount) {
+  document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Knotenanzahl simulieren (wird später durch echte API ersetzt)
+function animateCounter() {
+  const el = document.getElementById('node-count');
+  let count = 0;
+  const target = 1; // Startet bei 1 — du selbst
+  const timer = setInterval(() => {
+    count++;
+    el.textContent = count;
+    if (count >= target) clearInterval(timer);
+  }, 80);
+}
+
+animateCounter();
+
+// Anmeldung
+function handleSignup(e) {
+  e.preventDefault();
+  const email = document.getElementById('signup-email').value;
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = '✓ Eingetragen — wir melden uns!';
+  btn.style.background = 'var(--green-l)';
+  btn.disabled = true;
+  // Hier später: fetch('/api/signup', { method: 'POST', body: JSON.stringify({email}) })
+}
+</script>
+</body>
+</html>

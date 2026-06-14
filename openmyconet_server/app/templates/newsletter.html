@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenMycoNet — Newsletter</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
+        h1 { color: #4caf50; }
+        label { display: block; margin-top: 16px; color: #aaa; font-size: 0.9em; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 6px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 200px; resize: vertical; }
+        button { background: #4caf50; color: #000; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; }
+        .msg { color: #4caf50; margin-top: 16px; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        .err { color: #f44336; margin-top: 16px; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        .info { color: #aaa; font-size: 0.85em; margin-top: 6px; }
+        a { color: #4caf50; }
+        nav { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <nav><a href="/admin">← Admin</a></nav>
+    <h1>🍄 Newsletter versenden</h1>
+
+    {% if nachricht %}
+        <p class="msg">{{ nachricht }}</p>
+    {% endif %}
+    {% if fehler %}
+        <p class="err">{{ fehler }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <label>Empfänger</label>
+        <select name="gruppe">
+            <option value="">Alle bestätigten Nutzer</option>
+            <option value="allgemein">Allgemein / Interessiert</option>
+            <option value="biocomm">BioComm Hardware-Nutzer</option>
+            <option value="wissenschaft">Wissenschaft / Forschung</option>
+            <option value="foerderer">Förderer / Sponsor</option>
+        </select>
+
+        <label>Sprache (optional)</label>
+        <select name="sprache">
+            <option value="">Alle Sprachen</option>
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+            <option value="nl">Nederlands</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+        </select>
+
+        <label>Betreff</label>
+        <input type="text" name="betreff" required>
+
+        <label>Nachricht</label>
+        <textarea name="inhalt" required></textarea>
+        <p class="info">Du kannst {name} verwenden — wird durch den Namen des Empfängers ersetzt.</p>
+
+        <button type="submit">Vorschau & Senden</button>
+    </form>
+
+    {% if vorschau %}
+    <hr style="border-color: #1a2a1a; margin: 30px 0;">
+    <h2>Vorschau ({{ empfaenger_anzahl }} Empfänger)</h2>
+    <p style="color:#aaa; font-size:0.9em;">Betreff: <strong>{{ vorschau.betreff }}</strong></p>
+    <pre style="background:#1a2a1a; padding:15px; border-radius:4px; white-space:pre-wrap; color:#eee;">{{ vorschau.inhalt }}</pre>
+    <form method="POST">
+        <input type="hidden" name="gruppe" value="{{ vorschau.gruppe }}">
+        <input type="hidden" name="sprache" value="{{ vorschau.sprache }}">
+        <input type="hidden" name="betreff" value="{{ vorschau.betreff }}">
+        <input type="hidden" name="inhalt" value="{{ vorschau.inhalt }}">
+        <input type="hidden" name="bestaetigt_senden" value="1">
+        <button type="submit" style="background:#f44336;">Jetzt an {{ empfaenger_anzahl }} Empfänger senden</button>
+    </form>
+    {% endif %}
+</body>
+</html>

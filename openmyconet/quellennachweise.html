@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quellennachweise – OpenMycoNet</title>
+<style>
+  :root {
+    --bg: #0e0f0e;
+    --bg2: #161714;
+    --bg3: #1c1d1a;
+    --text: #e8e6df;
+    --text2: #9a9890;
+    --text3: #5c5b56;
+    --accent: #4a8c5c;
+    --accent2: #2f5c3a;
+    --accent-light: #7abd96;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --pmc: #1d6a52;
+    --pmc-bg: #0d2b20;
+    --pmc-text: #5ecfa0;
+    --arxiv: #1a4a7a;
+    --arxiv-bg: #0d2038;
+    --arxiv-text: #6aabea;
+    --book-bg: #2a1f40;
+    --book-text: #b48ef0;
+    --cs-bg: #3a2a10;
+    --cs-text: #d4a847;
+    --radius: 6px;
+    --font-body: 'Georgia', serif;
+    --font-ui: system-ui, -apple-system, sans-serif;
+    --font-mono: 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  .site-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .site-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--font-body);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    line-height: 1.25;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 520px;
+    margin-bottom: 3rem;
+    line-height: 1.65;
+  }
+
+  .path-section {
+    margin-bottom: 3.5rem;
+  }
+  .path-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 0.75rem;
+  }
+  .path-chain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: center;
+  }
+  .path-step {
+    font-size: 12px;
+    color: var(--text2);
+    padding: 6px 12px;
+    border: 0.5px solid var(--border2);
+    background: var(--bg3);
+    white-space: nowrap;
+  }
+  .path-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .path-step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .path-step.active {
+    background: var(--accent2);
+    border-color: var(--accent);
+    color: var(--accent-light);
+  }
+  .path-arrow {
+    font-size: 10px;
+    color: var(--text3);
+    padding: 0 1px;
+    border-top: 0.5px solid var(--border2);
+    border-bottom: 0.5px solid var(--border2);
+    background: var(--bg3);
+    height: 33px;
+    display: flex;
+    align-items: center;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--border) 90%);
+  }
+
+  .station {
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .station-dot {
+    position: absolute;
+    left: -24px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--accent);
+  }
+  .station-dot.dim { border-color: var(--text3); }
+
+  .station-header {
+    margin-bottom: 1rem;
+  }
+  .station-step {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 3px;
+    font-family: var(--font-ui);
+  }
+  .station-step.dim { color: var(--text3); }
+  .station-title {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--text);
+  }
+  .station-desc {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 4px;
+    max-width: 560px;
+  }
+
+  .ref {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    background: var(--bg2);
+    transition: border-color 0.15s, background 0.15s;
+    cursor: pointer;
+  }
+  .ref:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+  }
+  .ref-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text3);
+    min-width: 18px;
+    padding-top: 2px;
+  }
+  .ref-body { flex: 1; min-width: 0; }
+  .ref-title {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+  .ref-meta {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .ref-badge {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    align-self: center;
+    font-family: var(--font-ui);
+  }
+  .ref-badge.pmc   { background: var(--pmc-bg);  color: var(--pmc-text);  }
+  .ref-badge.arxiv { background: var(--arxiv-bg); color: var(--arxiv-text); }
+  .ref-badge.book  { background: var(--book-bg);  color: var(--book-text); }
+  .ref-badge.cs    { background: var(--cs-bg);    color: var(--cs-text);   }
+  .ref-relevanz {
+    font-size: 11.5px;
+    color: var(--accent-light);
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 0.5px solid rgba(74,140,92,0.2);
+    line-height: 1.5;
+  }
+  .ref-relevanz::before {
+    content: '→ OMN: ';
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .ref-ext {
+    font-size: 13px;
+    color: var(--text3);
+    align-self: center;
+    flex-shrink: 0;
+  }
+  .ref:hover .ref-ext { color: var(--accent-light); }
+
+  .page-footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 0.5px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .back-link {
+    font-size: 12px;
+    color: var(--accent-light);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2.5rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .page { padding: 2rem 1.25rem 4rem; }
+    h1 { font-size: 1.6rem; }
+    .path-chain { gap: 0; }
+    .path-step { font-size: 11px; padding: 5px 8px; }
+    .ref-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="/">← OpenMycoNet</a>
+  <div class="site-label">OpenMycoNet · Wissenschaftliche Grundlagen</div>
+  <h1>Quellennachweise</h1>
+  <p class="subtitle">
+    OpenMycoNet steht auf einem nachvollziehbaren wissenschaftlichen Fundament.
+    Die folgenden Quellen belegen jeden Schritt unseres Erkenntnispfades –
+    von der Mykorrhiza-Grundlagenforschung bis zur angewandten Citizen Science.
+  </p>
+
+  <div style="margin-bottom: 2.5rem; padding: 1rem 1.25rem; border-left: 2px solid var(--accent2); background: rgba(47,92,58,0.12); border-radius: 0 var(--radius) var(--radius) 0;">
+    <p style="font-size: 13px; color: var(--text2); line-height: 1.7; margin: 0;">
+      OpenMycoNet versteht sich als Citizen-Science-Projekt. Die folgenden Quellen dokumentieren den aktuellen Stand der Forschung zu Mykorrhiza-Netzwerken, elektrischer Aktivität in Pilzen, Biosensorik und biologischer Signalverarbeitung. Nicht alle aufgeführten Arbeiten belegen die Ziele von OpenMycoNet direkt; sie bilden jedoch die wissenschaftliche Grundlage, auf der die Projektfragen aufbauen.
+    </p>
+  </div>
+
+  <div class="path-section">
+    <div class="path-label">Wissenschaftlicher Pfad</div>
+    <div class="path-chain">
+      <span class="path-step active">Mykorrhiza</span>
+      <span class="path-arrow">›</span>
+      <span class="path-step active">Netzwerke</span>
+      <span class="path-arrow">›</span>
+      <span class="path-step active">Elektr. Aktivität</span>
+      <span class="path-arrow">›</span>
+      <span class="path-step active">Messbarkeit</span>
+      <span class="path-arrow">›</span>
+      <span class="path-step active">Sensorik</span>
+      <span class="path-arrow">›</span>
+      <span class="path-step active">KI-Mustererkennung</span>
+      <span class="path-arrow">›</span>
+      <span class="path-step active">Citizen Science</span>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- Station 1: Mykorrhiza & Netzwerke -->
+    <div class="station">
+      <div class="station-dot"></div>
+      <div class="station-header">
+        <div class="station-step">Schritt 1 – Mykorrhiza & Netzwerke</div>
+        <div class="station-title">Pflanzen kommunizieren unterirdisch</div>
+        <div class="station-desc">
+          Suzanne Simards Pionierarbeit etablierte das Konzept des mykorrhizalen Netzwerks
+          als echten Informationskanal zwischen Pflanzen – nicht Metapher, sondern Messbefund.
+        </div>
+      </div>
+      <a class="ref" href="https://www.ted.com/talks/suzanne_simard_how_trees_talk_to_each_other" target="_blank" rel="noopener">
+        <span class="ref-num">01</span>
+        <div class="ref-body">
+          <div class="ref-title">Suzanne Simard – How Trees Talk to Each Other</div>
+          <div class="ref-meta">TED Talk (2016) · Populärwissenschaftlicher Einstieg · Grundlagenwerk: <em>Finding the Mother Tree</em>, Knopf 2021</div>
+          <div class="ref-relevanz">Belegt, dass Bäume über Mykorrhiza-Netzwerke aktiv Signale und Ressourcen austauschen – die biologische Grundannahme hinter OpenMycoNet.</div>
+        </div>
+        <span class="ref-badge book">Buch / TED</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4497361/" target="_blank" rel="noopener">
+        <span class="ref-num">02</span>
+        <div class="ref-body">
+          <div class="ref-title">Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities</div>
+          <div class="ref-meta">Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access</div>
+          <div class="ref-relevanz">Peer-reviewed Nachweis, dass Pflanzen über Mykorrhiza-Netzwerke komplexes adaptives Verhalten koordinieren – wissenschaftliche Grundlage für Netzwerkmonitoring.</div>
+        </div>
+        <span class="ref-badge pmc">PMC</span>
+        <span class="ref-ext">↗</span>
+      </a>
+    </div>
+
+    <!-- Station 1b: Kritische Perspektive -->
+    <div class="station">
+      <div class="station-dot" style="border-color: #8c6a4a;"></div>
+      <div class="station-header">
+        <div class="station-step" style="color: #d4a847;">Kritische Perspektive – Wissenschaftliche Einordnung</div>
+        <div class="station-title">Was wirklich belegt ist — und was nicht</div>
+        <div class="station-desc">
+          Nicht alle populären Behauptungen über das "Wood Wide Web" sind durch Feldstudien
+          ausreichend belegt. OpenMycoNet bezieht diese Kritik ausdrücklich ein —
+          sie ist ein Grund, warum wir messen.
+        </div>
+      </div>
+      <a class="ref" href="https://www.nature.com/articles/s41559-023-01986-1" target="_blank" rel="noopener">
+        <span class="ref-num">11</span>
+        <div class="ref-body">
+          <div class="ref-title">Positive citation bias and overinterpreted results lead to misinformation on common mycorrhizal networks in forests</div>
+          <div class="ref-meta">Karst, Jones & Hoeksema · Nature Ecology &amp; Evolution 7, 501–511 (2023) · DOI 10.1038/s41559-023-01986-1</div>
+          <div class="ref-relevanz" style="color: #d4a847; border-top-color: rgba(212,168,71,0.2);">Zeigt, dass viele populäre Behauptungen über Mykorrhiza-Netzwerke der Feldforschung vorauseilen. OpenMycoNet teilt diese Haltung: Wir messen, weil die Datenlage noch dünn ist — nicht weil alles bewiesen ist.</div>
+        </div>
+        <span class="ref-badge cs">Nature Ecol.</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://disi.org/rethinking-the-wood-wide-web/" target="_blank" rel="noopener">
+        <span class="ref-num">12</span>
+        <div class="ref-body">
+          <div class="ref-title">Rethinking the "Wood Wide Web" – Gespräch mit Dr. Justine Karst</div>
+          <div class="ref-meta">Many Minds Podcast · DISI · Oktober 2024 · Dr. Justine Karst, Universität Alberta</div>
+          <div class="ref-relevanz" style="color: #d4a847; border-top-color: rgba(212,168,71,0.2);">Zugängliche Einordnung der wissenschaftlichen Debatte für Nicht-Fachpublikum. Karst: "Wir wollen niemandem die Freude am Wald nehmen — aber Fehlinformationen eindämmen."</div>
+        </div>
+        <span class="ref-badge cs">Podcast</span>
+        <span class="ref-ext">↗</span>
+      </a>
+    </div>
+
+    <!-- Station 2: Elektrische Aktivität -->
+    <div class="station">
+      <div class="station-dot"></div>
+      <div class="station-header">
+        <div class="station-step">Schritt 2 – Elektrische Aktivität</div>
+        <div class="station-title">Pilze senden messbare elektrische Signale</div>
+        <div class="station-desc">
+          Bioelektrische Impulse im Myzel zeigen neuronale Charakteristika:
+          Spiking-Muster, Signalausbreitung, nicht-lineare Eigenschaften.
+        </div>
+      </div>
+      <a class="ref" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11995700/" target="_blank" rel="noopener">
+        <span class="ref-num">03</span>
+        <div class="ref-body">
+          <div class="ref-title">Electrical signaling in fungi</div>
+          <div class="ref-meta">PMC11995700 · Aktueller Review · Bioelektrische Signalwege im Pilzmyzel</div>
+          <div class="ref-relevanz">Zeigt, dass Pilznetzwerke reproduzierbare elektrische Aktivität erzeugen – direkte Rechtfertigung für den Einsatz bioelektrischer Sensoren im BioComm-System.</div>
+        </div>
+        <span class="ref-badge pmc">PMC</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10157304/" target="_blank" rel="noopener">
+        <span class="ref-num">04</span>
+        <div class="ref-body">
+          <div class="ref-title">The fungal grid – electrical signals and the Wood Wide Web hypothesis</div>
+          <div class="ref-meta">PMC10157304 · Elektrische Kommunikation als Grundlage des „Wood Wide Web"</div>
+          <div class="ref-relevanz">Verbindet elektrische Pilzsignale mit dem Konzept des Waldnetzwerks – stützt die Hypothese, dass Signalmuster ökologisch interpretierbar sind.</div>
+        </div>
+        <span class="ref-badge pmc">PMC</span>
+        <span class="ref-ext">↗</span>
+      </a>
+    </div>
+
+    <!-- Station 3: Messbarkeit & Sensorik & KI -->
+    <div class="station">
+      <div class="station-dot"></div>
+      <div class="station-header">
+        <div class="station-step">Schritt 3 – Messbarkeit, Sensorik & KI-Mustererkennung</div>
+        <div class="station-title">Von der Beobachtung zur Berechnung</div>
+        <div class="station-desc">
+          Andrew Adamatzkys Arbeiten zeigen, dass Myzelsignale nicht nur existieren,
+          sondern technisch nutzbar sind – als logische Gatter, als übertragbare Frequenzen,
+          zuletzt als direkte KI-Schnittstelle.
+        </div>
+      </div>
+      <a class="ref" href="https://arxiv.org/abs/2112.07236" target="_blank" rel="noopener">
+        <span class="ref-num">05</span>
+        <div class="ref-body">
+          <div class="ref-title">Logics in fungal mycelium networks (Adamatzky)</div>
+          <div class="ref-meta">arXiv:2112.07236 · Neuronales Spiking, logische Gatter, nicht-lineare Eigenschaften im Myzel</div>
+          <div class="ref-relevanz">Belegt, dass Myzelsignale nicht nur existieren, sondern informationsverarbeitend sind – wissenschaftliche Basis für KI-gestützte Mustererkennung in OpenMycoNet.</div>
+        </div>
+        <span class="ref-badge arxiv">arXiv</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://arxiv.org/abs/2304.10675" target="_blank" rel="noopener">
+        <span class="ref-num">06</span>
+        <div class="ref-body">
+          <div class="ref-title">Propagation of electrical signals by fungal mycelium composites</div>
+          <div class="ref-meta">arXiv:2304.10675 · Frequenzmodulierte Signalübertragung durch Myzel (100–10.000 Hz)</div>
+          <div class="ref-relevanz">Zeigt, dass Myzel Frequenzsignale zuverlässig überträgt – technische Grundlage für die Sensorauslegung des BioComm-Knotens.</div>
+        </div>
+        <span class="ref-badge arxiv">arXiv</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://arxiv.org/abs/2604.22947" target="_blank" rel="noopener">
+        <span class="ref-num">07</span>
+        <div class="ref-body">
+          <div class="ref-title">MIND – Mycoponically Integrated Network Device</div>
+          <div class="ref-meta">arXiv:2604.22947 · Bioelektrische Sensorik mit KI-Schnittstelle für lebende Pilznetzwerke · 2025</div>
+          <div class="ref-relevanz">Aktuellster Stand der Forschung: Hardware-KI-Kopplung für lebende Myzelnetzwerke – konzeptionell direkt verwandt mit dem BioComm-System.</div>
+        </div>
+        <span class="ref-badge arxiv">arXiv</span>
+        <span class="ref-ext">↗</span>
+      </a>
+    </div>
+
+    <!-- Station 4: Sachbuch -->
+    <div class="station">
+      <div class="station-dot dim"></div>
+      <div class="station-header">
+        <div class="station-step dim">Kontext – Populärwissenschaft</div>
+        <div class="station-title">Das Buch, das alles zusammenfasst</div>
+        <div class="station-desc">
+          Merlin Sheldrakes Standardwerk vermittelt die biologische Komplexität
+          von Pilzorganismen einem breiten Publikum – ohne die Wissenschaft zu vereinfachen.
+        </div>
+      </div>
+      <a class="ref" href="https://www.merlinsheldrake.com/entangled-life" target="_blank" rel="noopener">
+        <span class="ref-num">08</span>
+        <div class="ref-body">
+          <div class="ref-title">Entangled Life – Merlin Sheldrake</div>
+          <div class="ref-meta">Random House 2020 · ISBN 978-0525510314 · Dt.: <em>Verwobenes Leben</em>, Ullstein 2021</div>
+          <div class="ref-relevanz">Vermittelt die biologische Komplexität von Pilzorganismen verständlich – empfohlene Lektüre für neue OpenMycoNet-Mitglieder ohne Fachhintergrund.</div>
+        </div>
+        <span class="ref-badge book">Buch</span>
+        <span class="ref-ext">↗</span>
+      </a>
+    </div>
+
+    <!-- Station 5: Citizen Science -->
+    <div class="station">
+      <div class="station-dot"></div>
+      <div class="station-header">
+        <div class="station-step">Schritt 4 – Citizen Science</div>
+        <div class="station-title">Wissenschaft durch kollektive Beobachtung</div>
+        <div class="station-desc">
+          Citizen-Science-Plattformen wie iNaturalist und FunDive belegen,
+          dass verteilte Laienmessungen wissenschaftlich valide Daten liefern können.
+          OpenMycoNet folgt diesem Modell für bioelektrische Signale.
+        </div>
+      </div>
+      <a class="ref" href="https://theoryandpractice.citizenscienceassociation.org/articles/10.5334/cstp.717" target="_blank" rel="noopener">
+        <span class="ref-num">09</span>
+        <div class="ref-body">
+          <div class="ref-title">iNaturalist as a citizen science platform – methodology and reach</div>
+          <div class="ref-meta">Citizen Science: Theory and Practice · DOI 10.5334/cstp.717 · Peer-reviewed</div>
+          <div class="ref-relevanz">Belegt methodisch, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern – Grundlage für OpenMycoNets Citizen-Science-Ansatz.</div>
+        </div>
+        <span class="ref-badge cs">Journal</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://citizenscience.eu/project/621" target="_blank" rel="noopener">
+        <span class="ref-num">10</span>
+        <div class="ref-body">
+          <div class="ref-title">FunDive – Citizen Science für Pilzbiodiversität</div>
+          <div class="ref-meta">citizenscience.eu · Vergleichsprojekt im Bereich mykologische Bürgerwissenschaft</div>
+          <div class="ref-relevanz">Zeigt, wie Citizen-Science-Infrastruktur für Pilzforschung in der Praxis aussieht – Orientierungspunkt für Aufbau und Community-Strategie.</div>
+        </div>
+        <span class="ref-badge cs">CS Platform</span>
+        <span class="ref-ext">↗</span>
+      </a>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <div class="page-footer">
+    <span>Alle verlinkten Quellen sind Open Access oder öffentlich zugänglich.</span>
+    <span>Stand: Juni 2026 · OpenMycoNet / Robert Jank</span>
+  </div>
+
+</div>
+</body>
+</html>

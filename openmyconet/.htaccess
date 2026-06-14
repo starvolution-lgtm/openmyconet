@@ -1,0 +1,19 @@
+Options +FollowSymLinks
+
+AddType application/pdf .pdf
+
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Redirects alte Sprachversionen → neue URL-Struktur
+RewriteEngine On
+RewriteRule ^index-en\.html$ /?lang=en [R=301,L]
+RewriteRule ^index-nl\.html$ /?lang=nl [R=301,L]
+RewriteRule ^index-fr\.html$ /?lang=fr [R=301,L]
+RewriteRule ^index-es\.html$ /?lang=es [R=301,L]
+RewriteRule ^foerderer-en\.html$ /foerderer.html?lang=en [R=301,L]
+RewriteRule ^foerderer-nl\.html$ /foerderer.html?lang=nl [R=301,L]
+RewriteRule ^foerderer-fr\.html$ /foerderer.html?lang=fr [R=301,L]
+RewriteRule ^foerderer-es\.html$ /foerderer.html?lang=es [R=301,L]

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Förderer — OpenMycoNet</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.svg">
+<meta name="theme-color" content="#0a0f0a">
+<link href="fonts.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background-color:#0a0f0a; color:#d8e8d0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; }
+nav {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:1rem 2rem; background-color:rgba(10,15,10,0.95);
+  border-bottom:1px solid #1e2e1e;
+}
+.nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#7ec87e; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
+.nav-logo span { color:#e8a84a; }
+.main { max-width:900px; margin:0 auto; padding:5rem 2rem 4rem; }
+.section-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#c8882a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
+h1 { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:400; color:#f0f8f0; margin-bottom:1.5rem; line-height:1.2; }
+h1 em { font-style:italic; color:#7ec87e; }
+h2 { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#7ec87e; letter-spacing:0.12em; text-transform:uppercase; margin-top:2.5rem; margin-bottom:0.75rem; padding-bottom:0.5rem; border-bottom:1px solid #1e2e1e; }
+p { color:#6a8a6a; margin-bottom:0.75rem; font-size:1rem; }
+p strong { color:#d8e8d0; }
+a { color:#7ec87e; text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+/* Vorteile */
+.vorteile { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
+.vorteil { flex:1 1 250px; padding:1.5rem; background-color:#0f160f; border-left:3px solid #2d6a2d; }
+.vorteil-icon { font-size:1.6rem; margin-bottom:0.5rem; display:block; }
+.vorteil h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:#f0f8f0; margin-bottom:0.4rem; }
+.vorteil p { font-size:0.9rem; color:#6a8a6a; }
+
+/* Preistabelle */
+.preise { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
+.preis-box { flex:1 1 200px; padding:1.8rem; background-color:#0f160f; border:1px solid #1e2e1e; border-top:3px solid #c8882a; text-align:center; }
+.preis-box.highlight { border-top-color:#4a9e4a; background-color:#0d180d; }
+.preis-num { font-family:'Playfair Display',serif; font-size:2.2rem; color:#e8a84a; line-height:1; margin-bottom:0.3rem; }
+.preis-box.highlight .preis-num { color:#7ec87e; }
+.preis-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#6a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
+.preis-box ul { list-style:none; text-align:left; }
+.preis-box ul li { font-size:0.9rem; color:#6a8a6a; padding:0.3rem 0; border-bottom:1px solid #1e2e1e; }
+.preis-box ul li:last-child { border-bottom:none; }
+.preis-box ul li::before { content:"✓ "; color:#4a9e4a; }
+
+/* Fördererliste */
+.foerderer-grid { display:flex; flex-wrap:wrap; gap:1.5rem; margin:2rem 0; }
+.foerderer-card { flex:1 1 260px; padding:1.5rem; background-color:#0f160f; border:1px solid #1e2e1e; transition:border-color 0.2s; }
+.foerderer-card:hover { border-color:#2d6a2d; }
+.foerderer-badge { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#4a9e4a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
+.foerderer-name { font-family:'Playfair Display',serif; font-size:1.2rem; color:#f0f8f0; margin-bottom:0.4rem; }
+.foerderer-desc { font-size:0.9rem; color:#6a8a6a; line-height:1.6; margin-bottom:0.75rem; }
+.foerderer-link { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#7ec87e; }
+
+/* Placeholder */
+.placeholder { padding:3rem; background-color:#0f160f; border:1px dashed #1e2e1e; text-align:center; margin:2rem 0; }
+.placeholder p { color:#2d6a2d; font-style:italic; }
+
+/* Formular */
+.form-wrap { max-width:620px; margin-top:2rem; }
+.form-group { margin-bottom:1.3rem; }
+label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#6a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
+input, select, textarea { width:100%; padding:0.8rem 1rem; background-color:#ffffff; border:1px solid #1e2e1e; color:#1a1a1a; font-family:'Lora',serif; font-size:1rem; outline:none; -webkit-appearance:none; appearance:none; }
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a9e4a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer; }
+input:focus, select:focus, textarea:focus { border-color:#4a9e4a; }
+textarea { height:90px; resize:vertical; }
+.btn { display:inline-block; padding:0.85rem 2rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; background-color:#2d6a2d; color:#f0f8f0; }
+.btn:hover { background-color:#4a9e4a; }
+.btn-amber { background-color:transparent; color:#e8a84a; border:1px solid #c8882a; }
+.btn-amber:hover { background-color:rgba(200,136,42,0.1); }
+.form-note { margin-top:0.8rem; font-size:0.85rem; color:#6a8a6a; font-style:italic; }
+.back { display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6a8a6a; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #1e2e1e; padding-bottom:2px; }
+.back:hover { color:#7ec87e; border-color:#7ec87e; }
+footer { padding:2rem; border-top:1px solid #1e2e1e; margin-top:4rem; }
+.footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#6a8a6a; line-height:2; }
+@media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } h1 { font-size:2rem; } }
+</style>
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer-en.html">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/foerderer-nl.html">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/foerderer-fr.html">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/foerderer-es.html">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/foerderer.html">
+<link rel="canonical" href="https://www.openmyconet.de/foerderer.html">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Open<span>MycoNet</span></a>
+</nav>
+
+<div class="main">
+  <p class="section-label">Partnerschaft</p>
+  <h1>Gewerbliche <em>Förderer</em></h1>
+
+  <p style="color:#d8e8d0; font-size:1.1rem; max-width:680px; margin-bottom:1rem;">
+    OpenMycoNet verbindet Menschen die sich für Pilze, Mykorrhiza und Bodengesundheit
+    begeistern — weltweit. Als gewerblicher Förderer erreichen Sie genau diese Zielgruppe
+    und unterstützen gleichzeitig echte Citizen Science.
+  </p>
+  <p style="max-width:680px; margin-bottom:2rem;">
+    Wir suchen Partner die thematisch zu uns passen — Pilzzüchter, Buchhandlungen,
+    Hersteller nachhaltiger Materialien, Agrartech-Unternehmen, Forstbetriebe und alle
+    die das Thema Mykologie ernst nehmen. Keine Werbung für beliebige Produkte —
+    nur echte Partner mit echtem Bezug zum Thema.
+  </p>
+
+  <!-- Vorteile -->
+  <h2>Was Förderer erhalten</h2>
+  <div class="vorteile">
+    <div class="vorteil">
+      <span class="vorteil-icon">📋</span>
+      <h3>Eintrag in der Fördererliste</h3>
+      <p>Name, Beschreibung, Kontaktdaten und Link — sichtbar für alle Besucher von openmyconet.de.</p>
+    </div>
+    <div class="vorteil">
+      <span class="vorteil-icon">🏷️</span>
+      <h3>Förderer-Badge</h3>
+      <p>„Offizieller Förderer von OpenMycoNet" — als Badge für Ihre Website oder Social Media.</p>
+    </div>
+    <div class="vorteil">
+      <span class="vorteil-icon">📧</span>
+      <h3>Community-Reichweite</h3>
+      <p>Nennung in relevanten E-Mails an unsere wachsende Community aus Citizen Scientists.</p>
+    </div>
+    <div class="vorteil">
+      <span class="vorteil-icon">🌿</span>
+      <h3>Thematische Sichtbarkeit</h3>
+      <p>Ihre Marke im Kontext echter Wissenschaft — glaubwürdig, nachhaltig, international.</p>
+    </div>
+  </div>
+
+  <!-- Preise -->
+  <h2>Jahresbeitrag — frei wählbar ab 50 €</h2>
+  <p>Der Beitrag ist freiwillig und nach oben offen. Er richtet sich nach Ihren
+  Möglichkeiten und Ihrer Wertschätzung für das Projekt.
+  <strong>Alle Förderer erhalten dieselbe Sichtbarkeit</strong> —
+  unabhängig vom gewählten Betrag.</p>
+
+  <div style="margin:2rem 0; max-width:460px;">
+    <label style="display:block; font-family:'JetBrains Mono',monospace; font-size:0.7rem;
+                  color:#6a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem;">
+      Ihr Jahresbeitrag (Minimum 50 €)
+    </label>
+
+    <!-- Slider -->
+    <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1rem;">
+      <input type="range" id="beitrag-slider" min="50" max="1000" step="10" value="150"
+        style="flex:1; accent-color:#4a9e4a; height:4px; cursor:pointer; background:#1e2e1e;">
+      <div style="display:flex; align-items:center; gap:0.4rem; min-width:120px;">
+        <input type="number" id="beitrag-num" min="50" value="150"
+          style="width:80px; padding:0.5rem; background:#ffffff; border:1px solid #1e2e1e;
+                 color:#1a1a1a; font-family:'JetBrains Mono',monospace; font-size:1.1rem;
+                 text-align:right; outline:none;">
+        <span style="color:#6a8a6a; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">€ / Jahr</span>
+      </div>
+    </div>
+
+    <!-- Schnellauswahl -->
+    <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+      <button onclick="setBeitrag(50)"  class="quick-btn">50 €</button>
+      <button onclick="setBeitrag(100)" class="quick-btn">100 €</button>
+      <button onclick="setBeitrag(150)" class="quick-btn active">150 €</button>
+      <button onclick="setBeitrag(250)" class="quick-btn">250 €</button>
+      <button onclick="setBeitrag(500)" class="quick-btn">500 €</button>
+    </div>
+
+    <p style="margin-top:1.2rem; font-size:0.85rem; color:#6a8a6a; font-style:italic;">
+      Der Beitrag wird erst nach Prüfung und Bestätigung Ihrer Anfrage fällig —
+      bequem per PayPal oder Überweisung.
+    </p>
+  </div>
+
+  <style>
+  .quick-btn {
+    padding:0.4rem 1rem; background:#0f160f; border:1px solid #1e2e1e;
+    color:#6a8a6a; font-family:'JetBrains Mono',monospace; font-size:0.75rem;
+    cursor:pointer; transition:all 0.2s;
+  }
+  .quick-btn:hover, .quick-btn.active {
+    border-color:#c8882a; color:#e8a84a; background:rgba(200,136,42,0.08);
+  }
+  </style>
+
+  <script>
+  var slider = document.getElementById('beitrag-slider');
+  var numInput = document.getElementById('beitrag-num');
+
+  slider.addEventListener('input', function() {
+    numInput.value = slider.value;
+    updateQuickBtns(parseInt(slider.value));
+  });
+
+  numInput.addEventListener('input', function() {
+    var val = Math.max(50, parseInt(numInput.value) || 50);
+    numInput.value = val;
+    slider.value = Math.min(val, 1000);
+    updateQuickBtns(val);
+  });
+
+  function setBeitrag(val) {
+    slider.value = Math.min(val, 1000);
+    numInput.value = val;
+    updateQuickBtns(val);
+  }
+
+  function updateQuickBtns(val) {
+    document.querySelectorAll('.quick-btn').forEach(function(b) {
+      b.classList.remove('active');
+      if (parseInt(b.textContent) === val) b.classList.add('active');
+    });
+  }
+  </script>
+
+  <!-- Ablauf -->
+  <h2>So funktioniert es</h2>
+  <p><strong>1. Anfrage senden</strong> — über das Formular unten oder per E-Mail an kontakt@openmyconet.de.</p>
+  <p><strong>2. Kurze Prüfung</strong> — wir prüfen ob die thematische Passung gegeben ist. Das dauert max. 48 Stunden.</p>
+  <p><strong>3. Beitrag leisten</strong> — freiwillig, ab 50 €, über PayPal oder Überweisung.</p>
+  <p><strong>4. Eintrag live</strong> — Ihr Eintrag erscheint innerhalb von 24 Stunden in der Fördererliste.</p>
+  <p><strong>5. Jährliche Erneuerung</strong> — 2–3 Monate vor Ablauf erhalten Sie eine E-Mail mit der Frage ob Sie die Förderpartnerschaft fortsetzen möchten. Kein Automatismus, kein Druck.</p>
+
+  <!-- Aktuelle Förderer -->
+  <h2>Aktuelle Förderer</h2>
+  <p>So sieht Ihr Eintrag aus:</p>
+
+  <!-- Beispiel-Eintrag -->
+  <div class="foerderer-grid" style="margin-bottom:0.5rem;">
+    <div class="foerderer-card" style="opacity:0.5; border-style:dashed;">
+      <div class="foerderer-badge">★ Offizieller Förderer ★ &nbsp;|&nbsp; Beispiel-Eintrag</div>
+      <div class="foerderer-name">Ihr Unternehmensname</div>
+      <div class="foerderer-desc">
+        Hier erscheint eine kurze Beschreibung Ihres Unternehmens — was Sie machen,
+        warum Sie OpenMycoNet unterstützen und was Sie mit dem Thema Mykologie verbindet.
+        Ca. 2-3 Sätze.
+      </div>
+      <a href="#" class="foerderer-link" onclick="return false;">www.ihre-website.de</a>
+    </div>
+  </div>
+  <p style="font-size:0.85rem; font-style:italic; margin-bottom:2rem;">
+    Premium-Förderer erhalten zusätzlich eine hervorgehobene Position und ihr Logo im Eintrag.
+    Nach Ihrer Anfrage erhalten Sie einen Fragebogen für Ihren persönlichen Eintrag inkl. Logo-Upload.
+  </p>
+
+  <div class="placeholder">
+    <p>✶ Hier erscheinen die ersten Förderer von OpenMycoNet ✶</p>
+    <p style="margin-top:0.5rem; font-size:0.85rem;">Werden Sie der Erste.</p>
+  </div>
+
+  <!-- Anfrageformular -->
+  <h2>Förderpartnerschaft anfragen</h2>
+  <p>Schreiben Sie uns kurz wer Sie sind und warum OpenMycoNet zu Ihnen passt.
+  Wir melden uns innerhalb von 48 Stunden.</p>
+
+  <form class="form-wrap" onsubmit="handleFoerderer(event)">
+    <div class="form-group">
+      <label>Unternehmen / Name *</label>
+      <input type="text" name="firma" placeholder="z.B. MykoLibri, Pilzzucht Müller..." required>
+    </div>
+    <div class="form-group">
+      <label>Website</label>
+      <input type="url" name="website" placeholder="https://ihre-website.de">
+    </div>
+    <div class="form-group">
+      <label>E-Mail-Adresse *</label>
+      <input type="email" name="email" placeholder="kontakt@ihre-firma.de" required>
+    </div>
+    <div class="form-group">
+      <label>Thematischer Bezug</label>
+      <select name="bereich">
+        <option>Pilzzucht / Mykologie</option>
+        <option>Buchhandlung / Verlag</option>
+        <option>Nachhaltige Materialien (Myzel)</option>
+        <option>Landwirtschaft / Agrartech</option>
+        <option>Forstwirtschaft / Naturschutz</option>
+        <option>Bildung / Forschung</option>
+        <option>Sonstiges</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Gewünschter Jahresbeitrag</label>
+      <input type="hidden" name="beitrag" id="form-beitrag" value="150">
+      <p style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#e8a84a; margin:0;">
+        <span id="form-beitrag-anzeige">150</span> € / Jahr
+        <span style="color:#6a8a6a; font-size:0.75rem;"> — oben anpassbar</span>
+      </p>
+    </div>
+    <div class="form-group">
+      <label>Kurze Beschreibung Ihres Unternehmens *</label>
+      <textarea name="beschreibung" placeholder="Was machen Sie? Warum passt OpenMycoNet zu Ihnen?" required></textarea>
+    </div>
+    <button type="submit" class="btn" id="foerderer-btn">Anfrage senden</button>
+    <p class="form-note">
+      Keine Vorauszahlung. Nach Ihrer Anfrage prüfen wir die thematische Passung (max. 48h)
+      und senden Ihnen einen Fragebogen für Ihren persönlichen Eintrag inkl. Logo-Upload.
+    </p>
+  </form>
+
+  <a href="index.html" class="back">← Zurück zur Startseite</a>
+</div>
+
+<footer>
+  <div class="footer-info">
+    OpenMycoNet · Robert Jank · Maintal · 2026 ·
+    <a href="impressum.html" style="color:#7ec87e;">Impressum</a> ·
+    <a href="datenschutz.html" style="color:#7ec87e;">Datenschutz</a>
+  </div>
+</footer>
+
+<script>
+// Beitrag aus Slider in Formular synchronisieren
+  document.addEventListener('DOMContentLoaded', function() {
+    var s = document.getElementById('beitrag-slider');
+    var n = document.getElementById('beitrag-num');
+    var fb = document.getElementById('form-beitrag');
+    var fa = document.getElementById('form-beitrag-anzeige');
+    if (!s || !fb) return;
+    function sync() {
+      var val = n.value || s.value;
+      fb.value = val;
+      if (fa) fa.textContent = val;
+    }
+    s.addEventListener('input', sync);
+    n.addEventListener('input', sync);
+  });
+
+function handleFoerderer(e) {
+  e.preventDefault();
+  var btn = document.getElementById('foerderer-btn');
+  var form = e.target;
+  var data = new FormData(form);
+  btn.textContent = 'Wird gesendet...';
+  btn.disabled = true;
+  fetch('foerderer.php', { method:'POST', body:data })
+    .then(function(r){ return r.text(); })
+    .then(function(resp){
+      if(resp.trim()==='ok'){
+        btn.textContent = '✓ Anfrage eingegangen — wir melden uns!';
+        btn.style.backgroundColor = '#4a9e4a';
+      } else {
+        btn.textContent = 'Fehler — bitte E-Mail senden';
+        btn.style.backgroundColor = '#8b2020';
+        btn.disabled = false;
+      }
+    })
+    .catch(function(){
+      btn.textContent = 'Fehler — bitte E-Mail senden';
+      btn.style.backgroundColor = '#8b2020';
+      btn.disabled = false;
+    });
+}
+</script>
+</body>
+</html>

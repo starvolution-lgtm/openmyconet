@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Startseite (eine URL, alle Sprachen per ?lang= Parameter) -->
+  <url>
+    <loc>https://www.openmyconet.de/</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/"/>
+  </url>
+
+  <!-- Fördererseite (eine URL, alle Sprachen per ?lang= Parameter) -->
+  <url>
+    <loc>https://www.openmyconet.de/foerderer.html</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/foerderer.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/foerderer.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/foerderer.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/foerderer.html"/>
+  </url>
+
+  <!-- Impressum -->
+  <url>
+    <loc>https://www.openmyconet.de/impressum.html</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+  <!-- Datenschutz -->
+  <url>
+    <loc>https://www.openmyconet.de/datenschutz.html</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+</urlset>

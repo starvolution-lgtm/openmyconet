@@ -1,0 +1,48 @@
+{
+  "name": "OpenMycoNet — Listen to the Forest",
+  "short_name": "OpenMycoNet",
+  "description": "Weltweites Citizen-Science-Netzwerk für bioelektrische Signale aus Mykorrhiza-Netzwerken",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f0a",
+  "theme_color": "#0a0f0a",
+  "orientation": "portrait-primary",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": [
+    "science",
+    "education",
+    "lifestyle"
+  ],
+  "shortcuts": [
+    {
+      "name": "Anmelden",
+      "url": "/#anmelden",
+      "description": "Zum Netzwerk beitreten"
+    },
+    {
+      "name": "Unterstützen",
+      "url": "/#spenden",
+      "description": "Projekt unterstützen"
+    }
+  ]
+}

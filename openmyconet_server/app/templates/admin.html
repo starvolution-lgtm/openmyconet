@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenMycoNet — Admin</title>
+    <style>
+        body { font-family: sans-serif; max-width: 1000px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
+        h1 { color: #4caf50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #1a2a1a; color: #4caf50; padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #1a2a1a; font-size: 0.9em; }
+        tr:hover { background: #111f11; }
+        .ja { color: #4caf50; }
+        .nein { color: #f44336; }
+        .stats { display: flex; gap: 20px; margin: 20px 0; }
+        .stat { background: #1a2a1a; padding: 15px 25px; border-radius: 6px; text-align: center; }
+        .stat h3 { color: #4caf50; margin: 0; font-size: 1.8em; }
+        .stat p { margin: 4px 0 0; font-size: 0.85em; color: #aaa; }
+        select { background: #1a2a1a; color: #eee; border: 1px solid #4caf50; padding: 6px; border-radius: 4px; }
+        a { color: #4caf50; }
+    </style>
+</head>
+<body>
+    <h1>🍄 OpenMycoNet Admin</h1>
+<p><a href="/admin/newsletter">📧 Newsletter versenden</a></p>
+<p><a href="/admin/news">📰 News verwalten</a></p>
+<p><a href="/admin/knoten">📡 Knoten verwalten</a></p>
+
+    <div class="stats">
+        <div class="stat">
+            <h3>{{ gesamt }}</h3>
+            <p>Registrierungen gesamt</p>
+        </div>
+        <div class="stat">
+            <h3>{{ bestaetigt }}</h3>
+            <p>Bestätigt</p>
+        </div>
+        <div class="stat">
+            <h3>{{ unbestaetigt }}</h3>
+            <p>Unbestätigt</p>
+        </div>
+    </div>
+
+    <form method="GET">
+        <label>Gruppe: </label>
+        <select name="gruppe" onchange="this.form.submit()">
+            <option value="">Alle</option>
+            <option value="allgemein" {% if filter_gruppe == 'allgemein' %}selected{% endif %}>Allgemein</option>
+            <option value="biocomm" {% if filter_gruppe == 'biocomm' %}selected{% endif %}>BioComm</option>
+            <option value="wissenschaft" {% if filter_gruppe == 'wissenschaft' %}selected{% endif %}>Wissenschaft</option>
+            <option value="foerderer" {% if filter_gruppe == 'foerderer' %}selected{% endif %}>Förderer</option>
+        </select>
+        &nbsp;
+        <label>Sprache: </label>
+        <select name="sprache" onchange="this.form.submit()">
+            <option value="">Alle</option>
+            <option value="de" {% if filter_sprache == 'de' %}selected{% endif %}>Deutsch</option>
+            <option value="en" {% if filter_sprache == 'en' %}selected{% endif %}>English</option>
+            <option value="nl" {% if filter_sprache == 'nl' %}selected{% endif %}>Nederlands</option>
+            <option value="fr" {% if filter_sprache == 'fr' %}selected{% endif %}>Français</option>
+            <option value="es" {% if filter_sprache == 'es' %}selected{% endif %}>Español</option>
+        </select>
+    </form>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>E-Mail</th>
+            <th>Sprache</th>
+            <th>Land</th>
+            <th>Gruppe</th>
+            <th>Bestätigt</th>
+            <th>Registriert</th>
+        </tr>
+        {% for nutzer in nutzer_liste %}
+        <tr>
+            <td>{{ nutzer.name }}</td>
+            <td>{{ nutzer.email }}</td>
+            <td>{{ nutzer.sprache }}</td>
+            <td>{{ nutzer.land }}</td>
+            <td>{{ nutzer.gruppe }}</td>
+            <td class="{{ 'ja' if nutzer.bestaetigt else 'nein' }}">{{ '✓' if nutzer.bestaetigt else '✗' }}</td>
+            <td>{{ nutzer.registriert_am.strftime('%d.%m.%Y %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
