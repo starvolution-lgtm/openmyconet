@@ -4,342 +4,453 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quellennachweise – OpenMycoNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Lora:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e0f0e;
-    --bg2: #161714;
-    --bg3: #1c1d1a;
-    --text: #e8e6df;
-    --text2: #9a9890;
-    --text3: #5c5b56;
-    --accent: #4a8c5c;
-    --accent2: #2f5c3a;
-    --accent-light: #7abd96;
-    --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
-    --pmc: #1d6a52;
-    --pmc-bg: #0d2b20;
-    --pmc-text: #5ecfa0;
-    --arxiv: #1a4a7a;
-    --arxiv-bg: #0d2038;
-    --arxiv-text: #6aabea;
-    --book-bg: #2a1f40;
-    --book-text: #b48ef0;
-    --cs-bg: #3a2a10;
-    --cs-text: #d4a847;
-    --radius: 6px;
-    --font-body: 'Georgia', serif;
-    --font-ui: system-ui, -apple-system, sans-serif;
-    --font-mono: 'Courier New', monospace;
+    --bg:          #024530;
+    --bg2:         #013826;
+    --bg3:         rgba(0,0,0,0.22);
+    --bg4:         rgba(0,0,0,0.28);
+    --text:        #e8f5e0;
+    --text2:       #a0c8a0;
+    --text3:       #5a8a6a;
+    --accent:      #6ee87e;
+    --accent2:     #3a9e5a;
+    --accent3:     #0a7050;
+    --amber:       #f0b84a;
+    --amber2:      #d4a030;
+    --amber3:      rgba(200,136,42,0.12);
+    --border:      #0a6040;
+    --border2:     rgba(10,96,64,0.5);
+    --pmc-bg:      #0d2b20;
+    --pmc-text:    #5ecfa0;
+    --arxiv-bg:    #0d2038;
+    --arxiv-text:  #6aabea;
+    --book-bg:     #2a1f40;
+    --book-text:   #b48ef0;
+    --cs-bg:       #3a2a10;
+    --cs-text:     #d4a847;
+    --font-body:   'Playfair Display', Georgia, serif;
+    --font-ui:     'Lora', Georgia, serif;
+    --font-mono:   'JetBrains Mono', 'Courier New', monospace;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-ui);
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
+  body { background: var(--bg); color: var(--text); font-family: var(--font-ui); font-size: 16px; line-height: 1.75; min-height: 100vh; }
   a { color: inherit; text-decoration: none; }
 
-  .page {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 4rem 2rem 6rem;
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem clamp(1.5rem,5vw,5rem);
+    background: rgba(2,69,48,0.97); border-bottom: 1px solid var(--border);
   }
+  .nav-logo { font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-logo span { color: var(--amber); }
+  nav ul { list-style: none; display: flex; align-items: center; gap: 2rem; }
+  nav ul a {
+    color: var(--text2); font-family: var(--font-mono);
+    font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none; transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--amber); }
+  nav ul a.nav-active { color: var(--amber); border-bottom: 1px solid var(--amber2); padding-bottom: 2px; }
 
-  .site-label {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 2.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .site-label::before {
-    content: '';
-    display: inline-block;
-    width: 20px;
-    height: 1px;
-    background: var(--accent);
-  }
+  /* ── HAMBURGER ── */
+  .hamburger { display: none; flex-direction: row; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; background: transparent; border: 1px solid var(--border); border-radius: 0; z-index: 101; animation: hamburger-pulse 2.5s ease-in-out infinite; }
+  .hamburger:hover, .hamburger:active { border-color: var(--accent); background: rgba(110,232,126,0.08); box-shadow: 0 0 0 3px rgba(110,232,126,0.2); animation: none; }
+  .hamburger-bars { display:inline-flex; flex-direction: column; gap:5px; vertical-align:middle; }
+  .hamburger-bars span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+  .hamburger-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); white-space: nowrap; }
 
-  h1 {
-    font-family: var(--font-body);
-    font-size: 2rem;
-    font-weight: 400;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-    line-height: 1.25;
-  }
-  .subtitle {
-    font-size: 14px;
-    color: var(--text2);
-    max-width: 520px;
-    margin-bottom: 3rem;
-    line-height: 1.65;
-  }
+  /* ── MOBILE MENU ── */
+  .mobile-menu { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,69,48,0.97); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem; }
+  .mobile-menu a { font-family: var(--font-mono); font-size: 1.1rem; color: var(--text); letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu-close { position: absolute; top: 1.2rem; right: 1.4rem; background: none; border: none; color: var(--text); font-size: 1.8rem; cursor: pointer; line-height: 1; }
+  .mobile-lang { display: flex; gap: 0.6rem; margin-top: 1rem; align-items: center; }
 
-  .path-section {
-    margin-bottom: 3.5rem;
+  /* ── LANG SIDEBAR ── */
+  #lang-sidebar {
+    display: none; position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+    z-index: 199; flex-direction: column; align-items: center; gap: 0.4rem;
+    background: rgba(20,31,20,0.88); border: 1px solid var(--border);
+    border-right: none; padding: 0.6rem 0.45rem; border-radius: 4px 0 0 4px;
   }
-  .path-label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 0.75rem;
+  #lang-sidebar a { display: inline-flex; cursor: pointer; }
+  .lang-flag-active { opacity: 1; }
+  .lang-flag-inactive { opacity: 0.45; }
+
+  /* ── BACK LINK ── */
+  .back-link {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.75rem;
+    color: #00e5e5; letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none; border-bottom: 1px solid #00e5e5; padding-bottom: 2px;
+    transition: opacity 0.2s;
   }
+  .back-link:hover { opacity: 0.7; }
+
+  /* ── PAGE ── */
+  .page { max-width: 820px; margin: 0 auto; padding: 7rem 2rem 6rem; }
+
+  .page-tag { font-family: var(--font-mono); font-size: 0.68rem; color: var(--amber2); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+  .page-tag::before { content: ''; display: inline-block; width: 24px; height: 1px; background: var(--amber2); }
+
+  h1 { font-family: var(--font-body); font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 400; color: #ffffff; margin-bottom: 1rem; line-height: 1.15; }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .subtitle { font-size: 1.05rem; color: var(--text2); max-width: 600px; margin-bottom: 1.5rem; line-height: 1.8; }
+
+  .intro-box { margin-bottom: 3.5rem; padding: 1.2rem 1.5rem; border-left: 3px solid var(--amber2); background: var(--amber3); font-size: 0.95rem; color: var(--text2); line-height: 1.75; }
+  .intro-box strong { color: var(--text); }
+
+  /* ── WISSENSPFAD ── */
+  .path-section { margin-bottom: 4rem; }
+  .path-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber2); margin-bottom: 1.5rem; }
+
+  /* Desktop: Fortschrittsleiste */
   .path-chain {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    align-items: center;
+    display: flex; align-items: flex-start;
+    gap: 0; position: relative;
+    padding-bottom: 0.5rem;
   }
-  .path-step {
-    font-size: 12px;
-    color: var(--text2);
-    padding: 6px 12px;
-    border: 0.5px solid var(--border2);
-    background: var(--bg3);
-    white-space: nowrap;
+  .path-node {
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1; position: relative; cursor: pointer;
+    min-width: 0;
   }
-  .path-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
-  .path-step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
-  .path-step.active {
-    background: var(--accent2);
-    border-color: var(--accent);
-    color: var(--accent-light);
-  }
-  .path-arrow {
-    font-size: 10px;
-    color: var(--text3);
-    padding: 0 1px;
-    border-top: 0.5px solid var(--border2);
-    border-bottom: 0.5px solid var(--border2);
-    background: var(--bg3);
-    height: 33px;
-    display: flex;
-    align-items: center;
-  }
-
-  .timeline {
-    position: relative;
-    padding-left: 28px;
-  }
-  .timeline::before {
+  /* Verbindungslinie zwischen Knoten */
+  .path-node:not(:last-child)::after {
     content: '';
-    position: absolute;
-    left: 8px;
-    top: 8px;
-    bottom: 8px;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--accent), var(--border) 90%);
+    position: absolute; top: 14px; left: 50%; right: -50%;
+    height: 1px; background: var(--border);
+    z-index: 0;
+    transition: background 0.3s;
   }
+  .path-node.passed:not(:last-child)::after { background: var(--accent3); }
 
-  .station {
-    margin-bottom: 3rem;
-    position: relative;
-  }
-  .station-dot {
-    position: absolute;
-    left: -24px;
-    top: 5px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 1.5px solid var(--accent);
-  }
-  .station-dot.dim { border-color: var(--text3); }
-
-  .station-header {
-    margin-bottom: 1rem;
-  }
-  .station-step {
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent-light);
-    margin-bottom: 3px;
-    font-family: var(--font-ui);
-  }
-  .station-step.dim { color: var(--text3); }
-  .station-title {
-    font-family: var(--font-body);
-    font-size: 1.05rem;
-    font-weight: 400;
-    color: var(--text);
-  }
-  .station-desc {
-    font-size: 13px;
-    color: var(--text2);
-    margin-top: 4px;
-    max-width: 560px;
-  }
-
-  .ref {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 12px 14px;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 8px;
-    background: var(--bg2);
-    transition: border-color 0.15s, background 0.15s;
-    cursor: pointer;
-  }
-  .ref:hover {
-    border-color: var(--border2);
+  .path-node-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--border);
     background: var(--bg3);
-  }
-  .ref-num {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text3);
-    min-width: 18px;
-    padding-top: 2px;
-  }
-  .ref-body { flex: 1; min-width: 0; }
-  .ref-title {
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 3px;
-    line-height: 1.4;
-  }
-  .ref-meta {
-    font-size: 12px;
-    color: var(--text2);
-    line-height: 1.5;
-  }
-  .ref-badge {
-    font-size: 10px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 3px;
-    white-space: nowrap;
-    align-self: center;
-    font-family: var(--font-ui);
-  }
-  .ref-badge.pmc   { background: var(--pmc-bg);  color: var(--pmc-text);  }
-  .ref-badge.arxiv { background: var(--arxiv-bg); color: var(--arxiv-text); }
-  .ref-badge.book  { background: var(--book-bg);  color: var(--book-text); }
-  .ref-badge.cs    { background: var(--cs-bg);    color: var(--cs-text);   }
-  .ref-relevanz {
-    font-size: 11.5px;
-    color: var(--accent-light);
-    margin-top: 5px;
-    padding-top: 5px;
-    border-top: 0.5px solid rgba(74,140,92,0.2);
-    line-height: 1.5;
-  }
-  .ref-relevanz::before {
-    content: '→ OMN: ';
-    color: var(--accent);
-    font-weight: 500;
-  }
-  .ref-ext {
-    font-size: 13px;
-    color: var(--text3);
-    align-self: center;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 0.6rem; color: var(--text3);
+    position: relative; z-index: 1;
+    transition: all 0.25s;
     flex-shrink: 0;
   }
-  .ref:hover .ref-ext { color: var(--accent-light); }
+  .path-node.active .path-node-circle {
+    border-color: var(--accent3); color: var(--accent);
+    background: rgba(10,112,80,0.3);
+  }
+  .path-node.amber .path-node-circle {
+    border-color: var(--amber2); color: var(--amber);
+    background: var(--amber3);
+  }
+  .path-node.current .path-node-circle {
+    border-color: var(--accent); color: #fff;
+    background: var(--accent3);
+    box-shadow: 0 0 0 3px rgba(110,232,126,0.2);
+  }
+  .path-node.amber.current .path-node-circle {
+    border-color: var(--amber); color: #fff;
+    background: rgba(212,160,48,0.4);
+    box-shadow: 0 0 0 3px rgba(240,184,74,0.2);
+  }
+  .path-node-label {
+    font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.04em;
+    color: var(--text3); text-align: center; margin-top: 6px;
+    line-height: 1.3; max-width: 72px;
+    transition: color 0.25s;
+    white-space: normal;
+  }
+  .path-node.active .path-node-label { color: var(--text2); }
+  .path-node.amber .path-node-label { color: var(--amber2); }
+  .path-node.current .path-node-label { color: var(--accent); }
+  .path-node.amber.current .path-node-label { color: var(--amber); }
+  .path-node:hover .path-node-circle { border-color: var(--accent); }
+  .path-node:hover .path-node-label { color: var(--accent); }
 
-  .page-footer {
-    margin-top: 4rem;
-    padding-top: 1.5rem;
-    border-top: 0.5px solid var(--border);
-    font-size: 12px;
-    color: var(--text3);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
+  /* Mobile: Akkordeon */
+  .path-accordion { display: none; }
+  .path-accordion-item {
+    border: 1px solid var(--border);
+    margin-bottom: 4px;
+    background: var(--bg3);
+    transition: border-color 0.2s;
   }
-  .back-link {
-    font-size: 12px;
-    color: var(--accent-light);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 2.5rem;
+  .path-accordion-item.amber { border-color: var(--amber2); }
+  .path-accordion-item.active-acc { border-color: var(--accent3); }
+  .path-accordion-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0.75rem 1rem; cursor: pointer;
+    font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.06em; color: var(--text2);
+    user-select: none;
   }
-  .back-link:hover { text-decoration: underline; }
+  .path-accordion-item.amber .path-accordion-header { color: var(--amber); }
+  .path-accordion-item.active-acc .path-accordion-header { color: var(--accent); }
+  .path-accordion-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.58rem; color: var(--text3); flex-shrink: 0;
+  }
+  .path-accordion-item.amber .path-accordion-num { border-color: var(--amber2); color: var(--amber); }
+  .path-accordion-item.active-acc .path-accordion-num { border-color: var(--accent); color: var(--accent); background: rgba(10,112,80,0.3); }
+  .path-accordion-chevron {
+    margin-left: auto; font-size: 0.8rem; color: var(--text3);
+    transition: transform 0.25s;
+  }
+  .path-accordion-item.open .path-accordion-chevron { transform: rotate(180deg); }
+  .path-accordion-body {
+    display: none; padding: 0 1rem 1rem;
+    font-size: 0.85rem; color: var(--text2); line-height: 1.7;
+  }
+  .path-accordion-item.open .path-accordion-body { display: block; }
+  .path-accordion-body a.acc-scroll-link {
+    display: inline-block; margin-top: 0.75rem;
+    font-family: var(--font-mono); font-size: 0.65rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); border-bottom: 1px solid var(--accent3);
+    padding-bottom: 1px; cursor: pointer;
+  }
+  .path-accordion-item.amber .path-accordion-body a.acc-scroll-link { color: var(--amber); border-bottom-color: var(--amber2); }
 
   @media (max-width: 600px) {
-    .page { padding: 2rem 1.25rem 4rem; }
-    h1 { font-size: 1.6rem; }
-    .path-chain { gap: 0; }
-    .path-step { font-size: 11px; padding: 5px 8px; }
+    .path-chain { display: none; }
+    .path-accordion { display: block; }
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 36px; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 12px; bottom: 12px; width: 1px; background: linear-gradient(to bottom, var(--accent3), var(--border2) 85%, transparent); }
+
+  .station { margin-bottom: 4rem; position: relative; }
+  .station-dot { position: absolute; left: -30px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent3); }
+  .station-dot.amber { border-color: var(--amber2); }
+  .station-dot.dim   { border-color: var(--text3); }
+  .station.in-view .station-dot { background: var(--accent3); border-color: var(--accent); }
+  .station.in-view .station-dot.amber { background: rgba(212,160,48,0.3); border-color: var(--amber); }
+
+  .station-header { margin-bottom: 1.25rem; }
+  .station-step { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+  .station-step.amber { color: var(--amber); }
+  .station-step.dim   { color: var(--text3); }
+  .station-title { font-family: var(--font-body); font-size: 1.4rem; font-weight: 400; color: #ffffff; line-height: 1.25; margin-bottom: 0.5rem; }
+  .station-desc { font-size: 0.95rem; color: var(--text2); max-width: 580px; line-height: 1.75; }
+
+  .station.highlight .station-title { animation: stationPulse 1.2s ease-out; }
+  @keyframes stationPulse {
+    0%   { color: var(--amber); text-shadow: 0 0 18px rgba(240,184,74,0.6); }
+    60%  { color: var(--amber); text-shadow: 0 0 8px rgba(240,184,74,0.3); }
+    100% { color: #ffffff; text-shadow: none; }
+  }
+
+  /* ── REF CARDS ── */
+  .ref { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); background: var(--bg3); margin-bottom: 8px; transition: border-color 0.15s, background 0.15s; cursor: pointer; }
+  .ref:hover { border-color: var(--accent3); background: var(--bg4); }
+  .ref-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text3); min-width: 20px; padding-top: 2px; }
+  .ref-body { flex: 1; min-width: 0; }
+  .ref-title { font-size: 0.95rem; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.45; font-family: var(--font-ui); }
+  .ref-meta { font-size: 0.8rem; color: var(--text2); line-height: 1.55; font-family: var(--font-mono); }
+  .ref-badge { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; white-space: nowrap; align-self: center; }
+  .ref-badge.pmc   { background: var(--pmc-bg);   color: var(--pmc-text);  }
+  .ref-badge.arxiv { background: var(--arxiv-bg);  color: var(--arxiv-text);}
+  .ref-badge.book  { background: var(--book-bg);   color: var(--book-text); }
+  .ref-badge.cs    { background: var(--cs-bg);     color: var(--cs-text);   }
+  .ref-relevanz { font-size: 0.82rem; color: var(--accent); margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(10,112,80,0.25); line-height: 1.6; }
+  .ref-relevanz::before { content: '→ OMN: '; color: var(--accent2); font-weight: 500; font-family: var(--font-mono); font-size: 0.72rem; }
+  .ref-relevanz.amber { color: var(--amber); border-top-color: rgba(212,160,48,0.25); }
+  .ref-relevanz.amber::before { color: var(--amber2); }
+  .ref-ext { font-family: var(--font-mono); font-size: 0.9rem; color: var(--text3); align-self: center; flex-shrink: 0; }
+  .ref:hover .ref-ext { color: var(--accent); }
+
+  /* ── FOOTER ── */
+  .page-footer { margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 0.7rem; color: var(--text3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .page-footer a { color: var(--accent); }
+
+  @media (min-width: 601px) { #lang-sidebar { display: flex; } }
+  @media (max-width: 600px) {
+    nav ul { display: none; }
+    .hamburger { display: flex; }
+    .page { padding: 5.5rem 1.25rem 4rem; }
+    h1 { font-size: 1.7rem; }
     .ref-badge { display: none; }
   }
+
+@keyframes hamburger-pulse {
+  0%   { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
+  50%  { border-color:#6ee87e; box-shadow: 0 0 0 3px rgba(110,232,126,0.15); }
+  100% { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
+}
 </style>
 </head>
 <body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Open<span>Myco</span>Net</a>
+  <ul>
+    <li><a href="index.html#warum" data-i18n="nav_warum">Warum</a></li>
+    <li><a href="index.html#mitmachen" data-i18n="nav_mitmachen">Mitmachen</a></li>
+    <li><a href="index.html#spenden" data-i18n="nav_spenden">Unterstützen</a></li>
+    <li><a href="index.html#anmelden" data-i18n="nav_anmelden">Anmelden</a></li>
+    <li><a href="index.html#ueber" data-i18n="nav_ueber">Über</a></li>
+    <li><a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a></li>
+    <li><a href="quellennachweise.html" class="nav-active" data-i18n="nav_quellen">Quellen</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
+    <span class="hamburger-bars"><span></span><span></span><span></span></span>
+    <span class="hamburger-label" data-i18n="nav_menu">Menü</span>
+  </button>
+</nav>
+
+<!-- Mobile Overlay-Menü -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileClose">✕</button>
+  <a href="index.html#warum" data-i18n="nav_warum">Warum</a>
+  <a href="index.html#mitmachen" data-i18n="nav_mitmachen">Mitmachen</a>
+  <a href="index.html#spenden" data-i18n="nav_spenden">Unterstützen</a>
+  <a href="index.html#anmelden" data-i18n="nav_anmelden">Anmelden</a>
+  <a href="index.html#ueber" data-i18n="nav_ueber">Über</a>
+  <a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a>
+  <a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a>
+  <div class="mobile-lang" id="lang-flags-mobile"></div>
+</div>
+
+<div id="lang-sidebar"><!-- Flags via JS --></div>
+
 <div class="page">
 
-  <a class="back-link" href="/">← OpenMycoNet</a>
-  <div class="site-label">OpenMycoNet · Wissenschaftliche Grundlagen</div>
-  <h1>Quellennachweise</h1>
-  <p class="subtitle">
-    OpenMycoNet steht auf einem nachvollziehbaren wissenschaftlichen Fundament.
-    Die folgenden Quellen belegen jeden Schritt unseres Erkenntnispfades –
-    von der Mykorrhiza-Grundlagenforschung bis zur angewandten Citizen Science.
-  </p>
+  <a href="index.html" class="back-link" id="q-back-top" data-i18n="q_back">← Startseite</a>
 
-  <div style="margin-bottom: 2.5rem; padding: 1rem 1.25rem; border-left: 2px solid var(--accent2); background: rgba(47,92,58,0.12); border-radius: 0 var(--radius) var(--radius) 0;">
-    <p style="font-size: 13px; color: var(--text2); line-height: 1.7; margin: 0;">
-      OpenMycoNet versteht sich als Citizen-Science-Projekt. Die folgenden Quellen dokumentieren den aktuellen Stand der Forschung zu Mykorrhiza-Netzwerken, elektrischer Aktivität in Pilzen, Biosensorik und biologischer Signalverarbeitung. Nicht alle aufgeführten Arbeiten belegen die Ziele von OpenMycoNet direkt; sie bilden jedoch die wissenschaftliche Grundlage, auf der die Projektfragen aufbauen.
-    </p>
+  <div style="height:1.5rem;"></div>
+
+  <div class="page-tag" data-i18n="q_page_tag">OpenMycoNet · Wissenschaftliche Grundlagen</div>
+
+  <h1 data-i18n-html="q_h1_html">Quellennachweise &amp;<br><em>Erkenntnispfad</em></h1>
+
+  <p class="subtitle" data-i18n="q_subtitle">OpenMycoNet steht auf einem nachvollziehbaren wissenschaftlichen Fundament.</p>
+
+  <div class="intro-box">
+    <strong data-i18n="q_intro_strong">Transparenzhinweis:</strong>
+    <span data-i18n="q_intro"> Nicht alle aufgeführten Arbeiten belegen die Ziele von OpenMycoNet direkt.</span>
   </div>
 
+  <!-- WISSENSPFAD -->
   <div class="path-section">
-    <div class="path-label">Wissenschaftlicher Pfad</div>
+    <div class="path-label" data-i18n="q_path_label">Wissenschaftlicher Erkenntnispfad</div>
+
+    <!-- Desktop: Fortschrittsleiste mit Kreisen -->
     <div class="path-chain">
-      <span class="path-step active">Mykorrhiza</span>
-      <span class="path-arrow">›</span>
-      <span class="path-step active">Netzwerke</span>
-      <span class="path-arrow">›</span>
-      <span class="path-step active">Elektr. Aktivität</span>
-      <span class="path-arrow">›</span>
-      <span class="path-step active">Messbarkeit</span>
-      <span class="path-arrow">›</span>
-      <span class="path-step active">Sensorik</span>
-      <span class="path-arrow">›</span>
-      <span class="path-step active">KI-Mustererkennung</span>
-      <span class="path-arrow">›</span>
-      <span class="path-step active">Citizen Science</span>
+      <div class="path-node active" data-target="station-1">
+        <div class="path-node-circle">01</div>
+        <div class="path-node-label" data-i18n="q_path_1">01 · Mykorrhiza</div>
+      </div>
+      <div class="path-node active" data-target="station-1">
+        <div class="path-node-circle">02</div>
+        <div class="path-node-label" data-i18n="q_path_2">02 · Netzwerke</div>
+      </div>
+      <div class="path-node amber" data-target="station-kritik">
+        <div class="path-node-circle">!</div>
+        <div class="path-node-label" data-i18n="q_path_kritik">! · Kritik</div>
+      </div>
+      <div class="path-node active" data-target="station-2">
+        <div class="path-node-circle">03</div>
+        <div class="path-node-label" data-i18n="q_path_3">03 · Elektr. Aktivität</div>
+      </div>
+      <div class="path-node active" data-target="station-3">
+        <div class="path-node-circle">04</div>
+        <div class="path-node-label" data-i18n="q_path_4">04 · Messbarkeit</div>
+      </div>
+      <div class="path-node active" data-target="station-3">
+        <div class="path-node-circle">05</div>
+        <div class="path-node-label" data-i18n="q_path_5">05 · KI-Muster</div>
+      </div>
+      <div class="path-node active" data-target="station-cs">
+        <div class="path-node-circle">06</div>
+        <div class="path-node-label" data-i18n="q_path_6">06 · Citizen Science</div>
+      </div>
+    </div>
+
+    <!-- Mobile: Akkordeon -->
+    <div class="path-accordion">
+      <div class="path-accordion-item active-acc">
+        <div class="path-accordion-header">
+          <span class="path-accordion-num">01</span>
+          <span data-i18n="q_s1_step">Schritt 01 — Mykorrhiza &amp; Netzwerke</span>
+          <span class="path-accordion-chevron">▾</span>
+        </div>
+        <div class="path-accordion-body">
+          <span data-i18n="q_s1_desc">Suzanne Simards Pionierarbeit etablierte das Konzept des mykorrhizalen Netzwerks.</span>
+          <br><a class="acc-scroll-link" data-target="station-1">↓ Zur Station</a>
+        </div>
+      </div>
+      <div class="path-accordion-item amber">
+        <div class="path-accordion-header">
+          <span class="path-accordion-num">!</span>
+          <span data-i18n="q_sk_step">! Kritische Perspektive</span>
+          <span class="path-accordion-chevron">▾</span>
+        </div>
+        <div class="path-accordion-body">
+          <span data-i18n="q_sk_desc">Nicht alle populären Behauptungen über das „Wood Wide Web" sind ausreichend belegt.</span>
+          <br><a class="acc-scroll-link" data-target="station-kritik">↓ Zur Station</a>
+        </div>
+      </div>
+      <div class="path-accordion-item">
+        <div class="path-accordion-header">
+          <span class="path-accordion-num">02</span>
+          <span data-i18n="q_s2_step">Schritt 02 — Elektrische Aktivität</span>
+          <span class="path-accordion-chevron">▾</span>
+        </div>
+        <div class="path-accordion-body">
+          <span data-i18n="q_s2_desc">Bioelektrische Impulse im Myzel zeigen neuronale Charakteristika.</span>
+          <br><a class="acc-scroll-link" data-target="station-2">↓ Zur Station</a>
+        </div>
+      </div>
+      <div class="path-accordion-item">
+        <div class="path-accordion-header">
+          <span class="path-accordion-num">03</span>
+          <span data-i18n="q_s3_step">Schritt 03 — Messbarkeit &amp; KI</span>
+          <span class="path-accordion-chevron">▾</span>
+        </div>
+        <div class="path-accordion-body">
+          <span data-i18n="q_s3_desc">Andrew Adamatzkys Arbeiten zeigen, dass Myzelsignale technisch nutzbar sind.</span>
+          <br><a class="acc-scroll-link" data-target="station-3">↓ Zur Station</a>
+        </div>
+      </div>
+      <div class="path-accordion-item">
+        <div class="path-accordion-header">
+          <span class="path-accordion-num">04</span>
+          <span data-i18n="q_s5_step">Schritt 04 — Citizen Science</span>
+          <span class="path-accordion-chevron">▾</span>
+        </div>
+        <div class="path-accordion-body">
+          <span data-i18n="q_s5_desc">Verteilte Laienmessungen können wissenschaftlich valide Daten liefern.</span>
+          <br><a class="acc-scroll-link" data-target="station-cs">↓ Zur Station</a>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="timeline">
 
-    <!-- Station 1: Mykorrhiza & Netzwerke -->
-    <div class="station">
+    <!-- Station 1 -->
+    <div class="station" id="station-1">
       <div class="station-dot"></div>
       <div class="station-header">
-        <div class="station-step">Schritt 1 – Mykorrhiza & Netzwerke</div>
-        <div class="station-title">Pflanzen kommunizieren unterirdisch</div>
-        <div class="station-desc">
-          Suzanne Simards Pionierarbeit etablierte das Konzept des mykorrhizalen Netzwerks
-          als echten Informationskanal zwischen Pflanzen – nicht Metapher, sondern Messbefund.
-        </div>
+        <div class="station-step" data-i18n="q_s1_step">Schritt 01 — Mykorrhiza &amp; Netzwerke</div>
+        <div class="station-title" data-i18n="q_s1_title">Pflanzen kommunizieren unterirdisch</div>
+        <div class="station-desc" data-i18n="q_s1_desc">Suzanne Simards Pionierarbeit etablierte das Konzept des mykorrhizalen Netzwerks als echten Informationskanal zwischen Pflanzen.</div>
       </div>
       <a class="ref" href="https://www.ted.com/talks/suzanne_simard_how_trees_talk_to_each_other" target="_blank" rel="noopener">
         <span class="ref-num">01</span>
         <div class="ref-body">
           <div class="ref-title">Suzanne Simard – How Trees Talk to Each Other</div>
-          <div class="ref-meta">TED Talk (2016) · Populärwissenschaftlicher Einstieg · Grundlagenwerk: <em>Finding the Mother Tree</em>, Knopf 2021</div>
+          <div class="ref-meta">TED Talk (2016) · Grundlagenwerk: <em>Finding the Mother Tree</em>, Knopf 2021</div>
           <div class="ref-relevanz">Belegt, dass Bäume über Mykorrhiza-Netzwerke aktiv Signale und Ressourcen austauschen – die biologische Grundannahme hinter OpenMycoNet.</div>
         </div>
         <span class="ref-badge book">Buch / TED</span>
@@ -350,31 +461,27 @@
         <div class="ref-body">
           <div class="ref-title">Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities</div>
           <div class="ref-meta">Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access</div>
-          <div class="ref-relevanz">Peer-reviewed Nachweis, dass Pflanzen über Mykorrhiza-Netzwerke komplexes adaptives Verhalten koordinieren – wissenschaftliche Grundlage für Netzwerkmonitoring.</div>
+          <div class="ref-relevanz">Peer-reviewed Nachweis, dass Pflanzen über Mykorrhiza-Netzwerke komplexes adaptives Verhalten koordinieren.</div>
         </div>
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
       </a>
     </div>
 
-    <!-- Station 1b: Kritische Perspektive -->
-    <div class="station">
-      <div class="station-dot" style="border-color: #8c6a4a;"></div>
+    <!-- Station Kritik -->
+    <div class="station" id="station-kritik">
+      <div class="station-dot amber"></div>
       <div class="station-header">
-        <div class="station-step" style="color: #d4a847;">Kritische Perspektive – Wissenschaftliche Einordnung</div>
-        <div class="station-title">Was wirklich belegt ist — und was nicht</div>
-        <div class="station-desc">
-          Nicht alle populären Behauptungen über das "Wood Wide Web" sind durch Feldstudien
-          ausreichend belegt. OpenMycoNet bezieht diese Kritik ausdrücklich ein —
-          sie ist ein Grund, warum wir messen.
-        </div>
+        <div class="station-step amber" data-i18n="q_sk_step">! Kritische Perspektive — Wissenschaftliche Einordnung</div>
+        <div class="station-title" data-i18n="q_sk_title">Was wirklich belegt ist — und was nicht</div>
+        <div class="station-desc" data-i18n="q_sk_desc">Nicht alle populären Behauptungen über das „Wood Wide Web" sind durch Feldstudien ausreichend belegt.</div>
       </div>
       <a class="ref" href="https://www.nature.com/articles/s41559-023-01986-1" target="_blank" rel="noopener">
         <span class="ref-num">11</span>
         <div class="ref-body">
           <div class="ref-title">Positive citation bias and overinterpreted results lead to misinformation on common mycorrhizal networks in forests</div>
-          <div class="ref-meta">Karst, Jones & Hoeksema · Nature Ecology &amp; Evolution 7, 501–511 (2023) · DOI 10.1038/s41559-023-01986-1</div>
-          <div class="ref-relevanz" style="color: #d4a847; border-top-color: rgba(212,168,71,0.2);">Zeigt, dass viele populäre Behauptungen über Mykorrhiza-Netzwerke der Feldforschung vorauseilen. OpenMycoNet teilt diese Haltung: Wir messen, weil die Datenlage noch dünn ist — nicht weil alles bewiesen ist.</div>
+          <div class="ref-meta">Karst, Jones &amp; Hoeksema · Nature Ecology &amp; Evolution 7, 501–511 (2023) · DOI 10.1038/s41559-023-01986-1</div>
+          <div class="ref-relevanz amber">Zeigt, dass viele populäre Behauptungen der Feldforschung vorauseilen. Wir messen, weil die Datenlage noch dünn ist.</div>
         </div>
         <span class="ref-badge cs">Nature Ecol.</span>
         <span class="ref-ext">↗</span>
@@ -384,30 +491,27 @@
         <div class="ref-body">
           <div class="ref-title">Rethinking the "Wood Wide Web" – Gespräch mit Dr. Justine Karst</div>
           <div class="ref-meta">Many Minds Podcast · DISI · Oktober 2024 · Dr. Justine Karst, Universität Alberta</div>
-          <div class="ref-relevanz" style="color: #d4a847; border-top-color: rgba(212,168,71,0.2);">Zugängliche Einordnung der wissenschaftlichen Debatte für Nicht-Fachpublikum. Karst: "Wir wollen niemandem die Freude am Wald nehmen — aber Fehlinformationen eindämmen."</div>
+          <div class="ref-relevanz amber">Zugängliche Einordnung der wissenschaftlichen Debatte für Nicht-Fachpublikum.</div>
         </div>
         <span class="ref-badge cs">Podcast</span>
         <span class="ref-ext">↗</span>
       </a>
     </div>
 
-    <!-- Station 2: Elektrische Aktivität -->
-    <div class="station">
+    <!-- Station 2 -->
+    <div class="station" id="station-2">
       <div class="station-dot"></div>
       <div class="station-header">
-        <div class="station-step">Schritt 2 – Elektrische Aktivität</div>
-        <div class="station-title">Pilze senden messbare elektrische Signale</div>
-        <div class="station-desc">
-          Bioelektrische Impulse im Myzel zeigen neuronale Charakteristika:
-          Spiking-Muster, Signalausbreitung, nicht-lineare Eigenschaften.
-        </div>
+        <div class="station-step" data-i18n="q_s2_step">Schritt 02 — Elektrische Aktivität</div>
+        <div class="station-title" data-i18n="q_s2_title">Pilze senden messbare elektrische Signale</div>
+        <div class="station-desc" data-i18n="q_s2_desc">Bioelektrische Impulse im Myzel zeigen neuronale Charakteristika.</div>
       </div>
       <a class="ref" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11995700/" target="_blank" rel="noopener">
         <span class="ref-num">03</span>
         <div class="ref-body">
           <div class="ref-title">Electrical signaling in fungi</div>
           <div class="ref-meta">PMC11995700 · Aktueller Review · Bioelektrische Signalwege im Pilzmyzel</div>
-          <div class="ref-relevanz">Zeigt, dass Pilznetzwerke reproduzierbare elektrische Aktivität erzeugen – direkte Rechtfertigung für den Einsatz bioelektrischer Sensoren im BioComm-System.</div>
+          <div class="ref-relevanz">Zeigt, dass Pilznetzwerke reproduzierbare elektrische Aktivität erzeugen – direkte Rechtfertigung für BioComm.</div>
         </div>
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
@@ -417,31 +521,27 @@
         <div class="ref-body">
           <div class="ref-title">The fungal grid – electrical signals and the Wood Wide Web hypothesis</div>
           <div class="ref-meta">PMC10157304 · Elektrische Kommunikation als Grundlage des „Wood Wide Web"</div>
-          <div class="ref-relevanz">Verbindet elektrische Pilzsignale mit dem Konzept des Waldnetzwerks – stützt die Hypothese, dass Signalmuster ökologisch interpretierbar sind.</div>
+          <div class="ref-relevanz">Verbindet elektrische Pilzsignale mit dem Konzept des Waldnetzwerks.</div>
         </div>
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
       </a>
     </div>
 
-    <!-- Station 3: Messbarkeit & Sensorik & KI -->
-    <div class="station">
+    <!-- Station 3 -->
+    <div class="station" id="station-3">
       <div class="station-dot"></div>
       <div class="station-header">
-        <div class="station-step">Schritt 3 – Messbarkeit, Sensorik & KI-Mustererkennung</div>
-        <div class="station-title">Von der Beobachtung zur Berechnung</div>
-        <div class="station-desc">
-          Andrew Adamatzkys Arbeiten zeigen, dass Myzelsignale nicht nur existieren,
-          sondern technisch nutzbar sind – als logische Gatter, als übertragbare Frequenzen,
-          zuletzt als direkte KI-Schnittstelle.
-        </div>
+        <div class="station-step" data-i18n="q_s3_step">Schritt 03 — Messbarkeit, Sensorik &amp; KI-Mustererkennung</div>
+        <div class="station-title" data-i18n="q_s3_title">Von der Beobachtung zur Berechnung</div>
+        <div class="station-desc" data-i18n="q_s3_desc">Andrew Adamatzkys Arbeiten zeigen, dass Myzelsignale nicht nur existieren, sondern technisch nutzbar sind.</div>
       </div>
       <a class="ref" href="https://arxiv.org/abs/2112.07236" target="_blank" rel="noopener">
         <span class="ref-num">05</span>
         <div class="ref-body">
           <div class="ref-title">Logics in fungal mycelium networks (Adamatzky)</div>
           <div class="ref-meta">arXiv:2112.07236 · Neuronales Spiking, logische Gatter, nicht-lineare Eigenschaften im Myzel</div>
-          <div class="ref-relevanz">Belegt, dass Myzelsignale nicht nur existieren, sondern informationsverarbeitend sind – wissenschaftliche Basis für KI-gestützte Mustererkennung in OpenMycoNet.</div>
+          <div class="ref-relevanz">Belegt, dass Myzelsignale informationsverarbeitend sind – Basis für KI-gestützte Mustererkennung.</div>
         </div>
         <span class="ref-badge arxiv">arXiv</span>
         <span class="ref-ext">↗</span>
@@ -451,7 +551,7 @@
         <div class="ref-body">
           <div class="ref-title">Propagation of electrical signals by fungal mycelium composites</div>
           <div class="ref-meta">arXiv:2304.10675 · Frequenzmodulierte Signalübertragung durch Myzel (100–10.000 Hz)</div>
-          <div class="ref-relevanz">Zeigt, dass Myzel Frequenzsignale zuverlässig überträgt – technische Grundlage für die Sensorauslegung des BioComm-Knotens.</div>
+          <div class="ref-relevanz">Zeigt, dass Myzel Frequenzsignale zuverlässig überträgt – Grundlage für die Sensorauslegung des BioComm-Knotens.</div>
         </div>
         <span class="ref-badge arxiv">arXiv</span>
         <span class="ref-ext">↗</span>
@@ -461,7 +561,7 @@
         <div class="ref-body">
           <div class="ref-title">MIND – Mycoponically Integrated Network Device</div>
           <div class="ref-meta">arXiv:2604.22947 · Bioelektrische Sensorik mit KI-Schnittstelle für lebende Pilznetzwerke · 2025</div>
-          <div class="ref-relevanz">Aktuellster Stand der Forschung: Hardware-KI-Kopplung für lebende Myzelnetzwerke – konzeptionell direkt verwandt mit dem BioComm-System.</div>
+          <div class="ref-relevanz">Aktuellster Stand: Hardware-KI-Kopplung für lebende Myzelnetzwerke – konzeptionell direkt verwandt mit BioComm.</div>
         </div>
         <span class="ref-badge arxiv">arXiv</span>
         <span class="ref-ext">↗</span>
@@ -469,46 +569,39 @@
     </div>
 
     <!-- Station 4: Sachbuch -->
-    <div class="station">
+    <div class="station" id="station-buch">
       <div class="station-dot dim"></div>
       <div class="station-header">
-        <div class="station-step dim">Kontext – Populärwissenschaft</div>
-        <div class="station-title">Das Buch, das alles zusammenfasst</div>
-        <div class="station-desc">
-          Merlin Sheldrakes Standardwerk vermittelt die biologische Komplexität
-          von Pilzorganismen einem breiten Publikum – ohne die Wissenschaft zu vereinfachen.
-        </div>
+        <div class="station-step dim" data-i18n="q_s4_step">Kontext — Populärwissenschaft</div>
+        <div class="station-title" data-i18n="q_s4_title">Das Buch, das alles zusammenfasst</div>
+        <div class="station-desc" data-i18n="q_s4_desc">Merlin Sheldrakes Standardwerk vermittelt die biologische Komplexität von Pilzorganismen einem breiten Publikum.</div>
       </div>
       <a class="ref" href="https://www.merlinsheldrake.com/entangled-life" target="_blank" rel="noopener">
         <span class="ref-num">08</span>
         <div class="ref-body">
           <div class="ref-title">Entangled Life – Merlin Sheldrake</div>
           <div class="ref-meta">Random House 2020 · ISBN 978-0525510314 · Dt.: <em>Verwobenes Leben</em>, Ullstein 2021</div>
-          <div class="ref-relevanz">Vermittelt die biologische Komplexität von Pilzorganismen verständlich – empfohlene Lektüre für neue OpenMycoNet-Mitglieder ohne Fachhintergrund.</div>
+          <div class="ref-relevanz">Empfohlene Lektüre für neue OpenMycoNet-Mitglieder ohne Fachhintergrund.</div>
         </div>
         <span class="ref-badge book">Buch</span>
         <span class="ref-ext">↗</span>
       </a>
     </div>
 
-    <!-- Station 5: Citizen Science -->
-    <div class="station">
+    <!-- Station 5 -->
+    <div class="station" id="station-cs">
       <div class="station-dot"></div>
       <div class="station-header">
-        <div class="station-step">Schritt 4 – Citizen Science</div>
-        <div class="station-title">Wissenschaft durch kollektive Beobachtung</div>
-        <div class="station-desc">
-          Citizen-Science-Plattformen wie iNaturalist und FunDive belegen,
-          dass verteilte Laienmessungen wissenschaftlich valide Daten liefern können.
-          OpenMycoNet folgt diesem Modell für bioelektrische Signale.
-        </div>
+        <div class="station-step" data-i18n="q_s5_step">Schritt 04 — Citizen Science</div>
+        <div class="station-title" data-i18n="q_s5_title">Wissenschaft durch kollektive Beobachtung</div>
+        <div class="station-desc" data-i18n="q_s5_desc">Citizen-Science-Plattformen belegen, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern können.</div>
       </div>
       <a class="ref" href="https://theoryandpractice.citizenscienceassociation.org/articles/10.5334/cstp.717" target="_blank" rel="noopener">
         <span class="ref-num">09</span>
         <div class="ref-body">
           <div class="ref-title">iNaturalist as a citizen science platform – methodology and reach</div>
           <div class="ref-meta">Citizen Science: Theory and Practice · DOI 10.5334/cstp.717 · Peer-reviewed</div>
-          <div class="ref-relevanz">Belegt methodisch, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern – Grundlage für OpenMycoNets Citizen-Science-Ansatz.</div>
+          <div class="ref-relevanz">Belegt methodisch, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern.</div>
         </div>
         <span class="ref-badge cs">Journal</span>
         <span class="ref-ext">↗</span>
@@ -518,7 +611,7 @@
         <div class="ref-body">
           <div class="ref-title">FunDive – Citizen Science für Pilzbiodiversität</div>
           <div class="ref-meta">citizenscience.eu · Vergleichsprojekt im Bereich mykologische Bürgerwissenschaft</div>
-          <div class="ref-relevanz">Zeigt, wie Citizen-Science-Infrastruktur für Pilzforschung in der Praxis aussieht – Orientierungspunkt für Aufbau und Community-Strategie.</div>
+          <div class="ref-relevanz">Zeigt, wie Citizen-Science-Infrastruktur für Pilzforschung in der Praxis aussieht.</div>
         </div>
         <span class="ref-badge cs">CS Platform</span>
         <span class="ref-ext">↗</span>
@@ -527,11 +620,198 @@
 
   </div><!-- /timeline -->
 
-  <div class="page-footer">
-    <span>Alle verlinkten Quellen sind Open Access oder öffentlich zugänglich.</span>
-    <span>Stand: Juni 2026 · OpenMycoNet / Robert Jank</span>
-  </div>
+</div><!-- /page -->
 
-</div>
+<!-- Footer (identisch mit index.html) -->
+<footer style="padding:2.5rem clamp(1.5rem,5vw,5rem); text-align:center; border-top:1px solid #0a6040; background:#024530; font-family:'JetBrains Mono',monospace;">
+  <div style="font-size:0.85rem; color:#6ee87e; margin-bottom:0.5rem;">OpenMycoNet</div>
+  <div style="font-size:0.7rem; color:#a0c8a0; line-height:2;">
+    <span data-i18n="footer_copy">Robert Jank · Maintal, Deutschland · 2026</span><br>
+    Gebrauchsmuster DE 20 2025 004 858.3 ·
+    <a href="impressum.html" style="color:#6ee87e; text-decoration:none;" data-i18n="footer_impressum">Impressum</a> ·
+    <a href="datenschutz.html" style="color:#6ee87e; text-decoration:none;" data-i18n="footer_datenschutz">Datenschutz</a> ·
+    <a href="quellennachweise.html" style="color:#6ee87e; text-decoration:none;" data-i18n="footer_quellen">Quellennachweise</a>
+  </div>
+</footer>
+
+<!-- Translations (shared with index.html) -->
+<script src="translations.js"></script>
+
+<script>
+// ── Lang detection (same as index.html) ──────────────────────
+var FLAGS = {
+  de: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>',
+  en: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>',
+  nl: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>',
+  fr: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>',
+  es: '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>'
+};
+var FLAG_TITLES = {de:'Deutsch',en:'English',nl:'Nederlands',fr:'Français',es:'Español'};
+var LANG_NAMES = ['de','en','nl','fr','es'];
+
+function getLang() {
+  var p = new URLSearchParams(window.location.search).get('lang');
+  if (p && LANG_NAMES.indexOf(p) !== -1) return p;
+  var stored = localStorage.getItem('omn_lang');
+  if (stored && LANG_NAMES.indexOf(stored) !== -1) return stored;
+  var bl = (navigator.language || navigator.userLanguage || 'de').split('-')[0].toLowerCase();
+  return LANG_NAMES.indexOf(bl) !== -1 ? bl : 'de';
+}
+
+var currentLang = getLang();
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); }
+  else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyQuellenTranslations(lang);
+  renderFlags(lang);
+  document.documentElement.lang = lang;
+}
+
+function renderFlagsInto(containerId, lang, size) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = LANG_NAMES.map(function(l) {
+    var opacity = l === lang ? '1' : '0.45';
+    var svg = FLAGS[l].replace('width="20" height="14"', 'width="' + size + '" height="' + Math.round(size*0.7) + '"');
+    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" onclick="setLang(\'' + l + '\')" style="opacity:' + opacity + '; display:inline-flex; cursor:pointer;">' + svg + '</a>';
+  }).join('');
+}
+
+function renderFlags(lang) {
+  renderFlagsInto('lang-sidebar', lang, 22);
+  renderFlagsInto('lang-flags-mobile', lang, 28);
+  var sb = document.getElementById('lang-sidebar');
+  if (sb && window.innerWidth > 600) sb.style.display = 'flex';
+}
+
+function applyQuellenTranslations(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  // data-i18n: textContent
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  // data-i18n-html: innerHTML (for em tags)
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  applyQuellenTranslations(currentLang);
+  renderFlags(currentLang);
+});
+
+// ── Mobile menu ──────────────────────────────────────────────
+(function() {
+  var menu = document.getElementById('mobileMenu');
+  var btn  = document.getElementById('hamburger');
+  var cls  = document.getElementById('mobileClose');
+  if (!menu || !btn) return;
+  function openMenu()  { menu.style.display = 'flex'; }
+  function closeMenu() { menu.style.display = 'none'; }
+  btn.addEventListener('click', openMenu);
+  cls.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e){ if(e.target===menu) closeMenu(); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+})();
+
+// ── Interactive path ──────────────────────────────────────────
+function scrollToStation(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var top = el.getBoundingClientRect().top + window.pageYOffset - 90;
+  window.scrollTo({ top: top, behavior: 'smooth' });
+  setTimeout(function() {
+    el.classList.add('highlight');
+    setTimeout(function() { el.classList.remove('highlight'); }, 1400);
+  }, 420);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ── Desktop: click on path-node ──
+  document.querySelectorAll('.path-node[data-target]').forEach(function(node) {
+    node.addEventListener('click', function() {
+      scrollToStation(this.getAttribute('data-target'));
+    });
+  });
+
+  // ── Mobile: accordion toggle ──
+  document.querySelectorAll('.path-accordion-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+      var item = this.parentElement;
+      var isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.path-accordion-item').forEach(function(i) {
+        i.classList.remove('open');
+      });
+      // Toggle clicked
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // ── Mobile: acc-scroll-link ──
+  document.querySelectorAll('.acc-scroll-link[data-target]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      scrollToStation(this.getAttribute('data-target'));
+    });
+  });
+
+  // ── IntersectionObserver: highlight active node on scroll ──
+  var stationMap = {
+    'station-1':     ['q_path_1', 'q_path_2'],
+    'station-kritik':['q_path_kritik'],
+    'station-2':     ['q_path_3'],
+    'station-3':     ['q_path_4', 'q_path_5'],
+    'station-buch':  [],
+    'station-cs':    ['q_path_6']
+  };
+
+  var nodes = document.querySelectorAll('.path-node');
+
+  function setCurrentNode(i18nKeys) {
+    nodes.forEach(function(n) {
+      n.classList.remove('current');
+      // Mark passed nodes
+      var nodeLabel = n.querySelector('.path-node-label');
+      if (nodeLabel) {
+        var key = nodeLabel.getAttribute('data-i18n');
+        if (key && i18nKeys && i18nKeys.indexOf(key) !== -1) {
+          n.classList.add('current');
+        }
+      }
+    });
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        setCurrentNode(stationMap[entry.target.id] || []);
+        entry.target.classList.add('in-view');
+      } else {
+        entry.target.classList.remove('in-view');
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+  Object.keys(stationMap).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+});
+</script>
+
+<!-- Chatbot (identisch mit index.html) -->
+<script src="/biocomm-chat.js"></script>
+
 </body>
 </html>

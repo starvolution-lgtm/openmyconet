@@ -24,6 +24,27 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // --- Konfiguration ---
 require_once __DIR__ . '/config.php'; // definiert ANTHROPIC_API_KEY
 
+// --- Rate Limiting (max. 20 Requests / IP / Stunde, dateibasiert) ---
+$rateDir  = sys_get_temp_dir() . '/omn_rl/';
+if (!is_dir($rateDir)) @mkdir($rateDir, 0700, true);
+$ip       = preg_replace('/[^a-f0-9:.]/i', '', $_SERVER['REMOTE_ADDR'] ?? '0');
+$rateFile = $rateDir . md5($ip) . '.json';
+$window   = 3600; // Sekunden
+$limit    = 20;
+$now      = time();
+$log      = [];
+if (file_exists($rateFile)) {
+    $log = json_decode(file_get_contents($rateFile), true) ?: [];
+}
+$log = array_filter($log, fn($t) => $t > $now - $window);
+if (count($log) >= $limit) {
+    http_response_code(429);
+    echo json_encode(['error' => 'Zu viele Anfragen — bitte später erneut versuchen.']);
+    exit;
+}
+$log[] = $now;
+file_put_contents($rateFile, json_encode(array_values($log)));
+
 // --- Request lesen ---
 $body = json_decode(file_get_contents('php://input'), true);
 $message = trim($body['message'] ?? '');
@@ -32,6 +53,13 @@ $history = $body['history'] ?? [];
 if (!$message) {
     http_response_code(400);
     echo json_encode(['error' => 'Kein Text übermittelt']);
+    exit;
+}
+
+// --- Nachrichtenlänge begrenzen ---
+if (mb_strlen($message) > 1000) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Nachricht zu lang (max. 1000 Zeichen).']);
     exit;
 }
 
@@ -213,8 +241,12 @@ function findChunks(string $query, string $lang, array $chunks, int $topK = 3): 
         'join'      => ['join','node','hardware','step','electrode','operate'],
         'datenschutz' => ['datenschutz','gps','daten','privat','anonym'],
         'privacy'   => ['privacy','gps','data','personal','anonymous'],
-        'spenden'   => ['spenden','unterstütz','förder'],
-        'donate'    => ['donate','support','fund'],
+        'spenden'   => ['spenden','unterstütz','förder','förderer','paypal','finanzier','beitrag','jahresbeitrag'],
+        'donate'    => ['donate','support','fund','sponsor','paypal','contribution','partner'],
+        'fördern'   => ['förder','förderer','partner','unterstütz','gewerblich','jahresbeitrag','beitrag','badge'],
+        'förderer'  => ['förder','förderer','partner','unterstütz','gewerblich','jahresbeitrag','beitrag','badge'],
+        'sponsor'   => ['förder','förderer','partner','unterstütz','gewerblich','sponsor'],
+        'unterstütz'=> ['spenden','förder','förderer','paypal','unterstütz','partner','beitrag'],
         'disponible'=> ['hardware','calendrier','nœud','nodo'],
         'beschikbaar'=> ['hardware','tijdlijn','knooppunt'],
     ];
@@ -343,7 +375,7 @@ foreach (array_slice($history, -10) as $m) {
 $cleanHistory[] = ['role' => 'user', 'content' => $message];
 
 $payload = json_encode([
-    'model'      => 'claude-sonnet-4-20250514',
+    'model'      => 'claude-sonnet-4-6',
     'max_tokens' => 1000,
     'system'     => $system,
     'messages'   => $cleanHistory,

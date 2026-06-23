@@ -12,11 +12,32 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Rate Limiting (max. 5 Absendungen / IP / Stunde, dateibasiert)
+$rateDir  = sys_get_temp_dir() . '/omn_rl/';
+if (!is_dir($rateDir)) @mkdir($rateDir, 0700, true);
+$ip       = preg_replace('/[^a-f0-9:.]/i', '', $_SERVER['REMOTE_ADDR'] ?? '0');
+$rateFile = $rateDir . md5($ip . '_contact') . '.json';
+$window   = 3600;
+$limit    = 5;
+$now      = time();
+$log      = [];
+if (file_exists($rateFile)) {
+    $log = json_decode(file_get_contents($rateFile), true) ?: [];
+}
+$log = array_filter($log, fn($t) => $t > $now - $window);
+if (count($log) >= $limit) {
+    http_response_code(429);
+    echo 'error';
+    exit;
+}
+$log[] = $now;
+file_put_contents($rateFile, json_encode(array_values($log)));
+
 // Felder einlesen und bereinigen
-$name      = trim(strip_tags($_POST['name']       ?? ''));
+$name      = str_replace(["\r","\n"], ' ', trim(strip_tags($_POST['name']       ?? '')));
 $email     = trim(strip_tags($_POST['email']      ?? ''));
-$rolle     = trim(strip_tags($_POST['rolle']      ?? ''));
-$substrat  = trim(strip_tags($_POST['substrat']   ?? ''));
+$rolle     = str_replace(["\r","\n"], ' ', trim(strip_tags($_POST['rolle']      ?? '')));
+$substrat  = str_replace(["\r","\n"], ' ', trim(strip_tags($_POST['substrat']   ?? '')));
 $nachricht = trim(strip_tags($_POST['nachricht']  ?? ''));
 $lang      = trim(strip_tags($_POST['lang']       ?? 'de'));
 $type      = trim(strip_tags($_POST['type']       ?? 'registrierung'));

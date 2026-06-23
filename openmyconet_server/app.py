@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
+from flask_cors import CORS
 from datetime import datetime
 from dotenv import load_dotenv
 import secrets
@@ -31,6 +32,7 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'changeme')
 
 db = SQLAlchemy(app)
 mail = Mail(app)
+CORS(app, origins=['https://www.openmyconet.de', 'https://openmyconet.de'])
 app.register_blueprint(chatbot_bp)
 
 # --- Datenbankmodelle ---
@@ -133,7 +135,8 @@ def register():
             db.session.add(nutzer)
             db.session.commit()
 
-            confirm_url = f'http://127.0.0.1:5000/confirm/{token}'
+            base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
+            confirm_url = f'{base_url}/confirm/{token}'
             msg = Message(
                 subject='OpenMycoNet — Bitte bestätige deine Registrierung',
                 recipients=[email]
@@ -353,4 +356,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         print('Datenbank initialisiert.')
-    app.run(debug=True)
+    app.run(debug=False)

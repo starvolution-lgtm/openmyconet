@@ -1,24 +1,43 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" id="foerderer-html">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Förderer — OpenMycoNet</title>
+<title id="page-title">Förderer — OpenMycoNet</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.svg">
-<meta name="theme-color" content="#0a0f0a">
+<meta name="theme-color" content="#024530">
 <link href="fonts.css" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; }
+body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
   display:flex; justify-content:space-between; align-items:center;
-  padding:1rem 2rem; background-color:rgba(1,30,20,0.97);
+  padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97);
   border-bottom:1px solid #0a6040;
 }
 .nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
 .nav-logo span { color:#f0b84a; }
-.main { max-width:900px; margin:0 auto; padding:5rem 2rem 4rem; }
+nav ul { list-style:none; display:flex; align-items:center; gap:2rem; }
+nav ul a { color:#a0c8a0; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; transition:color 0.2s; }
+nav ul a:hover { color:#f0b84a; }
+nav ul a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
+.hamburger { display:none; flex-direction:row; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; background:transparent; border:1px solid #0a6040; border-radius:0; z-index:101; animation:hamburger-pulse 2.5s ease-in-out infinite; }
+.hamburger:hover, .hamburger:active { border-color:#6ee87e; background:rgba(110,232,126,0.08); box-shadow:0 0 0 3px rgba(110,232,126,0.2); animation:none; }
+.hamburger-bars { display:inline-flex !important; flex-direction:column; gap:5px; vertical-align:middle; }
+.hamburger-bars span { display:block; width:20px; height:2px; background:#e8f5e0; border-radius:2px; }
+.hamburger-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8f5e0; white-space:nowrap; }
+.mobile-menu { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem; }
+.mobile-menu a { font-family:'JetBrains Mono',monospace; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
+.mobile-menu a:hover { color:#6ee87e; }
+.mobile-menu-close { position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; line-height:1; }
+.mobile-lang { display:flex; gap:0.6rem; margin-top:1rem; align-items:center; }
+.lang-sidebar-desktop { display:flex; }
+@media (max-width:700px) {
+  .lang-sidebar-desktop { display:none !important; }
+}
+.main { max-width:900px; margin:0 auto; padding:6rem 2rem 4rem; }
 .section-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#f0b84a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
 h1 { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:400; color:#ffffff; margin-bottom:1.5rem; line-height:1.2; }
 h1 em { font-style:italic; color:#6ee87e; }
@@ -27,27 +46,11 @@ p { color:#b0d4b0; margin-bottom:0.75rem; font-size:1rem; }
 p strong { color:#e8f5e0; }
 a { color:#6ee87e; text-decoration:none; }
 a:hover { text-decoration:underline; }
-
-/* Vorteile */
 .vorteile { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
 .vorteil { flex:1 1 250px; padding:1.5rem; background-color:rgba(0,0,0,0.25); border-left:3px solid #3a9e5a; }
 .vorteil-icon { font-size:1.6rem; margin-bottom:0.5rem; display:block; }
 .vorteil h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:#ffffff; margin-bottom:0.4rem; }
 .vorteil p { font-size:0.9rem; color:#b0d4b0; }
-
-/* Preistabelle */
-.preise { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
-.preis-box { flex:1 1 200px; padding:1.8rem; background-color:rgba(0,0,0,0.25); border:1px solid #0a6040; border-top:3px solid #f0b84a; text-align:center; }
-.preis-box.highlight { border-top-color:#6ee87e; background-color:rgba(0,0,0,0.35); }
-.preis-num { font-family:'Playfair Display',serif; font-size:2.2rem; color:#f0b84a; line-height:1; margin-bottom:0.3rem; }
-.preis-box.highlight .preis-num { color:#6ee87e; }
-.preis-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#b0d4b0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
-.preis-box ul { list-style:none; text-align:left; }
-.preis-box ul li { font-size:0.9rem; color:#b0d4b0; padding:0.3rem 0; border-bottom:1px solid #0a6040; }
-.preis-box ul li:last-child { border-bottom:none; }
-.preis-box ul li::before { content:"✓ "; color:#6ee87e; }
-
-/* Fördererliste */
 .foerderer-grid { display:flex; flex-wrap:wrap; gap:1.5rem; margin:2rem 0; }
 .foerderer-card { flex:1 1 260px; padding:1.5rem; background-color:rgba(0,0,0,0.25); border:1px solid #0a6040; transition:border-color 0.2s; }
 .foerderer-card:hover { border-color:#6ee87e; }
@@ -55,12 +58,6 @@ a:hover { text-decoration:underline; }
 .foerderer-name { font-family:'Playfair Display',serif; font-size:1.2rem; color:#ffffff; margin-bottom:0.4rem; }
 .foerderer-desc { font-size:0.9rem; color:#b0d4b0; line-height:1.6; margin-bottom:0.75rem; }
 .foerderer-link { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; }
-
-/* Placeholder */
-.placeholder { padding:3rem; background-color:rgba(0,0,0,0.2); border:1px dashed #0a6040; text-align:center; margin:2rem 0; }
-.placeholder p { color:#6ee87e; font-style:italic; }
-
-/* Formular */
 .form-wrap { max-width:620px; margin-top:2rem; }
 .form-group { margin-bottom:1.3rem; }
 label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#b0d4b0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
@@ -70,208 +67,178 @@ input:focus, select:focus, textarea:focus { border-color:#6ee87e; }
 textarea { height:90px; resize:vertical; }
 .btn { display:inline-block; padding:0.85rem 2rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; background-color:#0a6040; color:#ffffff; }
 .btn:hover { background-color:#3a9e5a; }
-.btn-amber { background-color:transparent; color:#f0b84a; border:1px solid #f0b84a; }
-.btn-amber:hover { background-color:rgba(240,184,74,0.1); }
 .form-note { margin-top:0.8rem; font-size:0.85rem; color:#b0d4b0; font-style:italic; }
-.back { display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#b0d4b0; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #0a6040; padding-bottom:2px; }
-.back:hover { color:#6ee87e; border-color:#6ee87e; }
 footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
 .footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#b0d4b0; line-height:2; }
+.quick-btn2 { padding:0.4rem 1rem; background:rgba(0,0,0,0.2); border:1px solid #0a6040; color:#b0d4b0; font-family:'JetBrains Mono',monospace; font-size:0.75rem; cursor:pointer; transition:all 0.2s; }
+.quick-btn2:hover, .quick-btn2.active2 { border-color:#f0b84a; color:#f0b84a; background:rgba(240,184,74,0.1); }
+.lang-flag { display:flex; align-items:center; justify-content:center; width:36px; height:28px; border-radius:4px; text-decoration:none; cursor:pointer; transition:opacity 0.2s, border-color 0.2s; }
+.lang-flag.active { opacity:1; border:1px solid #6ee87e; background:rgba(0,0,0,0.4); }
+.lang-flag.inactive { opacity:0.6; border:1px solid #0a6040; background:rgba(0,0,0,0.25); }
 @media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } h1 { font-size:2rem; } }
+
+@media (max-width:700px) {
+  nav ul { display:none; }
+  .hamburger { display:flex !important; }
+}
+
+@keyframes hamburger-pulse {
+  0%   { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
+  50%  { border-color:#6ee87e; box-shadow: 0 0 0 3px rgba(110,232,126,0.15); }
+  100% { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
+}
 </style>
 <link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html">
-<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer-en.html">
-<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/foerderer-nl.html">
-<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/foerderer-fr.html">
-<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/foerderer-es.html">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer.html?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/foerderer.html?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/foerderer.html?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/foerderer.html?lang=es">
 <link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/foerderer.html">
-<link rel="canonical" href="https://www.openmyconet.de/foerderer.html">
+<link rel="canonical" id="foerderer-canonical" href="https://www.openmyconet.de/foerderer.html">
 </head>
 <body>
 
 <nav>
   <a href="index.html" class="nav-logo">Open<span>MycoNet</span></a>
-  <a href="index.html" style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#00e5e5; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Startseite</a>
+  <ul>
+    <li><a href="index.html#warum" data-foerderer-i18n="nav_warum">Warum</a></li>
+    <li><a href="index.html#mitmachen" data-foerderer-i18n="nav_mitmachen">Mitmachen</a></li>
+    <li><a href="index.html#spenden" data-foerderer-i18n="nav_spenden">Unterstützen</a></li>
+    <li><a href="index.html#anmelden" data-foerderer-i18n="nav_anmelden">Anmelden</a></li>
+    <li><a href="index.html#ueber" data-foerderer-i18n="nav_ueber">Über</a></li>
+    <li><a href="foerderer.html" class="nav-active" data-foerderer-i18n="nav_foerderer">Förderer</a></li>
+    <li><a href="quellennachweise.html" data-foerderer-i18n="nav_quellen">Quellen</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
+    <span class="hamburger-bars"><span></span><span></span><span></span></span>
+    <span class="hamburger-label" data-foerderer-i18n="nav_menu">Menü</span>
+  </button>
 </nav>
 
-<!-- Schwebende Sprachauswahl -->
-<div style="position:fixed; right:1.2rem; top:50%; transform:translateY(-50%); z-index:999; display:flex; flex-direction:column; gap:0.4rem;">
-  <a href="foerderer.html" title="Deutsch" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.4); border:1px solid #6ee87e; border-radius:4px; text-decoration:none; opacity:1;">
+<!-- Mobile Overlay-Menü -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileClose">✕</button>
+  <a href="index.html#warum" data-foerderer-i18n="nav_warum">Warum</a>
+  <a href="index.html#mitmachen" data-foerderer-i18n="nav_mitmachen">Mitmachen</a>
+  <a href="index.html#spenden" data-foerderer-i18n="nav_spenden">Unterstützen</a>
+  <a href="index.html#anmelden" data-foerderer-i18n="nav_anmelden">Anmelden</a>
+  <a href="index.html#ueber" data-foerderer-i18n="nav_ueber">Über</a>
+  <a href="foerderer.html" data-foerderer-i18n="nav_foerderer">Förderer</a>
+  <a href="quellennachweise.html" data-foerderer-i18n="nav_quellen">Quellen</a>
+  <div class="mobile-lang">
+    <a href="javascript:void(0)" onclick="setFoerdererLang('de')" title="Deutsch" class="lang-flag active" id="flag-de-m">
+      <svg width="28" height="19" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>
+    </a>
+    <a href="javascript:void(0)" onclick="setFoerdererLang('en')" title="English" class="lang-flag inactive" id="flag-en-m">
+      <svg width="28" height="19" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>
+    </a>
+    <a href="javascript:void(0)" onclick="setFoerdererLang('nl')" title="Nederlands" class="lang-flag inactive" id="flag-nl-m">
+      <svg width="28" height="19" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>
+    </a>
+    <a href="javascript:void(0)" onclick="setFoerdererLang('fr')" title="Français" class="lang-flag inactive" id="flag-fr-m">
+      <svg width="28" height="19" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>
+    </a>
+    <a href="javascript:void(0)" onclick="setFoerdererLang('es')" title="Español" class="lang-flag inactive" id="flag-es-m">
+      <svg width="28" height="19" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- Schwebende Sprachauswahl (nur Desktop) -->
+<div style="position:fixed; right:1.2rem; top:calc(50vh - 80px); z-index:199; display:flex; flex-direction:column; gap:0.4rem;" id="lang-sidebar" class="lang-sidebar-desktop">
+  <a href="javascript:void(0)" onclick="setFoerdererLang('de')" title="Deutsch" class="lang-flag active" id="flag-de">
     <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>
   </a>
-  <a href="foerderer-en.html" title="English" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+  <a href="javascript:void(0)" onclick="setFoerdererLang('en')" title="English" class="lang-flag inactive" id="flag-en">
     <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>
   </a>
-  <a href="foerderer-nl.html" title="Nederlands" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+  <a href="javascript:void(0)" onclick="setFoerdererLang('nl')" title="Nederlands" class="lang-flag inactive" id="flag-nl">
     <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>
   </a>
-  <a href="foerderer-fr.html" title="Français" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+  <a href="javascript:void(0)" onclick="setFoerdererLang('fr')" title="Français" class="lang-flag inactive" id="flag-fr">
     <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>
   </a>
-  <a href="foerderer-es.html" title="Español" style="display:flex; align-items:center; justify-content:center; width:36px; height:28px; background:rgba(0,0,0,0.25); border:1px solid #0a6040; border-radius:4px; text-decoration:none; opacity:0.6;">
+  <a href="javascript:void(0)" onclick="setFoerdererLang('es')" title="Español" class="lang-flag inactive" id="flag-es">
     <svg width="22" height="15" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>
   </a>
 </div>
 
 <div class="main">
-  <p class="section-label">Partnerschaft</p>
-  <h1>Gewerbliche <em>Förderer</em></h1>
+  <p class="section-label" id="f-section-label">Partnerschaft</p>
+  <h1 id="f-h1">Gewerbliche <em>Förderer</em></h1>
 
-  <p style="color:#d8e8d0; font-size:1.1rem; max-width:680px; margin-bottom:1rem;">
-    OpenMycoNet verbindet Menschen die sich für Pilze, Mykorrhiza und Bodengesundheit
-    begeistern — weltweit. Als gewerblicher Förderer erreichen Sie genau diese Zielgruppe
-    und unterstützen gleichzeitig echte Citizen Science.
-  </p>
-  <p style="max-width:680px; margin-bottom:2rem;">
-    Wir suchen Partner die thematisch zu uns passen — Pilzzüchter, Buchhandlungen,
-    Hersteller nachhaltiger Materialien, Agrartech-Unternehmen, Forstbetriebe und alle
-    die das Thema Mykologie ernst nehmen. Keine Werbung für beliebige Produkte —
-    nur echte Partner mit echtem Bezug zum Thema.
-  </p>
-
-  <!-- Vorteile -->
-  <h2>Was Förderer erhalten</h2>
-  <div class="vorteile">
-    <div class="vorteil">
-      <span class="vorteil-icon">📋</span>
-      <h3>Eintrag in der Fördererliste</h3>
-      <p>Name, Beschreibung, Kontaktdaten und Link — sichtbar für alle Besucher von openmyconet.de.</p>
-    </div>
-    <div class="vorteil">
-      <span class="vorteil-icon">🏷️</span>
-      <h3>Förderer-Badge</h3>
-      <p>„Offizieller Förderer von OpenMycoNet" — als Badge für Ihre Website oder Social Media.</p>
-    </div>
-    <div class="vorteil">
-      <span class="vorteil-icon">📧</span>
-      <h3>Community-Reichweite</h3>
-      <p>Nennung in relevanten E-Mails an unsere wachsende Community aus Citizen Scientists.</p>
-    </div>
-    <div class="vorteil">
-      <span class="vorteil-icon">🌿</span>
-      <h3>Thematische Sichtbarkeit</h3>
-      <p>Ihre Marke im Kontext echter Wissenschaft — glaubwürdig, nachhaltig, international.</p>
-    </div>
+  <p id="f-intro-p1" style="color:#e8f5e0; font-size:1.1rem; max-width:680px; margin-bottom:2rem;">
+    OpenMycoNet verbindet Menschen die sich für Pilze, Mykorrhiza und Bodengesundheit begeistern — weltweit. Als gewerblicher Förderer erreichen Sie genau diese Zielgruppe und unterstützen gleichzeitig echte Citizen Science.
+  </p>  <!-- Vorteile -->
+  <h2 id="f-h2-vorteile">Was Förderer erhalten</h2>
+  <div class="vorteile" id="f-vorteile">
+    <div class="vorteil"><span class="vorteil-icon">📋</span><h3 id="v0-h">Eintrag in der Fördererliste</h3><p id="v0-p">Name, Beschreibung, Kontaktdaten und Link — sichtbar für alle Besucher von openmyconet.de.</p></div>
+    <div class="vorteil"><span class="vorteil-icon">🏷️</span><h3 id="v1-h">Förderer-Badge</h3><p id="v1-p">„Offizieller Förderer von OpenMycoNet" — als Badge für Ihre Website oder Social Media.</p></div>
+    <div class="vorteil"><span class="vorteil-icon">📧</span><h3 id="v2-h">Community-Reichweite</h3><p id="v2-p">Nennung in relevanten E-Mails an unsere wachsende Community aus Citizen Scientists.</p></div>
+    <div class="vorteil"><span class="vorteil-icon">🌿</span><h3 id="v3-h">Thematische Sichtbarkeit</h3><p id="v3-p">Ihre Marke im Kontext echter Wissenschaft — glaubwürdig, nachhaltig, international.</p></div>
   </div>
 
-  <!-- Preise -->
-  <h2>Jahresbeitrag — frei wählbar ab 50 €</h2>
-  <p>Der Beitrag ist freiwillig und nach oben offen. Er richtet sich nach Ihren
-  Möglichkeiten und Ihrer Wertschätzung für das Projekt.
-  <strong>Alle Förderer erhalten dieselbe Sichtbarkeit</strong> —
-  unabhängig vom gewählten Betrag.</p>
-
-  <style>
-  .quick-btn2 {
-    padding:0.4rem 1rem; background:rgba(0,0,0,0.2); border:1px solid #0a6040;
-    color:#b0d4b0; font-family:'JetBrains Mono',monospace; font-size:0.75rem;
-    cursor:pointer; transition:all 0.2s;
-  }
-  .quick-btn2:hover, .quick-btn2.active2 {
-    border-color:#f0b84a; color:#f0b84a; background:rgba(240,184,74,0.1);
-  }
-  </style>
-
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var slider = document.getElementById('beitrag-slider2');
-    var numInput = document.getElementById('beitrag-num2');
-    var formBeitrag = document.getElementById('form-beitrag');
-    var formAnzeige = document.getElementById('form-beitrag-anzeige');
-
-    function setVal(val) {
-      val = Math.max(50, Math.min(1000, parseInt(val) || 50));
-      slider.value = val;
-      numInput.value = val;
-      if (formBeitrag) formBeitrag.value = val;
-      if (formAnzeige) formAnzeige.textContent = val;
-      document.querySelectorAll('.quick-btn2').forEach(function(b) {
-        b.classList.toggle('active2', parseInt(b.dataset.val) === val);
-      });
-    }
-
-    slider.addEventListener('input', function() { setVal(parseInt(slider.value)); });
-    numInput.addEventListener('input', function() { setVal(parseInt(numInput.value)); });
-
-    document.querySelectorAll('.quick-btn2').forEach(function(b) {
-      b.addEventListener('click', function() { setVal(parseInt(b.dataset.val)); });
-    });
-
-    setVal(150); // Startwert
-  });
-  </script>
+  <!-- Beitrag -->
+  <h2 id="f-h2-beitrag">Jahresbeitrag — frei wählbar ab 50 €</h2>
+  <p id="f-beitrag-p">Der Beitrag ist freiwillig und nach oben offen. <strong>Alle Förderer erhalten dieselbe Sichtbarkeit</strong> — unabhängig vom gewählten Betrag.</p>
 
   <!-- Ablauf -->
-  <h2>So funktioniert es</h2>
-  <p><strong>1. Anfrage senden</strong> — über das Formular unten oder per E-Mail an kontakt@openmyconet.de.</p>
-  <p><strong>2. Kurze Prüfung</strong> — wir prüfen ob die thematische Passung gegeben ist. Das dauert max. 48 Stunden.</p>
-  <p><strong>3. Beitrag leisten</strong> — freiwillig, ab 50 €, über PayPal oder Überweisung.</p>
-  <p><strong>4. Eintrag live</strong> — Ihr Eintrag erscheint innerhalb von 24 Stunden in der Fördererliste.</p>
-  <p><strong>5. Jährliche Erneuerung</strong> — 2–3 Monate vor Ablauf erhalten Sie eine E-Mail mit der Frage ob Sie die Förderpartnerschaft fortsetzen möchten. Kein Automatismus, kein Druck.</p>
+  <h2 id="f-h2-ablauf">So funktioniert es</h2>
+  <div id="f-steps">
+    <p><strong>1. Anfrage senden</strong> — über das Formular unten oder per E-Mail an kontakt@openmyconet.de.</p>
+    <p><strong>2. Kurze Prüfung</strong> — wir prüfen ob die thematische Passung gegeben ist. Das dauert max. 48 Stunden.</p>
+    <p><strong>3. Beitrag leisten</strong> — freiwillig, ab 50 €, über PayPal oder Überweisung.</p>
+    <p><strong>4. Eintrag live</strong> — Ihr Eintrag erscheint innerhalb von 24 Stunden in der Fördererliste.</p>
+    <p><strong>5. Jährliche Erneuerung</strong> — 2–3 Monate vor Ablauf erhalten Sie eine E-Mail. Kein Automatismus, kein Druck.</p>
+  </div>
 
   <!-- Aktuelle Förderer -->
-  <h2>Aktuelle Förderer</h2>
-
+  <h2 id="f-h2-liste">Aktuelle Förderer</h2>
   <div class="foerderer-grid">
     <div class="foerderer-card">
       <div class="foerderer-badge">★ Offizieller Förderer ★</div>
       <div class="foerderer-name">GPG-Projekt GmbH</div>
-      <div class="foerderer-desc">
-        GPG-Projekt GmbH unterstützt OpenMycoNet als einer der ersten gewerblichen Förderer
-        und begleitet die Entwicklung des BioComm-Sensorsystems für die Anwendung in
-        Forstwirtschaft und Präzisionslandwirtschaft.
-      </div>
+      <div class="foerderer-desc" id="gpg-desc">GPG-Projekt GmbH unterstützt OpenMycoNet als einer der ersten gewerblichen Förderer und begleitet die Entwicklung des BioComm-Sensorsystems für die Anwendung in Forstwirtschaft und Präzisionslandwirtschaft.</div>
       <a href="https://www.gpg-projekt.de" class="foerderer-link" target="_blank" rel="noopener">www.gpg-projekt.de</a>
     </div>
   </div>
-
-  <p style="font-size:1.1rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem;">Seien Sie der Nächste.</p>
+  <p id="f-next-headline" style="font-size:1.3rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem;">Machen Sie mit.</p>
+  <p id="f-next-sub" style="font-size:0.95rem; color:#a0c8a0; text-align:center; margin-top:0.5rem; line-height:1.7;">Fördern und unterstützen Sie unser Citizen-Science-Netzwerk – Sie für OpenMycoNet, OpenMycoNet für alle.</p>
 
   <!-- Anfrageformular -->
-  <h2>Förderpartnerschaft anfragen</h2>
-  <p>Schreiben Sie uns kurz wer Sie sind und warum OpenMycoNet zu Ihnen passt.
-  Wir melden uns innerhalb von 48 Stunden.</p>
+  <h2 id="f-h2-form">Förderpartnerschaft anfragen</h2>
+  <p id="f-form-intro">Schreiben Sie uns kurz wer Sie sind und warum OpenMycoNet zu Ihnen passt. Wir melden uns innerhalb von 48 Stunden.</p>
 
   <form class="form-wrap" onsubmit="handleFoerderer(event)">
     <div class="form-group">
-      <label>Unternehmen / Name *</label>
-      <input type="text" name="firma" placeholder="z.B. MykoLibri, Pilzzucht Müller..." required>
+      <label id="f-lbl-firma">Unternehmen / Name *</label>
+      <input type="text" name="firma" required>
     </div>
     <div class="form-group">
-      <label>Website</label>
+      <label id="f-lbl-website">Website</label>
       <input type="url" name="website" placeholder="https://ihre-website.de">
     </div>
     <div class="form-group">
-      <label>E-Mail-Adresse *</label>
-      <input type="email" name="email" placeholder="kontakt@ihre-firma.de" required>
+      <label id="f-lbl-email">E-Mail-Adresse *</label>
+      <input type="email" name="email" required>
     </div>
     <div class="form-group">
-      <label>Thematischer Bezug</label>
-      <select name="bereich">
-        <option>Pilzzucht / Mykologie</option>
-        <option>Buchhandlung / Verlag</option>
-        <option>Nachhaltige Materialien (Myzel)</option>
-        <option>Landwirtschaft / Agrartech</option>
-        <option>Forstwirtschaft / Naturschutz</option>
-        <option>Bildung / Forschung</option>
-        <option>Sonstiges</option>
-      </select>
+      <label id="f-lbl-bereich">Thematischer Bezug</label>
+      <select name="bereich" id="f-select-bereich"></select>
     </div>
     <div class="form-group">
-      <label>Gewünschter Jahresbeitrag</label>
+      <label id="f-lbl-beitrag">Gewünschter Jahresbeitrag</label>
       <input type="hidden" name="beitrag" id="form-beitrag" value="150">
-
-      <!-- Betragsauswahl direkt hier -->
       <div style="margin-bottom:1rem;">
         <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
           <input type="range" id="beitrag-slider2" min="50" max="1000" step="10" value="150"
             style="flex:1; accent-color:#f0b84a; height:4px; cursor:pointer; background:rgba(240,184,74,0.25);">
           <div style="display:flex; align-items:center; gap:0.4rem;">
             <input type="number" id="beitrag-num2" min="50" value="150"
-              style="width:80px; padding:0.5rem; background:#ffffff; border:1px solid #1e2e1e;
+              style="width:80px; padding:0.5rem; background:#ffffff; border:1px solid #0a6040;
                      color:#1a1a1a; font-family:'JetBrains Mono',monospace; font-size:1.1rem;
                      text-align:right; outline:none;">
-            <span style="color:#6a8a6a; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">€ / Jahr</span>
+            <span id="f-year-label" style="color:#b0d4b0; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">€ / Jahr</span>
           </div>
         </div>
         <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
@@ -282,61 +249,235 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
           <button type="button" class="quick-btn2" data-val="500">500 €</button>
         </div>
       </div>
-
-      <p style="font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:bold; color:#f0b84a; margin:0.5rem 0 0; background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); display:inline-block; padding:0.4rem 1rem;">
-        Ausgewählt: <span id="form-beitrag-anzeige">150</span> € / Jahr
+      <p style="font-family:'Lora',serif; font-size:1.1rem; font-weight:bold; color:#f0b84a; margin:0.5rem 0 0; background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); display:inline-block; padding:0.4rem 1rem;">
+        <span id="f-selected-label">Ausgewählt:</span> <span id="form-beitrag-anzeige">150</span> <span id="f-year-label2">€ / Jahr</span>
       </p>
     </div>
     <div class="form-group">
-      <label>Kurze Beschreibung Ihres Unternehmens *</label>
-      <textarea name="beschreibung" placeholder="Was machen Sie? Warum passt OpenMycoNet zu Ihnen?" required></textarea>
+      <label id="f-lbl-beschreibung">Kurze Beschreibung Ihres Unternehmens *</label>
+      <textarea name="beschreibung" required></textarea>
     </div>
     <button type="submit" class="btn" id="foerderer-btn">Anfrage senden</button>
-    <p class="form-note">
-      Keine Vorauszahlung. Nach Ihrer Anfrage prüfen wir die thematische Passung (max. 48h)
-      und senden Ihnen einen Fragebogen für Ihren persönlichen Eintrag inkl. Logo-Upload.
-    </p>
+    <p class="form-note" id="f-form-note">Keine Vorauszahlung. Nach Ihrer Anfrage prüfen wir die thematische Passung (max. 48h) und senden Ihnen einen Fragebogen für Ihren persönlichen Eintrag.</p>
   </form>
 
-  <a href="index.html" style="display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#00e5e5; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Zurück zur Startseite</a>
+  <a href="index.html" id="f-back" style="display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#00e5e5; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Zurück zur Startseite</a>
 </div>
 
-<footer>
+<footer style="padding:2.5rem clamp(1.5rem,5vw,5rem); text-align:center; border-top:1px solid #0a6040; background:#024530; font-family:'JetBrains Mono',monospace;">
+  <div style="font-size:0.85rem; color:#6ee87e; margin-bottom:0.5rem;">OpenMycoNet</div>
   <div class="footer-info">
-    OpenMycoNet · Robert Jank · Maintal · 2026 ·
-    <a href="impressum.html" style="color:#7ec87e;">Impressum</a> ·
-    <a href="datenschutz.html" style="color:#7ec87e;">Datenschutz</a>
+    <span id="f-footer-copy">Robert Jank · Maintal, Deutschland · 2026</span><br>
+    Gebrauchsmuster DE 20 2025 004 858.3 ·
+    <a href="impressum.html" style="color:#6ee87e; text-decoration:none;" id="f-footer-impressum">Impressum</a> ·
+    <a href="datenschutz.html" style="color:#6ee87e; text-decoration:none;" id="f-footer-datenschutz">Datenschutz</a> ·
+    <a href="quellennachweise.html" style="color:#6ee87e; text-decoration:none;" id="f-footer-quellen">Quellennachweise</a>
   </div>
 </footer>
 
+<script src="foerderer_translations.js"></script>
 <script>
+// Sprache sofort nach Laden der Translations anwenden
+window.addEventListener('load', function() {
+  applyFoerdererLang(getFoerdererLang());
+});
+// ─── Sprachumschaltung ────────────────────────────────────────
+var LANGS = ['de','en','nl','fr','es'];
+
+function getFoerdererLang() {
+  var p = new URLSearchParams(window.location.search).get('lang');
+  if (p && LANGS.indexOf(p) !== -1) return p;
+  var stored = localStorage.getItem('omn_lang');
+  if (stored && LANGS.indexOf(stored) !== -1) return stored;
+  var bl = (navigator.language || 'de').split('-')[0].toLowerCase();
+  return LANGS.indexOf(bl) !== -1 ? bl : 'de';
+}
+
+
+// ── Mobile menu ──────────────────────────────────────────────
+(function() {
+  var menu = document.getElementById('mobileMenu');
+  var btn  = document.getElementById('hamburger');
+  var cls  = document.getElementById('mobileClose');
+  if (!menu || !btn) return;
+  function openMenu()  { menu.style.display = 'flex'; }
+  function closeMenu() { menu.style.display = 'none'; }
+  btn.addEventListener('click', openMenu);
+  cls.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e){ if(e.target===menu) closeMenu(); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+})();
+
+// ── Nav i18n ──────────────────────────────────────────────────
+function applyFoerdererNavTranslations(lang) {
+  var NAV_LABELS = {
+    de: { nav_warum:'Warum', nav_mitmachen:'Mitmachen', nav_spenden:'Unterstützen', nav_anmelden:'Anmelden', nav_ueber:'Über', nav_foerderer:'Förderer', nav_quellen:'Quellen', nav_menu:'Menü' },
+    en: { nav_warum:'Why', nav_mitmachen:'Join', nav_spenden:'Support', nav_anmelden:'Register', nav_ueber:'About', nav_foerderer:'Supporters', nav_quellen:'References', nav_menu:'Menu' },
+    nl: { nav_warum:'Waarom', nav_mitmachen:'Meedoen', nav_spenden:'Ondersteunen', nav_anmelden:'Aanmelden', nav_ueber:'Over', nav_foerderer:'Partners', nav_quellen:'Bronnen', nav_menu:'Menu' },
+    fr: { nav_warum:'Pourquoi', nav_mitmachen:'Participer', nav_spenden:'Soutenir', nav_anmelden:"S'inscrire", nav_ueber:'À propos', nav_foerderer:'Partenaires', nav_quellen:'Sources', nav_menu:'Menu' },
+    es: { nav_warum:'Por qué', nav_mitmachen:'Participar', nav_spenden:'Apoyar', nav_anmelden:'Registrarse', nav_ueber:'Acerca', nav_foerderer:'Patrocinadores', nav_quellen:'Fuentes', nav_menu:'Menú' }
+  };
+  var T = NAV_LABELS[lang] || NAV_LABELS.de;
+  document.querySelectorAll('[data-foerderer-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-foerderer-i18n');
+    if (T[key]) el.textContent = T[key];
+  });
+}
+function setFoerdererLang(lang) {
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyFoerdererLang(lang);
+}
+
+function applyFoerdererLang(lang) {
+  var t = FOERDERER_TRANS[lang] || FOERDERER_TRANS['de'];
+
+  document.getElementById('foerderer-html').setAttribute('lang', lang);
+  document.getElementById('page-title').textContent = t.title;
+
+  // Flags (Desktop + Mobile)
+  LANGS.forEach(function(l) {
+    var f = document.getElementById('flag-' + l);
+    if (f) { f.className = 'lang-flag ' + (l === lang ? 'active' : 'inactive'); }
+    var fm = document.getElementById('flag-' + l + '-m');
+    if (fm) { fm.className = 'lang-flag ' + (l === lang ? 'active' : 'inactive'); }
+  });
+
+  // Texte
+  document.getElementById('f-section-label').textContent = t.section_label;
+  document.getElementById('f-h1').innerHTML = t.h1;
+  document.getElementById('f-intro-p1').textContent = t.intro_p1;
+  document.getElementById('f-h2-vorteile').textContent = t.h2_vorteile;
+  document.getElementById('f-h2-beitrag').textContent = t.h2_beitrag;
+  document.getElementById('f-h2-ablauf').textContent = t.h2_ablauf;
+  document.getElementById('f-h2-liste').textContent = t.h2_liste;
+  document.getElementById('f-h2-form').textContent = t.h2_form;
+  document.getElementById('f-lbl-firma').textContent = t.lbl_firma;
+  document.getElementById('f-lbl-website').textContent = t.lbl_website;
+  document.getElementById('f-lbl-email').textContent = t.lbl_email;
+  document.getElementById('f-lbl-bereich').textContent = t.lbl_bereich;
+  document.getElementById('f-lbl-beitrag').textContent = t.lbl_beitrag;
+  document.getElementById('f-lbl-beschreibung').textContent = t.lbl_beschreibung;
+  document.getElementById('f-year-label').textContent = t.year_label;
+  document.getElementById('f-year-label2').textContent = t.year_label;
+  document.getElementById('f-form-note').textContent = t.form_note;
+  // nav-back removed
+  applyFoerdererNavTranslations(lang);
+  document.getElementById('foerderer-btn').textContent = t.submit;
+  document.getElementById('f-selected-label').textContent = t.selected_label || 'Ausgewählt:';
+  document.getElementById('f-beitrag-p').textContent = t.beitrag_note || '';
+  document.getElementById('f-form-intro').textContent = t.form_intro || '';
+
+  // Vorteile
+  if (t.vorteile) {
+    t.vorteile.forEach(function(v, i) {
+      var h = document.getElementById('v' + i + '-h');
+      var p = document.getElementById('v' + i + '-p');
+      if (h) h.textContent = v.h;
+      if (p) p.textContent = v.p;
+    });
+  }
+
+  // Ablauf-Schritte
+  if (t.steps) {
+    var stepsEl = document.getElementById('f-steps');
+    stepsEl.innerHTML = t.steps.map(function(s) {
+      return '<p><strong>' + s.num + '</strong> ' + s.text + '</p>';
+    }).join('');
+  }
+
+  // Select-Optionen
+  var sel = document.getElementById('f-select-bereich');
+  if (sel && t.opts) {
+    sel.innerHTML = t.opts.map(function(o) { return '<option>' + o + '</option>'; }).join('');
+  }
+
+  // Zweiteiliger Call-to-Action
+  var nextHeadlines = { de: 'Machen Sie mit.', en: 'Join us.', nl: 'Doe mee.', fr: 'Rejoignez-nous.', es: 'Únase a nosotros.' };
+  var nextSubs = {
+    de: 'Fördern und unterstützen Sie unser Citizen-Science-Netzwerk – Sie für OpenMycoNet, OpenMycoNet für alle.',
+    en: 'Support our citizen science network – you for OpenMycoNet, OpenMycoNet for everyone.',
+    nl: 'Steun ons citizen science-netwerk – u voor OpenMycoNet, OpenMycoNet voor iedereen.',
+    fr: 'Soutenez notre réseau de science citoyenne – vous pour OpenMycoNet, OpenMycoNet pour tous.',
+    es: 'Apoye nuestra red de ciencia ciudadana – usted para OpenMycoNet, OpenMycoNet para todos.'
+  };
+  var nh = document.getElementById('f-next-headline');
+  var ns = document.getElementById('f-next-sub');
+  if (nh) nh.textContent = nextHeadlines[lang] || nextHeadlines.de;
+  if (ns) ns.textContent = nextSubs[lang] || nextSubs.de;
+
+  // Footer
+  var footerCopy = { de: 'Robert Jank · Maintal, Deutschland · 2026', en: 'Robert Jank · Maintal, Germany · 2026', nl: 'Robert Jank · Maintal, Duitsland · 2026', fr: 'Robert Jank · Maintal, Allemagne · 2026', es: 'Robert Jank · Maintal, Alemania · 2026' };
+  var footerImpressum = { de: 'Impressum', en: 'Legal Notice', nl: 'Colofon', fr: 'Mentions légales', es: 'Aviso legal' };
+  var footerDatenschutz = { de: 'Datenschutz', en: 'Privacy', nl: 'Privacy', fr: 'Confidentialité', es: 'Privacidad' };
+  var footerQuellen = { de: 'Quellennachweise', en: 'References', nl: 'Bronverwijzingen', fr: 'Références', es: 'Referencias' };
+  var fc = document.getElementById('f-footer-copy');
+  var fi = document.getElementById('f-footer-impressum');
+  var fd = document.getElementById('f-footer-datenschutz');
+  var fq = document.getElementById('f-footer-quellen');
+  if (fc) fc.textContent = footerCopy[lang] || footerCopy.de;
+  if (fi) fi.textContent = footerImpressum[lang] || footerImpressum.de;
+  if (fd) fd.textContent = footerDatenschutz[lang] || footerDatenschutz.de;
+  if (fq) fq.textContent = footerQuellen[lang] || footerQuellen.de;
+}
+
+// ─── Slider & Quick-Buttons ───────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  var slider = document.getElementById('beitrag-slider2');
+  var numInput = document.getElementById('beitrag-num2');
+  var formBeitrag = document.getElementById('form-beitrag');
+  var formAnzeige = document.getElementById('form-beitrag-anzeige');
+
+  function setVal(val) {
+    val = Math.max(50, Math.min(1000, parseInt(val) || 50));
+    slider.value = val;
+    numInput.value = val;
+    if (formBeitrag) formBeitrag.value = val;
+    if (formAnzeige) formAnzeige.textContent = val;
+    document.querySelectorAll('.quick-btn2').forEach(function(b) {
+      b.classList.toggle('active2', parseInt(b.dataset.val) === val);
+    });
+  }
+
+  slider.addEventListener('input', function() { setVal(parseInt(slider.value)); });
+  numInput.addEventListener('input', function() { setVal(parseInt(numInput.value)); });
+  document.querySelectorAll('.quick-btn2').forEach(function(b) {
+    b.addEventListener('click', function() { setVal(parseInt(b.dataset.val)); });
+  });
+  setVal(150);
+});
+
+// ─── Formular ─────────────────────────────────────────────────
 function handleFoerderer(e) {
   e.preventDefault();
   var btn = document.getElementById('foerderer-btn');
+  var lang = getFoerdererLang();
+  var t = FOERDERER_TRANS[lang] || FOERDERER_TRANS['de'];
   var form = e.target;
   var data = new FormData(form);
-  btn.textContent = 'Wird gesendet...';
+  btn.textContent = t.sending;
   btn.disabled = true;
   fetch('foerderer.php', { method:'POST', body:data })
     .then(function(r){ return r.text(); })
     .then(function(resp){
       if(resp.trim()==='ok'){
-        btn.textContent = '✓ Anfrage eingegangen — wir melden uns!';
-        btn.style.backgroundColor = '#4a9e4a';
+        btn.textContent = t.success;
+        btn.style.backgroundColor = '#3a9e5a';
       } else {
-        btn.textContent = 'Fehler — bitte E-Mail senden';
+        btn.textContent = t.error;
         btn.style.backgroundColor = '#8b2020';
         btn.disabled = false;
       }
     })
     .catch(function(){
-      btn.textContent = 'Fehler — bitte E-Mail senden';
+      btn.textContent = t.error;
       btn.style.backgroundColor = '#8b2020';
       btn.disabled = false;
     });
 }
 </script>
 <script src="/biocomm-chat.js"></script>
-
 </body>
 </html>

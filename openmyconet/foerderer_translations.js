@@ -57,7 +57,12 @@ const FOERDERER_TRANS = {
     error: 'Fehler — bitte E-Mail an kontakt@openmyconet.de',
     sending: 'Wird gesendet...',
     year_label: '€ / Jahr',
+    selected_label: 'Ausgewählt:',
+    beitrag_note: 'Der Beitrag ist freiwillig und nach oben offen. Alle Förderer erhalten dieselbe Sichtbarkeit — unabhängig vom gewählten Betrag.',
+    form_intro: 'Schreiben Sie uns kurz wer Sie sind und warum OpenMycoNet zu Ihnen passt. Wir melden uns innerhalb von 48 Stunden.',
     adjustable: '— oben anpassbar',
+    cta_h: 'Machen Sie mit.',
+    cta_p: 'Fördern und unterstützen Sie unser Citizen-Science-Netzwerk — Sie für OpenMycoNet, OpenMycoNet für alle.',
   },
 
   en: {
@@ -116,7 +121,12 @@ const FOERDERER_TRANS = {
     error: 'Error — please email kontakt@openmyconet.de',
     sending: 'Sending...',
     year_label: '€ / year',
+    selected_label: 'Selected:',
+    beitrag_note: 'The contribution is voluntary and open-ended. All supporters receive the same visibility — regardless of the amount chosen.',
+    form_intro: 'Tell us briefly who you are and why OpenMycoNet suits you. We will get back to you within 48 hours.',
     adjustable: '— adjustable above',
+    cta_h: 'Join us.',
+    cta_p: 'Support and fund our citizen science network — you for OpenMycoNet, OpenMycoNet for everyone.',
   },
 
   nl: {
@@ -174,7 +184,12 @@ const FOERDERER_TRANS = {
     error: 'Error — please email kontakt@openmyconet.de',
     sending: 'Verzenden...',
     year_label: '€ / jaar',
+    selected_label: 'Geselecteerd:',
+    beitrag_note: 'De bijdrage is vrijwillig en naar boven open. Alle supporters ontvangen dezelfde zichtbaarheid — ongeacht het gekozen bedrag.',
+    form_intro: 'Vertel ons kort wie u bent en waarom OpenMycoNet bij u past. We nemen binnen 48 uur contact op.',
     adjustable: '— hierboven aanpasbaar',
+    cta_h: 'Doe mee.',
+    cta_p: 'Steun en bevorder ons citizen-science-netwerk — u voor OpenMycoNet, OpenMycoNet voor iedereen.',
   },
 
   fr: {
@@ -233,7 +248,12 @@ const FOERDERER_TRANS = {
     error: 'Error — please email kontakt@openmyconet.de',
     sending: 'Envoi...',
     year_label: '€ / an',
+    selected_label: 'Sélectionné:',
+    beitrag_note: 'La contribution est volontaire et ouverte vers le haut. Tous les partenaires reçoivent la même visibilité — quel que soit le montant choisi.',
+    form_intro: 'Dites-nous brièvement qui vous êtes et pourquoi OpenMycoNet vous correspond. Nous vous répondrons dans les 48 heures.',
     adjustable: '— réglable ci-dessus',
+    cta_h: 'Participez.',
+    cta_p: 'Soutenez et financez notre réseau de science citoyenne — vous pour OpenMycoNet, OpenMycoNet pour tous.',
   },
 
   es: {
@@ -292,7 +312,12 @@ const FOERDERER_TRANS = {
     error: 'Error — please email kontakt@openmyconet.de',
     sending: 'Enviando...',
     year_label: '€ / año',
+    selected_label: 'Seleccionado:',
+    beitrag_note: 'La contribución es voluntaria y abierta hacia arriba. Todos los patrocinadores reciben la misma visibilidad — independientemente del importe elegido.',
+    form_intro: 'Cuéntenos brevemente quién es usted y por qué OpenMycoNet le conviene. Nos pondremos en contacto en 48 horas.',
     adjustable: '— ajustable arriba',
+    cta_h: 'Únase.',
+    cta_p: 'Apoye y financie nuestra red de ciencia ciudadana — usted por OpenMycoNet, OpenMycoNet para todos.',
   },
 
 };

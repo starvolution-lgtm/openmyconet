@@ -11,7 +11,7 @@
  */
 
 (function () {
-  const API_URL = "/chat.php";
+  const API_URL = "https://api.openmyconet.de/api/chat";
   let history = [];
   let isOpen = false;
 
@@ -97,49 +97,49 @@
       </filter>
       <!-- Radialer Gradient für Sensor-Kern -->
       <radialGradient id="omn-core-grad" cx="50%" cy="45%" r="55%">
-        <stop offset="0%" stop-color="#1B3A2A"/>
-        <stop offset="100%" stop-color="#0D1A12"/>
+        <stop offset="0%" stop-color="#013826"/>
+        <stop offset="100%" stop-color="#013020"/>
       </radialGradient>
     </defs>
 
     <!-- Äußerer Ring — Sensor-Gehäuse -->
-    <circle cx="28" cy="28" r="26" fill="#0D1A12" stroke="#1B3A2A" stroke-width="1.5"/>
+    <circle cx="28" cy="28" r="26" fill="#013020" stroke="#013826" stroke-width="1.5"/>
 
     <!-- Myzelstränge (dezent, Offline-Modus) -->
     <g id="omn-myzel" opacity="0.35" filter="url(#omn-glow-soft)">
-      <line x1="28" y1="28" x2="10" y2="18" stroke="#4DE0FF" stroke-width="0.6" stroke-linecap="round"/>
-      <line x1="28" y1="28" x2="46" y2="16" stroke="#4DE0FF" stroke-width="0.6" stroke-linecap="round"/>
-      <line x1="28" y1="28" x2="8"  y2="38" stroke="#4DE0FF" stroke-width="0.5" stroke-linecap="round"/>
-      <line x1="28" y1="28" x2="48" y2="40" stroke="#4DE0FF" stroke-width="0.5" stroke-linecap="round"/>
-      <line x1="28" y1="28" x2="22" y2="50" stroke="#4DE0FF" stroke-width="0.4" stroke-linecap="round"/>
-      <line x1="28" y1="28" x2="36" y2="50" stroke="#4DE0FF" stroke-width="0.4" stroke-linecap="round"/>
+      <line x1="28" y1="28" x2="10" y2="18" stroke="#d4a030" stroke-width="0.6" stroke-linecap="round"/>
+      <line x1="28" y1="28" x2="46" y2="16" stroke="#d4a030" stroke-width="0.6" stroke-linecap="round"/>
+      <line x1="28" y1="28" x2="8"  y2="38" stroke="#d4a030" stroke-width="0.5" stroke-linecap="round"/>
+      <line x1="28" y1="28" x2="48" y2="40" stroke="#d4a030" stroke-width="0.5" stroke-linecap="round"/>
+      <line x1="28" y1="28" x2="22" y2="50" stroke="#d4a030" stroke-width="0.4" stroke-linecap="round"/>
+      <line x1="28" y1="28" x2="36" y2="50" stroke="#d4a030" stroke-width="0.4" stroke-linecap="round"/>
       <!-- Knotenpunkte an den Enden -->
-      <circle cx="10" cy="18" r="1.2" fill="#4DE0FF" opacity="0.6"/>
-      <circle cx="46" cy="16" r="1.2" fill="#4DE0FF" opacity="0.6"/>
-      <circle cx="8"  cy="38" r="1.0" fill="#55FF99" opacity="0.5"/>
-      <circle cx="48" cy="40" r="1.0" fill="#55FF99" opacity="0.5"/>
-      <circle cx="22" cy="50" r="0.9" fill="#4DE0FF" opacity="0.4"/>
-      <circle cx="36" cy="50" r="0.9" fill="#4DE0FF" opacity="0.4"/>
+      <circle cx="10" cy="18" r="1.2" fill="#d4a030" opacity="0.6"/>
+      <circle cx="46" cy="16" r="1.2" fill="#d4a030" opacity="0.6"/>
+      <circle cx="8"  cy="38" r="1.0" fill="#6ee87e" opacity="0.5"/>
+      <circle cx="48" cy="40" r="1.0" fill="#6ee87e" opacity="0.5"/>
+      <circle cx="22" cy="50" r="0.9" fill="#d4a030" opacity="0.4"/>
+      <circle cx="36" cy="50" r="0.9" fill="#d4a030" opacity="0.4"/>
     </g>
 
     <!-- Sensor-Kern -->
-    <circle cx="28" cy="28" r="14" fill="url(#omn-core-grad)" stroke="#2A5A3A" stroke-width="1"/>
+    <circle cx="28" cy="28" r="14" fill="url(#omn-core-grad)" stroke="#0a6040" stroke-width="1"/>
 
     <!-- Innerer Kreis — Sensorring -->
-    <circle cx="28" cy="28" r="10" fill="none" stroke="#1D9E75" stroke-width="0.8" opacity="0.7"/>
+    <circle cx="28" cy="28" r="10" fill="none" stroke="#0a7050" stroke-width="0.8" opacity="0.7"/>
 
     <!-- Kreuzmarkierung — Sensor-Mitte -->
-    <line x1="24" y1="28" x2="32" y2="28" stroke="#1D9E75" stroke-width="0.7" opacity="0.6"/>
-    <line x1="28" y1="24" x2="28" y2="32" stroke="#1D9E75" stroke-width="0.7" opacity="0.6"/>
+    <line x1="24" y1="28" x2="32" y2="28" stroke="#0a7050" stroke-width="0.7" opacity="0.6"/>
+    <line x1="28" y1="24" x2="28" y2="32" stroke="#0a7050" stroke-width="0.7" opacity="0.6"/>
 
     <!-- Status-LED (grün im Offline-Modus, pulsiert später) -->
-    <circle id="omn-led" cx="28" cy="28" r="3" fill="#55FF99" filter="url(#omn-glow)">
+    <circle id="omn-led" cx="28" cy="28" r="3" fill="#6ee87e" filter="url(#omn-glow)">
       <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
       <animate attributeName="r" values="2.8;3.2;2.8" dur="3s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Äußerer Pulse-Ring (sehr subtil) -->
-    <circle cx="28" cy="28" r="20" fill="none" stroke="#4DE0FF" stroke-width="0.4" opacity="0">
+    <circle cx="28" cy="28" r="20" fill="none" stroke="#d4a030" stroke-width="0.4" opacity="0">
       <animate attributeName="opacity" values="0;0.15;0" dur="4s" repeatCount="indefinite"/>
       <animate attributeName="r" values="16;22;16" dur="4s" repeatCount="indefinite"/>
     </circle>
@@ -158,28 +158,28 @@
         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
       <radialGradient id="omn-fab-grad" cx="50%" cy="45%" r="55%">
-        <stop offset="0%" stop-color="#1B3A2A"/>
-        <stop offset="100%" stop-color="#0D1A12"/>
+        <stop offset="0%" stop-color="#013826"/>
+        <stop offset="100%" stop-color="#013020"/>
       </radialGradient>
     </defs>
     <!-- Myzelstränge im FAB -->
     <g opacity="0.4" filter="url(#omn-fab-glow-soft)">
-      <line x1="20" y1="20" x2="6"  y2="10" stroke="#4DE0FF" stroke-width="0.7" stroke-linecap="round"/>
-      <line x1="20" y1="20" x2="34" y2="10" stroke="#4DE0FF" stroke-width="0.7" stroke-linecap="round"/>
-      <line x1="20" y1="20" x2="5"  y2="30" stroke="#4DE0FF" stroke-width="0.5" stroke-linecap="round"/>
-      <line x1="20" y1="20" x2="35" y2="30" stroke="#4DE0FF" stroke-width="0.5" stroke-linecap="round"/>
-      <circle cx="6"  cy="10" r="1.2" fill="#4DE0FF" opacity="0.7"/>
-      <circle cx="34" cy="10" r="1.2" fill="#4DE0FF" opacity="0.7"/>
-      <circle cx="5"  cy="30" r="1.0" fill="#55FF99" opacity="0.5"/>
-      <circle cx="35" cy="30" r="1.0" fill="#55FF99" opacity="0.5"/>
+      <line x1="20" y1="20" x2="6"  y2="10" stroke="#d4a030" stroke-width="0.7" stroke-linecap="round"/>
+      <line x1="20" y1="20" x2="34" y2="10" stroke="#d4a030" stroke-width="0.7" stroke-linecap="round"/>
+      <line x1="20" y1="20" x2="5"  y2="30" stroke="#d4a030" stroke-width="0.5" stroke-linecap="round"/>
+      <line x1="20" y1="20" x2="35" y2="30" stroke="#d4a030" stroke-width="0.5" stroke-linecap="round"/>
+      <circle cx="6"  cy="10" r="1.2" fill="#d4a030" opacity="0.7"/>
+      <circle cx="34" cy="10" r="1.2" fill="#d4a030" opacity="0.7"/>
+      <circle cx="5"  cy="30" r="1.0" fill="#6ee87e" opacity="0.5"/>
+      <circle cx="35" cy="30" r="1.0" fill="#6ee87e" opacity="0.5"/>
     </g>
-    <circle cx="20" cy="20" r="13" fill="url(#omn-fab-grad)" stroke="#2A5A3A" stroke-width="1"/>
-    <circle cx="20" cy="20" r="9"  fill="none" stroke="#1D9E75" stroke-width="0.8" opacity="0.6"/>
-    <circle cx="20" cy="20" r="3"  fill="#55FF99" filter="url(#omn-fab-glow)">
+    <circle cx="20" cy="20" r="13" fill="url(#omn-fab-grad)" stroke="#0a6040" stroke-width="1"/>
+    <circle cx="20" cy="20" r="9"  fill="none" stroke="#0a7050" stroke-width="0.8" opacity="0.6"/>
+    <circle cx="20" cy="20" r="3"  fill="#6ee87e" filter="url(#omn-fab-glow)">
       <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
       <animate attributeName="r" values="2.6;3.2;2.6" dur="3s" repeatCount="indefinite"/>
     </circle>
-    <circle cx="20" cy="20" r="16" fill="none" stroke="#4DE0FF" stroke-width="0.4" opacity="0">
+    <circle cx="20" cy="20" r="16" fill="none" stroke="#d4a030" stroke-width="0.4" opacity="0">
       <animate attributeName="opacity" values="0;0.2;0" dur="4s" repeatCount="indefinite"/>
       <animate attributeName="r" values="12;18;12" dur="4s" repeatCount="indefinite"/>
     </circle>
@@ -193,24 +193,24 @@
     #omn-fab {
       position: fixed; bottom: 220px; right: 16px; z-index: 9999;
       width: 56px; height: 56px; border-radius: 50%;
-      background: #0D1A12; border: 1.5px solid #1D9E75;
+      background: #013020; border: 1.5px solid #0a7050;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(77,224,255,0.18), 0 2px 8px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 20px rgba(110,232,126,0.12), 0 2px 8px rgba(0,0,0,0.5);
       display: flex; align-items: center; justify-content: center;
       transition: box-shadow 0.3s, border-color 0.3s;
       padding: 0;
     }
     #omn-fab:hover {
-      box-shadow: 0 4px 28px rgba(77,224,255,0.35), 0 2px 8px rgba(0,0,0,0.5);
-      border-color: #4DE0FF;
+      box-shadow: 0 4px 28px rgba(110,232,126,0.25), 0 2px 8px rgba(0,0,0,0.5);
+      border-color: #6ee87e;
     }
     #omn-fab.omn-open-fab {
-      background: #0D1A12;
-      border-color: #4DE0FF;
+      background: #013020;
+      border-color: #6ee87e;
     }
     #omn-fab-close-icon {
       display: none;
-      color: #4DE0FF; font-size: 22px; line-height: 1;
+      color: #d4a030; font-size: 22px; line-height: 1;
       font-family: sans-serif; font-weight: 300;
     }
     #omn-fab.omn-open-fab #omn-fab-svg-wrap { display: none; }
@@ -220,17 +220,17 @@
       position: fixed; bottom: 286px; right: 16px; z-index: 9998;
       width: 370px; max-width: calc(100vw - 32px);
       max-height: calc(100vh - 120px);
-      background: #0D0F0E; border-radius: 16px;
-      border: 1px solid #1B3A2A;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(77,224,255,0.06);
+      background: #024530; border-radius: 0px;
+      border: 1px solid #0a6040;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(10,96,64,0.15);
       display: none; flex-direction: column; overflow: hidden;
-      font-family: sans-serif;
+      font-family: 'Lora', Georgia, serif;
     }
     #omn-widget.omn-open { display: flex; }
 
     #omn-widget-header {
-      background: #0D1A12;
-      border-bottom: 1px solid #1B3A2A;
+      background: #013020;
+      border-bottom: 1px solid #0a6040;
       padding: 12px 14px;
       display: flex; align-items: center; gap: 12px;
     }
@@ -241,19 +241,19 @@
     .omn-header-text { flex: 1; }
     .omn-htitle {
       font-size: 14px; font-weight: 600;
-      color: #E6E3DA; letter-spacing: 0.02em;
+      color: #e8f5e0; letter-spacing: 0.02em;
     }
     .omn-hsub {
-      font-size: 10px; color: #55FF99; opacity: 0.75;
+      font-size: 10px; color: #6ee87e; opacity: 0.75;
       margin-top: 2px; letter-spacing: 0.05em;
     }
     .omn-hstate {
-      font-size: 9px; color: #4DE0FF; opacity: 0.6;
+      font-size: 9px; color: #d4a030; opacity: 0.6;
       margin-top: 2px; letter-spacing: 0.08em; text-transform: uppercase;
     }
     #omn-widget-close {
       background: none; border: none;
-      color: #4DE0FF; font-size: 20px; cursor: pointer;
+      color: #d4a030; font-size: 20px; cursor: pointer;
       line-height: 1; padding: 4px; opacity: 0.6;
       transition: opacity 0.2s;
     }
@@ -263,60 +263,60 @@
       flex: 1; overflow-y: auto; padding: 14px;
       display: flex; flex-direction: column; gap: 10px;
       min-height: 120px; max-height: min(320px, calc(100vh - 340px));
-      background: #0D0F0E;
+      background: #024530;
     }
     /* Scrollbar */
     #omn-messages::-webkit-scrollbar { width: 4px; }
     #omn-messages::-webkit-scrollbar-track { background: transparent; }
-    #omn-messages::-webkit-scrollbar-thumb { background: #1B3A2A; border-radius: 2px; }
+    #omn-messages::-webkit-scrollbar-thumb { background: #0a6040; border-radius: 2px; }
 
     .omn-msg { display: flex; flex-direction: column; max-width: 88%; }
     .omn-msg.omn-user { align-self: flex-end; align-items: flex-end; }
     .omn-msg.omn-bot  { align-self: flex-start; align-items: flex-start; }
 
     .omn-bubble {
-      padding: 9px 13px; border-radius: 12px;
+      padding: 9px 13px; border-radius: 0px;
       font-size: 13px; line-height: 1.55;
     }
     .omn-msg.omn-user .omn-bubble {
-      background: #1D9E75; color: #fff;
-      border-bottom-right-radius: 3px;
+      background: #0a7050; color: #fff;
+      border-bottom-right-radius: 0px;
     }
     .omn-msg.omn-bot .omn-bubble {
-      background: #0D1A12;
-      border: 1px solid #1B3A2A;
-      color: #E6E3DA;
-      border-bottom-left-radius: 3px;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid #0a6040;
+      color: #e8f5e0;
+      border-bottom-left-radius: 0px;
     }
     .omn-sources {
-      font-size: 10px; color: #4DE0FF;
+      font-size: 10px; color: #d4a030;
       margin-top: 4px; opacity: 0.6;
     }
-    .omn-thinking { opacity: 0.4; font-style: italic; color: #4DE0FF; }
+    .omn-thinking { opacity: 0.4; font-style: italic; color: #d4a030; }
 
     #omn-input-area {
       padding: 10px 12px;
-      border-top: 1px solid #1B3A2A;
+      border-top: 1px solid #0a6040;
       display: flex; gap: 8px; align-items: flex-end;
-      background: #0D1A12;
+      background: #013020;
     }
     #omn-input {
-      flex: 1; border: 1px solid #1B3A2A; border-radius: 8px;
+      flex: 1; border: 1px solid #0a6040; border-radius: 0px;
       padding: 8px 11px; font-size: 13px; resize: none;
       font-family: sans-serif; max-height: 60px;
-      background: #0D0F0E; color: #E6E3DA;
+      background: #024530; color: #e8f5e0;
       outline: none; transition: border-color 0.2s;
     }
-    #omn-input:focus { border-color: #4DE0FF; }
-    #omn-input::placeholder { color: #3A5A4A; }
+    #omn-input:focus { border-color: #6ee87e; }
+    #omn-input::placeholder { color: #5a8a6a; }
     #omn-send {
-      background: #1D9E75; color: #fff; border: none;
-      border-radius: 8px; padding: 8px 14px;
+      background: #0a7050; color: #fff; border: none;
+      border-radius: 0px; padding: 8px 14px;
       font-size: 13px; cursor: pointer; white-space: nowrap;
       transition: background 0.2s;
     }
-    #omn-send:hover { background: #25c08e; }
-    #omn-send:disabled { background: #1B3A2A; color: #3A5A4A; cursor: default; }
+    #omn-send:hover { background: #3a9e5a; }
+    #omn-send:disabled { background: #0a6040; color: #5a8a6a; cursor: default; }
 
     /* Sprachauswahl */
     .omn-lang-btn {
@@ -325,11 +325,11 @@
     }
     .omn-lang-btn:hover { opacity: 0.9; }
     .omn-lang-btn.omn-lang-active {
-      opacity: 1; color: #4DE0FF; font-weight: 700;
+      opacity: 1; color: #d4a030; font-weight: 700;
     }
 
     /* Zustandsvarianten — für spätere Aktivierung */
-    .omn-state-active #omn-led { fill: #4DE0FF; }
+    .omn-state-active #omn-led { fill: #f0b84a; }
     .omn-state-growing #omn-myzel { opacity: 0.7; }
 
     @media (max-width: 480px) {
@@ -337,7 +337,7 @@
         left: 8px; right: 8px; width: auto;
         bottom: 136px;
         max-height: calc(100vh - 100px);
-        border-radius: 12px;
+        border-radius: 0px;
       }
       #omn-fab {
         bottom: 72px; right: 16px;
@@ -441,9 +441,9 @@
     if (role === "bot") {
       const escaped = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
       // URLs als klickbare Links
-      let linked = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:#4DE0FF;text-decoration:underline;">$1</a>');
+      let linked = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:#d4a030;text-decoration:underline;">$1</a>');
       // E-Mail-Adressen als mailto-Links
-      linked = linked.replace(/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" style="color:#4DE0FF;text-decoration:underline;">$1</a>');
+      linked = linked.replace(/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" style="color:#d4a030;text-decoration:underline;">$1</a>');
       bub.innerHTML = linked;
     } else {
       bub.textContent = text;

@@ -92,7 +92,7 @@ section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5r
 .btn-amber:hover { background-color:rgba(200,136,42,0.12); }
 
 /* ── Sections ── */
-section { padding:5rem 0; }
+section { padding:3rem 0; }
 .section-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#d4a030; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
 h2 { font-family:'Playfair Display',serif; font-size:2.4rem; font-weight:400; color:#ffffff; line-height:1.2; margin-bottom:1.2rem; }
 h2 em { font-style:italic; color:#6ee87e; }
@@ -165,8 +165,11 @@ footer { padding:2.5rem 0; border-top:1px solid #0a6040; background-color:#02453
 @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
 /* ── Hamburger ── */
-.hamburger { display:none; -webkit-flex-direction:column; flex-direction:column; gap:5px; cursor:pointer; padding:6px 4px; background:none; border:none; z-index:101; }
-.hamburger span { display:block; width:26px; height:2px; background:#e8f5e0; border-radius:2px; }
+.hamburger { display:none; -webkit-flex-direction:row; flex-direction:row; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; background:transparent; border:1px solid #0a6040; border-radius:0; z-index:101; animation:hamburger-pulse 2.5s ease-in-out infinite; }
+.hamburger:hover, .hamburger:active { border-color:#6ee87e; background:rgba(110,232,126,0.08); box-shadow:0 0 0 3px rgba(110,232,126,0.2); animation:none; }
+.hamburger-bars { display:inline-flex; flex-direction:column; gap:5px; vertical-align:middle; }
+.hamburger-bars span { display:block; width:20px; height:2px; background:#e8f5e0; border-radius:2px; }
+.hamburger-label { font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8f5e0; white-space:nowrap; }
 
 /* ── Layout ── */
 .page-wrap { max-width:860px; margin:0 auto; padding:0 clamp(1.5rem,5vw,5rem); }
@@ -281,7 +284,7 @@ input[type="checkbox"], input[type="radio"] {
   .hero-content { margin-top:-4.5rem; padding:0 0 3rem; max-width:100%; }
   .page-wrap { margin-left:1.2rem; }
   h2 { font-size:1.9rem; }
-  section { padding:3.5rem 1.2rem; }
+  section { padding:2.5rem 1.2rem; }
   .flow-row { -webkit-flex-direction:column; flex-direction:column; }
   .flow-arrow { -webkit-transform:rotate(90deg); transform:rotate(90deg); }
   .social-bar { top:auto; bottom:0; right:0; left:0; transform:none; flex-direction:row; justify-content:center; border-top:1px solid #0a6040; }
@@ -289,6 +292,12 @@ input[type="checkbox"], input[type="radio"] {
   .social-bar a:first-child { border-top-left-radius:0; }
   .social-bar a:last-child  { border-bottom-left-radius:0; border-right:none; }
   .social-bar a .tip { display:none; }
+}
+
+@keyframes hamburger-pulse {
+  0%   { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
+  50%  { border-color:#6ee87e; box-shadow: 0 0 0 3px rgba(110,232,126,0.15); }
+  100% { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
 }
 </style>
 </head>
@@ -310,7 +319,8 @@ input[type="checkbox"], input[type="radio"] {
     </li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
-    <span></span><span></span><span></span>
+    <span class="hamburger-bars"><span></span><span></span><span></span></span>
+    <span class="hamburger-label" data-i18n="nav_menu">Menü</span>
   </button>
 </nav>
 
@@ -352,7 +362,7 @@ input[type="checkbox"], input[type="radio"] {
   <div class="hero-buttons">
     <a href="#anmelden" class="btn btn-green" data-i18n="btn_join">Jetzt mitmachen</a>
     <a href="#spenden" class="btn btn-amber" data-i18n="btn_support">Projekt unterstützen</a>
-    <button onclick="document.getElementById('omn-fab').click()" class="btn btn-amber" data-i18n="btn_fragen" style="cursor:pointer;border:1px solid #4DE0FF;color:#4DE0FF;background:transparent;">&#11044; Offene Fragen?</button>
+    <button onclick="document.getElementById('omn-fab').click()" class="btn btn-amber" data-i18n="btn_fragen" style="cursor:pointer;border:1px solid #6ee87e;color:#6ee87e;background:transparent;">&#11044; Offene Fragen?</button>
   </div>
   </div></div>
 </section>
@@ -385,12 +395,12 @@ input[type="checkbox"], input[type="radio"] {
       <h2 data-i18n-html="h2_vision" style="margin-bottom:0;">Was möglich wird, wenn wir <em>verstehen</em></h2>
     </div>
   </div>
-  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+  <div style="padding:2rem clamp(1.5rem,5vw,5rem) 1.5rem;">
     <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p1">Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde.</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">OpenMycoNet stellt die einfache aber weitreichende Frage.</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:2.5rem;" data-i18n="vision_p3">Das sind keine spekulativen Fragen.</p>
-    <div id="vision-apps" style="display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:1rem;"></div>
-    <div style="margin-top:3rem; padding:2rem; border-top:1px solid #0a6040;">
+    <div id="vision-apps" style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:0.5rem;"></div>
+    <div style="margin-top:1.5rem; padding:1rem 0 0; border-top:1px solid #0a6040;">
       <p style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:400; color:#ffffff; line-height:1.5; font-style:italic;" data-i18n="vision_quote">„Das Netzwerk sendet. Wir haben gerade erst angefangen zuzuhören."</p>
       <p style="margin-top:1rem; color:#a0c8a0; font-size:0.9rem;" data-i18n="vision_closing">Jeder BioComm-Knoten der weltweit in Betrieb geht bringt uns einen Schritt näher an das Verständnis — für alle.</p>
     </div>
@@ -398,7 +408,7 @@ input[type="checkbox"], input[type="radio"] {
 </section>
 
 <!-- Warum -->
-<section id="warum" style="background-color:#024530; border-top:1px solid #0a6040; border-bottom:1px solid #0a6040;">
+<section id="warum" style="background-color:#024530; border-top:1px solid #0a6040;">
   <div style="position:relative; overflow:hidden; height:280px;">
     <img src="warum_bg.png" alt="" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.50) saturate(0.85);">
     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
@@ -406,7 +416,7 @@ input[type="checkbox"], input[type="radio"] {
       <h2 data-i18n-html="h2_warum" style="margin-bottom:0;">Ein Netzwerk das<br><em>zuhört</em></h2>
     </div>
   </div>
-  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+  <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
     <p class="section-desc" data-i18n="desc_warum">Mykorrhiza-Pilze verbinden über 90 % aller Landpflanzen.</p>
     <div class="cards-grid" id="cards-grid"></div>
   </div>
@@ -421,16 +431,16 @@ input[type="checkbox"], input[type="radio"] {
       <h2 data-i18n-html="h2_mitmachen" style="margin-bottom:0;">In vier Schritten<br>zum eigenen <em>Knoten</em></h2>
     </div>
   </div>
-  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+  <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
     <div class="steps-grid" id="steps-grid"></div>
-    <div style="margin-top:2.5rem;">
+    <div style="margin-top:1.5rem;">
       <a href="#anmelden" class="btn btn-green" data-i18n="btn_register">Jetzt registrieren</a>
     </div>
   </div>
 </section>
 
 <!-- Datenfluss -->
-<section id="daten" style="background-color:#024530; border-top:1px solid #0a6040; border-bottom:1px solid #0a6040;">
+<section id="daten" style="background-color:#024530; border-top:1px solid #0a6040;">
   <div style="position:relative; overflow:hidden; height:280px;">
     <img src="daten_bg.png" alt="" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.52) saturate(0.9);">
     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
@@ -438,7 +448,7 @@ input[type="checkbox"], input[type="radio"] {
       <h2 data-i18n-html="h2_daten" style="margin-bottom:0;">Wie deine Daten<br><em>fließen</em></h2>
     </div>
   </div>
-  <div style="padding:3rem clamp(1.5rem,5vw,5rem) 5rem;">
+  <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
     <p class="section-desc" data-i18n="desc_daten">GPS-Koordinaten werden auf 10×10 km vergröbert.</p>
     <div class="flow-row" id="flow-row"></div>
   </div>
@@ -462,29 +472,45 @@ input[type="checkbox"], input[type="radio"] {
   </div>
 </section>
 
-<section id="spenden" style="padding-top:5rem; padding-bottom:5rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+<section id="spenden" style="padding-top:3rem; padding-bottom:3rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
   <p class="section-label" data-i18n="label_spenden">Unterstützung</p>
   <h2 data-i18n-html="h2_spenden">Das Projekt<br><em>unterstützen</em></h2>
   <div class="donate-box">
     <p data-i18n="donate_p">OpenMycoNet ist ein unabhängiges Citizen-Science-Projekt ohne institutionelle Förderung.</p>
     <div class="amounts">
-      <button class="amt-btn" onclick="selectAmt(this)">5 €</button>
-      <button class="amt-btn active" onclick="selectAmt(this)">15 €</button>
-      <button class="amt-btn" onclick="selectAmt(this)">35 €</button>
-      <button class="amt-btn" onclick="selectAmt(this)">50 €</button>
-      <button class="amt-btn" onclick="selectAmt(this)">100 €</button>
+      <button class="amt-btn" onclick="selectAmt(this,5)">5 €</button>
+      <button class="amt-btn active" onclick="selectAmt(this,15)">15 €</button>
+      <button class="amt-btn" onclick="selectAmt(this,35)">35 €</button>
+      <button class="amt-btn" onclick="selectAmt(this,50)">50 €</button>
+      <button class="amt-btn" onclick="selectAmt(this,100)">100 €</button>
     </div>
+
+    <!-- Transaktionskosten-Checkbox -->
+    <div id="fee-box" style="margin-bottom:1.4rem; padding:0.9rem 1rem; border:1px solid #0a6040; background:rgba(0,0,0,0.18); font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#a0c8a0;">
+      <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; line-height:1.6;">
+        <input type="checkbox" id="cover-fees" onchange="updateFeeBox()" style="margin-top:3px; accent-color:#6ee87e; width:15px; height:15px; flex-shrink:0;">
+        <span id="fee-label"><span data-i18n="donate_fee_label">Transaktionskosten übernehmen</span>: <strong id="fee-amount" style="color:#f0b84a;">+0,72 €</strong> → Gesamt: <strong id="fee-total" style="color:#6ee87e;">15,72 €</strong></span>
+      </label>
+    </div>
+
     <div class="donate-buttons">
-      <a href="https://paypal.me/openmyconet" class="btn btn-amber" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f0b84a" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> PayPal</a>
+      <a id="paypal-btn" href="https://www.paypal.com/donate/?hosted_button_id=openmyconet&amount=15" class="btn btn-amber" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f0b84a" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        PayPal — <span id="paypal-amount-label">15,00 €</span>
+      </a>
+      <!-- Weitere Zahlwege — vorbereitet, noch nicht aktiv -->
+      <!-- <a href="#" class="btn" style="opacity:0.4; pointer-events:none; border:1px solid #0a6040; color:#5a8a6a;">Überweisung</a> -->
+      <!-- <a href="#" class="btn" style="opacity:0.4; pointer-events:none; border:1px solid #0a6040; color:#5a8a6a;">Kreditkarte</a> -->
     </div>
-    <p class="donate-note">Du kannst auch spenden ohne Dich registrieren zu müssen, aber wir würden uns freuen wenn Du es dennoch machst und so ein Teil des Netzwerks wirst.</p>
+    <p class="donate-note" data-i18n="donate_note">Du kannst auch spenden ohne Dich registrieren zu müssen, aber wir würden uns freuen wenn Du es dennoch machst und so ein Teil des Netzwerks wirst.</p>
+    <p class="donate-note" data-i18n="donate_claim" style="text-align:center; margin-top:0.5rem; font-style:italic; color:#e8f5e0;">Wir für OpenMycoNet — OpenMycoNet für alle.</p>
   </div>
 </section>
 
 
 
 <!-- Anmelden / Registrierung -->
-<section id="anmelden" class="bg-dark border-t" style="padding-top:5rem; padding-bottom:5rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+<section id="anmelden" class="bg-dark border-t" style="padding-top:3rem; padding-bottom:3rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
   <p class="section-label" id="reg-section-label">Registrierung</p>
   <h2 id="reg-h2">Teil des <em>Netzwerks</em> werden</h2>
   <p class="section-desc" id="reg-intro">Registriere dich — du erhältst projektrelevante Neuigkeiten per Mail.</p>
@@ -620,7 +646,7 @@ input[type="checkbox"], input[type="radio"] {
 </div>
 
 <!-- Über -->
-<section id="ueber" class="bg-dark border-t" style="padding-top:5rem; padding-bottom:5rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+<section id="ueber" class="bg-dark border-t" style="padding-top:3rem; padding-bottom:3rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
   <p class="section-label" data-i18n="label_ueber">Das Projekt</p>
   <h2 data-i18n-html="h2_ueber">Unabhängige Wissenschaft<br>von <em>unten</em></h2>
   <div class="about-grid">
@@ -630,7 +656,7 @@ input[type="checkbox"], input[type="radio"] {
       <p data-i18n="about_p3">Prinzip: <strong>Proprietary Intelligence, Open Data</strong>.</p>
       <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
         <a href="mailto:kontakt@openmyconet.de" class="btn btn-amber" data-i18n="btn_contact">Kontakt</a>
-        <button onclick="document.getElementById('omn-fab').click()" class="btn" data-i18n="btn_fragen" style="cursor:pointer; border:1px solid #4DE0FF; color:#4DE0FF; background:transparent;">&#11044; Offene Fragen?</button>
+        <button onclick="document.getElementById('omn-fab').click()" class="btn" data-i18n="btn_fragen" style="cursor:pointer; border:1px solid #6ee87e; color:#6ee87e; background:transparent;">&#11044; Offene Fragen?</button>
       </div>
     </div>
     <div class="facts" id="facts-grid"></div>
@@ -912,10 +938,45 @@ function handleApply(e) {
 }
 
 // ─── Donate ───────────────────────────────────────────────────
-function selectAmt(btn) {
+// ─── Spenden: Betrag + Transaktionskosten ────────────────────
+var currentDonationAmt = 15;
+var PAYPAL_PCT  = 0.0249;   // 2,49 %
+var PAYPAL_FIXED = 0.35;    // 0,35 €
+
+function calcFee(amount) {
+  return Math.round((amount * PAYPAL_PCT + PAYPAL_FIXED) * 100) / 100;
+}
+
+function fmtEur(val) {
+  return val.toFixed(2).replace('.', ',') + ' €';
+}
+
+function updateFeeBox() {
+  var amt    = currentDonationAmt;
+  var fee    = calcFee(amt);
+  var total  = Math.round((amt + fee) * 100) / 100;
+  var checked = document.getElementById('cover-fees').checked;
+  var finalAmt = checked ? total : amt;
+
+  document.getElementById('fee-amount').textContent = '+' + fmtEur(fee);
+  document.getElementById('fee-total').textContent  = fmtEur(total);
+  document.getElementById('paypal-amount-label').textContent = fmtEur(finalAmt);
+
+  // PayPal.me Link mit Betrag (paypal.me/name/BETRAG)
+  var amtStr = finalAmt.toFixed(2);
+  document.getElementById('paypal-btn').href =
+    'https://www.paypal.com/paypalme/openmyconet/' + amtStr + 'EUR';
+}
+
+function selectAmt(btn, amt) {
   document.querySelectorAll('.amt-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
+  currentDonationAmt = amt || parseInt(btn.textContent) || 15;
+  updateFeeBox();
 }
+
+// Init
+document.addEventListener('DOMContentLoaded', function() { updateFeeBox(); });
 
 // ─── Active nav highlight (scroll-based) ─────────────────────
 (function() {
