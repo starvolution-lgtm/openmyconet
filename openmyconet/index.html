@@ -61,7 +61,7 @@ body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif
 nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
 .nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; }
 .nav-logo span { color:#f0b84a; }
-nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1.5rem; }
+nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1.5rem; position:absolute; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%); }
 nav a { color:#a0c8a0; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.2s; }
 nav a:hover { color:#f0b84a; }
 nav a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
@@ -85,7 +85,7 @@ section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5r
 .hero-buttons { display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; -webkit-flex-wrap:wrap; flex-wrap:wrap; }
 
 /* ── Playlist Player ── */
-.omn-player { margin-top:2rem; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #0a7050; max-width:520px; }
+.omn-player { margin-top:2rem; margin-left:auto; margin-right:auto; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #0a7050; max-width:520px; }
 .omn-cover-wrap { position:relative; width:100%; height:200px; overflow:hidden; }
 .omn-cover-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.6s ease; }
 .omn-cover-img.active { opacity:1; }
@@ -727,7 +727,88 @@ input[type="checkbox"], input[type="radio"] {
   </form>
 </section>
 
-<!-- Node-Bewerbungs-Panel (Overlay) -->
+<!-- Willkommens-Player -->
+<section id="willkommen-music" style="background-color:#012a1e; border-top:1px solid #0a6040; padding-top:3rem; padding-bottom:3rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
+  <div style="max-width:580px; margin:0 auto;">
+    <p class="section-label">Für die ersten Schritte im Netzwerk</p>
+    <p style="font-family:'Lora',serif; font-size:1.05rem; color:#c8e6c0; line-height:1.8; margin-bottom:0.8rem;">Die ältesten Netzwerke der Erde sprechen nicht mit Worten.<br>Sie verbinden, reagieren und erinnern.</p>
+    <p style="font-family:'Lora',serif; font-size:1.05rem; color:#c8e6c0; line-height:1.8; margin-bottom:1rem;"><em>Listen to the Forest</em> entstand als musikalische Begleitung zu der Idee, genauer hinzuhören.</p>
+    <p style="font-family:'Lora',serif; font-size:1.4rem; color:#f0b84a; line-height:1.8; margin-bottom:2rem; text-align:center; font-style:italic;">Wir freuen uns, dass du dabei bist.</p>
+
+    <!-- Cover -->
+    <div style="position:relative; max-width:520px; margin:0 auto 0 auto;">
+      <img src="cover-listen-to-the-forest.jpeg" alt="Listen to the Forest" style="width:100%; display:block; max-height:220px; object-fit:cover;">
+      <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(1,42,30,0) 40%, rgba(1,42,30,0.9) 100%);"></div>
+    </div>
+
+    <!-- Player -->
+    <audio id="ltf-audio" src="listen-to-the-forest.mp3" preload="metadata"></audio>
+    <div style="max-width:520px; margin:0 auto; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #f0b84a;">
+      <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.4rem;">
+        <button id="ltf-play-btn" onclick="ltfTogglePlay()" style="width:40px; height:40px; border-radius:50%; background-color:#0a7050; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background-color 0.2s;" aria-label="Play">
+          <svg id="ltf-icon-play" viewBox="0 0 16 16" style="width:16px;height:16px;fill:#fff;margin-left:2px;"><polygon points="3,1 15,8 3,15"/></svg>
+          <svg id="ltf-icon-pause" viewBox="0 0 16 16" style="width:16px;height:16px;fill:#fff;display:none;margin-left:0;"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
+        </button>
+        <div style="flex:1; min-width:0;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#f0b84a; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.2rem;">Listen to the Forest</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#a0c8a0; margin-bottom:0.4rem;">OpenMycoNet · Hymne</div>
+          <div id="ltf-progress-wrap" onclick="ltfSeek(event)" style="position:relative; height:3px; background-color:rgba(255,255,255,0.1); cursor:pointer;">
+            <div id="ltf-progress-bar" style="height:3px; background-color:#f0b84a; width:0%; transition:width 0.1s linear;"></div>
+          </div>
+          <div id="ltf-time" style="font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:#a0c8a0; margin-top:0.3rem;">0:00 / 0:00</div>
+        </div>
+      </div>
+      <!-- Download + Counter -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:0.7rem 1.4rem; border-top:1px solid #0a6040;">
+        <a href="listen-to-the-forest.mp3" download onclick="ltfCountDownload()" style="display:inline-flex; align-items:center; gap:0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#f0b84a'" onmouseout="this.style.color='#6ee87e'">
+          <svg viewBox="0 0 16 16" style="width:13px;height:13px;fill:currentColor;"><path d="M8 1v9M4 7l4 4 4-4M2 14h12"/><path d="M8 10l-4-4m4 4l4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          Download MP3
+        </a>
+        <div id="ltf-counter" style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040;">▶ – · ↓ –</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var audio = document.getElementById('ltf-audio');
+    var btnEl = document.getElementById('ltf-play-btn');
+    var bar   = document.getElementById('ltf-progress-bar');
+    var timeEl= document.getElementById('ltf-time');
+    var iconP = document.getElementById('ltf-icon-play');
+    var iconPa= document.getElementById('ltf-icon-pause');
+    function fmt(s){ if(isNaN(s)||!isFinite(s)) return '0:00'; var m=Math.floor(s/60),sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
+    audio.addEventListener('timeupdate', function(){
+      if(audio.duration){ bar.style.width=(audio.currentTime/audio.duration*100)+'%'; }
+      timeEl.textContent = fmt(audio.currentTime)+' / '+fmt(audio.duration);
+    });
+    audio.addEventListener('ended', function(){ iconP.style.display='block'; iconPa.style.display='none'; });
+    window.ltfTogglePlay = function(){
+      if(audio.paused){
+        audio.play(); iconP.style.display='none'; iconPa.style.display='block';
+        fetch('track_play.php?track=listen-to-the-forest').then(function(){ ltfLoadCounter(); }).catch(function(){});
+      } else {
+        audio.pause(); iconP.style.display='block'; iconPa.style.display='none';
+      }
+    };
+    window.ltfSeek = function(e){
+      var w=document.getElementById('ltf-progress-wrap');
+      if(audio.duration) audio.currentTime=(e.offsetX/w.offsetWidth)*audio.duration;
+    };
+    window.ltfCountDownload = function(){
+      fetch('track_play.php?track=listen-to-the-forest&type=download').catch(function(){});
+      setTimeout(ltfLoadCounter, 500);
+    };
+    function ltfLoadCounter(){
+      fetch('track_play.php?track=listen-to-the-forest&type=stats')
+        .then(function(r){ return r.json(); })
+        .then(function(d){ document.getElementById('ltf-counter').textContent = '▶ '+d.plays+' · ↓ '+d.downloads; })
+        .catch(function(){});
+    }
+    ltfLoadCounter();
+  })();
+  </script>
+</section>
 <div id="node-panel" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000; background:rgba(2,69,48,0.97); overflow-y:auto; padding:2rem clamp(1.5rem,5vw,4rem);">
   <button onclick="closeNodePanel()" style="position:fixed; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; z-index:1001; line-height:1;">✕</button>
 
