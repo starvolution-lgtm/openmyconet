@@ -168,7 +168,7 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
   <h1 id="f-h1">Gewerbliche <em>Förderer</em></h1>
 
   <p id="f-intro-p1" style="color:#e8f5e0; font-size:1.1rem; max-width:680px; margin-bottom:2rem;">
-    OpenMycoNet verbindet Menschen die sich für Pilze, Mykorrhiza und Bodengesundheit begeistern — weltweit. Als gewerblicher Förderer erreichen Sie genau diese Zielgruppe und unterstützen gleichzeitig echte Citizen Science.
+    Mit Ihrem Beitrag helfen Sie dabei, die verborgenen Netzwerke unter unseren Füßen besser zu verstehen. Sie unterstützen offene Forschung, Citizen Science und die Entwicklung neuer Messsysteme für Pilze, Mykorrhiza und Bodengesundheit. Gleichzeitig wird Ihr Engagement sichtbar – als Teil eines Netzwerks von Unternehmen und Menschen, die Verantwortung für die Zukunft unserer Böden übernehmen.
   </p>  <!-- Vorteile -->
   <h2 id="f-h2-vorteile">Was Förderer erhalten</h2>
   <div class="vorteile" id="f-vorteile">
@@ -185,10 +185,10 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
   <!-- Ablauf -->
   <h2 id="f-h2-ablauf">So funktioniert es</h2>
   <div id="f-steps">
-    <p><strong>1. Anfrage senden</strong> — über das Formular unten oder per E-Mail an kontakt@openmyconet.de.</p>
-    <p><strong>2. Kurze Prüfung</strong> — wir prüfen ob die thematische Passung gegeben ist. Das dauert max. 48 Stunden.</p>
-    <p><strong>3. Beitrag leisten</strong> — freiwillig, ab 50 €, über PayPal oder Überweisung.</p>
-    <p><strong>4. Eintrag live</strong> — Ihr Eintrag erscheint innerhalb von 24 Stunden in der Fördererliste.</p>
+    <p><strong>1. Eintrag gestalten</strong> — Firmenname, Beschreibung, Logo hochladen, Betrag wählen. Alles in einem Schritt.</p>
+    <p><strong>2. Vorschau prüfen</strong> — Sie sehen Ihren Eintrag genau so wie er erscheinen wird, bevor Sie zahlen.</p>
+    <p><strong>3. Beitrag leisten</strong> — ab 50 € / Jahr, sicher via PayPal. Keine Vorauszahlung vor der Vorschau.</p>
+    <p><strong>4. Sofort live</strong> — Ihr Eintrag erscheint automatisch nach Zahlungseingang. Rechnung kommt per E-Mail.</p>
     <p><strong>5. Jährliche Erneuerung</strong> — 2–3 Monate vor Ablauf erhalten Sie eine E-Mail. Kein Automatismus, kein Druck.</p>
   </div>
 
@@ -206,60 +206,18 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
   <p id="f-next-sub" style="font-size:0.95rem; color:#a0c8a0; text-align:center; margin-top:0.5rem; line-height:1.7;">Fördern und unterstützen Sie unser Citizen-Science-Netzwerk – Sie für OpenMycoNet, OpenMycoNet für alle.</p>
 
   <!-- Anfrageformular -->
-  <h2 id="f-h2-form">Förderpartnerschaft anfragen</h2>
-  <p id="f-form-intro">Schreiben Sie uns kurz wer Sie sind und warum OpenMycoNet zu Ihnen passt. Wir melden uns innerhalb von 48 Stunden.</p>
+  <h2 id="f-h2-form">Jetzt Förderer werden</h2>
+  <p id="f-form-intro">Gestalten Sie Ihren Eintrag selbst — mit Logo, Beschreibung und Betrag. Sie sehen eine Vorschau bevor Sie zahlen.</p>
 
-  <form class="form-wrap" onsubmit="handleFoerderer(event)">
-    <div class="form-group">
-      <label id="f-lbl-firma">Unternehmen / Name *</label>
-      <input type="text" name="firma" required>
-    </div>
-    <div class="form-group">
-      <label id="f-lbl-website">Website</label>
-      <input type="url" name="website" placeholder="https://ihre-website.de">
-    </div>
-    <div class="form-group">
-      <label id="f-lbl-email">E-Mail-Adresse *</label>
-      <input type="email" name="email" required>
-    </div>
-    <div class="form-group">
-      <label id="f-lbl-bereich">Thematischer Bezug</label>
-      <select name="bereich" id="f-select-bereich"></select>
-    </div>
-    <div class="form-group">
-      <label id="f-lbl-beitrag">Gewünschter Jahresbeitrag</label>
-      <input type="hidden" name="beitrag" id="form-beitrag" value="150">
-      <div style="margin-bottom:1rem;">
-        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
-          <input type="range" id="beitrag-slider2" min="50" max="1000" step="10" value="150"
-            style="flex:1; accent-color:#f0b84a; height:4px; cursor:pointer; background:rgba(240,184,74,0.25);">
-          <div style="display:flex; align-items:center; gap:0.4rem;">
-            <input type="number" id="beitrag-num2" min="50" value="150"
-              style="width:80px; padding:0.5rem; background:#ffffff; border:1px solid #0a6040;
-                     color:#1a1a1a; font-family:'JetBrains Mono',monospace; font-size:1.1rem;
-                     text-align:right; outline:none;">
-            <span id="f-year-label" style="color:#b0d4b0; font-family:'JetBrains Mono',monospace; font-size:0.9rem;">€ / Jahr</span>
-          </div>
-        </div>
-        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-          <button type="button" class="quick-btn2" data-val="50">50 €</button>
-          <button type="button" class="quick-btn2" data-val="100">100 €</button>
-          <button type="button" class="quick-btn2" data-val="150">150 €</button>
-          <button type="button" class="quick-btn2" data-val="250">250 €</button>
-          <button type="button" class="quick-btn2" data-val="500">500 €</button>
-        </div>
-      </div>
-      <p style="font-family:'Lora',serif; font-size:1.1rem; font-weight:bold; color:#f0b84a; margin:0.5rem 0 0; background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); display:inline-block; padding:0.4rem 1rem;">
-        <span id="f-selected-label">Ausgewählt:</span> <span id="form-beitrag-anzeige">150</span> <span id="f-year-label2">€ / Jahr</span>
-      </p>
-    </div>
-    <div class="form-group">
-      <label id="f-lbl-beschreibung">Kurze Beschreibung Ihres Unternehmens *</label>
-      <textarea name="beschreibung" required></textarea>
-    </div>
-    <button type="submit" class="btn" id="foerderer-btn">Anfrage senden</button>
-    <p class="form-note" id="f-form-note">Keine Vorauszahlung. Nach Ihrer Anfrage prüfen wir die thematische Passung (max. 48h) und senden Ihnen einen Fragebogen für Ihren persönlichen Eintrag.</p>
-  </form>
+  <div style="margin-top:1.5rem;">
+    <a href="foerderer-antrag.php" class="btn" id="foerderer-btn"
+      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:1rem 2.5rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
+      ✦ <span id="f-cta-label">Eintrag gestalten &amp; Förderer werden</span>
+    </a>
+    <p class="form-note" id="f-form-note" style="margin-top:1rem;">
+      Keine Vorauszahlung — Sie zahlen erst nach der Vorschau. Logo-Upload inklusive. Rechnung automatisch per E-Mail.
+    </p>
+  </div>
 
   <a href="index.html" id="f-back" style="display:inline-block; margin-top:3rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#00e5e5; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Zurück zur Startseite</a>
 </div>
@@ -353,20 +311,11 @@ function applyFoerdererLang(lang) {
   document.getElementById('f-h2-beitrag').textContent = t.h2_beitrag;
   document.getElementById('f-h2-ablauf').textContent = t.h2_ablauf;
   document.getElementById('f-h2-liste').textContent = t.h2_liste;
-  document.getElementById('f-h2-form').textContent = t.h2_form;
-  document.getElementById('f-lbl-firma').textContent = t.lbl_firma;
-  document.getElementById('f-lbl-website').textContent = t.lbl_website;
-  document.getElementById('f-lbl-email').textContent = t.lbl_email;
-  document.getElementById('f-lbl-bereich').textContent = t.lbl_bereich;
-  document.getElementById('f-lbl-beitrag').textContent = t.lbl_beitrag;
-  document.getElementById('f-lbl-beschreibung').textContent = t.lbl_beschreibung;
-  document.getElementById('f-year-label').textContent = t.year_label;
-  document.getElementById('f-year-label2').textContent = t.year_label;
-  document.getElementById('f-form-note').textContent = t.form_note;
+  document.getElementById('f-h2-form').textContent = t.h2_form || 'Jetzt Förderer werden';
+  document.getElementById('f-form-note').textContent = t.form_note || '';
   // nav-back removed
   applyFoerdererNavTranslations(lang);
-  document.getElementById('foerderer-btn').textContent = t.submit;
-  document.getElementById('f-selected-label').textContent = t.selected_label || 'Ausgewählt:';
+  var ctaEl = document.getElementById('f-cta-label'); if(ctaEl && t.submit) ctaEl.textContent = t.submit;
   document.getElementById('f-beitrag-p').textContent = t.beitrag_note || '';
   document.getElementById('f-form-intro').textContent = t.form_intro || '';
 

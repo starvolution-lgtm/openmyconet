@@ -84,6 +84,41 @@ section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5r
 .live-dot { width:8px; height:8px; background-color:#6ee87e; border-radius:50%; -webkit-animation:pulse 1.5s ease-in-out infinite; animation:pulse 1.5s ease-in-out infinite; }
 .hero-buttons { display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; -webkit-flex-wrap:wrap; flex-wrap:wrap; }
 
+/* ── Playlist Player ── */
+.omn-player { margin-top:2rem; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #0a7050; max-width:520px; }
+.omn-cover-wrap { position:relative; width:100%; height:200px; overflow:hidden; }
+.omn-cover-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.6s ease; }
+.omn-cover-img.active { opacity:1; }
+.omn-cover-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(2,69,48,0) 40%, rgba(2,69,48,0.92) 100%); }
+.omn-player-main { display:flex; align-items:center; gap:1rem; padding:0.9rem 1.4rem; }
+.omn-controls { display:flex; align-items:center; gap:0.5rem; flex-shrink:0; }
+.omn-play-btn { width:40px; height:40px; border-radius:50%; background-color:#0a7050; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background-color 0.2s; flex-shrink:0; }
+.omn-play-btn:hover { background-color:#3a9e5a; }
+.omn-play-btn svg { width:16px; height:16px; fill:#ffffff; margin-left:2px; }
+.omn-play-btn.playing svg.icon-play { display:none; }
+.omn-play-btn.playing svg.icon-pause { display:block !important; }
+.omn-next-btn { width:28px; height:28px; background:none; border:1px solid #0a6040; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color 0.2s; flex-shrink:0; border-radius:0; }
+.omn-next-btn:hover { border-color:#6ee87e; }
+.omn-next-btn svg { width:12px; height:12px; fill:#a0c8a0; }
+.omn-player-info { flex:1; min-width:0; }
+.omn-player-title { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#6ee87e; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.omn-player-sub { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#d4a030; letter-spacing:0.06em; margin-bottom:0.4rem; }
+.omn-progress-wrap { position:relative; height:3px; background-color:rgba(255,255,255,0.1); cursor:pointer; }
+.omn-progress-bar { height:3px; background-color:#0a7050; width:0%; transition:width 0.1s linear; }
+.omn-time { font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:#a0c8a0; margin-top:0.3rem; }
+.omn-playlist { border-top:1px solid #0a6040; }
+.omn-pl-item { display:flex; align-items:center; gap:0.8rem; padding:0.65rem 1.4rem; cursor:pointer; transition:background-color 0.15s; border-bottom:1px solid rgba(10,96,64,0.3); }
+.omn-pl-item:last-child { border-bottom:none; }
+.omn-pl-item:hover { background-color:rgba(10,112,80,0.15); }
+.omn-pl-item.active { background-color:rgba(10,112,80,0.22); }
+.omn-pl-thumb { width:32px; height:32px; object-fit:cover; flex-shrink:0; opacity:0.6; transition:opacity 0.2s; }
+.omn-pl-item.active .omn-pl-thumb { opacity:1; }
+.omn-pl-num { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; width:14px; text-align:center; flex-shrink:0; }
+.omn-pl-item.active .omn-pl-num { color:#6ee87e; }
+.omn-pl-name { font-family:'JetBrains Mono',monospace; font-size:0.66rem; color:#a0c8a0; letter-spacing:0.05em; flex:1; }
+.omn-pl-item.active .omn-pl-name { color:#e8f5e0; }
+.omn-pl-dur { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; }
+
 /* ── Buttons ── */
 .btn { display:inline-block; padding:0.85rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; -webkit-border-radius:0; border-radius:0; -webkit-transition:background-color 0.2s,color 0.2s; transition:background-color 0.2s,color 0.2s; }
 .btn-green { background-color:#0a7050; color:#ffffff; }
@@ -364,6 +399,116 @@ input[type="checkbox"], input[type="radio"] {
     <a href="#spenden" class="btn btn-amber" data-i18n="btn_support">Projekt unterstützen</a>
     <button onclick="document.getElementById('omn-fab').click()" class="btn btn-amber" data-i18n="btn_fragen" style="cursor:pointer;border:1px solid #6ee87e;color:#6ee87e;background:transparent;">&#11044; Offene Fragen?</button>
   </div>
+
+  <!-- Playlist Player -->
+  <audio id="omn-audio" preload="metadata"></audio>
+  <div class="omn-player">
+    <!-- Cover -->
+    <div class="omn-cover-wrap">
+      <img class="omn-cover-img active" id="omn-cover-0" src="cover-listening-to-the-trees.jpeg" alt="Listening to the Trees">
+      <img class="omn-cover-img"        id="omn-cover-1" src="cover-the-oldest-living-network.jpeg" alt="The Oldest Living Network">
+      <img class="omn-cover-img"        id="omn-cover-2" src="cover-three-ways-of-knowing.jpeg" alt="Three Ways of Knowing">
+      <div class="omn-cover-overlay"></div>
+    </div>
+    <!-- Controls -->
+    <div class="omn-player-main">
+      <div class="omn-controls">
+        <button class="omn-play-btn" id="omn-play-btn" onclick="omnTogglePlay()" aria-label="Play/Pause">
+          <svg class="icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="3,1 15,8 3,15"/></svg>
+          <svg class="icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none;margin-left:0;"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
+        </button>
+        <button class="omn-next-btn" onclick="omnNext()" aria-label="Next">
+          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="2,1 11,8 2,15"/><rect x="12" y="1" width="2" height="14"/></svg>
+        </button>
+      </div>
+      <div class="omn-player-info">
+        <div class="omn-player-title" id="omn-player-title">Listening to the Trees</div>
+        <div class="omn-player-sub">OpenMycoNet · Original Songs</div>
+        <div class="omn-progress-wrap" id="omn-progress-wrap" onclick="omnSeek(event)">
+          <div class="omn-progress-bar" id="omn-progress-bar"></div>
+        </div>
+        <div class="omn-time" id="omn-time">0:00 / 0:00</div>
+      </div>
+    </div>
+    <!-- Playlist -->
+    <div class="omn-playlist" id="omn-playlist"></div>
+  </div>
+  <script>
+  (function(){
+    var tracks = [
+      { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'cover-listening-to-the-trees.jpeg' },
+      { file:'the-oldest-living-network.mp3',  title:'The Oldest Living Network', cover:'cover-the-oldest-living-network.jpeg' },
+      { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg' }
+    ];
+    var current = 0;
+    var audio   = document.getElementById('omn-audio');
+    var btn     = document.getElementById('omn-play-btn');
+    var bar     = document.getElementById('omn-progress-bar');
+    var timeEl  = document.getElementById('omn-time');
+    var titleEl = document.getElementById('omn-player-title');
+    var plEl    = document.getElementById('omn-playlist');
+
+    function fmt(s){ if(isNaN(s)||!isFinite(s)) return '0:00'; var m=Math.floor(s/60),sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
+
+    function switchCover(idx){
+      tracks.forEach(function(_,i){
+        var el = document.getElementById('omn-cover-'+i);
+        if(el) el.classList.toggle('active', i===idx);
+      });
+    }
+
+    function renderPlaylist(){
+      plEl.innerHTML = tracks.map(function(t,i){
+        return '<div class="omn-pl-item'+(i===current?' active':'')+'" onclick="omnSelectTrack('+i+')">'
+          +'<img class="omn-pl-thumb" src="'+t.cover+'" alt="">'
+          +'<span class="omn-pl-num">'+(i===current?'▶':(i+1))+'</span>'
+          +'<span class="omn-pl-name">'+t.title+'</span>'
+          +'<span class="omn-pl-dur" id="omn-dur-'+i+'">–:––</span>'
+          +'</div>';
+      }).join('');
+    }
+
+    function loadTrack(idx, autoplay){
+      current = idx;
+      audio.src = tracks[idx].file;
+      titleEl.textContent = tracks[idx].title;
+      bar.style.width = '0%';
+      timeEl.textContent = '0:00 / 0:00';
+      switchCover(idx);
+      renderPlaylist();
+      if(autoplay){ audio.play(); btn.classList.add('playing'); }
+      else { btn.classList.remove('playing'); }
+    }
+
+    // Preload durations
+    tracks.forEach(function(t,i){
+      var a = new Audio();
+      a.preload = 'metadata';
+      a.src = t.file;
+      a.addEventListener('loadedmetadata', function(){
+        var el = document.getElementById('omn-dur-'+i);
+        if(el) el.textContent = fmt(a.duration);
+      });
+    });
+
+    audio.addEventListener('timeupdate', function(){
+      if(audio.duration){ bar.style.width=(audio.currentTime/audio.duration*100)+'%'; }
+      timeEl.textContent = fmt(audio.currentTime)+' / '+fmt(audio.duration);
+    });
+    audio.addEventListener('ended', function(){
+      if(current < tracks.length-1){ loadTrack(current+1, true); }
+      else { btn.classList.remove('playing'); bar.style.width='0%'; }
+    });
+
+    window.omnTogglePlay   = function(){ if(audio.paused){ audio.play(); btn.classList.add('playing'); } else { audio.pause(); btn.classList.remove('playing'); } };
+    window.omnNext         = function(){ loadTrack((current+1) % tracks.length, !audio.paused); };
+    window.omnSelectTrack  = function(idx){ loadTrack(idx, true); };
+    window.omnSeek         = function(e){ var w=document.getElementById('omn-progress-wrap'); if(audio.duration) audio.currentTime=(e.offsetX/w.offsetWidth)*audio.duration; };
+
+    loadTrack(0, false);
+  })();
+  </script>
+
   </div></div>
 </section>
 
