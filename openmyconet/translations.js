@@ -539,7 +539,7 @@ const TRANSLATIONS = {
     q_back_long: '← Retour à l\'accueil',
     player_hint: 'Profitez de la musique pendant que vous explorez le reste du contenu.',
     buch_teaser_label: '✦ Téléchargement Gratuit ✦',
-    buch_teaser_text: '"Das letzte Korn" — un roman sur des hommes, les mycorhizes, l'IA et la question de qui appartient la nature et comment y vivre.',
+    buch_teaser_text: '"Das letzte Korn" — un roman sur des hommes, les mycorhizes, l\'IA et la question de qui appartient la nature et comment y vivre.',
     footer_copy: 'Robert Jank · Maintal, Allemagne · 2026',
     donate_fee_label: 'Couvrir les frais de transaction',
     footer_impressum: 'Mentions légales',

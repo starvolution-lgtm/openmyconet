@@ -7,7 +7,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once 'config.php'; // nutzt deine bestehende DB-Verbindung
+require_once 'config_foerderer.php'; // DB-Konstanten: DB_HOST, DB_NAME, DB_USER, DB_PASS
 
 $track = isset($_GET['track']) ? preg_replace('/[^a-z0-9\-]/', '', $_GET['track']) : '';
 $type  = isset($_GET['type'])  ? $_GET['type'] : 'play';

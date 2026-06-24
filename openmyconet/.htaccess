@@ -7,6 +7,17 @@ AddType application/pdf .pdf
     Deny from all
 </Files>
 
+<Files "config_foerderer.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<FilesMatch "^(foerderer-ipn|foerderer-rechnung|track_play)\.php$">
+    Order allow,deny
+    Deny from all
+    Allow from env=REDIRECT_STATUS
+</FilesMatch>
+
 # Redirects alte Sprachversionen → neue URL-Struktur
 RewriteEngine On
 RewriteRule ^index-en\.html$ /?lang=en [R=301,L]
