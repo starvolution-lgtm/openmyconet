@@ -352,6 +352,15 @@ function applyFoerdererLang(lang) {
     fr: 'Soutenez notre réseau de science citoyenne – vous pour OpenMycoNet, OpenMycoNet pour tous.',
     es: 'Apoye nuestra red de ciencia ciudadana – usted para OpenMycoNet, OpenMycoNet para todos.'
   };
+  // Vorteile (v0–v3)
+  ['v0','v1','v2','v3'].forEach(function(v) {
+    var eh = document.getElementById(v+'-h');
+    var ep = document.getElementById(v+'-p');
+    if (eh && t[v+'_h']) eh.textContent = t[v+'_h'];
+    if (ep && t[v+'_p']) ep.textContent = t[v+'_p'];
+  });
+
+  // next_headline / next_sub aus translations
   var nh = document.getElementById('f-next-headline');
   var ns = document.getElementById('f-next-sub');
   if (nh) nh.textContent = nextHeadlines[lang] || nextHeadlines.de;
