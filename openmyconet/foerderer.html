@@ -17,9 +17,9 @@ nav {
   padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97);
   border-bottom:1px solid #0a6040;
 }
-.nav-logo { font-family:'Lora',Georgia,serif; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
-.nav-logo span { color:#f0b84a; }
-nav ul { list-style:none; display:flex; align-items:center; gap:2rem; }
+/* nav-logo replaced by image */
+
+nav ul { list-style:none; display:flex; align-items:center; gap:1rem; position:absolute; left:50%; transform:translateX(-50%); }
 nav ul a { color:#a0c8a0; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; transition:color 0.2s; }
 nav ul a:hover { color:#f0b84a; }
 nav ul a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
@@ -34,7 +34,7 @@ nav ul a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bo
 .mobile-menu-close { position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; line-height:1; }
 .mobile-lang { display:flex; gap:0.6rem; margin-top:1rem; align-items:center; }
 .lang-sidebar-desktop { display:flex; }
-@media (max-width:700px) {
+@media (max-width:900px) {
   .lang-sidebar-desktop { display:none !important; }
 }
 .main { max-width:900px; margin:0 auto; padding:6rem 2rem 4rem; }
@@ -77,8 +77,12 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
 .lang-flag.inactive { opacity:0.6; border:1px solid #0a6040; background:rgba(0,0,0,0.25); }
 @media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } h1 { font-size:2rem; } }
 
-@media (max-width:700px) {
+@media (max-width:900px) {
   nav ul { display:none; }
+  nav ul { display:none !important; }
+  .nav-tools { margin-left:auto; margin-right:0.5rem; gap:0.3rem; }
+  .nav-tool-btn img { width:38px; height:38px; }
+  #lang-sidebar { display:none !important; }
   .hamburger { display:flex !important; }
 }
 
@@ -87,6 +91,13 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
   50%  { border-color:#6ee87e; box-shadow: 0 0 0 3px rgba(110,232,126,0.15); }
   100% { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
 }
+
+/* ── Nav Tools (Chat, FAQ) ── */
+.nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
+.nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
+.nav-tool-btn:hover { opacity:0.85; transform:scale(1.05); }
+/* Hide floating FABs */
+#omn-fab, #omn-faq-fab { display:none !important; }
 </style>
 <link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html">
 <link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer.html?lang=en">
@@ -99,7 +110,7 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo">Open<span>MycoNet</span></a>
+  <a href="index.html" style="display:flex; align-items:center; text-decoration:none;"><img src="/logo-openmyconet.png" alt="OpenMycoNet" style="height:68px; width:auto; display:block;"></a>
   <ul>
     <li><a href="index.html#warum" data-foerderer-i18n="nav_warum">Warum</a></li>
     <li><a href="index.html#mitmachen" data-foerderer-i18n="nav_mitmachen">Mitmachen</a></li>
@@ -109,11 +120,22 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
     <li><a href="foerderer.html" class="nav-active" data-foerderer-i18n="nav_foerderer">Förderer</a></li>
     <li><a href="quellennachweise.html" data-foerderer-i18n="nav_quellen">Quellen</a></li>
   </ul>
+  <div class="nav-tools">
+    <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
+      <img src="/icon-chat.png" alt="Chat" style="width:48px; height:48px; display:block;">
+    </button>
+    <button class="nav-tool-btn nav-tool-faq" id="nav-faq-btn" aria-label="FAQ" title="FAQ">
+      <img src="/icon-faq.png" alt="FAQ" style="width:48px; height:48px; display:block;">
+    </button>
+  </div>
   <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
     <span class="hamburger-bars"><span></span><span></span><span></span></span>
     <span class="hamburger-label" data-foerderer-i18n="nav_menu">Menü</span>
   </button>
 </nav>
+
+<!-- Sprach-Sidebar (Desktop) -->
+<div id="lang-sidebar"><!-- Flags injected by JS --></div>
 
 <!-- Mobile Overlay-Menü -->
 <div class="mobile-menu" id="mobileMenu">
@@ -125,6 +147,7 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
   <a href="index.html#ueber" data-foerderer-i18n="nav_ueber">Über</a>
   <a href="foerderer.html" data-foerderer-i18n="nav_foerderer">Förderer</a>
   <a href="quellennachweise.html" data-foerderer-i18n="nav_quellen">Quellen</a>
+  <a href="leihgeraete.html" data-foerderer-i18n="nav_leihgeraete">Leihgerät</a>
   <div class="mobile-lang">
     <a href="javascript:void(0)" onclick="setFoerdererLang('de')" title="Deutsch" class="lang-flag active" id="flag-de-m">
       <svg width="28" height="19" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>
@@ -437,5 +460,21 @@ function handleFoerderer(e) {
 }
 </script>
 <script src="/biocomm-chat.js"></script>
+<script src="/biocomm-faq.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var chatBtn = document.getElementById('nav-chat-btn');
+  if (chatBtn) chatBtn.addEventListener('click', function() {
+    var fab = document.getElementById('omn-fab');
+    if (fab) fab.click();
+  });
+  var faqBtn = document.getElementById('nav-faq-btn');
+  if (faqBtn) faqBtn.addEventListener('click', function() {
+    var fab = document.getElementById('omn-faq-fab');
+    if (fab) fab.click();
+  });
+});
+</script>
 </body>
 </html>

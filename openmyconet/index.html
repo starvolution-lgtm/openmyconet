@@ -58,16 +58,16 @@ html { scroll-behavior:smooth; overflow-x:hidden; }
 body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; overflow-x:hidden; -webkit-text-size-adjust:100%; }
 
 /* ── Navigation ── */
-nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:0.75rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
 .nav-logo { font-family:'Lora',Georgia,serif; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; }
 .nav-logo span { color:#f0b84a; }
-nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1.5rem; position:absolute; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%); }
+nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; position:absolute; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%); }
 nav a { color:#a0c8a0; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.2s; }
 nav a:hover { color:#f0b84a; }
 nav a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
 /* Sprachauswahl Desktop-Sidebar */
 #lang-sidebar { display:none; position:fixed; right:42px; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
-#lang-flags-nav { display:none !important; }
+/* lang-flags-nav removed — flags now in .nav-flags */
 section > *:not(.section-full):not(.hero-img-wrap) { max-width:860px; margin-left:auto; margin-right:auto; }
 .hero-img-wrap { max-width:none !important; margin-left:0 !important; margin-right:0 !important; }
 section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem); }
@@ -188,6 +188,8 @@ textarea { height:100px; resize:vertical; }
 .fact { padding:1.3rem; background-color:rgba(0,0,0,0.22); border-left:3px solid #0a7050; margin-bottom:1rem; }
 .fact-num { font-family:'Playfair Display',serif; font-size:2.2rem; color:#6ee87e; line-height:1; margin-bottom:0.2rem; }
 .fact p { color:#a0c8a0; font-size:0.9rem; }
+
+/* FAQ moved to overlay (biocomm-faq.js) */
 
 /* ── Footer ── */
 footer { padding:2.5rem 0; border-top:1px solid #0a6040; background-color:#024530; }
@@ -310,8 +312,12 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 /* ── Mobile ── */
-@media (max-width:600px) {
+@media (max-width:900px) {
   nav ul { display:none !important; }
+  .nav-tools { margin-left:auto; margin-right:auto; gap:0.3rem; }
+  .nav-tool-label { display:none; }
+  .nav-tool-btn img { width:38px; height:38px; }
+  #lang-sidebar { display:none !important; }
   nav { padding:0.9rem 1.2rem; }
   .hamburger { display:-webkit-flex !important; display:flex !important; }
   .hero h1 { font-size:2.2rem; }
@@ -334,13 +340,23 @@ input[type="checkbox"], input[type="radio"] {
   50%  { border-color:#6ee87e; box-shadow: 0 0 0 3px rgba(110,232,126,0.15); }
   100% { border-color:#0a6040; box-shadow: 0 0 0 0 rgba(110,232,126,0); }
 }
+
+/* ── Nav Tools (Chat, FAQ) ── */
+.nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
+.nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
+.nav-tool-btn:hover { opacity:0.85; transform:scale(1.05); }
+
+.nav-tool-label { font-family:'Lora',Georgia,serif; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:#6ee87e; }
+.nav-tool-label-faq { color:#d4a030; }
+/* Hide floating FABs — now in header */
+#omn-fab, #omn-faq-fab { display:none !important; }
 </style>
 </head>
 <body>
 
 <!-- Navigation -->
 <nav>
-  <div class="nav-logo">Open<span>MycoNet</span></div>
+  <a href="/" style="display:flex; align-items:center; text-decoration:none;"><img src="/logo-openmyconet.png" alt="OpenMycoNet" style="height:52px; width:auto; display:block;"></a>
   <ul>
     <li><a href="#warum" data-i18n="nav_warum">Warum</a></li>
     <li><a href="#mitmachen" data-i18n="nav_mitmachen">Mitmachen</a></li>
@@ -349,10 +365,15 @@ input[type="checkbox"], input[type="radio"] {
     <li><a href="#ueber" data-i18n="nav_ueber">Über</a></li>
     <li><a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a></li>
     <li><a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a></li>
-    <li id="lang-flags-nav" style="margin-left:0.5rem; display:flex; align-items:center; gap:0.35rem;">
-      <!-- Flags injected by JS -->
-    </li>
   </ul>
+  <div class="nav-tools">
+    <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
+      <img src="/icon-chat.png" alt="Chat" style="width:48px; height:48px; display:block;">
+    </button>
+    <button class="nav-tool-btn nav-tool-faq" id="nav-faq-btn" aria-label="FAQ" title="FAQ">
+      <img src="/icon-faq.png" alt="FAQ" style="width:48px; height:48px; display:block;">
+    </button>
+  </div>
   <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
     <span class="hamburger-bars"><span></span><span></span><span></span></span>
     <span class="hamburger-label" data-i18n="nav_menu">Menü</span>
@@ -374,6 +395,7 @@ input[type="checkbox"], input[type="radio"] {
   <a href="#ueber" data-i18n="nav_ueber">Über</a>
   <a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a>
   <a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a>
+  <a href="leihgeraete.html" data-i18n="nav_leihgeraete">Leihgerät</a>
   <div class="mobile-lang" id="lang-flags-mobile"></div>
 </div>
 
@@ -599,6 +621,7 @@ input[type="checkbox"], input[type="radio"] {
     <div class="flow-row" id="flow-row"></div>
   </div>
 </section>
+
 
 <!-- Spenden -->
 <!-- Buch Teaser -->
@@ -1077,6 +1100,21 @@ function renderDynamicSections(lang) {
       return '<div class="fact"><div class="fact-num">' + f.num + '</div><p>' + f.text + '</p></div>';
     }).join('');
   }
+
+  // FAQ
+  var faqEl = document.getElementById('faq-grid');
+  if (faqEl && T.faq) {
+    faqEl.innerHTML = T.faq.map(function(item, i) {
+      var id = 'faq-item-' + i;
+      return '<div class="faq-item" id="' + id + '">' +
+        '<button class="faq-q" onclick="toggleFaq(\'' + id + '\')" aria-expanded="false">' +
+          '<span>' + item.q + '</span>' +
+          '<svg class="faq-chevron" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="#6ee87e" stroke-width="2" stroke-linecap="round"><polyline points="4,6 8,10 12,6"/></svg>' +
+        '</button>' +
+        '<div class="faq-a" hidden><p>' + item.a + '</p></div>' +
+        '</div>';
+    }).join('');
+  }
 }
 
 // ─── Apply form rendering ─────────────────────────────────────
@@ -1123,6 +1161,18 @@ function renderApplyForm(lang) {
   
   document.getElementById('apply-btn').textContent = A.submit;
   document.getElementById('apply-note').textContent = A.note;
+}
+
+function toggleFaq(id) {
+  var item = document.getElementById(id);
+  if (!item) return;
+  var btn = item.querySelector('.faq-q');
+  var ans = item.querySelector('.faq-a');
+  var chev = item.querySelector('.faq-chevron');
+  var isOpen = !ans.hidden;
+  ans.hidden = isOpen;
+  btn.setAttribute('aria-expanded', String(!isOpen));
+  chev.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
 
 function checkApplyRole(sel) {
@@ -1617,6 +1667,34 @@ if ('serviceWorker' in navigator) {
   </a>
 </div>
 <script src="/biocomm-chat.js"></script>
+<script src="/biocomm-faq.js"></script>
 
+
+<!-- Header-Buttons → Overlays -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Chat button → trigger omn-fab click (biocomm-chat.js creates it)
+  var chatBtn = document.getElementById('nav-chat-btn');
+  if (chatBtn) {
+    chatBtn.addEventListener('click', function() {
+      var fab = document.getElementById('omn-fab');
+      if (fab) fab.click();
+    });
+  }
+  // FAQ button → trigger omn-faq-fab click (biocomm-faq.js creates it)
+  var faqBtn = document.getElementById('nav-faq-btn');
+  if (faqBtn) {
+    faqBtn.addEventListener('click', function() {
+      var fab = document.getElementById('omn-faq-fab');
+      if (fab) fab.click();
+    });
+  }
+  // Render flags in nav-flags (same function as before, new container)
+  if (typeof renderFlags === 'function') {
+    // renderFlags already fills lang-flags-nav and lang-flags-mobile
+    // We add nav-flags as additional container
+  }
+});
+</script>
 </body>
 </html>
