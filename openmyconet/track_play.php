@@ -1,52 +1,78 @@
 <?php
 /**
- * track_play.php — OpenMycoNet Song Counter
- * Zählt Plays und Downloads pro Track in der MySQL-Datenbank
+ * track_play.php — Zähler für Musik-Plays und Downloads
+ * ───────────────────────────────────────────────────────────────────
+ * Verwendung (wie in index.html verdrahtet):
+ *   ?track=listen-to-the-forest              → Play zählen
+ *   ?track=listen-to-the-forest&type=download → Download zählen
+ *   ?track=listen-to-the-forest&type=stats    → {"plays":N,"downloads":M}
+ * ───────────────────────────────────────────────────────────────────
+ * Speicherung: JSON-Datei im selben Verzeichnis (track_stats.json)
+ * Kein Datenbankzugriff nötig.
  */
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once 'config_foerderer.php'; // DB-Konstanten: DB_HOST, DB_NAME, DB_USER, DB_PASS
+// ── Config ───────────────────────────────────────────────────────
+$statsFile  = __DIR__ . '/track_stats.json';
+$allowedTracks = ['listen-to-the-forest'];
+$rateFile   = sys_get_temp_dir() . '/omn_trackrate_' . md5($_SERVER['REMOTE_ADDR'] ?? '');
+$rateWindow = 10; // Sekunden zwischen zwei Play-Counts pro IP
 
-$track = isset($_GET['track']) ? preg_replace('/[^a-z0-9\-]/', '', $_GET['track']) : '';
-$type  = isset($_GET['type'])  ? $_GET['type'] : 'play';
+// ── Input validieren ─────────────────────────────────────────────
+$track = trim($_GET['track'] ?? '');
+$type  = trim($_GET['type']  ?? 'play');
 
-if(empty($track)) { echo json_encode(['error'=>'no track']); exit; }
-
-try {
-    $pdo = new PDO(
-        'mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8',
-        DB_USER, DB_PASS,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
-
-    // Tabelle anlegen falls nicht vorhanden
-    $pdo->exec("CREATE TABLE IF NOT EXISTS track_stats (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        track VARCHAR(100) NOT NULL,
-        plays INT DEFAULT 0,
-        downloads INT DEFAULT 0,
-        UNIQUE KEY unique_track (track)
-    )");
-
-    if($type === 'play') {
-        $pdo->prepare("INSERT INTO track_stats (track, plays, downloads) VALUES (?,1,0)
-            ON DUPLICATE KEY UPDATE plays = plays + 1")->execute([$track]);
-        echo json_encode(['ok'=>true]);
-
-    } elseif($type === 'download') {
-        $pdo->prepare("INSERT INTO track_stats (track, plays, downloads) VALUES (?,0,1)
-            ON DUPLICATE KEY UPDATE downloads = downloads + 1")->execute([$track]);
-        echo json_encode(['ok'=>true]);
-
-    } elseif($type === 'stats') {
-        $stmt = $pdo->prepare("SELECT plays, downloads FROM track_stats WHERE track = ?");
-        $stmt->execute([$track]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo json_encode($row ?: ['plays'=>0,'downloads'=>0]);
-    }
-
-} catch(Exception $e) {
-    echo json_encode(['plays'=>0,'downloads'=>0]);
+if (!in_array($track, $allowedTracks, true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Unknown track']);
+    exit;
 }
+
+// ── Stats laden ──────────────────────────────────────────────────
+$stats = [];
+if (file_exists($statsFile)) {
+    $stats = json_decode(file_get_contents($statsFile), true) ?: [];
+}
+if (!isset($stats[$track])) {
+    $stats[$track] = ['plays' => 0, 'downloads' => 0];
+}
+
+// ── Aktion ausführen ─────────────────────────────────────────────
+if ($type === 'stats') {
+    // Nur lesen
+    echo json_encode([
+        'plays'     => (int)($stats[$track]['plays']     ?? 0),
+        'downloads' => (int)($stats[$track]['downloads'] ?? 0),
+    ]);
+    exit;
+}
+
+if ($type === 'play') {
+    // Rate-Limiting: max 1 Play-Count pro IP alle 10 Sekunden
+    $now = time();
+    $last = file_exists($rateFile) ? (int)file_get_contents($rateFile) : 0;
+    if ($now - $last < $rateWindow) {
+        // Zu schnell — still ignorieren, aber Stats zurückgeben
+        echo json_encode([
+            'plays'     => (int)$stats[$track]['plays'],
+            'downloads' => (int)$stats[$track]['downloads'],
+        ]);
+        exit;
+    }
+    file_put_contents($rateFile, $now);
+    $stats[$track]['plays']++;
+}
+
+if ($type === 'download') {
+    $stats[$track]['downloads']++;
+}
+
+// ── Speichern ────────────────────────────────────────────────────
+file_put_contents($statsFile, json_encode($stats, JSON_PRETTY_PRINT), LOCK_EX);
+
+echo json_encode([
+    'plays'     => (int)$stats[$track]['plays'],
+    'downloads' => (int)$stats[$track]['downloads'],
+]);
