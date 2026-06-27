@@ -51,9 +51,9 @@ section { padding:3rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; max
 .preview-intro { color:#a0c8a0; font-size:1rem; line-height:1.8; margin-bottom:2rem; }
 
 /* Edition grid */
-.edition-grid { display:flex; flex-wrap:wrap; gap:2rem; margin-top:1rem; }
-.edition-card { flex:1 1 260px; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; overflow:hidden; }
-.edition-img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+.edition-grid { display:flex; flex-wrap:wrap; gap:2rem; margin-top:1rem; justify-content:center; }
+.edition-card { flex:1 1 220px; max-width:300px; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; }
+.edition-img { width:100%; height:520px; object-fit:contain; object-position:center bottom; display:block; background:#012a1e; }
 .edition-body { padding:1.2rem 1.4rem; }
 .edition-name { font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#6ee87e; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.6rem; }
 .edition-desc { color:#a0c8a0; font-size:0.88rem; line-height:1.7; }
@@ -190,6 +190,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
   <div class="inner">
     <p class="section-label" id="leih-preview-label">KI-generierte Vorschau</p>
     <h2>So werden die<br>Nodes <em>aussehen</em></h2>
+    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;" id="leih-ki-hint">⚠ Diese Visualisierungen sind KI-generiert. Die echten Geräte werden zu ca. 80 % so aussehen — welches Farbdesign es letztlich wird, steht noch nicht fest.</p>
     <p class="preview-intro" id="leih-preview-intro">So werden die BioComm-Knoten in etwa aussehen. Die Visualisierungen sind KI-generiert — die echten Geräte werden zu ca. 80 % so aussehen. Welches Farbdesign es letztlich wird, steht noch nicht fest. Aber eins davon wird es werden.</p>
     <div class="edition-grid" id="edition-grid">
       <!-- rendered by JS -->
@@ -216,6 +217,38 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
     <div class="how-grid" id="how-grid">
       <!-- rendered by JS -->
     </div>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section style="background-color:#024530;">
+  <div class="inner">
+    <p class="section-label">BioComm Bridge</p>
+    <h2>Die <em>Zentrale</em></h2>
+    <div style="display:flex; flex-wrap:wrap; gap:2rem; align-items:center;">
+      <div style="flex:0 0 auto; max-width:320px;">
+        <img src="biocomm-bridge.png" alt="BioComm Bridge" style="width:100%; border:1px solid #0a6040;">
+      </div>
+      <div style="flex:1 1 280px;">
+        <p style="color:#a0c8a0; line-height:1.8; margin-bottom:1rem;">Die BioComm Bridge verbindet bis zu 4 Messknoten gleichzeitig über BLE und leitet alle Daten per USB an den PC weiter. Node 1–4 LEDs zeigen den Verbindungsstatus in Echtzeit.</p>
+        <ul style="color:#a0c8a0; font-size:0.9rem; line-height:2; padding-left:1.2rem;">
+          <li>ESP32 mit BLE 4.2/5.0</li>
+          <li>USB-C Verbindung zum PC</li>
+          <li>4 Node-Status-LEDs</li>
+          <li>Kompaktes Desktop-Gehäuse</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Komplettsystem -->
+<section style="background-color:#012a1e;">
+  <div class="inner">
+    <p class="section-label">Das Gesamtsystem</p>
+    <h2>BioComm <em>im Einsatz</em></h2>
+    <img src="biocomm-komplett.png" alt="BioComm Komplettsystem im Einsatz" style="width:100%; border:1px solid #0a6040; margin-bottom:1.5rem;">
+    <p style="color:#a0c8a0; line-height:1.8;">Vier BioComm-Knoten im Boden, verbunden über BLE mit der Bridge, Messdaten live auf dem Dashboard — das ist OpenMycoNet in der Praxis. Jeder Knoten misst unabhängig, die Bridge aggregiert alle Datenströme.</p>
   </div>
 </section>
 
@@ -283,9 +316,9 @@ function renderSidebar() {
 
 // Edition images — same KI images as on main site
 var EDITION_IMGS = [
-  { src: 'node-forest-camouflage.jpg', alt: 'Forest Camouflage Edition' },
-  { src: 'node-moss-edition.jpg',      alt: 'Moss Edition' },
-  { src: 'node-mycelium-edition.jpg',  alt: 'Mycelium Edition' },
+  { src: 'node-forest-camouflage.png', alt: 'Forest Camouflage Edition' },
+  { src: 'node-moos-edition.png',      alt: 'Moos Edition' },
+  { src: 'node-mycelium-edition.png',  alt: 'Mycelium Edition' },
 ];
 
 function applyPage(lang) {
@@ -317,18 +350,8 @@ function applyPage(lang) {
       { name: T.leih_edition_3_name, desc: T.leih_edition_3_desc, img: EDITION_IMGS[2] },
     ];
     grid.innerHTML = editions.map(function(e) {
-      // Fallback: if image not found, show placeholder with mycelium SVG bg
-      var imgHtml = '<div style="width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,#012a1e 0%,#024530 50%,#013020 100%);display:flex;align-items:center;justify-content:center;">'
-        + '<svg viewBox="0 0 80 80" width="60" height="60" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.4">'
-        + '<circle cx="40" cy="40" r="38" stroke="#6ee87e" stroke-width="1.5"/>'
-        + '<line x1="40" y1="40" x2="14" y2="22" stroke="#d4a030" stroke-width="0.8"/>'
-        + '<line x1="40" y1="40" x2="66" y2="20" stroke="#d4a030" stroke-width="0.8"/>'
-        + '<line x1="40" y1="40" x2="10" y2="55" stroke="#d4a030" stroke-width="0.6"/>'
-        + '<line x1="40" y1="40" x2="70" y2="58" stroke="#d4a030" stroke-width="0.6"/>'
-        + '<circle cx="40" cy="40" r="5" fill="#6ee87e"/>'
-        + '</svg></div>';
-      // Try real image first, fall back gracefully
-      var imgTag = '<img class="edition-img" src="' + e.img.src + '" alt="' + e.img.alt + '" onerror="this.parentNode.innerHTML=\'' + imgHtml.replace(/'/g,"\\'") + '\'">';
+      // Image with fallback
+      var imgTag = '<img class="edition-img" src="' + e.img.src + '" alt="' + e.img.alt + '">';
       return '<div class="edition-card">'
         + imgTag
         + '<div class="edition-body">'

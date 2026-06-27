@@ -489,7 +489,7 @@
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: msg, history: history.slice(0, -1) }),
+        body: JSON.stringify({ message: msg, history: history.slice(0, -1), lang: currentLang }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));

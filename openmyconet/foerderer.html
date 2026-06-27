@@ -99,6 +99,37 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
 /* Hide floating FABs */
 #omn-fab, #omn-faq-fab { display:none !important; }
 </style>
+<meta name="robots" content="index, follow">
+<meta name="author" content="Robert Jank">
+<meta id="foerderer-description" name="description" content="Unterstütze OpenMycoNet — das Citizen-Science-Netzwerk für Mykorrhiza-Biosignale. Als Förderer ermöglichst du Leihgeräte, Forschung und den Aufbau eines weltweiten Messnetzes.">
+<meta property="og:type" content="website">
+<meta id="foerderer-og-url" property="og:url" content="https://www.openmyconet.de/foerderer.html">
+<meta id="foerderer-og-title" property="og:title" content="Förderer werden — OpenMycoNet">
+<meta id="foerderer-og-description" property="og:description" content="Unterstütze OpenMycoNet — das Citizen-Science-Netzwerk für Mykorrhiza-Biosignale. Ermögliche Leihgeräte, Forschung und ein weltweites Messnetz.">
+<meta property="og:image" content="https://www.openmyconet.de/og-image.png">
+<meta id="foerderer-og-locale" property="og:locale" content="de_DE">
+<meta property="og:site_name" content="OpenMycoNet">
+<meta name="twitter:card" content="summary_large_image">
+<meta id="foerderer-twitter-title" name="twitter:title" content="Förderer werden — OpenMycoNet">
+<meta id="foerderer-twitter-description" name="twitter:description" content="Citizen Science für Mykorrhiza-Netzwerke unterstützen. Leihgeräte, Forschung, weltweites Messnetz.">
+<meta name="twitter:image" content="https://www.openmyconet.de/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Förderer — OpenMycoNet",
+  "description": "Unterstütze OpenMycoNet — das Citizen-Science-Netzwerk zur Messung bioelektrischer Signale in Mykorrhiza-Netzwerken.",
+  "url": "https://www.openmyconet.de/foerderer.html",
+  "inLanguage": "de",
+  "isPartOf": { "@type": "WebSite", "name": "OpenMycoNet", "url": "https://www.openmyconet.de" },
+  "about": {
+    "@type": "DonateAction",
+    "name": "OpenMycoNet unterstützen",
+    "description": "Förderbeiträge ermöglichen Leihgeräte für Citizen Scientists und den Aufbau eines weltweiten Messnetzes für Mykorrhiza-Biosignale.",
+    "recipient": { "@type": "Person", "name": "Robert Jank", "address": { "@type": "PostalAddress", "addressLocality": "Maintal", "addressCountry": "DE" } }
+  }
+}
+</script>
 <link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html">
 <link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer.html?lang=en">
 <link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/foerderer.html?lang=nl">
@@ -317,6 +348,21 @@ function applyFoerdererLang(lang) {
 
   document.getElementById('foerderer-html').setAttribute('lang', lang);
   document.getElementById('page-title').textContent = t.title;
+
+  // SEO tags — update on language switch
+  var localeMap = { de:'de_DE', en:'en_US', nl:'nl_NL', fr:'fr_FR', es:'es_ES' };
+  var canonicalUrl = 'https://www.openmyconet.de/foerderer.html' + (lang !== 'de' ? '?lang=' + lang : '');
+  var seoDesc = t.seo_desc || 'Unterstütze OpenMycoNet — das Citizen-Science-Netzwerk für Mykorrhiza-Biosignale.';
+  var seoTitle = t.title || 'Förderer — OpenMycoNet';
+  var el;
+  el = document.getElementById('foerderer-canonical');       if (el) el.setAttribute('href', canonicalUrl);
+  el = document.getElementById('foerderer-og-url');         if (el) el.setAttribute('content', canonicalUrl);
+  el = document.getElementById('foerderer-og-title');       if (el) el.setAttribute('content', seoTitle);
+  el = document.getElementById('foerderer-og-description'); if (el) el.setAttribute('content', seoDesc);
+  el = document.getElementById('foerderer-og-locale');      if (el) el.setAttribute('content', localeMap[lang] || 'de_DE');
+  el = document.getElementById('foerderer-twitter-title');  if (el) el.setAttribute('content', seoTitle);
+  el = document.getElementById('foerderer-twitter-description'); if (el) el.setAttribute('content', seoDesc);
+  el = document.getElementById('foerderer-description');    if (el) el.setAttribute('content', seoDesc);
 
   // Flags (Desktop + Mobile)
   LANGS.forEach(function(l) {
