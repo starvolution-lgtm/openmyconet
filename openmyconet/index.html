@@ -61,10 +61,16 @@ body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif
 nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:0.75rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
 .nav-logo { font-family:'Lora',Georgia,serif; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; }
 .nav-logo span { color:#f0b84a; }
+nav a.nav-logo-link { margin-left:clamp(-1.5rem,-1.5vw,-0.75rem); }
 nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; position:absolute; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%); }
 nav a { color:#a0c8a0; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.2s; }
 nav a:hover { color:#f0b84a; }
 nav a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
+nav a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px; animation: nav-news-glow 1.6s ease-in-out infinite; }
+@keyframes nav-news-glow {
+  0%, 100% { background-color:rgba(240,184,74,0.08); box-shadow:0 0 6px rgba(240,184,74,0.3); text-shadow:0 0 4px rgba(240,184,74,0.5); }
+  50% { background-color:rgba(240,184,74,0.28); box-shadow:0 0 10px 2px rgba(240,184,74,0.9), 0 0 26px rgba(240,184,74,0.55); text-shadow:0 0 10px rgba(255,210,120,1), 0 0 20px rgba(240,184,74,0.85); }
+}
 /* Sprachauswahl Desktop-Sidebar */
 #lang-sidebar { display:none; position:fixed; right:42px; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
 /* lang-flags-nav removed — flags now in .nav-flags */
@@ -311,6 +317,13 @@ input[type="checkbox"], input[type="radio"] {
   flex-shrink:0;
 }
 
+/* Hamburger springt früher an, damit die Nav-Items (inkl. News) bei mittleren
+   Breiten nicht mit dem Logo kollidieren */
+@media (max-width:1180px) {
+  nav ul { display:none !important; }
+  .hamburger { display:-webkit-flex !important; display:flex !important; }
+}
+
 /* ── Mobile ── */
 @media (max-width:900px) {
   nav ul { display:none !important; }
@@ -356,7 +369,7 @@ input[type="checkbox"], input[type="radio"] {
 
 <!-- Navigation -->
 <nav>
-  <a href="/" style="display:flex; align-items:center; text-decoration:none;"><img src="/logo-openmyconet.png" alt="OpenMycoNet" style="height:52px; width:auto; display:block;"></a>
+  <a href="/" class="nav-logo-link" style="display:flex; align-items:center; text-decoration:none;"><img src="/logo-openmyconet.png" alt="OpenMycoNet" style="height:52px; width:auto; display:block;"></a>
   <ul>
     <li><a href="#warum" data-i18n="nav_warum">Warum</a></li>
     <li><a href="#mitmachen" data-i18n="nav_mitmachen">Mitmachen</a></li>
@@ -365,6 +378,7 @@ input[type="checkbox"], input[type="radio"] {
     <li><a href="#ueber" data-i18n="nav_ueber">Über</a></li>
     <li><a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a></li>
     <li><a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a></li>
+    <li><a href="https://api.openmyconet.de/news" data-i18n="nav_news">News</a></li>
   </ul>
   <div class="nav-tools">
     <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
@@ -395,6 +409,7 @@ input[type="checkbox"], input[type="radio"] {
   <a href="#ueber" data-i18n="nav_ueber">Über</a>
   <a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a>
   <a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a>
+  <a href="https://api.openmyconet.de/news" data-i18n="nav_news">News</a>
   <a href="leihgeraete.html" data-i18n="nav_leihgeraete">Leihgerät</a>
   <div class="mobile-lang" id="lang-flags-mobile"></div>
 </div>
@@ -432,6 +447,7 @@ input[type="checkbox"], input[type="radio"] {
       <img class="omn-cover-img active" id="omn-cover-0" src="cover-listening-to-the-trees.jpeg" alt="Listening to the Trees">
       <img class="omn-cover-img"        id="omn-cover-1" src="cover-the-oldest-living-network.jpeg" alt="The Oldest Living Network">
       <img class="omn-cover-img"        id="omn-cover-2" src="cover-three-ways-of-knowing.jpeg" alt="Three Ways of Knowing">
+      <img class="omn-cover-img"        id="omn-cover-3" src="cover-nobody-funds-the-ground.jpeg" alt="Nobody Funds the Ground">
       <div class="omn-cover-overlay"></div>
     </div>
     <!-- Controls -->
@@ -462,7 +478,8 @@ input[type="checkbox"], input[type="radio"] {
     var tracks = [
       { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'cover-listening-to-the-trees.jpeg' },
       { file:'the-oldest-living-network.mp3',  title:'The Oldest Living Network', cover:'cover-the-oldest-living-network.jpeg' },
-      { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg' }
+      { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg' },
+      { file:'nobody-funds-the-ground.mp3',    title:'Nobody Funds the Ground',   cover:'cover-nobody-funds-the-ground.jpeg' }
     ];
     var current = 0;
     var audio   = document.getElementById('omn-audio');
@@ -601,6 +618,7 @@ input[type="checkbox"], input[type="radio"] {
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
+    <p class="section-desc" data-i18n="desc_mitmachen">Die Ergebnisse und Daten des Netzwerks stehen allen offen — auch ohne eigenen Knoten. Wer selbst einen BioComm-Knoten betreiben möchte, bewirbt sich unten für einen der kuratierten Plätze.</p>
     <div class="steps-grid" id="steps-grid"></div>
     <div style="margin-top:1.5rem;">
       <a href="#anmelden" class="btn btn-green" data-i18n="btn_register">Jetzt registrieren</a>
@@ -983,6 +1001,15 @@ var META_DESCRIPTIONS = {
 };
 var OG_LOCALES = {de:'de_DE',en:'en_US',nl:'nl_NL',fr:'fr_FR',es:'es_ES'};
 
+function getUrlLang() {
+  // Canonical/og:url dürfen sich NUR nach dem tatsächlichen ?lang=-Parameter der
+  // aktuellen Adresse richten, nicht nach erkannter Browsersprache/localStorage —
+  // sonst liefert z.B. Googlebot mit englischer Render-Locale für "/" einen
+  // canonical von "?lang=en", was Google als widersprüchliches Canonical-Signal wertet.
+  var p = new URLSearchParams(window.location.search).get('lang');
+  return (p && LANG_NAMES.indexOf(p) !== -1) ? p : 'de';
+}
+
 function updateMeta(lang) {
   var desc = META_DESCRIPTIONS[lang] || META_DESCRIPTIONS.de;
   document.getElementById('html-root').setAttribute('lang', lang);
@@ -990,7 +1017,8 @@ function updateMeta(lang) {
   document.getElementById('og-description').setAttribute('content', desc);
   document.getElementById('twitter-description').setAttribute('content', desc);
   document.getElementById('og-locale').setAttribute('content', OG_LOCALES[lang] || 'de_DE');
-  var url = lang === 'de' ? 'https://www.openmyconet.de/' : 'https://www.openmyconet.de/?lang=' + lang;
+  var urlLang = getUrlLang();
+  var url = urlLang === 'de' ? 'https://www.openmyconet.de/' : 'https://www.openmyconet.de/?lang=' + urlLang;
   document.getElementById('canonical').setAttribute('href', url);
   document.getElementById('og-url').setAttribute('content', url);
 }
@@ -1359,7 +1387,7 @@ function renderRegForm(lang) {
 
   // Requirements list
   var reqList = document.getElementById('node-req-list');
-  var reqKeys = ['node_req_1','node_req_2','node_req_3','node_req_4','node_req_5','node_req_6','node_req_7'];
+  var reqKeys = ['node_req_1','node_req_2','node_req_3','node_req_4','node_req_5','node_req_6','node_req_7','node_req_8'];
   reqList.innerHTML = reqKeys.map(function(k) {
     return '<li>' + A[k] + '</li>';
   }).join('');
@@ -1667,6 +1695,73 @@ if ('serviceWorker' in navigator) {
     <span class="tip">Mastodon</span>
   </a>
 </div>
+
+<!-- ── Schwebender Audio-Controller ─────────────────────────────── -->
+<div id="omn-audio-fab" style="position:fixed; bottom:1.4rem; left:1.2rem; z-index:890; display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem;">
+  <!-- Panel mit Lautstärkeregler -->
+  <div id="omn-audio-panel" style="display:none; background:rgba(2,40,28,0.97); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 1.1rem; min-width:170px; box-shadow:0 4px 24px rgba(0,0,0,0.5); font-family:JetBrains Mono,monospace;">
+    <div style="font-size:0.6rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.7rem;">Audio</div>
+    <div style="display:flex; align-items:center; gap:0.6rem;">
+      <span style="font-size:0.6rem; color:#a0c8a0; letter-spacing:0.06em; min-width:60px;">Lautst&#228;rke</span>
+      <input id="omn-vol-slider" type="range" min="0" max="1" step="0.02" value="1" style="flex:1; accent-color:#6ee87e; cursor:pointer; height:3px;">
+    </div>
+    <div style="font-size:0.55rem; color:#6a9a6a; letter-spacing:0.06em; margin-top:0.6rem; text-align:center;">Klick auf Icon = Mute/Unmute</div>
+  </div>
+  <!-- FAB: Klick öffnet Panel, Rechtsklick/Doppelklick → nein; Icon wechselt bei Mute -->
+  <button id="omn-audio-btn" onclick="omnAudioFabClick()" title="Audio-Steuerung (Klick = Mute/Unmute, gedrückt halten = Lautstärke)"
+    style="width:52px; height:52px; border-radius:12px; background:transparent; border:none; padding:0; cursor:pointer; box-shadow:0 2px 12px rgba(0,0,0,0.5); transition:transform 0.15s; display:flex; align-items:center; justify-content:center;">
+    <img id="omn-audio-icon" src="Ton.png" alt="Audio" style="width:52px; height:52px; border-radius:12px; display:block;">
+  </button>
+  <!-- Kleiner Pfeil-Button zum Panel öffnen -->
+  <button onclick="omnAudioPanelToggle()" title="Lautstärke" style="position:absolute; bottom:0; left:54px; width:20px; height:20px; border-radius:50%; background:rgba(2,40,28,0.97); border:1px solid #0a6040; color:#6ee87e; font-size:0.6rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 6px rgba(0,0,0,0.4);">&#9650;</button>
+</div>
+<script>
+(function(){
+  var panelOpen=false, muted=false;
+  function getAudios(){return[document.getElementById("omn-audio"),document.getElementById("ltf-audio")].filter(Boolean);}
+
+  window.omnAudioFabClick=function(){
+    // Klick auf Icon = Mute/Unmute
+    muted=!muted;
+    getAudios().forEach(function(a){a.muted=muted;});
+    document.getElementById("omn-audio-icon").src = muted ? "Mute.png" : "Ton.png";
+    document.getElementById("omn-vol-slider").style.opacity = muted ? "0.4" : "1";
+    // Kurze visuelle Rückmeldung
+    var btn=document.getElementById("omn-audio-btn");
+    btn.style.transform="scale(0.88)";
+    setTimeout(function(){btn.style.transform="scale(1)";},150);
+  };
+
+  window.omnAudioPanelToggle=function(){
+    panelOpen=!panelOpen;
+    var panel=document.getElementById("omn-audio-panel");
+    panel.style.display=panelOpen?"block":"none";
+    // Pfeil-Richtung anpassen
+    this.innerHTML=panelOpen?"&#9660;":"&#9650;";
+  };
+
+  document.getElementById("omn-vol-slider").addEventListener("input",function(){
+    var vol=parseFloat(this.value);
+    getAudios().forEach(function(a){a.volume=vol;});
+    // Auto-unmute wenn Regler bewegt wird
+    if(muted&&vol>0){
+      muted=false;
+      getAudios().forEach(function(a){a.muted=false;});
+      document.getElementById("omn-audio-icon").src="Ton.png";
+      document.getElementById("omn-vol-slider").style.opacity="1";
+    }
+  });
+
+  // Panel schließen bei Klick außerhalb
+  document.addEventListener("click",function(e){
+    if(panelOpen&&!document.getElementById("omn-audio-fab").contains(e.target)){
+      panelOpen=false;
+      document.getElementById("omn-audio-panel").style.display="none";
+    }
+  });
+})();
+</script>
+<!-- ── Ende Audio-Controller ────────────────────────────────────── -->
 <script src="/biocomm-chat.js"></script>
 <script src="/biocomm-faq.js"></script>
 
