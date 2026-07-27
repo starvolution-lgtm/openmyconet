@@ -100,10 +100,10 @@
 
         function addPunkt(lat, lon, farbe, popup) {
             if (lat === null || lat === undefined || lon === null || lon === undefined) return;
-            L.circleMarker([lat, lon], { radius: 8, color: farbe, fillColor: farbe, fillOpacity: 0.8 })
+            L.circle([lat, lon], { radius: 1000, color: farbe, weight: 2.5, opacity: 0.9, fillOpacity: 0.1 }).addTo(map);
+            L.circle([lat, lon], { radius: 3000, color: farbe, weight: 2, opacity: 0.7, dashArray: '6 8', fillOpacity: 0 }).addTo(map);
+            L.circleMarker([lat, lon], { radius: 9, color: '#000', weight: 1, fillColor: farbe, fillOpacity: 1 })
                 .addTo(map).bindPopup(popup);
-            L.circle([lat, lon], { radius: 1000, color: farbe, weight: 1.5, fillOpacity: 0.03 }).addTo(map);
-            L.circle([lat, lon], { radius: 3000, color: farbe, weight: 1, dashArray: '4 6', fillOpacity: 0 }).addTo(map);
         }
 
         var bewerbungen = [
