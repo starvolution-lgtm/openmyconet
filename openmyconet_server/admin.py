@@ -481,16 +481,21 @@ def bewerbungen_admin():
     fehler = None
     if request.method == 'POST':
         bewerbung_id = request.form.get('bewerbung_id', type=int)
-        neuer_status = request.form.get('status', '').strip()
         bewerbung = Bewerbung.query.get(bewerbung_id) if bewerbung_id else None
         if not bewerbung:
             fehler = 'Bewerbung nicht gefunden.'
-        elif neuer_status not in BEWERBUNG_STATUS:
-            fehler = 'Ungültiger Status.'
-        else:
-            bewerbung.status = neuer_status
+        elif request.form.get('action') == 'delete':
+            nachricht = f'Bewerbung #{bewerbung.id} ({bewerbung.name or bewerbung.email}) gelöscht.'
+            db.session.delete(bewerbung)
             db.session.commit()
-            nachricht = f'Status von Bewerbung #{bewerbung.id} auf "{neuer_status}" gesetzt.'
+        else:
+            neuer_status = request.form.get('status', '').strip()
+            if neuer_status not in BEWERBUNG_STATUS:
+                fehler = 'Ungültiger Status.'
+            else:
+                bewerbung.status = neuer_status
+                db.session.commit()
+                nachricht = f'Status von Bewerbung #{bewerbung.id} auf "{neuer_status}" gesetzt.'
 
     bewerbungen_liste = Bewerbung.query.order_by(Bewerbung.erstellt_am.desc()).all()
     knoten_liste = Knoten.query.filter_by(aktiv=True).all()

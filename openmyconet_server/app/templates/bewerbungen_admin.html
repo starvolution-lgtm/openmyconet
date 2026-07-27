@@ -78,6 +78,11 @@
                     </select>
                     <button type="submit">Setzen</button>
                 </form>
+                <form method="POST" style="margin-top:6px;" onsubmit="return confirm('Bewerbung #{{ b.id }} ({{ b.name or b.email }}) endgültig löschen?');">
+                    <input type="hidden" name="bewerbung_id" value="{{ b.id }}">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" style="border-color:#f44336; color:#f44336;">Löschen</button>
+                </form>
             </td>
             <td>{{ b.erstellt_am.strftime('%d.%m.%Y') }}</td>
         </tr>
