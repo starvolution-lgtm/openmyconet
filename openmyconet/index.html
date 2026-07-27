@@ -1483,10 +1483,50 @@ function handleReg(e) {
 // ─── Adress-Geocoding (Nominatim/OpenStreetMap) ───────────────
 var nodeGeoMap = null;
 var nodeGeoMarker = null;
+var nodeGeoLastAddress = null; // Adresse, für die zuletzt erfolgreich geocodiert wurde
 
 function nodeGeoSetLatLon(lat, lon) {
   document.getElementById('node-inp-lat').value = lat;
   document.getElementById('node-inp-lon').value = lon;
+}
+
+function nodeGeoClearLatLon() {
+  document.getElementById('node-inp-lat').value = '';
+  document.getElementById('node-inp-lon').value = '';
+  nodeGeoLastAddress = null;
+}
+
+function nodeGeoShowMarker(lat, lon) {
+  var mapEl = document.getElementById('node-geo-map');
+  mapEl.style.display = 'block';
+  if (!nodeGeoMap) {
+    nodeGeoMap = L.map('node-geo-map').setView([lat, lon], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(nodeGeoMap);
+    nodeGeoMarker = L.marker([lat, lon], { draggable: true }).addTo(nodeGeoMap);
+    nodeGeoMarker.on('dragend', function() {
+      var pos = nodeGeoMarker.getLatLng();
+      nodeGeoSetLatLon(pos.lat, pos.lng);
+    });
+  } else {
+    nodeGeoMap.setView([lat, lon], 13);
+    nodeGeoMarker.setLatLng([lat, lon]);
+  }
+  setTimeout(function() { nodeGeoMap.invalidateSize(); }, 100);
+}
+
+// Führt das eigentliche Geocoding aus und liefert ein Promise<{lat,lon}|null>.
+// Wird sowohl vom manuellen "Standort suchen"-Button als auch automatisch
+// beim Absenden genutzt, falls der Nutzer nicht selbst auf den Button geklickt hat.
+function performNodeGeocode(address) {
+  return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address))
+    .then(function(r) { return r.json(); })
+    .then(function(results) {
+      if (!results || !results.length) return null;
+      return { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
+    })
+    .catch(function() { return null; });
 }
 
 function geocodeNodeAddress() {
@@ -1498,46 +1538,37 @@ function geocodeNodeAddress() {
 
   var btn = document.getElementById('node-geocode-btn');
   btn.disabled = true;
-  fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address))
-    .then(function(r) { return r.json(); })
-    .then(function(results) {
-      btn.disabled = false;
-      if (!results || !results.length) {
-        errEl.textContent = A.node_geocode_error;
-        errEl.style.display = 'block';
-        return;
-      }
-      var lat = parseFloat(results[0].lat);
-      var lon = parseFloat(results[0].lon);
-      nodeGeoSetLatLon(lat, lon);
-
-      var mapEl = document.getElementById('node-geo-map');
-      mapEl.style.display = 'block';
-      if (!nodeGeoMap) {
-        nodeGeoMap = L.map('node-geo-map').setView([lat, lon], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap'
-        }).addTo(nodeGeoMap);
-        nodeGeoMarker = L.marker([lat, lon], { draggable: true }).addTo(nodeGeoMap);
-        nodeGeoMarker.on('dragend', function() {
-          var pos = nodeGeoMarker.getLatLng();
-          nodeGeoSetLatLon(pos.lat, pos.lng);
-        });
-      } else {
-        nodeGeoMap.setView([lat, lon], 13);
-        nodeGeoMarker.setLatLng([lat, lon]);
-      }
-      setTimeout(function() { nodeGeoMap.invalidateSize(); }, 100);
-    })
-    .catch(function() {
-      btn.disabled = false;
+  performNodeGeocode(address).then(function(result) {
+    btn.disabled = false;
+    if (!result) {
+      nodeGeoClearLatLon();
       errEl.textContent = A.node_geocode_error;
       errEl.style.display = 'block';
-    });
+      return;
+    }
+    nodeGeoSetLatLon(result.lat, result.lon);
+    nodeGeoLastAddress = address;
+    nodeGeoShowMarker(result.lat, result.lon);
+  });
 }
 
-function handleNodeApply(e) {
-  e.preventDefault();
+// Adresse nachträglich geändert, ohne neu zu suchen? Alten Pin/Koordinaten verwerfen,
+// damit nie eine falsche (zur Adresse nicht mehr passende) Koordinate abgeschickt wird.
+document.addEventListener('DOMContentLoaded', function() {
+  var addrEl = document.getElementById('node-inp-address');
+  if (addrEl) {
+    addrEl.addEventListener('input', function() {
+      if (this.value.trim() !== nodeGeoLastAddress) {
+        nodeGeoClearLatLon();
+      }
+    });
+    addrEl.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); geocodeNodeAddress(); }
+    });
+  }
+});
+
+function submitNodeApplication() {
   var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
   var btn = document.getElementById('node-submit-btn');
   var form = document.getElementById('node-form');
@@ -1572,6 +1603,35 @@ function handleNodeApply(e) {
       btn.style.backgroundColor = '#8b2020';
       btn.disabled = false;
     });
+}
+
+function handleNodeApply(e) {
+  e.preventDefault();
+  var address = document.getElementById('node-inp-address').value.trim();
+  var latVal = document.getElementById('node-inp-lat').value;
+
+  // Adresse eingegeben, aber noch keine (aktuelle) Koordinate gesetzt — z.B. weil
+  // der Nutzer nach dem letzten Klick auf "Standort suchen" die Adresse noch
+  // geändert hat. Statt eine leere Koordinate abzuschicken, jetzt automatisch
+  // nachholen, damit die Bewerbung nie ohne Standort ankommt, wenn eine Adresse
+  // angegeben wurde.
+  if (address && !latVal) {
+    var btn = document.getElementById('node-submit-btn');
+    var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
+    btn.textContent = A.node_sending;
+    btn.disabled = true;
+    performNodeGeocode(address).then(function(result) {
+      if (result) {
+        nodeGeoSetLatLon(result.lat, result.lon);
+        nodeGeoLastAddress = address;
+      }
+      // Auch bei fehlgeschlagenem Geocoding wird abgeschickt — Koordinate bleibt
+      // dann leer, die Bewerbung selbst (Adresse als Freitext) geht trotzdem durch.
+      submitNodeApplication();
+    });
+  } else {
+    submitNodeApplication();
+  }
 }
 
 // ─── Social Sharing ────────────────────────────────────────────
