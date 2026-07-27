@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>OpenMycoNet — Knoten verwalten</title>
+    <title>OpenMycoNet — Admin-Accounts</title>
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
         h1, h2 { color: #4caf50; }
@@ -14,7 +14,7 @@
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th { background: #1a2a1a; color: #4caf50; padding: 10px; text-align: left; }
         td { padding: 8px 10px; border-bottom: 1px solid #1a2a1a; font-size: 0.9em; }
-        .aktiv { color: #4caf50; }
+        .del { color: #f44336; text-decoration: none; font-size: 0.85em; }
         nav { margin-bottom: 30px; }
         a { color: #4caf50; }
         hr { border-color: #1a2a1a; margin: 30px 0; }
@@ -22,52 +22,48 @@
 </head>
 <body>
     <nav><a href="{{ url_for('admin.admin') }}">← Admin</a> · <a href="{{ url_for('admin.change_password') }}">Passwort ändern</a> · <a href="{{ url_for('admin.logout') }}">Logout</a></nav>
-    <h1>🍄 Knoten verwalten</h1>
+    <h1>🍄 Admin-Accounts</h1>
 
-    {% if nachricht %}
-        <p class="msg">{{ nachricht }}</p>
-    {% endif %}
-    {% if fehler %}
-        <p class="err">{{ fehler }}</p>
-    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, msg in messages %}
+            <p class="{{ 'err' if category == 'error' else 'msg' }}">{{ msg }}</p>
+        {% endfor %}
+    {% endwith %}
+    {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
+    {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
 
-    <h2>Neuen Knoten anlegen</h2>
+    <h2>Neuen Account anlegen</h2>
     <form method="POST">
-        <label>Knoten-ID (z.B. DE-001)</label>
-        <input type="text" name="knoten_id" required placeholder="DE-001">
+        <label>Benutzername</label>
+        <input type="text" name="username" required>
 
-        <label>Nutzer</label>
-        <select name="nutzer_email">
-            {% for nutzer in nutzer_liste %}
-            <option value="{{ nutzer.email }}">{{ nutzer.name }} — {{ nutzer.email }}</option>
-            {% endfor %}
+        <label>Passwort</label>
+        <input type="password" name="password" required>
+
+        <label>Rolle</label>
+        <select name="role">
+            <option value="editor">Editor (Inhalte)</option>
+            <option value="superadmin">Superadmin (alles)</option>
         </select>
 
-        <label>Substrat</label>
-        <input type="text" name="substrat" placeholder="z.B. Mykorrhiza-Erde, Kompost, Waldboden">
-
-        <button type="submit">Knoten anlegen</button>
+        <button type="submit">Anlegen</button>
     </form>
 
     <hr>
-    <h2>Registrierte Knoten</h2>
+    <h2>Bestehende Accounts</h2>
     <table>
         <tr>
-            <th>Knoten-ID</th>
-            <th>Nutzer</th>
-            <th>Substrat</th>
-            <th>Aktiv</th>
+            <th>Benutzername</th>
+            <th>Rolle</th>
             <th>Angelegt</th>
-            <th>Messungen</th>
+            <th></th>
         </tr>
-        {% for knoten in knoten_liste %}
+        {% for acc in accounts_liste %}
         <tr>
-            <td>{{ knoten.knoten_id }}</td>
-            <td>{{ knoten.nutzer.name }}</td>
-            <td>{{ knoten.substrat }}</td>
-            <td class="aktiv">{{ '✓' if knoten.aktiv else '✗' }}</td>
-            <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
-            <td>{{ knoten.messungen|length }}</td>
+            <td>{{ acc.username }}</td>
+            <td>{{ acc.role }}</td>
+            <td>{{ acc.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</td>
+            <td><a href="{{ url_for('admin.account_delete', user_id=acc.id) }}" class="del" onclick="return confirm('Account wirklich löschen?')">✕</a></td>
         </tr>
         {% endfor %}
     </table>

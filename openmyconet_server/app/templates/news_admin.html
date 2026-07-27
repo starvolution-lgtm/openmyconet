@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>OpenMycoNet — News verwalten</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <style>
         body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
         h1, h2 { color: #4caf50; }
         label { display: block; margin-top: 16px; color: #aaa; font-size: 0.9em; }
         input, select, textarea { width: 100%; padding: 8px; margin: 6px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; box-sizing: border-box; }
         textarea { height: 180px; resize: vertical; }
+        #editor { height: 220px; background: #fff; color: #000; border-radius: 0 0 4px 4px; }
+        .ql-toolbar { background: #1a2a1a; border-color: #4caf50 !important; border-radius: 4px 4px 0 0; }
+        .ql-container { border-color: #4caf50 !important; }
+        .ql-toolbar .ql-stroke { stroke: #eee; }
+        .ql-toolbar .ql-fill { fill: #eee; }
+        .ql-toolbar .ql-picker-label { color: #eee; }
         button { background: #4caf50; color: #000; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; }
         .msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -21,17 +28,26 @@
     </style>
 </head>
 <body>
-    <nav><a href="/admin">← Admin</a></nav>
+    <nav>
+        {% if session.admin_role == 'superadmin' %}<a href="{{ url_for('admin.admin') }}">← Admin</a>{% endif %}
+        · <a href="{{ url_for('admin.change_password') }}">Passwort ändern</a> · <a href="{{ url_for('admin.logout') }}">Logout</a>
+    </nav>
     <h1>🍄 News verwalten</h1>
 
     {% if nachricht %}
         <p class="msg">{{ nachricht }}</p>
     {% endif %}
+    {% if fehler %}
+        <p class="msg" style="color:#f44336;">{{ fehler }}</p>
+    {% endif %}
 
     <h2>Neuen Beitrag erstellen</h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data" id="news-form">
         <label>Titel</label>
         <input type="text" name="titel" required>
+
+        <label>Untertitel (optional)</label>
+        <input type="text" name="untertitel">
 
         <label>Sprache</label>
         <select name="sprache">
@@ -42,11 +58,42 @@
             <option value="es">Español</option>
         </select>
 
+        <label>Bild (optional, png/jpg/jpeg/webp/gif)</label>
+        <input type="file" name="bild" accept="image/png,image/jpeg,image/webp,image/gif">
+
         <label>Inhalt</label>
-        <textarea name="inhalt" required></textarea>
+        <div id="editor"></div>
+        <textarea name="inhalt" id="inhalt-feld" style="display:none;"></textarea>
+
+        <label>Tags (kommagetrennt, optional)</label>
+        <input type="text" name="tags" placeholder="z.B. Mykorrhiza, Forschung, Update">
 
         <button type="submit">Veröffentlichen</button>
     </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script>
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            }
+        });
+        document.getElementById('news-form').addEventListener('submit', function (e) {
+            if (!quill.getText().trim()) {
+                e.preventDefault();
+                alert('Bitte einen Inhalt eingeben.');
+                return;
+            }
+            document.getElementById('inhalt-feld').value = quill.root.innerHTML;
+        });
+    </script>
 
     <hr>
     <h2>Bestehende Beiträge</h2>
@@ -55,6 +102,7 @@
             <th>Datum</th>
             <th>Sprache</th>
             <th>Titel</th>
+            <th>Bild</th>
             <th></th>
         </tr>
         {% for news in news_liste %}
@@ -62,7 +110,12 @@
             <td>{{ news.veroeffentlicht.strftime('%d.%m.%Y') }}</td>
             <td>{{ news.sprache }}</td>
             <td>{{ news.titel }}</td>
-            <td><a href="/admin/news/delete/{{ news.id }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a></td>
+            <td>{% if news.bild_dateiname %}✓{% endif %}</td>
+            <td>
+                {% if news.slug %}<a href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank" style="margin-right:8px;">Ansehen</a>{% endif %}
+                <a href="{{ url_for('admin.news_edit', news_id=news.id) }}" style="margin-right:8px;">Bearbeiten</a>
+                <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

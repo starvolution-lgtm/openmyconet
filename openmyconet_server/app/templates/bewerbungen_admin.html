@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenMycoNet — Bewerbungen verwalten</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 1000px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
+        h1, h2 { color: #4caf50; }
+        select, button { padding: 6px 10px; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; }
+        button { cursor: pointer; font-weight: bold; }
+        .msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        .err { color: #f44336; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #1a2a1a; color: #4caf50; padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #1a2a1a; font-size: 0.9em; vertical-align: top; }
+        nav { margin-bottom: 30px; }
+        a { color: #4caf50; }
+        hr { border-color: #1a2a1a; margin: 30px 0; }
+        .status-neu { color: #f0b84a; }
+        .status-in_pruefung { color: #4a9ef0; }
+        .status-angenommen { color: #4caf50; }
+        .status-abgelehnt { color: #888; }
+        .status-warteliste { color: #b04af0; }
+        #bewerbungen-map { height: 480px; border: 1px solid #4caf50; border-radius: 4px; }
+        .legende { font-size: 0.85em; color: #aaa; margin-top: 8px; }
+        .legende span { margin-right: 16px; }
+    </style>
+</head>
+<body>
+    <nav><a href="{{ url_for('admin.admin') }}">← Admin</a> · <a href="{{ url_for('admin.knoten_admin') }}">Knoten</a> · <a href="{{ url_for('admin.change_password') }}">Passwort ändern</a> · <a href="{{ url_for('admin.logout') }}">Logout</a></nav>
+    <h1>🗺️ Bewerbungen verwalten</h1>
+
+    {% if nachricht %}
+        <p class="msg">{{ nachricht }}</p>
+    {% endif %}
+    {% if fehler %}
+        <p class="err">{{ fehler }}</p>
+    {% endif %}
+
+    <h2>Karte</h2>
+    <div id="bewerbungen-map"></div>
+    <p class="legende">
+        <span style="color:#f0b84a;">● neu</span>
+        <span style="color:#4a9ef0;">● in Prüfung</span>
+        <span style="color:#4caf50;">● angenommen / aktiver Knoten</span>
+        <span style="color:#888;">● abgelehnt</span>
+        <span style="color:#b04af0;">● Warteliste</span>
+        — Kreise: durchgezogen = 1 km sichere LoRa-Reichweite, gestrichelt = 3 km optimistische Maximalreichweite (Kollisionsrisiko zwischen benachbarten Bridges beachten).
+    </p>
+
+    <hr>
+    <h2>Bewerbungen ({{ bewerbungen_liste|length }})</h2>
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Name / E-Mail</th>
+            <th>Substrat / Adresse</th>
+            <th>Bewerbungstext</th>
+            <th>Status</th>
+            <th>Eingegangen</th>
+        </tr>
+        {% for b in bewerbungen_liste %}
+        <tr>
+            <td>{{ b.id }}</td>
+            <td>{{ b.name or '—' }}<br><small>{{ b.email }}</small></td>
+            <td>{{ b.substrat }}<br><small>{{ b.adresse or 'keine Adresse' }}{% if b.lat %} ({{ '%.4f'|format(b.lat) }}, {{ '%.4f'|format(b.lon) }}){% endif %}</small></td>
+            <td>{{ b.motivation[:200] }}{% if b.motivation|length > 200 %}…{% endif %}</td>
+            <td>
+                <span class="status-{{ b.status }}">{{ b.status }}</span>
+                <form method="POST" style="margin-top:6px;">
+                    <input type="hidden" name="bewerbung_id" value="{{ b.id }}">
+                    <select name="status">
+                        {% for s in status_optionen %}
+                        <option value="{{ s }}" {{ 'selected' if s == b.status else '' }}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Setzen</button>
+                </form>
+            </td>
+            <td>{{ b.erstellt_am.strftime('%d.%m.%Y') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        var map = L.map('bewerbungen-map').setView([51.1657, 10.4515], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var statusFarben = {
+            neu: '#f0b84a',
+            in_pruefung: '#4a9ef0',
+            angenommen: '#4caf50',
+            abgelehnt: '#888888',
+            warteliste: '#b04af0'
+        };
+
+        function addPunkt(lat, lon, farbe, popup) {
+            if (lat === null || lat === undefined || lon === null || lon === undefined) return;
+            L.circleMarker([lat, lon], { radius: 8, color: farbe, fillColor: farbe, fillOpacity: 0.8 })
+                .addTo(map).bindPopup(popup);
+            L.circle([lat, lon], { radius: 1000, color: farbe, weight: 1.5, fillOpacity: 0.03 }).addTo(map);
+            L.circle([lat, lon], { radius: 3000, color: farbe, weight: 1, dashArray: '4 6', fillOpacity: 0 }).addTo(map);
+        }
+
+        var bewerbungen = [
+            {% for b in bewerbungen_liste %}
+            { lat: {{ b.lat|tojson }}, lon: {{ b.lon|tojson }},
+              status: {{ b.status|tojson }}, id: {{ b.id|tojson }}, label: {{ (b.name or b.email)|tojson }} },
+            {% endfor %}
+        ];
+        bewerbungen.forEach(function(b) {
+            var popup = '#' + b.id + ' — ' + b.label + ' (' + b.status + ')';
+            addPunkt(b.lat, b.lon, statusFarben[b.status] || '#aaa', popup);
+        });
+
+        var knoten = [
+            {% for k in knoten_liste %}
+            { lat: {{ k.lat_grob|tojson }}, lon: {{ k.lon_grob|tojson }}, knotenId: {{ k.knoten_id|tojson }} },
+            {% endfor %}
+        ];
+        knoten.forEach(function(k) {
+            var popup = 'Knoten ' + k.knotenId + ' (aktiv)';
+            addPunkt(k.lat, k.lon, statusFarben.angenommen, popup);
+        });
+    </script>
+</body>
+</html>

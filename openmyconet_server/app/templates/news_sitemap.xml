@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for news in news_liste %}
+  <url>
+    <loc>{{ url_for('news_detail', slug=news.slug, _external=True) }}</loc>
+    <lastmod>{{ news.veroeffentlicht.strftime('%Y-%m-%d') }}</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+{% endfor %}
+</urlset>

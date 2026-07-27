@@ -2,23 +2,45 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <title>OpenMycoNet — News</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
-        h1 { color: #4caf50; }
-        .artikel { border-bottom: 1px solid #1a2a1a; padding: 24px 0; }
-        .artikel h2 { color: #4caf50; margin: 0 0 6px 0; font-size: 1.3em; }
-        .datum { color: #666; font-size: 0.85em; margin-bottom: 12px; }
-        .inhalt { line-height: 1.7; color: #ccc; white-space: pre-wrap; }
-        .leer { color: #666; margin-top: 40px; }
-        nav { margin-bottom: 30px; }
-        a { color: #4caf50; }
-        .sprache-filter { margin-bottom: 20px; }
-        select { background: #1a2a1a; color: #eee; border: 1px solid #4caf50; padding: 6px; border-radius: 4px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Lora', Georgia, serif; max-width: 800px; margin: 0 auto; color: #e8f5e0; background: #024530; padding: 100px 20px 40px; }
+        nav.site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 0.75rem clamp(1.5rem,5vw,3rem); background-color: rgba(2,69,48,0.97); border-bottom: 1px solid #0a6040; }
+        nav.site-nav .logo-link { display: flex; align-items: center; text-decoration: none; }
+        nav.site-nav .logo-link img { height: 44px; width: auto; display: block; }
+        nav.site-nav .zurueck-link { color: #a0c8a0; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+        nav.site-nav .zurueck-link:hover { color: #f0b84a; }
+        .artikel { background: #fff; color: #222; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .artikel h2 { color: #1a1a1a; margin: 0 0 4px 0; font-size: 1.4em; }
+        .artikel h2 a { color: inherit; text-decoration: none; }
+        .artikel h2 a:hover { text-decoration: underline; }
+        .untertitel { color: #555; font-size: 1.05em; margin: 0 0 10px 0; }
+        .datum { color: #888; font-size: 0.85em; margin-bottom: 16px; }
+        .exzerpt { line-height: 1.7; color: #222; }
+        .artikel > img { max-width: 100%; border-radius: 6px; margin: 8px 0; }
+        .weiterlesen { display: inline-block; margin-top: 12px; color: #2e7d32; font-weight: bold; text-decoration: none; }
+        .weiterlesen:hover { text-decoration: underline; }
+        .leer { color: #a0c8a0; margin-top: 40px; }
+        a { color: #6ee87e; }
+        .sprache-filter { margin-bottom: 20px; color: #e8f5e0; }
+        select { background: #01301f; color: #e8f5e0; border: 1px solid #0a6040; padding: 6px; border-radius: 4px; }
+        .tag-filter-hinweis { margin-bottom: 20px; color: #a0c8a0; }
+        .tag-filter-hinweis a { margin-left: 8px; }
+        .tags { margin-top: 16px; }
+        .tags a { color: #2e7d32; text-decoration: none; margin-right: 10px; font-size: 0.9em; }
+        .tags a:hover { text-decoration: underline; }
+        .ki-hinweis { background: rgba(240,184,74,0.12); border: 1px solid rgba(240,184,74,0.4); color: #e8f5e0; font-size: 0.85em; padding: 10px 16px; border-radius: 6px; margin-bottom: 24px; }
     </style>
 </head>
 <body>
-    <h1>🍄 OpenMycoNet News</h1>
+    <nav class="site-nav">
+        <a href="https://www.openmyconet.de/" class="logo-link"><img src="https://www.openmyconet.de/logo-openmyconet.png" alt="OpenMycoNet"></a>
+        <a href="https://www.openmyconet.de/" class="zurueck-link">← Zur Website</a>
+    </nav>
+
+    <p class="ki-hinweis">ℹ️ Hinweis: Die Bilder in diesen Beiträgen sind KI-generiert.</p>
 
     <form method="GET" class="sprache-filter">
         <label>Sprache: </label>
@@ -32,12 +54,28 @@
         </select>
     </form>
 
+    {% if filter_tag %}
+    <p class="tag-filter-hinweis">Gefiltert nach <strong>#{{ filter_tag }}</strong><a href="{{ url_for('news', sprache=filter_sprache) }}">✕ Filter zurücksetzen</a></p>
+    {% endif %}
+
      {% if news_liste %}
         {% for news in news_liste %}
         <div class="artikel">
-            <h2>{{ news.titel }}</h2>
+            <h2><a href="{{ url_for('news_detail', slug=news.slug) }}">{{ news.titel }}</a></h2>
+            {% if news.untertitel %}<p class="untertitel">{{ news.untertitel }}</p>{% endif %}
             <p class="datum">{{ news.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ news.sprache }}</p>
-            <div class="inhalt">{{ news.inhalt }}</div>
+            {% if news.bild_dateiname %}
+            <img src="{{ url_for('static', filename='uploads/news/' + news.bild_dateiname) }}" alt="">
+            {% endif %}
+            <p class="exzerpt">{{ news.exzerpt }}</p>
+            <a class="weiterlesen" href="{{ url_for('news_detail', slug=news.slug) }}">Weiterlesen →</a>
+            {% if news.tags %}
+            <p class="tags">
+                {% for tag in news.tags.split(',') %}
+                <a href="{{ url_for('news', tag=tag, sprache=filter_sprache) }}">#{{ tag }}</a>
+                {% endfor %}
+            </p>
+            {% endif %}
         </div>
         {% endfor %}
     {% else %}

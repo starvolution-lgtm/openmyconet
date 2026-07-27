@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenMycoNet — Chat-Logs</title>
+    <style>
+        body { font-family: sans-serif; max-width: 900px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
+        h1 { color: #4caf50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #1a2a1a; color: #4caf50; padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #1a2a1a; font-size: 0.85em; vertical-align: top; }
+        select { background: #1a2a1a; color: #eee; border: 1px solid #4caf50; padding: 6px; border-radius: 4px; }
+        nav { margin-bottom: 30px; }
+        a { color: #4caf50; }
+        .pager { margin-top: 20px; }
+        .leer { color: #666; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav><a href="{{ url_for('admin.admin') }}">← Admin</a> · <a href="{{ url_for('admin.change_password') }}">Passwort ändern</a> · <a href="{{ url_for('admin.logout') }}">Logout</a></nav>
+    <h1>💬 Chat-Logs</h1>
+
+    <form method="GET">
+        <label>Sprache: </label>
+        <select name="lang" onchange="this.form.submit()">
+            <option value="">Alle</option>
+            <option value="de" {% if filter_lang == 'de' %}selected{% endif %}>Deutsch</option>
+            <option value="en" {% if filter_lang == 'en' %}selected{% endif %}>English</option>
+            <option value="nl" {% if filter_lang == 'nl' %}selected{% endif %}>Nederlands</option>
+            <option value="fr" {% if filter_lang == 'fr' %}selected{% endif %}>Français</option>
+            <option value="es" {% if filter_lang == 'es' %}selected{% endif %}>Español</option>
+        </select>
+    </form>
+
+    {% if pagination.items %}
+    <table>
+        <tr>
+            <th>Zeit</th>
+            <th>Sprache</th>
+            <th>Frage</th>
+            <th>Antwort</th>
+            <th>Genutzte Chunks</th>
+        </tr>
+        {% for log in pagination.items %}
+        <tr>
+            <td>{{ log.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</td>
+            <td>{{ log.lang }}</td>
+            <td>{{ log.message }}</td>
+            <td>{{ log.answer }}</td>
+            <td>{{ log.chunks_used }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="pager">
+        {% if pagination.has_prev %}
+            <a href="?page={{ pagination.prev_num }}&lang={{ filter_lang }}">← Neuer</a>
+        {% endif %}
+        Seite {{ pagination.page }} von {{ pagination.pages }}
+        {% if pagination.has_next %}
+            <a href="?page={{ pagination.next_num }}&lang={{ filter_lang }}">Älter →</a>
+        {% endif %}
+    </div>
+    {% else %}
+        <p class="leer">Noch keine Chat-Anfragen protokolliert.</p>
+    {% endif %}
+</body>
+</html>

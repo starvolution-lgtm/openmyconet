@@ -18,13 +18,33 @@
         .stat p { margin: 4px 0 0; font-size: 0.85em; color: #aaa; }
         select { background: #1a2a1a; color: #eee; border: 1px solid #4caf50; padding: 6px; border-radius: 4px; }
         a { color: #4caf50; }
+        .msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        .err { color: #f44336; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
+        .aktion { font-size: 0.85em; text-decoration: none; margin-right: 8px; }
+        .aktion.ok { color: #4caf50; }
+        .aktion.del { color: #f44336; }
     </style>
 </head>
 <body>
     <h1>🍄 OpenMycoNet Admin</h1>
-<p><a href="/admin/newsletter">📧 Newsletter versenden</a></p>
-<p><a href="/admin/news">📰 News verwalten</a></p>
-<p><a href="/admin/knoten">📡 Knoten verwalten</a></p>
+<p>
+    <a href="{{ url_for('admin.newsletter') }}">📧 Newsletter</a> ·
+    <a href="{{ url_for('admin.news_admin') }}">📰 News</a> ·
+    <a href="{{ url_for('admin.knoten_admin') }}">📡 Knoten</a> ·
+    <a href="{{ url_for('admin.bewerbungen_admin') }}">🗺️ Bewerbungen</a> ·
+    <a href="{{ url_for('admin.spenden_admin') }}">💚 Spenden</a> ·
+    <a href="{{ url_for('admin.inhalte_admin') }}">📝 Website-Inhalte</a> ·
+    <a href="{{ url_for('admin.chatlogs') }}">💬 Chat-Logs</a> ·
+    <a href="{{ url_for('admin.accounts') }}">🔑 Admin-Accounts</a> ·
+    <a href="{{ url_for('admin.change_password') }}">Passwort ändern</a> ·
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, msg in messages %}
+            <p class="{{ 'err' if category == 'error' else 'msg' }}">{{ msg }}</p>
+        {% endfor %}
+    {% endwith %}
 
     <div class="stats">
         <div class="stat">
@@ -71,6 +91,7 @@
             <th>Gruppe</th>
             <th>Bestätigt</th>
             <th>Registriert</th>
+            <th></th>
         </tr>
         {% for nutzer in nutzer_liste %}
         <tr>
@@ -81,6 +102,12 @@
             <td>{{ nutzer.gruppe }}</td>
             <td class="{{ 'ja' if nutzer.bestaetigt else 'nein' }}">{{ '✓' if nutzer.bestaetigt else '✗' }}</td>
             <td>{{ nutzer.registriert_am.strftime('%d.%m.%Y %H:%M') }}</td>
+            <td>
+                {% if not nutzer.bestaetigt %}
+                <a class="aktion ok" href="{{ url_for('admin.nutzer_bestaetigen', nutzer_id=nutzer.id) }}">Bestätigen</a>
+                {% endif %}
+                <a class="aktion del" href="{{ url_for('admin.nutzer_loeschen', nutzer_id=nutzer.id) }}" onclick="return confirm('{{ nutzer.name }} wirklich löschen?')">Löschen</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
