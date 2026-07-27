@@ -44,6 +44,8 @@
 }
 </script>
 <link href="fonts.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <!-- hreflang — single canonical URL with ?lang= param -->
 <link rel="alternate" hreflang="de" href="https://www.openmyconet.de/">
 <link rel="alternate" hreflang="en" href="https://www.openmyconet.de/?lang=en">
@@ -895,6 +897,18 @@ input[type="checkbox"], input[type="radio"] {
         <input type="text" id="node-inp-substrat" name="node_substrat" required>
       </div>
       <div class="form-group">
+        <label id="node-lbl-address"></label>
+        <div style="display:flex; gap:0.6rem;">
+          <input type="text" id="node-inp-address" name="adresse" style="flex:1;">
+          <button type="button" id="node-geocode-btn" onclick="geocodeNodeAddress()" style="flex:0 0 auto; padding:0 1rem; background:transparent; color:#f0b84a; border:1px solid #d4a030; cursor:pointer;">📍</button>
+        </div>
+        <p id="node-geocode-hint" style="font-size:0.75rem; color:#a0c8a0; margin-top:0.4rem;"></p>
+        <p id="node-geocode-error" style="font-size:0.75rem; color:#e88; margin-top:0.4rem; display:none;"></p>
+        <div id="node-geo-map" style="display:none; height:220px; margin-top:0.6rem; border:1px solid #0a6040;"></div>
+        <input type="hidden" id="node-inp-lat" name="lat">
+        <input type="hidden" id="node-inp-lon" name="lon">
+      </div>
+      <div class="form-group">
         <label id="node-lbl-motivation"></label>
         <textarea id="node-inp-motivation" name="motivation" required style="height:130px;"></textarea>
       </div>
@@ -1379,6 +1393,10 @@ function renderRegForm(lang) {
   document.getElementById('node-inp-profession').placeholder = A.node_ph_profession;
   document.getElementById('node-lbl-substrat').textContent = A.node_lbl_substrat;
   document.getElementById('node-inp-substrat').placeholder = A.node_ph_substrat;
+  document.getElementById('node-lbl-address').textContent = A.node_lbl_address;
+  document.getElementById('node-inp-address').placeholder = A.node_ph_address;
+  document.getElementById('node-geocode-btn').title = A.node_geocode_btn;
+  document.getElementById('node-geocode-hint').textContent = A.node_geocode_hint;
   document.getElementById('node-lbl-motivation').textContent = A.node_lbl_motivation;
   document.getElementById('node-inp-motivation').placeholder = A.node_ph_motivation;
   document.getElementById('node-lbl-loan').textContent = A.node_lbl_loan;
@@ -1462,6 +1480,62 @@ function handleReg(e) {
     });
 }
 
+// ─── Adress-Geocoding (Nominatim/OpenStreetMap) ───────────────
+var nodeGeoMap = null;
+var nodeGeoMarker = null;
+
+function nodeGeoSetLatLon(lat, lon) {
+  document.getElementById('node-inp-lat').value = lat;
+  document.getElementById('node-inp-lon').value = lon;
+}
+
+function geocodeNodeAddress() {
+  var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
+  var address = document.getElementById('node-inp-address').value.trim();
+  var errEl = document.getElementById('node-geocode-error');
+  errEl.style.display = 'none';
+  if (!address) return;
+
+  var btn = document.getElementById('node-geocode-btn');
+  btn.disabled = true;
+  fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address))
+    .then(function(r) { return r.json(); })
+    .then(function(results) {
+      btn.disabled = false;
+      if (!results || !results.length) {
+        errEl.textContent = A.node_geocode_error;
+        errEl.style.display = 'block';
+        return;
+      }
+      var lat = parseFloat(results[0].lat);
+      var lon = parseFloat(results[0].lon);
+      nodeGeoSetLatLon(lat, lon);
+
+      var mapEl = document.getElementById('node-geo-map');
+      mapEl.style.display = 'block';
+      if (!nodeGeoMap) {
+        nodeGeoMap = L.map('node-geo-map').setView([lat, lon], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(nodeGeoMap);
+        nodeGeoMarker = L.marker([lat, lon], { draggable: true }).addTo(nodeGeoMap);
+        nodeGeoMarker.on('dragend', function() {
+          var pos = nodeGeoMarker.getLatLng();
+          nodeGeoSetLatLon(pos.lat, pos.lng);
+        });
+      } else {
+        nodeGeoMap.setView([lat, lon], 13);
+        nodeGeoMarker.setLatLng([lat, lon]);
+      }
+      setTimeout(function() { nodeGeoMap.invalidateSize(); }, 100);
+    })
+    .catch(function() {
+      btn.disabled = false;
+      errEl.textContent = A.node_geocode_error;
+      errEl.style.display = 'block';
+    });
+}
+
 function handleNodeApply(e) {
   e.preventDefault();
   var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
@@ -1476,10 +1550,10 @@ function handleNodeApply(e) {
   data.append('type', 'node_bewerbung');
   btn.textContent = A.node_sending;
   btn.disabled = true;
-  fetch('contact.php', { method:'POST', body:data })
-    .then(function(r){ return r.text(); })
+  fetch('https://api.openmyconet.de/api/bewerbung', { method:'POST', body:data })
+    .then(function(r){ return r.json(); })
     .then(function(resp) {
-      if (resp.trim() === 'ok') {
+      if (resp && resp.ok) {
         btn.textContent = A.node_success;
         btn.style.backgroundColor = '#3a9e5a';
         btn.style.fontSize = '0.75rem';
