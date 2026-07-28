@@ -20,6 +20,11 @@ AddType application/pdf .pdf
 
 # Redirects alte Sprachversionen → neue URL-Struktur
 RewriteEngine On
+
+# non-www → www (Duplicate-Content-Fix, nur bei exaktem non-www-Host, kein Loop möglich)
+RewriteCond %{HTTP_HOST} ^openmyconet\.de$ [NC]
+RewriteRule ^(.*)$ https://www.openmyconet.de/$1 [R=301,L]
+
 RewriteRule ^index-en\.html$ /?lang=en [R=301,L]
 RewriteRule ^index-nl\.html$ /?lang=nl [R=301,L]
 RewriteRule ^index-fr\.html$ /?lang=fr [R=301,L]

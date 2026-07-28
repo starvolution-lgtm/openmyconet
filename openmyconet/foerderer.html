@@ -23,6 +23,11 @@ nav ul { list-style:none; display:flex; align-items:center; gap:1rem; position:a
 nav ul a { color:#a0c8a0; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; transition:color 0.2s; }
 nav ul a:hover { color:#f0b84a; }
 nav ul a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
+nav ul a[data-foerderer-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px; animation: nav-news-glow 1.6s ease-in-out infinite; }
+@keyframes nav-news-glow {
+  0%, 100% { background-color:rgba(240,184,74,0.08); box-shadow:0 0 6px rgba(240,184,74,0.3); text-shadow:0 0 4px rgba(240,184,74,0.5); }
+  50% { background-color:rgba(240,184,74,0.28); box-shadow:0 0 10px 2px rgba(240,184,74,0.9), 0 0 26px rgba(240,184,74,0.55); text-shadow:0 0 10px rgba(255,210,120,1), 0 0 20px rgba(240,184,74,0.85); }
+}
 .hamburger { display:none; flex-direction:row; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; background:transparent; border:1px solid #0a6040; border-radius:0; z-index:101; animation:hamburger-pulse 2.5s ease-in-out infinite; }
 .hamburger:hover, .hamburger:active { border-color:#6ee87e; background:rgba(110,232,126,0.08); box-shadow:0 0 0 3px rgba(110,232,126,0.2); animation:none; }
 .hamburger-bars { display:inline-flex !important; flex-direction:column; gap:5px; vertical-align:middle; }
@@ -76,6 +81,11 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
 .lang-flag.active { opacity:1; border:1px solid #6ee87e; background:rgba(0,0,0,0.4); }
 .lang-flag.inactive { opacity:0.6; border:1px solid #0a6040; background:rgba(0,0,0,0.25); }
 @media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } h1 { font-size:2rem; } }
+
+@media (max-width:1180px) {
+  nav ul { display:none !important; }
+  .hamburger { display:flex !important; }
+}
 
 @media (max-width:900px) {
   nav ul { display:none; }
@@ -150,6 +160,7 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
     <li><a href="index.html#ueber" data-foerderer-i18n="nav_ueber">Über</a></li>
     <li><a href="foerderer.html" class="nav-active" data-foerderer-i18n="nav_foerderer">Förderer</a></li>
     <li><a href="quellennachweise.html" data-foerderer-i18n="nav_quellen">Quellen</a></li>
+    <li><a href="https://api.openmyconet.de/news" data-foerderer-i18n="nav_news">News</a></li>
   </ul>
   <div class="nav-tools">
     <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
@@ -178,6 +189,7 @@ footer { padding:2rem; border-top:1px solid #0a6040; margin-top:4rem; }
   <a href="index.html#ueber" data-foerderer-i18n="nav_ueber">Über</a>
   <a href="foerderer.html" data-foerderer-i18n="nav_foerderer">Förderer</a>
   <a href="quellennachweise.html" data-foerderer-i18n="nav_quellen">Quellen</a>
+  <a href="https://api.openmyconet.de/news" data-foerderer-i18n="nav_news">News</a>
   <a href="leihgeraete.html" data-foerderer-i18n="nav_leihgeraete">Leihgerät</a>
   <div class="mobile-lang">
     <a href="javascript:void(0)" onclick="setFoerdererLang('de')" title="Deutsch" class="lang-flag active" id="flag-de-m">

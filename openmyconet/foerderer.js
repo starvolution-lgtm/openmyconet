@@ -32,11 +32,11 @@ function getFoerdererLang() {
 // ── Nav i18n ──────────────────────────────────────────────────
 function applyFoerdererNavTranslations(lang) {
   var NAV_LABELS = {
-    de: { nav_warum:'Warum', nav_mitmachen:'Mitmachen', nav_spenden:'Unterstützen', nav_anmelden:'Anmelden', nav_ueber:'Über', nav_foerderer:'Förderer', nav_quellen:'Quellen' },
-    en: { nav_warum:'Why', nav_mitmachen:'Join', nav_spenden:'Support', nav_anmelden:'Register', nav_ueber:'About', nav_foerderer:'Supporters', nav_quellen:'References' },
-    nl: { nav_warum:'Waarom', nav_mitmachen:'Meedoen', nav_spenden:'Ondersteunen', nav_anmelden:'Aanmelden', nav_ueber:'Over', nav_foerderer:'Partners', nav_quellen:'Bronnen' },
-    fr: { nav_warum:'Pourquoi', nav_mitmachen:'Participer', nav_spenden:'Soutenir', nav_anmelden:"S'inscrire", nav_ueber:'À propos', nav_foerderer:'Partenaires', nav_quellen:'Sources' },
-    es: { nav_warum:'Por qué', nav_mitmachen:'Participar', nav_spenden:'Apoyar', nav_anmelden:'Registrarse', nav_ueber:'Acerca', nav_foerderer:'Patrocinadores', nav_quellen:'Fuentes' }
+    de: { nav_warum:'Warum', nav_mitmachen:'Mitmachen', nav_spenden:'Unterstützen', nav_anmelden:'Anmelden', nav_ueber:'Über', nav_foerderer:'Förderer', nav_quellen:'Quellen', nav_news:'News' },
+    en: { nav_warum:'Why', nav_mitmachen:'Join', nav_spenden:'Support', nav_anmelden:'Register', nav_ueber:'About', nav_foerderer:'Supporters', nav_quellen:'References', nav_news:'News' },
+    nl: { nav_warum:'Waarom', nav_mitmachen:'Meedoen', nav_spenden:'Ondersteunen', nav_anmelden:'Aanmelden', nav_ueber:'Over', nav_foerderer:'Partners', nav_quellen:'Bronnen', nav_news:'Nieuws' },
+    fr: { nav_warum:'Pourquoi', nav_mitmachen:'Participer', nav_spenden:'Soutenir', nav_anmelden:"S'inscrire", nav_ueber:'À propos', nav_foerderer:'Partenaires', nav_quellen:'Sources', nav_news:'Actualités' },
+    es: { nav_warum:'Por qué', nav_mitmachen:'Participar', nav_spenden:'Apoyar', nav_anmelden:'Registrarse', nav_ueber:'Acerca', nav_foerderer:'Patrocinadores', nav_quellen:'Fuentes', nav_news:'Noticias' }
   };
   var T = NAV_LABELS[lang] || NAV_LABELS.de;
   document.querySelectorAll('[data-foerderer-i18n]').forEach(function(el) {

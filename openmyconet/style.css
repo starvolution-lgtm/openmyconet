@@ -5,12 +5,19 @@ body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif
 
 /* ── Navigation ── */
 nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
+nav .nav-logo { margin-left:clamp(-3rem,-3vw,-1.5rem); }
 .nav-logo { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; }
 .nav-logo span { color:#f0b84a; }
 nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1.5rem; }
 nav a { color:#a0c8a0; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.2s; }
 nav a:hover { color:#f0b84a; }
 nav a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
+
+a[data-i18n="nav_news"] { animation: nav-news-glow 1.8s ease-in-out infinite; }
+@keyframes nav-news-glow {
+  0%, 100% { text-shadow: 0 0 4px rgba(240,184,74,0.4), 0 0 8px rgba(240,184,74,0.2); }
+  50% { text-shadow: 0 0 10px rgba(240,184,74,0.95), 0 0 22px rgba(240,184,74,0.65); }
+}
 /* Sprachauswahl Desktop-Sidebar */
 #lang-sidebar { display:none; position:fixed; right:42px; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
 #lang-flags-nav { display:none; gap:0.4rem; align-items:center; margin-left:0.5rem; }

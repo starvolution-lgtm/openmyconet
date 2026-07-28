@@ -46,6 +46,15 @@ var META_DESCRIPTIONS = {
 };
 var OG_LOCALES = {de:'de_DE',en:'en_US',nl:'nl_NL',fr:'fr_FR',es:'es_ES'};
 
+function getUrlLang() {
+  // Canonical/og:url dürfen sich NUR nach dem tatsächlichen ?lang=-Parameter der
+  // aktuellen Adresse richten, nicht nach erkannter Browsersprache/localStorage —
+  // sonst liefert z.B. Googlebot mit englischer Render-Locale für "/" einen
+  // canonical von "?lang=en", was Google als widersprüchliches Canonical-Signal wertet.
+  var p = new URLSearchParams(window.location.search).get('lang');
+  return (p && LANG_NAMES.indexOf(p) !== -1) ? p : 'de';
+}
+
 function updateMeta(lang) {
   var desc = META_DESCRIPTIONS[lang] || META_DESCRIPTIONS.de;
   document.getElementById('html-root').setAttribute('lang', lang);
@@ -53,7 +62,8 @@ function updateMeta(lang) {
   document.getElementById('og-description').setAttribute('content', desc);
   document.getElementById('twitter-description').setAttribute('content', desc);
   document.getElementById('og-locale').setAttribute('content', OG_LOCALES[lang] || 'de_DE');
-  var url = lang === 'de' ? 'https://www.openmyconet.de/' : 'https://www.openmyconet.de/?lang=' + lang;
+  var urlLang = getUrlLang();
+  var url = urlLang === 'de' ? 'https://www.openmyconet.de/' : 'https://www.openmyconet.de/?lang=' + urlLang;
   document.getElementById('canonical').setAttribute('href', url);
   document.getElementById('og-url').setAttribute('content', url);
 }

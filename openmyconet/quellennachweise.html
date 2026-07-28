@@ -91,6 +91,11 @@
   }
   nav ul a:hover { color: var(--amber); }
   nav ul a.nav-active { color: var(--amber); border-bottom: 1px solid var(--amber2); padding-bottom: 2px; }
+  nav ul a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px; animation: nav-news-glow 1.6s ease-in-out infinite; }
+  @keyframes nav-news-glow {
+    0%, 100% { background-color:rgba(240,184,74,0.08); box-shadow:0 0 6px rgba(240,184,74,0.3); text-shadow:0 0 4px rgba(240,184,74,0.5); }
+    50% { background-color:rgba(240,184,74,0.28); box-shadow:0 0 10px 2px rgba(240,184,74,0.9), 0 0 26px rgba(240,184,74,0.55); text-shadow:0 0 10px rgba(255,210,120,1), 0 0 20px rgba(240,184,74,0.85); }
+  }
 
   /* ── HAMBURGER ── */
   .hamburger { display: none; flex-direction: row; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; background: transparent; border: 1px solid var(--border); border-radius: 0; z-index: 101; animation: hamburger-pulse 2.5s ease-in-out infinite; }
@@ -307,6 +312,10 @@
   .page-footer a { color: var(--accent); }
 
   @media (min-width: 601px) { #lang-sidebar { display: flex; } }
+  @media (max-width: 1180px) {
+    nav ul { display: none !important; }
+    .hamburger { display: flex !important; }
+  }
   @media (max-width: 900px) {
     nav ul { display: none; }
   nav ul { display:none !important; }
@@ -345,6 +354,7 @@
     <li><a href="index.html#ueber" data-i18n="nav_ueber">Über</a></li>
     <li><a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a></li>
     <li><a href="quellennachweise.html" class="nav-active" data-i18n="nav_quellen">Quellen</a></li>
+    <li><a href="https://api.openmyconet.de/news" data-i18n="nav_news">News</a></li>
   </ul>
   <div class="nav-tools">
     <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
@@ -370,6 +380,7 @@
   <a href="index.html#ueber" data-i18n="nav_ueber">Über</a>
   <a href="foerderer.html" data-i18n="nav_foerderer">Förderer</a>
   <a href="quellennachweise.html" data-i18n="nav_quellen">Quellen</a>
+  <a href="https://api.openmyconet.de/news" data-i18n="nav_news">News</a>
   <div class="mobile-lang" id="lang-flags-mobile"></div>
 </div>
 
@@ -518,6 +529,16 @@
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
       </a>
+      <a class="ref" href="https://onlinelibrary.wiley.com/doi/epdf/10.1111/j.1365-3040.2005.01310.x" target="_blank" rel="noopener">
+        <span class="ref-num">14</span>
+        <div class="ref-body">
+          <div class="ref-title" data-i18n="q_ref14_title">Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species</div>
+          <div class="ref-meta" data-i18n="q_ref14_meta">Cavagnaro, Smith, Smith &amp; Jakobsen (2005) · Plant, Cell &amp; Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x</div>
+          <div class="ref-relevanz" data-i18n="q_ref14_relevanz">Zeigt, dass verschiedene Mykorrhizapilz-Arten Nährstoff-Hotspots im Boden unterschiedlich effizient nutzen – eine offene Frage ist, ob elektrische Signalausbreitung im Myzel Teil des Koordinationsmechanismus für diesen differenzierten Nährstoffaustausch sein könnte.</div>
+        </div>
+        <span class="ref-badge pmc">Wiley</span>
+        <span class="ref-ext">↗</span>
+      </a>
     </div>
 
     <!-- Station Kritik -->
@@ -576,6 +597,16 @@
           <div class="ref-relevanz">Verbindet elektrische Pilzsignale mit dem Konzept des Waldnetzwerks.</div>
         </div>
         <span class="ref-badge pmc">PMC</span>
+        <span class="ref-ext">↗</span>
+      </a>
+      <a class="ref" href="https://doi.org/10.1016/j.isci.2025.113484" target="_blank" rel="noopener">
+        <span class="ref-num">13</span>
+        <div class="ref-body">
+          <div class="ref-title" data-i18n="q_ref08_title">Detection of electrical signals in fungal mycelia in response to external stimuli</div>
+          <div class="ref-meta" data-i18n="q_ref08_meta">Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access</div>
+          <div class="ref-relevanz" data-i18n="q_ref08_relevanz">Methodisch bislang fortschrittlichste Validierungsstudie: PCB-Elektroden, Faraday-Käfig und Biozid-Kontrollen bestätigen den biologischen Ursprung von Myzel-Signalen – direkte methodische Bestätigung des BioComm-Ansatzes.</div>
+        </div>
+        <span class="ref-badge pmc">iScience</span>
         <span class="ref-ext">↗</span>
       </a>
     </div>
