@@ -19,6 +19,12 @@ MIGRATIONS = [
     ('news', 'untertitel', 'VARCHAR(300)'),
     ('news', 'tags', 'VARCHAR(255)'),
     ('news', 'slug', 'VARCHAR(250)'),
+    ('bewerbung', 'nutzer_id', 'INTEGER'),
+    ('bewerbung', 'ip', 'VARCHAR(45)'),
+    ('nutzer', 'ip', 'VARCHAR(45)'),
+    ('nutzer', 'fachrolle', 'VARCHAR(30)'),
+    ('nutzer', 'login_token', 'VARCHAR(100)'),
+    ('nutzer', 'login_token_angefordert_am', 'DATETIME'),
 ]
 
 UMLAUT_MAP = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
@@ -71,6 +77,9 @@ def main():
             cur.execute(f'ALTER TABLE {tabelle} ADD COLUMN {spalte} {typ}')
             print(f'{tabelle}.{spalte} hinzugefügt.')
     backfill_slugs(cur)
+    # ALTER TABLE ADD COLUMN kennt in SQLite keine UNIQUE-Constraints -- Index separat anlegen,
+    # damit auf bestehenden DBs dieselbe Eindeutigkeit gilt wie beim frischen db.create_all().
+    cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS ix_nutzer_login_token ON nutzer (login_token)')
     conn.commit()
     conn.close()
 

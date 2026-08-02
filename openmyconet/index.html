@@ -82,6 +82,14 @@ section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5r
 
 /* ── Hero ── */
 .hero { background-color:#024530; position:relative; }
+/* Mykorrhiza-Textur: reines Ambiente, extrem geringe Deckkraft, per ::before hinter
+   .hero-content/.hero-img-wrap (beide bereits position:relative mit z-index:1). */
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background-image:url('mykorrhiza-tile.jpg');
+  background-repeat:repeat; background-size:320px 320px;
+  opacity:0.25; pointer-events:none; z-index:0;
+}
 .hero-img-wrap { position:relative; width:100%; height:60vw; min-height:300px; max-height:560px; overflow:hidden; max-width:none !important; margin-left:0 !important; margin-right:0 !important; }
 .hero-content { position:relative; z-index:1; margin-top:-7rem; padding-bottom:4rem; max-width:860px; }
 .hero-tag { font-family:'Lora',Georgia,serif; font-size:0.75rem; color:#d4a030; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:1.5rem; }
@@ -774,6 +782,11 @@ input[type="checkbox"], input[type="radio"] {
       <p id="privacy-notice" style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; line-height:1.7;">Deine Daten werden ausschließlich zur Bearbeitung deiner Anfrage gespeichert. Kein Tracking, kein Newsletter ohne deine explizite Zustimmung, keine Weitergabe.</p>
     </div>
 
+    <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+      <label for="reg-website">Website</label>
+      <input type="text" id="reg-website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
     <button type="submit" class="btn btn-green" id="reg-btn">Registrieren</button>
   </form>
 </section>
@@ -929,6 +942,11 @@ input[type="checkbox"], input[type="radio"] {
         <p id="node-privacy-notice" style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; line-height:1.7;"></p>
       </div>
 
+      <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+        <label for="node-website">Website</label>
+        <input type="text" id="node-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
       <button type="submit" class="btn btn-green" id="node-submit-btn" style="width:100%;">Bewerbung absenden</button>
     </form>
   </div>
@@ -998,6 +1016,7 @@ function setLang(lang) {
   else { url.searchParams.set('lang', lang); }
   window.history.replaceState({}, '', url);
   applyTranslations(lang);
+  applyContentBlocks(lang);
   updateMeta(lang);
   updateFlags(lang);
   renderDynamicSections(lang);
@@ -1071,6 +1090,28 @@ function applyTranslations(lang) {
     var key = el.getAttribute('data-i18n-html');
     if (T[key]) el.innerHTML = T[key];
   });
+}
+
+// ─── Admin-editierbare Content-Blocks (überlagert die statischen Texte oben) ──
+// Läuft NACH applyTranslations(), damit die Seite ohne Netzwerk/API sofort
+// lesbar ist; bei Erfolg werden dieselben data-i18n(-html)-Elemente mit dem
+// aktuellen Admin-Inhalt überschrieben. Schlägt der Fetch fehl (API down,
+// offline), bleibt einfach der statische Text aus TRANSLATIONS stehen.
+function applyContentBlocks(lang) {
+  fetch('https://api.openmyconet.de/api/v1/content?seite=index&sprache=' + lang)
+    .then(function(r) { return r.ok ? r.json() : {}; })
+    .then(function(blocks) {
+      Object.keys(blocks).forEach(function(schluessel) {
+        var key = schluessel.replace(/^index_/, '');
+        document.querySelectorAll('[data-i18n="' + key + '"]').forEach(function(el) {
+          el.textContent = blocks[schluessel];
+        });
+        document.querySelectorAll('[data-i18n-html="' + key + '"]').forEach(function(el) {
+          el.innerHTML = blocks[schluessel];
+        });
+      });
+    })
+    .catch(function() { /* stiller Fallback auf statischen Text */ });
 }
 
 // ─── Dynamic section rendering ────────────────────────────────
@@ -1160,52 +1201,6 @@ function renderDynamicSections(lang) {
   }
 }
 
-// ─── Apply form rendering ─────────────────────────────────────
-function renderApplyForm(lang) {
-  var A = APPLY_TRANS[lang] || APPLY_TRANS.de;
-  
-  document.getElementById('apply-section-label').textContent = A.section_label;
-  document.getElementById('apply-h2').innerHTML = A.h2;
-  document.getElementById('apply-badge-text').textContent = A.badge;
-  document.getElementById('apply-intro').textContent = A.intro;
-  
-  document.getElementById('lbl-name').textContent = A.lbl_name;
-  document.getElementById('lbl-email').textContent = A.lbl_email;
-  document.getElementById('lbl-role').textContent = A.lbl_role;
-  document.getElementById('lbl-background').textContent = A.lbl_background;
-  document.getElementById('lbl-substrat').textContent = A.lbl_substrat;
-  document.getElementById('lbl-motivation').textContent = A.lbl_motivation;
-  document.getElementById('lbl-msg').textContent = A.lbl_msg;
-  
-  document.getElementById('inp-name').placeholder = A.ph_name;
-  document.getElementById('inp-email').placeholder = A.ph_email;
-  document.getElementById('inp-background').placeholder = A.ph_background;
-  document.getElementById('inp-substrat').placeholder = A.ph_substrat;
-  document.getElementById('inp-motivation').placeholder = A.ph_motivation;
-  document.getElementById('inp-msg').placeholder = A.ph_msg;
-  
-  // Role options
-  var roleMap = [
-    {val:'teilnehmer', key:'opt_teilnehmer'},
-    {val:'wissenschaftler', key:'opt_wissenschaftler'},
-    {val:'entwickler', key:'opt_entwickler'},
-    {val:'unterstuetzer', key:'opt_unterstuetzer'},
-    {val:'foerderer', key:'opt_foerderer'}
-  ];
-  var sel = document.getElementById('apply-role');
-  sel.innerHTML = roleMap.map(function(o) {
-    return '<option value="' + o.val + '">' + A[o.key] + '</option>';
-  }).join('');
-  
-  // Förderer hint
-  document.getElementById('foerderer-hint-text').textContent = A.foerderer_hint;
-  document.getElementById('foerderer-hint-link').textContent = A.foerderer_link;
-  document.getElementById('foerderer-hint-note').textContent = A.foerderer_note;
-  
-  document.getElementById('apply-btn').textContent = A.submit;
-  document.getElementById('apply-note').textContent = A.note;
-}
-
 function toggleFaq(id) {
   var item = document.getElementById(id);
   if (!item) return;
@@ -1216,51 +1211,6 @@ function toggleFaq(id) {
   ans.hidden = isOpen;
   btn.setAttribute('aria-expanded', String(!isOpen));
   chev.style.transform = isOpen ? '' : 'rotate(180deg)';
-}
-
-function checkApplyRole(sel) {
-  var isF = sel.value === 'foerderer';
-  var hint = document.getElementById('foerderer-hint');
-  var form = document.getElementById('apply-form');
-  hint.style.display = isF ? 'block' : 'none';
-  var fields = form.querySelectorAll('input:not([type=submit]), textarea');
-  var btn = document.getElementById('apply-btn');
-  if (isF) {
-    fields.forEach(function(el){ el.style.opacity='0.3'; el.disabled=true; });
-    btn.style.opacity='0.3'; btn.disabled=true;
-  } else {
-    fields.forEach(function(el){ el.style.opacity='1'; el.disabled=false; });
-    btn.style.opacity='1'; btn.disabled=false;
-  }
-}
-
-function handleApply(e) {
-  e.preventDefault();
-  var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
-  var btn = document.getElementById('apply-btn');
-  var form = document.getElementById('apply-form');
-  var data = new FormData(form);
-  data.append('lang', currentLang);
-  data.append('type', 'bewerbung');
-  btn.textContent = A.sending;
-  btn.disabled = true;
-  fetch('contact.php', { method:'POST', body:data })
-    .then(function(r){ return r.text(); })
-    .then(function(resp) {
-      if (resp.trim() === 'ok') {
-        btn.textContent = A.success;
-        btn.style.backgroundColor = '#3a9e5a';
-      } else {
-        btn.textContent = A.error;
-        btn.style.backgroundColor = '#8b2020';
-        btn.disabled = false;
-      }
-    })
-    .catch(function() {
-      btn.textContent = A.error;
-      btn.style.backgroundColor = '#8b2020';
-      btn.disabled = false;
-    });
 }
 
 // ─── Donate ───────────────────────────────────────────────────
@@ -1458,13 +1408,12 @@ function handleReg(e) {
   var form = document.getElementById('reg-form');
   var data = new FormData(form);
   data.append('lang', currentLang);
-  data.append('type', 'registrierung');
   btn.textContent = A.sending;
   btn.disabled = true;
-  fetch('contact.php', { method:'POST', body:data })
-    .then(function(r){ return r.text(); })
+  fetch('https://api.openmyconet.de/api/register', { method:'POST', body:data })
+    .then(function(r){ return r.json(); })
     .then(function(resp) {
-      if (resp.trim() === 'ok') {
+      if (resp && resp.ok) {
         btn.textContent = A.success;
         btn.style.backgroundColor = '#3a9e5a';
       } else {
@@ -1578,14 +1527,14 @@ function submitNodeApplication() {
   data.append('name', document.getElementById('inp-name').value);
   data.append('email', document.getElementById('inp-email').value);
   data.append('rolle', document.getElementById('reg-role').value);
-  data.append('type', 'node_bewerbung');
   btn.textContent = A.node_sending;
   btn.disabled = true;
   fetch('https://api.openmyconet.de/api/bewerbung', { method:'POST', body:data })
     .then(function(r){ return r.json(); })
     .then(function(resp) {
       if (resp && resp.ok) {
-        btn.textContent = A.node_success;
+        var confirmNote = resp.bestaetigung_erforderlich ? (A.node_success_confirm || '') : '';
+        btn.textContent = confirmNote + A.node_success;
         btn.style.backgroundColor = '#3a9e5a';
         btn.style.fontSize = '0.75rem';
         btn.style.height = 'auto';
@@ -1714,6 +1663,7 @@ function renderBroschuere(lang) {
 document.addEventListener('DOMContentLoaded', function() {
   updateFlags(currentLang);
   applyTranslations(currentLang);
+  applyContentBlocks(currentLang);
   updateMeta(currentLang);
   renderDynamicSections(currentLang);
   renderRegForm(currentLang);

@@ -1,0 +1,248 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('leih_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('leih_status') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/leihgeraete.html">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/leihgeraete.html?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/leihgeraete.html?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/leihgeraete.html?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/leihgeraete.html?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/leihgeraete.html">
+{% endblock %}
+
+{% block mobile_menu_self_link %}
+<a href="{{ live('leihgeraete.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_leihgeraete">{{ t('nav_leihgeraete') }}</a>
+{% endblock %}
+
+{% block extra_css %}
+/* Status box */
+.status-box { padding:1.4rem 1.6rem; background-color:rgba(212,160,48,0.08); border-left:4px solid #d4a030; margin-bottom:2rem; }
+.status-box p { color:#e8f5e0; font-size:1rem; line-height:1.8; }
+
+/* Preview intro */
+.preview-intro { color:#a0c8a0; font-size:1rem; line-height:1.8; margin-bottom:2rem; }
+
+/* Edition grid */
+.edition-grid { display:flex; flex-wrap:wrap; gap:2rem; margin-top:1rem; justify-content:center; }
+.edition-card { flex:1 1 220px; max-width:300px; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; }
+.edition-img { width:100%; height:520px; object-fit:contain; object-position:center bottom; display:block; background:#012a1e; }
+.edition-body { padding:1.2rem 1.4rem; }
+.edition-name { font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#6ee87e; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.6rem; }
+.edition-desc { color:#a0c8a0; font-size:0.88rem; line-height:1.7; }
+
+/* Specs table */
+.specs-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+.specs-table tr { border-bottom:1px solid #0a6040; }
+.specs-table td { padding:0.7rem 0; font-size:0.92rem; vertical-align:top; }
+.specs-table td:first-child { color:#d4a030; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.04em; padding-right:1.5rem; width:42%; }
+.specs-table td:last-child { color:#e8f5e0; }
+
+/* How-to steps */
+.how-grid { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; counter-reset:how-counter; }
+.how-step { flex:1 1 200px; padding:1.2rem 1.4rem; background-color:rgba(0,0,0,0.28); border-top:3px solid #0a7050; position:relative; counter-increment:how-counter; }
+.how-step::before { content:counter(how-counter, decimal-leading-zero); font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#0a7050; letter-spacing:0.08em; display:block; margin-bottom:0.6rem; }
+.how-step h3 { font-family:'Lora',Georgia,serif; font-size:1rem; font-weight:600; color:#6ee87e; margin-bottom:0.5rem; }
+.how-step p { color:#a0c8a0; font-size:0.88rem; line-height:1.7; }
+
+@media(max-width:600px){
+  .edition-grid { flex-direction:column; }
+  .how-grid { flex-direction:column; }
+  .specs-table td:first-child { width:50%; font-size:0.72rem; }
+}
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" id="leih-label" data-i18n="leih_label">{{ t('leih_label') }}</p>
+    <h1 id="leih-h1" data-i18n-html="leih_h1">{{ t('leih_h1') | safe }}</h1>
+  </div>
+</div>
+
+<!-- Status -->
+<section style="background-color:#024530;">
+  <div class="inner">
+    <p class="section-label" id="leih-status-label" data-i18n="leih_status_label">{{ t('leih_status_label') }}</p>
+    <div class="status-box">
+      <p id="leih-status" data-i18n="leih_status">{{ t('leih_status') }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Preview -->
+<section style="background-color:#012a1e;">
+  <div class="inner">
+    <p class="section-label" id="leih-preview-label" data-i18n="leih_preview_label">{{ t('leih_preview_label') }}</p>
+    <h2 data-i18n-html="leih_preview_h2">{{ t('leih_preview_h2') | safe }}</h2>
+    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;" id="leih-ki-hint" data-i18n="leih_ki_hint">{{ t('leih_ki_hint') }}</p>
+    <p class="preview-intro" id="leih-preview-intro" data-i18n="leih_preview_intro">{{ t('leih_preview_intro') }}</p>
+    <div class="edition-grid" id="edition-grid">
+      {% for ed in [(t('leih_edition_1_name'), t('leih_edition_1_desc'), 'node-forest-camouflage.png', 'Forest Camouflage Edition'),
+                    (t('leih_edition_2_name'), t('leih_edition_2_desc'), 'node-moos-edition.png', 'Moos Edition'),
+                    (t('leih_edition_3_name'), t('leih_edition_3_desc'), 'node-mycelium-edition.png', 'Mycelium Edition')] %}
+      <div class="edition-card">
+        <img class="edition-img" src="{{ asset(ed[2]) }}" alt="{{ ed[3] }}">
+        <div class="edition-body">
+          <div class="edition-name">{{ ed[0] }}</div>
+          <div class="edition-desc">{{ ed[1] }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Specs -->
+<section style="background-color:#024530;">
+  <div class="inner">
+    <p class="section-label" id="leih-specs-label" data-i18n="leih_specs_label">{{ t('leih_specs_label') }}</p>
+    <h2 data-i18n-html="leih_specs_h2">{{ t('leih_specs_h2') | safe }}</h2>
+    <table class="specs-table" id="specs-table">
+      {% for spec in translations[current_lang()]['leih_specs'] %}
+      <tr><td>{{ spec.label }}</td><td>{{ spec.value }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</section>
+
+<!-- How it works -->
+<section style="background-color:#012a1e;">
+  <div class="inner">
+    <p class="section-label" id="leih-how-label" data-i18n="leih_how_label">{{ t('leih_how_label') }}</p>
+    <h2 data-i18n-html="leih_how_h2">{{ t('leih_how_h2') | safe }}</h2>
+    <div class="how-grid" id="how-grid">
+      {% for step in translations[current_lang()]['leih_how'] %}
+      <div class="how-step"><h3>{{ step.h }}</h3><p>{{ step.p }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Bridge -->
+<section style="background-color:#024530;">
+  <div class="inner">
+    <p class="section-label">BioComm Bridge</p>
+    <h2 data-i18n-html="leih_bridge_h2">{{ t('leih_bridge_h2') | safe }}</h2>
+    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;" data-i18n="leih_bridge_warning">{{ t('leih_bridge_warning') }}</p>
+    <div style="display:flex; flex-wrap:wrap; gap:2rem; align-items:center;">
+      <div style="flex:0 0 auto; max-width:320px;">
+        <img src="{{ asset('biocomm-bridge.png') }}" alt="BioComm Bridge" style="width:100%; border:1px solid #0a6040;">
+      </div>
+      <div style="flex:1 1 280px;">
+        <p style="color:#a0c8a0; line-height:1.8; margin-bottom:1rem;" data-i18n="leih_bridge_desc">{{ t('leih_bridge_desc') }}</p>
+        <ul style="color:#a0c8a0; font-size:0.9rem; line-height:2; padding-left:1.2rem;">
+          <li data-i18n="leih_bridge_li1">{{ t('leih_bridge_li1') }}</li>
+          <li data-i18n="leih_bridge_li2">{{ t('leih_bridge_li2') }}</li>
+          <li data-i18n="leih_bridge_li3">{{ t('leih_bridge_li3') }}</li>
+          <li data-i18n="leih_bridge_li4">{{ t('leih_bridge_li4') }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Komplettsystem -->
+<section style="background-color:#012a1e;">
+  <div class="inner">
+    <p class="section-label" data-i18n="leih_system_label">{{ t('leih_system_label') }}</p>
+    <h2 data-i18n-html="leih_system_h2">{{ t('leih_system_h2') | safe }}</h2>
+    <img src="{{ asset('biocomm-komplett.png') }}" alt="BioComm Komplettsystem im Einsatz" style="width:100%; border:1px solid #0a6040; margin-bottom:1.5rem;">
+    <p style="color:#a0c8a0; line-height:1.8;" data-i18n="leih_system_desc">{{ t('leih_system_desc') }}</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="inner" style="text-align:center; padding:1rem 0;">
+    <a href="{{ live('index.html#anmelden') }}" class="btn btn-green" id="leih-register-btn" data-i18n="leih_register_btn">{{ t('leih_register_btn') }}</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Edition images — same KI images as on main site
+var EDITION_IMGS = [
+  { src: '{{ asset("node-forest-camouflage.png") }}', alt: 'Forest Camouflage Edition' },
+  { src: '{{ asset("node-moos-edition.png") }}',      alt: 'Moos Edition' },
+  { src: '{{ asset("node-mycelium-edition.png") }}',  alt: 'Mycelium Edition' },
+];
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+
+  // Titel/Meta-Description sind keine data-i18n-Elemente (kein Text-Node im
+  // eigentlichen Sinn) -- bleiben als gezielte Einzel-Updates bestehen.
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.leih_page_title || 'OpenMycoNet · BioComm-Knoten';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.leih_status || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key]) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key]) el.innerHTML = T[key];
+  });
+
+  // Edition cards
+  var grid = document.getElementById('edition-grid');
+  if (grid && T.leih_edition_1_name) {
+    var editions = [
+      { name: T.leih_edition_1_name, desc: T.leih_edition_1_desc, img: EDITION_IMGS[0] },
+      { name: T.leih_edition_2_name, desc: T.leih_edition_2_desc, img: EDITION_IMGS[1] },
+      { name: T.leih_edition_3_name, desc: T.leih_edition_3_desc, img: EDITION_IMGS[2] },
+    ];
+    grid.innerHTML = editions.map(function(e) {
+      var imgTag = '<img class="edition-img" src="' + e.img.src + '" alt="' + e.img.alt + '">';
+      return '<div class="edition-card">'
+        + imgTag
+        + '<div class="edition-body">'
+        + '<div class="edition-name">' + e.name + '</div>'
+        + '<div class="edition-desc">' + e.desc + '</div>'
+        + '</div></div>';
+    }).join('');
+  }
+
+  // Specs table
+  var tbl = document.getElementById('specs-table');
+  if (tbl && T.leih_specs) {
+    tbl.innerHTML = T.leih_specs.map(function(s) {
+      return '<tr><td>' + s.label + '</td><td>' + s.value + '</td></tr>';
+    }).join('');
+  }
+
+  // How-to steps
+  var how = document.getElementById('how-grid');
+  if (how && T.leih_how) {
+    how.innerHTML = T.leih_how.map(function(s) {
+      return '<div class="how-step"><h3>' + s.h + '</h3><p>' + s.p + '</p></div>';
+    }).join('');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // TRANSLATIONS wird per fetch geladen (siehe base.html) -- die initiale
+  // Sprache steht bereits serverseitig im HTML, dieser Re-Render greift erst,
+  // sobald der Fetch durch ist (i.d.R. wenige ms, kein sichtbarer Flackereffekt).
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
+{% endblock %}

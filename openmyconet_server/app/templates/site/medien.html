@@ -1,0 +1,197 @@
+{% extends "site/base.html" %}
+
+{% block title %}Medien – OpenMycoNet{% endblock %}
+{% block meta_description %}Broschüre, Musik und Roman zum OpenMycoNet-Projekt — gebündelt zum Anhören, Lesen und Herunterladen.{% endblock %}
+
+{% block hreflang %}
+<link rel="canonical" href="https://www.openmyconet.de/medien.html">
+{% endblock %}
+
+{% block extra_css %}
+/* ── Broschüre-Block (aus index.html ausgelagert, Phase 4 Erweiterung 1b) ── */
+.broschuere-section { position:relative; overflow:hidden; }
+.broschuere-img { width:100%; height:480px; object-fit:cover; object-position:center 30%; display:block; filter:brightness(0.85) saturate(1.0); }
+.broschuere-overlay { position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem clamp(1.5rem,5vw,5rem); background:linear-gradient(to bottom, rgba(20,31,20,0.3) 0%, rgba(20,31,20,0.6) 100%); }
+.broschuere-label { font-family:'Lora',Georgia,serif; font-size:0.72rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
+.broschuere-captions { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem; }
+.broschuere-captions span { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; letter-spacing:0.08em; }
+.broschuere-captions span::before { content:"·"; margin-right:0.5rem; color:#3a9e5a; }
+.broschuere-captions span:first-child::before { content:""; margin-right:0; }
+.broschuere-tagline { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:400; color:#ffffff; line-height:1.3; margin-bottom:2rem; max-width:620px; }
+.broschuere-tagline em { font-style:italic; color:#6ee87e; }
+.broschuere-btn { display:inline-flex; align-items:center; gap:0.6rem; padding:0.9rem 2rem; background-color:#0a7050; color:#ffffff; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; transition:background-color 0.2s; margin-bottom:0.8rem; }
+.broschuere-btn:hover { background-color:#3a9e5a; }
+.broschuere-note { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#a0c8a0; letter-spacing:0.05em; }
+@media (max-width:600px) {
+  .broschuere-img { height:320px; }
+  .broschuere-tagline { font-size:1.4rem; }
+  .broschuere-captions { gap:0.8rem; flex-direction:column; align-items:center; }
+}
+.medien-page-header p { color:#a0c8a0; max-width:640px; }
+{% endblock %}
+
+{% set pdf_files = {
+  'de': 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3.pdf',
+  'en': 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3en-GB.pdf',
+  'nl': 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3nl-NL.pdf',
+  'fr': 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3fr-FR.pdf',
+  'es': 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3es-ES.pdf'
+} %}
+
+{% block content %}
+<div class="page-header medien-page-header">
+  <p class="section-label" data-i18n="label_medien">{{ t('label_medien') }}</p>
+  <h1 data-i18n="h1_medien">{{ t('h1_medien') }}</h1>
+  <p data-i18n="desc_medien">{{ t('desc_medien') }}</p>
+</div>
+
+<!-- Broschüre (aus index.html ausgelagert) -->
+<section class="broschuere-section">
+  <img src="{{ asset('Bild_Broschuere.png') }}" alt="" class="broschuere-img">
+  <div class="broschuere-overlay">
+    <p class="broschuere-label" id="broschuere-label" data-i18n="br_label">{{ t('br_label') }}</p>
+    <div class="broschuere-captions">
+      <span id="broschuere-c1" data-i18n="br_caption_1">{{ t('br_caption_1') }}</span>
+      <span id="broschuere-c2" data-i18n="br_caption_2">{{ t('br_caption_2') }}</span>
+      <span id="broschuere-c3" data-i18n="br_caption_3">{{ t('br_caption_3') }}</span>
+    </div>
+    <p class="broschuere-tagline" id="broschuere-tagline">{{ t('br_tagline').replace('verständlich', '<em>verständlich</em>').replace('explained', '<em>explained</em>').replace('begrijpelijk', '<em>begrijpelijk</em>').replace('compréhensible', '<em>compréhensible</em>').replace('explicado', '<em>explicado</em>') | safe }}</p>
+    <a href="{{ asset(pdf_files[current_lang()]) }}" download class="broschuere-btn" id="broschuere-btn">{{ t('br_btn') }}</a>
+    <p class="broschuere-note" id="broschuere-note" data-i18n="br_note">{{ t('br_note') }}</p>
+    <div id="broschuere-flags" style="display:flex; gap:0.6rem; align-items:center; margin-top:0.8rem; flex-wrap:wrap; justify-content:center;">
+      <!-- von JS befuellt: Direktlinks zu allen 5 Sprachvarianten der Broschuere -->
+    </div>
+  </div>
+</section>
+
+<!-- Musik: volle Playlist-/Player-Ansicht, steuert den zentralen Player aus base.html.
+     Textinhalt aus dem ehemaligen willkommen-music-Abschnitt auf index.html
+     uebernommen -- dort nie an die Uebersetzung angebunden gewesen, jetzt bei
+     der Migration nach medien.html nachtraeglich in allen 5 Sprachen ergaenzt. -->
+<section id="musik" style="background-color:#012a1e;">
+  <div style="max-width:580px; margin:0 auto;">
+    <p class="section-label" data-i18n="label_musik">{{ t('label_musik') }}</p>
+    <p style="font-family:'Lora',serif; font-size:1.05rem; color:#c8e6c0; line-height:1.8; margin-bottom:0.8rem;" data-i18n-html="musik_p1">{{ t('musik_p1') | safe }}</p>
+    <p style="font-family:'Lora',serif; font-size:1.05rem; color:#c8e6c0; line-height:1.8; margin-bottom:1rem;" data-i18n="musik_p2">{{ t('musik_p2') }}</p>
+    <p style="font-family:'Lora',serif; font-size:1.4rem; color:#f0b84a; line-height:1.8; margin-bottom:2rem; text-align:center; font-style:italic;" data-i18n="musik_p3">{{ t('musik_p3') }}</p>
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; letter-spacing:0.05em; text-align:center; margin-bottom:1rem;" data-i18n="musik_ki_hinweis">{{ t('musik_ki_hinweis') }}</p>
+
+    <div class="omn-player">
+      <div class="omn-cover-wrap">
+        <img class="omn-cover-img active" id="omn-cover-0" src="{{ asset('cover-listening-to-the-trees.jpeg') }}" alt="Listening to the Trees">
+        <img class="omn-cover-img"        id="omn-cover-1" src="{{ asset('cover-the-oldest-living-network.jpeg') }}" alt="The Oldest Living Network">
+        <img class="omn-cover-img"        id="omn-cover-2" src="{{ asset('cover-three-ways-of-knowing.jpeg') }}" alt="Three Ways of Knowing">
+        <img class="omn-cover-img"        id="omn-cover-3" src="{{ asset('cover-nobody-funds-the-ground.jpeg') }}" alt="Nobody Funds the Ground">
+        <img class="omn-cover-img"        id="omn-cover-4" src="{{ asset('cover-listen-to-the-forest.jpeg') }}" alt="Listen to the Forest">
+        <div class="omn-cover-overlay"></div>
+      </div>
+      <div class="omn-player-main">
+        <div class="omn-controls">
+          <button class="omn-play-btn" id="omn-play-btn" onclick="omnTogglePlay()" aria-label="Play/Pause">
+            <svg class="icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="3,1 15,8 3,15"/></svg>
+            <svg class="icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none;margin-left:0;"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
+          </button>
+          <button class="omn-next-btn" onclick="omnNext()" aria-label="Next">
+            <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="2,1 11,8 2,15"/><rect x="12" y="1" width="2" height="14"/></svg>
+          </button>
+        </div>
+        <div class="omn-player-info">
+          <div class="omn-player-title" id="omn-player-title">Listening to the Trees</div>
+          <div class="omn-player-sub">OpenMycoNet · Original Songs</div>
+          <div class="omn-progress-wrap" id="omn-progress-wrap" onclick="omnSeek(event)">
+            <div class="omn-progress-bar" id="omn-progress-bar"></div>
+          </div>
+          <div class="omn-time" id="omn-time">0:00 / 0:00</div>
+        </div>
+      </div>
+      <div class="omn-playlist" id="omn-playlist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Buch-Teaser + Buch (aus index.html ausgelagert) -->
+<section id="buch-teaser" style="padding:2.5rem clamp(1.5rem,5vw,5rem) 1.5rem; text-align:center; border-top:1px solid #0a6040;">
+  <p style="font-family:'Lora',Georgia,serif; font-size:1rem; font-weight:700; color:#f0b84a; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:1.2rem;" data-i18n="buch_teaser_label">{{ t('buch_teaser_label') }}</p>
+  <p style="font-family:'Playfair Display',serif; font-size:clamp(1rem,2.5vw,1.2rem); color:#e8f5e0; max-width:680px; margin:0 auto; line-height:1.85;" data-i18n="buch_teaser_text">{{ t('buch_teaser_text') | safe }}</p>
+</section>
+
+<section id="buch" style="position:relative; overflow:hidden; border-top:1px solid #0a6040; padding:0;">
+  <img src="{{ asset('buch_bg.png') }}" alt="" style="width:100%; height:480px; object-fit:cover; object-position:center center; display:block; filter:brightness(0.50) saturate(0.9);">
+  <div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem clamp(1.5rem,5vw,5rem); background:linear-gradient(to bottom, rgba(2,69,48,0.2) 0%, rgba(2,69,48,0.55) 100%);">
+    <p class="section-label" id="buch-label" data-i18n="buch_label">{{ t('buch_label') }}</p>
+    <h2 style="font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3rem); color:#ffffff; font-weight:400; margin-bottom:1rem;">
+      <em>Das letzte Korn</em>
+    </h2>
+    <p style="color:#a0c8a0; font-size:1.1rem; line-height:1.7; margin-bottom:2.5rem;" data-i18n="buch_desc">{{ t('buch_desc') }}</p>
+    <a href="{{ asset('Das letzte Korn_Komplett_down.pdf') }}" download class="btn btn-amber" style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.8rem;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span data-i18n="buch_btn">{{ t('buch_btn') }}</span>
+    </a>
+    <p style="margin-top:1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#a0c8a0; letter-spacing:0.05em;" data-i18n="buch_note">{{ t('buch_note') }}</p>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var PDF_FILES = {{ pdf_files | tojson }};
+var BROSCHUERE_OTHER_LANG = { de: 'Andere Sprache:', en: 'Other language:', nl: 'Andere taal:', fr: 'Autre langue :', es: 'Otro idioma:' };
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyTranslations(lang);
+  renderBroschuere(lang);
+  renderSidebar();
+}
+
+function applyTranslations(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+}
+
+function renderBroschuere(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  var btn = document.getElementById('broschuere-btn');
+  if (btn) {
+    btn.textContent = T.br_btn;
+    btn.setAttribute('href', PDF_FILES[lang] || PDF_FILES.de);
+  }
+  var taglineEl = document.getElementById('broschuere-tagline');
+  if (taglineEl && T.br_tagline) {
+    taglineEl.innerHTML = T.br_tagline
+      .replace('verständlich', '<em>verständlich</em>')
+      .replace('explained', '<em>explained</em>')
+      .replace('begrijpelijk', '<em>begrijpelijk</em>')
+      .replace('compréhensible', '<em>compréhensible</em>')
+      .replace('explicado', '<em>explicado</em>');
+  }
+  var flagsEl = document.getElementById('broschuere-flags');
+  if (flagsEl) {
+    var labelStyle = 'font-family:monospace; font-size:0.65rem; color:#a0c8a0; letter-spacing:0.05em;';
+    var langStyle = 'font-family:monospace; font-size:0.6rem; color:#e8f5e0; margin-left:2px;';
+    var out = '<span style="' + labelStyle + '">' + (BROSCHUERE_OTHER_LANG[lang] || BROSCHUERE_OTHER_LANG.de) + '</span>';
+    LANGS.forEach(function(l) {
+      var active = l === lang ? 'opacity:1; border-bottom:1px solid #6ee87e;' : 'opacity:0.5;';
+      var linkStyle = 'display:inline-flex; align-items:center; gap:3px; cursor:pointer; text-decoration:none; ' + active;
+      out += '<a href="' + (PDF_FILES[l] || PDF_FILES.de) + '" download title="' + FLAG_TITLES[l] + '" style="' + linkStyle + '">';
+      out += FLAGS[l];
+      out += '<span style="' + langStyle + '">' + l.toUpperCase() + '</span></a>';
+    });
+    flagsEl.innerHTML = out;
+  }
+}
+
+TRANSLATIONS_READY.then(function() { renderBroschuere(currentLang); });
+</script>
+{% endblock %}

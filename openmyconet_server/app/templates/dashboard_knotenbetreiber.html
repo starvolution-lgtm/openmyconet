@@ -1,0 +1,22 @@
+{% extends "dashboard_base.html" %}
+{% block title %}OpenMycoNet — Mein Dashboard{% endblock %}
+{% block content %}
+    <h1>Willkommen, {{ nutzer.name }}</h1>
+    <div class="card">
+        <p><span class="label">E-Mail:</span> {{ nutzer.email }}</p>
+        {% if nutzer.fachrolle %}<p><span class="label">Fachrolle:</span> {{ nutzer.fachrolle }}</p>{% endif %}
+    </div>
+
+    <h2>Deine Knoten</h2>
+    <table>
+        <tr><th>Knoten-ID</th><th>Substrat</th><th>Status</th><th>Seit</th></tr>
+        {% for knoten in knoten_liste %}
+        <tr>
+            <td>{{ knoten.knoten_id }}</td>
+            <td>{{ knoten.substrat }}</td>
+            <td>{{ 'Aktiv' if knoten.aktiv else 'Inaktiv' }}</td>
+            <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

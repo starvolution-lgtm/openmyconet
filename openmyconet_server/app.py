@@ -1,10 +1,8 @@
 import bleach
 from flask import Flask, render_template, request, url_for, Response
-from flask_mail import Message
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
-import secrets
 import os
 
 from extensions import db, mail
@@ -12,6 +10,12 @@ from models import Nutzer, Knoten, Messung, News, Spende, ContentBlock
 from admin import admin_bp
 from rag_chatbot import chatbot_bp
 from bewerbung import bewerbung_bp
+from registrierung import registrierung_bp, register_nutzer_core
+from dashboard import dashboard_bp
+from site_preview import site_preview_bp
+from site_live import site_live_bp
+from foerderer import foerderer_bp
+from i18n import init_i18n
 
 load_dotenv()
 
@@ -29,7 +33,9 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///openmyconet.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB, für Bildupload im Blog
+app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024  # 6 MB Gesamt-Request (Bildupload Blog + Foerderer-Logo max. 5 MB
+                                                     # -- 1 MB Puffer fuer Formularfelder/Multipart-Overhead, damit die
+                                                     # eigene 5-MB-Fehlermeldung greift statt Werkzeugs generischer 413.
 
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
@@ -45,13 +51,28 @@ CORS(app, origins=['https://www.openmyconet.de', 'https://openmyconet.de'])
 app.register_blueprint(admin_bp)
 app.register_blueprint(chatbot_bp)
 app.register_blueprint(bewerbung_bp)
+app.register_blueprint(registrierung_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(site_preview_bp)
+app.register_blueprint(site_live_bp)
+app.register_blueprint(foerderer_bp)
+
+# Phase 4 Schritt 1 (Template-Pilot): asset()/live() referenzieren bis zum Asset-
+# Umzug (Schritt 4) weiterhin die Live-Domain, damit der Pilot ohne Datei-
+# Duplizierung testbar ist.
+app.jinja_env.globals['asset'] = lambda path: 'https://www.openmyconet.de/' + path
+app.jinja_env.globals['live'] = lambda path: 'https://www.openmyconet.de/' + path
+# translations.json ist Teil des neuen, vereinheitlichten i18n-Mechanismus (Schritt 2)
+# und liegt bereits lokal in app/static/ -- bewusst NICHT ueber asset()/Live-Domain,
+# da die alte translations.js dort ein anderes (JS-, nicht JSON-)Format hat.
+app.jinja_env.globals['translations_json_url'] = lambda: '/translations.json'
+
+init_i18n(app)
 
 # --- Öffentliche Routen ---
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
+# '/' und die anderen Hauptseiten-Routen sind jetzt in site_live.py (Phase 4,
+# Schritt 4-Vorbereitung) -- die alte, kaputte render_template('index.html')
+# (Template existiert seit der Phase-4-Migration nicht mehr) ist damit ersetzt.
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -64,43 +85,9 @@ def register():
         land = request.form.get('land', '').strip()
         gruppe = request.form.get('gruppe', 'allgemein')
 
-        if Nutzer.query.filter_by(email=email).first():
-            fehler = 'Diese E-Mail ist bereits registriert.'
-        else:
-            token = secrets.token_urlsafe(32)
-            nutzer = Nutzer(
-                name=name, email=email, sprache=sprache,
-                land=land, gruppe=gruppe, token=token
-            )
-            db.session.add(nutzer)
-            db.session.commit()
-
-            base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
-            confirm_url = f'{base_url}/confirm/{token}'
-            msg = Message(
-                subject='OpenMycoNet — Bitte bestätige deine Registrierung',
-                recipients=[email]
-            )
-            msg.body = f'''Hallo {name},
-
-vielen Dank für deine Registrierung bei OpenMycoNet!
-
-Bitte bestätige deine E-Mail-Adresse durch Klick auf folgenden Link:
-
-{confirm_url}
-
-Dieser Link ist einmalig und nur für dich bestimmt.
-
-Das OpenMycoNet-Team
-https://www.openmyconet.de
-'''
-            try:
-                mail.send(msg)
-                nachricht = f'Danke {name}! Wir haben dir eine Bestätigungsmail geschickt.'
-            except Exception as e:
-                db.session.delete(nutzer)
-                db.session.commit()
-                fehler = f'Mailversand fehlgeschlagen: {str(e)}'
+        nutzer, fehler = register_nutzer_core(name, email, sprache, land, gruppe, ip=request.remote_addr)
+        if nutzer:
+            nachricht = f'Danke {name}! Wir haben dir eine Bestätigungsmail geschickt.'
 
     return render_template('register.html', nachricht=nachricht, fehler=fehler)
 
@@ -137,7 +124,7 @@ def news():
         news_liste = [n for n in news_liste if filter_tag in (n.tags or '').split(',')]
     for n in news_liste:
         n.exzerpt = news_exzerpt(n.inhalt)
-    return render_template('news.html', news_liste=news_liste, filter_sprache=filter_sprache, filter_tag=filter_tag)
+    return render_template('news.html', news_liste=news_liste, filter_sprache=filter_sprache, filter_tag=filter_tag, current_page='news')
 
 
 @app.route('/news/<slug>')
@@ -147,7 +134,7 @@ def news_detail(slug):
     bild_url = None
     if artikel.bild_dateiname:
         bild_url = url_for('static', filename='uploads/news/' + artikel.bild_dateiname, _external=True)
-    return render_template('news_detail.html', artikel=artikel, beschreibung=beschreibung, bild_url=bild_url)
+    return render_template('news_detail.html', artikel=artikel, beschreibung=beschreibung, bild_url=bild_url, current_page='news')
 
 
 @app.route('/news-sitemap.xml')
@@ -219,6 +206,19 @@ def api_content(schluessel):
     if not block:
         return {'fehler': 'Nicht gefunden'}, 404
     return {'schluessel': block.schluessel, 'sprache': block.sprache, 'inhalt': block.inhalt}
+
+
+@app.route('/api/v1/content', methods=['GET'])
+def api_content_bulk():
+    # Namensraum-Konvention: schluessel ist "<seite>_<key>" (z.B. "index_about_p1"),
+    # damit mehrere Seiten denselben Kurz-Key ohne Kollision nutzen können.
+    seite = request.args.get('seite', '').strip()
+    sprache = request.args.get('sprache', 'de')
+    query = ContentBlock.query.filter_by(sprache=sprache)
+    if seite:
+        query = query.filter(ContentBlock.schluessel.like(f'{seite}_%'))
+    bloecke = query.all()
+    return {block.schluessel: block.inhalt for block in bloecke}
 
 
 # --- Start ---

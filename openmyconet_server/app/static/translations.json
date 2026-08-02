@@ -1,0 +1,2436 @@
+{
+  "de": {
+    "nav_warum": "Warum",
+    "nav_mitmachen": "Mitmachen",
+    "nav_spenden": "Unterstützen",
+    "nav_anmelden": "Anmelden",
+    "nav_ueber": "Über",
+    "nav_medien": "Medien",
+    "label_medien": "OpenMycoNet · Medien",
+    "h1_medien": "Broschüre, Musik & Buch",
+    "desc_medien": "Alles zum Anhören, Lesen und Herunterladen an einem Ort — die Kurzbroschüre, die Songs des Projekts und der Roman „Das letzte Korn\".",
+    "nav_foerderer": "Förderer",
+    "nav_quellen": "Quellen",
+    "nav_news": "News",
+    "nav_leihgeraete": "Leihgerät",
+    "btn_leihgeraet": "⬡ BioComm-Knoten leihen",
+    "leih_edition_1_name": "Forest Camouflage Edition",
+    "leih_edition_1_desc": "Tarnmuster für den Waldeinsatz — geht in der natürlichen Umgebung auf.",
+    "leih_edition_2_name": "Moos Edition",
+    "leih_edition_2_desc": "Moosgrünes Gehäuse, dezent und naturverbunden.",
+    "leih_edition_3_name": "Mycelium Edition",
+    "leih_edition_3_desc": "Marmoriertes Dunkelgrau mit Myzel-Struktur — urban und wissenschaftlich.",
+    "leih_page_title": "OpenMycoNet · BioComm-Knoten Leihgerät",
+    "leih_seo_desc": "Kompaktes Open-Source-Messgerät für bioelektrische Signale in Mykorrhiza-Netzwerken. Kostenloser Leihknoten für Citizen Scientists — jetzt registrieren.",
+    "leih_label": "Leihprogramm",
+    "leih_h1": "Der BioComm-Knoten<br><em>zum Ausleihen</em>",
+    "leih_status_label": "Projektstatus",
+    "leih_status": "Hardware-Entwicklung abgeschlossen · Erste Geräte werden vorbereitet",
+    "leih_preview_label": "So werden die Nodes aussehen",
+    "leih_preview_intro": "Der BioComm-Messknoten wird als kompaktes Gerät geliefert, vorinstalliert und einsatzbereit. Elektroden in den Boden stecken — der Knoten funkt die Daten per LoRa an die Bridge, die sie per WLAN an die Zentrale weiterleitet. Diese Funkanbindung ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation.",
+    "leih_specs_label": "Technische Daten",
+    "leih_specs": [
+      {
+        "label": "Prozessor",
+        "value": "ESP32 + LoRa-Funkmodul"
+      },
+      {
+        "label": "Funkverbindung",
+        "value": "LoRa zur Bridge (1–3 km im Wald) · Bridge verbindet sich per WLAN mit der Zentrale — in Entwicklung, noch nicht ausgeliefert"
+      },
+      {
+        "label": "ADC",
+        "value": "16-bit, 8 Kanäle"
+      },
+      {
+        "label": "Sensoren",
+        "value": "Bioelektrische Signale + Boden- & Umweltdaten (Temperatur, Feuchtigkeit, CO₂)"
+      },
+      {
+        "label": "Stromversorgung",
+        "value": "USB-C oder LiPo-Akku"
+      },
+      {
+        "label": "Gehäuse",
+        "value": "IP65, wetterfest"
+      }
+    ],
+    "leih_how_label": "In fünf Schritten zum Messknoten",
+    "leih_preview_h2": "So werden die<br>Nodes <em>aussehen</em>",
+    "leih_ki_hint": "⚠ Diese Visualisierungen sind KI-generiert. Die echten Geräte werden zu ca. 80 % so aussehen — welches Farbdesign es letztlich wird, steht noch nicht fest.",
+    "leih_specs_h2": "Was der Knoten<br><em>kann</em>",
+    "leih_how_h2": "In fünf Schritten<br>zum <em>Messknoten</em>",
+    "leih_bridge_h2": "Die <em>Zentrale</em>",
+    "leih_bridge_warning": "⚠ Die Funkanbindung (LoRa/WLAN) ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation und noch nicht ausgeliefert.",
+    "leih_bridge_desc": "Die BioComm Bridge verbindet bis zu 4 Messknoten gleichzeitig per LoRa-Funk (Punkt-zu-Punkt, realistisch 1–3 km Reichweite im Wald) und leitet alle Daten per WLAN an die Zentrale weiter. Node 1–4 LEDs zeigen den Verbindungsstatus in Echtzeit.",
+    "leih_bridge_li1": "ESP32 mit LoRa-Funkmodul",
+    "leih_bridge_li2": "WLAN-Verbindung zur Zentrale",
+    "leih_bridge_li3": "4 Node-Status-LEDs",
+    "leih_bridge_li4": "Kompaktes Desktop-Gehäuse",
+    "leih_system_label": "Das Gesamtsystem",
+    "leih_system_h2": "BioComm <em>im Einsatz</em>",
+    "leih_system_desc": "Vier BioComm-Knoten im Boden, verbunden über LoRa mit der Bridge, Messdaten live auf dem Dashboard — das ist OpenMycoNet in der Praxis. Jeder Knoten misst unabhängig, die Bridge aggregiert alle Datenströme und überträgt sie per WLAN an die Zentrale.",
+    "leih_how": [
+      {
+        "h": "Registrieren",
+        "p": "Formular auf der Hauptseite ausfüllen — Substrat, Standort, Motivation."
+      },
+      {
+        "h": "Kaution hinterlegen",
+        "p": "Ca. 100 € Kaution (endgültiger Betrag noch zu bestätigen). Wird bei Rückgabe vollständig erstattet."
+      },
+      {
+        "h": "Gerät erhalten",
+        "p": "Der BioComm-Knoten wird per Post geliefert — vorinstalliert und einsatzbereit."
+      },
+      {
+        "h": "Messen",
+        "p": "Elektroden ins Substrat stecken, WLAN-Daten eingeben — fertig. Das Gerät läuft automatisch."
+      },
+      {
+        "h": "Zurückgeben",
+        "p": "Rückgabe jederzeit möglich. Kaution wird erstattet."
+      }
+    ],
+    "leih_register_btn": "Jetzt für das Leihprogramm registrieren",
+    "leih_back": "← Zurück zur Startseite",
+    "nav_menu": "Menü",
+    "btn_fragen": "⬤ Offene Fragen?",
+    "hero_sub": "Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza- und Pilznetzwerken. Die Signale existieren — die Frage ist, was sie bedeuten.",
+    "live_badge": "aktiver Knoten — werde der nächste",
+    "btn_join": "Jetzt mitmachen",
+    "btn_support": "Projekt unterstützen",
+    "label_vision": "Die größere Frage",
+    "label_warum": "Das Warum",
+    "label_mitmachen": "So funktioniert es",
+    "label_daten": "Transparenz",
+    "label_spenden": "Unterstützung",
+    "label_anmelden": "Registrierung",
+    "label_ueber": "Das Projekt",
+    "h2_vision": "Was möglich wird, wenn wir <em>verstehen</em>",
+    "h2_warum": "Ein Netzwerk das<br><em>zuhört</em>",
+    "h2_mitmachen": "In vier Schritten<br>zum eigenen <em>Knoten</em>",
+    "h2_daten": "Wie deine Daten<br><em>fließen</em>",
+    "h2_spenden": "Das Projekt<br><em>unterstützen</em>",
+    "h2_anmelden": "Werde Teil des<br><em>Netzwerks</em>",
+    "h2_ueber": "Unabhängige Wissenschaft<br>von <em>unten</em>",
+    "vision_p1": "Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde. Mykorrhiza-Pilze verbinden seit 400 Millionen Jahren nahezu alle Landpflanzen miteinander — sie transportieren Nährstoffe, übermitteln Warnsignale und koordinieren das Leben im Boden auf eine Weise die wir gerade erst zu verstehen beginnen. Sie senden elektrische Signale. Messbar. Reproduzierbar. Und bisher kaum entschlüsselt.",
+    "vision_p2": "OpenMycoNet stellt die einfache aber weitreichende Frage: Was passiert wenn wir aufhören, Böden nur von außen zu analysieren — und stattdessen anfangen zuzuhören was das Netzwerk selbst sendet? Was wenn die Pflanze uns längst sagt dass sie Durst hat, bevor wir es sehen? Was wenn der Boden selbst meldet dass ein Schädling naht, bevor der erste Schaden entsteht?",
+    "vision_p3": "Das sind keine spekulativen Fragen. Die wissenschaftliche Grundlage existiert. Was fehlt sind Daten — viele, aus verschiedenen Klimazonen, Substraten, Jahreszeiten. Genau das kann kein einzelnes Labor liefern. Aber eine weltweite Gemeinschaft von Menschen die in ihrem Garten, ihrem Wald, ihrem Gewächshaus messen — schon.",
+    "vision_quote": "Das Netzwerk sendet. Wir haben gerade erst angefangen zuzuhören.",
+    "vision_closing": "Jeder BioComm-Knoten der weltweit in Betrieb geht bringt uns einen Schritt näher an das Verständnis — für alle.",
+    "desc_warum": "Mykorrhiza-Pilze verbinden über 90 % aller Landpflanzen. Sie senden elektrische Signale — messbar, reproduzierbar, rätselhaft. Gemeinsam können wir verstehen was sie bedeuten.",
+    "desc_mitmachen": "Die Ergebnisse und Daten des Netzwerks stehen allen offen — auch ohne eigenen Knoten. Wer selbst einen BioComm-Knoten betreiben möchte, bewirbt sich unten für einen der kuratierten Plätze.",
+    "desc_daten": "GPS-Koordinaten werden auf 10×10 km vergröbert — kein exakter Standort. Keine personenbezogenen Daten. Alle Rohdaten öffentlich zugänglich.",
+    "label_musik": "Musik",
+    "musik_p1": "Die ältesten Netzwerke der Erde sprechen nicht mit Worten.<br>Sie verbinden, reagieren und erinnern.",
+    "musik_p2": "Die Songs dieser Sammlung entstanden als musikalische Begleitung zu der Idee, genauer hinzuhören.",
+    "musik_p3": "Wir freuen uns, dass du dabei bist.",
+    "musik_ki_hinweis": "Die Musik und Stimmen sind KI-generiert, Text ist von Robert Jank.",
+    "player_more_link": "Mehr Musik?",
+    "label_kooperationen": "Gemeinsam",
+    "h2_kooperationen": "Förderer & <em>Kooperationen</em>",
+    "desc_kooperationen": "Unternehmen und Projekte, die OpenMycoNet unterstützen und mit uns zusammenarbeiten.",
+    "link_kooperationen": "Alle Förderer ansehen →",
+    "desc_anmelden": "Trag dich ein — wir informieren dich wenn OpenMycoNet offiziell startet und schicken dir die Hardware-Anleitung.",
+    "donate_p": "OpenMycoNet ist ein unabhängiges Citizen-Science-Projekt ohne institutionelle Förderung. Serverkosten und Weiterentwicklung werden durch freiwillige Spenden finanziert. Jeder Betrag hilft.",
+    "donate_note": "Du kannst auch spenden ohne Dich registrieren zu müssen, aber wir würden uns freuen wenn Du es dennoch machst und so ein Teil des Netzwerks wirst.",
+    "donate_claim": "Wir für OpenMycoNet — OpenMycoNet für alle.",
+    "buch_label": "Gratisdownload",
+    "buch_desc": "Eine Geschichte über die Symbiose der dritten Art",
+    "buch_btn": "↓ Roman herunterladen",
+    "buch_note": "PDF · kostenlos · Robert Jank · 2026",
+    "about_p1": "OpenMycoNet wurde von Robert Jank, unabhängigem Erfinder aus Maintal bei Frankfurt, initiiert — ohne Institutszugehörigkeit, mit dem Ziel zu verstehen was Mykorrhiza-Netzwerke elektrisch signalisieren.",
+    "about_p2": "Das zugrundeliegende System BioComm ist durch ein Gebrauchsmuster beim DPMA geschützt. Die Software wird als portable .exe bereitgestellt. Die Messdaten gehören der Gemeinschaft.",
+    "about_p3": "Prinzip: Proprietary Intelligence, Open Data — das KI-Modell ist geschützt, die Daten die es trainieren sind frei.",
+    "btn_contact": "Kontakt",
+    "btn_register": "Jetzt registrieren",
+    "vision_apps": [
+      {
+        "label": "Präzisionslandwirtschaft",
+        "text": "Wenn wir die Signalmuster von Trockenstress, Nährstoffmangel und Schädlingsbefall kennen, können Landwirte reagieren bevor Schäden entstehen — ohne Chemie, ohne Flächenpauschalen, ohne Raten.",
+        "italic": "Das Mykorrhiza-Netzwerk als Frühwarnsystem für den Acker."
+      },
+      {
+        "label": "Waldschutz",
+        "text": "Wälder kommunizieren über ihr unterirdisches Pilznetzwerk. Veränderungen in den Signalmustern könnten Trockenheit, Borkenkäferbefall oder Brandgefahr anzeigen — Wochen bevor es sichtbar wird.",
+        "italic": "Der Wald der uns warnt, bevor es zu spät ist."
+      },
+      {
+        "label": "Bodenregeneration",
+        "text": "Durch gezielte Frequenzstimulation lässt sich die Aktivität von Mykorrhiza-Netzwerken beeinflussen — möglicherweise um geschädigte Böden schneller zu regenerieren und Nährstofftransport zu fördern.",
+        "italic": "Nicht Chemie, sondern Dialog mit dem Boden."
+      },
+      {
+        "label": "Klimaschutz",
+        "text": "Gesunde Mykorrhiza-Netzwerke binden nachweislich CO₂. BioComm könnte als unabhängiges Monitoring-Instrument für Boden-Carbon-Zertifikate dienen — kontinuierlich, ortsunabhängig, fälschungssicher.",
+        "italic": "Der Boden als messbarer Klimaschützer."
+      },
+      {
+        "label": "Grundlagenforschung",
+        "text": "Adamatzky et al. haben gezeigt dass Pilz-Spike-Trains strukturelle Ähnlichkeiten mit menschlichen Sprachen aufweisen. Wenn das stimmt — was sagen sie? Jede Messung im OpenMycoNet-Netzwerk ist ein Datenpunkt auf dem Weg zur Antwort.",
+        "italic": "Die älteste Sprache der Erde entschlüsseln."
+      },
+      {
+        "label": "Was wir noch nicht wissen",
+        "text": "Vielleicht gibt es Signalmuster die wir noch gar nicht kennen. Vielleicht kommunizieren Netzwerke über Entfernungen auf eine Weise die unsere Modelle nicht vorhersagen. Das ist der eigentliche Grund für OpenMycoNet — nicht das Bestätigen von Hypothesen, sondern das Entdecken von Überraschungen.",
+        "italic": "Die interessantesten Antworten sind die, nach denen wir noch nicht gefragt haben."
+      }
+    ],
+    "cards": [
+      {
+        "h": "Globale Datenbasis",
+        "p": "Deine Messung in Maintal, eine in Osaka, eine in São Paulo — zusammen entsteht ein Datensatz den kein einzelnes Labor erzeugen könnte."
+      },
+      {
+        "h": "Echte Wissenschaft",
+        "p": "Die Signale existieren nachweislich (Adamatzky et al., 2022). Du hilfst dabei herauszufinden was sie bedeuten."
+      },
+      {
+        "h": "KI die dazulernt",
+        "p": "Jede Messung verbessert das gemeinsame KI-Modell. Je mehr Teilnehmer, desto klüger das System — für alle."
+      },
+      {
+        "h": "Offene Daten",
+        "p": "Alle Messdaten unter Creative Commons CC BY 4.0 — frei für Wissenschaft und Forschung."
+      },
+      {
+        "h": "Geringer Aufwand",
+        "p": "Elektroden in den Blumentopf, BioComm starten, fertig. Das System läuft im Hintergrund."
+      },
+      {
+        "h": "Citizen Science",
+        "p": "Wie SETI@home — nur mit dem entscheidenden Unterschied: die Signale die wir suchen sind bereits da."
+      }
+    ],
+    "steps": [
+      {
+        "h": "Hardware leihen",
+        "p": "BioComm-Messgerät als Leihgerät erhalten — Pfand ca. 100 € (finale Kosten folgen). Rückgabe jederzeit möglich.",
+        "cost": "Pfand ca. 100 €"
+      },
+      {
+        "h": "BioComm herunterladen",
+        "p": "Die BioComm-Software kostenlos herunterladen — keine Installation, kein Python nötig.",
+        "cost": "Kostenlos"
+      },
+      {
+        "h": "Elektroden setzen",
+        "p": "Nadeln in Boden, Blumentopf oder Kompost mit Pilz- oder Mykorrhiza-Substrat.",
+        "cost": "5 Minuten"
+      },
+      {
+        "h": "Messen & teilen",
+        "p": "BioComm verbindet automatisch und lädt die Daten hoch. Analyse und Anonymisierung erfolgen lokal auf deinem Gerät — keine Rohdaten verlassen deinen PC.",
+        "cost": ""
+      }
+    ],
+    "flow_nodes": [
+      {
+        "h": "Dein Knoten",
+        "p": "Elektroden im Substrat"
+      },
+      {
+        "h": "BioComm.exe",
+        "p": "Analyse &amp; Anonymisierung — lokal auf deinem PC"
+      },
+      {
+        "h": "OpenMycoNet",
+        "p": "Server &amp; KI-Training"
+      },
+      {
+        "h": "Open Data",
+        "p": "CC BY 4.0 — frei für alle"
+      },
+      {
+        "h": "KI-Update",
+        "p": "Zurück an alle Knoten"
+      }
+    ],
+    "facts": [
+      {
+        "num": "400M",
+        "text": "Jahre alt — so lange existieren Mykorrhiza-Netzwerke auf der Erde"
+      },
+      {
+        "num": "90%",
+        "text": "aller Landpflanzen sind mit Mykorrhiza-Pilzen verbunden"
+      },
+      {
+        "num": "8",
+        "text": "Messkanäle erfasst BioComm gleichzeitig, bis zu 10.000 Hz"
+      },
+      {
+        "num": "~100€",
+        "text": "Pfandgebühr für ein BioComm-Leihgerät (ca., finale Kosten folgen)"
+      }
+    ],
+    "form_options": {
+      "interessent": "Interessent — über das Projekt informiert bleiben",
+      "wissenschaftler": "Wissenschaftler / Institut — Daten nutzen / kooperieren",
+      "entwickler": "Softwareentwickler — an BioComm mitarbeiten",
+      "unterstuetzer": "Unterstützer — Projekt bekannt machen / helfen",
+      "foerderer": "Gewerblicher Förderer — Firmeneintrag ab 50 €/Jahr"
+    },
+    "q_page_tag": "OpenMycoNet · Wissenschaftliche Grundlagen",
+    "q_h1_html": "Quellennachweise &amp;<br><em>Erkenntnispfad</em>",
+    "q_subtitle": "OpenMycoNet steht auf einem nachvollziehbaren wissenschaftlichen Fundament. Jeder Schritt unseres Erkenntnispfades — von der Mykorrhiza-Grundlagenforschung bis zur angewandten Citizen Science — ist durch publizierte Forschung belegt.",
+    "q_intro_strong": "Transparenzhinweis:",
+    "q_intro": "Nicht alle aufgeführten Arbeiten belegen die Ziele von OpenMycoNet direkt. Sie bilden das wissenschaftliche Fundament, auf dem unsere Fragen aufbauen — einschließlich kritischer Perspektiven. Wir messen, weil die Datenlage noch dünn ist, nicht weil alles bewiesen ist.",
+    "q_path_label": "Wissenschaftlicher Erkenntnispfad",
+    "q_path_1": "01 · Mykorrhiza",
+    "q_path_2": "02 · Netzwerke",
+    "q_path_kritik": "! · Kritik",
+    "q_path_3": "03 · Elektr. Aktivität",
+    "q_path_4": "04 · Messbarkeit",
+    "q_path_5": "05 · KI-Muster",
+    "q_path_6": "06 · Citizen Science",
+    "q_s1_step": "Schritt 01 — Mykorrhiza & Netzwerke",
+    "q_s1_title": "Pflanzen kommunizieren unterirdisch",
+    "q_s1_desc": "Suzanne Simards Pionierarbeit etablierte das Konzept des mykorrhizalen Netzwerks als echten Informationskanal zwischen Pflanzen — nicht Metapher, sondern Messbefund.",
+    "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
+    "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
+    "q_ref14_relevanz": "Zeigt, dass G. intraradices die P-Aufnahme aus einem unangereicherten Bodenbereich gezielt drosselt, sobald ein angereicherter Patch erschlossen wird – die Autoren benennen explizit, dass die dafür nötigen Signalmoleküle im Hyphennetzwerk noch unbekannt sind. Ein plausibler Kandidat: elektrische Signalausbreitung im Myzel.",
+    "q_sk_step": "! Kritische Perspektive — Wissenschaftliche Einordnung",
+    "q_sk_title": "Was wirklich belegt ist — und was nicht",
+    "q_sk_desc": "Nicht alle populären Behauptungen über das „Wood Wide Web\" sind durch Feldstudien ausreichend belegt. OpenMycoNet bezieht diese Kritik ausdrücklich ein — sie ist ein Grund, warum wir messen.",
+    "q_s2_step": "Schritt 02 — Elektrische Aktivität",
+    "q_s2_title": "Pilze senden messbare elektrische Signale",
+    "q_s2_desc": "Bioelektrische Impulse im Myzel zeigen neuronale Charakteristika: Spiking-Muster, Signalausbreitung, nicht-lineare Eigenschaften.",
+    "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+    "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
+    "q_ref08_relevanz": "Methodisch bislang fortschrittlichste Validierungsstudie: PCB-Elektroden, Faraday-Käfig und Biozid-Kontrollen bestätigen den biologischen Ursprung von Myzel-Signalen – direkte methodische Bestätigung des BioComm-Ansatzes.",
+    "q_s3_step": "Schritt 03 — Messbarkeit, Sensorik & KI-Mustererkennung",
+    "q_s3_title": "Von der Beobachtung zur Berechnung",
+    "q_s3_desc": "Andrew Adamatzkys Arbeiten zeigen, dass Myzelsignale nicht nur existieren, sondern technisch nutzbar sind — als logische Gatter, als übertragbare Frequenzen, zuletzt als direkte KI-Schnittstelle.",
+    "q_s4_step": "Kontext — Populärwissenschaft",
+    "q_s4_title": "Das Buch, das alles zusammenfasst",
+    "q_s4_desc": "Merlin Sheldrakes Standardwerk vermittelt die biologische Komplexität von Pilzorganismen einem breiten Publikum — ohne die Wissenschaft zu vereinfachen.",
+    "q_s5_step": "Schritt 04 — Citizen Science",
+    "q_s5_title": "Wissenschaft durch kollektive Beobachtung",
+    "q_s5_desc": "Citizen-Science-Plattformen wie iNaturalist und FunDive belegen, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern können. OpenMycoNet folgt diesem Modell für bioelektrische Signale.",
+    "q_footer_left": "Alle verlinkten Quellen sind Open Access oder öffentlich zugänglich.",
+    "q_footer_right": "Stand: Juni 2026 · OpenMycoNet / Robert Jank",
+    "q_back": "← Startseite",
+    "q_back_long": "← Zurück zur Startseite",
+    "player_hint": "Genieße die Musik während du den weiteren Inhalt durchforstest.",
+    "buch_teaser_label": "✦ Kostenloser Download ✦",
+    "buch_teaser_text": "„Das letzte Korn\" — ein Roman über Menschen, Mykorrhiza, KI und die Frage, wem die Natur gehört und wie man mit ihr leben könnte.",
+    "footer_copy": "Robert Jank · Maintal, Deutschland · 2026",
+    "donate_fee_label": "Transaktionskosten übernehmen",
+    "footer_impressum": "Impressum",
+    "footer_datenschutz": "Datenschutz",
+    "footer_quellen": "Quellennachweise",
+    "f_title": "Förderer — OpenMycoNet",
+    "f_section_label": "Partnerschaft",
+    "f_h1": "Gewerbliche <em>Förderer</em>",
+    "f_intro_p1": "Mit Ihrem Beitrag helfen Sie dabei, die verborgenen Netzwerke unter unseren Füßen besser zu verstehen. Sie unterstützen offene Forschung, Citizen Science und die Entwicklung neuer Messsysteme für Pilze, Mykorrhiza und Bodengesundheit. Gleichzeitig wird Ihr Engagement sichtbar – als Teil eines Netzwerks von Unternehmen und Menschen, die Verantwortung für die Zukunft unserer Böden übernehmen.",
+    "f_intro_p2": "",
+    "f_h2_vorteile": "Was Förderer erhalten",
+    "f_h2_beitrag": "Jahresbeitrag — frei wählbar ab 50 €",
+    "f_h2_ablauf": "So funktioniert es",
+    "f_h2_liste": "Aktuelle Förderer",
+    "f_h2_form": "Jetzt Förderer werden",
+    "f_vorteile": [
+      {
+        "h": "Eintrag in der Fördererliste",
+        "p": "Name, Beschreibung, Kontaktdaten und Link — sichtbar für alle Besucher von openmyconet.de."
+      },
+      {
+        "h": "Förderer-Badge",
+        "p": "„Offizieller Förderer von OpenMycoNet\" — als Badge für Ihre Website oder Social Media."
+      },
+      {
+        "h": "Community-Reichweite",
+        "p": "Nennung in relevanten E-Mails an unsere wachsende Community aus Citizen Scientists."
+      },
+      {
+        "h": "Thematische Sichtbarkeit",
+        "p": "Ihre Marke im Kontext echter Wissenschaft — glaubwürdig, nachhaltig, international."
+      }
+    ],
+    "f_slider_label": "Ihr Jahresbeitrag",
+    "f_slider_min_hint": "Minimum 50 €",
+    "f_beitrag_note": "Der Beitrag ist freiwillig und nach oben offen. Alle Förderer erhalten dieselbe Sichtbarkeit — unabhängig vom gewählten Betrag.",
+    "f_steps": [
+      {
+        "num": "1. Eintrag gestalten",
+        "text": "— Firmenname, Beschreibung, Logo hochladen, Betrag wählen. Alles in einem Schritt."
+      },
+      {
+        "num": "2. Vorschau prüfen",
+        "text": "— Sie sehen Ihren Eintrag genau so wie er erscheinen wird, bevor Sie zahlen."
+      },
+      {
+        "num": "3. Beitrag leisten",
+        "text": "— ab 50 € / Jahr, sicher via PayPal. Keine Vorauszahlung vor der Vorschau."
+      },
+      {
+        "num": "4. Sofort live",
+        "text": "— Ihr Eintrag erscheint automatisch nach Zahlungseingang. Rechnung kommt per E-Mail."
+      },
+      {
+        "num": "5. Jährliche Erneuerung",
+        "text": "— 2–3 Monate vor Ablauf erhalten Sie eine E-Mail mit der Frage ob Sie die Förderpartnerschaft fortsetzen möchten. Kein Automatismus, kein Druck."
+      }
+    ],
+    "f_badge_example": "★ Offizieller Förderer ★  |  Beispiel-Eintrag",
+    "f_name_example": "Ihr Unternehmensname",
+    "f_desc_example": "Hier erscheint eine kurze Beschreibung Ihres Unternehmens — was Sie machen, warum Sie OpenMycoNet unterstützen und was Sie mit dem Thema Mykologie verbindet. Ca. 2-3 Sätze.",
+    "f_link_example": "www.ihre-website.de",
+    "f_premium_note": "Premium-Förderer erhalten zusätzlich eine hervorgehobene Position und ihr Logo im Eintrag. Nach Ihrer Anfrage erhalten Sie einen Fragebogen für Ihren persönlichen Eintrag inkl. Logo-Upload.",
+    "f_placeholder_1": "✶ Hier erscheinen die ersten Förderer von OpenMycoNet ✶",
+    "f_placeholder_2": "Werden Sie der Erste.",
+    "f_lbl_firma": "Unternehmen / Name *",
+    "f_lbl_website": "Website",
+    "f_lbl_email": "E-Mail-Adresse *",
+    "f_lbl_bereich": "Thematischer Bezug",
+    "f_lbl_beitrag": "Gewünschter Jahresbeitrag",
+    "f_lbl_beschreibung": "Kurze Beschreibung Ihres Unternehmens *",
+    "f_opts": [
+      "Pilzzucht / Mykologie",
+      "Buchhandlung / Verlag",
+      "Nachhaltige Materialien (Myzel)",
+      "Landwirtschaft / Agrartech",
+      "Forstwirtschaft / Naturschutz",
+      "Bildung / Forschung",
+      "Sonstiges"
+    ],
+    "f_submit": "Eintrag gestalten & Förderer werden",
+    "f_form_note": "Keine Vorauszahlung — Sie zahlen erst nach der Vorschau. Logo-Upload inklusive. Rechnung automatisch per E-Mail.",
+    "f_back": "← Zurück zur Startseite",
+    "f_success": "✓ Anfrage eingegangen — wir melden uns!",
+    "f_error": "Fehler — bitte E-Mail an kontakt@openmyconet.de",
+    "f_sending": "Wird gesendet...",
+    "f_year_label": "€ / Jahr",
+    "f_selected_label": "Ausgewählt:",
+    "f_v0_h": "Eintrag in der Fördererliste",
+    "f_v0_p": "Name, Beschreibung, Kontaktdaten und Link — sichtbar für alle Besucher von openmyconet.de.",
+    "f_v1_h": "Förderer-Badge",
+    "f_v1_p": "„Offizieller Förderer von OpenMycoNet\" — als Badge für Ihre Website oder Social Media.",
+    "f_v2_h": "Community-Reichweite",
+    "f_v2_p": "Nennung in relevanten E-Mails an unsere wachsende Community aus Citizen Scientists.",
+    "f_v3_h": "Thematische Sichtbarkeit",
+    "f_v3_p": "Ihre Marke im Kontext echter Wissenschaft — glaubwürdig, nachhaltig, international.",
+    "f_next_headline": "Machen Sie mit.",
+    "f_next_sub": "Fördern und unterstützen Sie unser Citizen-Science-Netzwerk – Sie für OpenMycoNet, OpenMycoNet für alle.",
+    "f_form_intro": "Gestalten Sie Ihren Eintrag selbst — mit Logo, Beschreibung und Betrag. Sie sehen eine Vorschau bevor Sie zahlen.",
+    "f_adjustable": "— oben anpassbar",
+    "f_cta_h": "Machen Sie mit.",
+    "f_cta_p": "Fördern und unterstützen Sie unser Citizen-Science-Netzwerk — Sie für OpenMycoNet, OpenMycoNet für alle.",
+    "a_section_label": "Registrierung",
+    "a_h2": "Teil des <em>Netzwerks</em> werden",
+    "a_intro": "Registriere dich — du erhältst projektrelevante Neuigkeiten per Mail. Eine Registrierung ist nicht mit finanzieller Unterstützung verbunden.",
+    "a_lbl_name": "Name (optional)",
+    "a_lbl_email": "E-Mail-Adresse *",
+    "a_lbl_role": "Ich interessiere mich als",
+    "a_lbl_msg": "Nachricht (optional)",
+    "a_ph_name": "z.B. Robert Jank",
+    "a_ph_email": "deine@email.de",
+    "a_ph_msg": "Fragen, Ideen, Anmerkungen...",
+    "a_opt_interessent": "Interessent — über das Projekt informiert bleiben",
+    "a_opt_wissenschaftler": "Wissenschaftler / Institut — Daten nutzen / kooperieren",
+    "a_opt_entwickler": "Softwareentwickler — an BioComm mitarbeiten",
+    "a_opt_unterstuetzer": "Unterstützer — Projekt bekannt machen / helfen",
+    "a_opt_foerderer": "Gewerblicher Förderer — zur Fördererseite",
+    "a_node_question": "Möchtest du einen eigenen BioComm-Knoten betreiben?",
+    "a_node_yes": "Ja, ich bewerbe mich für einen Knoten",
+    "a_node_no": "Nein",
+    "a_submit": "Registrieren",
+    "a_newsletter_label": "Ja, ich möchte per E-Mail über alle Neuigkeiten informiert werden.",
+    "a_privacy_label": "Ich habe die [Datenschutzerklärung] gelesen und stimme der Verarbeitung meiner Daten zur Bearbeitung meiner Anfrage zu. Keine Weitergabe an Dritte.",
+    "a_privacy_notice": "Deine Daten werden ausschließlich zur Bearbeitung deiner Anfrage gespeichert. Kein Tracking, kein Newsletter ohne deine explizite Zustimmung, keine Weitergabe.",
+    "a_success": "✓ Registrierung eingegangen — willkommen bei OpenMycoNet!",
+    "a_error": "Fehler — bitte E-Mail an kontakt@openmyconet.de",
+    "a_sending": "Wird gesendet...",
+    "a_foerderer_hint": "Für gewerbliche Förderer gibt es eine eigene Seite:",
+    "a_foerderer_link": "→ Zur Fördererseite",
+    "a_foerderer_note": "Dort können Sie Ihren Beitrag frei wählen (ab 50 €/Jahr) und Ihre Firmendaten eintragen.",
+    "a_node_panel_title": "Bewerbung: Eigener BioComm-Knoten",
+    "a_node_info_title": "Voraussetzungen & Hinweise",
+    "a_node_info_geo": "📍 Aktuell suchen wir Knotenbetreiber in Deutschland. In einem zweiten Schritt weiten wir das Netzwerk auf DACH aus, langfristig weltweit. Bewerbungen aus anderen Regionen nehmen wir bereits entgegen — wir melden uns sobald deine Region dran ist.",
+    "a_node_info_hw": "⚠️ Die Hardware ist begrenzt. Bei hoher Nachfrage führen wir eine Warteliste und benachrichtigen dich per Mail sobald ein Gerät verfügbar ist.",
+    "a_node_req_title": "Mindestanforderungen",
+    "a_node_req_1": "PC oder Smartphone zur Ersteinrichtung der Bridge (einmalig WLAN-Zugangsdaten eingeben)",
+    "a_node_req_2": "WLAN-Verfügbarkeit in der Nähe des geplanten Bridge-Standorts",
+    "a_node_req_3": "Zugang zu geeignetem Substrat: Garten, Wald, Kompost, Blumentopf mit Pilzerde o.ä.",
+    "a_node_req_4": "Möglichkeit zur dauerhaften, wettergeschützten Aufstellung",
+    "a_node_req_5": "Bereitschaft zur Messung über mindestens 3 Monate (danach monatlich kündbar)",
+    "a_node_req_6": "Nur ein Knoten pro Betreiber (Ausnahmen nach Rücksprache)",
+    "a_node_req_7": "Grundlegende Handhabung von Hardware — kein Löten, keine Programmierkenntnisse nötig",
+    "a_node_req_8": "Fachlicher oder wissenschaftlicher Bezug von Vorteil (z. B. Biologie, Forstwissenschaft, Umweltwissenschaften) — aber keine Voraussetzung",
+    "a_node_info_feedback": "✓ Du erhältst regelmäßiges Feedback zu deinen Messdaten und wirst über alle Neuigkeiten informiert.",
+    "a_node_lbl_profession": "Beruf / Hintergrund (optional)",
+    "a_node_ph_profession": "z.B. Student, Rentner, Landwirt, Biologin, Hobbyist, Lehrer...",
+    "a_node_lbl_substrat": "Geplantes Substrat / Standort *",
+    "a_node_ph_substrat": "z.B. Mischwald bei Maintal, Hausgarten mit Kompost, Gewächshaus...",
+    "a_node_lbl_address": "Adresse (für die Standortplanung, optional aber hilfreich)",
+    "a_node_ph_address": "Straße, PLZ, Ort",
+    "a_node_geocode_btn": "Auf Karte anzeigen",
+    "a_node_geocode_hint": "Hilft uns, Bridge-Standorte sinnvoll zu planen. Pin danach bei Bedarf per Ziehen genauer positionieren.",
+    "a_node_geocode_error": "Adresse nicht gefunden — bitte präziser formulieren oder Pin manuell ignorieren.",
+    "a_node_lbl_motivation": "Bewerbungstext *",
+    "a_node_ph_motivation": "Erzähl uns von dir und warum du mitmachen möchtest — auch wenn du nicht in jedes Kriterium passt. Mindestens 3-4 Sätze.",
+    "a_node_lbl_loan": "Ich akzeptiere die Leihbedingungen (Pfand ca. 100 €, Rückgabe bei Beendigung der Messung) *",
+    "a_node_submit": "Bewerbung absenden",
+    "a_node_success": "✓ Deine Bewerbung ist eingegangen. Wir prüfen sie sorgfältig und melden uns per Mail. Bei hoher Nachfrage oder noch nicht verfügbarer Hardware in deiner Region kommst du auf unsere Warteliste — du wirst benachrichtigt sobald ein Platz frei wird.",
+    "a_node_success_confirm": "Damit bist du gleichzeitig registriert — bitte bestätige deine E-Mail-Adresse über den Link, den wir dir gerade geschickt haben. ",
+    "a_node_sending": "Bewerbung wird gesendet...",
+    "a_node_error": "Fehler — bitte E-Mail an kontakt@openmyconet.de",
+    "br_label": "Broschüre",
+    "br_caption_1": "Das Wissen ist da.",
+    "br_caption_2": "Es wird geteilt.",
+    "br_caption_3": "Es weckt Neugier.",
+    "br_tagline": "Was wir machen, verständlich für jeden.",
+    "br_btn": "↓ Broschüre herunterladen",
+    "br_note": "PDF · kostenlos · frei weiterzugeben (CC BY-NC-SA 4.0)",
+    "meta_desc_index": "Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza- und Pilznetzwerken. Mitmachen, Daten teilen, die Wissenschaft voranbringen."
+  },
+  "en": {
+    "nav_warum": "Why",
+    "nav_mitmachen": "Join",
+    "nav_spenden": "Support",
+    "nav_anmelden": "Register",
+    "nav_ueber": "About",
+    "nav_medien": "Media",
+    "label_medien": "OpenMycoNet · Media",
+    "h1_medien": "Brochure, Music & Book",
+    "desc_medien": "Everything to listen to, read and download in one place — the short brochure, the project's songs and the novel \"Das letzte Korn\".",
+    "nav_foerderer": "Supporters",
+    "nav_quellen": "References",
+    "nav_news": "News",
+    "nav_leihgeraete": "Loan Device",
+    "btn_leihgeraet": "⬡ Borrow BioComm Node",
+    "leih_edition_1_name": "Forest Camouflage Edition",
+    "leih_edition_1_desc": "Camouflage pattern for forest deployment — blends into the natural environment.",
+    "leih_edition_2_name": "Moos Edition",
+    "leih_edition_2_desc": "Moss green housing, subtle and nature-inspired.",
+    "leih_edition_3_name": "Mycelium Edition",
+    "leih_edition_3_desc": "Marbled dark grey with mycelium texture — urban and scientific.",
+    "leih_page_title": "OpenMycoNet · BioComm Node Loan Device",
+    "leih_seo_desc": "Compact open-source biosensor for bioelectrical signals in mycorrhizal networks. Free loan node for citizen scientists — register now.",
+    "leih_label": "Loan Programme",
+    "leih_h1": "The BioComm Node<br><em>to borrow</em>",
+    "leih_status_label": "Project status",
+    "leih_status": "Hardware development complete · First devices being prepared",
+    "leih_preview_label": "What the nodes will look like",
+    "leih_preview_intro": "The BioComm sensor node is delivered as a compact device, pre-installed and ready to use. Insert electrodes into the soil — the node transmits data to the bridge via LoRa, which forwards it to the central server over WiFi. This radio link is part of the hardware generation currently in development.",
+    "leih_specs_label": "Technical specifications",
+    "leih_specs": [
+      {
+        "label": "Processor",
+        "value": "ESP32 + LoRa radio module"
+      },
+      {
+        "label": "Radio link",
+        "value": "LoRa to bridge (1–3 km in forest terrain) · Bridge connects to the central server via WiFi — in development, not yet shipped"
+      },
+      {
+        "label": "ADC",
+        "value": "16-bit, 8 channels"
+      },
+      {
+        "label": "Sensors",
+        "value": "Bioelectrical signals + soil & environmental data (temperature, humidity, CO₂)"
+      },
+      {
+        "label": "Power",
+        "value": "USB-C or LiPo battery"
+      },
+      {
+        "label": "Housing",
+        "value": "IP65, weatherproof"
+      }
+    ],
+    "leih_how_label": "Five steps to your own measurement node",
+    "leih_preview_h2": "What the Nodes<br>Will <em>Look Like</em>",
+    "leih_ki_hint": "⚠ These visualisations are AI-generated. The real devices will look about 80% like this — the final colour design has not yet been decided.",
+    "leih_specs_h2": "What the Node<br>Can <em>Do</em>",
+    "leih_how_h2": "Five Steps to Your<br>Own <em>Measurement Node</em>",
+    "leih_bridge_h2": "The <em>Hub</em>",
+    "leih_bridge_warning": "⚠ The radio link (LoRa/WiFi) is part of the hardware generation currently in development and has not yet shipped.",
+    "leih_bridge_desc": "The BioComm Bridge connects up to 4 measurement nodes simultaneously via LoRa radio (point-to-point, realistically 1–3 km range in forest terrain) and forwards all data to the central server via WiFi. Node 1–4 LEDs show the connection status in real time.",
+    "leih_bridge_li1": "ESP32 with LoRa radio module",
+    "leih_bridge_li2": "WiFi connection to the central server",
+    "leih_bridge_li3": "4 node status LEDs",
+    "leih_bridge_li4": "Compact desktop enclosure",
+    "leih_system_label": "The Complete System",
+    "leih_system_h2": "BioComm <em>in Action</em>",
+    "leih_system_desc": "Four BioComm nodes in the ground, connected to the bridge via LoRa, measurement data live on the dashboard — that's OpenMycoNet in practice. Each node measures independently, the bridge aggregates all data streams and transmits them to the central server via WiFi.",
+    "leih_how": [
+      {
+        "h": "Register",
+        "p": "Fill in the form on the main page — substrate, location, motivation."
+      },
+      {
+        "h": "Pay deposit",
+        "p": "Approx. €100 deposit (final amount to be confirmed). Fully refunded on return."
+      },
+      {
+        "h": "Receive device",
+        "p": "The BioComm node is delivered by post — pre-installed and ready to use."
+      },
+      {
+        "h": "Measure",
+        "p": "Insert electrodes into substrate, enter WiFi details — done. The device runs automatically."
+      },
+      {
+        "h": "Return",
+        "p": "Return possible at any time. Deposit is refunded."
+      }
+    ],
+    "leih_register_btn": "Register now for the loan programme",
+    "leih_back": "← Back to homepage",
+    "nav_menu": "Menu",
+    "btn_fragen": "⬤ Open Questions?",
+    "hero_sub": "A global citizen science network recording bioelectrical signals from mycorrhizal and fungal networks. The signals exist — the question is what they mean.",
+    "live_badge": "active node — be the next",
+    "btn_join": "Join now",
+    "btn_support": "Support the project",
+    "label_vision": "The bigger question",
+    "label_warum": "The Why",
+    "label_mitmachen": "How it works",
+    "label_daten": "Transparency",
+    "label_spenden": "Support",
+    "label_anmelden": "Registration",
+    "label_ueber": "The project",
+    "h2_vision": "What becomes possible when we <em>understand</em>",
+    "h2_warum": "A network that<br><em>listens</em>",
+    "h2_mitmachen": "Your own node<br>in four <em>steps</em>",
+    "h2_daten": "How your data<br><em>flows</em>",
+    "h2_spenden": "Support<br>the <em>project</em>",
+    "h2_anmelden": "Become part of<br>the <em>network</em>",
+    "h2_ueber": "Independent science<br>from <em>below</em>",
+    "vision_p1": "Beneath our feet lies the oldest and most extensive communication network on Earth. Mycorrhizal fungi have connected almost all land plants for 400 million years — transporting nutrients, transmitting warning signals, and coordinating life in the soil in ways we are only beginning to understand. They send electrical signals. Measurable. Reproducible. And barely deciphered so far.",
+    "vision_p2": "OpenMycoNet asks a simple yet profound question: what happens when we stop analysing soil only from the outside — and start listening to what the network itself is sending? What if the plant has long been telling us it's thirsty, before we can even see it? What if the soil itself signals the approach of a pest, before the first damage appears?",
+    "vision_p3": "These are not speculative questions. The scientific foundation exists. What is missing is data — lots of it, from different climate zones, substrates, seasons. No single laboratory can provide that. But a global community of people measuring in their gardens, their forests, their greenhouses — can.",
+    "vision_quote": "The network is transmitting. We have only just begun to listen.",
+    "vision_closing": "Every BioComm node that goes live anywhere in the world brings us one step closer to understanding — for everyone.",
+    "desc_warum": "Mycorrhizal fungi connect over 90% of all land plants. They send electrical signals — measurable, reproducible, enigmatic. Together we can understand what they mean.",
+    "desc_mitmachen": "The network's results and data are open to everyone — even without operating your own node. If you'd like to run a BioComm node yourself, apply below for one of the curated spots.",
+    "desc_daten": "GPS coordinates are coarsened to 10×10 km — no exact location. No personal data. All raw data publicly accessible.",
+    "label_musik": "Music",
+    "musik_p1": "The oldest networks on Earth don't speak in words.<br>They connect, respond and remember.",
+    "musik_p2": "The songs in this collection were created as a musical companion to the idea of listening more closely.",
+    "musik_p3": "We're glad you're here.",
+    "musik_ki_hinweis": "The music and voices are AI-generated, text by Robert Jank.",
+    "player_more_link": "More music?",
+    "label_kooperationen": "Together",
+    "h2_kooperationen": "Supporters & <em>Partners</em>",
+    "desc_kooperationen": "Companies and projects that support OpenMycoNet and work with us.",
+    "link_kooperationen": "See all supporters →",
+    "desc_anmelden": "Sign up — we'll let you know when OpenMycoNet officially launches and send you the hardware guide.",
+    "donate_p": "OpenMycoNet is an independent citizen science project without institutional funding. Server costs and further development are financed by voluntary donations. Every contribution helps.",
+    "donate_note": "You can donate without registering, but we would be delighted if you did and became part of the network.",
+    "donate_claim": "We support OpenMycoNet — OpenMycoNet supports everyone.",
+    "buch_label": "Free Download",
+    "buch_desc": "A story about the symbiosis of the third kind",
+    "buch_btn": "↓ Download novel",
+    "buch_note": "PDF · free · Robert Jank · 2026",
+    "about_p1": "OpenMycoNet was initiated by Robert Jank, independent inventor from Maintal near Frankfurt — without institutional affiliation, with the goal of understanding what mycorrhizal networks signal electrically.",
+    "about_p2": "The underlying BioComm system is protected by a utility model registered with the DPMA. The software is provided as a portable .exe. The measurement data belongs to the community.",
+    "about_p3": "Principle: Proprietary Intelligence, Open Data — the AI model is protected, the data that trains it is free.",
+    "btn_contact": "Contact",
+    "btn_register": "Register now",
+    "vision_apps": [
+      {
+        "label": "Precision agriculture",
+        "text": "Once we know the signal patterns of drought stress, nutrient deficiency and pest infestation, farmers can respond before damage occurs — without chemicals, without blanket treatments, without guesswork.",
+        "italic": "The mycorrhizal network as an early warning system for the field."
+      },
+      {
+        "label": "Forest protection",
+        "text": "Forests communicate through their underground fungal network. Changes in signal patterns could indicate drought, bark beetle infestation or fire risk — weeks before it becomes visible.",
+        "italic": "The forest that warns us before it's too late."
+      },
+      {
+        "label": "Soil regeneration",
+        "text": "Targeted frequency stimulation can influence the activity of mycorrhizal networks — potentially to regenerate damaged soils faster and promote nutrient transport.",
+        "italic": "Not chemistry, but a dialogue with the soil."
+      },
+      {
+        "label": "Climate protection",
+        "text": "Healthy mycorrhizal networks demonstrably sequester CO₂. BioComm could serve as an independent monitoring tool for soil carbon certificates — continuous, location-independent, tamper-proof.",
+        "italic": "The soil as a measurable climate protector."
+      },
+      {
+        "label": "Fundamental research",
+        "text": "Adamatzky et al. have shown that fungal spike trains have structural similarities to human languages. If that is true — what are they saying? Every measurement in the OpenMycoNet network is a data point on the way to the answer.",
+        "italic": "Deciphering the oldest language on Earth."
+      },
+      {
+        "label": "What we don't yet know",
+        "text": "Perhaps there are signal patterns we don't even know exist yet. Perhaps networks communicate across distances in ways our models don't predict. That is the real reason for OpenMycoNet — not confirming hypotheses, but discovering surprises.",
+        "italic": "The most interesting answers are the ones we haven't yet thought to ask for."
+      }
+    ],
+    "cards": [
+      {
+        "h": "Global data base",
+        "p": "Your measurement in Maintal, one in Osaka, one in São Paulo — together they form a dataset no single laboratory could ever produce."
+      },
+      {
+        "h": "Real science",
+        "p": "The signals demonstrably exist (Adamatzky et al., 2022). You help find out what they mean."
+      },
+      {
+        "h": "AI that keeps learning",
+        "p": "Every measurement improves the shared AI model. The more participants, the smarter the system — for everyone."
+      },
+      {
+        "h": "Open data",
+        "p": "All measurement data under Creative Commons CC BY 4.0 — free for science and research."
+      },
+      {
+        "h": "Minimal effort",
+        "p": "Electrodes in the pot, start BioComm, done. The system runs in the background."
+      },
+      {
+        "h": "Citizen science",
+        "p": "Like SETI@home — with one crucial difference: the signals we are looking for are already there."
+      }
+    ],
+    "steps": [
+      {
+        "h": "Borrow hardware",
+        "p": "Receive a BioComm measuring device on loan — deposit approx. €100 (final costs to follow). Return at any time.",
+        "cost": "Deposit approx. €100"
+      },
+      {
+        "h": "Download BioComm",
+        "p": "Download BioComm software for free — no installation, no Python required.",
+        "cost": "Free"
+      },
+      {
+        "h": "Place electrodes",
+        "p": "Needles into soil, plant pot or compost with fungal or mycorrhizal substrate.",
+        "cost": "5 minutes"
+      },
+      {
+        "h": "Measure & share",
+        "p": "BioComm connects automatically and uploads the data. Analysis and anonymisation are performed locally on your device — no raw data ever leaves your PC.",
+        "cost": ""
+      }
+    ],
+    "flow_nodes": [
+      {
+        "h": "Your node",
+        "p": "Electrodes in substrate"
+      },
+      {
+        "h": "BioComm.exe",
+        "p": "Analysis &amp; anonymisation — locally on your PC"
+      },
+      {
+        "h": "OpenMycoNet",
+        "p": "Server &amp; AI training"
+      },
+      {
+        "h": "Open Data",
+        "p": "CC BY 4.0 — free for all"
+      },
+      {
+        "h": "KI-Update",
+        "p": "Back to all nodes"
+      }
+    ],
+    "facts": [
+      {
+        "num": "400M",
+        "text": "years old — that's how long mycorrhizal networks have existed on Earth"
+      },
+      {
+        "num": "90%",
+        "text": "of all land plants are connected to mycorrhizal fungi"
+      },
+      {
+        "num": "8",
+        "text": "channels recorded simultaneously by BioComm, up to 10,000 Hz"
+      },
+      {
+        "num": "~100€",
+        "text": "deposit for a BioComm loan device (approx., final costs to follow)"
+      }
+    ],
+    "form_options": {
+      "interessent": "Interested party — stay informed about the project",
+      "wissenschaftler": "Scientist / Institute — use data / collaborate",
+      "entwickler": "Software developer — contribute to BioComm",
+      "unterstuetzer": "Supporter — promote / help the project",
+      "foerderer": "Commercial supporter — company listing from €50/year"
+    },
+    "q_page_tag": "OpenMycoNet · Scientific Foundations",
+    "q_h1_html": "References &amp;<br><em>Knowledge Path</em>",
+    "q_subtitle": "OpenMycoNet rests on a transparent scientific foundation. Every step of our knowledge path — from mycorrhizal basics to applied citizen science — is backed by published research.",
+    "q_intro_strong": "Transparency note:",
+    "q_intro": "Not all listed works directly support the goals of OpenMycoNet. They form the scientific foundation on which our questions are built — including critical perspectives. We measure because the data is still sparse, not because everything is proven.",
+    "q_path_label": "Scientific Knowledge Path",
+    "q_path_1": "01 · Mycorrhiza",
+    "q_path_2": "02 · Networks",
+    "q_path_kritik": "! · Critique",
+    "q_path_3": "03 · Electr. Activity",
+    "q_path_4": "04 · Measurability",
+    "q_path_5": "05 · AI Patterns",
+    "q_path_6": "06 · Citizen Science",
+    "q_s1_step": "Step 01 — Mycorrhiza & Networks",
+    "q_s1_title": "Plants communicate underground",
+    "q_s1_desc": "Suzanne Simard's pioneering work established the concept of the mycorrhizal network as a genuine information channel between plants — not metaphor, but measured fact.",
+    "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
+    "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
+    "q_ref14_relevanz": "Shows that G. intraradices deliberately reduces P uptake from an unenriched soil region as soon as an enriched patch is exploited — the authors explicitly state that the signal molecules coordinating this within the hyphal network remain unknown. Electrical signal propagation in the mycelium is a plausible candidate.",
+    "q_sk_step": "! Critical Perspective — Scientific Context",
+    "q_sk_title": "What is actually proven — and what is not",
+    "q_sk_desc": "Not all popular claims about the \"Wood Wide Web\" are adequately supported by field studies. OpenMycoNet explicitly incorporates this critique — it is one reason why we measure.",
+    "q_s2_step": "Step 02 — Electrical Activity",
+    "q_s2_title": "Fungi emit measurable electrical signals",
+    "q_s2_desc": "Bioelectrical impulses in mycelium show neuronal characteristics: spiking patterns, signal propagation, non-linear properties.",
+    "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+    "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
+    "q_ref08_relevanz": "The most methodologically advanced validation study to date: PCB electrodes, a Faraday cage, and biocide controls confirm the biological origin of mycelial signals — direct methodological support for the BioComm approach.",
+    "q_s3_step": "Step 03 — Measurability, Sensing & AI Pattern Recognition",
+    "q_s3_title": "From observation to computation",
+    "q_s3_desc": "Andrew Adamatzky's work shows that mycelium signals not only exist but are technically usable — as logic gates, as transmittable frequencies, and most recently as a direct AI interface.",
+    "q_s4_step": "Context — Popular Science",
+    "q_s4_title": "The book that brings it all together",
+    "q_s4_desc": "Merlin Sheldrake's standard work conveys the biological complexity of fungal organisms to a broad audience — without oversimplifying the science.",
+    "q_s5_step": "Step 04 — Citizen Science",
+    "q_s5_title": "Science through collective observation",
+    "q_s5_desc": "Citizen science platforms such as iNaturalist and FunDive demonstrate that distributed amateur measurements can yield scientifically valid data. OpenMycoNet follows this model for bioelectrical signals.",
+    "q_footer_left": "All linked sources are Open Access or publicly accessible.",
+    "q_footer_right": "As of June 2026 · OpenMycoNet / Robert Jank",
+    "q_back": "← Home",
+    "q_back_long": "← Back to Home",
+    "player_hint": "Enjoy the music while exploring the rest of the content.",
+    "buch_teaser_label": "✦ Free Download ✦",
+    "buch_teaser_text": "\"Das letzte Korn\" — a novel about people, mycorrhiza, AI and the question of who owns nature and how we might live with it.",
+    "footer_copy": "Robert Jank · Maintal, Germany · 2026",
+    "donate_fee_label": "Cover transaction fees",
+    "footer_impressum": "Legal Notice",
+    "footer_datenschutz": "Privacy",
+    "footer_quellen": "References",
+    "f_title": "Supporters — OpenMycoNet",
+    "f_section_label": "Partnership",
+    "f_h1": "Commercial <em>supporters</em>",
+    "f_intro_p1": "Your contribution helps us better understand the hidden networks beneath our feet. You support open research, citizen science and the development of new measurement systems for fungi, mycorrhiza and soil health. At the same time, your commitment becomes visible – as part of a network of companies and people taking responsibility for the future of our soils.",
+    "f_intro_p2": "",
+    "f_h2_vorteile": "What supporters receive",
+    "f_h2_beitrag": "Annual contribution — freely chosen from €50",
+    "f_h2_ablauf": "How it works",
+    "f_h2_liste": "Current supporters",
+    "f_h2_form": "Become a supporter now",
+    "f_vorteile": [
+      {
+        "h": "Entry in the supporters list",
+        "p": "Name, description, contact details and link — visible to all visitors of openmyconet.de."
+      },
+      {
+        "h": "Supporter badge",
+        "p": "\"Official Supporter of OpenMycoNet\" — as a badge for your website or social media."
+      },
+      {
+        "h": "Community reach",
+        "p": "Mention in relevant emails to our growing community of citizen scientists."
+      },
+      {
+        "h": "Thematic visibility",
+        "p": "Your brand in the context of real science — credible, sustainable, international."
+      }
+    ],
+    "f_slider_label": "Your annual contribution",
+    "f_slider_min_hint": "Minimum 50 €",
+    "f_beitrag_note": "The contribution is voluntary and open-ended. All supporters receive the same visibility — regardless of the amount chosen.",
+    "f_steps": [
+      {
+        "num": "1. Design your listing",
+        "text": "— company name, description, logo upload, choose amount. All in one step."
+      },
+      {
+        "num": "2. Brief review",
+        "text": "— we check whether the thematic fit is there. This takes a maximum of 48 hours."
+      },
+      {
+        "num": "3. Make contribution",
+        "text": "— voluntary, from €50, via PayPal or bank transfer."
+      },
+      {
+        "num": "4. Entry live",
+        "text": "— your listing appears in the supporters list within 24 hours."
+      },
+      {
+        "num": "5. Annual renewal",
+        "text": "— 2–3 months before expiry you receive an email asking whether you wish to continue the support partnership. No automatic renewal, no pressure."
+      }
+    ],
+    "f_badge_example": "★ Official Supporter ★  |  Example entry",
+    "f_name_example": "Your company name",
+    "f_desc_example": "A brief description of your company appears here — what you do, why you support OpenMycoNet and what connects you to the topic of mycology. Approx. 2–3 sentences.",
+    "f_link_example": "www.ihre-website.de",
+    "f_premium_note": "Premium supporters additionally receive a highlighted position and their logo in the entry. After your enquiry you will receive a questionnaire for your personal listing including logo upload.",
+    "f_placeholder_1": "✶ The first supporters of OpenMycoNet will appear here ✶",
+    "f_placeholder_2": "Be the first.",
+    "f_lbl_firma": "Company / Name *",
+    "f_lbl_website": "Website",
+    "f_lbl_email": "Email address *",
+    "f_lbl_bereich": "Thematic connection",
+    "f_lbl_beitrag": "Desired annual contribution",
+    "f_lbl_beschreibung": "Brief description of your company *",
+    "f_opts": [
+      "Mushroom cultivation / mycology",
+      "Bookshop / publisher",
+      "Sustainable materials (mycelium)",
+      "Agriculture / agri-tech",
+      "Forestry / nature conservation",
+      "Education / research",
+      "Other"
+    ],
+    "f_submit": "Design listing & become a supporter",
+    "f_form_note": "No advance payment — you pay only after the preview. Logo upload included. Invoice automatically by email.",
+    "f_back": "← Back to homepage",
+    "f_success": "✓ Anfrage eingegangen — wir melden uns!",
+    "f_error": "Error — please email kontakt@openmyconet.de",
+    "f_sending": "Sending...",
+    "f_year_label": "€ / year",
+    "f_selected_label": "Selected:",
+    "f_v0_h": "Entry in the supporters list",
+    "f_v0_p": "Name, description, contact details and link — visible to all visitors of openmyconet.de.",
+    "f_v1_h": "Supporter badge",
+    "f_v1_p": "\"Official Supporter of OpenMycoNet\" — as a badge for your website or social media.",
+    "f_v2_h": "Community reach",
+    "f_v2_p": "Mentioned in relevant emails to our growing community of citizen scientists.",
+    "f_v3_h": "Thematic visibility",
+    "f_v3_p": "Your brand in the context of real science — credible, sustainable, international.",
+    "f_next_headline": "Join us.",
+    "f_next_sub": "Support our citizen science network — you for OpenMycoNet, OpenMycoNet for everyone.",
+    "f_form_intro": "Design your own listing — with logo, description and amount. You see a preview before you pay.",
+    "f_adjustable": "— adjustable above",
+    "f_cta_h": "Join us.",
+    "f_cta_p": "Support and fund our citizen science network — you for OpenMycoNet, OpenMycoNet for everyone.",
+    "a_section_label": "Registration",
+    "a_h2": "Become part of the <em>network</em>",
+    "a_intro": "Register — you'll receive project-relevant news by email. Registration is not linked to any financial support.",
+    "a_lbl_name": "Name (optional)",
+    "a_lbl_email": "Email address *",
+    "a_lbl_role": "I am interested as",
+    "a_lbl_msg": "Message (optional)",
+    "a_ph_name": "e.g. Jane Smith",
+    "a_ph_email": "your@email.com",
+    "a_ph_msg": "Questions, ideas, comments...",
+    "a_opt_interessent": "Interested party — stay informed about the project",
+    "a_opt_wissenschaftler": "Scientist / Institute — use data / collaborate",
+    "a_opt_entwickler": "Software developer — contribute to BioComm",
+    "a_opt_unterstuetzer": "Supporter — promote / help the project",
+    "a_opt_foerderer": "Commercial supporter — to supporter page",
+    "a_node_question": "Would you like to operate your own BioComm node?",
+    "a_node_yes": "Yes, I'd like to apply for a node",
+    "a_node_no": "No",
+    "a_submit": "Register",
+    "a_newsletter_label": "Yes, I would like to receive all project news by email.",
+    "a_privacy_label": "I have read the [Privacy Policy] and consent to the processing of my data for handling my request. No sharing with third parties.",
+    "a_privacy_notice": "Your data is stored exclusively for processing your request. No tracking, no newsletter without your explicit consent, no sharing.",
+    "a_success": "✓ Registration received — welcome to OpenMycoNet!",
+    "a_error": "Error — please email kontakt@openmyconet.de",
+    "a_sending": "Sending...",
+    "a_foerderer_hint": "Commercial supporters have a dedicated page:",
+    "a_foerderer_link": "→ Supporter page",
+    "a_foerderer_note": "There you can choose your contribution freely (from €50/year) and enter your company details.",
+    "a_node_panel_title": "Application: Your own BioComm node",
+    "a_node_info_title": "Requirements & information",
+    "a_node_info_geo": "📍 We are currently looking for node operators in Germany. In a second step we will expand to DACH, and eventually worldwide. Applications from other regions are already welcome — we'll be in touch when your region is next.",
+    "a_node_info_hw": "⚠️ Hardware is limited. If demand is high we maintain a waiting list and will notify you by email as soon as a device becomes available.",
+    "a_node_req_title": "Minimum requirements",
+    "a_node_req_1": "PC or smartphone for initial bridge setup (enter Wi-Fi credentials once)",
+    "a_node_req_2": "Wi-Fi availability near the planned bridge location",
+    "a_node_req_3": "Access to suitable substrate: garden, forest, compost, plant pot with fungal substrate, etc.",
+    "a_node_req_4": "Possibility of permanent, weatherproof installation",
+    "a_node_req_5": "Willingness to measure for at least 3 months (monthly cancellation thereafter)",
+    "a_node_req_6": "One node per operator (exceptions by arrangement)",
+    "a_node_req_7": "Basic hardware handling — no soldering or programming skills required",
+    "a_node_req_8": "A professional or scientific background is a plus (e.g. biology, forestry, environmental science) — but not a requirement",
+    "a_node_info_feedback": "✓ You will receive regular feedback on your measurement data and be kept informed of all news.",
+    "a_node_lbl_profession": "Profession / background (optional)",
+    "a_node_ph_profession": "e.g. student, retired, farmer, biologist, hobbyist, teacher...",
+    "a_node_lbl_substrat": "Planned substrate / location *",
+    "a_node_ph_substrat": "e.g. mixed forest near Maintal, home garden with compost, greenhouse...",
+    "a_node_lbl_address": "Address (for site planning, optional but helpful)",
+    "a_node_ph_address": "Street, postal code, city",
+    "a_node_geocode_btn": "Show on map",
+    "a_node_geocode_hint": "Helps us plan bridge locations sensibly. You can drag the pin afterwards to fine-tune it.",
+    "a_node_geocode_error": "Address not found — please be more specific, or just leave the pin out.",
+    "a_node_lbl_motivation": "Application text *",
+    "a_node_ph_motivation": "Tell us about yourself and why you want to participate — even if you don't fit every criterion. At least 3-4 sentences.",
+    "a_node_lbl_loan": "I accept the loan conditions (deposit approx. €100, return upon end of measurement) *",
+    "a_node_submit": "Submit application",
+    "a_node_success": "✓ Your application has been received. We will review it carefully and get back to you by email. If demand is high or hardware is not yet available in your region, you will be placed on our waiting list — you will be notified as soon as a spot becomes available.",
+    "a_node_success_confirm": "This also registers you with OpenMycoNet — please confirm your email address via the link we just sent you. ",
+    "a_node_sending": "Sending application...",
+    "a_node_error": "Error — please email kontakt@openmyconet.de",
+    "br_label": "Brochure",
+    "br_caption_1": "The knowledge is there.",
+    "br_caption_2": "It is being shared.",
+    "br_caption_3": "It sparks curiosity.",
+    "br_tagline": "What we do — explained for everyone.",
+    "br_btn": "↓ Download brochure",
+    "br_note": "PDF · free · free to share (CC BY-NC-SA 4.0)",
+    "meta_desc_index": "A global citizen science network recording bioelectrical signals from mycorrhizal and fungal networks. Join, share data, advance science."
+  },
+  "nl": {
+    "nav_warum": "Waarom",
+    "nav_mitmachen": "Meedoen",
+    "nav_spenden": "Ondersteunen",
+    "nav_anmelden": "Aanmelden",
+    "nav_ueber": "Over",
+    "nav_medien": "Media",
+    "label_medien": "OpenMycoNet · Media",
+    "h1_medien": "Brochure, muziek & boek",
+    "desc_medien": "Alles om te beluisteren, te lezen en te downloaden op één plek — de korte brochure, de nummers van het project en de roman \"Das letzte Korn\".",
+    "nav_foerderer": "Partners",
+    "nav_quellen": "Bronnen",
+    "nav_news": "Nieuws",
+    "nav_leihgeraete": "Leentoestel",
+    "btn_leihgeraet": "⬡ BioComm-knoop lenen",
+    "leih_edition_1_name": "Forest Camouflage Editie",
+    "leih_edition_1_desc": "Camouflagepatroon voor bosopstellingen — gaat op in de natuur.",
+    "leih_edition_2_name": "Mos Editie",
+    "leih_edition_2_desc": "Mosgroen behuizing, subtiel en natuurgeïnspireerd.",
+    "leih_edition_3_name": "Mycelium Editie",
+    "leih_edition_3_desc": "Gemarmerd donkergrijs met myceliumtextuur — urbaan en wetenschappelijk.",
+    "leih_page_title": "OpenMycoNet · BioComm-Knoop Leentoestel",
+    "leih_seo_desc": "Compacte open-source biosensor voor bio-elektrische signalen in mycorrhiza-netwerken. Gratis leenknoop voor citizen scientists — nu registreren.",
+    "leih_label": "Leenprogramma",
+    "leih_h1": "De BioComm-knoop<br><em>om te lenen</em>",
+    "leih_status_label": "Projectstatus",
+    "leih_status": "Hardwareontwikkeling voltooid · Eerste apparaten worden voorbereid",
+    "leih_preview_label": "Zo zien de nodes eruit",
+    "leih_preview_intro": "De BioComm-meetknoop wordt geleverd als compact apparaat, voorgeïnstalleerd en gebruiksklaar. Elektroden in de grond steken — de node zendt de gegevens via LoRa naar de bridge, die ze via wifi doorstuurt naar de centrale server. Deze radioverbinding maakt deel uit van de hardwaregeneratie die momenteel in ontwikkeling is.",
+    "leih_specs_label": "Technische gegevens",
+    "leih_specs": [
+      {
+        "label": "Processor",
+        "value": "ESP32 + LoRa-radiomodule"
+      },
+      {
+        "label": "Radioverbinding",
+        "value": "LoRa naar de bridge (1–3 km in bosgebied) · Bridge verbindt via wifi met de centrale server — in ontwikkeling, nog niet uitgeleverd"
+      },
+      {
+        "label": "ADC",
+        "value": "16-bit, 8 kanalen"
+      },
+      {
+        "label": "Sensoren",
+        "value": "Bio-elektrische signalen + bodem- & omgevingsdata (temperatuur, vochtigheid, CO₂)"
+      },
+      {
+        "label": "Voeding",
+        "value": "USB-C of LiPo-accu"
+      },
+      {
+        "label": "Behuizing",
+        "value": "IP65, weerbestendig"
+      }
+    ],
+    "leih_how_label": "In vijf stappen naar uw eigen meetknoop",
+    "leih_preview_h2": "Zo zien de<br>Nodes <em>eruit</em>",
+    "leih_ki_hint": "⚠ Deze visualisaties zijn AI-gegenereerd. De echte apparaten zullen er ongeveer 80% zo uitzien — welk kleurontwerp het uiteindelijk wordt, staat nog niet vast.",
+    "leih_specs_h2": "Wat de node<br><em>kan</em>",
+    "leih_how_h2": "In vijf stappen naar<br>uw eigen <em>meetknoop</em>",
+    "leih_bridge_h2": "De <em>Hub</em>",
+    "leih_bridge_warning": "⚠ De radioverbinding (LoRa/wifi) maakt deel uit van de hardwaregeneratie die momenteel in ontwikkeling is en nog niet is uitgeleverd.",
+    "leih_bridge_desc": "De BioComm Bridge verbindt tot 4 meetknopen tegelijk via LoRa-radio (punt-tot-punt, realistisch 1–3 km bereik in bosgebied) en stuurt alle gegevens via wifi door naar de centrale server. Node 1–4 LED's tonen de verbindingsstatus in realtime.",
+    "leih_bridge_li1": "ESP32 met LoRa-radiomodule",
+    "leih_bridge_li2": "Wifi-verbinding met de centrale server",
+    "leih_bridge_li3": "4 node-status-leds",
+    "leih_bridge_li4": "Compacte desktopbehuizing",
+    "leih_system_label": "Het Volledige Systeem",
+    "leih_system_h2": "BioComm <em>in actie</em>",
+    "leih_system_desc": "Vier BioComm-knopen in de grond, verbonden via LoRa met de bridge, meetgegevens live op het dashboard — dat is OpenMycoNet in de praktijk. Elke node meet zelfstandig, de bridge verzamelt alle datastromen en stuurt ze via wifi door naar de centrale server.",
+    "leih_how": [
+      {
+        "h": "Registreren",
+        "p": "Formulier invullen op de hoofdpagina — substraat, locatie, motivatie."
+      },
+      {
+        "h": "Borg storten",
+        "p": "Ca. €100 borg (definitief bedrag nog te bevestigen). Volledig terugbetaald bij retour."
+      },
+      {
+        "h": "Apparaat ontvangen",
+        "p": "De BioComm-knoop wordt per post geleverd — voorgeïnstalleerd en gebruiksklaar."
+      },
+      {
+        "h": "Meten",
+        "p": "Elektroden in substraat steken, wifi-gegevens invoeren — klaar. Het apparaat werkt automatisch."
+      },
+      {
+        "h": "Terugsturen",
+        "p": "Retour altijd mogelijk. Borg wordt terugbetaald."
+      }
+    ],
+    "leih_register_btn": "Nu aanmelden voor het leenprogramma",
+    "leih_back": "← Terug naar de startpagina",
+    "nav_menu": "Menu",
+    "btn_fragen": "⬤ Vragen?",
+    "hero_sub": "Een wereldwijd citizen science-netwerk voor het meten van bio-elektrische signalen uit mycorrhiza- en schimmelnetwerken. De signalen bestaan — de vraag is wat ze betekenen.",
+    "live_badge": "actief knooppunt — word de volgende",
+    "btn_join": "Nu meedoen",
+    "btn_support": "Project ondersteunen",
+    "label_vision": "De grotere vraag",
+    "label_warum": "Het Waarom",
+    "label_mitmachen": "Zo werkt het",
+    "label_daten": "Transparantie",
+    "label_spenden": "Ondersteuning",
+    "label_anmelden": "Registratie",
+    "label_ueber": "Het project",
+    "h2_vision": "Wat mogelijk wordt als we <em>begrijpen</em>",
+    "h2_warum": "Een netwerk dat<br><em>luistert</em>",
+    "h2_mitmachen": "Jouw eigen knooppunt<br>in vier <em>stappen</em>",
+    "h2_daten": "Hoe jouw data<br><em>stroomt</em>",
+    "h2_spenden": "Het project<br><em>ondersteunen</em>",
+    "h2_anmelden": "Word deel van<br>het <em>netwerk</em>",
+    "h2_ueber": "Onafhankelijke wetenschap<br>van <em>onderaf</em>",
+    "vision_p1": "Onder onze voeten ligt het oudste en meest uitgebreide communicatienetwerk van de aarde. Mycorrhizaschimmels verbinden al 400 miljoen jaar vrijwel alle landplanten met elkaar — ze transporteren voedingsstoffen, sturen waarschuwingssignalen en coördineren het leven in de bodem op een manier die we nog maar nauwelijks beginnen te begrijpen. Ze zenden elektrische signalen. Meetbaar. Reproduceerbaar. En tot nu toe nauwelijks ontcijferd.",
+    "vision_p2": "OpenMycoNet stelt een eenvoudige maar verstrekkende vraag: wat gebeurt er als we ophouden bodems alleen van buitenaf te analyseren — en in plaats daarvan beginnen te luisteren naar wat het netwerk zelf uitzendt? Wat als de plant ons al lang vertelt dat ze dorst heeft, voordat we het kunnen zien? Wat als de bodem zelf aangeeft dat er een plaag nadert, voordat de eerste schade ontstaat?",
+    "vision_p3": "Dit zijn geen speculatieve vragen. De wetenschappelijke basis bestaat. Wat ontbreekt zijn gegevens — veel gegevens, uit verschillende klimaatzones, substraten, seizoenen. Dat kan geen enkel laboratorium leveren. Maar een wereldwijde gemeenschap van mensen die meten in hun tuin, hun bos, hun kas — wel.",
+    "vision_quote": "Het netwerk zendt. We zijn er nog maar net mee begonnen te luisteren.",
+    "vision_closing": "Elk BioComm-knooppunt dat wereldwijd in gebruik wordt genomen brengt ons een stap dichter bij begrip — voor iedereen.",
+    "desc_warum": "Mycorrhizaschimmels verbinden meer dan 90% van alle landplanten. Ze zenden elektrische signalen — meetbaar, reproduceerbaar, raadselachtig. Samen kunnen we begrijpen wat ze betekenen.",
+    "desc_mitmachen": "De resultaten en gegevens van het netwerk zijn voor iedereen toegankelijk — ook zonder eigen node. Wie zelf een BioComm-node wil beheren, solliciteert hieronder voor een van de gecureerde plekken.",
+    "desc_daten": "GPS-coördinaten worden vergroot naar 10×10 km — geen exacte locatie. Geen persoonsgegevens. Alle ruwe data openbaar toegankelijk.",
+    "label_musik": "Muziek",
+    "musik_p1": "De oudste netwerken van de aarde spreken niet met woorden.<br>Ze verbinden, reageren en onthouden.",
+    "musik_p2": "De nummers in deze verzameling ontstonden als muzikale begeleiding bij het idee om beter te luisteren.",
+    "musik_p3": "Fijn dat je erbij bent.",
+    "musik_ki_hinweis": "De muziek en stemmen zijn AI-gegenereerd, tekst van Robert Jank.",
+    "player_more_link": "Meer muziek?",
+    "label_kooperationen": "Samen",
+    "h2_kooperationen": "Sponsors & <em>partners</em>",
+    "desc_kooperationen": "Bedrijven en projecten die OpenMycoNet ondersteunen en met ons samenwerken.",
+    "link_kooperationen": "Alle sponsors bekijken →",
+    "desc_anmelden": "Meld je aan — we informeren je wanneer OpenMycoNet officieel van start gaat en sturen je de hardware-handleiding.",
+    "donate_p": "OpenMycoNet is een onafhankelijk citizen science-project zonder institutionele financiering. Serverkosten en verdere ontwikkeling worden gefinancierd door vrijwillige donaties. Elk bedrag helpt.",
+    "donate_note": "Je kunt doneren zonder je te registreren, maar we zouden het fijn vinden als je dat toch deed en zo deel uitmaakt van het netwerk.",
+    "donate_claim": "Wij voor OpenMycoNet — OpenMycoNet voor iedereen.",
+    "buch_label": "Gratis download",
+    "buch_desc": "Een verhaal over de symbiose van de derde soort",
+    "buch_btn": "↓ Roman downloaden",
+    "buch_note": "PDF · gratis · Robert Jank · 2026",
+    "about_p1": "OpenMycoNet werd geïnitieerd door Robert Jank, onafhankelijk uitvinder uit Maintal bij Frankfurt — zonder institutionele binding, met als doel te begrijpen wat mycorrhizanetwerken elektrisch signaleren.",
+    "about_p2": "Het onderliggende BioComm-systeem is beschermd door een gebruiksmodel geregistreerd bij het DPMA. De software wordt aangeboden als draagbare .exe. De meetgegevens zijn eigendom van de gemeenschap.",
+    "about_p3": "Principe: Proprietary Intelligence, Open Data — het AI-model is beschermd, de data die het traint zijn vrij.",
+    "btn_contact": "Contact",
+    "btn_register": "Nu aanmelden",
+    "vision_apps": [
+      {
+        "label": "Precisielandbouw",
+        "text": "Zodra we de signaalpatronen van droogtestress, voedingstekort en plaagaantasting kennen, kunnen boeren reageren voordat schade ontstaat — zonder chemicaliën, zonder vlakdekkende behandelingen, zonder gissen.",
+        "italic": "Het mycorrhizanetwerk als vroegwaarschuwingssysteem voor het land."
+      },
+      {
+        "label": "Bosbescherming",
+        "text": "Bossen communiceren via hun ondergrondse schimmelnetwerk. Veranderingen in de signaalpatronen kunnen droogte, essenbastkeverplaag of brandgevaar signaleren — weken voordat het zichtbaar wordt.",
+        "italic": "Het bos dat ons waarschuwt voordat het te laat is."
+      },
+      {
+        "label": "Bodemregeneratie",
+        "text": "Gerichte frequentiestimulatie kan de activiteit van mycorrhizanetwerken beïnvloeden — mogelijk om beschadigde bodems sneller te regenereren en nutriëntentransport te bevorderen.",
+        "italic": "Niet chemie, maar dialoog met de bodem."
+      },
+      {
+        "label": "Klimaatbescherming",
+        "text": "Gezonde mycorrhizanetwerken binden aantoonbaar CO₂. BioComm kan dienen als onafhankelijk monitoringinstrument voor bodemkoolstofcertificaten — continu, locatieonafhankelijk, vervalsingsbestendig.",
+        "italic": "De bodem als meetbare klimaatbeschermer."
+      },
+      {
+        "label": "Fundamenteel onderzoek",
+        "text": "Adamatzky et al. hebben aangetoond dat fungale spiketrains structurele overeenkomsten vertonen met menselijke talen. Als dat klopt — wat zeggen ze dan? Elke meting in het OpenMycoNet-netwerk is een datapunt op weg naar het antwoord.",
+        "italic": "De oudste taal van de aarde ontcijferen."
+      },
+      {
+        "label": "Wat we nog niet weten",
+        "text": "Misschien zijn er signaalpatronen die we nog helemaal niet kennen. Misschien communiceren netwerken over afstanden op een manier die onze modellen niet voorspellen. Dat is de eigenlijke reden voor OpenMycoNet — niet het bevestigen van hypothesen, maar het ontdekken van verrassingen.",
+        "italic": "De interessantste antwoorden zijn die waarom we nog niet hebben gevraagd."
+      }
+    ],
+    "cards": [
+      {
+        "h": "Wereldwijde databasis",
+        "p": "Jouw meting in Maintal, een in Osaka, een in São Paulo — samen ontstaat een dataset die geen enkel laboratorium ooit zou kunnen produceren."
+      },
+      {
+        "h": "Echte wetenschap",
+        "p": "De signalen bestaan aantoonbaar (Adamatzky et al., 2022). Jij helpt uitvinden wat ze betekenen."
+      },
+      {
+        "h": "AI die blijft leren",
+        "p": "Elke meting verbetert het gedeelde AI-model. Hoe meer deelnemers, hoe slimmer het systeem — voor iedereen."
+      },
+      {
+        "h": "Open data",
+        "p": "Alle meetgegevens onder Creative Commons CC BY 4.0 — vrij voor wetenschap en onderzoek."
+      },
+      {
+        "h": "Minimale inspanning",
+        "p": "Elektroden in de bloempot, BioComm starten, klaar. Het systeem draait op de achtergrond."
+      },
+      {
+        "h": "Citizen science",
+        "p": "Zoals SETI@home — maar met één cruciaal verschil: de signalen die we zoeken zijn er al."
+      }
+    ],
+    "steps": [
+      {
+        "h": "Hardware lenen",
+        "p": "Ontvang een BioComm-meetapparaat als leentoestel — borg ca. €100 (definitieve kosten volgen). Terugave op elk moment mogelijk.",
+        "cost": "Borg ca. €100"
+      },
+      {
+        "h": "BioComm downloaden",
+        "p": "Download BioComm-software gratis — geen installatie, geen Python nodig.",
+        "cost": "Gratis"
+      },
+      {
+        "h": "Elektroden plaatsen",
+        "p": "Naalden in bodem, bloempot of compost met schimmel- of mycorrhizasubstraat.",
+        "cost": "5 minuten"
+      },
+      {
+        "h": "Meten & delen",
+        "p": "BioComm maakt automatisch verbinding en uploadt de gegevens. Analyse en anonimisering gebeuren lokaal op je apparaat — geen ruwe data verlaat je pc.",
+        "cost": ""
+      }
+    ],
+    "flow_nodes": [
+      {
+        "h": "Jouw knooppunt",
+        "p": "Elektroden in substraat"
+      },
+      {
+        "h": "BioComm.exe",
+        "p": "Analyse &amp; anonimisering — lokaal op je pc"
+      },
+      {
+        "h": "OpenMycoNet",
+        "p": "Server &amp; AI-training"
+      },
+      {
+        "h": "Open Data",
+        "p": "CC BY 4.0 — vrij voor iedereen"
+      },
+      {
+        "h": "KI-Update",
+        "p": "Terug naar alle knooppunten"
+      }
+    ],
+    "facts": [
+      {
+        "num": "400M",
+        "text": "jaar oud — zo lang bestaan mycorrhizanetwerken al op aarde"
+      },
+      {
+        "num": "90%",
+        "text": "van alle landplanten zijn verbonden met mycorrhizaschimmels"
+      },
+      {
+        "num": "8",
+        "text": "kanalen registreert BioComm gelijktijdig, tot 10.000 Hz"
+      },
+      {
+        "num": "~100€",
+        "text": "borgsom voor een BioComm-leentoestel (ca., definitieve kosten volgen)"
+      }
+    ],
+    "form_options": {
+      "interessent": "Geïnteresseerde — op de hoogte blijven van het project",
+      "wissenschaftler": "Wetenschapper / Instituut — data gebruiken / samenwerken",
+      "entwickler": "Softwareontwikkelaar — bijdragen aan BioComm",
+      "unterstuetzer": "Ondersteuner — project bekendmaken / helpen",
+      "foerderer": "Commerciële partner — bedrijfsvermelding vanaf €50/jaar"
+    },
+    "q_page_tag": "OpenMycoNet · Wetenschappelijke Grondslagen",
+    "q_h1_html": "Bronverwijzingen &amp;<br><em>Kennispad</em>",
+    "q_subtitle": "OpenMycoNet staat op een transparante wetenschappelijke basis. Elke stap van ons kennispad — van mycorrhiza-basisonderzoek tot toegepaste citizen science — wordt ondersteund door gepubliceerd onderzoek.",
+    "q_intro_strong": "Transparantienota:",
+    "q_intro": "Niet alle vermelde werken ondersteunen de doelen van OpenMycoNet direct. Ze vormen het wetenschappelijke fundament waarop onze vragen zijn gebouwd — inclusief kritische perspectieven. We meten omdat de gegevens nog schaars zijn, niet omdat alles bewezen is.",
+    "q_path_label": "Wetenschappelijk Kennispad",
+    "q_path_1": "01 · Mycorrhiza",
+    "q_path_2": "02 · Netwerken",
+    "q_path_kritik": "! · Kritiek",
+    "q_path_3": "03 · Elektr. Activiteit",
+    "q_path_4": "04 · Meetbaarheid",
+    "q_path_5": "05 · AI-patronen",
+    "q_path_6": "06 · Citizen Science",
+    "q_s1_step": "Stap 01 — Mycorrhiza & Netwerken",
+    "q_s1_title": "Planten communiceren ondergronds",
+    "q_s1_desc": "Het baanbrekende werk van Suzanne Simard vestigde het concept van het mycorrhizanetwerk als een echte informatiekanaal tussen planten — geen metafoor, maar gemeten feit.",
+    "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
+    "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
+    "q_ref14_relevanz": "Toont aan dat G. intraradices de P-opname uit een niet-verrijkt bodemgebied gericht vermindert zodra een verrijkte patch wordt benut — de auteurs stellen expliciet dat de signaalmoleculen die dit binnen het hyfennetwerk coördineren nog onbekend zijn. Elektrische signaaloverdracht in het mycelium is een plausibele kandidaat.",
+    "q_sk_step": "! Kritisch Perspectief — Wetenschappelijke Context",
+    "q_sk_title": "Wat werkelijk bewezen is — en wat niet",
+    "q_sk_desc": "Niet alle populaire beweringen over het \"Wood Wide Web\" worden voldoende ondersteund door veldstudies. OpenMycoNet neemt deze kritiek uitdrukkelijk mee — het is een reden waarom we meten.",
+    "q_s2_step": "Stap 02 — Elektrische Activiteit",
+    "q_s2_title": "Schimmels zenden meetbare elektrische signalen",
+    "q_s2_desc": "Bio-elektrische impulsen in mycelium tonen neuronale kenmerken: spiking-patronen, signaalvoortplanting, niet-lineaire eigenschappen.",
+    "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+    "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
+    "q_ref08_relevanz": "De tot nu toe methodologisch meest geavanceerde validatiestudie: PCB-elektroden, een kooi van Faraday en biocide-controles bevestigen de biologische oorsprong van myceliumsignalen — directe methodologische onderbouwing voor de BioComm-aanpak.",
+    "q_s3_step": "Stap 03 — Meetbaarheid, Sensoriek & AI-patroonherkenning",
+    "q_s3_title": "Van observatie naar berekening",
+    "q_s3_desc": "Het werk van Andrew Adamatzky toont aan dat myceliumsignalen niet alleen bestaan maar technisch bruikbaar zijn — als logische poorten, als overdraagbare frequenties, en recentelijk als directe AI-interface.",
+    "q_s4_step": "Context — Populaire Wetenschap",
+    "q_s4_title": "Het boek dat alles samenvat",
+    "q_s4_desc": "Het standaardwerk van Merlin Sheldrake brengt de biologische complexiteit van schimmelorganismen over aan een breed publiek — zonder de wetenschap te vereenvoudigen.",
+    "q_s5_step": "Stap 04 — Citizen Science",
+    "q_s5_title": "Wetenschap door collectieve observatie",
+    "q_s5_desc": "Citizen science-platforms zoals iNaturalist en FunDive tonen aan dat gedistribueerde lekemetingen wetenschappelijk geldige gegevens kunnen opleveren. OpenMycoNet volgt dit model voor bio-elektrische signalen.",
+    "q_footer_left": "Alle gelinkte bronnen zijn Open Access of openbaar toegankelijk.",
+    "q_footer_right": "Stand: juni 2026 · OpenMycoNet / Robert Jank",
+    "q_back": "← Startpagina",
+    "q_back_long": "← Terug naar startpagina",
+    "player_hint": "Geniet van de muziek terwijl je de rest van de inhoud verkent.",
+    "buch_teaser_label": "✦ Gratis Download ✦",
+    "buch_teaser_text": "\"Das letzte Korn\" — een roman over mensen, mycorrhiza, AI en de vraag aan wie de natuur toebehoort en hoe we ermee zouden kunnen leven.",
+    "footer_copy": "Robert Jank · Maintal, Duitsland · 2026",
+    "donate_fee_label": "Transactiekosten dekken",
+    "footer_impressum": "Colofon",
+    "footer_datenschutz": "Privacy",
+    "footer_quellen": "Bronverwijzingen",
+    "f_title": "Partners — OpenMycoNet",
+    "f_section_label": "Partnerschap",
+    "f_h1": "Commerciële <em>partners</em>",
+    "f_intro_p1": "Met uw bijdrage helpt u de verborgen netwerken onder onze voeten beter te begrijpen. U ondersteunt open onderzoek, citizen science en de ontwikkeling van nieuwe meetsystemen voor schimmels, mycorrhiza en bodemgezondheid. Tegelijkertijd wordt uw betrokkenheid zichtbaar – als onderdeel van een netwerk van bedrijven en mensen die verantwoordelijkheid nemen voor de toekomst van onze bodems.",
+    "f_h2_vorteile": "Wat partners ontvangen",
+    "f_h2_beitrag": "Jaarbijdrage — vrij te kiezen vanaf €50",
+    "f_h2_ablauf": "Zo werkt het",
+    "f_h2_liste": "Huidige partners",
+    "f_h2_form": "Word nu partner",
+    "f_vorteile": [
+      {
+        "h": "Vermelding in de partnerslijst",
+        "p": "Naam, beschrijving, contactgegevens en link — zichtbaar voor alle bezoekers van openmyconet.de."
+      },
+      {
+        "h": "Partnerbadge",
+        "p": "\"Officiële partner van OpenMycoNet\" — als badge voor uw website of sociale media."
+      },
+      {
+        "h": "Gemeenschapsbereik",
+        "p": "Vermelding in relevante e-mails aan onze groeiende gemeenschap van citizen scientists."
+      },
+      {
+        "h": "Thematische zichtbaarheid",
+        "p": "Uw merk in de context van echte wetenschap — geloofwaardig, duurzaam, internationaal."
+      }
+    ],
+    "f_slider_label": "Uw jaarbijdrage",
+    "f_slider_min_hint": "Minimum 50 €",
+    "f_beitrag_note": "De bijdrage is vrijwillig en naar boven open. Alle supporters ontvangen dezelfde zichtbaarheid — ongeacht het gekozen bedrag.",
+    "f_steps": [
+      {
+        "num": "1. Aanvraag sturen",
+        "text": "— via het onderstaande formulier of per e-mail naar kontakt@openmyconet.de."
+      },
+      {
+        "num": "2. Korte beoordeling",
+        "text": "— we controleren of de thematische aansluiting aanwezig is. Dit duurt maximaal 48 uur."
+      },
+      {
+        "num": "3. Bijdrage leveren",
+        "text": "— vanaf €50/jaar, veilig via PayPal. Geen vooruitbetaling voor het voorbeeld."
+      },
+      {
+        "num": "4. Direct live",
+        "text": "— uw vermelding verschijnt automatisch na betaling. Factuur per e-mail."
+      },
+      {
+        "num": "5. Jaarlijkse verlenging",
+        "text": "— 2–3 maanden voor het verstrijken ontvangt u een e-mail met de vraag of u de partnerschap wilt voortzetten. Geen automatisme, geen druk."
+      }
+    ],
+    "f_badge_example": "★ Officiële partner ★  |  Voorbeeldvermelding",
+    "f_name_example": "Uw bedrijfsnaam",
+    "f_desc_example": "Hier verschijnt een korte beschrijving van uw bedrijf — wat u doet, waarom u OpenMycoNet ondersteunt en wat u verbindt met het onderwerp mycologie. Ca. 2–3 zinnen.",
+    "f_link_example": "www.ihre-website.de",
+    "f_premium_note": "",
+    "f_placeholder_1": "✶ Hier verschijnen de eerste partners van OpenMycoNet ✶",
+    "f_placeholder_2": "Word de eerste.",
+    "f_lbl_firma": "Bedrijf / Naam *",
+    "f_lbl_website": "Website",
+    "f_lbl_email": "E-mailadres *",
+    "f_lbl_bereich": "Thematische verbinding",
+    "f_lbl_beitrag": "Gewenste jaarbijdrage",
+    "f_lbl_beschreibung": "Korte beschrijving van uw bedrijf *",
+    "f_opts": [
+      "Champignonteelt / mycologie",
+      "Boekwinkel / uitgever",
+      "Duurzame materialen (mycelium)",
+      "Landbouw / agrarische technologie",
+      "Bosbouw / natuurbehoud",
+      "Onderwijs / onderzoek",
+      "Overig"
+    ],
+    "f_submit": "Vermelding ontwerpen & partner worden",
+    "f_form_note": "Geen vooruitbetaling — u betaalt pas na het voorbeeld. Logo-upload inbegrepen. Factuur automatisch per e-mail.",
+    "f_back": "← Terug naar startpagina",
+    "f_success": "✓ Anfrage eingegangen — wir melden uns!",
+    "f_error": "Error — please email kontakt@openmyconet.de",
+    "f_sending": "Verzenden...",
+    "f_year_label": "€ / jaar",
+    "f_selected_label": "Geselecteerd:",
+    "f_v0_h": "Vermelding in de partnerslijst",
+    "f_v0_p": "Naam, beschrijving, contactgegevens en link — zichtbaar voor alle bezoekers van openmyconet.de.",
+    "f_v1_h": "Partner-badge",
+    "f_v1_p": "\"Officiële partner van OpenMycoNet\" — als badge voor uw website of social media.",
+    "f_v2_h": "Community-bereik",
+    "f_v2_p": "Vermelding in relevante e-mails aan onze groeiende gemeenschap van citizen scientists.",
+    "f_v3_h": "Thematische zichtbaarheid",
+    "f_v3_p": "Uw merk in de context van echte wetenschap — geloofwaardig, duurzaam, internationaal.",
+    "f_next_headline": "Doe mee.",
+    "f_next_sub": "Steun ons citizen science-netwerk — u voor OpenMycoNet, OpenMycoNet voor iedereen.",
+    "f_form_intro": "Ontwerp uw eigen vermelding — met logo, beschrijving en bedrag. U ziet een voorbeeld voordat u betaalt.",
+    "f_adjustable": "— hierboven aanpasbaar",
+    "f_cta_h": "Doe mee.",
+    "f_cta_p": "Steun en bevorder ons citizen-science-netwerk — u voor OpenMycoNet, OpenMycoNet voor iedereen.",
+    "a_section_label": "Registratie",
+    "a_h2": "Word deel van het <em>netwerk</em>",
+    "a_intro": "Registreer je — je ontvangt projectrelevant nieuws per e-mail. Registratie is niet gekoppeld aan financiële steun.",
+    "a_lbl_name": "Naam (optioneel)",
+    "a_lbl_email": "E-mailadres *",
+    "a_lbl_role": "Ik ben geïnteresseerd als",
+    "a_lbl_msg": "Bericht (optioneel)",
+    "a_ph_name": "bijv. Jan de Vries",
+    "a_ph_email": "jouw@email.nl",
+    "a_ph_msg": "Vragen, ideeën, opmerkingen...",
+    "a_opt_interessent": "Geïnteresseerde — op de hoogte blijven van het project",
+    "a_opt_wissenschaftler": "Wetenschapper / Instituut — data gebruiken / samenwerken",
+    "a_opt_entwickler": "Softwareontwikkelaar — bijdragen aan BioComm",
+    "a_opt_unterstuetzer": "Ondersteuner — project bekendmaken / helpen",
+    "a_opt_foerderer": "Commerciële partner — naar de partnerpagina",
+    "a_node_question": "Wil je een eigen BioComm-knooppunt beheren?",
+    "a_node_yes": "Ja, ik wil me aanmelden voor een knooppunt",
+    "a_node_no": "Nee",
+    "a_submit": "Registreren",
+    "a_newsletter_label": "Ja, ik wil per e-mail op de hoogte gehouden worden van alle nieuws.",
+    "a_privacy_label": "Ik heb het [Privacybeleid] gelezen en ga akkoord met de verwerking van mijn gegevens voor de afhandeling van mijn verzoek. Geen doorgave aan derden.",
+    "a_privacy_notice": "Je gegevens worden uitsluitend opgeslagen voor de afhandeling van je verzoek. Geen tracking, geen nieuwsbrief zonder je uitdrukkelijke toestemming, geen doorgave.",
+    "a_success": "✓ Registratie ontvangen — welkom bij OpenMycoNet!",
+    "a_error": "Fout — stuur een e-mail naar kontakt@openmyconet.de",
+    "a_sending": "Verzenden...",
+    "a_foerderer_hint": "Commerciële partners hebben een eigen pagina:",
+    "a_foerderer_link": "→ Partnerpagina",
+    "a_foerderer_note": "Daar kunt u uw bijdrage vrij kiezen (vanaf €50/jaar) en uw bedrijfsgegevens invoeren.",
+    "a_node_panel_title": "Aanmelding: Eigen BioComm-knooppunt",
+    "a_node_info_title": "Vereisten & informatie",
+    "a_node_info_geo": "📍 We zoeken momenteel knooppuntbeheerders in Duitsland. In een tweede stap breiden we het netwerk uit naar DACH en uiteindelijk wereldwijd. Aanmeldingen uit andere regio's zijn al welkom — we nemen contact op zodra jouw regio aan de beurt is.",
+    "a_node_info_hw": "⚠️ Hardware is beperkt. Bij grote vraag houden we een wachtlijst bij en sturen je een e-mail zodra een apparaat beschikbaar is.",
+    "a_node_req_title": "Minimumvereisten",
+    "a_node_req_1": "PC of smartphone voor de eerste installatie van de bridge (eenmalig wifi-gegevens invoeren)",
+    "a_node_req_2": "Wifi-beschikbaarheid in de buurt van de geplande bridge-locatie",
+    "a_node_req_3": "Toegang tot geschikt substraat: tuin, bos, compost, bloempot met schimmelgrond, enz.",
+    "a_node_req_4": "Mogelijkheid tot permanente, weerbestendige opstelling",
+    "a_node_req_5": "Bereidheid om minimaal 3 maanden te meten (daarna maandelijks opzegbaar)",
+    "a_node_req_6": "Één knooppunt per beheerder (uitzonderingen in overleg)",
+    "a_node_req_7": "Basiskennis van hardware — geen solderen of programmeerkennis vereist",
+    "a_node_req_8": "Vakinhoudelijke of wetenschappelijke achtergrond is een pré (bijv. biologie, bosbouw, milieuwetenschappen) — maar geen vereiste",
+    "a_node_info_feedback": "✓ Je ontvangt regelmatige feedback over je meetgegevens en wordt op de hoogte gehouden van al het nieuws.",
+    "a_node_lbl_profession": "Beroep / achtergrond (optioneel)",
+    "a_node_ph_profession": "bijv. student, gepensioneerde, boer, bioloog, hobbyist, leraar...",
+    "a_node_lbl_substrat": "Gepland substraat / locatie *",
+    "a_node_ph_substrat": "bijv. gemengd bos bij Maintal, tuin met compost, kas...",
+    "a_node_lbl_address": "Adres (voor locatieplanning, optioneel maar nuttig)",
+    "a_node_ph_address": "Straat, postcode, plaats",
+    "a_node_geocode_btn": "Op kaart tonen",
+    "a_node_geocode_hint": "Helpt ons bridge-locaties goed te plannen. Sleep de pin daarna eventueel naar de exacte plek.",
+    "a_node_geocode_error": "Adres niet gevonden — probeer preciezer, of laat de pin gewoon weg.",
+    "a_node_lbl_motivation": "Aanmeldingstekst *",
+    "a_node_ph_motivation": "Vertel ons over jezelf en waarom je wilt meedoen — ook als je niet aan elk criterium voldoet. Minimaal 3-4 zinnen.",
+    "a_node_lbl_loan": "Ik accepteer de leenvoorwaarden (borg ca. €100, terugave bij beëindiging van de meting) *",
+    "a_node_submit": "Aanmelding versturen",
+    "a_node_success": "✓ Je aanmelding is ontvangen. We beoordelen deze zorgvuldig en nemen contact met je op per e-mail. Bij grote vraag of nog niet beschikbare hardware in jouw regio kom je op onze wachtlijst — je wordt op de hoogte gesteld zodra er een plek vrijkomt.",
+    "a_node_success_confirm": "Hiermee ben je meteen ook geregistreerd — bevestig je e-mailadres via de link die we je zojuist gestuurd hebben. ",
+    "a_node_sending": "Aanmelding verzenden...",
+    "a_node_error": "Fout — stuur een e-mail naar kontakt@openmyconet.de",
+    "br_label": "Brochure",
+    "br_caption_1": "De kennis is er.",
+    "br_caption_2": "Ze wordt gedeeld.",
+    "br_caption_3": "Ze wekt nieuwsgierigheid.",
+    "br_tagline": "Wat we doen — begrijpelijk voor iedereen.",
+    "br_btn": "↓ Brochure downloaden",
+    "br_note": "PDF · gratis · vrij te delen (CC BY-NC-SA 4.0)",
+    "meta_desc_index": "Een wereldwijd citizen science-netwerk voor het meten van bio-elektrische signalen uit mycorrhiza- en schimmelnetwerken. Doe mee, deel gegevens, bevorder de wetenschap."
+  },
+  "fr": {
+    "nav_warum": "Pourquoi",
+    "nav_mitmachen": "Participer",
+    "nav_spenden": "Soutenir",
+    "nav_anmelden": "S'inscrire",
+    "nav_ueber": "À propos",
+    "nav_medien": "Médias",
+    "label_medien": "OpenMycoNet · Médias",
+    "h1_medien": "Brochure, musique & livre",
+    "desc_medien": "Tout pour écouter, lire et télécharger au même endroit — la brochure, les chansons du projet et le roman « Das letzte Korn ».",
+    "nav_foerderer": "Partenaires",
+    "nav_quellen": "Sources",
+    "nav_news": "Actualités",
+    "nav_leihgeraete": "Appareil en prêt",
+    "btn_leihgeraet": "⬡ Emprunter un nœud BioComm",
+    "leih_edition_1_name": "Édition Forest Camouflage",
+    "leih_edition_1_desc": "Motif camouflage pour déploiement en forêt — se fond dans l'environnement.",
+    "leih_edition_2_name": "Édition Mousse",
+    "leih_edition_2_desc": "Boîtier vert mousse, discret et inspiré de la nature.",
+    "leih_edition_3_name": "Édition Mycélium",
+    "leih_edition_3_desc": "Gris foncé marbré avec texture mycélium — urbain et scientifique.",
+    "leih_page_title": "OpenMycoNet · Appareil en prêt BioComm",
+    "leih_seo_desc": "Biocapteur open source compact pour les signaux bioélectriques dans les réseaux mycorhiziens. Nœud de prêt gratuit pour les scientifiques citoyens — inscrivez-vous maintenant.",
+    "leih_label": "Programme de prêt",
+    "leih_h1": "Le nœud BioComm<br><em>en prêt</em>",
+    "leih_status_label": "Statut du projet",
+    "leih_status": "Développement matériel terminé · Premiers appareils en cours de préparation",
+    "leih_preview_label": "À quoi ressembleront les nœuds",
+    "leih_preview_intro": "Le nœud de mesure BioComm est livré prêt à l'emploi, préinstallé. Insérez les électrodes dans le sol — le nœud transmet les données au pont via LoRa, qui les relaie au serveur central par WiFi. Cette liaison radio fait partie de la génération de matériel actuellement en développement.",
+    "leih_specs_label": "Caractéristiques techniques",
+    "leih_specs": [
+      {
+        "label": "Processeur",
+        "value": "ESP32 + module radio LoRa"
+      },
+      {
+        "label": "Liaison radio",
+        "value": "LoRa vers le pont (1–3 km en forêt) · Le pont se connecte au serveur central via WiFi — en développement, pas encore livré"
+      },
+      {
+        "label": "ADC",
+        "value": "16 bits, 8 canaux"
+      },
+      {
+        "label": "Capteurs",
+        "value": "Signaux bioélectriques + données de sol & environnementales (température, humidité, CO₂)"
+      },
+      {
+        "label": "Alimentation",
+        "value": "USB-C ou batterie LiPo"
+      },
+      {
+        "label": "Boîtier",
+        "value": "IP65, résistant aux intempéries"
+      }
+    ],
+    "leih_how_label": "Cinq étapes pour votre nœud de mesure",
+    "leih_preview_h2": "À quoi ressembleront<br>les <em>nœuds</em>",
+    "leih_ki_hint": "⚠ Ces visualisations sont générées par IA. Les appareils réels ressembleront à environ 80 % à ceci — le design final des couleurs n'est pas encore arrêté.",
+    "leih_specs_h2": "Ce que le nœud<br><em>peut faire</em>",
+    "leih_how_h2": "Cinq étapes vers<br>votre <em>nœud de mesure</em>",
+    "leih_bridge_h2": "Le <em>Hub</em>",
+    "leih_bridge_warning": "⚠ La liaison radio (LoRa/WiFi) fait partie de la génération de matériel actuellement en développement et n'a pas encore été livrée.",
+    "leih_bridge_desc": "Le BioComm Bridge connecte jusqu'à 4 nœuds de mesure simultanément par radio LoRa (point à point, portée réaliste de 1 à 3 km en forêt) et transmet toutes les données au serveur central via WiFi. Les LED Node 1 à 4 indiquent l'état de la connexion en temps réel.",
+    "leih_bridge_li1": "ESP32 avec module radio LoRa",
+    "leih_bridge_li2": "Connexion WiFi au serveur central",
+    "leih_bridge_li3": "4 LED d'état des nœuds",
+    "leih_bridge_li4": "Boîtier de bureau compact",
+    "leih_system_label": "Le Système Complet",
+    "leih_system_h2": "BioComm <em>en action</em>",
+    "leih_system_desc": "Quatre nœuds BioComm dans le sol, reliés au pont par LoRa, données de mesure en direct sur le tableau de bord — voilà OpenMycoNet en pratique. Chaque nœud mesure de façon autonome, le pont agrège tous les flux de données et les transmet au serveur central via WiFi.",
+    "leih_how": [
+      {
+        "h": "S'inscrire",
+        "p": "Remplir le formulaire sur la page principale — substrat, emplacement, motivation."
+      },
+      {
+        "h": "Verser la caution",
+        "p": "Environ 100 € de caution (montant définitif à confirmer). Intégralement remboursé au retour."
+      },
+      {
+        "h": "Recevoir l'appareil",
+        "p": "Le nœud BioComm est livré par courrier — préinstallé et prêt à l'emploi."
+      },
+      {
+        "h": "Mesurer",
+        "p": "Insérer les électrodes dans le substrat, entrer les données WiFi — terminé. L'appareil fonctionne automatiquement."
+      },
+      {
+        "h": "Retourner",
+        "p": "Retour possible à tout moment. La caution est remboursée."
+      }
+    ],
+    "leih_register_btn": "S'inscrire maintenant au programme de prêt",
+    "leih_back": "← Retour à la page d'accueil",
+    "nav_menu": "Menu",
+    "btn_fragen": "⬤ Des questions?",
+    "hero_sub": "Un réseau mondial de science citoyenne qui enregistre les signaux bioélectriques des réseaux mycorhiziens et fongiques. Les signaux existent — la question est ce qu'ils signifient.",
+    "live_badge": "nœud actif — soyez le prochain",
+    "btn_join": "Rejoindre",
+    "btn_support": "Soutenir le projet",
+    "label_vision": "La grande question",
+    "label_warum": "Le Pourquoi",
+    "label_mitmachen": "Comment ça fonctionne",
+    "label_daten": "Transparence",
+    "label_spenden": "Soutien",
+    "label_anmelden": "Inscription",
+    "label_ueber": "Le projet",
+    "h2_vision": "Ce qui devient possible quand nous <em>comprenons</em>",
+    "h2_warum": "Un réseau qui<br><em>écoute</em>",
+    "h2_mitmachen": "Votre propre nœud<br>en quatre <em>étapes</em>",
+    "h2_daten": "Comment vos données<br><em>circulent</em>",
+    "h2_spenden": "Soutenir<br>le <em>projet</em>",
+    "h2_anmelden": "Rejoignez<br>le <em>réseau</em>",
+    "h2_ueber": "Une science indépendante<br>venue d'<em>en bas</em>",
+    "vision_p1": "Sous nos pieds se trouve le réseau de communication le plus ancien et le plus étendu de la Terre. Les champignons mycorhiziens relient presque toutes les plantes terrestres depuis 400 millions d'années — ils transportent des nutriments, transmettent des signaux d'alerte et coordonnent la vie dans le sol d'une manière que nous commençons à peine à comprendre. Ils émettent des signaux électriques. Mesurables. Reproductibles. Et à peine déchiffrés jusqu'ici.",
+    "vision_p2": "OpenMycoNet pose une question simple mais fondamentale : que se passe-t-il si nous cessons d'analyser les sols uniquement de l'extérieur — et commençons à écouter ce que le réseau lui-même émet ? Et si la plante nous disait depuis longtemps qu'elle a soif, avant même que nous le voyions ? Et si le sol signalait lui-même l'approche d'un ravageur, avant que les premiers dégâts n'apparaissent ?",
+    "vision_p3": "Ce ne sont pas des questions spéculatives. La base scientifique existe. Ce qui manque, ce sont des données — beaucoup, provenant de différentes zones climatiques, substrats, saisons. Aucun laboratoire ne peut fournir cela seul. Mais une communauté mondiale de personnes mesurant dans leur jardin, leur forêt, leur serre — si.",
+    "vision_quote": "Le réseau émet. Nous venons tout juste de commencer à écouter.",
+    "vision_closing": "Chaque nœud BioComm mis en service dans le monde nous rapproche d'un pas de la compréhension — pour tous.",
+    "desc_warum": "Les champignons mycorhiziens connectent plus de 90 % de toutes les plantes terrestres. Ils émettent des signaux électriques — mesurables, reproductibles, énigmatiques. Ensemble, nous pouvons comprendre ce qu'ils signifient.",
+    "desc_mitmachen": "Les résultats et données du réseau sont accessibles à tous — même sans exploiter son propre nœud. Si vous souhaitez exploiter vous-même un nœud BioComm, postulez ci-dessous pour l'une des places sélectionnées.",
+    "desc_daten": "Les coordonnées GPS sont arrondies à 10×10 km — aucune localisation précise. Aucune donnée personnelle. Toutes les données brutes accessibles publiquement.",
+    "label_musik": "Musique",
+    "musik_p1": "Les plus anciens réseaux de la Terre ne parlent pas avec des mots.<br>Ils relient, réagissent et se souviennent.",
+    "musik_p2": "Les chansons de cette collection sont nées comme accompagnement musical à l'idée d'écouter plus attentivement.",
+    "musik_p3": "Nous sommes heureux que vous soyez là.",
+    "musik_ki_hinweis": "La musique et les voix sont générées par IA, texte de Robert Jank.",
+    "player_more_link": "Plus de musique ?",
+    "label_kooperationen": "Ensemble",
+    "h2_kooperationen": "Partenaires & <em>coopérations</em>",
+    "desc_kooperationen": "Entreprises et projets qui soutiennent OpenMycoNet et collaborent avec nous.",
+    "link_kooperationen": "Voir tous les partenaires →",
+    "desc_anmelden": "Inscrivez-vous — nous vous informerons quand OpenMycoNet sera officiellement lancé et vous enverrons le guide matériel.",
+    "donate_p": "OpenMycoNet est un projet de science citoyenne indépendant sans financement institutionnel. Les coûts de serveur et le développement ultérieur sont financés par des dons volontaires. Chaque contribution compte.",
+    "donate_note": "Vous pouvez faire un don sans vous inscrire, mais nous serions ravis que vous le fassiez quand même et deveniez ainsi membre du réseau.",
+    "donate_claim": "Nous pour OpenMycoNet — OpenMycoNet pour tous.",
+    "buch_label": "Téléchargement gratuit",
+    "buch_desc": "Une histoire sur la symbiose du troisième type",
+    "buch_btn": "↓ Télécharger le roman",
+    "buch_note": "PDF · gratuit · Robert Jank · 2026",
+    "about_p1": "OpenMycoNet a été initié par Robert Jank, inventeur indépendant de Maintal près de Francfort — sans appartenance institutionnelle, avec l'objectif de comprendre ce que les réseaux mycorhiziens signalent électriquement.",
+    "about_p2": "Le système BioComm sous-jacent est protégé par un modèle d'utilité déposé auprès du DPMA. Le logiciel est fourni en tant qu'.exe portable. Les données de mesure appartiennent à la communauté.",
+    "about_p3": "Principe : Proprietary Intelligence, Open Data — le modèle d'IA est protégé, les données qui l'entraînent sont libres.",
+    "btn_contact": "Contact",
+    "btn_register": "S'inscrire maintenant",
+    "vision_apps": [
+      {
+        "label": "Agriculture de précision",
+        "text": "Une fois que nous connaîtrons les signaux du stress hydrique, des carences et des infestations, les agriculteurs pourront réagir avant les dégâts — sans produits chimiques, sans traitements systématiques, sans approximations.",
+        "italic": "Le réseau mycorhizien comme système d'alerte précoce pour les champs."
+      },
+      {
+        "label": "Protection des forêts",
+        "text": "Les forêts communiquent par leur réseau fongique souterrain. Des changements dans les signaux pourraient indiquer une sécheresse, une infestation de scolytes ou un risque d'incendie — des semaines avant que cela ne devienne visible.",
+        "italic": "La forêt qui nous prévient avant qu'il ne soit trop tard."
+      },
+      {
+        "label": "Régénération des sols",
+        "text": "La stimulation fréquentielle ciblée peut influencer l'activité des réseaux mycorhiziens — potentiellement pour régénérer plus rapidement les sols dégradés et favoriser le transport des nutriments.",
+        "italic": "Pas de la chimie, mais un dialogue avec le sol."
+      },
+      {
+        "label": "Protection du climat",
+        "text": "Les réseaux mycorhiziens sains séquestrent du CO₂ de manière avérée. BioComm pourrait servir d'outil de monitoring indépendant pour les certificats carbone des sols — en continu, indépendamment du lieu, à l'épreuve de la falsification.",
+        "italic": "Le sol comme protecteur climatique mesurable."
+      },
+      {
+        "label": "Recherche fondamentale",
+        "text": "Adamatzky et al. ont montré que les trains de spikes fongiques présentent des similitudes structurelles avec les langues humaines. Si c'est vrai — que disent-ils ? Chaque mesure dans le réseau OpenMycoNet est un point de données sur le chemin vers la réponse.",
+        "italic": "Déchiffrer le langage le plus ancien de la Terre."
+      },
+      {
+        "label": "Ce que nous ne savons pas encore",
+        "text": "Il existe peut-être des patterns de signaux que nous ne connaissons même pas encore. Les réseaux communiquent peut-être sur de longues distances d'une manière que nos modèles ne prédisent pas. C'est la vraie raison d'être d'OpenMycoNet — non pas confirmer des hypothèses, mais découvrir des surprises.",
+        "italic": "Les réponses les plus intéressantes sont celles que nous n'avons pas encore pensé à demander."
+      }
+    ],
+    "cards": [
+      {
+        "h": "Base de données mondiale",
+        "p": "Votre mesure à Maintal, une à Osaka, une à São Paulo — ensemble elles forment un jeu de données qu'aucun laboratoire seul ne pourrait jamais produire."
+      },
+      {
+        "h": "Vraie science",
+        "p": "Les signaux existent de manière avérée (Adamatzky et al., 2022). Vous aidez à découvrir ce qu'ils signifient."
+      },
+      {
+        "h": "Une IA qui apprend",
+        "p": "Chaque mesure améliore le modèle d'IA partagé. Plus il y a de participants, plus le système devient intelligent — pour tous."
+      },
+      {
+        "h": "Données ouvertes",
+        "p": "Toutes les données de mesure sous Creative Commons CC BY 4.0 — libres pour la science et la recherche."
+      },
+      {
+        "h": "Effort minimal",
+        "p": "Électrodes dans le pot, démarrez BioComm, c'est fait. Le système fonctionne en arrière-plan."
+      },
+      {
+        "h": "Science citoyenne",
+        "p": "Comme SETI@home — avec une différence cruciale : les signaux que nous cherchons sont déjà là."
+      }
+    ],
+    "steps": [
+      {
+        "h": "Emprunter le matériel",
+        "p": "Recevoir un appareil de mesure BioComm en prêt — caution env. 100 € (coût final à confirmer). Retour à tout moment.",
+        "cost": "Caution env. 100 €"
+      },
+      {
+        "h": "Télécharger BioComm",
+        "p": "Télécharger le logiciel BioComm gratuitement — aucune installation, pas de Python nécessaire.",
+        "cost": "Gratuit"
+      },
+      {
+        "h": "Placer les électrodes",
+        "p": "Aiguilles dans le sol, le pot ou le compost avec substrat fongique ou mycorhizien.",
+        "cost": "5 minutes"
+      },
+      {
+        "h": "Mesurer & partager",
+        "p": "BioComm se connecte automatiquement et télécharge les données. L'analyse et l'anonymisation s'effectuent localement sur votre appareil — aucune donnée brute ne quitte votre PC.",
+        "cost": ""
+      }
+    ],
+    "flow_nodes": [
+      {
+        "h": "Votre nœud",
+        "p": "Électrodes dans le substrat"
+      },
+      {
+        "h": "BioComm.exe",
+        "p": "Analyse &amp; anonymisation — localement sur votre PC"
+      },
+      {
+        "h": "OpenMycoNet",
+        "p": "Serveur &amp; formation IA"
+      },
+      {
+        "h": "Open Data",
+        "p": "CC BY 4.0 — libre pour tous"
+      },
+      {
+        "h": "KI-Update",
+        "p": "Renvoyée à tous les nœuds"
+      }
+    ],
+    "facts": [
+      {
+        "num": "400M",
+        "text": "millions d'années — c'est depuis combien de temps les réseaux mycorhiziens existent"
+      },
+      {
+        "num": "90%",
+        "text": "de toutes les plantes terrestres sont connectées à des champignons mycorhiziens"
+      },
+      {
+        "num": "8",
+        "text": "canaux enregistrés simultanément par BioComm, jusqu'à 10 000 Hz"
+      },
+      {
+        "num": "~100€",
+        "text": "caution pour un appareil BioComm en prêt (env., coût final à confirmer)"
+      }
+    ],
+    "form_options": {
+      "interessent": "Personne intéressée — rester informé(e) sur le projet",
+      "wissenschaftler": "Scientifique / Institut — utiliser les données / collaborer",
+      "entwickler": "Développeur logiciel — contribuer à BioComm",
+      "unterstuetzer": "Soutien — promouvoir / aider le projet",
+      "foerderer": "Partenaire commercial — vers la page partenaires"
+    },
+    "q_page_tag": "OpenMycoNet · Fondements Scientifiques",
+    "q_h1_html": "Références &amp;<br><em>Parcours de connaissance</em>",
+    "q_subtitle": "OpenMycoNet repose sur une base scientifique transparente. Chaque étape de notre parcours de connaissance — de la recherche fondamentale sur les mycorhizes à la science citoyenne appliquée — est étayée par des recherches publiées.",
+    "q_intro_strong": "Note de transparence :",
+    "q_intro": "Tous les travaux répertoriés ne soutiennent pas directement les objectifs d'OpenMycoNet. Ils forment le fondement scientifique sur lequel nos questions sont construites — y compris les perspectives critiques. Nous mesurons parce que les données sont encore rares, pas parce que tout est prouvé.",
+    "q_path_label": "Parcours Scientifique de Connaissance",
+    "q_path_1": "01 · Mycorhize",
+    "q_path_2": "02 · Réseaux",
+    "q_path_kritik": "! · Critique",
+    "q_path_3": "03 · Act. électr.",
+    "q_path_4": "04 · Mesurabilité",
+    "q_path_5": "05 · Patterns IA",
+    "q_path_6": "06 · Science citoyenne",
+    "q_s1_step": "Étape 01 — Mycorhizes & Réseaux",
+    "q_s1_title": "Les plantes communiquent sous terre",
+    "q_s1_desc": "Le travail pionnier de Suzanne Simard a établi le concept du réseau mycorhizien comme un véritable canal d'information entre les plantes — pas une métaphore, mais un fait mesuré.",
+    "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
+    "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
+    "q_ref14_relevanz": "Montre que G. intraradices réduit délibérément l'absorption de P dans une zone du sol non enrichie dès qu'une zone enrichie est exploitée — les auteurs indiquent explicitement que les molécules de signalisation coordonnant ce phénomène dans le réseau hyphal restent inconnues. La propagation de signaux électriques dans le mycélium en est un candidat plausible.",
+    "q_sk_step": "! Perspective critique — Contexte scientifique",
+    "q_sk_title": "Ce qui est réellement prouvé — et ce qui ne l'est pas",
+    "q_sk_desc": "Toutes les affirmations populaires sur le « Wood Wide Web » ne sont pas suffisamment étayées par des études de terrain. OpenMycoNet intègre explicitement cette critique.",
+    "q_s2_step": "Étape 02 — Activité Électrique",
+    "q_s2_title": "Les champignons émettent des signaux électriques mesurables",
+    "q_s2_desc": "Les impulsions bioélectriques dans le mycélium présentent des caractéristiques neuronales : motifs de décharge, propagation du signal, propriétés non linéaires.",
+    "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+    "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
+    "q_ref08_relevanz": "L'étude de validation méthodologiquement la plus avancée à ce jour : électrodes sur PCB, cage de Faraday et contrôles biocides confirment l'origine biologique des signaux mycéliens — un appui méthodologique direct pour l'approche BioComm.",
+    "q_s3_step": "Étape 03 — Mesurabilité, Capteurs & Reconnaissance de motifs IA",
+    "q_s3_title": "De l'observation au calcul",
+    "q_s3_desc": "Les travaux d'Andrew Adamatzky montrent que les signaux du mycélium sont techniquement utilisables — comme portes logiques, fréquences transmissibles, et interface directe avec l'IA.",
+    "q_s4_step": "Contexte — Science populaire",
+    "q_s4_title": "Le livre qui rassemble tout",
+    "q_s4_desc": "L'ouvrage de référence de Merlin Sheldrake transmet la complexité biologique des organismes fongiques à un large public.",
+    "q_s5_step": "Étape 04 — Science Citoyenne",
+    "q_s5_title": "La science par l'observation collective",
+    "q_s5_desc": "Des plateformes de science citoyenne comme iNaturalist et FunDive démontrent que des mesures amateurs distribuées peuvent produire des données scientifiquement valides.",
+    "q_footer_left": "Toutes les sources liées sont en accès libre ou accessibles au public.",
+    "q_footer_right": "Mis à jour : juin 2026 · OpenMycoNet / Robert Jank",
+    "q_back": "← Accueil",
+    "q_back_long": "← Retour à l'accueil",
+    "player_hint": "Profitez de la musique pendant que vous explorez le reste du contenu.",
+    "buch_teaser_label": "✦ Téléchargement Gratuit ✦",
+    "buch_teaser_text": "\"Das letzte Korn\" — un roman sur des hommes, les mycorhizes, l'IA et la question de qui appartient la nature et comment y vivre.",
+    "footer_copy": "Robert Jank · Maintal, Allemagne · 2026",
+    "donate_fee_label": "Couvrir les frais de transaction",
+    "footer_impressum": "Mentions légales",
+    "footer_datenschutz": "Confidentialité",
+    "footer_quellen": "Références",
+    "f_title": "Partenaires — OpenMycoNet",
+    "f_section_label": "Partenariat",
+    "f_h1": "Partenaires <em>commerciaux</em>",
+    "f_intro_p1": "Votre contribution nous aide à mieux comprendre les réseaux cachés sous nos pieds. Vous soutenez la recherche ouverte, la science citoyenne et le développement de nouveaux systèmes de mesure pour les champignons, les mycorhizes et la santé des sols. En même temps, votre engagement devient visible – en tant que membre d'un réseau d'entreprises et de personnes qui prennent leurs responsabilités pour l'avenir de nos sols.",
+    "f_intro_p2": "",
+    "f_h2_vorteile": "Ce que les partenaires reçoivent",
+    "f_h2_beitrag": "Cotisation annuelle — librement choisie à partir de 50 €",
+    "f_h2_ablauf": "Comment ça fonctionne",
+    "f_h2_liste": "Partenaires actuels",
+    "f_h2_form": "Devenez partenaire maintenant",
+    "f_vorteile": [
+      {
+        "h": "Inscription dans la liste des partenaires",
+        "p": "Nom, description, coordonnées et lien — visible pour tous les visiteurs d'openmyconet.de."
+      },
+      {
+        "h": "Badge partenaire",
+        "p": "« Partenaire officiel d'OpenMycoNet » — sous forme de badge pour votre site web ou vos réseaux sociaux."
+      },
+      {
+        "h": "Portée communautaire",
+        "p": "Mention dans les e-mails pertinents adressés à notre communauté croissante de scientifiques citoyens."
+      },
+      {
+        "h": "Visibilité thématique",
+        "p": "Votre marque dans le contexte d'une vraie science — crédible, durable, internationale."
+      }
+    ],
+    "f_slider_label": "Votre cotisation",
+    "f_slider_min_hint": "Minimum 50 €",
+    "f_beitrag_note": "La contribution est volontaire et ouverte vers le haut. Tous les partenaires reçoivent la même visibilité — quel que soit le montant choisi.",
+    "f_steps": [
+      {
+        "num": "1. Envoyer une demande",
+        "text": "— via le formulaire ci-dessous ou par e-mail à kontakt@openmyconet.de."
+      },
+      {
+        "num": "2. Bref examen",
+        "text": "— nous vérifions si l'adéquation thématique est présente. Cela prend au maximum 48 heures."
+      },
+      {
+        "num": "3. Effectuer la contribution",
+        "text": "— volontaire, à partir de 50 €, via PayPal ou virement bancaire."
+      },
+      {
+        "num": "4. Inscription en ligne",
+        "text": "— votre entrée apparaît dans la liste des partenaires dans les 24 heures."
+      },
+      {
+        "num": "5. Renouvellement annuel",
+        "text": "— 2 à 3 mois avant l'expiration, vous recevez un e-mail vous demandant si vous souhaitez poursuivre le partenariat. Pas d'automatisme, pas de pression."
+      }
+    ],
+    "f_badge_example": "★ Partenaire officiel ★  |  Exemple d'entrée",
+    "f_name_example": "Votre nom d'entreprise",
+    "f_desc_example": "Une brève description de votre entreprise apparaît ici — ce que vous faites, pourquoi vous soutenez OpenMycoNet et ce qui vous relie au sujet de la mycologie. Environ 2–3 phrases.",
+    "f_link_example": "www.ihre-website.de",
+    "f_premium_note": "Les partenaires premium reçoivent en outre une position mise en évidence et leur logo dans l'entrée. Après votre demande, vous recevrez un questionnaire pour votre inscription personnelle avec téléchargement de logo.",
+    "f_placeholder_1": "✶ Les premiers partenaires d'OpenMycoNet apparaîtront ici ✶",
+    "f_placeholder_2": "Soyez le premier.",
+    "f_lbl_firma": "Entreprise / Nom *",
+    "f_lbl_website": "Website",
+    "f_lbl_email": "Adresse e-mail *",
+    "f_lbl_bereich": "Lien thématique",
+    "f_lbl_beitrag": "Cotisation annuelle souhaitée",
+    "f_lbl_beschreibung": "Brève description de votre entreprise *",
+    "f_opts": [
+      "Culture de champignons / mycologie",
+      "Librairie / éditeur",
+      "Matériaux durables (mycélium)",
+      "Agriculture / agri-tech",
+      "Sylviculture / protection de la nature",
+      "Éducation / recherche",
+      "Autre"
+    ],
+    "f_submit": "Créer l'annonce & devenir partenaire",
+    "f_form_note": "Pas de paiement anticipé — vous payez seulement après l'aperçu. Téléchargement du logo inclus. Facture automatiquement par e-mail.",
+    "f_back": "← Retour à la page d'accueil",
+    "f_success": "✓ Anfrage eingegangen — wir melden uns!",
+    "f_error": "Error — please email kontakt@openmyconet.de",
+    "f_sending": "Envoi...",
+    "f_year_label": "€ / an",
+    "f_selected_label": "Sélectionné:",
+    "f_v0_h": "Inscription dans la liste des partenaires",
+    "f_v0_p": "Nom, description, coordonnées et lien — visibles pour tous les visiteurs d'openmyconet.de.",
+    "f_v1_h": "Badge partenaire",
+    "f_v1_p": "\"Partenaire officiel d'OpenMycoNet\" — en tant que badge pour votre site web ou réseaux sociaux.",
+    "f_v2_h": "Portée communautaire",
+    "f_v2_p": "Mention dans les e-mails pertinents à notre communauté croissante de scientifiques citoyens.",
+    "f_v3_h": "Visibilité thématique",
+    "f_v3_p": "Votre marque dans le contexte d'une vraie science — crédible, durable, internationale.",
+    "f_next_headline": "Rejoignez-nous.",
+    "f_next_sub": "Soutenez notre réseau de science citoyenne — vous pour OpenMycoNet, OpenMycoNet pour tous.",
+    "f_form_intro": "Créez votre propre annonce — avec logo, description et montant. Vous voyez un aperçu avant de payer.",
+    "f_adjustable": "— réglable ci-dessus",
+    "f_cta_h": "Participez.",
+    "f_cta_p": "Soutenez et financez notre réseau de science citoyenne — vous pour OpenMycoNet, OpenMycoNet pour tous.",
+    "a_section_label": "Inscription",
+    "a_h2": "Rejoignez le <em>réseau</em>",
+    "a_intro": "Inscrivez-vous — vous recevrez des nouvelles du projet par e-mail. L'inscription n'est pas liée à un soutien financier.",
+    "a_lbl_name": "Nom (optionnel)",
+    "a_lbl_email": "Adresse e-mail *",
+    "a_lbl_role": "Je suis intéressé(e) en tant que",
+    "a_lbl_msg": "Message (optionnel)",
+    "a_ph_name": "p. ex. Marie Dupont",
+    "a_ph_email": "votre@email.fr",
+    "a_ph_msg": "Questions, idées, remarques...",
+    "a_opt_interessent": "Personne intéressée — rester informé(e) sur le projet",
+    "a_opt_wissenschaftler": "Scientifique / Institut — utiliser les données / collaborer",
+    "a_opt_entwickler": "Développeur logiciel — contribuer à BioComm",
+    "a_opt_unterstuetzer": "Soutien — promouvoir / aider le projet",
+    "a_opt_foerderer": "Partenaire commercial — vers la page partenaires",
+    "a_node_question": "Souhaitez-vous exploiter votre propre nœud BioComm ?",
+    "a_node_yes": "Oui, je souhaite postuler pour un nœud",
+    "a_node_no": "Non",
+    "a_submit": "S'inscrire",
+    "a_newsletter_label": "Oui, je souhaite recevoir toutes les nouvelles du projet par e-mail.",
+    "a_privacy_label": "J'ai lu la [Politique de confidentialité] et consens au traitement de mes données pour le traitement de ma demande. Pas de partage avec des tiers.",
+    "a_privacy_notice": "Vos données sont stockées exclusivement pour le traitement de votre demande. Pas de suivi, pas de newsletter sans votre consentement explicite, pas de partage.",
+    "a_success": "✓ Inscription reçue — bienvenue chez OpenMycoNet !",
+    "a_error": "Erreur — veuillez envoyer un e-mail à kontakt@openmyconet.de",
+    "a_sending": "Envoi en cours...",
+    "a_foerderer_hint": "Les partenaires commerciaux disposent d'une page dédiée :",
+    "a_foerderer_link": "→ Page partenaires",
+    "a_foerderer_note": "Vous pouvez y choisir librement votre contribution (à partir de 50 €/an) et saisir les données de votre entreprise.",
+    "a_node_panel_title": "Candidature : Votre propre nœud BioComm",
+    "a_node_info_title": "Conditions requises et informations",
+    "a_node_info_geo": "📍 Nous recherchons actuellement des opérateurs de nœuds en Allemagne. Dans un deuxième temps, nous étendrons le réseau à la zone DACH, puis au monde entier. Les candidatures d'autres régions sont déjà les bienvenues — nous vous contacterons dès que votre région sera concernée.",
+    "a_node_info_hw": "⚠️ Le matériel est limité. En cas de forte demande, nous gérons une liste d'attente et vous informerons par e-mail dès qu'un appareil sera disponible.",
+    "a_node_req_title": "Conditions minimales",
+    "a_node_req_1": "PC ou smartphone pour la première configuration du pont (saisie unique des identifiants Wi-Fi)",
+    "a_node_req_2": "Disponibilité du Wi-Fi à proximité de l'emplacement prévu pour le pont",
+    "a_node_req_3": "Accès à un substrat approprié : jardin, forêt, compost, pot avec substrat fongique, etc.",
+    "a_node_req_4": "Possibilité d'installation permanente et protégée des intempéries",
+    "a_node_req_5": "Disponibilité pour mesurer pendant au moins 3 mois (résiliable mensuellement ensuite)",
+    "a_node_req_6": "Un seul nœud par opérateur (exceptions sur demande)",
+    "a_node_req_7": "Manipulation de base du matériel — pas de soudure ni de compétences en programmation requises",
+    "a_node_req_8": "Un profil professionnel ou scientifique est un plus (par ex. biologie, foresterie, sciences de l'environnement) — mais pas une condition",
+    "a_node_info_feedback": "✓ Vous recevrez des retours réguliers sur vos données de mesure et serez tenu(e) informé(e) de toutes les actualités.",
+    "a_node_lbl_profession": "Profession / parcours (optionnel)",
+    "a_node_ph_profession": "p. ex. étudiant, retraité, agriculteur, biologiste, passionné, enseignant...",
+    "a_node_lbl_substrat": "Substrat / localisation prévus *",
+    "a_node_ph_substrat": "p. ex. forêt mixte près de Maintal, jardin avec compost, serre...",
+    "a_node_lbl_address": "Adresse (pour la planification, facultatif mais utile)",
+    "a_node_ph_address": "Rue, code postal, ville",
+    "a_node_geocode_btn": "Afficher sur la carte",
+    "a_node_geocode_hint": "Nous aide à planifier les emplacements des ponts. Vous pouvez ensuite affiner en faisant glisser le repère.",
+    "a_node_geocode_error": "Adresse introuvable — précisez-la ou laissez simplement le repère de côté.",
+    "a_node_lbl_motivation": "Texte de candidature *",
+    "a_node_ph_motivation": "Parlez-nous de vous et expliquez pourquoi vous souhaitez participer — même si vous ne correspondez pas à tous les critères. Au moins 3-4 phrases.",
+    "a_node_lbl_loan": "J'accepte les conditions de prêt (caution env. 100 €, retour à la fin de la mesure) *",
+    "a_node_submit": "Envoyer la candidature",
+    "a_node_success": "✓ Votre candidature a été reçue. Nous l'examinerons attentivement et vous répondrons par e-mail. En cas de forte demande ou de matériel non encore disponible dans votre région, vous serez placé(e) sur notre liste d'attente — vous serez informé(e) dès qu'une place se libère.",
+    "a_node_success_confirm": "Cela vous inscrit également automatiquement — veuillez confirmer votre adresse e-mail via le lien que nous venons de vous envoyer. ",
+    "a_node_sending": "Envoi de la candidature...",
+    "a_node_error": "Erreur — veuillez envoyer un e-mail à kontakt@openmyconet.de",
+    "br_label": "Brochure",
+    "br_caption_1": "Le savoir est là.",
+    "br_caption_2": "Il est partagé.",
+    "br_caption_3": "Il éveille la curiosité.",
+    "br_tagline": "Ce que nous faisons — compréhensible pour tous.",
+    "br_btn": "↓ Télécharger la brochure",
+    "br_note": "PDF · gratuit · libre de partage (CC BY-NC-SA 4.0)",
+    "meta_desc_index": "Un réseau mondial de science citoyenne enregistrant les signaux bioélectriques des réseaux mycorhiziens et fongiques. Participez, partagez des données, faites avancer la science."
+  },
+  "es": {
+    "nav_warum": "Por qué",
+    "nav_mitmachen": "Unirse",
+    "nav_spenden": "Apoyar",
+    "nav_anmelden": "Registrarse",
+    "nav_ueber": "Acerca de",
+    "nav_medien": "Medios",
+    "label_medien": "OpenMycoNet · Medios",
+    "h1_medien": "Folleto, música y libro",
+    "desc_medien": "Todo para escuchar, leer y descargar en un solo lugar — el folleto, las canciones del proyecto y la novela «Das letzte Korn».",
+    "nav_foerderer": "Patrocinadores",
+    "nav_quellen": "Fuentes",
+    "nav_news": "Noticias",
+    "nav_leihgeraete": "Dispositivo en préstamo",
+    "btn_leihgeraet": "⬡ Pedir prestado un nodo BioComm",
+    "leih_edition_1_name": "Edición Forest Camouflage",
+    "leih_edition_1_desc": "Patrón de camuflaje para despliegue en bosque — se mezcla con el entorno.",
+    "leih_edition_2_name": "Edición Musgo",
+    "leih_edition_2_desc": "Carcasa verde musgo, discreta e inspirada en la naturaleza.",
+    "leih_edition_3_name": "Edición Micelio",
+    "leih_edition_3_desc": "Gris oscuro marmolado con textura de micelio — urbano y científico.",
+    "leih_page_title": "OpenMycoNet · Dispositivo en préstamo BioComm",
+    "leih_seo_desc": "Biosensor open source compacto para señales bioeléctricas en redes micorrícicas. Nodo de préstamo gratuito para científicos ciudadanos — regístrate ahora.",
+    "leih_label": "Programa de préstamo",
+    "leih_h1": "El nodo BioComm<br><em>en préstamo</em>",
+    "leih_status_label": "Estado del proyecto",
+    "leih_status": "Desarrollo de hardware completado · Primeros dispositivos en preparación",
+    "leih_preview_label": "Así serán los nodos",
+    "leih_preview_intro": "El nodo de medición BioComm se entrega como dispositivo compacto, preinstalado y listo para usar. Introduzca los electrodos en el suelo — el nodo transmite los datos al puente mediante LoRa, que los reenvía al servidor central por WiFi. Este enlace de radio forma parte de la generación de hardware actualmente en desarrollo.",
+    "leih_specs_label": "Datos técnicos",
+    "leih_specs": [
+      {
+        "label": "Procesador",
+        "value": "ESP32 + módulo de radio LoRa"
+      },
+      {
+        "label": "Conexión de radio",
+        "value": "LoRa hacia el puente (1–3 km en bosque) · El puente se conecta al servidor central por WiFi — en desarrollo, aún no distribuido"
+      },
+      {
+        "label": "ADC",
+        "value": "16 bits, 8 canales"
+      },
+      {
+        "label": "Sensores",
+        "value": "Señales bioeléctricas + datos de suelo & ambientales (temperatura, humedad, CO₂)"
+      },
+      {
+        "label": "Alimentación",
+        "value": "USB-C o batería LiPo"
+      },
+      {
+        "label": "Carcasa",
+        "value": "IP65, resistente a la intemperie"
+      }
+    ],
+    "leih_how_label": "Cinco pasos para su nodo de medición",
+    "leih_preview_h2": "Así serán<br>los <em>nodos</em>",
+    "leih_ki_hint": "⚠ Estas visualizaciones están generadas por IA. Los dispositivos reales se parecerán en torno a un 80 % a esto — el diseño de color definitivo aún no está decidido.",
+    "leih_specs_h2": "Lo que el nodo<br><em>puede hacer</em>",
+    "leih_how_h2": "Cinco pasos hacia<br>tu <em>nodo de medición</em>",
+    "leih_bridge_h2": "El <em>Hub</em>",
+    "leih_bridge_warning": "⚠ El enlace de radio (LoRa/WiFi) forma parte de la generación de hardware actualmente en desarrollo y aún no se ha distribuido.",
+    "leih_bridge_desc": "El BioComm Bridge conecta hasta 4 nodos de medición simultáneamente por radio LoRa (punto a punto, con un alcance realista de 1 a 3 km en bosque) y reenvía todos los datos al servidor central por WiFi. Los LED Node 1–4 muestran el estado de la conexión en tiempo real.",
+    "leih_bridge_li1": "ESP32 con módulo de radio LoRa",
+    "leih_bridge_li2": "Conexión WiFi al servidor central",
+    "leih_bridge_li3": "4 LED de estado de nodo",
+    "leih_bridge_li4": "Carcasa de sobremesa compacta",
+    "leih_system_label": "El Sistema Completo",
+    "leih_system_h2": "BioComm <em>en acción</em>",
+    "leih_system_desc": "Cuatro nodos BioComm en el suelo, conectados al puente mediante LoRa, datos de medición en vivo en el panel — así es OpenMycoNet en la práctica. Cada nodo mide de forma independiente, el puente agrega todos los flujos de datos y los transmite al servidor central por WiFi.",
+    "leih_how": [
+      {
+        "h": "Registrarse",
+        "p": "Rellenar el formulario en la página principal — sustrato, ubicación, motivación."
+      },
+      {
+        "h": "Depositar fianza",
+        "p": "Aprox. 100 € de depósito (importe definitivo por confirmar). Se reembolsa íntegramente al devolver."
+      },
+      {
+        "h": "Recibir el dispositivo",
+        "p": "El nodo BioComm se entrega por correo — preinstalado y listo para usar."
+      },
+      {
+        "h": "Medir",
+        "p": "Insertar electrodos en el sustrato, introducir datos WiFi — listo. El dispositivo funciona automáticamente."
+      },
+      {
+        "h": "Devolver",
+        "p": "Devolución posible en cualquier momento. Se reembolsa el depósito."
+      }
+    ],
+    "leih_register_btn": "Registrarse ahora para el programa de préstamo",
+    "leih_back": "← Volver a la página principal",
+    "nav_menu": "Menú",
+    "btn_fragen": "⬤ ¿Preguntas?",
+    "hero_sub": "Una red mundial de ciencia ciudadana que registra señales bioeléctricas de redes micorrícicas y fúngicas. Las señales existen — la pregunta es qué significan.",
+    "live_badge": "nodo activo — sé el siguiente",
+    "btn_join": "Unirse ahora",
+    "btn_support": "Apoyar el proyecto",
+    "label_vision": "La pregunta mayor",
+    "label_warum": "El Por qué",
+    "label_mitmachen": "Cómo funciona",
+    "label_daten": "Transparencia",
+    "label_spenden": "Apoyo",
+    "label_anmelden": "Registro",
+    "label_ueber": "El proyecto",
+    "h2_vision": "Lo que se vuelve posible cuando <em>comprendemos</em>",
+    "h2_warum": "Una red que<br><em>escucha</em>",
+    "h2_mitmachen": "Tu propio nodo<br>en cuatro <em>pasos</em>",
+    "h2_daten": "Cómo fluyen<br>tus <em>datos</em>",
+    "h2_spenden": "Apoyar<br>el <em>proyecto</em>",
+    "h2_anmelden": "Forma parte<br>de la <em>red</em>",
+    "h2_ueber": "Ciencia independiente<br>desde <em>abajo</em>",
+    "vision_p1": "Bajo nuestros pies se encuentra la red de comunicación más antigua y extensa de la Tierra. Los hongos micorrícicos llevan 400 millones de años conectando casi todas las plantas terrestres — transportan nutrientes, transmiten señales de advertencia y coordinan la vida en el suelo de maneras que apenas comenzamos a comprender. Emiten señales eléctricas. Medibles. Reproducibles. Y apenas descifradas hasta ahora.",
+    "vision_p2": "¿Qué ocurre cuando dejamos de analizar los suelos solo desde el exterior — y empezamos a escuchar lo que la red misma está enviando? ¿Y si la planta lleva tiempo diciéndonos que tiene sed, antes de que podamos verlo? ¿Y si el propio suelo nos avisa de la llegada de una plaga, antes de que aparezca el primer daño?",
+    "vision_p3": "No son preguntas especulativas. La base científica existe. Lo que falta son datos — muchos, de diferentes zonas climáticas, sustratos, estaciones. Ningún laboratorio puede proporcionar eso solo. Pero una comunidad mundial de personas que miden en su jardín, su bosque, su invernadero — sí puede.",
+    "vision_quote": "La red transmite. Apenas hemos empezado a escuchar.",
+    "vision_closing": "Cada nodo BioComm que entra en funcionamiento en cualquier parte del mundo nos acerca un paso más a la comprensión — para todos.",
+    "desc_warum": "Los hongos micorrícicos conectan más del 90% de todas las plantas terrestres. Envían señales eléctricas — medibles, reproducibles, enigmáticas. Juntos podemos entender qué significan.",
+    "desc_mitmachen": "Los resultados y datos de la red están abiertos a todos — incluso sin operar tu propio nodo. Si quieres operar tú mismo un nodo BioComm, postúlate abajo para una de las plazas seleccionadas.",
+    "desc_daten": "Las coordenadas GPS se redondean a 10×10 km — sin ubicación exacta. Sin datos personales. Todos los datos brutos accesibles públicamente.",
+    "label_musik": "Música",
+    "musik_p1": "Las redes más antiguas de la Tierra no hablan con palabras.<br>Conectan, reaccionan y recuerdan.",
+    "musik_p2": "Las canciones de esta colección surgieron como acompañamiento musical a la idea de escuchar con más atención.",
+    "musik_p3": "Nos alegra que estés aquí.",
+    "musik_ki_hinweis": "La música y las voces están generadas por IA, texto de Robert Jank.",
+    "player_more_link": "¿Más música?",
+    "label_kooperationen": "Juntos",
+    "h2_kooperationen": "Patrocinadores & <em>colaboraciones</em>",
+    "desc_kooperationen": "Empresas y proyectos que apoyan a OpenMycoNet y colaboran con nosotros.",
+    "link_kooperationen": "Ver todos los patrocinadores →",
+    "desc_anmelden": "Regístrate — te informaremos cuando OpenMycoNet se lance oficialmente y te enviaremos la guía de hardware.",
+    "donate_p": "OpenMycoNet es un proyecto de ciencia ciudadana independiente sin financiación institucional. Los costes de servidor y el desarrollo posterior se financian con donaciones voluntarias. Cada aportación cuenta.",
+    "donate_note": "Puedes donar sin registrarte, pero nos alegraría mucho que lo hicieras y así formaras parte de la red.",
+    "donate_claim": "Nosotros por OpenMycoNet — OpenMycoNet para todos.",
+    "buch_label": "Descarga gratuita",
+    "buch_desc": "Una historia sobre la simbiosis del tercer tipo",
+    "buch_btn": "↓ Descargar novela",
+    "buch_note": "PDF · gratuito · Robert Jank · 2026",
+    "about_p1": "OpenMycoNet fue iniciado por Robert Jank, inventor independiente de Maintal, cerca de Frankfurt — sin afiliación institucional, con el objetivo de comprender qué señalizan eléctricamente las redes micorrícicas.",
+    "about_p2": "El sistema BioComm subyacente está protegido por un El sistema BioComm subyacente está protegido por un modelo de utilidad registrado en la DPMA. El software se proporciona como .exe portátil. Los datos de medición pertenecen a la comunidad.",
+    "about_p3": "Principio: Proprietary Intelligence, Open Data — el modelo de IA está protegido, los datos que lo entrenan son libres.",
+    "btn_contact": "Contacto",
+    "btn_register": "Registrarse ahora",
+    "vision_apps": [
+      {
+        "label": "Agricultura de precisión",
+        "text": "Una vez que conozcamos los patrones de señales del estrés hídrico, las deficiencias y las infestaciones, los agricultores podrán reaccionar antes de que se produzcan daños — sin químicos, sin tratamientos indiscriminados, sin suposiciones.",
+        "italic": "La red micorrícica como sistema de alerta temprana para el campo."
+      },
+      {
+        "label": "Protección forestal",
+        "text": "Los bosques se comunican a través de su red fúngica subterránea. Los cambios en los patrones de señales podrían indicar sequía, infestación de escarabajos o riesgo de incendio — semanas antes de que sea visible.",
+        "italic": "El bosque que nos avisa antes de que sea demasiado tarde."
+      },
+      {
+        "label": "Regeneración del suelo",
+        "text": "La estimulación frecuencial dirigida puede influir en la actividad de las redes micorrícicas — potencialmente para regenerar suelos dañados más rápido y favorecer el transporte de nutrientes.",
+        "italic": "No química, sino diálogo con el suelo."
+      },
+      {
+        "label": "Protección del clima",
+        "text": "Las redes micorrícicas saludables secuestran CO₂ de forma demostrable. BioComm podría servir como herramienta de monitoreo independiente para certificados de carbono del suelo — continua, independiente de la ubicación, a prueba de falsificaciones.",
+        "italic": "El suelo como protector climático medible."
+      },
+      {
+        "label": "Investigación fundamental",
+        "text": "Adamatzky et al. han demostrado que los trenes de espigas fúngicas presentan similitudes estructurales con los lenguajes humanos. Si eso es cierto — ¿qué están diciendo? Cada medición en la red OpenMycoNet es un punto de datos en el camino hacia la respuesta.",
+        "italic": "Descifrar el idioma más antiguo de la Tierra."
+      },
+      {
+        "label": "Lo que aún no sabemos",
+        "text": "Quizás existen patrones de señales que aún no conocemos. Quizás las redes se comunican a distancias de maneras que nuestros modelos no predicen. Esa es la verdadera razón de OpenMycoNet — no confirmar hipótesis, sino descubrir sorpresas.",
+        "italic": "Las respuestas más interesantes son aquellas que aún no hemos pensado en preguntar."
+      }
+    ],
+    "cards": [
+      {
+        "h": "Base de datos global",
+        "p": "Tu medición en Maintal, una en Osaka, una en São Paulo — juntas forman un conjunto de datos que ningún laboratorio podría producir por sí solo."
+      },
+      {
+        "h": "Ciencia real",
+        "p": "Las señales existen de forma demostrable (Adamatzky et al., 2022). Tú ayudas a descubrir qué significan."
+      },
+      {
+        "h": "IA que sigue aprendiendo",
+        "p": "Cada medición mejora el modelo de IA compartido. Cuantos más participantes, más inteligente es el sistema — para todos."
+      },
+      {
+        "h": "Datos abiertos",
+        "p": "Todos los datos de medición bajo Creative Commons CC BY 4.0 — libres para la ciencia y la investigación."
+      },
+      {
+        "h": "Esfuerzo mínimo",
+        "p": "Electrodos en la maceta, iniciar BioComm, listo. El sistema funciona en segundo plano."
+      },
+      {
+        "h": "Ciencia ciudadana",
+        "p": "Como SETI@home — con una diferencia crucial: las señales que buscamos ya están ahí."
+      }
+    ],
+    "steps": [
+      {
+        "h": "Tomar hardware en préstamo",
+        "p": "Recibe un dispositivo de medición BioComm en préstamo — depósito aprox. 100 € (costes finales por confirmar). Devolución en cualquier momento.",
+        "cost": "Depósito aprox. 100 €"
+      },
+      {
+        "h": "Descargar BioComm",
+        "p": "Descarga el software BioComm de forma gratuita — sin instalación, sin Python necesario.",
+        "cost": "Gratuito"
+      },
+      {
+        "h": "Colocar electrodos",
+        "p": "Agujas en tierra, maceta o compost con sustrato fúngico o micorrícico.",
+        "cost": "5 minutos"
+      },
+      {
+        "h": "Medir & compartir",
+        "p": "BioComm se conecta automáticamente y sube los datos. El análisis y la anonimización se realizan localmente en tu dispositivo — ningún dato bruto abandona tu PC.",
+        "cost": ""
+      }
+    ],
+    "flow_nodes": [
+      {
+        "h": "Tu nodo",
+        "p": "Electrodos en sustrato"
+      },
+      {
+        "h": "BioComm.exe",
+        "p": "Análisis &amp; anonimización — localmente en tu PC"
+      },
+      {
+        "h": "OpenMycoNet",
+        "p": "Servidor &amp; entrenamiento IA"
+      },
+      {
+        "h": "Open Data",
+        "p": "CC BY 4.0 — libre para todos"
+      },
+      {
+        "h": "KI-Update",
+        "p": "De vuelta a todos los nodos"
+      }
+    ],
+    "facts": [
+      {
+        "num": "400M",
+        "text": "millones de años — así de antiguos son las redes micorrícicas en la Tierra"
+      },
+      {
+        "num": "90%",
+        "text": "de todas las plantas terrestres están conectadas a hongos micorrícicos"
+      },
+      {
+        "num": "8",
+        "text": "canales registra BioComm simultáneamente, hasta 10.000 Hz"
+      },
+      {
+        "num": "~100€",
+        "text": "depósito para un dispositivo BioComm en préstamo (aprox., costes finales por confirmar)"
+      }
+    ],
+    "form_options": {
+      "interessent": "Interesado — mantenerse informado sobre el proyecto",
+      "wissenschaftler": "Científico / Instituto — usar datos / colaborar",
+      "entwickler": "Desarrollador de software — contribuir a BioComm",
+      "unterstuetzer": "Apoyo — promocionar / ayudar al proyecto",
+      "foerderer": "Patrocinador comercial — a la página de patrocinadores"
+    },
+    "q_page_tag": "OpenMycoNet · Fundamentos Científicos",
+    "q_h1_html": "Referencias &amp;<br><em>Ruta del conocimiento</em>",
+    "q_subtitle": "OpenMycoNet se basa en un fundamento científico transparente. Cada paso de nuestra ruta del conocimiento — desde la investigación básica sobre micorrizas hasta la ciencia ciudadana aplicada — está respaldado por investigaciones publicadas.",
+    "q_intro_strong": "Nota de transparencia:",
+    "q_intro": "No todos los trabajos enumerados apoyan directamente los objetivos de OpenMycoNet. Forman el fundamento científico sobre el que se construyen nuestras preguntas — incluidas las perspectivas críticas. Medimos porque los datos aún son escasos, no porque todo esté probado.",
+    "q_path_label": "Ruta Científica del Conocimiento",
+    "q_path_1": "01 · Micorriza",
+    "q_path_2": "02 · Redes",
+    "q_path_kritik": "! · Crítica",
+    "q_path_3": "03 · Act. eléctrica",
+    "q_path_4": "04 · Medibilidad",
+    "q_path_5": "05 · Patrones IA",
+    "q_path_6": "06 · Ciencia ciudadana",
+    "q_s1_step": "Paso 01 — Micorrizas & Redes",
+    "q_s1_title": "Las plantas se comunican bajo tierra",
+    "q_s1_desc": "El trabajo pionero de Suzanne Simard estableció el concepto de la red micorrícica como un canal de información real entre plantas — no una metáfora, sino un hecho medido.",
+    "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
+    "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
+    "q_ref14_relevanz": "Muestra que G. intraradices reduce deliberadamente la absorción de P de una zona del suelo no enriquecida en cuanto se explota un parche enriquecido — los autores señalan explícitamente que aún se desconocen las moléculas de señalización que coordinan esto en la red de hifas. La propagación de señales eléctricas en el micelio es un candidato plausible.",
+    "q_sk_step": "! Perspectiva crítica — Contexto científico",
+    "q_sk_title": "Lo que realmente está probado — y lo que no",
+    "q_sk_desc": "No todas las afirmaciones populares sobre el \"Wood Wide Web\" están suficientemente respaldadas por estudios de campo. OpenMycoNet incorpora explícitamente esta crítica.",
+    "q_s2_step": "Paso 02 — Actividad Eléctrica",
+    "q_s2_title": "Los hongos emiten señales eléctricas medibles",
+    "q_s2_desc": "Los impulsos bioeléctricos en el micelio muestran características neuronales: patrones de disparo, propagación de señales, propiedades no lineales.",
+    "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+    "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
+    "q_ref08_relevanz": "El estudio de validación metodológicamente más avanzado hasta la fecha: electrodos en PCB, jaula de Faraday y controles con biocidas confirman el origen biológico de las señales miceliales — respaldo metodológico directo para el enfoque de BioComm.",
+    "q_s3_step": "Paso 03 — Medibilidad, Sensores & Reconocimiento de patrones IA",
+    "q_s3_title": "De la observación al cálculo",
+    "q_s3_desc": "El trabajo de Andrew Adamatzky muestra que las señales del micelio son técnicamente utilizables — como puertas lógicas, frecuencias transmisibles e interfaz directa con la IA.",
+    "q_s4_step": "Contexto — Ciencia popular",
+    "q_s4_title": "El libro que lo resume todo",
+    "q_s4_desc": "La obra de referencia de Merlin Sheldrake transmite la complejidad biológica de los organismos fúngicos a un amplio público.",
+    "q_s5_step": "Paso 04 — Ciencia Ciudadana",
+    "q_s5_title": "Ciencia a través de la observación colectiva",
+    "q_s5_desc": "Plataformas de ciencia ciudadana como iNaturalist y FunDive demuestran que las mediciones amateur distribuidas pueden producir datos científicamente válidos.",
+    "q_footer_left": "Todas las fuentes enlazadas son de acceso abierto o accesibles públicamente.",
+    "q_footer_right": "Actualizado: junio 2026 · OpenMycoNet / Robert Jank",
+    "q_back": "← Inicio",
+    "q_back_long": "← Volver al inicio",
+    "player_hint": "Disfruta de la música mientras exploras el resto del contenido.",
+    "buch_teaser_label": "✦ Descarga Gratuita ✦",
+    "buch_teaser_text": "\"Das letzte Korn\" — una novela sobre personas, micorrizas, IA y la pregunta de a quién pertenece la naturaleza y cómo podríamos vivir con ella.",
+    "footer_copy": "Robert Jank · Maintal, Alemania · 2026",
+    "donate_fee_label": "Cubrir los costes de transacción",
+    "footer_impressum": "Aviso legal",
+    "footer_datenschutz": "Privacidad",
+    "footer_quellen": "Referencias",
+    "f_title": "Patrocinadores — OpenMycoNet",
+    "f_section_label": "Asociación",
+    "f_h1": "Patrocinadores <em>comerciales</em>",
+    "f_intro_p1": "Su aportación nos ayuda a comprender mejor las redes ocultas bajo nuestros pies. Apoya la investigación abierta, la ciencia ciudadana y el desarrollo de nuevos sistemas de medición para hongos, micorrizas y salud del suelo. Al mismo tiempo, su compromiso se hace visible – como parte de una red de empresas y personas que asumen la responsabilidad por el futuro de nuestros suelos.",
+    "f_intro_p2": "",
+    "f_h2_vorteile": "Lo que reciben los patrocinadores",
+    "f_h2_beitrag": "Cuota anual — libre elección desde 50 €",
+    "f_h2_ablauf": "Cómo funciona",
+    "f_h2_liste": "Patrocinadores actuales",
+    "f_h2_form": "Conviértase en patrocinador ahora",
+    "f_vorteile": [
+      {
+        "h": "Entrada en la lista de patrocinadores",
+        "p": "Nombre, descripción, datos de contacto y enlace — visible para todos los visitantes de openmyconet.de."
+      },
+      {
+        "h": "Insignia de patrocinador",
+        "p": "\"Patrocinador oficial de OpenMycoNet\" — como insignia para su sitio web o redes sociales."
+      },
+      {
+        "h": "Alcance comunitario",
+        "p": "Mención en correos electrónicos relevantes a nuestra creciente comunidad de científicos ciudadanos."
+      },
+      {
+        "h": "Visibilidad temática",
+        "p": "Su marca en el contexto de la ciencia real — creíble, sostenible, internacional."
+      }
+    ],
+    "f_slider_label": "Su cuota",
+    "f_slider_min_hint": "50 €",
+    "f_beitrag_note": "La contribución es voluntaria y abierta hacia arriba. Todos los patrocinadores reciben la misma visibilidad — independientemente del importe elegido.",
+    "f_steps": [
+      {
+        "num": "1. Enviar consulta",
+        "text": "— a través del formulario a continuación o por correo electrónico a kontakt@openmyconet.de."
+      },
+      {
+        "num": "2. Revisión breve",
+        "text": "— comprobamos si existe la adecuación temática. Esto tarda un máximo de 48 horas."
+      },
+      {
+        "num": "3. Realizar la contribución",
+        "text": "— voluntaria, desde 50 €, por PayPal o transferencia bancaria."
+      },
+      {
+        "num": "4. Entrada activa",
+        "text": "— su entrada aparece en la lista de patrocinadores en un plazo de 24 horas."
+      },
+      {
+        "num": "5. Renovación anual",
+        "text": "— 2–3 meses antes del vencimiento recibirá un correo electrónico preguntando si desea continuar la asociación. Sin renovación automática, sin presión."
+      }
+    ],
+    "f_badge_example": "★ Patrocinador oficial ★  |  Ejemplo de entrada",
+    "f_name_example": "Nombre de su empresa",
+    "f_desc_example": "Aquí aparece una breve descripción de su empresa — qué hace, por qué apoya OpenMycoNet y qué le une al tema de la micología. Aprox. 2–3 frases.",
+    "f_link_example": "www.ihre-website.de",
+    "f_premium_note": "Los patrocinadores premium reciben adicionalmente una posición destacada y su logotipo en la entrada. Tras su consulta recibirá un cuestionario para su entrada personal incluida la carga del logotipo.",
+    "f_placeholder_1": "✶ Aquí aparecerán los primeros patrocinadores de OpenMycoNet ✶",
+    "f_placeholder_2": "Sea el primero.",
+    "f_lbl_firma": "Empresa / Nombre *",
+    "f_lbl_website": "Website",
+    "f_lbl_email": "Dirección de correo *",
+    "f_lbl_bereich": "Conexión temática",
+    "f_lbl_beitrag": "Cuota anual deseada",
+    "f_lbl_beschreibung": "Breve descripción de su empresa *",
+    "f_opts": [
+      "Cultivo de setas / micología",
+      "Librería / editorial",
+      "Materiales sostenibles (micelio)",
+      "Agricultura / agri-tech",
+      "Silvicultura / conservación de la naturaleza",
+      "Educación / investigación",
+      "Otro"
+    ],
+    "f_submit": "Diseñar entrada & convertirse en patrocinador",
+    "f_form_note": "Sin pago anticipado — paga solo después de la vista previa. Carga de logo incluida. Factura automáticamente por correo.",
+    "f_back": "← Volver a la página de inicio",
+    "f_success": "✓ Anfrage eingegangen — wir melden uns!",
+    "f_error": "Error — please email kontakt@openmyconet.de",
+    "f_sending": "Enviando...",
+    "f_year_label": "€ / año",
+    "f_selected_label": "Seleccionado:",
+    "f_v0_h": "Entrada en la lista de patrocinadores",
+    "f_v0_p": "Nombre, descripción, datos de contacto y enlace — visible para todos los visitantes de openmyconet.de.",
+    "f_v1_h": "Insignia de patrocinador",
+    "f_v1_p": "\"Patrocinador oficial de OpenMycoNet\" — como insignia para su sitio web o redes sociales.",
+    "f_v2_h": "Alcance comunitario",
+    "f_v2_p": "Mención en correos relevantes a nuestra creciente comunidad de científicos ciudadanos.",
+    "f_v3_h": "Visibilidad temática",
+    "f_v3_p": "Su marca en el contexto de ciencia real — creíble, sostenible, internacional.",
+    "f_next_headline": "Únase a nosotros.",
+    "f_next_sub": "Apoye nuestra red de ciencia ciudadana — usted para OpenMycoNet, OpenMycoNet para todos.",
+    "f_form_intro": "Diseñe su propia entrada — con logo, descripción e importe. Verá una vista previa antes de pagar.",
+    "f_adjustable": "— ajustable arriba",
+    "f_cta_h": "Únase.",
+    "f_cta_p": "Apoye y financie nuestra red de ciencia ciudadana — usted por OpenMycoNet, OpenMycoNet para todos.",
+    "a_section_label": "Registro",
+    "a_h2": "Únete a la <em>red</em>",
+    "a_intro": "Regístrate — recibirás noticias relevantes del proyecto por correo. El registro no está vinculado a ningún apoyo financiero.",
+    "a_lbl_name": "Nombre (opcional)",
+    "a_lbl_email": "Dirección de correo *",
+    "a_lbl_role": "Me interesa como",
+    "a_lbl_msg": "Mensaje (opcional)",
+    "a_ph_name": "p. ej. María García",
+    "a_ph_email": "tu@email.es",
+    "a_ph_msg": "Preguntas, ideas, comentarios...",
+    "a_opt_interessent": "Interesado — mantenerse informado sobre el proyecto",
+    "a_opt_wissenschaftler": "Científico / Instituto — usar datos / colaborar",
+    "a_opt_entwickler": "Desarrollador de software — contribuir a BioComm",
+    "a_opt_unterstuetzer": "Apoyo — promocionar / ayudar al proyecto",
+    "a_opt_foerderer": "Patrocinador comercial — a la página de patrocinadores",
+    "a_node_question": "¿Te gustaría operar tu propio nodo BioComm?",
+    "a_node_yes": "Sí, me gustaría solicitar un nodo",
+    "a_node_no": "No",
+    "a_submit": "Registrarse",
+    "a_newsletter_label": "Sí, me gustaría recibir todas las noticias del proyecto por correo.",
+    "a_privacy_label": "He leído la [Política de privacidad] y consiento el tratamiento de mis datos para gestionar mi solicitud. Sin cesión a terceros.",
+    "a_privacy_notice": "Tus datos se almacenan exclusivamente para gestionar tu solicitud. Sin seguimiento, sin boletín sin tu consentimiento explícito, sin cesión.",
+    "a_success": "✓ Registro recibido — ¡bienvenido/a a OpenMycoNet!",
+    "a_error": "Error — por favor envía un correo a kontakt@openmyconet.de",
+    "a_sending": "Enviando...",
+    "a_foerderer_hint": "Los patrocinadores comerciales tienen una página dedicada:",
+    "a_foerderer_link": "→ Página de patrocinadores",
+    "a_foerderer_note": "Allí puede elegir libremente su contribución (desde 50 €/año) e introducir los datos de su empresa.",
+    "a_node_panel_title": "Solicitud: Tu propio nodo BioComm",
+    "a_node_info_title": "Requisitos e información",
+    "a_node_info_geo": "📍 Actualmente buscamos operadores de nodos en Alemania. En un segundo paso ampliaremos la red a la región DACH y finalmente a todo el mundo. Las solicitudes de otras regiones ya son bienvenidas — nos pondremos en contacto cuando llegue el turno de tu región.",
+    "a_node_info_hw": "⚠️ El hardware es limitado. Si la demanda es alta, mantenemos una lista de espera y te notificaremos por correo en cuanto haya un dispositivo disponible.",
+    "a_node_req_title": "Requisitos mínimos",
+    "a_node_req_1": "PC o smartphone para la configuración inicial del puente (introducir los datos Wi-Fi una sola vez)",
+    "a_node_req_2": "Disponibilidad de Wi-Fi cerca de la ubicación prevista del puente",
+    "a_node_req_3": "Acceso a sustrato adecuado: jardín, bosque, compost, maceta con sustrato fúngico, etc.",
+    "a_node_req_4": "Posibilidad de instalación permanente y protegida de las inclemencias",
+    "a_node_req_5": "Disponibilidad para medir durante al menos 3 meses (cancelable mensualmente después)",
+    "a_node_req_6": "Un nodo por operador (excepciones previo acuerdo)",
+    "a_node_req_7": "Manejo básico de hardware — no se requiere soldar ni conocimientos de programación",
+    "a_node_req_8": "Un perfil profesional o científico es una ventaja (p. ej. biología, ciencias forestales, ciencias ambientales) — pero no un requisito",
+    "a_node_info_feedback": "✓ Recibirás comentarios regulares sobre tus datos de medición y estarás informado/a de todas las novedades.",
+    "a_node_lbl_profession": "Profesión / formación (opcional)",
+    "a_node_ph_profession": "p. ej. estudiante, jubilado, agricultor, bióloga, aficionado, profesor...",
+    "a_node_lbl_substrat": "Sustrato / ubicación planificados *",
+    "a_node_ph_substrat": "p. ej. bosque mixto cerca de Maintal, jardín con compost, invernadero...",
+    "a_node_lbl_address": "Dirección (para planificar ubicaciones, opcional pero útil)",
+    "a_node_ph_address": "Calle, código postal, ciudad",
+    "a_node_geocode_btn": "Mostrar en el mapa",
+    "a_node_geocode_hint": "Nos ayuda a planificar bien las ubicaciones del puente. Puedes arrastrar el pin después para ajustarlo.",
+    "a_node_geocode_error": "Dirección no encontrada — sé más preciso, o simplemente omite el pin.",
+    "a_node_lbl_motivation": "Texto de solicitud *",
+    "a_node_ph_motivation": "Cuéntanos sobre ti y por qué quieres participar — aunque no cumplas todos los criterios. Al menos 3-4 frases.",
+    "a_node_lbl_loan": "Acepto las condiciones de préstamo (depósito aprox. 100 €, devolución al finalizar la medición) *",
+    "a_node_submit": "Enviar solicitud",
+    "a_node_success": "✓ Tu solicitud ha sido recibida. La revisaremos cuidadosamente y te responderemos por correo. Si la demanda es alta o el hardware aún no está disponible en tu región, te pondremos en lista de espera — te notificaremos en cuanto haya un lugar disponible.",
+    "a_node_success_confirm": "Con esto también quedas registrado/a — por favor confirma tu dirección de correo a través del enlace que acabamos de enviarte. ",
+    "a_node_sending": "Enviando solicitud...",
+    "a_node_error": "Error — por favor envía un correo a kontakt@openmyconet.de",
+    "br_label": "Folleto",
+    "br_caption_1": "El conocimiento existe.",
+    "br_caption_2": "Se comparte.",
+    "br_caption_3": "Despierta curiosidad.",
+    "br_tagline": "Lo que hacemos — explicado para todos.",
+    "br_btn": "↓ Descargar folleto",
+    "br_note": "PDF · gratuito · libre para compartir (CC BY-NC-SA 4.0)",
+    "meta_desc_index": "Una red mundial de ciencia ciudadana que registra señales bioeléctricas de redes micorrícicas y fúngicas. Únete, comparte datos, avanza en la ciencia."
+  }
+}

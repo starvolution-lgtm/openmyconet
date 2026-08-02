@@ -244,8 +244,8 @@
       color: #e8f5e0; letter-spacing: 0.02em;
     }
     .omn-hsub {
-      font-size: 10px; color: #6ee87e; opacity: 0.75;
-      margin-top: 2px; letter-spacing: 0.05em;
+      font-size: 11px; color: #6ee87e; opacity: 0.9;
+      margin-top: 3px; letter-spacing: 0.05em;
     }
     .omn-hstate {
       font-size: 9px; color: #d4a030; opacity: 0.6;
@@ -320,10 +320,10 @@
 
     /* Sprachauswahl */
     .omn-lang-btn {
-      cursor: pointer; opacity: 0.5;
+      cursor: pointer; opacity: 0.7; padding: 2px 1px;
       transition: opacity 0.2s, color 0.2s;
     }
-    .omn-lang-btn:hover { opacity: 0.9; }
+    .omn-lang-btn:hover { opacity: 1; }
     .omn-lang-btn.omn-lang-active {
       opacity: 1; color: #d4a030; font-weight: 700;
     }

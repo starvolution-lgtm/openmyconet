@@ -1,0 +1,222 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('f_title') }}{% endblock %}
+{% block meta_description %}{{ t('f_intro_p1') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/foerderer.html">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/foerderer.html?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/foerderer.html?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/foerderer.html?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/foerderer.html?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/foerderer.html">
+<link rel="canonical" href="https://www.openmyconet.de/foerderer.html">
+{% endblock %}
+
+{% block mobile_menu_self_link %}
+<a href="{{ live('leihgeraete.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_leihgeraete">{{ t('nav_leihgeraete') }}</a>
+{% endblock %}
+
+{% block extra_css %}
+.section-label { font-family:'Lora',Georgia,serif; font-size:0.68rem; color:#f0b84a; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:1rem; }
+.main h1 { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:400; color:#ffffff; margin-bottom:1.5rem; line-height:1.2; }
+.main h1 em { font-style:italic; color:#6ee87e; }
+.main h2 { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee87e; letter-spacing:0.12em; text-transform:uppercase; margin-top:2.5rem; margin-bottom:0.75rem; padding-bottom:0.5rem; border-bottom:1px solid #0a6040; }
+.main { max-width:900px; margin:0 auto; padding:6rem 2rem 4rem; }
+.main p { color:#b0d4b0; margin-bottom:0.75rem; font-size:1rem; }
+.main p strong { color:#e8f5e0; }
+.main a { color:#6ee87e; text-decoration:none; }
+.main a:hover { text-decoration:underline; }
+.vorteile { display:flex; flex-wrap:wrap; gap:1.2rem; margin:2rem 0; }
+.vorteil { flex:1 1 250px; padding:1.5rem; background-color:rgba(0,0,0,0.25); border-left:3px solid #3a9e5a; }
+.vorteil-icon { font-size:1.6rem; margin-bottom:0.5rem; display:block; }
+.vorteil h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:#ffffff; margin-bottom:0.4rem; }
+.vorteil p { font-size:0.9rem; color:#b0d4b0; }
+.foerderer-grid { display:flex; flex-wrap:wrap; gap:1.5rem; margin:2rem 0; }
+.foerderer-card { flex:1 1 260px; max-width:320px; padding:1.5rem; background-color:rgba(0,0,0,0.25); border:1px solid #0a6040; transition:border-color 0.2s; display:block; text-decoration:none; }
+.foerderer-card:hover { border-color:#6ee87e; }
+.foerderer-badge { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
+.foerderer-name { font-family:'Playfair Display',serif; font-size:1.2rem; color:#ffffff; margin-bottom:0.4rem; }
+.foerderer-desc { font-size:0.9rem; color:#b0d4b0; line-height:1.6; margin-bottom:0.75rem; }
+.foerderer-link { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; display:inline-flex; align-items:center; gap:0.3rem; transition:gap 0.2s; }
+.foerderer-card:hover .foerderer-link { gap:0.55rem; }
+.foerderer-logo-wrap { display:flex; align-items:center; justify-content:center; width:160px; height:100px; background:#ffffff; border-radius:4px; margin-bottom:0.9rem; overflow:hidden; }
+.foerderer-logo { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+.btn { display:inline-block; padding:0.85rem 2rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; background-color:#0a6040; color:#ffffff; }
+.btn:hover { background-color:#3a9e5a; }
+.form-note { margin-top:0.8rem; font-size:0.85rem; color:#b0d4b0; font-style:italic; }
+@media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } .main h1 { font-size:2rem; } }
+{% endblock %}
+
+{% block content %}
+<div class="main">
+  <p class="section-label" data-i18n="f_section_label">{{ t('f_section_label') }}</p>
+  <h1 data-i18n-html="f_h1">{{ t('f_h1') | safe }}</h1>
+
+  <p data-i18n="f_intro_p1" style="color:#e8f5e0; font-size:1.1rem; max-width:680px; margin-bottom:2rem;">{{ t('f_intro_p1') }}</p>
+
+  <h2 data-i18n="f_h2_vorteile">{{ t('f_h2_vorteile') }}</h2>
+  <div class="vorteile">
+    {% for v in translations[current_lang()]['f_vorteile'] %}
+    <div class="vorteil">
+      <span class="vorteil-icon">{{ ['📋','🏷️','📧','🌿'][loop.index0] }}</span>
+      <h3>{{ v.h }}</h3>
+      <p>{{ v.p }}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2 data-i18n="f_h2_beitrag">{{ t('f_h2_beitrag') }}</h2>
+  <p data-i18n="f_beitrag_note">{{ t('f_beitrag_note') }}</p>
+
+  <h2 data-i18n="f_h2_ablauf">{{ t('f_h2_ablauf') }}</h2>
+  <div id="f-steps">
+    {% for s in translations[current_lang()]['f_steps'] %}
+    <p><strong>{{ s.num }}</strong> {{ s.text }}</p>
+    {% endfor %}
+  </div>
+
+  <h2 data-i18n="f_h2_liste">{{ t('f_h2_liste') }}</h2>
+  <div class="foerderer-grid">
+    {% for f in foerderer_liste %}
+      {% set inner %}
+        <div class="foerderer-badge">{% if f.typ == 'kooperation' %}Kooperation{% else %}★ Offizieller Förderer ★{% endif %}</div>
+        <div class="foerderer-logo-wrap">
+          {% if f.logo_datei %}<img src="{{ asset('uploads/foerderer/' + f.logo_datei) }}" alt="{{ f.firma }}" class="foerderer-logo">{% endif %}
+        </div>
+        <div class="foerderer-name">{{ f.firma }}</div>
+        <div class="foerderer-desc">{{ f.beschreibung }}</div>
+        {% if f.website %}<span class="foerderer-link">→ Website besuchen</span>{% endif %}
+      {% endset %}
+      {% if f.website %}
+        <a class="foerderer-card" href="{{ f.website }}" target="_blank" rel="noopener">{{ inner }}</a>
+      {% else %}
+        <div class="foerderer-card">{{ inner }}</div>
+      {% endif %}
+    {% else %}
+      <p style="color:#a0c8a0;">Noch keine Förderer eingetragen.</p>
+    {% endfor %}
+  </div>
+  <p data-i18n="f_next_headline" style="font-size:1.3rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem;">{{ t('f_next_headline') }}</p>
+  <p data-i18n="f_next_sub" style="font-size:0.95rem; color:#a0c8a0; text-align:center; margin-top:0.5rem; line-height:1.7;">{{ t('f_next_sub') }}</p>
+
+  <h2 data-i18n="f_h2_form">{{ t('f_h2_form') }}</h2>
+  <p data-i18n="f_form_intro">{{ t('f_form_intro') }}</p>
+
+  <div style="margin-top:1.5rem;">
+    <a href="https://api.openmyconet.de/foerderer/antrag" class="btn" id="foerderer-btn"
+      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:1rem 2.5rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
+      ✦ <span id="f-cta-label" data-i18n="f_submit">{{ t('f_submit') }}</span>
+    </a>
+    <p class="form-note" data-i18n="f_form_note" style="margin-top:1rem;">{{ t('f_form_note') }}</p>
+  </div>
+
+  <a href="{{ live('index.html') }}" data-i18n="f_back" style="display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">{{ t('f_back') }}</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyFoerdererContent(lang);
+  renderSidebar();
+}
+
+function applyFoerdererContent(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.f_title || 'OpenMycoNet';
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+
+  var icons = ['📋','🏷️','📧','🌿'];
+  var vorteileEl = document.querySelector('.vorteile');
+  if (vorteileEl && T.f_vorteile) {
+    vorteileEl.innerHTML = T.f_vorteile.map(function(v, i) {
+      return '<div class="vorteil"><span class="vorteil-icon">' + icons[i] + '</span><h3>' + v.h + '</h3><p>' + v.p + '</p></div>';
+    }).join('');
+  }
+
+  var stepsEl = document.getElementById('f-steps');
+  if (stepsEl && T.f_steps) {
+    stepsEl.innerHTML = T.f_steps.map(function(s) {
+      return '<p><strong>' + s.num + '</strong> ' + s.text + '</p>';
+    }).join('');
+  }
+}
+
+// ─── Slider & Quick-Buttons (derzeit ungenutzt -- kein passendes Formular auf
+// dieser Seite, aus dem Original 1:1 uebernommen fuer Paritaet) ──────────────
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyFoerdererContent(currentLang);
+    renderSidebar();
+  });
+
+  var slider = document.getElementById('beitrag-slider2');
+  var numInput = document.getElementById('beitrag-num2');
+  var formBeitrag = document.getElementById('form-beitrag');
+  var formAnzeige = document.getElementById('form-beitrag-anzeige');
+
+  function setVal(val) {
+    val = Math.max(50, Math.min(1000, parseInt(val) || 50));
+    slider.value = val;
+    numInput.value = val;
+    if (formBeitrag) formBeitrag.value = val;
+    if (formAnzeige) formAnzeige.textContent = val;
+    document.querySelectorAll('.quick-btn2').forEach(function(b) {
+      b.classList.toggle('active2', parseInt(b.dataset.val) === val);
+    });
+  }
+
+  if (!slider || !numInput) return;
+  slider.addEventListener('input', function() { setVal(parseInt(slider.value)); });
+  numInput.addEventListener('input', function() { setVal(parseInt(numInput.value)); });
+  document.querySelectorAll('.quick-btn2').forEach(function(b) {
+    b.addEventListener('click', function() { setVal(parseInt(b.dataset.val)); });
+  });
+  setVal(150);
+});
+
+// ─── Formular (derzeit ungenutzt, kein <form> auf der Seite -- aus dem
+// Original 1:1 uebernommen fuer Paritaet) ────────────────────────────────────
+function handleFoerderer(e) {
+  e.preventDefault();
+  var btn = document.getElementById('foerderer-btn');
+  var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
+  var form = e.target;
+  var data = new FormData(form);
+  btn.textContent = T.f_sending;
+  btn.disabled = true;
+  fetch('foerderer.php', { method:'POST', body:data })
+    .then(function(r){ return r.text(); })
+    .then(function(resp){
+      if(resp.trim()==='ok'){
+        btn.textContent = T.f_success;
+        btn.style.backgroundColor = '#3a9e5a';
+      } else {
+        btn.textContent = T.f_error;
+        btn.style.backgroundColor = '#8b2020';
+        btn.disabled = false;
+      }
+    })
+    .catch(function(){
+      btn.textContent = T.f_error;
+      btn.style.backgroundColor = '#8b2020';
+      btn.disabled = false;
+    });
+}
+</script>
+{% endblock %}

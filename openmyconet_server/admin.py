@@ -160,16 +160,21 @@ def change_password():
 
 # --- Nutzerverwaltung ---
 
+FACHROLLEN = ['wissenschaftler', 'wiss_mitarbeiter', 'student']
+
 @admin_bp.route('/admin')
 @role_required('superadmin')
 def admin():
     filter_gruppe = request.args.get('gruppe', '')
     filter_sprache = request.args.get('sprache', '')
+    filter_fachrolle = request.args.get('fachrolle', '')
     query = Nutzer.query
     if filter_gruppe:
         query = query.filter_by(gruppe=filter_gruppe)
     if filter_sprache:
         query = query.filter_by(sprache=filter_sprache)
+    if filter_fachrolle:
+        query = query.filter_by(fachrolle=filter_fachrolle)
     nutzer_liste = query.order_by(Nutzer.registriert_am.desc()).all()
     gesamt = Nutzer.query.count()
     bestaetigt = Nutzer.query.filter_by(bestaetigt=True).count()
@@ -177,7 +182,8 @@ def admin():
     return render_template('admin.html',
         nutzer_liste=nutzer_liste, gesamt=gesamt,
         bestaetigt=bestaetigt, unbestaetigt=unbestaetigt,
-        filter_gruppe=filter_gruppe, filter_sprache=filter_sprache
+        filter_gruppe=filter_gruppe, filter_sprache=filter_sprache,
+        filter_fachrolle=filter_fachrolle, fachrollen=FACHROLLEN
     )
 
 
@@ -188,6 +194,17 @@ def nutzer_bestaetigen(nutzer_id):
     nutzer.bestaetigt = True
     db.session.commit()
     flash(f'{nutzer.name} manuell bestätigt.')
+    return redirect(url_for('admin.admin'))
+
+
+@admin_bp.route('/admin/nutzer/fachrolle/<int:nutzer_id>', methods=['POST'])
+@role_required('superadmin')
+def nutzer_fachrolle_setzen(nutzer_id):
+    nutzer = Nutzer.query.get_or_404(nutzer_id)
+    wert = request.form.get('fachrolle', '').strip()
+    nutzer.fachrolle = wert if wert in FACHROLLEN else None
+    db.session.commit()
+    flash(f'Fachrolle von {nutzer.name} aktualisiert.')
     return redirect(url_for('admin.admin'))
 
 

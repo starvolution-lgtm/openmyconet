@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang() }}" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title id="page-title">{% block title %}OpenMycoNet{% endblock %}</title>
+<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+<link rel="manifest" href="{{ asset('manifest.json') }}">
+<meta name="theme-color" content="#024530">
+{% if is_preview %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}
+<meta name="author" content="Robert Jank">
+<meta id="meta-description" name="description" content="{% block meta_description %}{% endblock %}">
+{% block hreflang %}{% endblock %}
+{% block extra_meta %}{% endblock %}
+<link href="{{ asset('fonts.css') }}" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; overflow-x:hidden; }
+body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; overflow-x:hidden; -webkit-text-size-adjust:100%; }
+a { color:inherit; text-decoration:none; }
+
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
+nav ul { list-style:none; display:flex; align-items:center; gap:1rem; position:absolute; left:50%; transform:translateX(-50%); }
+nav ul a { color:#a0c8a0; font-family:'Lora',Georgia,serif; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; transition:color 0.2s; }
+nav ul a:hover { color:#f0b84a; }
+nav ul a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
+nav a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px; animation: nav-news-glow 1.6s ease-in-out infinite; }
+@keyframes nav-news-glow {
+  0%, 100% { background-color:rgba(240,184,74,0.08); box-shadow:0 0 6px rgba(240,184,74,0.3); text-shadow:0 0 4px rgba(240,184,74,0.5); }
+  50% { background-color:rgba(240,184,74,0.28); box-shadow:0 0 10px 2px rgba(240,184,74,0.9), 0 0 26px rgba(240,184,74,0.55); text-shadow:0 0 10px rgba(255,210,120,1), 0 0 20px rgba(240,184,74,0.85); }
+}
+.nav-back { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#a0c8a0; text-decoration:none; letter-spacing:0.06em; transition:color 0.2s; }
+.nav-back:hover { color:#f0b84a; }
+
+main { padding-top:5rem; }
+
+.page-header { padding:3rem clamp(1.5rem,5vw,5rem) 2rem; border-bottom:1px solid #0a6040; }
+.section-label { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3rem); font-weight:400; line-height:1.15; color:#ffffff; margin-bottom:1.5rem; }
+h1 em { font-style:italic; color:#6ee87e; }
+h2 { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,3vw,2rem); font-weight:400; color:#ffffff; margin-bottom:1.5rem; }
+h2 em { font-style:italic; color:#6ee87e; }
+
+section { padding:3rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; max-width:none; }
+.inner { max-width:860px; margin:0 auto; }
+
+/* CTA */
+.cta-section { background-color:#012a1e; text-align:center; }
+.btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.75rem 1.8rem; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition:background-color 0.2s, color 0.2s; }
+.btn-green { background-color:#0a7050; color:#ffffff; }
+.btn-green:hover { background-color:#3a9e5a; }
+.btn-amber { background-color:transparent; color:#f0b84a; border:1px solid #d4a030; }
+.btn-amber:hover { background-color:rgba(212,160,48,0.1); }
+
+/* Footer */
+footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; text-align:center; }
+.footer-logo { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#6ee87e; margin-bottom:0.5rem; }
+.footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#a0c8a0; line-height:2; }
+.footer-info a { color:#6ee87e; text-decoration:none; }
+
+/* Lang sidebar */
+#lang-sidebar { display:none; position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
+
+.nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
+.nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
+.nav-tool-btn:hover { opacity:0.85; transform:scale(1.05); }
+#omn-fab, #omn-faq-fab { display:none !important; }
+
+.hamburger { display:none; flex-direction:row; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; background:transparent; border:1px solid #0a6040; z-index:101; animation:hamburger-pulse 2.5s ease-in-out infinite; }
+.hamburger:hover { border-color:#6ee87e; background:rgba(110,232,126,0.08); animation:none; }
+.hamburger-bars { display:inline-flex !important; flex-direction:column; gap:5px; vertical-align:middle; }
+.hamburger-bars span { display:block; width:20px; height:2px; background:#e8f5e0; border-radius:2px; }
+.hamburger-label { font-family:'Lora',Georgia,serif; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8f5e0; }
+@keyframes hamburger-pulse {
+  0%   { border-color:#0a6040; box-shadow:0 0 0 0 rgba(212,160,48,0); }
+  50%  { border-color:#d4a030; box-shadow:0 0 0 3px rgba(212,160,48,0.15); }
+  100% { border-color:#0a6040; box-shadow:0 0 0 0 rgba(212,160,48,0); }
+}
+@media(max-width:1180px){
+  nav ul { display:none !important; }
+  .hamburger { display:flex !important; }
+}
+@media(max-width:900px){
+  nav ul { display:none !important; }
+  .nav-tools { margin-left:auto; margin-right:0.5rem; gap:0.3rem; }
+  .nav-tool-btn img { width:38px; height:38px; }
+  #lang-sidebar { display:none !important; }
+  .hamburger { display:flex !important; }
+}
+
+/* ── Persistenter Audio-Player (Mini-Playlist-Widget, auf index/medien) ── */
+.omn-player { margin-top:2rem; margin-left:auto; margin-right:auto; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #0a7050; max-width:520px; }
+.omn-cover-wrap { position:relative; width:100%; height:200px; overflow:hidden; }
+.omn-cover-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.6s ease; }
+.omn-cover-img.active { opacity:1; }
+.omn-cover-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(2,69,48,0) 40%, rgba(2,69,48,0.92) 100%); }
+.omn-player-main { display:flex; align-items:center; gap:1rem; padding:0.9rem 1.4rem; }
+.omn-controls { display:flex; align-items:center; gap:0.5rem; flex-shrink:0; }
+.omn-play-btn { width:40px; height:40px; border-radius:50%; background-color:#0a7050; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background-color 0.2s; flex-shrink:0; }
+.omn-play-btn:hover { background-color:#3a9e5a; }
+.omn-play-btn svg { width:16px; height:16px; fill:#ffffff; margin-left:2px; }
+.omn-play-btn.playing svg.icon-play { display:none; }
+.omn-play-btn.playing svg.icon-pause { display:block !important; }
+@keyframes omn-fab-pulse {
+  0%, 100% { box-shadow:0 2px 12px rgba(0,0,0,0.5), 0 0 0 0 rgba(110,232,126,0.55); }
+  50% { box-shadow:0 2px 12px rgba(0,0,0,0.5), 0 0 0 7px rgba(110,232,126,0); }
+}
+.omn-fab-pulse { animation: omn-fab-pulse 1.8s ease-in-out infinite; }
+.omn-next-btn { width:28px; height:28px; background:none; border:1px solid #0a6040; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color 0.2s; flex-shrink:0; border-radius:0; }
+.omn-next-btn:hover { border-color:#6ee87e; }
+.omn-next-btn svg { width:12px; height:12px; fill:#a0c8a0; }
+.omn-player-info { flex:1; min-width:0; }
+.omn-player-title { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#6ee87e; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.omn-player-sub { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#d4a030; letter-spacing:0.06em; margin-bottom:0.4rem; }
+.omn-progress-wrap { position:relative; height:3px; background-color:rgba(255,255,255,0.1); cursor:pointer; }
+.omn-progress-bar { height:3px; background-color:#0a7050; width:0%; transition:width 0.1s linear; }
+.omn-time { font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:#a0c8a0; margin-top:0.3rem; }
+.omn-playlist { border-top:1px solid #0a6040; }
+.omn-pl-item { display:flex; align-items:center; gap:0.8rem; padding:0.65rem 1.4rem; cursor:pointer; transition:background-color 0.15s; border-bottom:1px solid rgba(10,96,64,0.3); }
+.omn-pl-item:last-child { border-bottom:none; }
+.omn-pl-item:hover { background-color:rgba(10,112,80,0.15); }
+.omn-pl-item.active { background-color:rgba(10,112,80,0.22); }
+.omn-pl-thumb { width:32px; height:32px; object-fit:cover; flex-shrink:0; opacity:0.6; transition:opacity 0.2s; }
+.omn-pl-item.active .omn-pl-thumb { opacity:1; }
+.omn-pl-num { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; width:14px; text-align:center; flex-shrink:0; }
+.omn-pl-item.active .omn-pl-num { color:#6ee87e; }
+.omn-pl-name { font-family:'JetBrains Mono',monospace; font-size:0.66rem; color:#a0c8a0; letter-spacing:0.05em; flex:1; }
+.omn-pl-item.active .omn-pl-name { color:#e8f5e0; }
+.omn-pl-dur { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; }
+
+{% block extra_css %}{% endblock %}
+</style>
+</head>
+<body>
+
+<nav>
+  {% block nav_logo %}
+  <a href="{{ live('index.html') }}" style="display:flex; align-items:center; text-decoration:none;"><img src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet" style="height:68px; width:auto; display:block;"></a>
+  {% endblock %}
+  <ul>
+    <li><a href="{{ live('index.html#warum') }}" {% if current_page=='warum' %}class="nav-active"{% endif %} data-i18n="nav_warum">{{ t('nav_warum') }}</a></li>
+    <li><a href="{{ live('index.html#mitmachen') }}" {% if current_page=='mitmachen' %}class="nav-active"{% endif %} data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a></li>
+    <li><a href="{{ live('index.html#spenden') }}" {% if current_page=='spenden' %}class="nav-active"{% endif %} data-i18n="nav_spenden">{{ t('nav_spenden') }}</a></li>
+    <li><a href="{{ live('index.html#anmelden') }}" {% if current_page=='anmelden' %}class="nav-active"{% endif %} data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a></li>
+    <li><a href="{{ live('index.html#ueber') }}" {% if current_page=='ueber' %}class="nav-active"{% endif %} data-i18n="nav_ueber">{{ t('nav_ueber') }}</a></li>
+    <li><a href="{{ live('medien.html') }}" {% if current_page=='medien' %}class="nav-active"{% endif %} data-i18n="nav_medien">{{ t('nav_medien') }}</a></li>
+    <li><a href="{{ live('foerderer.html') }}" {% if current_page=='foerderer' %}class="nav-active"{% endif %} data-i18n="nav_foerderer">{{ t('nav_foerderer') }}</a></li>
+    <li><a href="{{ live('quellennachweise.html') }}" {% if current_page=='quellen' %}class="nav-active"{% endif %} data-i18n="nav_quellen">{{ t('nav_quellen') }}</a></li>
+    <li><a href="{{ live('news') }}" {% if current_page=='news' %}class="nav-active"{% endif %} data-i18n="nav_news">{{ t('nav_news') }}</a></li>
+  </ul>
+  <div class="nav-tools">
+    <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
+      <img src="{{ asset('icon-chat.png') }}" alt="Chat" style="width:48px; height:48px; display:block;">
+    </button>
+    <button class="nav-tool-btn nav-tool-faq" id="nav-faq-btn" aria-label="FAQ" title="FAQ">
+      <img src="{{ asset('icon-faq.png') }}" alt="FAQ" style="width:48px; height:48px; display:block;">
+    </button>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
+    <span class="hamburger-bars"><span></span><span></span><span></span></span>
+    <span class="hamburger-label" data-i18n="nav_menu">{{ t('nav_menu') }}</span>
+  </button>
+</nav>
+
+<!-- Mobile Overlay-Menü -->
+<div class="mobile-menu" id="mobileMenu" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem;">
+  <button id="mobileClose" style="position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer;">✕</button>
+  <a href="{{ live('index.html#warum') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_warum">{{ t('nav_warum') }}</a>
+  <a href="{{ live('index.html#mitmachen') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a>
+  <a href="{{ live('index.html#spenden') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_spenden">{{ t('nav_spenden') }}</a>
+  <a href="{{ live('index.html#anmelden') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a>
+  <a href="{{ live('index.html#ueber') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_ueber">{{ t('nav_ueber') }}</a>
+  <a href="{{ live('medien.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_medien">{{ t('nav_medien') }}</a>
+  <a href="{{ live('foerderer.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_foerderer">{{ t('nav_foerderer') }}</a>
+  <a href="{{ live('quellennachweise.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_quellen">{{ t('nav_quellen') }}</a>
+  <a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
+  {% block mobile_menu_self_link %}{% endblock %}
+  <div class="mobile-lang" id="lang-flags-mobile" style="display:flex; gap:0.6rem; margin-top:1rem; align-items:center;"></div>
+</div>
+
+<div id="lang-sidebar"><!-- Flags injected by JS --></div>
+
+<!-- ── Persistenter Audio-Player: Audio-Element + schwebender Mini-Controller (FAB) ──
+     Zustandserhaltung (Track/Position/Lautstaerke/Mute) ueber Seitenwechsel via localStorage,
+     siehe Skript weiter unten. Grosse Playlist-Ansicht (.omn-player) existiert nur auf Seiten,
+     die sie im content-Block einbinden (index.html Hero, medien.html) -- dieses Audio-Element
+     und der FAB sind aber auf jeder Seite vorhanden. -->
+<audio id="omn-audio" preload="metadata"></audio>
+<div id="omn-audio-fab" style="position:fixed; bottom:1.4rem; left:1.2rem; z-index:890; display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem;">
+  <div id="omn-audio-panel" style="display:none; background:rgba(2,40,28,0.97); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 1.1rem; min-width:220px; box-shadow:0 4px 24px rgba(0,0,0,0.5); font-family:JetBrains Mono,monospace;">
+    <div style="font-size:0.6rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.7rem;">Audio</div>
+    <div style="display:flex; align-items:center; gap:0.6rem;">
+      <span style="font-size:0.6rem; color:#a0c8a0; letter-spacing:0.06em; min-width:60px;">Lautst&#228;rke</span>
+      <input id="omn-vol-slider" type="range" min="0" max="1" step="0.02" value="0.66" style="flex:1; accent-color:#6ee87e; cursor:pointer; height:8px;">
+      <span id="omn-vol-pct" style="font-size:0.6rem; color:#6ee87e; min-width:32px; text-align:right;">66%</span>
+    </div>
+    <div style="font-size:0.55rem; color:#6a9a6a; letter-spacing:0.06em; margin-top:0.6rem; text-align:center;">Regler auf 0% = stumm</div>
+  </div>
+  <button class="omn-play-btn" id="omn-audio-btn" onclick="omnTogglePlay()" title="Play/Stop" aria-label="Play/Stop"
+    style="width:26px; height:26px;">
+    <svg class="icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="width:11px;height:11px;"><polygon points="3,1 15,8 3,15"/></svg>
+    <svg class="icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none;width:11px;height:11px;margin-left:0;"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
+  </button>
+  <button class="omn-play-btn" id="omn-vol-toggle-btn" onclick="omnAudioPanelToggle()" title="Lautstärke" aria-label="Lautstärke"
+    style="width:26px; height:26px;">
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="width:11px;height:11px;">
+      <polygon points="1,6 4,6 8,2 8,14 4,10 1,10" fill="#ffffff"/>
+      <path d="M10 5.3 C11.6 6.7 11.6 9.3 10 10.7" stroke="#ffffff" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      <path d="M11.6 3.2 C14.2 5.3 14.2 10.7 11.6 12.8" stroke="#ffffff" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <a href="{{ live('medien.html') }}#musik" data-i18n="player_more_link" style="font-family:JetBrains Mono,monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline;">{{ t('player_more_link') }}</a>
+</div>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer>
+  <div class="footer-logo">OpenMycoNet</div>
+  <div class="footer-info" id="footer-info">
+    © Copyright 2026 · Robert Jank · Maintal, Deutschland ·
+    <a href="{{ live('impressum.html') }}">Impressum</a> ·
+    <a href="{{ live('datenschutz.html') }}">Datenschutz</a> ·
+    <a href="{{ live('index.html') }}">← Startseite</a>
+  </div>
+</footer>
+
+<script>
+// Einheitlicher i18n-Mechanismus (Phase 4 Schritt 2): translations.json ist die
+// einzige Datenquelle, server- und clientseitig. Die initiale Sprache steht
+// bereits serverseitig gerendert im HTML (ueber die t()-Jinja-Funktion in den
+// Templates) -- dieser fetch versorgt nur das weiterhin bestehende clientseitige
+// Instant-Umschalten per Flaggen-Klick (kein Reload).
+var TRANSLATIONS = {};
+var TRANSLATIONS_READY = fetch('{{ translations_json_url() }}').then(function(r) { return r.json(); }).then(function(data) { TRANSLATIONS = data; });
+
+var FLAGS = {
+  de: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>',
+  en: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>',
+  nl: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>',
+  fr: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>',
+  es: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>'
+};
+var FLAG_TITLES = {de:'Deutsch',en:'English',nl:'Nederlands',fr:'Français',es:'Español'};
+var LANGS = ['de','en','nl','fr','es'];
+
+function getLang() {
+  var p = new URLSearchParams(window.location.search).get('lang');
+  if (p && LANGS.indexOf(p) !== -1) return p;
+  var stored = localStorage.getItem('omn_lang');
+  if (stored && LANGS.indexOf(stored) !== -1) return stored;
+  var bl = (navigator.language || 'de').split('-')[0].toLowerCase();
+  return LANGS.indexOf(bl) !== -1 ? bl : 'de';
+}
+
+var currentLang = getLang();
+
+function renderFlagsInto(containerId, size) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = LANGS.map(function(l) {
+    var opacity = l === currentLang ? '1' : '0.45';
+    var svg = size ? FLAGS[l].replace('width="20" height="14"', 'width="' + size + '" height="' + Math.round(size*0.7) + '"') : FLAGS[l];
+    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" onclick="setLang(\'' + l + '\')" style="opacity:' + opacity + '; display:inline-flex; cursor:pointer;">' + svg + '</a>';
+  }).join('');
+}
+
+function renderSidebar() {
+  renderFlagsInto('lang-sidebar', 22);
+  renderFlagsInto('lang-flags-mobile', 28);
+  var sb = document.getElementById('lang-sidebar');
+  if (sb && window.innerWidth > 600) sb.style.display = 'flex';
+}
+</script>
+
+<script>
+// ── Persistenter Audio-Player (zentral, alle Seiten) ──────────────────────
+// Track-Manifest: eine Quelle fuer die Hero-Playlist (index.html) und die
+// volle Playlist-Ansicht (medien.html). Zustand (Track/Position/Lautstaerke/
+// Mute) wird per localStorage ueber Seitenwechsel hinweg erhalten -- da es
+// sich um klassische Multi-Page-Navigation handelt (kein SPA), startet die
+// Wiedergabe nach einem Seitenwechsel bewusst PAUSIERT (Track/Position/
+// Lautstaerke sind schon wiederhergestellt) statt automatisch fortzusetzen:
+// Browser blockieren programmatisches audio.play() ohne Nutzergeste ohnehin
+// per Autoplay-Policy. Ein Klick auf Play im Player setzt fort -- das
+// erfuellt die Geste-Anforderung und wirkt "nahtlos", ohne die Browser-
+// Autoplay-Policy zu umgehen.
+var OMN_ASSET_BASE = '{{ asset("") }}';
+var OMN_TRACKS = [
+  { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'cover-listening-to-the-trees.jpeg' },
+  { file:'the-oldest-living-network.mp3', title:'The Oldest Living Network', cover:'cover-the-oldest-living-network.jpeg' },
+  { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg' },
+  { file:'nobody-funds-the-ground.mp3',    title:'Nobody Funds the Ground',   cover:'cover-nobody-funds-the-ground.jpeg' },
+  { file:'listen-to-the-forest.mp3',       title:'Listen to the Forest',      cover:'cover-listen-to-the-forest.jpeg' }
+];
+
+(function(){
+  var STORAGE_KEY   = 'omn_player_state';
+  var STATE_MAX_AGE = 6 * 3600 * 1000; // 6 Stunden -- aeltere Zustaende werden ignoriert
+
+  var audio     = document.getElementById('omn-audio');
+  var current   = 0;
+  var panelOpen = false;
+
+  function updateVolLabel(){
+    var pct = document.getElementById('omn-vol-pct');
+    if(pct) pct.textContent = Math.round(audio.volume * 100) + '%';
+  }
+
+  // Grosse Playlist-UI -- existiert nur auf Seiten, die .omn-player einbinden
+  // (index.html Hero, medien.html); alle Zugriffe darauf sind defensiv (if-Check).
+  var btn     = document.getElementById('omn-play-btn');
+  var bar     = document.getElementById('omn-progress-bar');
+  var timeEl  = document.getElementById('omn-time');
+  var titleEl = document.getElementById('omn-player-title');
+  var plEl    = document.getElementById('omn-playlist');
+  var hasBigPlayer = !!(btn && bar && timeEl && titleEl && plEl);
+
+  var DEFAULT_VOLUME = 0.66; // ca. 1/3 leiser als Browser-Standard (1.0), fuer Erstbesucher ohne gespeicherten Zustand; auf Slider-Step (0.02) ausgerichtet
+
+  function fmt(s){ if(isNaN(s)||!isFinite(s)) return '0:00'; var m=Math.floor(s/60),sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
+
+  // Aktualisiert JEDEN Play/Pause-Button auf der Seite (grosser Player UND FAB) einheitlich.
+  function setPlayingUI(isPlaying){
+    document.querySelectorAll('.omn-play-btn').forEach(function(b){ b.classList.toggle('playing', isPlaying); });
+    // FAB: Start/Stop pulsiert im Ruhezustand (zieht Aufmerksamkeit an), Lautstaerke-
+    // Button pulsiert waehrend Musik laeuft (zeigt, wo man sie regeln kann).
+    var fabPlay = document.getElementById('omn-audio-btn');
+    if(fabPlay) fabPlay.classList.toggle('omn-fab-pulse', !isPlaying);
+    var fabVol = document.getElementById('omn-vol-toggle-btn');
+    if(fabVol) fabVol.classList.toggle('omn-fab-pulse', isPlaying);
+  }
+
+  function switchCover(idx){
+    OMN_TRACKS.forEach(function(_,i){
+      var el = document.getElementById('omn-cover-'+i);
+      if(el) el.classList.toggle('active', i===idx);
+    });
+  }
+
+  function renderPlaylist(){
+    if(!plEl) return;
+    plEl.innerHTML = OMN_TRACKS.map(function(t,i){
+      return '<div class="omn-pl-item'+(i===current?' active':'')+'" onclick="omnSelectTrack('+i+')">'
+        +'<img class="omn-pl-thumb" src="'+OMN_ASSET_BASE+t.cover+'" alt="">'
+        +'<span class="omn-pl-num">'+(i===current?'▶':(i+1))+'</span>'
+        +'<span class="omn-pl-name">'+t.title+'</span>'
+        +'<span class="omn-pl-dur" id="omn-dur-'+i+'">–:––</span>'
+        +'</div>';
+    }).join('');
+  }
+
+  function loadTrack(idx, autoplay, startAt){
+    current = idx;
+    audio.src = OMN_ASSET_BASE + OMN_TRACKS[idx].file;
+    if(titleEl) titleEl.textContent = OMN_TRACKS[idx].title;
+    if(bar) bar.style.width = '0%';
+    if(timeEl) timeEl.textContent = '0:00 / 0:00';
+    switchCover(idx);
+    renderPlaylist();
+    if(startAt){
+      audio.addEventListener('loadedmetadata', function once(){
+        audio.currentTime = startAt;
+        audio.removeEventListener('loadedmetadata', once);
+      });
+    }
+    if(autoplay){ audio.play(); setPlayingUI(true); }
+    else { setPlayingUI(false); }
+  }
+
+  OMN_TRACKS.forEach(function(t,i){
+    var a = new Audio();
+    a.preload = 'metadata';
+    a.src = OMN_ASSET_BASE + t.file;
+    a.addEventListener('loadedmetadata', function(){
+      var el = document.getElementById('omn-dur-'+i);
+      if(el) el.textContent = fmt(a.duration);
+    });
+  });
+
+  function saveState(){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        trackIndex: current,
+        currentTime: audio.currentTime || 0,
+        volume: audio.volume,
+        savedAt: Date.now()
+      }));
+    } catch(e) {}
+  }
+
+  var lastSave = 0;
+  audio.addEventListener('timeupdate', function(){
+    if(bar && audio.duration){ bar.style.width=(audio.currentTime/audio.duration*100)+'%'; }
+    if(timeEl) timeEl.textContent = fmt(audio.currentTime)+' / '+fmt(audio.duration);
+    var now = Date.now();
+    if(now - lastSave > 2000){ lastSave = now; saveState(); }
+  });
+  audio.addEventListener('play',  saveState);
+  audio.addEventListener('pause', saveState);
+  audio.addEventListener('ended', function(){
+    if(hasBigPlayer && current < OMN_TRACKS.length-1){ loadTrack(current+1, true); }
+    else { setPlayingUI(false); if(bar) bar.style.width='0%'; saveState(); }
+  });
+  window.addEventListener('pagehide', saveState);
+  window.addEventListener('beforeunload', saveState);
+
+  window.omnTogglePlay  = function(){ if(audio.paused){ audio.play(); setPlayingUI(true); } else { audio.pause(); setPlayingUI(false); } };
+  window.omnNext        = function(){ loadTrack((current+1) % OMN_TRACKS.length, !audio.paused); };
+  window.omnSelectTrack = function(idx){ loadTrack(idx, true); };
+  window.omnSeek        = function(e){ var w=document.getElementById('omn-progress-wrap'); if(w && audio.duration) audio.currentTime=(e.offsetX/w.offsetWidth)*audio.duration; };
+
+  // ── FAB: Play/Stop (auf jeder Seite vorhanden). Stummschaltung laeuft nur noch
+  // ueber den Lautstaerkeregler im Panel (0% = stumm), kein eigener Mute-Zustand mehr. ──
+  window.omnAudioPanelToggle = function(){
+    panelOpen = !panelOpen;
+    var panel = document.getElementById('omn-audio-panel');
+    panel.style.display = panelOpen ? 'block' : 'none';
+  };
+
+  document.getElementById('omn-vol-slider').addEventListener('input', function(){
+    audio.volume = parseFloat(this.value);
+    updateVolLabel();
+    saveState();
+  });
+
+  document.addEventListener('click', function(e){
+    if(panelOpen && !document.getElementById('omn-audio-fab').contains(e.target)){
+      panelOpen = false;
+      document.getElementById('omn-audio-panel').style.display = 'none';
+    }
+  });
+
+  // Gespeicherten Zustand wiederherstellen (Track/Position/Lautstaerke/Mute) --
+  // bewusst OHNE Autoplay, siehe Erlaeuterung oben.
+  var restored = null;
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      var s = JSON.parse(raw);
+      if(s && typeof s.trackIndex === 'number' && (Date.now() - (s.savedAt||0)) < STATE_MAX_AGE){
+        restored = s;
+      }
+    }
+  } catch(e) {}
+
+  if(restored){
+    audio.volume = (typeof restored.volume === 'number') ? restored.volume : DEFAULT_VOLUME;
+    var vs = document.getElementById('omn-vol-slider');
+    if(vs){ vs.value = audio.volume; }
+    loadTrack(restored.trackIndex % OMN_TRACKS.length, false, restored.currentTime || 0);
+  } else {
+    audio.volume = DEFAULT_VOLUME;
+    loadTrack(0, false);
+  }
+  updateVolLabel();
+})();
+</script>
+
+{% block scripts %}{% endblock %}
+
+<script src="{{ asset('biocomm-chat.js') }}"></script>
+<script src="{{ asset('biocomm-faq.js') }}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var chatBtn = document.getElementById('nav-chat-btn');
+  if (chatBtn) chatBtn.addEventListener('click', function() {
+    var fab = document.getElementById('omn-fab');
+    if (fab) fab.click();
+  });
+  var faqBtn = document.getElementById('nav-faq-btn');
+  if (faqBtn) faqBtn.addEventListener('click', function() {
+    var fab = document.getElementById('omn-faq-fab');
+    if (fab) fab.click();
+  });
+});
+</script>
+
+<script>
+(function() {
+  var menu = document.getElementById('mobileMenu');
+  var btn  = document.getElementById('hamburger');
+  var cls  = document.getElementById('mobileClose');
+  if (!menu || !btn) return;
+  function openMenu()  { menu.style.display = 'flex'; }
+  function closeMenu() { menu.style.display = 'none'; }
+  btn.addEventListener('click', openMenu);
+  if (cls) cls.addEventListener('click', closeMenu);
+  menu.addEventListener('click', function(e){ if(e.target===menu) closeMenu(); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+})();
+</script>
+</body>
+</html>

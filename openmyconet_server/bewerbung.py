@@ -9,7 +9,9 @@ from flask import Blueprint, request, jsonify
 from flask_mail import Message
 
 from extensions import db, mail
-from models import Bewerbung
+from models import Bewerbung, Nutzer
+from registrierung import register_nutzer_core
+from spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,14 @@ def bewerbung_einreichen():
     Gibt zurück:
         { "ok": true } oder { "error": "..." }
     """
+    if request.form.get("website"):
+        # Honeypot getroffen — stiller Erfolg vortäuschen, nichts speichern.
+        return jsonify({"ok": True})
+
+    ip = request.remote_addr
+    if not ip_erlaubt(ip, "bewerbung"):
+        return jsonify({"error": "Zu viele Anfragen — bitte später erneut versuchen."}), 429
+
     email = (request.form.get("email") or "").strip().lower()
     motivation = (request.form.get("motivation") or "").strip()
     substrat = (request.form.get("node_substrat") or "").strip()
@@ -37,8 +47,23 @@ def bewerbung_einreichen():
         except (TypeError, ValueError):
             return None
 
+    name = (request.form.get("name") or "").strip()
+    sprache = (request.form.get("lang") or "de").strip()
+
+    # Eine Knoten-Bewerbung ist immer auch eine Registrierung: bestehenden Nutzer
+    # verknüpfen, oder einen neuen anlegen (Mailfehler bei der Bestätigungsmail
+    # darf die Bewerbung selbst nicht verhindern — daher rollback_on_mail_fail=False).
+    nutzer = Nutzer.query.filter_by(email=email).first()
+    if not nutzer:
+        nutzer, fehler = register_nutzer_core(
+            name, email, sprache, land="", gruppe="biocomm",
+            ip=ip, rollback_on_mail_fail=False,
+        )
+        if fehler:
+            logger.error("Automatische Registrierung aus Knoten-Bewerbung fehlgeschlagen (%s): %s", email, fehler)
+
     bewerbung = Bewerbung(
-        name=(request.form.get("name") or "").strip(),
+        name=name,
         email=email,
         rolle=(request.form.get("rolle") or "").strip(),
         profession=(request.form.get("profession") or "").strip(),
@@ -47,10 +72,17 @@ def bewerbung_einreichen():
         lat=parse_float(request.form.get("lat")),
         lon=parse_float(request.form.get("lon")),
         motivation=motivation,
-        sprache=(request.form.get("lang") or "de").strip(),
+        sprache=sprache,
+        nutzer_id=nutzer.id if nutzer else None,
+        ip=ip,
     )
     db.session.add(bewerbung)
     db.session.commit()
+
+    # Fürs Frontend: nur dann "bitte bestätige deine E-Mail" anzeigen, wenn
+    # tatsächlich noch eine Bestätigung aussteht (nicht bei bereits bestätigten
+    # Bestandsnutzern, sonst wäre der Hinweis irreführend).
+    bestaetigung_erforderlich = bool(nutzer and not nutzer.bestaetigt)
 
     admin_email = os.getenv("ADMIN_NOTIFY_EMAIL") or os.getenv("MAIL_USERNAME")
     if admin_email:
@@ -79,4 +111,4 @@ Verwalten unter /admin/bewerbungen
         except Exception as e:
             logger.error("Bewerbungs-Benachrichtigung konnte nicht gesendet werden: %s", e)
 
-    return jsonify({"ok": True})
+    return jsonify({"ok": True, "bestaetigung_erforderlich": bestaetigung_erforderlich})

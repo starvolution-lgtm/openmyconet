@@ -3,7 +3,6 @@ const CACHE = 'openmyconet-v1';
 
 const PRECACHE = [
   '/',
-  '/index.html',
   '/impressum.html',
   '/datenschutz.html',
   '/favicon.svg',
@@ -40,6 +39,10 @@ self.addEventListener('fetch', function(e) {
   if (e.request.method !== 'GET') return;
   // contact.php nicht cachen
   if (e.request.url.includes('contact.php')) return;
+  // /index.html ist nur noch ein 301-Redirect auf '/' -- ein Service Worker darf bei
+  // Navigationsanfragen keine bereits umgeleitete Response ausliefern (Browser wirft
+  // sonst net::ERR_FAILED), daher hier unangetastet ans Netzwerk durchreichen.
+  if (new URL(e.request.url).pathname === '/index.html') return;
 
   e.respondWith(
     caches.match(e.request).then(function(cached) {
@@ -54,7 +57,7 @@ self.addEventListener('fetch', function(e) {
         return response;
       }).catch(function() {
         // Offline-Fallback
-        return caches.match('/index.html');
+        return caches.match('/');
       });
     })
   );

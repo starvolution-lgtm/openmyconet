@@ -1,0 +1,26 @@
+{% extends "dashboard_base.html" %}
+{% block title %}OpenMycoNet — Mein Dashboard{% endblock %}
+{% block content %}
+    <h1>Willkommen, {{ nutzer.name }}</h1>
+    <div class="card">
+        <p><span class="label">E-Mail:</span> {{ nutzer.email }}</p>
+        {% if nutzer.fachrolle %}<p><span class="label">Fachrolle:</span> {{ nutzer.fachrolle }}</p>{% endif %}
+    </div>
+
+    {% if bewerbung %}
+    <h2>Deine Bewerbung</h2>
+    <div class="card">
+        <p><span class="label">Status:</span>
+            {% if bewerbung.status == 'neu' %}Eingegangen, noch nicht geprüft
+            {% elif bewerbung.status == 'in_pruefung' %}In Prüfung
+            {% elif bewerbung.status == 'angenommen' %}Angenommen — dein Knoten wird vorbereitet
+            {% elif bewerbung.status == 'abgelehnt' %}Leider abgelehnt
+            {% elif bewerbung.status == 'warteliste' %}Warteliste
+            {% else %}{{ bewerbung.status }}
+            {% endif %}
+        </p>
+        <p><span class="label">Eingereicht am:</span> {{ bewerbung.erstellt_am.strftime('%d.%m.%Y') }}</p>
+        {% if bewerbung.profession %}<p><span class="label">Angabe:</span> {{ bewerbung.profession }}</p>{% endif %}
+    </div>
+    {% endif %}
+{% endblock %}

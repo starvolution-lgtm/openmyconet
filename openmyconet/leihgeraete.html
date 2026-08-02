@@ -200,8 +200,8 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 <section style="background-color:#012a1e;">
   <div class="inner">
     <p class="section-label" id="leih-preview-label">KI-generierte Vorschau</p>
-    <h2>So werden die<br>Nodes <em>aussehen</em></h2>
-    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;" id="leih-ki-hint">⚠ Diese Visualisierungen sind KI-generiert. Die echten Geräte werden zu ca. 80 % so aussehen — welches Farbdesign es letztlich wird, steht noch nicht fest.</p>
+    <h2 data-i18n-html="leih_preview_h2">So werden die<br>Nodes <em>aussehen</em></h2>
+    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;" id="leih-ki-hint" data-i18n="leih_ki_hint">⚠ Diese Visualisierungen sind KI-generiert. Die echten Geräte werden zu ca. 80 % so aussehen — welches Farbdesign es letztlich wird, steht noch nicht fest.</p>
     <p class="preview-intro" id="leih-preview-intro">So werden die BioComm-Knoten in etwa aussehen. Die Visualisierungen sind KI-generiert — die echten Geräte werden zu ca. 80 % so aussehen. Welches Farbdesign es letztlich wird, steht noch nicht fest. Aber eins davon wird es werden.</p>
     <div class="edition-grid" id="edition-grid">
       <!-- rendered by JS -->
@@ -213,7 +213,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 <section style="background-color:#024530;">
   <div class="inner">
     <p class="section-label" id="leih-specs-label">Technische Daten</p>
-    <h2>Was der Knoten<br><em>kann</em></h2>
+    <h2 data-i18n-html="leih_specs_h2">Was der Knoten<br><em>kann</em></h2>
     <table class="specs-table" id="specs-table">
       <!-- rendered by JS -->
     </table>
@@ -224,7 +224,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 <section style="background-color:#012a1e;">
   <div class="inner">
     <p class="section-label" id="leih-how-label">So funktioniert das Leihprogramm</p>
-    <h2>In fünf Schritten<br>zum <em>Messknoten</em></h2>
+    <h2 data-i18n-html="leih_how_h2">In fünf Schritten<br>zum <em>Messknoten</em></h2>
     <div class="how-grid" id="how-grid">
       <!-- rendered by JS -->
     </div>
@@ -235,19 +235,19 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 <section style="background-color:#024530;">
   <div class="inner">
     <p class="section-label">BioComm Bridge</p>
-    <h2>Die <em>Zentrale</em></h2>
-    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;">⚠ Die Funkanbindung (LoRa/WLAN) ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation und noch nicht ausgeliefert.</p>
+    <h2 data-i18n-html="leih_bridge_h2">Die <em>Zentrale</em></h2>
+    <p style="font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#d4a030; margin-bottom:1rem; font-style:italic;" data-i18n="leih_bridge_warning">⚠ Die Funkanbindung (LoRa/WLAN) ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation und noch nicht ausgeliefert.</p>
     <div style="display:flex; flex-wrap:wrap; gap:2rem; align-items:center;">
       <div style="flex:0 0 auto; max-width:320px;">
         <img src="biocomm-bridge.png" alt="BioComm Bridge" style="width:100%; border:1px solid #0a6040;">
       </div>
       <div style="flex:1 1 280px;">
-        <p style="color:#a0c8a0; line-height:1.8; margin-bottom:1rem;">Die BioComm Bridge verbindet bis zu 4 Messknoten gleichzeitig per LoRa-Funk (Punkt-zu-Punkt, realistisch 1–3 km Reichweite im Wald) und leitet alle Daten per WLAN an die Zentrale weiter. Node 1–4 LEDs zeigen den Verbindungsstatus in Echtzeit.</p>
+        <p style="color:#a0c8a0; line-height:1.8; margin-bottom:1rem;" data-i18n="leih_bridge_desc">Die BioComm Bridge verbindet bis zu 4 Messknoten gleichzeitig per LoRa-Funk (Punkt-zu-Punkt, realistisch 1–3 km Reichweite im Wald) und leitet alle Daten per WLAN an die Zentrale weiter. Node 1–4 LEDs zeigen den Verbindungsstatus in Echtzeit.</p>
         <ul style="color:#a0c8a0; font-size:0.9rem; line-height:2; padding-left:1.2rem;">
-          <li>ESP32 mit LoRa-Funkmodul</li>
-          <li>WLAN-Verbindung zur Zentrale</li>
-          <li>4 Node-Status-LEDs</li>
-          <li>Kompaktes Desktop-Gehäuse</li>
+          <li data-i18n="leih_bridge_li1">ESP32 mit LoRa-Funkmodul</li>
+          <li data-i18n="leih_bridge_li2">WLAN-Verbindung zur Zentrale</li>
+          <li data-i18n="leih_bridge_li3">4 Node-Status-LEDs</li>
+          <li data-i18n="leih_bridge_li4">Kompaktes Desktop-Gehäuse</li>
         </ul>
       </div>
     </div>
@@ -257,10 +257,10 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 <!-- Komplettsystem -->
 <section style="background-color:#012a1e;">
   <div class="inner">
-    <p class="section-label">Das Gesamtsystem</p>
-    <h2>BioComm <em>im Einsatz</em></h2>
+    <p class="section-label" data-i18n="leih_system_label">Das Gesamtsystem</p>
+    <h2 data-i18n-html="leih_system_h2">BioComm <em>im Einsatz</em></h2>
     <img src="biocomm-komplett.png" alt="BioComm Komplettsystem im Einsatz" style="width:100%; border:1px solid #0a6040; margin-bottom:1.5rem;">
-    <p style="color:#a0c8a0; line-height:1.8;">Vier BioComm-Knoten im Boden, verbunden über LoRa mit der Bridge, Messdaten live auf dem Dashboard — das ist OpenMycoNet in der Praxis. Jeder Knoten misst unabhängig, die Bridge aggregiert alle Datenströme und überträgt sie per WLAN an die Zentrale.</p>
+    <p style="color:#a0c8a0; line-height:1.8;" data-i18n="leih_system_desc">Vier BioComm-Knoten im Boden, verbunden über LoRa mit der Bridge, Messdaten live auf dem Dashboard — das ist OpenMycoNet in der Praxis. Jeder Knoten misst unabhängig, die Bridge aggregiert alle Datenströme und überträgt sie per WLAN an die Zentrale.</p>
   </div>
 </section>
 
@@ -352,6 +352,17 @@ function applyPage(lang) {
   setEl('leih-how-label',     T.leih_how_label);
   setEl('leih-register-btn',  T.leih_register_btn);
   setEl('nav-back-link',      T.leih_back);
+
+  // Nav + neuer Bridge/Komplettsystem-Content (data-i18n/-html) -- fehlte bisher
+  // komplett auf dieser Seite, siehe index.html/quellennachweise.html fuer dasselbe Muster.
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key]) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key]) el.innerHTML = T[key];
+  });
 
   // Edition cards
   var grid = document.getElementById('edition-grid');

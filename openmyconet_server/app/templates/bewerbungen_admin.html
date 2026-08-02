@@ -58,6 +58,7 @@
             <th>Name / E-Mail</th>
             <th>Substrat / Adresse</th>
             <th>Bewerbungstext</th>
+            <th>Registrierung</th>
             <th>Status</th>
             <th>Eingegangen</th>
         </tr>
@@ -67,6 +68,15 @@
             <td>{{ b.name or '—' }}<br><small>{{ b.email }}</small></td>
             <td>{{ b.substrat }}<br><small>{{ b.adresse or 'keine Adresse' }}{% if b.lat %} ({{ '%.4f'|format(b.lat) }}, {{ '%.4f'|format(b.lon) }}){% endif %}</small></td>
             <td>{{ b.motivation[:200] }}{% if b.motivation|length > 200 %}…{% endif %}</td>
+            <td>
+                {% if b.nutzer and b.nutzer.bestaetigt %}
+                    <span style="color:#4caf50;">✓ bestätigt</span>
+                {% elif b.nutzer %}
+                    <span style="color:#f0b84a;">registriert, unbestätigt</span>
+                {% else %}
+                    <span style="color:#888;">—</span>
+                {% endif %}
+            </td>
             <td>
                 <span class="status-{{ b.status }}">{{ b.status }}</span>
                 <form method="POST" style="margin-top:6px;">

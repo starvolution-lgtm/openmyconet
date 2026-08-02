@@ -14,7 +14,7 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-// Kein Caching — alle Anfragen direkt ans Netzwerk
-self.addEventListener('fetch', function(e) {
-  e.respondWith(fetch(e.request));
-});
+// Kein Caching, keine Interception -- alle Anfragen unangetastet ans Netzwerk.
+// Kein 'fetch'-Listener: respondWith(fetch(...)) wuerde bei Navigationsanfragen,
+// die serverseitig umgeleitet werden (z.B. /index.html -> 301 -> /), eine bereits
+// gefolgte Redirect-Response ausliefern -- das lehnt Chrome mit net::ERR_FAILED ab.

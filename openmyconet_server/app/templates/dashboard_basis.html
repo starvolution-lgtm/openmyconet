@@ -1,0 +1,12 @@
+{% extends "dashboard_base.html" %}
+{% block title %}OpenMycoNet — Mein Dashboard{% endblock %}
+{% block content %}
+    <h1>Willkommen, {{ nutzer.name }}</h1>
+    <div class="card">
+        <p><span class="label">E-Mail:</span> {{ nutzer.email }}</p>
+        <p><span class="label">Registriert seit:</span> {{ nutzer.registriert_am.strftime('%d.%m.%Y') }}</p>
+        {% if nutzer.fachrolle %}<p><span class="label">Fachrolle:</span> {{ nutzer.fachrolle }}</p>{% endif %}
+    </div>
+    <p>Du bist als Basis-Nutzer registriert. Möchtest du selbst einen BioComm-Knoten betreiben?
+       <a href="https://www.openmyconet.de/#mitmachen">Jetzt bewerben</a>.</p>
+{% endblock %}

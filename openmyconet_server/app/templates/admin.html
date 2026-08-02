@@ -80,6 +80,14 @@
             <option value="fr" {% if filter_sprache == 'fr' %}selected{% endif %}>Français</option>
             <option value="es" {% if filter_sprache == 'es' %}selected{% endif %}>Español</option>
         </select>
+        &nbsp;
+        <label>Fachrolle: </label>
+        <select name="fachrolle" onchange="this.form.submit()">
+            <option value="">Alle</option>
+            <option value="wissenschaftler" {% if filter_fachrolle == 'wissenschaftler' %}selected{% endif %}>Wissenschaftler</option>
+            <option value="wiss_mitarbeiter" {% if filter_fachrolle == 'wiss_mitarbeiter' %}selected{% endif %}>Wiss. Mitarbeiter</option>
+            <option value="student" {% if filter_fachrolle == 'student' %}selected{% endif %}>Student</option>
+        </select>
     </form>
 
     <table>
@@ -89,6 +97,7 @@
             <th>Sprache</th>
             <th>Land</th>
             <th>Gruppe</th>
+            <th>Fachrolle</th>
             <th>Bestätigt</th>
             <th>Registriert</th>
             <th></th>
@@ -100,6 +109,16 @@
             <td>{{ nutzer.sprache }}</td>
             <td>{{ nutzer.land }}</td>
             <td>{{ nutzer.gruppe }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.nutzer_fachrolle_setzen', nutzer_id=nutzer.id) }}">
+                    <select name="fachrolle" onchange="this.form.submit()">
+                        <option value="" {% if not nutzer.fachrolle %}selected{% endif %}>–</option>
+                        <option value="wissenschaftler" {% if nutzer.fachrolle == 'wissenschaftler' %}selected{% endif %}>Wissenschaftler</option>
+                        <option value="wiss_mitarbeiter" {% if nutzer.fachrolle == 'wiss_mitarbeiter' %}selected{% endif %}>Wiss. Mitarbeiter</option>
+                        <option value="student" {% if nutzer.fachrolle == 'student' %}selected{% endif %}>Student</option>
+                    </select>
+                </form>
+            </td>
             <td class="{{ 'ja' if nutzer.bestaetigt else 'nein' }}">{{ '✓' if nutzer.bestaetigt else '✗' }}</td>
             <td>{{ nutzer.registriert_am.strftime('%d.%m.%Y %H:%M') }}</td>
             <td>

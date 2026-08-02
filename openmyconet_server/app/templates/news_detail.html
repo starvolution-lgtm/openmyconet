@@ -1,70 +1,69 @@
-<!DOCTYPE html>
-<html lang="{{ artikel.sprache }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-    <title>{{ artikel.titel }} — OpenMycoNet News</title>
-    <meta name="description" content="{{ beschreibung }}">
-    <link rel="canonical" href="{{ url_for('news_detail', slug=artikel.slug, _external=True) }}">
+{% extends "site/base.html" %}
 
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="{{ artikel.titel }}">
-    <meta property="og:description" content="{{ beschreibung }}">
-    <meta property="og:url" content="{{ url_for('news_detail', slug=artikel.slug, _external=True) }}">
-    {% if bild_url %}<meta property="og:image" content="{{ bild_url }}">{% endif %}
-    <meta property="article:published_time" content="{{ artikel.veroeffentlicht.isoformat() }}">
-    <meta name="twitter:card" content="{% if bild_url %}summary_large_image{% else %}summary{% endif %}">
+{% block title %}{{ artikel.titel }} — OpenMycoNet News{% endblock %}
+{% block meta_description %}{{ beschreibung }}{% endblock %}
 
-    <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Lora', Georgia, serif; max-width: 800px; margin: 0 auto; color: #e8f5e0; background: #024530; padding: 100px 20px 40px; }
-        nav.site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 0.75rem clamp(1.5rem,5vw,3rem); background-color: rgba(2,69,48,0.97); border-bottom: 1px solid #0a6040; }
-        nav.site-nav .logo-link { display: flex; align-items: center; text-decoration: none; }
-        nav.site-nav .logo-link img { height: 44px; width: auto; display: block; }
-        nav.site-nav .zurueck-link { color: #a0c8a0; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
-        nav.site-nav .zurueck-link:hover { color: #f0b84a; }
-        .alle-news-link { display: inline-block; margin-bottom: 20px; color: #6ee87e; text-decoration: none; }
-        .alle-news-link:hover { text-decoration: underline; }
-        .artikel { background: #fff; color: #222; border-radius: 8px; padding: 24px; margin: 24px 0; }
-        .artikel h1 { color: #1a1a1a; margin: 0 0 4px 0; font-size: 1.6em; }
-        .untertitel { color: #555; font-size: 1.1em; margin: 0 0 10px 0; }
-        .datum { color: #888; font-size: 0.85em; margin-bottom: 16px; }
-        .inhalt { line-height: 1.7; color: #222; }
-        .inhalt h1, .inhalt h2, .inhalt h3 { color: #1a1a1a; }
-        .inhalt img, .artikel > img { max-width: 100%; border-radius: 6px; margin: 8px 0; }
-        .inhalt a { color: #2e7d32; }
-        .tags { margin-top: 16px; }
-        .tags a { color: #2e7d32; text-decoration: none; margin-right: 10px; font-size: 0.9em; }
-        .tags a:hover { text-decoration: underline; }
-        .ki-hinweis { background: rgba(240,184,74,0.12); border: 1px solid rgba(240,184,74,0.4); color: #e8f5e0; font-size: 0.85em; padding: 10px 16px; border-radius: 6px; margin-bottom: 24px; }
-    </style>
-</head>
-<body>
-    <nav class="site-nav">
-        <a href="https://www.openmyconet.de/" class="logo-link"><img src="https://www.openmyconet.de/logo-openmyconet.png" alt="OpenMycoNet"></a>
-        <a href="https://www.openmyconet.de/" class="zurueck-link">← Zur Website</a>
-    </nav>
+{% block extra_meta %}
+<link rel="canonical" href="{{ url_for('news_detail', slug=artikel.slug, _external=True) }}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ artikel.titel }}">
+<meta property="og:description" content="{{ beschreibung }}">
+<meta property="og:url" content="{{ url_for('news_detail', slug=artikel.slug, _external=True) }}">
+{% if bild_url %}<meta property="og:image" content="{{ bild_url }}">{% endif %}
+<meta property="article:published_time" content="{{ artikel.veroeffentlicht.isoformat() }}">
+<meta name="twitter:card" content="{% if bild_url %}summary_large_image{% else %}summary{% endif %}">
+{% endblock %}
 
+{% block mobile_menu_self_link %}
+<a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
+{% endblock %}
+
+{% block extra_css %}
+.alle-news-link { display:inline-block; margin-bottom:20px; color:#6ee87e; text-decoration:none; }
+.alle-news-link:hover { text-decoration:underline; }
+.artikel { background:#fff; color:#222; border-radius:8px; padding:24px; margin:24px 0; }
+.artikel h1 { color:#1a1a1a; margin:0 0 4px 0; font-size:1.6em; }
+.untertitel { color:#555; font-size:1.1em; margin:0 0 10px 0; }
+.datum { color:#888; font-size:0.85em; margin-bottom:16px; }
+.inhalt { line-height:1.7; color:#222; }
+.inhalt h1, .inhalt h2, .inhalt h3 { color:#1a1a1a; }
+.inhalt img, .artikel > img { max-width:100%; border-radius:6px; margin:8px 0; }
+.inhalt a { color:#2e7d32; }
+.tags { margin-top:16px; }
+.tags a { color:#2e7d32; text-decoration:none; margin-right:10px; font-size:0.9em; }
+.tags a:hover { text-decoration:underline; }
+.ki-hinweis { background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); color:#e8f5e0; font-size:0.85em; padding:10px 16px; border-radius:6px; margin-bottom:24px; }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label">News</p>
+    <h1 style="font-size:clamp(1.6rem,4vw,2.2rem);">{{ artikel.titel }}</h1>
+  </div>
+</div>
+
+<section style="background-color:#012a1e;">
+  <div class="inner">
     <p class="ki-hinweis">ℹ️ Hinweis: Die Bilder in diesen Beiträgen sind KI-generiert.</p>
 
-    <a class="alle-news-link" href="{{ url_for('news') }}">← Alle News</a>
+    <a class="alle-news-link" href="{{ live('news') }}">← Alle News</a>
 
     <div class="artikel">
-        <h1>{{ artikel.titel }}</h1>
-        {% if artikel.untertitel %}<p class="untertitel">{{ artikel.untertitel }}</p>{% endif %}
-        <p class="datum">{{ artikel.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ artikel.sprache }}</p>
-        {% if artikel.bild_dateiname %}
-        <img src="{{ url_for('static', filename='uploads/news/' + artikel.bild_dateiname) }}" alt="">
-        {% endif %}
-        <div class="inhalt">{{ artikel.inhalt | safe }}</div>
-        {% if artikel.tags %}
-        <p class="tags">
-            {% for tag in artikel.tags.split(',') %}
-            <a href="{{ url_for('news', tag=tag) }}">#{{ tag }}</a>
-            {% endfor %}
-        </p>
-        {% endif %}
+      {% if artikel.untertitel %}<p class="untertitel">{{ artikel.untertitel }}</p>{% endif %}
+      <p class="datum">{{ artikel.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ artikel.sprache }}</p>
+      {% if artikel.bild_dateiname %}
+      <img src="{{ url_for('static', filename='uploads/news/' + artikel.bild_dateiname) }}" alt="">
+      {% endif %}
+      <div class="inhalt">{{ artikel.inhalt | safe }}</div>
+      {% if artikel.tags %}
+      <p class="tags">
+        {% for tag in artikel.tags.split(',') %}
+        <a href="{{ url_for('news', tag=tag) }}">#{{ tag }}</a>
+        {% endfor %}
+      </p>
+      {% endif %}
     </div>
-</body>
-</html>
+  </div>
+</section>
+{% endblock %}

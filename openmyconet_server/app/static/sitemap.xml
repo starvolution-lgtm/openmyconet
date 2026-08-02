@@ -30,6 +30,56 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/foerderer.html"/>
   </url>
 
+  <!-- Medien -->
+  <url>
+    <loc>https://www.openmyconet.de/medien.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/medien.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/medien.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/medien.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/medien.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/medien.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/medien.html"/>
+  </url>
+
+  <!-- Leihgeräte -->
+  <url>
+    <loc>https://www.openmyconet.de/leihgeraete.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/leihgeraete.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/leihgeraete.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/leihgeraete.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/leihgeraete.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/leihgeraete.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/leihgeraete.html"/>
+  </url>
+
+  <!-- Quellennachweise -->
+  <url>
+    <loc>https://www.openmyconet.de/quellennachweise.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/quellennachweise.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/quellennachweise.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/quellennachweise.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/quellennachweise.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/quellennachweise.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/quellennachweise.html"/>
+  </url>
+
+  <!-- News-Übersicht (einzelne Artikel stehen in news-sitemap.xml) -->
+  <url>
+    <loc>https://www.openmyconet.de/news</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
   <!-- Impressum -->
   <url>
     <loc>https://www.openmyconet.de/impressum.html</loc>
