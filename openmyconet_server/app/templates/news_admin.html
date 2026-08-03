@@ -1,123 +1,106 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>OpenMycoNet — News verwalten</title>
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-    <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
-        h1, h2 { color: #4caf50; }
-        label { display: block; margin-top: 16px; color: #aaa; font-size: 0.9em; }
-        input, select, textarea { width: 100%; padding: 8px; margin: 6px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; box-sizing: border-box; }
-        textarea { height: 180px; resize: vertical; }
-        #editor { height: 220px; background: #fff; color: #000; border-radius: 0 0 4px 4px; }
-        .ql-toolbar { background: #1a2a1a; border-color: #4caf50 !important; border-radius: 4px 4px 0 0; }
-        .ql-container { border-color: #4caf50 !important; }
-        .ql-toolbar .ql-stroke { stroke: #eee; }
-        .ql-toolbar .ql-fill { fill: #eee; }
-        .ql-toolbar .ql-picker-label { color: #eee; }
-        button { background: #4caf50; color: #000; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; }
-        .msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: #1a2a1a; color: #4caf50; padding: 10px; text-align: left; }
-        td { padding: 8px 10px; border-bottom: 1px solid #1a2a1a; font-size: 0.9em; }
-        .del { color: #f44336; text-decoration: none; font-size: 0.85em; }
-        nav { margin-bottom: 30px; }
-        a { color: #4caf50; }
-        hr { border-color: #1a2a1a; margin: 30px 0; }
-    </style>
-</head>
-<body>
-    <nav>
-        {% if session.admin_role == 'superadmin' %}<a href="{{ url_for('admin.admin') }}">← Admin</a>{% endif %}
-        · <a href="{{ url_for('admin.change_password') }}">Passwort ändern</a> · <a href="{{ url_for('admin.logout') }}">Logout</a>
-    </nav>
-    <h1>🍄 News verwalten</h1>
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — News verwalten{% endblock %}
+{% block heading %}🍄 News verwalten{% endblock %}
 
-    {% if nachricht %}
-        <p class="msg">{{ nachricht }}</p>
-    {% endif %}
-    {% if fehler %}
-        <p class="msg" style="color:#f44336;">{{ fehler }}</p>
-    {% endif %}
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<style>
+    #editor { height: 220px; background: #fff; color: var(--ink); border-radius: 0 0 8px 8px; }
+    .ql-toolbar { background: var(--ground-raised); border-color: var(--line) !important; border-radius: 8px 8px 0 0; }
+    .ql-container { border-color: var(--line) !important; font-family: var(--serif); }
+    .ql-toolbar .ql-stroke { stroke: var(--ink); }
+    .ql-toolbar .ql-fill { fill: var(--ink); }
+    .ql-toolbar .ql-picker-label { color: var(--ink); }
+</style>
+{% endblock %}
 
-    <h2>Neuen Beitrag erstellen</h2>
-    <form method="POST" enctype="multipart/form-data" id="news-form">
-        <label>Titel</label>
-        <input type="text" name="titel" required>
+{% block content %}
 
-        <label>Untertitel (optional)</label>
-        <input type="text" name="untertitel">
+{% if nachricht %}
+    <p class="msg">{{ nachricht }}</p>
+{% endif %}
+{% if fehler %}
+    <p class="err">{{ fehler }}</p>
+{% endif %}
 
-        <label>Sprache</label>
-        <select name="sprache">
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-            <option value="nl">Nederlands</option>
-            <option value="fr">Français</option>
-            <option value="es">Español</option>
-        </select>
+<h2>Neuen Beitrag erstellen</h2>
+<form method="POST" enctype="multipart/form-data" id="news-form">
+    <label>Titel</label>
+    <input type="text" name="titel" required>
 
-        <label>Bild (optional, png/jpg/jpeg/webp/gif)</label>
-        <input type="file" name="bild" accept="image/png,image/jpeg,image/webp,image/gif">
+    <label>Untertitel (optional)</label>
+    <input type="text" name="untertitel">
 
-        <label>Inhalt</label>
-        <div id="editor"></div>
-        <textarea name="inhalt" id="inhalt-feld" style="display:none;"></textarea>
+    <label>Sprache</label>
+    <select name="sprache">
+        <option value="de">Deutsch</option>
+        <option value="en">English</option>
+        <option value="nl">Nederlands</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+    </select>
 
-        <label>Tags (kommagetrennt, optional)</label>
-        <input type="text" name="tags" placeholder="z.B. Mykorrhiza, Forschung, Update">
+    <label>Bild (optional, png/jpg/jpeg/webp/gif)</label>
+    <input type="file" name="bild" accept="image/png,image/jpeg,image/webp,image/gif">
 
-        <button type="submit">Veröffentlichen</button>
-    </form>
+    <label>Inhalt</label>
+    <div id="editor"></div>
+    <textarea name="inhalt" id="inhalt-feld" style="display:none;"></textarea>
 
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-    <script>
-        const quill = new Quill('#editor', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    ['link', 'image'],
-                    ['clean']
-                ]
-            }
-        });
-        document.getElementById('news-form').addEventListener('submit', function (e) {
-            if (!quill.getText().trim()) {
-                e.preventDefault();
-                alert('Bitte einen Inhalt eingeben.');
-                return;
-            }
-            document.getElementById('inhalt-feld').value = quill.root.innerHTML;
-        });
-    </script>
+    <label>Tags (kommagetrennt, optional)</label>
+    <input type="text" name="tags" placeholder="z.B. Mykorrhiza, Forschung, Update">
 
-    <hr>
-    <h2>Bestehende Beiträge</h2>
-    <table>
-        <tr>
-            <th>Datum</th>
-            <th>Sprache</th>
-            <th>Titel</th>
-            <th>Bild</th>
-            <th></th>
-        </tr>
-        {% for news in news_liste %}
-        <tr>
-            <td>{{ news.veroeffentlicht.strftime('%d.%m.%Y') }}</td>
-            <td>{{ news.sprache }}</td>
-            <td>{{ news.titel }}</td>
-            <td>{% if news.bild_dateiname %}✓{% endif %}</td>
-            <td>
-                {% if news.slug %}<a href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank" style="margin-right:8px;">Ansehen</a>{% endif %}
-                <a href="{{ url_for('admin.news_edit', news_id=news.id) }}" style="margin-right:8px;">Bearbeiten</a>
-                <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+    <button type="submit">Veröffentlichen</button>
+</form>
+
+<hr>
+<h2>Bestehende Beiträge</h2>
+<table>
+    <tr>
+        <th>Datum</th>
+        <th>Sprache</th>
+        <th>Titel</th>
+        <th>Bild</th>
+        <th></th>
+    </tr>
+    {% for news in news_liste %}
+    <tr>
+        <td>{{ news.veroeffentlicht.strftime('%d.%m.%Y') }}</td>
+        <td>{{ news.sprache }}</td>
+        <td>{{ news.titel }}</td>
+        <td>{% if news.bild_dateiname %}✓{% endif %}</td>
+        <td>
+            {% if news.slug %}<a href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank" style="margin-right:8px;">Ansehen</a>{% endif %}
+            <a href="{{ url_for('admin.news_edit', news_id=news.id) }}" style="margin-right:8px;">Bearbeiten</a>
+            <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+    const quill = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'image'],
+                ['clean']
+            ]
+        }
+    });
+    document.getElementById('news-form').addEventListener('submit', function (e) {
+        if (!quill.getText().trim()) {
+            e.preventDefault();
+            alert('Bitte einen Inhalt eingeben.');
+            return;
+        }
+        document.getElementById('inhalt-feld').value = quill.root.innerHTML;
+    });
+</script>
+{% endblock %}

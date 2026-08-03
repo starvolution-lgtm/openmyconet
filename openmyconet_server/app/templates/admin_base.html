@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}OpenMycoNet — Admin{% endblock %}</title>
+<link href="{{ asset('fonts.css') }}" rel="stylesheet">
+<link href="{{ asset('admin.css') }}" rel="stylesheet">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="wrap">
+  {% block header %}
+  <header class="admin-top">
+    <div>
+      <span class="eyebrow">OpenMycoNet · Admin</span>
+      <h1>{% block heading %}🍄 Admin{% endblock %}</h1>
+    </div>
+    <nav class="admin-nav">
+      {% if session.admin_role == 'superadmin' %}
+      <a href="{{ url_for('admin.admin') }}">👥 Nutzer</a>
+      {% endif %}
+      <a href="{{ url_for('admin.newsletter') }}">📧 Newsletter</a>
+      <a href="{{ url_for('admin.news_admin') }}">📰 News</a>
+      {% if session.admin_role == 'superadmin' %}
+      <a href="{{ url_for('admin.knoten_admin') }}">📡 Knoten</a>
+      <a href="{{ url_for('admin.bewerbungen_admin') }}">🗺️ Bewerbungen</a>
+      {% endif %}
+      <a href="{{ url_for('admin.spenden_admin') }}">💚 Spenden</a>
+      <a href="{{ url_for('admin.foerderer_admin') }}">🤝 Förderer</a>
+      <a href="{{ url_for('admin.inhalte_admin') }}">📝 Inhalte</a>
+      {% if session.admin_role == 'superadmin' %}
+      <a href="{{ url_for('admin.chatlogs') }}">💬 Chat-Logs</a>
+      <a href="{{ url_for('admin.accounts') }}">🔑 Accounts</a>
+      {% endif %}
+      <a href="{{ url_for('admin.change_password') }}">Passwort</a>
+      <a class="logout" href="{{ url_for('admin.logout') }}">Logout</a>
+    </nav>
+  </header>
+  {% endblock %}
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, msg in messages %}
+      <p class="{{ 'err' if category == 'error' else 'msg' }}">{{ msg }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
