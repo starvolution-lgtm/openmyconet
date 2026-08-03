@@ -39,6 +39,9 @@ KATEGORIEN = [
     'Bildung & Medien',
     'Nachhaltige Produkte',
     'Technologie & Software',
+    'Citizen Science & Bürgerforschung',
+    'Behörden & Institutionen',
+    'Schulen & Ausbildungsstätten',
     'Sonstiges',
 ]
 ALLOWED_LOGO_EXT = {'jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'}
@@ -115,8 +118,8 @@ def antrag():
         if request.form.get('website_url'):
             # Honeypot getroffen — stiller Leerlauf, kein Fehler, keine Speicherung.
             return render_template(
-                'foerderer_antrag.html', fehler=[], preview=False, data={},
-                betrag_optionen=BETRAG_OPTIONEN, kategorien=KATEGORIEN,
+                'site/foerderer_antrag.html', fehler=[], preview=False, data={},
+                betrag_optionen=BETRAG_OPTIONEN, kategorien=KATEGORIEN, current_page='foerderer',
             )
         ip = request.remote_addr
         if not ip_erlaubt(ip, 'foerderer_antrag', limit=10, window=3600):
@@ -216,10 +219,141 @@ def antrag():
         return redirect(f'{paypal_base}?{urlencode(params)}')
 
     return render_template(
-        'foerderer_antrag.html',
+        'site/foerderer_antrag.html',
         fehler=fehler, preview=preview, data=data,
-        betrag_optionen=BETRAG_OPTIONEN, kategorien=KATEGORIEN,
+        betrag_optionen=BETRAG_OPTIONEN, kategorien=KATEGORIEN, current_page='foerderer',
     )
+
+
+# --- Kooperationsanfrage: ohne PayPal, landet als 'pending' zur manuellen Freigabe ---
+
+@foerderer_bp.route('/foerderer/kooperation', methods=['GET', 'POST'])
+def kooperation():
+    fehler = []
+    preview = False
+    eingereicht = False
+    data = {}
+
+    action = request.form.get('action') if request.method == 'POST' else None
+
+    if action in ('preview', 'submit'):
+        if request.form.get('website_url'):
+            # Honeypot getroffen — stiller Leerlauf, kein Fehler, keine Speicherung.
+            return render_template(
+                'site/foerderer_kooperation.html', fehler=[], preview=False, eingereicht=False,
+                data={}, kategorien=KATEGORIEN, current_page='foerderer',
+            )
+        ip = request.remote_addr
+        if not ip_erlaubt(ip, 'foerderer_kooperation', limit=10, window=3600):
+            fehler.append('Zu viele Anfragen — bitte später erneut versuchen.')
+
+    if action == 'preview' and not fehler:
+        data = {
+            'firma': (request.form.get('firma') or '').strip(),
+            'beschreibung': (request.form.get('beschreibung') or '').strip(),
+            'gegenleistung_erwartet': (request.form.get('gegenleistung_erwartet') or '').strip(),
+            'website': (request.form.get('website') or '').strip(),
+            'kategorie': (request.form.get('kategorie') or '').strip(),
+            'email': (request.form.get('email') or '').strip(),
+        }
+        if len(data['firma']) < 2:
+            fehler.append('Firmenname ist zu kurz.')
+        if len(data['beschreibung']) < 20:
+            fehler.append('Beschreibung zu kurz (min. 20 Zeichen).')
+        if not _email_gueltig(data['email']):
+            fehler.append('E-Mail-Adresse ungültig.')
+
+        logo_datei = ''
+        logo_file = request.files.get('logo')
+        if logo_file and logo_file.filename:
+            ext = logo_file.filename.rsplit('.', 1)[-1].lower() if '.' in logo_file.filename else ''
+            if ext not in ALLOWED_LOGO_EXT:
+                fehler.append('Logo: nur JPG, PNG, WebP, GIF oder SVG erlaubt.')
+            else:
+                logo_file.seek(0, os.SEEK_END)
+                size = logo_file.tell()
+                logo_file.seek(0)
+                if size > MAX_LOGO_BYTES:
+                    fehler.append('Logo: max. 5 MB.')
+                else:
+                    gueltig, fehlermeldung = _logo_inhalt_gueltig(logo_file, ext)
+                    if not gueltig:
+                        fehler.append(fehlermeldung)
+                    else:
+                        upload_dir = os.path.join(current_app.static_folder, LOGO_UPLOAD_SUBDIR)
+                        os.makedirs(upload_dir, exist_ok=True)
+                        logo_datei = f'prev_{uuid.uuid4().hex}.{ext}'
+                        logo_file.save(os.path.join(upload_dir, logo_datei))
+
+        if not fehler:
+            preview = True
+            data['logo'] = logo_datei
+
+    elif action == 'submit' and not fehler:
+        data = {
+            'firma': (request.form.get('firma') or '').strip(),
+            'beschreibung': (request.form.get('beschreibung') or '').strip(),
+            'gegenleistung_erwartet': (request.form.get('gegenleistung_erwartet') or '').strip(),
+            'website': (request.form.get('website') or '').strip(),
+            'kategorie': (request.form.get('kategorie') or '').strip(),
+            'email': (request.form.get('email') or '').strip(),
+            'logo': (request.form.get('logo_datei') or '').strip(),
+        }
+
+        foerderer = Foerderer(
+            token=secrets.token_hex(32),
+            status='pending',
+            typ='kooperation',
+            firma=data['firma'],
+            beschreibung=data['beschreibung'],
+            gegenleistung_erwartet=data['gegenleistung_erwartet'],
+            website=data['website'],
+            kategorie=data['kategorie'],
+            email=data['email'],
+            betrag=0,
+            logo_datei=data['logo'],
+        )
+        db.session.add(foerderer)
+        db.session.commit()
+
+        _mail_kooperationsanfrage_admin(foerderer)
+        eingereicht = True
+        data = {}
+
+    return render_template(
+        'site/foerderer_kooperation.html',
+        fehler=fehler, preview=preview, eingereicht=eingereicht, data=data,
+        kategorien=KATEGORIEN, current_page='foerderer',
+    )
+
+
+def _mail_kooperationsanfrage_admin(foerderer):
+    admin_email = os.getenv('ADMIN_NOTIFY_EMAIL') or os.getenv('MAIL_USERNAME')
+    if not admin_email:
+        return
+    msg = Message(
+        subject=f'Neue Kooperationsanfrage: {foerderer.firma}',
+        recipients=[admin_email],
+    )
+    msg.body = f"""Neue Kooperationsanfrage (unbezahlt, wartet auf Freigabe):
+
+Firma:                  {foerderer.firma}
+E-Mail:                 {foerderer.email}
+Website:                {foerderer.website or '(nicht angegeben)'}
+Kategorie:              {foerderer.kategorie}
+
+Was wird angeboten:
+{foerderer.beschreibung}
+
+Was wird von OpenMycoNet erwartet:
+{foerderer.gegenleistung_erwartet or '(nicht angegeben)'}
+
+Freigeben unter: {_base_url()}/admin/foerderer
+"""
+    try:
+        mail.send(msg)
+    except Exception as e:
+        logger.error("Kooperationsanfrage-Benachrichtigung konnte nicht gesendet werden: %s", e)
 
 
 # --- PayPal IPN ---

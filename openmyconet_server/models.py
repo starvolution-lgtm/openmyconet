@@ -123,6 +123,7 @@ class Foerderer(db.Model):
     website = db.Column(db.String(255), default='')
     kategorie = db.Column(db.String(80), default='')
     typ = db.Column(db.String(20), default='foerderer')  # foerderer (bezahlt) | kooperation (manuell, ohne Zahlung)
+    gegenleistung_erwartet = db.Column(db.Text, default='')  # nur bei Kooperationsanfragen: was sich der Antragsteller von OpenMycoNet wuenscht
     email = db.Column(db.String(180), nullable=False)
     betrag = db.Column(db.Float, default=50.0)
     logo_datei = db.Column(db.String(255), default='')

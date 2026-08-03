@@ -77,16 +77,29 @@
   </div>
 
   <h2 data-i18n="f_h2_liste">{{ t('f_h2_liste') }}</h2>
+
+  <p data-i18n-html="koop_wege_text" style="color:#b0d4b0; font-size:0.95rem; max-width:640px; margin-bottom:1.5rem;">{{ t('koop_wege_text') | safe }}</p>
+  <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2.5rem;">
+    <a href="https://api.openmyconet.de/foerderer/antrag"
+      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
+      <span data-i18n="koop_btn_foerderer">{{ t('koop_btn_foerderer') }}</span>
+    </a>
+    <a href="https://api.openmyconet.de/foerderer/kooperation"
+      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:transparent; border:1px solid #d4a030; color:#f0b84a; text-decoration:none;">
+      <span data-i18n="koop_btn_kooperation">{{ t('koop_btn_kooperation') }}</span>
+    </a>
+  </div>
+
   <div class="foerderer-grid">
     {% for f in foerderer_liste %}
       {% set inner %}
-        <div class="foerderer-badge">{% if f.typ == 'kooperation' %}Kooperation{% else %}★ Offizieller Förderer ★{% endif %}</div>
+        <div class="foerderer-badge" data-i18n="{% if f.typ == 'kooperation' %}koop_badge_kooperation{% else %}koop_badge_foerderer{% endif %}">{% if f.typ == 'kooperation' %}{{ t('koop_badge_kooperation') }}{% else %}{{ t('koop_badge_foerderer') }}{% endif %}</div>
         <div class="foerderer-logo-wrap">
           {% if f.logo_datei %}<img src="{{ asset('uploads/foerderer/' + f.logo_datei) }}" alt="{{ f.firma }}" class="foerderer-logo">{% endif %}
         </div>
         <div class="foerderer-name">{{ f.firma }}</div>
         <div class="foerderer-desc">{{ f.beschreibung }}</div>
-        {% if f.website %}<span class="foerderer-link">→ Website besuchen</span>{% endif %}
+        {% if f.website %}<span class="foerderer-link" data-i18n="koop_link_website">{{ t('koop_link_website') }}</span>{% endif %}
       {% endset %}
       {% if f.website %}
         <a class="foerderer-card" href="{{ f.website }}" target="_blank" rel="noopener">{{ inner }}</a>

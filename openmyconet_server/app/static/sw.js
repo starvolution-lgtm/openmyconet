@@ -1,5 +1,5 @@
 // OpenMycoNet Service Worker — Offline-Fähigkeit
-const CACHE = 'openmyconet-v1';
+const CACHE = 'openmyconet-v3';
 
 const PRECACHE = [
   '/',

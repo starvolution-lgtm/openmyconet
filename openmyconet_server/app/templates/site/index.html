@@ -59,20 +59,9 @@
 html { scroll-behavior:smooth; overflow-x:hidden; }
 body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; overflow-x:hidden; -webkit-text-size-adjust:100%; }
 
-nav { position:fixed; top:0; left:0; right:0; z-index:100; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:justify; -webkit-justify-content:space-between; justify-content:space-between; -webkit-box-align:center; -webkit-align-items:center; align-items:center; padding:0.75rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
-.nav-logo { font-family:'Lora',Georgia,serif; font-size:0.9rem; color:#6ee87e; letter-spacing:0.1em; text-transform:uppercase; }
-.nav-logo span { color:#f0b84a; }
-nav a.nav-logo-link { margin-left:clamp(-1.5rem,-1.5vw,-0.75rem); }
-nav ul { list-style:none; display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; position:absolute; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%); }
-nav a { color:#a0c8a0; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.2s; }
-nav a:hover { color:#f0b84a; }
-nav a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
-nav a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px; animation: nav-news-glow 1.6s ease-in-out infinite; }
-@keyframes nav-news-glow {
-  0%, 100% { background-color:rgba(240,184,74,0.08); box-shadow:0 0 6px rgba(240,184,74,0.3); text-shadow:0 0 4px rgba(240,184,74,0.5); }
-  50% { background-color:rgba(240,184,74,0.28); box-shadow:0 0 10px 2px rgba(240,184,74,0.9), 0 0 26px rgba(240,184,74,0.55); text-shadow:0 0 10px rgba(255,210,120,1), 0 0 20px rgba(240,184,74,0.85); }
-}
-#lang-sidebar { display:none; position:fixed; right:42px; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
+/* nav/.hamburger/#lang-sidebar-Basisstile jetzt zentral in base.html (Aufräumen
+   2026-08-02 -- diese Kopie war veraltet und hätte den neuen Mobile-Overflow-Fix
+   in base.html überschrieben, siehe dortige @media(max-width:480px)). */
 section > *:not(.section-full):not(.hero-img-wrap) { max-width:860px; margin-left:auto; margin-right:auto; }
 .hero-img-wrap { max-width:none !important; margin-left:0 !important; margin-right:0 !important; }
 section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem); }
@@ -176,19 +165,8 @@ footer { padding:2.5rem 0; border-top:1px solid #0a6040; background-color:#02453
 @-webkit-keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-.hamburger { display:none; -webkit-flex-direction:row; flex-direction:row; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; background:transparent; border:1px solid #0a6040; border-radius:0; z-index:101; animation:hamburger-pulse 2.5s ease-in-out infinite; }
-.hamburger:hover, .hamburger:active { border-color:#6ee87e; background:rgba(110,232,126,0.08); box-shadow:0 0 0 3px rgba(110,232,126,0.2); animation:none; }
-.hamburger-bars { display:inline-flex; flex-direction:column; gap:5px; vertical-align:middle; }
-.hamburger-bars span { display:block; width:20px; height:2px; background:#e8f5e0; border-radius:2px; }
-.hamburger-label { font-family:'Lora',Georgia,serif; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8f5e0; white-space:nowrap; }
-
 .page-wrap { max-width:860px; margin:0 auto; padding:0 clamp(1.5rem,5vw,5rem); }
 .section-inner { max-width:1100px; margin:0 auto; }
-.mobile-menu { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,69,48,0.97); z-index:999; -webkit-flex-direction:column; flex-direction:column; -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center; gap:1.8rem; }
-.mobile-menu a { font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
-.mobile-menu a:hover { color:#6ee87e; }
-.mobile-menu-close { position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; line-height:1; }
-.mobile-lang { display:flex; gap:0.6rem; margin-top:1rem; align-items:center; }
 
 .foerderer-hint-box { display:none; margin-top:0.75rem; padding:1rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #d4a030; }
 
@@ -212,19 +190,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 #node-req-list li { display:flex; align-items:flex-start; gap:0.6rem; color:#a0c8a0; font-size:0.95rem; line-height:1.6; }
 #node-req-list li::before { content:"✓"; color:#3a9e5a; font-family:'JetBrains Mono',monospace; font-size:0.8rem; margin-top:3px; flex-shrink:0; }
 
-@media (max-width:1180px) {
-  nav ul { display:none !important; }
-  .hamburger { display:-webkit-flex !important; display:flex !important; }
-}
-
 @media (max-width:900px) {
-  nav ul { display:none !important; }
-  .nav-tools { margin-left:auto; margin-right:auto; gap:0.3rem; }
-  .nav-tool-label { display:none; }
-  .nav-tool-btn img { width:38px; height:38px; }
-  #lang-sidebar { display:none !important; }
   nav { padding:0.9rem 1.2rem; }
-  .hamburger { display:-webkit-flex !important; display:flex !important; }
   .hero h1 { font-size:2.2rem; }
   .hero-img-wrap { height:72vw; min-height:220px; }
   .hero-content { margin-top:-4.5rem; padding:0 0 3rem; max-width:100%; }
@@ -387,6 +354,22 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   <p class="section-label" data-i18n="label_kooperationen">{{ t('label_kooperationen') }}</p>
   <h2 data-i18n-html="h2_kooperationen">{{ t('h2_kooperationen') | safe }}</h2>
   <p class="section-desc" data-i18n="desc_kooperationen">{{ t('desc_kooperationen') }}</p>
+
+  <div style="margin-top:1.5rem; margin-bottom:2rem; max-width:640px;">
+    <p data-i18n="koop_wege_label" style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.6rem;">{{ t('koop_wege_label') }}</p>
+    <p data-i18n-html="koop_wege_text" style="color:#b0d4b0; font-size:0.95rem; line-height:1.7; margin-bottom:1.2rem;">{{ t('koop_wege_text') | safe }}</p>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <a href="https://api.openmyconet.de/foerderer/antrag"
+        style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
+        <span data-i18n="koop_btn_foerderer">{{ t('koop_btn_foerderer') }}</span>
+      </a>
+      <a href="https://api.openmyconet.de/foerderer/kooperation"
+        style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:transparent; border:1px solid #d4a030; color:#f0b84a; text-decoration:none;">
+        <span data-i18n="koop_btn_kooperation">{{ t('koop_btn_kooperation') }}</span>
+      </a>
+    </div>
+  </div>
+
   <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:0.5rem; margin-bottom:1.5rem;">
     {% for f in foerderer_liste %}
       {% set kurz = f.beschreibung[:90] + '…' if f.beschreibung|length > 90 else f.beschreibung %}
@@ -397,8 +380,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
         <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#ffffff; margin-bottom:0.3rem;">{{ f.firma }}</div>
         <div style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; margin-bottom:0.6rem; line-height:1.55;">{{ kurz }}</div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#d4a030; letter-spacing:0.08em; text-transform:uppercase;">{% if f.typ == 'kooperation' %}Kooperation{% else %}★ Förderer{% endif %}</span>
-          {% if f.website %}<span style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#6ee87e;">→ Website</span>{% endif %}
+          <span style="font-family:'JetBrains Mono',monospace; font-size:0.63rem; color:#d4a030; letter-spacing:0.08em; text-transform:uppercase;">{% if f.typ == 'kooperation' %}{{ t('koop_badge_kooperation') }}{% else %}{{ t('koop_badge_foerderer_kurz') }}{% endif %}</span>
+          {% if f.website %}<span style="font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#6ee87e;">{{ t('koop_link_website_kurz') }}</span>{% endif %}
         </div>
       {% endset %}
       {% if f.website %}
@@ -408,7 +391,9 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       {% endif %}
     {% endfor %}
   </div>
-  <a href="{{ live('foerderer.html') }}" class="btn btn-amber" data-i18n="link_kooperationen">{{ t('link_kooperationen') }}</a>
+  <div>
+    <a href="{{ live('foerderer.html') }}" class="btn btn-amber" data-i18n="link_kooperationen">{{ t('link_kooperationen') }}</a>
+  </div>
 </section>
 
 <section id="spenden" style="padding-top:3rem; padding-bottom:3rem; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
@@ -1122,44 +1107,10 @@ function shareSocial(network) {
   if (target) window.open(target, '_blank', 'noopener,width=600,height=500');
 }
 
-// ─── Broschüre (Instant-Umschalten per Flagge) ────────────────
-var PDF_FILES = {
-  de: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3.pdf',
-  en: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3en-GB.pdf',
-  nl: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3nl-NL.pdf',
-  fr: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3fr-FR.pdf',
-  es: 'OpenMycoNet_Broschuere_Das_unsichtbare_Netz_v1.3es-ES.pdf'
-};
-
-function renderBroschuere(lang) {
-  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
-  document.getElementById('broschuere-label').textContent = T.br_label;
-  document.getElementById('broschuere-c1').textContent = T.br_caption_1;
-  document.getElementById('broschuere-c2').textContent = T.br_caption_2;
-  document.getElementById('broschuere-c3').textContent = T.br_caption_3;
-  document.getElementById('broschuere-tagline').innerHTML = T.br_tagline.replace('verständlich','<em>verständlich</em>').replace('explained','<em>explained</em>').replace('begrijpelijk','<em>begrijpelijk</em>').replace('compréhensible','<em>compréhensible</em>').replace('explicado','<em>explicado</em>');
-  var btn = document.getElementById('broschuere-btn');
-  btn.textContent = T.br_btn;
-  btn.setAttribute('href', PDF_FILES[lang] || PDF_FILES.de);
-  document.getElementById('broschuere-note').textContent = T.br_note;
-  var flagsEl = document.getElementById('broschuere-flags');
-  if (flagsEl) {
-    var otherLabel = { de: 'Andere Sprache:', en: 'Other language:', nl: 'Andere taal:', fr: 'Autre langue :', es: 'Otro idioma:' };
-    var labelStyle = 'font-family:monospace; font-size:0.65rem; color:#a0c8a0; letter-spacing:0.05em;';
-    var langStyle = 'font-family:monospace; font-size:0.6rem; color:#e8f5e0; margin-left:2px;';
-    var out = '<span style="' + labelStyle + '">' + (otherLabel[lang] || otherLabel.de) + '</span>';
-    LANG_NAMES.forEach(function(l) {
-      var active = l === lang ? 'opacity:1; border-bottom:1px solid #6ee87e;' : 'opacity:0.5;';
-      var linkStyle = 'display:inline-flex; align-items:center; gap:3px; cursor:pointer; text-decoration:none; ' + active;
-      out += '<a href="' + (PDF_FILES[l] || PDF_FILES.de) + '" download title="' + FLAG_TITLES[l] + '" style="' + linkStyle + '">';
-      out += FLAGS[l];
-      out += '<span style="' + langStyle + '">' + l.toUpperCase() + '</span></a>';
-    });
-    flagsEl.innerHTML = out;
-  }
-}
-
-var LANG_NAMES = LANGS;
+// Broschuere ist nach medien.html ausgelagert (Phase 4 Erweiterung 1f) -- die
+// alte renderBroschuere()-Funktion samt PDF_FILES hier entfernt (2026-08-02),
+// da die referenzierten Elemente (#broschuere-label/-btn/-note usw.) auf
+// index.html gar nicht mehr existieren und jeder Aufruf mit TypeError crashte.
 
 // ─── Init: Client-Hydration nach translations.json-Fetch ──────
 document.addEventListener('DOMContentLoaded', function() {
@@ -1170,7 +1121,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateMeta(currentLang);
     renderDynamicSections(currentLang);
     renderRegForm(currentLang);
-    renderBroschuere(currentLang);
   });
 });
 
@@ -1192,7 +1142,6 @@ function setLang(lang) {
   updateFlags(lang);
   renderDynamicSections(lang);
   renderRegForm(lang);
-  renderBroschuere(lang);
 }
 </script>
 

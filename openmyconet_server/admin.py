@@ -13,7 +13,7 @@ from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from extensions import db, mail
-from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung
+from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung, Foerderer
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -523,3 +523,39 @@ def bewerbungen_admin():
         nachricht=nachricht,
         fehler=fehler
     )
+
+
+# --- Förderer/Kooperationen ---
+
+@admin_bp.route('/admin/foerderer', methods=['GET', 'POST'])
+@login_required
+def foerderer_admin():
+    from datetime import datetime as _dt
+    nachricht = None
+    fehler = None
+    if request.method == 'POST':
+        foerderer_id = request.form.get('foerderer_id', type=int)
+        eintrag = Foerderer.query.get(foerderer_id) if foerderer_id else None
+        if not eintrag:
+            fehler = 'Eintrag nicht gefunden.'
+        elif request.form.get('action') == 'delete':
+            nachricht = f'Eintrag "{eintrag.firma}" gelöscht.'
+            db.session.delete(eintrag)
+            db.session.commit()
+        elif request.form.get('action') == 'activate':
+            eintrag.status = 'active'
+            eintrag.aktiviert_am = _dt.utcnow()
+            db.session.commit()
+            nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
+        elif request.form.get('action') == 'reject':
+            eintrag.status = 'rejected'
+            db.session.commit()
+            nachricht = f'"{eintrag.firma}" wurde abgelehnt.'
+        else:
+            fehler = 'Ungültige Aktion.'
+
+    liste = Foerderer.query.order_by(
+        db.case((Foerderer.status == 'pending', 0), else_=1),
+        Foerderer.erstellt_am.desc()
+    ).all()
+    return render_template('foerderer_admin.html', liste=liste, nachricht=nachricht, fehler=fehler)
