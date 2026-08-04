@@ -37,9 +37,10 @@ def bewerbung_einreichen():
     email = (request.form.get("email") or "").strip().lower()
     motivation = (request.form.get("motivation") or "").strip()
     substrat = (request.form.get("node_substrat") or "").strip()
+    name = (request.form.get("name") or "").strip()
 
-    if not email or not motivation or not substrat:
-        return jsonify({"error": "Pflichtfelder fehlen (E-Mail, Substrat, Motivation)"}), 400
+    if not email or not motivation or not substrat or not name:
+        return jsonify({"error": "Pflichtfelder fehlen (Ansprechpartner, E-Mail, Substrat, Motivation)"}), 400
 
     def parse_float(value):
         try:
@@ -47,7 +48,6 @@ def bewerbung_einreichen():
         except (TypeError, ValueError):
             return None
 
-    name = (request.form.get("name") or "").strip()
     sprache = (request.form.get("lang") or "de").strip()
 
     # Eine Knoten-Bewerbung ist immer auch eine Registrierung: bestehenden Nutzer

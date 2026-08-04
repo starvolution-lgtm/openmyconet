@@ -902,6 +902,10 @@ input[type="checkbox"], input[type="radio"] {
       <input type="hidden" name="type" value="node_bewerbung">
 
       <div class="form-group">
+        <label id="node-lbl-ansprechpartner"></label>
+        <input type="text" id="node-inp-ansprechpartner" name="ansprechpartner" required>
+      </div>
+      <div class="form-group">
         <label id="node-lbl-profession"></label>
         <input type="text" id="node-inp-profession" name="profession">
       </div>
@@ -1339,6 +1343,8 @@ function renderRegForm(lang) {
   document.getElementById('node-info-hw').textContent = A.node_info_hw;
   document.getElementById('node-req-title').textContent = A.node_req_title;
   document.getElementById('node-info-feedback').textContent = A.node_info_feedback;
+  document.getElementById('node-lbl-ansprechpartner').textContent = A.node_lbl_ansprechpartner;
+  document.getElementById('node-inp-ansprechpartner').placeholder = A.node_ph_ansprechpartner;
   document.getElementById('node-lbl-profession').textContent = A.node_lbl_profession;
   document.getElementById('node-inp-profession').placeholder = A.node_ph_profession;
   document.getElementById('node-lbl-substrat').textContent = A.node_lbl_substrat;
@@ -1521,10 +1527,12 @@ function submitNodeApplication() {
   var A = APPLY_TRANS[currentLang] || APPLY_TRANS.de;
   var btn = document.getElementById('node-submit-btn');
   var form = document.getElementById('node-form');
-  // Copy main form data (name, email, rolle)
+  // Copy main form data (email, rolle) — name kommt bewusst aus dem eigenen,
+  // erforderlichen Ansprechpartner-Feld des node-form, nicht aus dem optionalen
+  // Namensfeld der allgemeinen Registrierung oben.
   var data = new FormData(form);
   data.append('lang', currentLang);
-  data.append('name', document.getElementById('inp-name').value);
+  data.append('name', document.getElementById('node-inp-ansprechpartner').value);
   data.append('email', document.getElementById('inp-email').value);
   data.append('rolle', document.getElementById('reg-role').value);
   btn.textContent = A.node_sending;

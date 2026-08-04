@@ -21,6 +21,7 @@
         <span class="badge typ">{{ f.typ }}</span>
     </div>
 
+    {% if f.ansprechpartner %}<div class="feld"><label>Ansprechpartner</label><p>{{ f.ansprechpartner }}</p></div>{% endif %}
     <div class="feld"><label>E-Mail</label><p>{{ f.email }}</p></div>
     {% if f.website %}<div class="feld"><label>Website</label><p><a href="{{ f.website }}" target="_blank" rel="noopener">{{ f.website }}</a></p></div>{% endif %}
     <div class="feld"><label>Kategorie</label><p>{{ f.kategorie or '—' }}</p></div>

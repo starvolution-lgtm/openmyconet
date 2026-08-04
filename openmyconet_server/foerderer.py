@@ -128,6 +128,7 @@ def antrag():
     if action == 'preview' and not fehler:
         data = {
             'firma': (request.form.get('firma') or '').strip(),
+            'ansprechpartner': (request.form.get('ansprechpartner') or '').strip(),
             'beschreibung': (request.form.get('beschreibung') or '').strip(),
             'website': (request.form.get('website') or '').strip(),
             'kategorie': (request.form.get('kategorie') or '').strip(),
@@ -172,6 +173,7 @@ def antrag():
     elif action == 'checkout' and not fehler:
         data = {
             'firma': (request.form.get('firma') or '').strip(),
+            'ansprechpartner': (request.form.get('ansprechpartner') or '').strip(),
             'beschreibung': (request.form.get('beschreibung') or '').strip(),
             'website': (request.form.get('website') or '').strip(),
             'kategorie': (request.form.get('kategorie') or '').strip(),
@@ -186,6 +188,7 @@ def antrag():
         foerderer = Foerderer(
             token=token,
             firma=data['firma'],
+            ansprechpartner=data['ansprechpartner'],
             beschreibung=data['beschreibung'],
             website=data['website'],
             kategorie=data['kategorie'],
@@ -250,6 +253,7 @@ def kooperation():
     if action == 'preview' and not fehler:
         data = {
             'firma': (request.form.get('firma') or '').strip(),
+            'ansprechpartner': (request.form.get('ansprechpartner') or '').strip(),
             'beschreibung': (request.form.get('beschreibung') or '').strip(),
             'gegenleistung_erwartet': (request.form.get('gegenleistung_erwartet') or '').strip(),
             'website': (request.form.get('website') or '').strip(),
@@ -258,6 +262,8 @@ def kooperation():
         }
         if len(data['firma']) < 2:
             fehler.append('Firmenname ist zu kurz.')
+        if not data['ansprechpartner']:
+            fehler.append('Ansprechpartner fehlt.')
         if len(data['beschreibung']) < 20:
             fehler.append('Beschreibung zu kurz (min. 20 Zeichen).')
         if not _email_gueltig(data['email']):
@@ -292,6 +298,7 @@ def kooperation():
     elif action == 'submit' and not fehler:
         data = {
             'firma': (request.form.get('firma') or '').strip(),
+            'ansprechpartner': (request.form.get('ansprechpartner') or '').strip(),
             'beschreibung': (request.form.get('beschreibung') or '').strip(),
             'gegenleistung_erwartet': (request.form.get('gegenleistung_erwartet') or '').strip(),
             'website': (request.form.get('website') or '').strip(),
@@ -305,6 +312,7 @@ def kooperation():
             status='pending',
             typ='kooperation',
             firma=data['firma'],
+            ansprechpartner=data['ansprechpartner'],
             beschreibung=data['beschreibung'],
             gegenleistung_erwartet=data['gegenleistung_erwartet'],
             website=data['website'],
@@ -338,6 +346,7 @@ def _mail_kooperationsanfrage_admin(foerderer):
     msg.body = f"""Neue Kooperationsanfrage (unbezahlt, wartet auf Freigabe):
 
 Firma:                  {foerderer.firma}
+Ansprechpartner:        {foerderer.ansprechpartner or '(nicht angegeben)'}
 E-Mail:                 {foerderer.email}
 Website:                {foerderer.website or '(nicht angegeben)'}
 Kategorie:              {foerderer.kategorie}
@@ -554,6 +563,7 @@ def _mail_admin(foerderer, rechnung_nr, betrag):
     msg.body = f"""Neuer Förderer-Eintrag aktiviert:
 
 Firma:    {foerderer.firma}
+Ansprechpartner: {foerderer.ansprechpartner or '(nicht angegeben)'}
 E-Mail:   {foerderer.email}
 Website:  {foerderer.website or '(nicht angegeben)'}
 Betrag:   {betrag:.2f} EUR
