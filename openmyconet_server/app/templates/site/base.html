@@ -37,7 +37,17 @@ nav a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px;
    unterschiedliche Sektionen auf index.html, die nicht direkt benachbart sind) */
 .nav-dropdown-wrap { position:relative; }
 .nav-dropdown-wrap > a { white-space:nowrap; }
-.nav-dropdown-menu { display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%); background-color:rgba(2,69,48,0.98); border:1px solid #0a6040; padding:0.4rem 0; margin-top:0.7rem; min-width:150px; list-style:none; z-index:101; }
+.nav-dropdown-menu {
+  display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  background-color:rgba(2,69,48,0.98); border:1px solid #0a6040; padding:0.4rem 0;
+  min-width:150px; list-style:none; z-index:101;
+}
+/* Unsichtbare Bruecke schliesst die Luecke zwischen Trigger und Menue --
+   ohne sie verliert .nav-dropdown-wrap:hover den Hover-Zustand beim
+   Durchqueren des Abstands, bevor die Maus das Menue erreicht (live
+   gemeldet: Dropdown schloss sich, sobald man auf "Warum"/"Ueber" zubewegte). */
+.nav-dropdown-menu::before { content:''; position:absolute; top:-0.7rem; left:0; right:0; height:0.7rem; }
+.nav-dropdown-menu { margin-top:0.7rem; }
 .nav-dropdown-wrap:hover .nav-dropdown-menu, .nav-dropdown-wrap:focus-within .nav-dropdown-menu { display:block; }
 .nav-dropdown-menu li { padding:0; }
 .nav-dropdown-menu a { display:block; padding:0.5rem 1.1rem; white-space:nowrap; }
