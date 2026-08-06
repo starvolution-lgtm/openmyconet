@@ -39,4 +39,48 @@
     {% endfor %}
 </table>
 {% endif %}
+
+<hr style="margin:2.5rem 0;">
+
+<h2>Suchbegriffe (GDELT)</h2>
+<p style="color:var(--muted); max-width:60ch;">Ein Begriff pro Sprache — Änderungen wirken beim nächsten Cronjob-Lauf (wöchentlich, Montag 8 Uhr). Nicht aktive Begriffe werden bei der Suche übersprungen.</p>
+
+<table>
+    <tr>
+        <th>Sprache</th>
+        <th>Suchbegriff</th>
+        <th>GDELT sourcelang</th>
+        <th>Aktiv</th>
+        <th></th>
+    </tr>
+    {% for sb in suchbegriffe %}
+    <tr>
+        <td><input type="text" name="sprache" form="sbform{{ sb.id }}" value="{{ sb.sprache }}" style="width:4em;"></td>
+        <td><input type="text" name="begriff" form="sbform{{ sb.id }}" value="{{ sb.begriff }}" style="width:16em;"></td>
+        <td><input type="text" name="quellsprache" form="sbform{{ sb.id }}" value="{{ sb.quellsprache }}" style="width:8em;"></td>
+        <td><input type="checkbox" name="aktiv" form="sbform{{ sb.id }}" style="width:auto;" {% if sb.aktiv %}checked{% endif %}></td>
+        <td style="white-space:nowrap;">
+            <button type="submit" form="sbform{{ sb.id }}" style="margin-right:8px;">Speichern</button>
+            <a href="{{ url_for('admin.suchbegriff_loeschen', suchbegriff_id=sb.id) }}" class="del" onclick="return confirm('Suchbegriff wirklich löschen?')">✕</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% for sb in suchbegriffe %}
+<form id="sbform{{ sb.id }}" method="POST" action="{{ url_for('admin.suchbegriff_speichern', suchbegriff_id=sb.id) }}"></form>
+{% endfor %}
+
+<h3 style="margin-top:1.5rem;">Neuen Suchbegriff hinzufügen</h3>
+<form method="POST" action="{{ url_for('admin.suchbegriff_neu') }}">
+    <label>Sprache (Website-Sprachcode, z.B. de)</label>
+    <input type="text" name="sprache" required>
+
+    <label>Suchbegriff</label>
+    <input type="text" name="begriff" required>
+
+    <label>GDELT sourcelang (z.B. german, english, dutch, french, spanish)</label>
+    <input type="text" name="quellsprache" required>
+
+    <button type="submit">Hinzufügen</button>
+</form>
 {% endblock %}

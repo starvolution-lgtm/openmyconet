@@ -2,8 +2,22 @@ import requests
 
 from conftest import eingeloggt
 from extensions import db
-from models import Presseeintrag, Pressekandidat
+from models import Presseeintrag, Pressekandidat, Suchbegriff
 import presse_suche
+
+
+def _suchbegriffe_seed(app, **overrides_pro_sprache):
+    with app.app_context():
+        for sprache, begriff, quellsprache in [
+            ('de', 'Mykorrhiza-Netzwerk', 'german'),
+            ('en', 'mycorrhizal network', 'english'),
+            ('nl', 'mycorrhiza netwerk', 'dutch'),
+            ('fr', 'réseau mycorhizien', 'french'),
+            ('es', 'red micorrícica', 'spanish'),
+        ]:
+            aktiv = overrides_pro_sprache.get(sprache, True)
+            db.session.add(Suchbegriff(sprache=sprache, begriff=begriff, quellsprache=quellsprache, aktiv=aktiv))
+        db.session.commit()
 
 
 def _presseeintrag(app, **overrides):
@@ -129,6 +143,43 @@ def test_kandidat_uebernehmen_befuellt_formular_und_markiert_kandidat(client, ap
         assert Pressekandidat.query.get(kandidat_id).status == 'uebernommen'
 
 
+# --- Suchbegriffe (Admin-UI fuer presse_suche.py) ---
+
+def test_suchbegriff_anlegen_bearbeiten_loeschen(client, app, superadmin):
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+
+    resp = client.post('/admin/presse-kandidaten/suchbegriff/neu', data={
+        'sprache': 'de', 'begriff': 'Testbegriff', 'quellsprache': 'german',
+    }, follow_redirects=True)
+    assert 'Testbegriff' in resp.get_data(as_text=True)
+
+    with app.app_context():
+        sb = Suchbegriff.query.filter_by(sprache='de').first()
+        assert sb is not None
+        assert sb.aktiv is True
+
+    resp = client.post(f'/admin/presse-kandidaten/suchbegriff/{sb.id}', data={
+        'sprache': 'de', 'begriff': 'Geaenderter Begriff', 'quellsprache': 'german',
+        # 'aktiv' Checkbox nicht mitgeschickt -> deaktiviert
+    }, follow_redirects=True)
+    with app.app_context():
+        sb_aktualisiert = Suchbegriff.query.get(sb.id)
+        assert sb_aktualisiert.begriff == 'Geaenderter Begriff'
+        assert sb_aktualisiert.aktiv is False
+
+    client.get(f'/admin/presse-kandidaten/suchbegriff/loeschen/{sb.id}')
+    with app.app_context():
+        assert Suchbegriff.query.get(sb.id) is None
+
+
+def test_suchbegriff_ohne_login_umgeleitet(client):
+    resp = client.post('/admin/presse-kandidaten/suchbegriff/neu', data={
+        'sprache': 'de', 'begriff': 'X', 'quellsprache': 'german',
+    }, follow_redirects=False)
+    assert resp.status_code == 302
+    assert '/login' in resp.headers['Location']
+
+
 def test_kandidat_verwerfen(client, app, superadmin):
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     kandidat_id = _kandidat(app)
@@ -156,6 +207,7 @@ class _GefaelschteResponse:
 
 def test_kandidaten_suchen_legt_neue_kandidaten_an(app, monkeypatch):
     monkeypatch.setattr(presse_suche.time, 'sleep', lambda *a: None)
+    _suchbegriffe_seed(app)
 
     antworten = {
         'de': '{"articles": [{"url": "https://example.com/de-1", "title": "DE Artikel", "domain": "beispiel.de", "seendate": "20260601T120000Z"}]}',
@@ -182,6 +234,7 @@ def test_kandidaten_suchen_legt_neue_kandidaten_an(app, monkeypatch):
 
 def test_kandidaten_suchen_dedupliziert_gegen_bestehende(app, monkeypatch):
     monkeypatch.setattr(presse_suche.time, 'sleep', lambda *a: None)
+    _suchbegriffe_seed(app)
     with app.app_context():
         db.session.add(Pressekandidat(titel='Schon da', url='https://example.com/de-1', quelle='x', sprache='de'))
         db.session.commit()
@@ -197,3 +250,28 @@ def test_kandidaten_suchen_dedupliziert_gegen_bestehende(app, monkeypatch):
         anzahl = presse_suche.kandidaten_suchen()
         assert anzahl == 0
         assert Pressekandidat.query.filter_by(url='https://example.com/de-1').count() == 1
+
+
+def test_kandidaten_suchen_ohne_suchbegriffe_gibt_null_zurueck(app, monkeypatch):
+    # Keine Suchbegriffe angelegt -- muss sauber abbrechen statt zu crashen.
+    monkeypatch.setattr(presse_suche.time, 'sleep', lambda *a: None)
+    with app.app_context():
+        assert presse_suche.kandidaten_suchen() == 0
+
+
+def test_kandidaten_suchen_ignoriert_inaktive_suchbegriffe(app, monkeypatch):
+    monkeypatch.setattr(presse_suche.time, 'sleep', lambda *a: None)
+    _suchbegriffe_seed(app, de=False)  # Deutsch deaktiviert, Rest aktiv
+
+    angefragte_sprachen = []
+
+    def fake_get(url, params=None, timeout=None):
+        angefragte_sprachen.append(params['sourcelang'])
+        return _GefaelschteResponse('{"articles": []}')
+
+    monkeypatch.setattr(presse_suche.requests, 'get', fake_get)
+
+    with app.app_context():
+        presse_suche.kandidaten_suchen()
+        assert 'german' not in angefragte_sprachen
+        assert 'english' in angefragte_sprachen

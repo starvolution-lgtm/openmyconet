@@ -161,3 +161,12 @@ class Pressekandidat(db.Model):
     sprache = db.Column(db.String(10), default='de')
     gefunden_am = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='pending')  # pending | uebernommen | verworfen
+
+class Suchbegriff(db.Model):
+    """Konfiguration fuer presse_suche.py -- im Admin unter /admin/presse-kandidaten
+    editierbar, damit Suchbegriffe ohne Code-Deploy angepasst werden koennen."""
+    id = db.Column(db.Integer, primary_key=True)
+    sprache = db.Column(db.String(10), nullable=False)  # Website-Sprachcode (de/en/nl/fr/es)
+    begriff = db.Column(db.String(200), nullable=False)  # GDELT-Suchbegriff
+    quellsprache = db.Column(db.String(20), nullable=False)  # GDELT sourcelang-Parameter, z.B. "german"
+    aktiv = db.Column(db.Boolean, default=True)

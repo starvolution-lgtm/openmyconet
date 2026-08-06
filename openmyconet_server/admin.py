@@ -14,7 +14,7 @@ from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from extensions import db, mail
-from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung, Foerderer, Presseeintrag, Pressekandidat
+from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung, Foerderer, Presseeintrag, Pressekandidat, Suchbegriff
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -642,7 +642,8 @@ def presse_kandidaten():
             db.session.commit()
         return redirect(url_for('admin.presse_kandidaten'))
     kandidaten = Pressekandidat.query.filter_by(status='pending').order_by(Pressekandidat.gefunden_am.desc()).all()
-    return render_template('presse_kandidaten.html', kandidaten=kandidaten)
+    suchbegriffe = Suchbegriff.query.order_by(Suchbegriff.sprache).all()
+    return render_template('presse_kandidaten.html', kandidaten=kandidaten, suchbegriffe=suchbegriffe)
 
 
 @admin_bp.route('/admin/presse-kandidaten/uebernehmen/<int:kandidat_id>')
@@ -655,3 +656,39 @@ def presse_kandidat_uebernehmen(kandidat_id):
         'admin.presse_admin',
         titel=kandidat.titel, url=kandidat.url, quelle=kandidat.quelle, sprache=kandidat.sprache,
     ))
+
+
+# --- Suchbegriffe fuer die GDELT-Kandidatensuche (presse_suche.py) ---
+
+@admin_bp.route('/admin/presse-kandidaten/suchbegriff/<int:suchbegriff_id>', methods=['POST'])
+@login_required
+def suchbegriff_speichern(suchbegriff_id):
+    sb = Suchbegriff.query.get_or_404(suchbegriff_id)
+    sb.sprache = request.form.get('sprache', '').strip()
+    sb.begriff = request.form.get('begriff', '').strip()
+    sb.quellsprache = request.form.get('quellsprache', '').strip()
+    sb.aktiv = bool(request.form.get('aktiv'))
+    if sb.sprache and sb.begriff and sb.quellsprache:
+        db.session.commit()
+    return redirect(url_for('admin.presse_kandidaten'))
+
+
+@admin_bp.route('/admin/presse-kandidaten/suchbegriff/neu', methods=['POST'])
+@login_required
+def suchbegriff_neu():
+    sprache = request.form.get('sprache', '').strip()
+    begriff = request.form.get('begriff', '').strip()
+    quellsprache = request.form.get('quellsprache', '').strip()
+    if sprache and begriff and quellsprache:
+        db.session.add(Suchbegriff(sprache=sprache, begriff=begriff, quellsprache=quellsprache, aktiv=True))
+        db.session.commit()
+    return redirect(url_for('admin.presse_kandidaten'))
+
+
+@admin_bp.route('/admin/presse-kandidaten/suchbegriff/loeschen/<int:suchbegriff_id>')
+@login_required
+def suchbegriff_loeschen(suchbegriff_id):
+    sb = Suchbegriff.query.get_or_404(suchbegriff_id)
+    db.session.delete(sb)
+    db.session.commit()
+    return redirect(url_for('admin.presse_kandidaten'))

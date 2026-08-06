@@ -17,7 +17,6 @@ eine Pause zwischen den Sprachen, statt mehrerer kombinierter Anfragen.
 Aufruf: python presse_suche.py (per Cronjob, z.B. woechentlich)
 """
 
-import os
 import time
 from datetime import datetime
 
@@ -25,21 +24,18 @@ import requests
 
 from app import app
 from extensions import db
-from models import Pressekandidat
+from models import Pressekandidat, Suchbegriff
 
 GDELT_URL = 'https://api.gdeltproject.org/api/v2/doc/doc'
 PAUSE_ZWISCHEN_ANFRAGEN = 10  # Sekunden -- GDELT verlangt mindestens 5, Sicherheitsmarge gegen Bursts
 
-# Bewusst ein einzelner, thematisch treffender Suchbegriff pro Sprache statt
-# mehrerer kombinierter Woerter -- UND-verknuepfte Mehrwort-Queries lieferten
-# im Test haeufiger 0 Treffer als ein einzelner praeziser Begriff.
-SUCHBEGRIFFE = {
-    'de': ('Mykorrhiza-Netzwerk', 'german'),
-    'en': ('mycorrhizal network', 'english'),
-    'nl': ('mycorrhiza netwerk', 'dutch'),
-    'fr': ('réseau mycorhizien', 'french'),
-    'es': ('red micorrícica', 'spanish'),
-}
+# Suchbegriffe liegen NICHT mehr hier im Code, sondern in der Suchbegriff-
+# Tabelle -- editierbar unter /admin/presse-kandidaten, damit sie ohne
+# Code-Deploy angepasst werden koennen (siehe seed_suchbegriffe.py fuer die
+# anfaengliche Befuellung). Bewusst ein einzelner, thematisch treffender
+# Suchbegriff pro Sprache statt mehrerer kombinierter Woerter -- UND-
+# verknuepfte Mehrwort-Queries lieferten im Test haeufiger 0 Treffer als ein
+# einzelner praeziser Begriff.
 
 
 def _datum_parsen(seendate):
@@ -70,13 +66,18 @@ def _sprache_suchen(sprache, begriff, quellsprache):
 def kandidaten_suchen():
     neue = 0
     with app.app_context():
-        for i, (sprache, (begriff, quellsprache)) in enumerate(SUCHBEGRIFFE.items()):
+        begriffe = Suchbegriff.query.filter_by(aktiv=True).all()
+        if not begriffe:
+            print('Keine aktiven Suchbegriffe konfiguriert (siehe /admin/presse-kandidaten).')
+            return 0
+
+        for i, sb in enumerate(begriffe):
             if i > 0:
                 time.sleep(PAUSE_ZWISCHEN_ANFRAGEN)
             try:
-                artikel = _sprache_suchen(sprache, begriff, quellsprache)
+                artikel = _sprache_suchen(sb.sprache, sb.begriff, sb.quellsprache)
             except (requests.RequestException, ValueError) as fehler:
-                print(f'GDELT-Suche ({sprache}) fehlgeschlagen: {fehler}')
+                print(f'GDELT-Suche ({sb.sprache}) fehlgeschlagen: {fehler}')
                 continue
 
             for a in artikel:
@@ -88,7 +89,7 @@ def kandidaten_suchen():
                     continue  # bereits frueher gefunden (uebernommen, verworfen oder noch pending)
                 kandidat = Pressekandidat(
                     titel=titel, url=url, quelle=a.get('domain', ''),
-                    datum=_datum_parsen(a.get('seendate')), sprache=sprache,
+                    datum=_datum_parsen(a.get('seendate')), sprache=sb.sprache,
                 )
                 db.session.add(kandidat)
                 neue += 1
