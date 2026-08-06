@@ -1,0 +1,75 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Presse verwalten{% endblock %}
+{% block heading %}📰 Presse verwalten{% endblock %}
+
+{% block content %}
+
+{% if nachricht %}
+    <p class="msg">{{ nachricht }}</p>
+{% endif %}
+{% if fehler %}
+    <p class="err">{{ fehler }}</p>
+{% endif %}
+
+<p style="margin-bottom:1.5rem;"><a href="{{ url_for('admin.presse_kandidaten') }}">→ Automatisch gefundene Kandidaten sichten</a></p>
+
+<h2>Neuen Presseeintrag anlegen</h2>
+<form method="POST">
+    <label>Titel der Quelle (unverändert übernehmbar)</label>
+    <input type="text" name="titel" value="{{ vorbefuellt.titel }}" required>
+
+    <label>URL</label>
+    <input type="url" name="url" value="{{ vorbefuellt.url }}" required>
+
+    <label>Quelle / Publikation</label>
+    <input type="text" name="quelle" value="{{ vorbefuellt.quelle }}" placeholder="z.B. Spektrum der Wissenschaft" required>
+
+    <label>Datum der Veröffentlichung (optional)</label>
+    <input type="date" name="datum">
+
+    <label>Sprache</label>
+    <select name="sprache">
+        <option value="de" {% if vorbefuellt.sprache == 'de' %}selected{% endif %}>Deutsch</option>
+        <option value="en" {% if vorbefuellt.sprache == 'en' %}selected{% endif %}>English</option>
+        <option value="nl" {% if vorbefuellt.sprache == 'nl' %}selected{% endif %}>Nederlands</option>
+        <option value="fr" {% if vorbefuellt.sprache == 'fr' %}selected{% endif %}>Français</option>
+        <option value="es" {% if vorbefuellt.sprache == 'es' %}selected{% endif %}>Español</option>
+    </select>
+
+    <label>Anreißertext (2-3 Sätze)</label>
+    <textarea name="anreissertext" rows="4" placeholder="Eigene kurze Einordnung, kein Zitat aus dem Original — was berichtet die Quelle, warum ist es für OpenMycoNet relevant." required></textarea>
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.3rem;">⚠️ Bitte nur eine eigene, kurze Einordnung schreiben — kein wörtliches Zitat und keinen Ausschnitt aus dem Originalartikel übernehmen, auch nicht verkürzt.</p>
+
+    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1rem;">
+        <input type="checkbox" name="veroeffentlicht" style="width:auto;"> Sofort veröffentlichen
+    </label>
+
+    <button type="submit">Speichern</button>
+</form>
+
+<hr>
+<h2>Bestehende Presseeinträge</h2>
+<table>
+    <tr>
+        <th>Datum</th>
+        <th>Sprache</th>
+        <th>Titel</th>
+        <th>Quelle</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+    {% for eintrag in presse_liste %}
+    <tr>
+        <td>{{ eintrag.datum.strftime('%d.%m.%Y') if eintrag.datum else '–' }}</td>
+        <td>{{ eintrag.sprache }}</td>
+        <td>{{ eintrag.titel }}</td>
+        <td>{{ eintrag.quelle }}</td>
+        <td>{{ '✓ veröffentlicht' if eintrag.veroeffentlicht else 'Entwurf' }}</td>
+        <td>
+            <a href="{{ url_for('admin.presse_edit', presse_id=eintrag.id) }}" style="margin-right:8px;">Bearbeiten</a>
+            <a href="{{ url_for('admin.presse_delete', presse_id=eintrag.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

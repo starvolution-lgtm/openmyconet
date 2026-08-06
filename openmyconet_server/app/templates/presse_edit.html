@@ -1,0 +1,43 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Presseeintrag bearbeiten{% endblock %}
+{% block heading %}📰 Presseeintrag bearbeiten{% endblock %}
+
+{% block content %}
+
+{% if fehler %}
+    <p class="err">{{ fehler }}</p>
+{% endif %}
+
+<form method="POST">
+    <label>Titel der Quelle (unverändert übernehmbar)</label>
+    <input type="text" name="titel" value="{{ eintrag.titel }}" required>
+
+    <label>URL</label>
+    <input type="url" name="url" value="{{ eintrag.url }}" required>
+
+    <label>Quelle / Publikation</label>
+    <input type="text" name="quelle" value="{{ eintrag.quelle }}" required>
+
+    <label>Datum der Veröffentlichung (optional)</label>
+    <input type="date" name="datum" value="{{ eintrag.datum.isoformat() if eintrag.datum else '' }}">
+
+    <label>Sprache</label>
+    <select name="sprache">
+        <option value="de" {% if eintrag.sprache == 'de' %}selected{% endif %}>Deutsch</option>
+        <option value="en" {% if eintrag.sprache == 'en' %}selected{% endif %}>English</option>
+        <option value="nl" {% if eintrag.sprache == 'nl' %}selected{% endif %}>Nederlands</option>
+        <option value="fr" {% if eintrag.sprache == 'fr' %}selected{% endif %}>Français</option>
+        <option value="es" {% if eintrag.sprache == 'es' %}selected{% endif %}>Español</option>
+    </select>
+
+    <label>Anreißertext (2-3 Sätze)</label>
+    <textarea name="anreissertext" rows="4" placeholder="Eigene kurze Einordnung, kein Zitat aus dem Original" required>{{ eintrag.anreissertext }}</textarea>
+    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.3rem;">⚠️ Bitte nur eine eigene, kurze Einordnung schreiben — kein wörtliches Zitat und keinen Ausschnitt aus dem Originalartikel übernehmen, auch nicht verkürzt.</p>
+
+    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1rem;">
+        <input type="checkbox" name="veroeffentlicht" style="width:auto;" {% if eintrag.veroeffentlicht %}checked{% endif %}> Veröffentlicht
+    </label>
+
+    <button type="submit">Speichern</button>
+</form>
+{% endblock %}

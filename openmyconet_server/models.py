@@ -137,3 +137,27 @@ class Foerderer(db.Model):
 class RechnungsZaehler(db.Model):
     jahr = db.Column(db.Integer, primary_key=True)
     zaehler = db.Column(db.Integer, default=0)
+
+class Presseeintrag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titel = db.Column(db.String(300), nullable=False)  # Originaltitel der Quelle, darf unveraendert uebernommen werden
+    url = db.Column(db.String(500), nullable=False)
+    quelle = db.Column(db.String(200), nullable=False)  # Publikation, z.B. "Spektrum der Wissenschaft"
+    anreissertext = db.Column(db.Text, nullable=False)  # eigene Einordnung, kein Zitat aus dem Original
+    datum = db.Column(db.Date, nullable=True)  # Veroeffentlichungsdatum des Presseartikels
+    sprache = db.Column(db.String(10), default='de')
+    veroeffentlicht = db.Column(db.Boolean, default=False)
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Pressekandidat(db.Model):
+    """Von der GDELT-Suche automatisch gefundene, noch nicht freigegebene Presse-
+    Treffer -- werden NIE automatisch veroeffentlicht, sondern warten hier auf
+    manuelle Sichtung im Admin (siehe presse_kandidaten in admin.py)."""
+    id = db.Column(db.Integer, primary_key=True)
+    titel = db.Column(db.String(300), nullable=False)
+    url = db.Column(db.String(500), unique=True, nullable=False)  # dedupliziert wiederholte Cronjob-Laeufe
+    quelle = db.Column(db.String(200), default='')
+    datum = db.Column(db.Date, nullable=True)
+    sprache = db.Column(db.String(10), default='de')
+    gefunden_am = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending')  # pending | uebernommen | verworfen

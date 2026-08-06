@@ -218,3 +218,6 @@ __marimo__/
 .streamlit/secrets.toml
 .env
 openmyconet/config.php
+
+# Lokale Claude-Code-Dev-Tooling-Konfiguration (Preview-Server-Configs, maschinenspezifische Pfade)
+.claude/

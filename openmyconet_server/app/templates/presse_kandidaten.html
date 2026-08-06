@@ -1,0 +1,42 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Presse-Kandidaten{% endblock %}
+{% block heading %}🔎 Presse-Kandidaten{% endblock %}
+
+{% block content %}
+
+<p><a href="{{ url_for('admin.presse_admin') }}">← zurück zur Presseverwaltung</a></p>
+
+<p style="color:var(--muted); max-width:60ch;">Automatisch von der GDELT-Suche gefundene Treffer zum Thema Mykorrhiza/Pilznetzwerke — <strong>nichts hier ist bereits veröffentlicht.</strong> Beim Übernehmen wird nur Titel/URL/Quelle vorausgefüllt, den Anreißertext schreibst du selbst.</p>
+
+{% if not kandidaten %}
+<p style="margin-top:1.5rem;">Aktuell keine offenen Kandidaten.</p>
+{% else %}
+<table>
+    <tr>
+        <th>Gefunden am</th>
+        <th>Datum</th>
+        <th>Sprache</th>
+        <th>Titel</th>
+        <th>Quelle</th>
+        <th></th>
+    </tr>
+    {% for k in kandidaten %}
+    <tr>
+        <td>{{ k.gefunden_am.strftime('%d.%m.%Y') }}</td>
+        <td>{{ k.datum.strftime('%d.%m.%Y') if k.datum else '–' }}</td>
+        <td>{{ k.sprache }}</td>
+        <td><a href="{{ k.url }}" target="_blank" rel="noopener">{{ k.titel }}</a></td>
+        <td>{{ k.quelle }}</td>
+        <td style="white-space:nowrap;">
+            <a href="{{ url_for('admin.presse_kandidat_uebernehmen', kandidat_id=k.id) }}" style="margin-right:8px;">Übernehmen</a>
+            <form method="POST" style="display:inline;">
+                <input type="hidden" name="kandidat_id" value="{{ k.id }}">
+                <input type="hidden" name="action" value="verwerfen">
+                <button type="submit" class="del" style="all:unset; cursor:pointer; color:#c0392b;">✕</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

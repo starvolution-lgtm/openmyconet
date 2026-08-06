@@ -27,6 +27,7 @@
       {% endif %}
       <a href="{{ url_for('admin.spenden_admin') }}">💚 Spenden</a>
       <a href="{{ url_for('admin.foerderer_admin') }}">🤝 Förderer</a>
+      <a href="{{ url_for('admin.presse_admin') }}">📰 Presse</a>
       <a href="{{ url_for('admin.inhalte_admin') }}">📝 Inhalte</a>
       {% if session.admin_role == 'superadmin' %}
       <a href="{{ url_for('admin.chatlogs') }}">💬 Chat-Logs</a>

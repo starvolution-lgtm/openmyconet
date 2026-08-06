@@ -1,0 +1,67 @@
+{% extends "site/base.html" %}
+
+{% block title %}OpenMycoNet — Presse{% endblock %}
+{% block meta_description %}Presseberichte und journalistische Beiträge Dritter zum Thema Mykorrhiza-Netzwerke und Pilzkommunikation.{% endblock %}
+
+{% block hreflang %}
+<link rel="canonical" href="https://www.openmyconet.de/presse">
+{% endblock %}
+
+{% block extra_css %}
+.artikel { background:#fff; color:#222; border-radius:8px; padding:24px; margin:24px 0; }
+.artikel h2 { color:#1a1a1a; margin:0 0 4px 0; font-size:1.3em; }
+.artikel h2 a { color:inherit; text-decoration:none; }
+.artikel h2 a:hover { text-decoration:underline; }
+.p-meta { color:#888; font-size:0.85em; margin-bottom:14px; }
+.p-text { line-height:1.7; color:#222; }
+.p-link { display:inline-block; margin-top:12px; color:#2e7d32; font-weight:bold; text-decoration:none; }
+.p-link:hover { text-decoration:underline; }
+.leer { color:#a0c8a0; margin-top:40px; }
+.sprache-filter { margin-bottom:20px; color:#e8f5e0; }
+.sprache-filter select { background:#01301f; color:#e8f5e0; border:1px solid #0a6040; padding:6px; border-radius:4px; }
+.presse-disclaimer { background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); color:#e8f5e0; font-size:0.9em; line-height:1.65; padding:14px 18px; border-radius:6px; margin-bottom:28px; }
+.presse-disclaimer a { color:#6ee87e; }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label">Presse</p>
+    <h1>Presse zum Thema Mykorrhiza-Netzwerke</h1>
+  </div>
+</div>
+
+<section style="background-color:#012a1e;">
+  <div class="inner">
+
+    <p class="presse-disclaimer">
+      ℹ️ Diese Presseübersicht sammelt journalistische Berichte Dritter zum Thema Mykorrhiza-Netzwerke und Pilzkommunikation — sie ist <strong>keine wissenschaftliche Validierung</strong> unserer Forschung und erwähnt OpenMycoNet nicht zwangsläufig. Wissenschaftlich geprüfte Quellen und Studien findest du unter <a href="{{ live('quellennachweise.html') }}">Quellennachweise</a>.
+    </p>
+
+    <form method="GET" class="sprache-filter">
+      <label>Sprache: </label>
+      <select name="sprache" onchange="this.form.submit()">
+        <option value="">Alle</option>
+        <option value="de" {% if filter_sprache == 'de' %}selected{% endif %}>Deutsch</option>
+        <option value="en" {% if filter_sprache == 'en' %}selected{% endif %}>English</option>
+        <option value="nl" {% if filter_sprache == 'nl' %}selected{% endif %}>Nederlands</option>
+        <option value="fr" {% if filter_sprache == 'fr' %}selected{% endif %}>Français</option>
+        <option value="es" {% if filter_sprache == 'es' %}selected{% endif %}>Español</option>
+      </select>
+    </form>
+
+    {% if presse_liste %}
+      {% for eintrag in presse_liste %}
+      <div class="artikel">
+        <h2><a href="{{ eintrag.url }}" target="_blank" rel="noopener">{{ eintrag.titel }}</a></h2>
+        <p class="p-meta">{{ eintrag.quelle }}{% if eintrag.datum %} · {{ eintrag.datum.strftime('%d.%m.%Y') }}{% endif %} · {{ eintrag.sprache }}</p>
+        <p class="p-text">{{ eintrag.anreissertext }}</p>
+        <a class="p-link" href="{{ eintrag.url }}" target="_blank" rel="noopener">Zum Originalartikel →</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="leer">Noch keine Presseeinträge vorhanden.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

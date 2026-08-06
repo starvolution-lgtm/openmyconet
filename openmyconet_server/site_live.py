@@ -6,9 +6,9 @@ die URLs, die nach dem DNS-Cutover unter www.openmyconet.de erreichbar sein soll
 
 Einbinden in app.py: from site_live import site_live_bp; app.register_blueprint(site_live_bp)
 """
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 
-from models import Foerderer
+from models import Foerderer, Presseeintrag
 from site_preview import FLOW_SVGS, CARD_SVGS
 
 site_live_bp = Blueprint('site_live', __name__)
@@ -52,3 +52,14 @@ def foerderer():
 @site_live_bp.route('/medien.html')
 def medien():
     return render_template('site/medien.html', current_page='medien')
+
+
+@site_live_bp.route('/presse')
+def presse():
+    filter_sprache = request.args.get('sprache', '')
+    query = Presseeintrag.query.filter_by(veroeffentlicht=True)
+    if filter_sprache:
+        query = query.filter_by(sprache=filter_sprache)
+    presse_liste = query.order_by(Presseeintrag.datum.desc().nullslast(), Presseeintrag.erstellt_am.desc()).all()
+    return render_template('site/presse.html', current_page='presse',
+                            presse_liste=presse_liste, filter_sprache=filter_sprache)
