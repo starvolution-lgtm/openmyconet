@@ -130,9 +130,22 @@ def expand_keywords(words: list[str]) -> list[str]:
     expanded = list(words)
     for w in words:
         for key, syns in SYNONYMS.items():
-            if w in key or key in w:
+            # Nur "key in w" (Query-Wort ist eine Erweiterung/Flexion des Keys,
+            # z.B. "verfügbarkeit" enthält "verfügbar") -- NICHT umgekehrt
+            # "w in key". Die umgekehrte Richtung liess kurze, generische
+            # Woerter matchen, die rein zufaellig als Textfragment in einem
+            # laengeren, thematisch unverwandten Key stecken -- z.B. "daten"
+            # in "datenschutz" (jede Frage zu Messdaten loeste dadurch den
+            # Datenschutz/GPS/anonym-Synonymblock aus) oder "operation" in
+            # "kooperation". Dokumentierte Ranking-Schwaeche, siehe
+            # Website_Status.md.
+            if key in w:
                 expanded.extend(syns)
-    return expanded
+    # Duplikate entfernen: mehrere Query-Woerter koennen denselben Synonym-
+    # Eintrag treffen (z.B. "förderer" + "kooperation" liefern identische
+    # Listen) -- ohne Dedupe wuerden solche Treffer im Score doppelt zaehlen
+    # und die Rangfolge zusaetzlich verzerren.
+    return list(dict.fromkeys(expanded))
 
 def find_chunks(query: str, lang: str, top_k: int = 3) -> list[dict]:
     """Gibt die relevantesten Chunks für Sprache und Query zurück."""
