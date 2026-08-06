@@ -36,6 +36,7 @@ nav a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px;
 /* Dropdown fuer zusammengelegte Menuepunkte (aktuell: Warum + Ueber, zwei
    unterschiedliche Sektionen auf index.html, die nicht direkt benachbart sind) */
 .nav-dropdown-wrap { position:relative; }
+.nav-dropdown-wrap > a { white-space:nowrap; }
 .nav-dropdown-menu { display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%); background-color:rgba(2,69,48,0.98); border:1px solid #0a6040; padding:0.4rem 0; margin-top:0.7rem; min-width:150px; list-style:none; z-index:101; }
 .nav-dropdown-wrap:hover .nav-dropdown-menu, .nav-dropdown-wrap:focus-within .nav-dropdown-menu { display:block; }
 .nav-dropdown-menu li { padding:0; }
@@ -159,7 +160,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
   {% endblock %}
   <ul>
     <li class="nav-dropdown-wrap">
-      <a href="{{ live('index.html#warum') }}" {% if current_page in ['warum','ueber'] %}class="nav-active"{% endif %} data-i18n="nav_warum_ueber">{{ t('nav_warum_ueber') }}</a>
+      <a href="{{ live('index.html#warum') }}" {% if current_page in ['warum','ueber'] %}class="nav-active"{% endif %} data-i18n="nav_info">{{ t('nav_info') }}</a>
       <ul class="nav-dropdown-menu">
         <li><a href="{{ live('index.html#warum') }}" data-i18n="nav_warum">{{ t('nav_warum') }}</a></li>
         <li><a href="{{ live('index.html#ueber') }}" data-i18n="nav_ueber">{{ t('nav_ueber') }}</a></li>
