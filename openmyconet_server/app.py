@@ -69,6 +69,42 @@ app.jinja_env.globals['translations_json_url'] = lambda: '/translations.json'
 
 init_i18n(app)
 
+# Sicherheits-Header. CSP erlaubt bewusst 'unsafe-inline' für script-src/style-src,
+# da die Templates aktuell durchgängig Inline-<script>- und style=""-Attribute
+# nutzen (285 Inline-Styles in 21 von 32 Templates) -- ein Nonce-basiertes
+# Entfernen von unsafe-inline waere ein eigenes, groesseres Refactoring-Projekt.
+# Alle anderen Direktiven sind strikt gesetzt; das ist eine echte Verbesserung
+# gegenueber "kein CSP", auch wenn es keine maximale Haertung ist.
+#
+# WICHTIG: asset()/live() (oben) verlinken Bilder/Skripte/Audio IMMER absolut auf
+# www.openmyconet.de, api_content() laeuft ueber api.openmyconet.de -- das ist
+# selbst auf der echten Live-Seite fuer Besucher der nackten Domain openmyconet.de
+# eine andere Origin als 'self'. Alle drei Domains muessen daher explizit erlaubt
+# werden, nicht nur 'self'.
+_EIGENE_DOMAINS = "https://www.openmyconet.de https://openmyconet.de https://api.openmyconet.de"
+_CSP = (
+    f"default-src 'self' {_EIGENE_DOMAINS}; "
+    f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net; "
+    f"style-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+    f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
+    f"img-src 'self' data: {_EIGENE_DOMAINS} https://unpkg.com https://*.tile.openstreetmap.org; "
+    f"media-src 'self' {_EIGENE_DOMAINS}; "
+    f"connect-src 'self' {_EIGENE_DOMAINS} https://nominatim.openstreetmap.org; "
+    "frame-ancestors 'self'; "
+    "object-src 'none'; "
+    "base-uri 'self'; "
+    "form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com;"
+)
+
+
+@app.after_request
+def _sicherheits_header(response):
+    response.headers['Content-Security-Policy'] = _CSP
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    return response
+
 # --- Öffentliche Routen ---
 # '/' und die anderen Hauptseiten-Routen sind jetzt in site_live.py (Phase 4,
 # Schritt 4-Vorbereitung) -- die alte, kaputte render_template('index.html')
