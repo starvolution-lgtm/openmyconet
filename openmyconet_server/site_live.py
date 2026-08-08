@@ -6,10 +6,11 @@ die URLs, die nach dem DNS-Cutover unter www.openmyconet.de erreichbar sein soll
 
 Einbinden in app.py: from site_live import site_live_bp; app.register_blueprint(site_live_bp)
 """
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, abort
 
 from models import Foerderer, Presseeintrag
 from site_preview import FLOW_SVGS, CARD_SVGS
+from i18n import LANGS
 
 site_live_bp = Blueprint('site_live', __name__)
 
@@ -31,6 +32,24 @@ def index_html_redirect():
     # die kanonische URL ist aber '/' (siehe canonical-Tag in site/index.html),
     # daher hier ein 301 statt Duplicate Content unter zwei URLs zu erzeugen.
     return redirect(url_for('site_live.index'), code=301)
+
+
+@site_live_bp.route('/index-<lang>.html')
+def index_lang_redirect(lang):
+    # Alte Sprachvarianten-URLs von der vor-Cutover-Seite (index-en.html usw.),
+    # die frueher per .htaccess auf /?lang=xx umgeleitet haben. Bei der SSR-
+    # Migration nur fuer /index.html selbst nachgebaut, hier fuer die restlichen
+    # Sprachen ergaenzt (GSC meldete 404 fuer index-es/-fr/-en/-nl.html).
+    if lang == 'de' or lang not in LANGS:
+        abort(404)
+    return redirect(url_for('site_live.index', lang=lang), code=301)
+
+
+@site_live_bp.route('/foerderer-<lang>.html')
+def foerderer_lang_redirect(lang):
+    if lang == 'de' or lang not in LANGS:
+        abort(404)
+    return redirect(url_for('site_live.foerderer', lang=lang), code=301)
 
 
 @site_live_bp.route('/leihgeraete.html')

@@ -3,6 +3,10 @@
 {% block title %}OpenMycoNet — News{% endblock %}
 {% block meta_description %}Neuigkeiten und Updates aus dem OpenMycoNet-Projekt.{% endblock %}
 
+{% block hreflang %}
+<link rel="canonical" href="https://www.openmyconet.de/news">
+{% endblock %}
+
 {% block mobile_menu_self_link %}
 <a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
 {% endblock %}
