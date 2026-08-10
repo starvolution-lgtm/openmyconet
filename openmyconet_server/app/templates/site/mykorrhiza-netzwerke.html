@@ -1,0 +1,127 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('myk_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('myk_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html">
+{% endblock %}
+
+{% block extra_css %}
+.article { max-width:720px; margin:0 auto; }
+.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
+.article p:last-child { margin-bottom:0; }
+.article a { color:#6ee87e; text-decoration:underline; }
+.article a:hover { opacity:0.8; }
+.kritik-section { border-left:3px solid #d4a030; }
+.kritik-section h2 { color:#f0b84a; }
+.kritik-section .inner { padding-left:1.5rem; }
+@media(max-width:900px){
+  .kritik-section .inner { padding-left:1rem; }
+}
+{% endblock %}
+
+{% block mobile_menu_self_link %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="myk_page_tag">{{ t('myk_page_tag') }}</p>
+    <h1 data-i18n-html="myk_h1">{{ t('myk_h1') | safe }}</h1>
+    <p data-i18n="myk_subtitle">{{ t('myk_subtitle') }}</p>
+  </div>
+</div>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="myk_s1_h2">{{ t('myk_s1_h2') }}</h2>
+    <p data-i18n-html="myk_s1_p1">{{ t('myk_s1_p1') | safe }}</p>
+    <p data-i18n-html="myk_s1_p2">{{ t('myk_s1_p2') | safe }}</p>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <h2 data-i18n="myk_s2_h2">{{ t('myk_s2_h2') }}</h2>
+    <p data-i18n="myk_s2_p1">{{ t('myk_s2_p1') }}</p>
+    <p data-i18n="myk_s2_p2">{{ t('myk_s2_p2') }}</p>
+  </div>
+</section>
+
+<section class="kritik-section" style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="myk_s3_h2">{{ t('myk_s3_h2') }}</h2>
+    <p data-i18n-html="myk_s3_p1">{{ t('myk_s3_p1') | safe }}</p>
+    <p data-i18n="myk_s3_p2">{{ t('myk_s3_p2') }}</p>
+    <p data-i18n="myk_s3_p3">{{ t('myk_s3_p3') }}</p>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <h2 data-i18n="myk_s4_h2">{{ t('myk_s4_h2') }}</h2>
+    <p data-i18n="myk_s4_p1">{{ t('myk_s4_p1') }}</p>
+  </div>
+</section>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="myk_s5_h2">{{ t('myk_s5_h2') }}</h2>
+    <p data-i18n="myk_s5_p1">{{ t('myk_s5_p1') }}</p>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="inner" style="text-align:center; padding:1rem 0;">
+    <h2 data-i18n="myk_cta_h2" style="margin-bottom:1rem;">{{ t('myk_cta_h2') }}</h2>
+    <p data-i18n="myk_cta_p" style="color:#a0c8a0; margin-bottom:1.8rem; max-width:520px; margin-left:auto; margin-right:auto;">{{ t('myk_cta_p') }}</p>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+      <a href="{{ live('quellennachweise.html') }}" class="btn btn-amber" data-i18n="myk_cta_quellen_btn">{{ t('myk_cta_quellen_btn') }}</a>
+      <a href="{{ live('index.html#anmelden') }}" class="btn btn-green" data-i18n="myk_cta_mitmachen_btn">{{ t('myk_cta_mitmachen_btn') }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.myk_page_title || 'OpenMycoNet';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.myk_meta_desc || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
+{% endblock %}

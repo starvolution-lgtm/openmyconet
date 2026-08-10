@@ -263,7 +263,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 1.5rem;">
     <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n-html="vision_p1">{{ t('vision_p1') | safe }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">{{ t('vision_p2') }}</p>
-    <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:2.5rem;" data-i18n="vision_p3">{{ t('vision_p3') }}</p>
+    <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p3">{{ t('vision_p3') }}</p>
+    <a href="{{ live('mykorrhiza-netzwerke.html') }}" class="btn btn-amber" style="margin-bottom:2.5rem;" data-i18n="link_myk_vertiefung">{{ t('link_myk_vertiefung') }}</a>
     <div id="vision-apps" style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:0.5rem;">
       {% for app in translations[current_lang()]['vision_apps'] %}
       <div style="flex:1 1 340px; padding:1.5rem; background-color:rgba(0,0,0,0.28); border-left:3px solid {{ '#3a9e5a' if loop.index0 == 5 else '#0a7050' }};">
