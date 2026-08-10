@@ -67,6 +67,11 @@ def mykorrhiza_netzwerke():
     return render_template('site/mykorrhiza-netzwerke.html', current_page='mykorrhiza')
 
 
+@site_live_bp.route('/bioelektrizitaet-biocomm.html')
+def bioelektrizitaet_biocomm():
+    return render_template('site/bioelektrizitaet-biocomm.html', current_page='bioelektrizitaet')
+
+
 @site_live_bp.route('/foerderer.html')
 def foerderer():
     return render_template('site/foerderer.html', current_page='foerderer',

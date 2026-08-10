@@ -1,0 +1,125 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('myk2_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('myk2_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html">
+{% endblock %}
+
+{% block extra_css %}
+.article { max-width:720px; margin:0 auto; }
+.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
+.article p:last-child { margin-bottom:0; }
+.article a { color:#6ee87e; text-decoration:underline; }
+.article a:hover { opacity:0.8; }
+.own-tech-section { border-left:3px solid #3a9e5a; }
+.own-tech-section .inner { padding-left:1.5rem; }
+@media(max-width:900px){
+  .own-tech-section .inner { padding-left:1rem; }
+}
+{% endblock %}
+
+{% block mobile_menu_self_link %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="myk2_page_tag">{{ t('myk2_page_tag') }}</p>
+    <h1 data-i18n-html="myk2_h1">{{ t('myk2_h1') | safe }}</h1>
+    <p data-i18n="myk2_subtitle">{{ t('myk2_subtitle') }}</p>
+  </div>
+</div>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <p class="section-label" data-i18n="myk2_s1_label">{{ t('myk2_s1_label') }}</p>
+    <h2 data-i18n="myk2_s1_h2">{{ t('myk2_s1_h2') }}</h2>
+    <p data-i18n-html="myk2_s1_p1">{{ t('myk2_s1_p1') | safe }}</p>
+    <p data-i18n-html="myk2_s1_p2">{{ t('myk2_s1_p2') | safe }}</p>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <p class="section-label" data-i18n="myk2_s2_label">{{ t('myk2_s2_label') }}</p>
+    <h2 data-i18n="myk2_s2_h2">{{ t('myk2_s2_h2') }}</h2>
+    <p data-i18n-html="myk2_s2_p1">{{ t('myk2_s2_p1') | safe }}</p>
+    <p data-i18n="myk2_s2_p2">{{ t('myk2_s2_p2') }}</p>
+  </div>
+</section>
+
+<section class="own-tech-section" style="background-color:#024530;">
+  <div class="inner article">
+    <p class="section-label" data-i18n="myk2_s3_label">{{ t('myk2_s3_label') }}</p>
+    <h2 data-i18n="myk2_s3_h2">{{ t('myk2_s3_h2') }}</h2>
+    <p data-i18n="myk2_s3_p1">{{ t('myk2_s3_p1') }}</p>
+    <p data-i18n="myk2_s3_p2">{{ t('myk2_s3_p2') }}</p>
+    <p data-i18n-html="myk2_s3_p3">{{ t('myk2_s3_p3') | safe }}</p>
+  </div>
+</section>
+
+<section class="own-tech-section" style="background-color:#012a1e;">
+  <div class="inner article">
+    <p class="section-label" data-i18n="myk2_s4_label">{{ t('myk2_s4_label') }}</p>
+    <h2 data-i18n="myk2_s4_h2">{{ t('myk2_s4_h2') }}</h2>
+    <p data-i18n="myk2_s4_p1">{{ t('myk2_s4_p1') }}</p>
+    <p data-i18n="myk2_s4_p2">{{ t('myk2_s4_p2') }}</p>
+    <p data-i18n="myk2_s4_p3">{{ t('myk2_s4_p3') }}</p>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="inner" style="text-align:center; padding:1rem 0;">
+    <h2 data-i18n="myk2_cta_h2" style="margin-bottom:1rem;">{{ t('myk2_cta_h2') }}</h2>
+    <p data-i18n-html="myk2_cta_p" style="color:#a0c8a0; margin-bottom:1.8rem; max-width:560px; margin-left:auto; margin-right:auto;">{{ t('myk2_cta_p') | safe }}</p>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+      <a href="{{ live('quellennachweise.html') }}" class="btn btn-amber" data-i18n="myk2_cta_quellen_btn">{{ t('myk2_cta_quellen_btn') }}</a>
+      <a href="{{ live('leihgeraete.html') }}" class="btn btn-green" data-i18n="myk2_cta_leih_btn">{{ t('myk2_cta_leih_btn') }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.myk2_page_title || 'OpenMycoNet';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.myk2_meta_desc || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
+{% endblock %}
