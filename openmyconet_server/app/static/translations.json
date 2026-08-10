@@ -212,7 +212,7 @@
       },
       {
         "h": "Citizen Science",
-        "p": "Wie SETI@home — nur mit dem entscheidenden Unterschied: die Signale die wir suchen sind bereits da."
+        "p": "Wie SETI@home — nur mit dem entscheidenden Unterschied: die Signale die wir suchen sind bereits da. <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">Mehr zur Citizen-Science-Methodik →</a>"
       }
     ],
     "steps": [
@@ -327,6 +327,9 @@
     "q_s5_step": "Schritt 04 — Citizen Science",
     "q_s5_title": "Wissenschaft durch kollektive Beobachtung",
     "q_s5_desc": "Citizen-Science-Plattformen wie iNaturalist und FunDive belegen, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern können. OpenMycoNet folgt diesem Modell für bioelektrische Signale.",
+    "q_ref17_title": "Assessing data quality in citizen science",
+    "q_ref17_meta": "Kosmala, Wiggins, Swanson & Simmons (2016) · Frontiers in Ecology and the Environment 14(10), 551–560 · DOI 10.1002/fee.1436",
+    "q_ref17_relevanz": "Zeigt anhand zahlreicher Citizen-Science-Projekte, dass Laiendaten die Genauigkeit professioneller Datenerhebung erreichen oder übertreffen können – wenn Projekte mehrere Methoden kombinieren: iterative Projektentwicklung, Freiwilligen-Schulung, Expertenvalidierung, Mehrfachbeobachtung und statistische Fehlermodellierung. Methodische Grundlage für OpenMycoNets Kombination aus breiter Beteiligung und gezielt eingebundener Fachexpertise.",
     "q_footer_left": "Alle verlinkten Quellen sind Open Access oder öffentlich zugänglich.",
     "q_footer_right": "Stand: Juni 2026 · OpenMycoNet / Robert Jank",
     "q_back": "← Startseite",
@@ -476,7 +479,7 @@
     "a_node_req_5": "Bereitschaft zur Messung über mindestens 3 Monate (danach monatlich kündbar)",
     "a_node_req_6": "Nur ein Knoten pro Betreiber (Ausnahmen nach Rücksprache)",
     "a_node_req_7": "Grundlegende Handhabung von Hardware — kein Löten, keine Programmierkenntnisse nötig",
-    "a_node_req_8": "Fachlicher oder wissenschaftlicher Bezug von Vorteil (z. B. Biologie, Forstwissenschaft, Umweltwissenschaften) — aber keine Voraussetzung",
+    "a_node_req_8": "Fachlicher oder wissenschaftlicher Bezug von Vorteil (z. B. Biologie, Forstwissenschaft, Umweltwissenschaften) — aber keine Voraussetzung — <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">mehr dazu →</a>",
     "a_node_info_feedback": "✓ Du erhältst regelmäßiges Feedback zu deinen Messdaten und wirst über alle Neuigkeiten informiert.",
     "a_node_lbl_ansprechpartner": "Ansprechpartner *",
     "a_node_ph_ansprechpartner": "Vor- und Nachname",
@@ -554,7 +557,28 @@
     "myk2_cta_h2": "Weiterlesen",
     "myk2_cta_p": "Diese Seite baut auf den <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" style=\"color:#6ee87e;\">Mykorrhiza-Grundlagen</a> auf. Die vollständige Literaturliste findest du auf der Quellennachweise-Seite, technische Details zum Leihgerät auf der Hardware-Seite.",
     "myk2_cta_quellen_btn": "Zu den Quellennachweisen",
-    "myk2_cta_leih_btn": "Zum BioComm-Leihgerät"
+    "myk2_cta_leih_btn": "Zum BioComm-Leihgerät",
+    "myk3_page_title": "Citizen Science bei OpenMycoNet — OpenMycoNet",
+    "myk3_meta_desc": "Warum breite Laienbeteiligung und gezielte Fachexpertise bei OpenMycoNet zusammengehören — methodisch begründet, mit allen Quellenangaben.",
+    "myk3_page_tag": "OpenMycoNet · Wissen",
+    "myk3_h1": "Citizen Science bei <em>OpenMycoNet</em>",
+    "myk3_subtitle": "Warum breite Beteiligung und gezielte Fachexpertise zusammengehören — nicht als Gegensatz, sondern als Ergänzung.",
+    "myk3_s1_h2": "Wie man mitmacht",
+    "myk3_s1_p1": "Die Ergebnisse und Daten des Netzwerks stehen allen offen — auch ohne eigenen Messknoten. Wer selbst einen BioComm-Knoten betreiben möchte, kann sich für einen der kuratierten Plätze bewerben: Hardware leihen, die BioComm-Software kostenlos herunterladen, Elektroden im Substrat platzieren. Analyse und Anonymisierung laufen lokal auf dem eigenen Gerät, bevor die Daten ans Netzwerk gehen.",
+    "myk3_s1_p2": "Der Wert entsteht aus der Fläche: eine Messung in Maintal, eine in Osaka, eine in São Paulo — zusammen ein Datensatz, den kein einzelnes Labor erzeugen könnte. Klimazonen, Substrate, Jahreszeiten unterscheiden sich weltweit; genau diese Streuung braucht es, um offene Fragen überhaupt beantworten zu können.",
+    "myk3_s2_label": "Wissenschaftlicher Beleg",
+    "myk3_s2_h2": "Funktioniert Wissenschaft durch Laien wirklich?",
+    "myk3_s2_p1": "Citizen Science hat sich als eigenständige Forschungsmethode etabliert. Eine methodische Untersuchung der Plattform iNaturalist zeigt, dass <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">verteilte Laienbeobachtungen wissenschaftlich valide Daten liefern können</a>; das Vergleichsprojekt FunDive demonstriert, wie eine solche Infrastruktur für die Pilzforschung konkret aussieht.",
+    "myk3_s2_p2": "Eine umfassendere Auswertung zahlreicher Citizen-Science-Projekte kommt zu einem klaren, aber bedingten Ergebnis: <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">Laiendaten können die Genauigkeit professioneller Datenerhebung erreichen oder sogar übertreffen</a>. Die Bedingung: Erfolgreiche Projekte kombinieren mehrere Methoden gleichzeitig — iterative Projektentwicklung, Schulung und Testung der Freiwilligen, Expertenvalidierung, Mehrfachbeobachtung durch verschiedene Teilnehmer und statistische Modellierung systematischer Fehler. Keine dieser Methoden allein reicht aus.",
+    "myk3_s3_label": "OpenMycoNets eigene Position",
+    "myk3_s3_h2": "Laien plus Fachschicht — nicht Laien statt Experten",
+    "myk3_s3_p1": "Aus dieser Bedingung leitet OpenMycoNet eine eigene, strategische Entscheidung ab: Breite Laienbeteiligung bleibt der Kern des Projekts — sie liefert die Fläche und Menge an Messdaten, die kein einzelnes Labor erzeugen könnte. Zusätzlich sucht OpenMycoNet gezielter nach Knotenbetreibern mit fachlichem Bezug: Wissenschaftlerinnen, Studenten, aber auch Unternehmen oder Einzelpersonen mit Pilz- oder Mykologie-Hintergrund. Diese Schicht soll Laien nicht ersetzen, sondern Interpretation, Validierung und letztlich die wissenschaftliche Verwertbarkeit der gesammelten Daten absichern.",
+    "myk3_s3_p2": "Wie ein solches hybrides Modell in der Praxis aussehen kann, zeigt exemplarisch eBird: Ein Netzwerk regionaler, ehrenamtlicher Prüferinnen und Prüfer sichtet Beobachtungen von Laien auf Auffälligkeiten und stuft sie als zuverlässig, klärungsbedürftig oder unzuverlässig ein — ohne den Freiwilligen die eigentliche Beobachtungsarbeit wegzunehmen.",
+    "myk3_s3_p3": "Wichtig für die Einordnung: Die oben zitierte Forschung belegt, dass hybride Modelle aus Laienbeteiligung und Fachvalidierung grundsätzlich funktionieren können — sie belegt nicht, dass OpenMycoNets eigene Umsetzung davon bereits validiert ist. Dafür gibt es bislang keine eigenen Messdaten. Auch hier gilt: erst Messdaten, dann alles andere.",
+    "myk3_cta_h2": "Weiterlesen",
+    "myk3_cta_p": "Was die Knoten tatsächlich messen, beschreibt die Seite zu <a href=\"https://www.openmyconet.de/bioelektrizitaet-biocomm.html\" style=\"color:#6ee87e;\">Bioelektrizität & BioComm</a>. Die vollständige Literaturliste findest du auf der Quellennachweise-Seite.",
+    "myk3_cta_bio_btn": "Zur Bioelektrizität & BioComm",
+    "myk3_cta_quellen_btn": "Zu den Quellennachweisen"
   },
   "en": {
     "nav_warum": "Why",
@@ -769,7 +793,7 @@
       },
       {
         "h": "Citizen science",
-        "p": "Like SETI@home — with one crucial difference: the signals we are looking for are already there."
+        "p": "Like SETI@home — with one crucial difference: the signals we are looking for are already there. <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">More on the citizen science methodology →</a>"
       }
     ],
     "steps": [
@@ -884,6 +908,9 @@
     "q_s5_step": "Step 04 — Citizen Science",
     "q_s5_title": "Science through collective observation",
     "q_s5_desc": "Citizen science platforms such as iNaturalist and FunDive demonstrate that distributed amateur measurements can yield scientifically valid data. OpenMycoNet follows this model for bioelectrical signals.",
+    "q_ref17_title": "Assessing data quality in citizen science",
+    "q_ref17_meta": "Kosmala, Wiggins, Swanson & Simmons (2016) · Frontiers in Ecology and the Environment 14(10), 551–560 · DOI 10.1002/fee.1436",
+    "q_ref17_relevanz": "Shows across numerous citizen-science projects that data collected by volunteers can match or exceed the accuracy of professional data collection — when projects combine several methods: iterative project development, volunteer training, expert validation, replication, and statistical modelling of systematic error. Methodological basis for OpenMycoNet's combination of broad participation and deliberately involved expertise.",
     "q_footer_left": "All linked sources are Open Access or publicly accessible.",
     "q_footer_right": "As of June 2026 · OpenMycoNet / Robert Jank",
     "q_back": "← Home",
@@ -1033,7 +1060,7 @@
     "a_node_req_5": "Willingness to measure for at least 3 months (monthly cancellation thereafter)",
     "a_node_req_6": "One node per operator (exceptions by arrangement)",
     "a_node_req_7": "Basic hardware handling — no soldering or programming skills required",
-    "a_node_req_8": "A professional or scientific background is a plus (e.g. biology, forestry, environmental science) — but not a requirement",
+    "a_node_req_8": "A professional or scientific background is a plus (e.g. biology, forestry, environmental science) — but not a requirement — <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">more on this →</a>",
     "a_node_info_feedback": "✓ You will receive regular feedback on your measurement data and be kept informed of all news.",
     "a_node_lbl_ansprechpartner": "Contact person *",
     "a_node_ph_ansprechpartner": "First and last name",
@@ -1111,7 +1138,28 @@
     "myk2_cta_h2": "Read More",
     "myk2_cta_p": "This page builds on the <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" style=\"color:#6ee87e;\">mycorrhizal fundamentals</a> covered elsewhere. The full list of studies is on the Sources page, technical details on the loan device are on the Hardware page.",
     "myk2_cta_quellen_btn": "Go to Sources",
-    "myk2_cta_leih_btn": "View the BioComm Loan Device"
+    "myk2_cta_leih_btn": "View the BioComm Loan Device",
+    "myk3_page_title": "Citizen Science at OpenMycoNet — OpenMycoNet",
+    "myk3_meta_desc": "Why broad public participation and targeted scientific expertise belong together at OpenMycoNet — methodically grounded, with full source references.",
+    "myk3_page_tag": "OpenMycoNet · Knowledge",
+    "myk3_h1": "Citizen Science at <em>OpenMycoNet</em>",
+    "myk3_subtitle": "Why broad participation and targeted expertise belong together — not as opposites, but as complements.",
+    "myk3_s1_h2": "How to Get Involved",
+    "myk3_s1_p1": "The network's results and data are open to everyone — even without running your own measurement node. Anyone who wants to operate a BioComm node can apply for one of the curated spots: borrow the hardware, download the BioComm software for free, place electrodes in the substrate. Analysis and anonymisation run locally on your own device before the data reaches the network.",
+    "myk3_s1_p2": "The value comes from breadth: one measurement in Maintal, one in Osaka, one in São Paulo — together forming a dataset no single laboratory could produce. Climate zones, substrates and seasons differ worldwide; that spread is exactly what's needed to answer the open questions in the first place.",
+    "myk3_s2_label": "Scientific Evidence",
+    "myk3_s2_h2": "Does Science by Amateurs Actually Work?",
+    "myk3_s2_p1": "Citizen science has established itself as a research method in its own right. A methodological study of the iNaturalist platform shows that <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">distributed observations by non-experts can produce scientifically valid data</a>; the comparison project FunDive demonstrates what such infrastructure looks like in practice for fungal research.",
+    "myk3_s2_p2": "A broader analysis covering numerous citizen-science projects reaches a clear but conditional conclusion: <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">citizen-collected data can match or even exceed the accuracy of professional data collection</a>. The condition: successful projects combine several methods at once — iterative project development, volunteer training and testing, expert validation, replication across multiple participants, and statistical modelling of systematic error. No single one of these methods is sufficient on its own.",
+    "myk3_s3_label": "OpenMycoNet's Own Position",
+    "myk3_s3_h2": "Volunteers Plus an Expert Layer — Not Volunteers Instead of Experts",
+    "myk3_s3_p1": "From this condition, OpenMycoNet draws its own strategic conclusion: broad public participation remains at the core of the project — it delivers the breadth and volume of measurement data no single laboratory could produce. In addition, OpenMycoNet is now searching more deliberately for node operators with relevant expertise: scientists, students, but also companies or individuals with a background in fungi or mycology. This layer is not meant to replace volunteers, but to safeguard interpretation, validation, and ultimately the scientific usability of the data collected.",
+    "myk3_s3_p2": "eBird illustrates what such a hybrid model can look like in practice: a network of regional volunteer reviewers checks lay observations for anomalies and flags them as reliable, needing clarification, or unreliable — without taking the actual observation work away from volunteers.",
+    "myk3_s3_p3": "Important for context: the research cited above establishes that hybrid models combining broad participation with expert validation can work in principle — it does not establish that OpenMycoNet's own implementation is already validated. There is no measurement data of our own for that yet. Here too: measurement data first, everything else after.",
+    "myk3_cta_h2": "Read More",
+    "myk3_cta_p": "What the nodes actually measure is described on the <a href=\"https://www.openmyconet.de/bioelektrizitaet-biocomm.html\" style=\"color:#6ee87e;\">Bioelectricity &amp; BioComm</a> page. The full list of studies is on the Sources page.",
+    "myk3_cta_bio_btn": "Go to Bioelectricity & BioComm",
+    "myk3_cta_quellen_btn": "Go to Sources"
   },
   "nl": {
     "nav_warum": "Waarom",
@@ -1326,7 +1374,7 @@
       },
       {
         "h": "Citizen science",
-        "p": "Zoals SETI@home — maar met één cruciaal verschil: de signalen die we zoeken zijn er al."
+        "p": "Zoals SETI@home — maar met één cruciaal verschil: de signalen die we zoeken zijn er al. <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">Meer over de citizen-science-methodiek →</a>"
       }
     ],
     "steps": [
@@ -1441,6 +1489,9 @@
     "q_s5_step": "Stap 04 — Citizen Science",
     "q_s5_title": "Wetenschap door collectieve observatie",
     "q_s5_desc": "Citizen science-platforms zoals iNaturalist en FunDive tonen aan dat gedistribueerde lekemetingen wetenschappelijk geldige gegevens kunnen opleveren. OpenMycoNet volgt dit model voor bio-elektrische signalen.",
+    "q_ref17_title": "Assessing data quality in citizen science",
+    "q_ref17_meta": "Kosmala, Wiggins, Swanson & Simmons (2016) · Frontiers in Ecology and the Environment 14(10), 551–560 · DOI 10.1002/fee.1436",
+    "q_ref17_relevanz": "Toont aan de hand van talrijke citizen-science-projecten aan dat door leken verzamelde gegevens de nauwkeurigheid van professionele dataverzameling kunnen evenaren of overtreffen — wanneer projecten meerdere methoden combineren: iteratieve projectontwikkeling, training van vrijwilligers, expertvalidatie, herhaling en statistische modellering van systematische fouten. Methodologische basis voor OpenMycoNets combinatie van brede deelname en gericht ingezette vakexpertise.",
     "q_footer_left": "Alle gelinkte bronnen zijn Open Access of openbaar toegankelijk.",
     "q_footer_right": "Stand: juni 2026 · OpenMycoNet / Robert Jank",
     "q_back": "← Startpagina",
@@ -1589,7 +1640,7 @@
     "a_node_req_5": "Bereidheid om minimaal 3 maanden te meten (daarna maandelijks opzegbaar)",
     "a_node_req_6": "Één knooppunt per beheerder (uitzonderingen in overleg)",
     "a_node_req_7": "Basiskennis van hardware — geen solderen of programmeerkennis vereist",
-    "a_node_req_8": "Vakinhoudelijke of wetenschappelijke achtergrond is een pré (bijv. biologie, bosbouw, milieuwetenschappen) — maar geen vereiste",
+    "a_node_req_8": "Vakinhoudelijke of wetenschappelijke achtergrond is een pré (bijv. biologie, bosbouw, milieuwetenschappen) — maar geen vereiste — <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">meer hierover →</a>",
     "a_node_info_feedback": "✓ Je ontvangt regelmatige feedback over je meetgegevens en wordt op de hoogte gehouden van al het nieuws.",
     "a_node_lbl_ansprechpartner": "Contactpersoon *",
     "a_node_ph_ansprechpartner": "Voor- en achternaam",
@@ -1667,7 +1718,28 @@
     "myk2_cta_h2": "Meer lezen",
     "myk2_cta_p": "Deze pagina bouwt voort op de <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" style=\"color:#6ee87e;\">mycorrhiza-grondslagen</a> die elders zijn beschreven. De volledige literatuurlijst vind je op de Bronvermeldingen-pagina, technische details over het leentoestel op de Hardware-pagina.",
     "myk2_cta_quellen_btn": "Naar de bronvermeldingen",
-    "myk2_cta_leih_btn": "Bekijk het BioComm-leentoestel"
+    "myk2_cta_leih_btn": "Bekijk het BioComm-leentoestel",
+    "myk3_page_title": "Citizen Science bij OpenMycoNet — OpenMycoNet",
+    "myk3_meta_desc": "Waarom brede publieke deelname en gerichte wetenschappelijke expertise bij OpenMycoNet samengaan — methodisch onderbouwd, met alle bronvermeldingen.",
+    "myk3_page_tag": "OpenMycoNet · Kennis",
+    "myk3_h1": "Citizen Science bij <em>OpenMycoNet</em>",
+    "myk3_subtitle": "Waarom brede deelname en gerichte expertise samengaan — niet als tegenstelling, maar als aanvulling.",
+    "myk3_s1_h2": "Hoe je meedoet",
+    "myk3_s1_p1": "De resultaten en gegevens van het netwerk zijn voor iedereen toegankelijk — ook zonder eigen meetknooppunt. Wie zelf een BioComm-knooppunt wil beheren, kan solliciteren naar een van de gecureerde plekken: hardware lenen, de BioComm-software gratis downloaden, elektroden in het substraat plaatsen. Analyse en anonimisering verlopen lokaal op het eigen apparaat, voordat de gegevens het netwerk bereiken.",
+    "myk3_s1_p2": "De waarde ontstaat uit de spreiding: één meting in Maintal, één in Osaka, één in São Paulo — samen een dataset die geen enkel laboratorium alleen zou kunnen genereren. Klimaatzones, substraten en seizoenen verschillen wereldwijd; precies die spreiding is nodig om de open vragen überhaupt te kunnen beantwoorden.",
+    "myk3_s2_label": "Wetenschappelijk bewijs",
+    "myk3_s2_h2": "Werkt wetenschap door leken echt?",
+    "myk3_s2_p1": "Citizen science heeft zich gevestigd als een volwaardige onderzoeksmethode. Een methodologisch onderzoek naar het platform iNaturalist toont aan dat <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">verspreide waarnemingen van leken wetenschappelijk valide gegevens kunnen opleveren</a>; het vergelijkingsproject FunDive laat zien hoe zo'n infrastructuur er in de praktijk uitziet voor schimmelonderzoek.",
+    "myk3_s2_p2": "Een bredere analyse van talrijke citizen-science-projecten komt tot een duidelijke maar voorwaardelijke conclusie: <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">door leken verzamelde gegevens kunnen de nauwkeurigheid van professionele dataverzameling evenaren of zelfs overtreffen</a>. De voorwaarde: succesvolle projecten combineren meerdere methoden tegelijk — iteratieve projectontwikkeling, training en toetsing van vrijwilligers, expertvalidatie, herhaling door meerdere deelnemers en statistische modellering van systematische fouten. Geen van deze methoden is op zichzelf voldoende.",
+    "myk3_s3_label": "OpenMycoNets eigen positie",
+    "myk3_s3_h2": "Leken plus een vaklaag — geen leken in plaats van experts",
+    "myk3_s3_p1": "Uit deze voorwaarde trekt OpenMycoNet een eigen, strategische conclusie: brede deelname van leken blijft de kern van het project — die levert de spreiding en hoeveelheid meetgegevens die geen enkel laboratorium alleen zou kunnen genereren. Daarnaast zoekt OpenMycoNet gerichter naar knooppuntbeheerders met vakinhoudelijke affiniteit: wetenschappers, studenten, maar ook bedrijven of individuen met een achtergrond in schimmels of mycologie. Deze laag moet leken niet vervangen, maar de interpretatie, validatie en uiteindelijk de wetenschappelijke bruikbaarheid van de verzamelde gegevens waarborgen.",
+    "myk3_s3_p2": "Hoe zo'n hybride model er in de praktijk uit kan zien, laat eBird exemplarisch zien: een netwerk van regionale, vrijwillige beoordelaars screent waarnemingen van leken op afwijkingen en classificeert ze als betrouwbaar, verduidelijking nodig of onbetrouwbaar — zonder de vrijwilligers het feitelijke waarnemingswerk uit handen te nemen.",
+    "myk3_s3_p3": "Belangrijk voor de duiding: het hierboven aangehaalde onderzoek toont aan dat hybride modellen van brede deelname en vakvalidatie in beginsel kunnen werken — het toont niet aan dat OpenMycoNets eigen uitvoering daarvan al gevalideerd is. Daarvoor bestaan tot nu toe geen eigen meetgegevens. Ook hier geldt: eerst meetgegevens, dan al het andere.",
+    "myk3_cta_h2": "Meer lezen",
+    "myk3_cta_p": "Wat de knooppunten daadwerkelijk meten, staat beschreven op de pagina <a href=\"https://www.openmyconet.de/bioelektrizitaet-biocomm.html\" style=\"color:#6ee87e;\">Bio-elektriciteit & BioComm</a>. De volledige literatuurlijst vind je op de Bronvermeldingen-pagina.",
+    "myk3_cta_bio_btn": "Naar Bio-elektriciteit & BioComm",
+    "myk3_cta_quellen_btn": "Naar de bronvermeldingen"
   },
   "fr": {
     "nav_warum": "Pourquoi",
@@ -1882,7 +1954,7 @@
       },
       {
         "h": "Science citoyenne",
-        "p": "Comme SETI@home — avec une différence cruciale : les signaux que nous cherchons sont déjà là."
+        "p": "Comme SETI@home — avec une différence cruciale : les signaux que nous cherchons sont déjà là. <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">En savoir plus sur la méthodologie de science citoyenne →</a>"
       }
     ],
     "steps": [
@@ -1997,6 +2069,9 @@
     "q_s5_step": "Étape 04 — Science Citoyenne",
     "q_s5_title": "La science par l'observation collective",
     "q_s5_desc": "Des plateformes de science citoyenne comme iNaturalist et FunDive démontrent que des mesures amateurs distribuées peuvent produire des données scientifiquement valides.",
+    "q_ref17_title": "Assessing data quality in citizen science",
+    "q_ref17_meta": "Kosmala, Wiggins, Swanson & Simmons (2016) · Frontiers in Ecology and the Environment 14(10), 551–560 · DOI 10.1002/fee.1436",
+    "q_ref17_relevanz": "Montre, à partir de nombreux projets de science citoyenne, que les données recueillies par des bénévoles peuvent égaler ou dépasser la précision d'une collecte de données professionnelle — lorsque les projets combinent plusieurs méthodes : développement itératif du projet, formation des bénévoles, validation par des experts, réplication et modélisation statistique des erreurs systématiques. Base méthodologique de la combinaison, chez OpenMycoNet, d'une large participation et d'une expertise sollicitée de manière ciblée.",
     "q_footer_left": "Toutes les sources liées sont en accès libre ou accessibles au public.",
     "q_footer_right": "Mis à jour : juin 2026 · OpenMycoNet / Robert Jank",
     "q_back": "← Accueil",
@@ -2146,7 +2221,7 @@
     "a_node_req_5": "Disponibilité pour mesurer pendant au moins 3 mois (résiliable mensuellement ensuite)",
     "a_node_req_6": "Un seul nœud par opérateur (exceptions sur demande)",
     "a_node_req_7": "Manipulation de base du matériel — pas de soudure ni de compétences en programmation requises",
-    "a_node_req_8": "Un profil professionnel ou scientifique est un plus (par ex. biologie, foresterie, sciences de l'environnement) — mais pas une condition",
+    "a_node_req_8": "Un profil professionnel ou scientifique est un plus (par ex. biologie, foresterie, sciences de l'environnement) — mais pas une condition — <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">en savoir plus →</a>",
     "a_node_info_feedback": "✓ Vous recevrez des retours réguliers sur vos données de mesure et serez tenu(e) informé(e) de toutes les actualités.",
     "a_node_lbl_ansprechpartner": "Personne de contact *",
     "a_node_ph_ansprechpartner": "Prénom et nom",
@@ -2224,7 +2299,28 @@
     "myk2_cta_h2": "Pour aller plus loin",
     "myk2_cta_p": "Cette page s'appuie sur les <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" style=\"color:#6ee87e;\">fondements mycorhiziens</a> présentés ailleurs. La liste complète des études se trouve sur la page Sources, les détails techniques sur l'appareil en prêt sur la page Matériel.",
     "myk2_cta_quellen_btn": "Voir les sources",
-    "myk2_cta_leih_btn": "Voir l'appareil BioComm en prêt"
+    "myk2_cta_leih_btn": "Voir l'appareil BioComm en prêt",
+    "myk3_page_title": "La science citoyenne chez OpenMycoNet — OpenMycoNet",
+    "myk3_meta_desc": "Pourquoi une large participation citoyenne et une expertise scientifique ciblée vont de pair chez OpenMycoNet — une démarche méthodiquement justifiée, avec toutes les références sourcées.",
+    "myk3_page_tag": "OpenMycoNet · Savoir",
+    "myk3_h1": "La science citoyenne chez <em>OpenMycoNet</em>",
+    "myk3_subtitle": "Pourquoi une large participation et une expertise ciblée vont de pair — non pas en opposition, mais en complément.",
+    "myk3_s1_h2": "Comment participer",
+    "myk3_s1_p1": "Les résultats et les données du réseau sont accessibles à tous — même sans nœud de mesure personnel. Quiconque souhaite exploiter un nœud BioComm peut postuler pour l'une des places sélectionnées : emprunter le matériel, télécharger gratuitement le logiciel BioComm, placer des électrodes dans le substrat. L'analyse et l'anonymisation s'effectuent localement sur l'appareil de l'utilisateur, avant que les données ne rejoignent le réseau.",
+    "myk3_s1_p2": "La valeur naît de l'étendue : une mesure à Maintal, une à Osaka, une à São Paulo — ensemble, un jeu de données qu'aucun laboratoire seul ne pourrait produire. Les zones climatiques, les substrats et les saisons diffèrent à travers le monde ; c'est précisément cette diversité qui permet de répondre aux questions ouvertes.",
+    "myk3_s2_label": "Preuves scientifiques",
+    "myk3_s2_h2": "La science par des amateurs fonctionne-t-elle vraiment ?",
+    "myk3_s2_p1": "La science citoyenne s'est imposée comme une méthode de recherche à part entière. Une étude méthodologique de la plateforme iNaturalist montre que <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">des observations distribuées réalisées par des non-spécialistes peuvent produire des données scientifiquement valides</a> ; le projet comparatif FunDive illustre concrètement à quoi ressemble une telle infrastructure pour la recherche fongique.",
+    "myk3_s2_p2": "Une analyse plus large portant sur de nombreux projets de science citoyenne aboutit à une conclusion claire mais conditionnelle : <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">les données recueillies par des citoyens peuvent égaler, voire dépasser, la précision d'une collecte de données professionnelle</a>. La condition : les projets qui réussissent combinent plusieurs méthodes à la fois — développement itératif du projet, formation et évaluation des volontaires, validation par des experts, réplication par plusieurs participants et modélisation statistique des erreurs systématiques. Aucune de ces méthodes ne suffit à elle seule.",
+    "myk3_s3_label": "La position propre d'OpenMycoNet",
+    "myk3_s3_h2": "Des volontaires, plus une couche d'expertise — pas des volontaires à la place des experts",
+    "myk3_s3_p1": "De cette condition, OpenMycoNet tire sa propre conclusion stratégique : la large participation citoyenne reste au cœur du projet — elle apporte l'étendue et le volume de données de mesure qu'aucun laboratoire seul ne pourrait produire. OpenMycoNet recherche en outre, de manière plus ciblée, des exploitants de nœuds ayant une expertise pertinente : des scientifiques, des étudiants, mais aussi des entreprises ou des particuliers ayant un lien avec les champignons ou la mycologie. Cette couche n'a pas vocation à remplacer les volontaires, mais à garantir l'interprétation, la validation et, in fine, l'exploitabilité scientifique des données collectées.",
+    "myk3_s3_p2": "eBird illustre concrètement à quoi peut ressembler un tel modèle hybride : un réseau de relecteurs bénévoles régionaux examine les observations des amateurs à la recherche d'anomalies et les classe comme fiables, à clarifier ou non fiables — sans retirer aux volontaires le travail d'observation lui-même.",
+    "myk3_s3_p3": "Élément important pour la mise en perspective : la recherche citée ci-dessus établit que les modèles hybrides combinant large participation et validation experte peuvent fonctionner en principe — elle n'établit pas que la mise en œuvre propre d'OpenMycoNet est déjà validée. Il n'existe à ce jour aucune donnée de mesure propre à ce sujet. Là aussi : d'abord les données de mesure, tout le reste ensuite.",
+    "myk3_cta_h2": "Pour aller plus loin",
+    "myk3_cta_p": "Ce que les nœuds mesurent réellement est décrit sur la page <a href=\"https://www.openmyconet.de/bioelektrizitaet-biocomm.html\" style=\"color:#6ee87e;\">Bioélectricité & BioComm</a>. La liste complète des études se trouve sur la page Sources.",
+    "myk3_cta_bio_btn": "Voir Bioélectricité & BioComm",
+    "myk3_cta_quellen_btn": "Voir les sources"
   },
   "es": {
     "nav_warum": "Por qué",
@@ -2439,7 +2535,7 @@
       },
       {
         "h": "Ciencia ciudadana",
-        "p": "Como SETI@home — con una diferencia crucial: las señales que buscamos ya están ahí."
+        "p": "Como SETI@home — con una diferencia crucial: las señales que buscamos ya están ahí. <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">Más sobre la metodología de ciencia ciudadana →</a>"
       }
     ],
     "steps": [
@@ -2554,6 +2650,9 @@
     "q_s5_step": "Paso 04 — Ciencia Ciudadana",
     "q_s5_title": "Ciencia a través de la observación colectiva",
     "q_s5_desc": "Plataformas de ciencia ciudadana como iNaturalist y FunDive demuestran que las mediciones amateur distribuidas pueden producir datos científicamente válidos.",
+    "q_ref17_title": "Assessing data quality in citizen science",
+    "q_ref17_meta": "Kosmala, Wiggins, Swanson & Simmons (2016) · Frontiers in Ecology and the Environment 14(10), 551–560 · DOI 10.1002/fee.1436",
+    "q_ref17_relevanz": "Muestra, a partir de numerosos proyectos de ciencia ciudadana, que los datos recopilados por voluntarios pueden igualar o superar la precisión de la recopilación de datos profesional — cuando los proyectos combinan varios métodos: desarrollo iterativo del proyecto, formación de voluntarios, validación por expertos, repetición y modelización estadística del error sistemático. Base metodológica de la combinación, en OpenMycoNet, de amplia participación y experiencia especializada incorporada de forma dirigida.",
     "q_footer_left": "Todas las fuentes enlazadas son de acceso abierto o accesibles públicamente.",
     "q_footer_right": "Actualizado: junio 2026 · OpenMycoNet / Robert Jank",
     "q_back": "← Inicio",
@@ -2703,7 +2802,7 @@
     "a_node_req_5": "Disponibilidad para medir durante al menos 3 meses (cancelable mensualmente después)",
     "a_node_req_6": "Un nodo por operador (excepciones previo acuerdo)",
     "a_node_req_7": "Manejo básico de hardware — no se requiere soldar ni conocimientos de programación",
-    "a_node_req_8": "Un perfil profesional o científico es una ventaja (p. ej. biología, ciencias forestales, ciencias ambientales) — pero no un requisito",
+    "a_node_req_8": "Un perfil profesional o científico es una ventaja (p. ej. biología, ciencias forestales, ciencias ambientales) — pero no un requisito — <a href=\"https://www.openmyconet.de/citizen-science-openmyconet.html\" style=\"color:#6ee87e;\">más información →</a>",
     "a_node_info_feedback": "✓ Recibirás comentarios regulares sobre tus datos de medición y estarás informado/a de todas las novedades.",
     "a_node_lbl_ansprechpartner": "Persona de contacto *",
     "a_node_ph_ansprechpartner": "Nombre y apellidos",
@@ -2781,6 +2880,27 @@
     "myk2_cta_h2": "Seguir leyendo",
     "myk2_cta_p": "Esta página se basa en los <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" style=\"color:#6ee87e;\">fundamentos de la micorriza</a> explicados en otra sección. La lista completa de estudios está en la página de Fuentes, los detalles técnicos del dispositivo en préstamo están en la página de Hardware.",
     "myk2_cta_quellen_btn": "Ir a las fuentes",
-    "myk2_cta_leih_btn": "Ver el dispositivo BioComm en préstamo"
+    "myk2_cta_leih_btn": "Ver el dispositivo BioComm en préstamo",
+    "myk3_page_title": "Ciencia ciudadana en OpenMycoNet — OpenMycoNet",
+    "myk3_meta_desc": "Por qué la amplia participación ciudadana y la experiencia científica dirigida van de la mano en OpenMycoNet — fundamentado metodológicamente, con todas las referencias documentadas.",
+    "myk3_page_tag": "OpenMycoNet · Conocimiento",
+    "myk3_h1": "Ciencia ciudadana en <em>OpenMycoNet</em>",
+    "myk3_subtitle": "Por qué la amplia participación y la experiencia dirigida van de la mano — no como opuestos, sino como complementos.",
+    "myk3_s1_h2": "Cómo participar",
+    "myk3_s1_p1": "Los resultados y datos de la red están abiertos a todo el mundo — incluso sin tener un nodo de medición propio. Quien quiera operar un nodo BioComm puede solicitar una de las plazas seleccionadas: pedir prestado el hardware, descargar gratis el software BioComm, colocar electrodos en el sustrato. El análisis y la anonimización se realizan localmente en el propio dispositivo antes de que los datos lleguen a la red.",
+    "myk3_s1_p2": "El valor surge de la amplitud: una medición en Maintal, otra en Osaka, otra en São Paulo — juntas forman un conjunto de datos que ningún laboratorio por sí solo podría generar. Las zonas climáticas, los sustratos y las estaciones difieren en todo el mundo; precisamente esa dispersión es la que se necesita para poder responder a las preguntas abiertas.",
+    "myk3_s2_label": "Evidencia científica",
+    "myk3_s2_h2": "¿Funciona realmente la ciencia hecha por aficionados?",
+    "myk3_s2_p1": "La ciencia ciudadana se ha consolidado como un método de investigación por derecho propio. Un estudio metodológico de la plataforma iNaturalist muestra que <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">las observaciones distribuidas de no expertos pueden generar datos científicamente válidos</a>; el proyecto comparativo FunDive demuestra cómo es en la práctica una infraestructura de este tipo para la investigación micológica.",
+    "myk3_s2_p2": "Un análisis más amplio de numerosos proyectos de ciencia ciudadana llega a una conclusión clara pero condicional: <a href=\"https://www.openmyconet.de/quellennachweise.html#station-cs\" style=\"color:#6ee87e;\">los datos recopilados por ciudadanos pueden igualar o incluso superar la precisión de la recopilación de datos profesional</a>. La condición: los proyectos exitosos combinan varios métodos a la vez — desarrollo iterativo del proyecto, formación y evaluación de los voluntarios, validación por expertos, repetición por parte de varios participantes y modelización estadística del error sistemático. Ninguno de estos métodos basta por sí solo.",
+    "myk3_s3_label": "La posición propia de OpenMycoNet",
+    "myk3_s3_h2": "Voluntarios más una capa de expertos — no voluntarios en lugar de expertos",
+    "myk3_s3_p1": "De esta condición, OpenMycoNet extrae su propia conclusión estratégica: la amplia participación ciudadana sigue siendo el núcleo del proyecto — aporta la amplitud y el volumen de datos de medición que ningún laboratorio por sí solo podría generar. Además, OpenMycoNet busca ahora de forma más dirigida operadores de nodos con vinculación profesional: científicos, estudiantes, pero también empresas o particulares con formación en hongos o micología. Esta capa no pretende sustituir a los voluntarios, sino garantizar la interpretación, la validación y, en última instancia, la utilidad científica de los datos recopilados.",
+    "myk3_s3_p2": "eBird ilustra de forma ejemplar cómo puede ser en la práctica un modelo híbrido de este tipo: una red de revisores voluntarios regionales examina las observaciones de los aficionados en busca de anomalías y las clasifica como fiables, pendientes de aclaración o no fiables — sin quitarle a los voluntarios el propio trabajo de observación.",
+    "myk3_s3_p3": "Importante para la interpretación: la investigación citada arriba demuestra que los modelos híbridos que combinan amplia participación y validación experta pueden funcionar en principio — no demuestra que la implementación propia de OpenMycoNet ya esté validada. Para ello, hasta ahora no existen datos de medición propios. También aquí rige: primero los datos de medición, después todo lo demás.",
+    "myk3_cta_h2": "Seguir leyendo",
+    "myk3_cta_p": "Lo que los nodos miden en realidad se describe en la página de <a href=\"https://www.openmyconet.de/bioelektrizitaet-biocomm.html\" style=\"color:#6ee87e;\">Bioelectricidad y BioComm</a>. La lista completa de estudios está en la página de Fuentes.",
+    "myk3_cta_bio_btn": "Ir a Bioelectricidad y BioComm",
+    "myk3_cta_quellen_btn": "Ir a las fuentes"
   }
 }

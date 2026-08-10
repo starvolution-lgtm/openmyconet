@@ -523,7 +523,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       <p id="node-req-title" style="font-family:'Lora',Georgia,serif; font-size:0.75rem; color:#d4a030; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:1rem;">{{ t('a_node_req_title') }}</p>
       <ul id="node-req-list" style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.5rem;">
         {% for k in ['a_node_req_1','a_node_req_2','a_node_req_3','a_node_req_4','a_node_req_5','a_node_req_6','a_node_req_7','a_node_req_8'] %}
-        <li>{{ t(k) }}</li>
+        <li>{{ t(k) | safe }}</li>
         {% endfor %}
       </ul>
       <div style="margin-top:1rem; padding:0.8rem 1rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #0a7050;">

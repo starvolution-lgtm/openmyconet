@@ -72,6 +72,11 @@ def bioelektrizitaet_biocomm():
     return render_template('site/bioelektrizitaet-biocomm.html', current_page='bioelektrizitaet')
 
 
+@site_live_bp.route('/citizen-science-openmyconet.html')
+def citizen_science_openmyconet():
+    return render_template('site/citizen-science-openmyconet.html', current_page='citizen-science')
+
+
 @site_live_bp.route('/foerderer.html')
 def foerderer():
     return render_template('site/foerderer.html', current_page='foerderer',
