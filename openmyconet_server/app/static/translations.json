@@ -116,12 +116,12 @@
     "h2_spenden": "Das Projekt<br><em>unterstützen</em>",
     "h2_anmelden": "Werde Teil des<br><em>Netzwerks</em>",
     "h2_ueber": "Unabhängige Wissenschaft<br>von <em>unten</em>",
-    "vision_p1": "Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde. Mykorrhiza-Pilze verbinden seit 400 Millionen Jahren nahezu alle Landpflanzen miteinander — sie transportieren Nährstoffe, übermitteln Warnsignale und koordinieren das Leben im Boden auf eine Weise die wir gerade erst zu verstehen beginnen. Sie senden elektrische Signale. Messbar. Reproduzierbar. Und bisher kaum entschlüsselt.",
+    "vision_p1": "Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde. Mykorrhiza-Pilze verbinden seit <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">400 Millionen Jahren</a> nahezu alle Landpflanzen miteinander — sie transportieren Nährstoffe, übermitteln Warnsignale und koordinieren das Leben im Boden auf eine Weise die wir gerade erst zu verstehen beginnen. Sie senden elektrische Signale. Messbar. Reproduzierbar. Und bisher kaum entschlüsselt.",
     "vision_p2": "OpenMycoNet stellt die einfache aber weitreichende Frage: Was passiert wenn wir aufhören, Böden nur von außen zu analysieren — und stattdessen anfangen zuzuhören was das Netzwerk selbst sendet? Was wenn die Pflanze uns längst sagt dass sie Durst hat, bevor wir es sehen? Was wenn der Boden selbst meldet dass ein Schädling naht, bevor der erste Schaden entsteht?",
     "vision_p3": "Das sind keine spekulativen Fragen. Die wissenschaftliche Grundlage existiert. Was fehlt sind Daten — viele, aus verschiedenen Klimazonen, Substraten, Jahreszeiten. Genau das kann kein einzelnes Labor liefern. Aber eine weltweite Gemeinschaft von Menschen die in ihrem Garten, ihrem Wald, ihrem Gewächshaus messen — schon.",
     "vision_quote": "Das Netzwerk sendet. Wir haben gerade erst angefangen zuzuhören.",
     "vision_closing": "Jeder BioComm-Knoten der weltweit in Betrieb geht bringt uns einen Schritt näher an das Verständnis — für alle.",
-    "desc_warum": "Mykorrhiza-Pilze verbinden über 90 % aller Landpflanzen. Sie senden elektrische Signale — messbar, reproduzierbar, rätselhaft. Gemeinsam können wir verstehen was sie bedeuten.",
+    "desc_warum": "Mykorrhiza-Pilze verbinden <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">~70 % aller Pflanzenarten</a>. Sie senden elektrische Signale — messbar, reproduzierbar, rätselhaft. Gemeinsam können wir verstehen was sie bedeuten.",
     "desc_mitmachen": "Die Ergebnisse und Daten des Netzwerks stehen allen offen — auch ohne eigenen Knoten. Wer selbst einen BioComm-Knoten betreiben möchte, bewirbt sich unten für einen der kuratierten Plätze.",
     "desc_daten": "GPS-Koordinaten werden auf 10×10 km vergröbert — kein exakter Standort. Keine personenbezogenen Daten. Alle Rohdaten öffentlich zugänglich.",
     "label_musik": "Musik",
@@ -195,7 +195,7 @@
       },
       {
         "h": "Echte Wissenschaft",
-        "p": "Die Signale existieren nachweislich (Adamatzky et al., 2022). Du hilfst dabei herauszufinden was sie bedeuten."
+        "p": "Die Signale existieren nachweislich (<a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" style=\"color:#6ee87e;\">Adamatzky et al., 2022</a>). Du hilfst dabei herauszufinden was sie bedeuten."
       },
       {
         "h": "KI die dazulernt",
@@ -261,11 +261,11 @@
     "facts": [
       {
         "num": "400M",
-        "text": "Jahre alt — so lange existieren Mykorrhiza-Netzwerke auf der Erde"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">Jahre alt — so lange existieren Mykorrhiza-Netzwerke auf der Erde</a>"
       },
       {
-        "num": "90%",
-        "text": "aller Landpflanzen sind mit Mykorrhiza-Pilzen verbunden"
+        "num": "~70%",
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">aller Pflanzenarten sind mit Mykorrhiza-Pilzen verbunden</a>"
       },
       {
         "num": "8",
@@ -302,6 +302,9 @@
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
     "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
     "q_ref14_relevanz": "Zeigt, dass G. intraradices die P-Aufnahme aus einem unangereicherten Bodenbereich gezielt drosselt, sobald ein angereicherter Patch erschlossen wird – die Autoren benennen explizit, dass die dafür nötigen Signalmoleküle im Hyphennetzwerk noch unbekannt sind. Ein plausibler Kandidat: elektrische Signalausbreitung im Myzel.",
+    "q_ref16_title": "Global density and biomass of arbuscular mycorrhizal fungal networks",
+    "q_ref16_meta": "Stewart, Bisot, Cargill et al. (2026) · Science 392(6803), 1171–1176 · DOI 10.1126/science.adu4373",
+    "q_ref16_relevanz": "Erste globale Kartierung arbuskulärer Mykorrhiza-Netzwerke: rund 110 Billiarden Kilometer Hyphenlänge in den obersten 15 cm Boden weltweit, ~300 Megatonnen Biomasse – das 4- bis 6-Fache der menschlichen Biomasse. Zeigt die physische Größenordnung des Netzwerks, das OpenMycoNet elektrisch zu vermessen versucht.",
     "q_sk_step": "! Kritische Perspektive — Wissenschaftliche Einordnung",
     "q_sk_title": "Was wirklich belegt ist — und was nicht",
     "q_sk_desc": "Nicht alle populären Behauptungen über das „Wood Wide Web\" sind durch Feldstudien ausreichend belegt. OpenMycoNet bezieht diese Kritik ausdrücklich ein — sie ist ein Grund, warum wir messen.",
@@ -311,6 +314,9 @@
     "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
     "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
     "q_ref08_relevanz": "Methodisch bislang fortschrittlichste Validierungsstudie: PCB-Elektroden, Faraday-Käfig und Biozid-Kontrollen bestätigen den biologischen Ursprung von Myzel-Signalen – direkte methodische Bestätigung des BioComm-Ansatzes.",
+    "q_ref15_title": "Language of fungi derived from their electrical spiking activity",
+    "q_ref15_meta": "Adamatzky (2022) · Royal Society Open Science 9(4), 211926 · DOI 10.1098/rsos.211926 · Open Access",
+    "q_ref15_relevanz": "Analysiert Spiking-Muster im Pilzmyzel auf sprachähnliche Strukturen (Wortlängen-Verteilung, Satzkomplexität) – meistzitierte Einzelstudie zur „Pilzsprache“ und wahrscheinlich die Quelle hinter der Aussage, dass die Signale nachweislich existieren.",
     "q_s3_step": "Schritt 03 — Messbarkeit, Sensorik & KI-Mustererkennung",
     "q_s3_title": "Von der Beobachtung zur Berechnung",
     "q_s3_desc": "Andrew Adamatzkys Arbeiten zeigen, dass Myzelsignale nicht nur existieren, sondern technisch nutzbar sind — als logische Gatter, als übertragbare Frequenzen, zuletzt als direkte KI-Schnittstelle.",
@@ -616,12 +622,12 @@
     "h2_spenden": "Support<br>the <em>project</em>",
     "h2_anmelden": "Become part of<br>the <em>network</em>",
     "h2_ueber": "Independent science<br>from <em>below</em>",
-    "vision_p1": "Beneath our feet lies the oldest and most extensive communication network on Earth. Mycorrhizal fungi have connected almost all land plants for 400 million years — transporting nutrients, transmitting warning signals, and coordinating life in the soil in ways we are only beginning to understand. They send electrical signals. Measurable. Reproducible. And barely deciphered so far.",
+    "vision_p1": "Beneath our feet lies the oldest and most extensive communication network on Earth. Mycorrhizal fungi have connected almost all land plants for <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">400 million years</a> — transporting nutrients, transmitting warning signals, and coordinating life in the soil in ways we are only beginning to understand. They send electrical signals. Measurable. Reproducible. And barely deciphered so far.",
     "vision_p2": "OpenMycoNet asks a simple yet profound question: what happens when we stop analysing soil only from the outside — and start listening to what the network itself is sending? What if the plant has long been telling us it's thirsty, before we can even see it? What if the soil itself signals the approach of a pest, before the first damage appears?",
     "vision_p3": "These are not speculative questions. The scientific foundation exists. What is missing is data — lots of it, from different climate zones, substrates, seasons. No single laboratory can provide that. But a global community of people measuring in their gardens, their forests, their greenhouses — can.",
     "vision_quote": "The network is transmitting. We have only just begun to listen.",
     "vision_closing": "Every BioComm node that goes live anywhere in the world brings us one step closer to understanding — for everyone.",
-    "desc_warum": "Mycorrhizal fungi connect over 90% of all land plants. They send electrical signals — measurable, reproducible, enigmatic. Together we can understand what they mean.",
+    "desc_warum": "Mycorrhizal fungi connect <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">~70% of all plant species</a>. They send electrical signals — measurable, reproducible, enigmatic. Together we can understand what they mean.",
     "desc_mitmachen": "The network's results and data are open to everyone — even without operating your own node. If you'd like to run a BioComm node yourself, apply below for one of the curated spots.",
     "desc_daten": "GPS coordinates are coarsened to 10×10 km — no exact location. No personal data. All raw data publicly accessible.",
     "label_musik": "Music",
@@ -695,7 +701,7 @@
       },
       {
         "h": "Real science",
-        "p": "The signals demonstrably exist (Adamatzky et al., 2022). You help find out what they mean."
+        "p": "The signals demonstrably exist (<a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" style=\"color:#6ee87e;\">Adamatzky et al., 2022</a>). You help find out what they mean."
       },
       {
         "h": "AI that keeps learning",
@@ -761,11 +767,11 @@
     "facts": [
       {
         "num": "400M",
-        "text": "years old — that's how long mycorrhizal networks have existed on Earth"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">years old — that's how long mycorrhizal networks have existed on Earth</a>"
       },
       {
-        "num": "90%",
-        "text": "of all land plants are connected to mycorrhizal fungi"
+        "num": "~70%",
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">of all plant species are connected to mycorrhizal fungi</a>"
       },
       {
         "num": "8",
@@ -802,6 +808,9 @@
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
     "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
     "q_ref14_relevanz": "Shows that G. intraradices deliberately reduces P uptake from an unenriched soil region as soon as an enriched patch is exploited — the authors explicitly state that the signal molecules coordinating this within the hyphal network remain unknown. Electrical signal propagation in the mycelium is a plausible candidate.",
+    "q_ref16_title": "Global density and biomass of arbuscular mycorrhizal fungal networks",
+    "q_ref16_meta": "Stewart, Bisot, Cargill et al. (2026) · Science 392(6803), 1171–1176 · DOI 10.1126/science.adu4373",
+    "q_ref16_relevanz": "First global map of arbuscular mycorrhizal networks: roughly 110 quadrillion kilometres of hyphae in the top 15 cm of soil worldwide, ~300 megatons of biomass — 4 to 6 times human biomass. Shows the physical scale of the network OpenMycoNet is trying to measure electrically.",
     "q_sk_step": "! Critical Perspective — Scientific Context",
     "q_sk_title": "What is actually proven — and what is not",
     "q_sk_desc": "Not all popular claims about the \"Wood Wide Web\" are adequately supported by field studies. OpenMycoNet explicitly incorporates this critique — it is one reason why we measure.",
@@ -811,6 +820,9 @@
     "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
     "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
     "q_ref08_relevanz": "The most methodologically advanced validation study to date: PCB electrodes, a Faraday cage, and biocide controls confirm the biological origin of mycelial signals — direct methodological support for the BioComm approach.",
+    "q_ref15_title": "Language of fungi derived from their electrical spiking activity",
+    "q_ref15_meta": "Adamatzky (2022) · Royal Society Open Science 9(4), 211926 · DOI 10.1098/rsos.211926 · Open Access",
+    "q_ref15_relevanz": "Analyses spiking patterns in fungal mycelium for language-like structures (word-length distribution, sentence complexity) — the most-cited single study on \"fungal language\" and likely the source behind the claim that the signals demonstrably exist.",
     "q_s3_step": "Step 03 — Measurability, Sensing & AI Pattern Recognition",
     "q_s3_title": "From observation to computation",
     "q_s3_desc": "Andrew Adamatzky's work shows that mycelium signals not only exist but are technically usable — as logic gates, as transmittable frequencies, and most recently as a direct AI interface.",
@@ -1116,12 +1128,12 @@
     "h2_spenden": "Het project<br><em>ondersteunen</em>",
     "h2_anmelden": "Word deel van<br>het <em>netwerk</em>",
     "h2_ueber": "Onafhankelijke wetenschap<br>van <em>onderaf</em>",
-    "vision_p1": "Onder onze voeten ligt het oudste en meest uitgebreide communicatienetwerk van de aarde. Mycorrhizaschimmels verbinden al 400 miljoen jaar vrijwel alle landplanten met elkaar — ze transporteren voedingsstoffen, sturen waarschuwingssignalen en coördineren het leven in de bodem op een manier die we nog maar nauwelijks beginnen te begrijpen. Ze zenden elektrische signalen. Meetbaar. Reproduceerbaar. En tot nu toe nauwelijks ontcijferd.",
+    "vision_p1": "Onder onze voeten ligt het oudste en meest uitgebreide communicatienetwerk van de aarde. Mycorrhizaschimmels verbinden al <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">400 miljoen jaar</a> vrijwel alle landplanten met elkaar — ze transporteren voedingsstoffen, sturen waarschuwingssignalen en coördineren het leven in de bodem op een manier die we nog maar nauwelijks beginnen te begrijpen. Ze zenden elektrische signalen. Meetbaar. Reproduceerbaar. En tot nu toe nauwelijks ontcijferd.",
     "vision_p2": "OpenMycoNet stelt een eenvoudige maar verstrekkende vraag: wat gebeurt er als we ophouden bodems alleen van buitenaf te analyseren — en in plaats daarvan beginnen te luisteren naar wat het netwerk zelf uitzendt? Wat als de plant ons al lang vertelt dat ze dorst heeft, voordat we het kunnen zien? Wat als de bodem zelf aangeeft dat er een plaag nadert, voordat de eerste schade ontstaat?",
     "vision_p3": "Dit zijn geen speculatieve vragen. De wetenschappelijke basis bestaat. Wat ontbreekt zijn gegevens — veel gegevens, uit verschillende klimaatzones, substraten, seizoenen. Dat kan geen enkel laboratorium leveren. Maar een wereldwijde gemeenschap van mensen die meten in hun tuin, hun bos, hun kas — wel.",
     "vision_quote": "Het netwerk zendt. We zijn er nog maar net mee begonnen te luisteren.",
     "vision_closing": "Elk BioComm-knooppunt dat wereldwijd in gebruik wordt genomen brengt ons een stap dichter bij begrip — voor iedereen.",
-    "desc_warum": "Mycorrhizaschimmels verbinden meer dan 90% van alle landplanten. Ze zenden elektrische signalen — meetbaar, reproduceerbaar, raadselachtig. Samen kunnen we begrijpen wat ze betekenen.",
+    "desc_warum": "Mycorrhizaschimmels verbinden <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">~70% van alle plantensoorten</a>. Ze zenden elektrische signalen — meetbaar, reproduceerbaar, raadselachtig. Samen kunnen we begrijpen wat ze betekenen.",
     "desc_mitmachen": "De resultaten en gegevens van het netwerk zijn voor iedereen toegankelijk — ook zonder eigen node. Wie zelf een BioComm-node wil beheren, solliciteert hieronder voor een van de gecureerde plekken.",
     "desc_daten": "GPS-coördinaten worden vergroot naar 10×10 km — geen exacte locatie. Geen persoonsgegevens. Alle ruwe data openbaar toegankelijk.",
     "label_musik": "Muziek",
@@ -1195,7 +1207,7 @@
       },
       {
         "h": "Echte wetenschap",
-        "p": "De signalen bestaan aantoonbaar (Adamatzky et al., 2022). Jij helpt uitvinden wat ze betekenen."
+        "p": "De signalen bestaan aantoonbaar (<a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" style=\"color:#6ee87e;\">Adamatzky et al., 2022</a>). Jij helpt uitvinden wat ze betekenen."
       },
       {
         "h": "AI die blijft leren",
@@ -1261,11 +1273,11 @@
     "facts": [
       {
         "num": "400M",
-        "text": "jaar oud — zo lang bestaan mycorrhizanetwerken al op aarde"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">jaar oud — zo lang bestaan mycorrhizanetwerken al op aarde</a>"
       },
       {
-        "num": "90%",
-        "text": "van alle landplanten zijn verbonden met mycorrhizaschimmels"
+        "num": "~70%",
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">van alle plantensoorten zijn verbonden met mycorrhizaschimmels</a>"
       },
       {
         "num": "8",
@@ -1302,6 +1314,9 @@
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
     "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
     "q_ref14_relevanz": "Toont aan dat G. intraradices de P-opname uit een niet-verrijkt bodemgebied gericht vermindert zodra een verrijkte patch wordt benut — de auteurs stellen expliciet dat de signaalmoleculen die dit binnen het hyfennetwerk coördineren nog onbekend zijn. Elektrische signaaloverdracht in het mycelium is een plausibele kandidaat.",
+    "q_ref16_title": "Global density and biomass of arbuscular mycorrhizal fungal networks",
+    "q_ref16_meta": "Stewart, Bisot, Cargill et al. (2026) · Science 392(6803), 1171–1176 · DOI 10.1126/science.adu4373",
+    "q_ref16_relevanz": "Eerste wereldwijde kartering van arbusculaire mycorrhizanetwerken: circa 110 biljard kilometer hyfen in de bovenste 15 cm bodem wereldwijd, ~300 megaton biomassa — 4 tot 6 keer de menselijke biomassa. Toont de fysieke schaal van het netwerk dat OpenMycoNet elektrisch probeert te meten.",
     "q_sk_step": "! Kritisch Perspectief — Wetenschappelijke Context",
     "q_sk_title": "Wat werkelijk bewezen is — en wat niet",
     "q_sk_desc": "Niet alle populaire beweringen over het \"Wood Wide Web\" worden voldoende ondersteund door veldstudies. OpenMycoNet neemt deze kritiek uitdrukkelijk mee — het is een reden waarom we meten.",
@@ -1311,6 +1326,9 @@
     "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
     "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
     "q_ref08_relevanz": "De tot nu toe methodologisch meest geavanceerde validatiestudie: PCB-elektroden, een kooi van Faraday en biocide-controles bevestigen de biologische oorsprong van myceliumsignalen — directe methodologische onderbouwing voor de BioComm-aanpak.",
+    "q_ref15_title": "Language of fungi derived from their electrical spiking activity",
+    "q_ref15_meta": "Adamatzky (2022) · Royal Society Open Science 9(4), 211926 · DOI 10.1098/rsos.211926 · Open Access",
+    "q_ref15_relevanz": "Analyseert spikingpatronen in schimmelmycelium op taalachtige structuren (verdeling van woordlengtes, zinscomplexiteit) — de meest geciteerde afzonderlijke studie over \"schimmeltaal\" en waarschijnlijk de bron achter de bewering dat de signalen aantoonbaar bestaan.",
     "q_s3_step": "Stap 03 — Meetbaarheid, Sensoriek & AI-patroonherkenning",
     "q_s3_title": "Van observatie naar berekening",
     "q_s3_desc": "Het werk van Andrew Adamatzky toont aan dat myceliumsignalen niet alleen bestaan maar technisch bruikbaar zijn — als logische poorten, als overdraagbare frequenties, en recentelijk als directe AI-interface.",
@@ -1615,12 +1633,12 @@
     "h2_spenden": "Soutenir<br>le <em>projet</em>",
     "h2_anmelden": "Rejoignez<br>le <em>réseau</em>",
     "h2_ueber": "Une science indépendante<br>venue d'<em>en bas</em>",
-    "vision_p1": "Sous nos pieds se trouve le réseau de communication le plus ancien et le plus étendu de la Terre. Les champignons mycorhiziens relient presque toutes les plantes terrestres depuis 400 millions d'années — ils transportent des nutriments, transmettent des signaux d'alerte et coordonnent la vie dans le sol d'une manière que nous commençons à peine à comprendre. Ils émettent des signaux électriques. Mesurables. Reproductibles. Et à peine déchiffrés jusqu'ici.",
+    "vision_p1": "Sous nos pieds se trouve le réseau de communication le plus ancien et le plus étendu de la Terre. Les champignons mycorhiziens relient presque toutes les plantes terrestres depuis <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">400 millions d'années</a> — ils transportent des nutriments, transmettent des signaux d'alerte et coordonnent la vie dans le sol d'une manière que nous commençons à peine à comprendre. Ils émettent des signaux électriques. Mesurables. Reproductibles. Et à peine déchiffrés jusqu'ici.",
     "vision_p2": "OpenMycoNet pose une question simple mais fondamentale : que se passe-t-il si nous cessons d'analyser les sols uniquement de l'extérieur — et commençons à écouter ce que le réseau lui-même émet ? Et si la plante nous disait depuis longtemps qu'elle a soif, avant même que nous le voyions ? Et si le sol signalait lui-même l'approche d'un ravageur, avant que les premiers dégâts n'apparaissent ?",
     "vision_p3": "Ce ne sont pas des questions spéculatives. La base scientifique existe. Ce qui manque, ce sont des données — beaucoup, provenant de différentes zones climatiques, substrats, saisons. Aucun laboratoire ne peut fournir cela seul. Mais une communauté mondiale de personnes mesurant dans leur jardin, leur forêt, leur serre — si.",
     "vision_quote": "Le réseau émet. Nous venons tout juste de commencer à écouter.",
     "vision_closing": "Chaque nœud BioComm mis en service dans le monde nous rapproche d'un pas de la compréhension — pour tous.",
-    "desc_warum": "Les champignons mycorhiziens connectent plus de 90 % de toutes les plantes terrestres. Ils émettent des signaux électriques — mesurables, reproductibles, énigmatiques. Ensemble, nous pouvons comprendre ce qu'ils signifient.",
+    "desc_warum": "Les champignons mycorhiziens connectent <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">~70 % de toutes les espèces végétales</a>. Ils émettent des signaux électriques — mesurables, reproductibles, énigmatiques. Ensemble, nous pouvons comprendre ce qu'ils signifient.",
     "desc_mitmachen": "Les résultats et données du réseau sont accessibles à tous — même sans exploiter son propre nœud. Si vous souhaitez exploiter vous-même un nœud BioComm, postulez ci-dessous pour l'une des places sélectionnées.",
     "desc_daten": "Les coordonnées GPS sont arrondies à 10×10 km — aucune localisation précise. Aucune donnée personnelle. Toutes les données brutes accessibles publiquement.",
     "label_musik": "Musique",
@@ -1694,7 +1712,7 @@
       },
       {
         "h": "Vraie science",
-        "p": "Les signaux existent de manière avérée (Adamatzky et al., 2022). Vous aidez à découvrir ce qu'ils signifient."
+        "p": "Les signaux existent de manière avérée (<a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" style=\"color:#6ee87e;\">Adamatzky et al., 2022</a>). Vous aidez à découvrir ce qu'ils signifient."
       },
       {
         "h": "Une IA qui apprend",
@@ -1760,11 +1778,11 @@
     "facts": [
       {
         "num": "400M",
-        "text": "millions d'années — c'est depuis combien de temps les réseaux mycorhiziens existent"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">millions d'années — c'est depuis combien de temps les réseaux mycorhiziens existent</a>"
       },
       {
-        "num": "90%",
-        "text": "de toutes les plantes terrestres sont connectées à des champignons mycorhiziens"
+        "num": "~70%",
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">de toutes les espèces végétales sont connectées à des champignons mycorhiziens</a>"
       },
       {
         "num": "8",
@@ -1801,6 +1819,9 @@
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
     "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
     "q_ref14_relevanz": "Montre que G. intraradices réduit délibérément l'absorption de P dans une zone du sol non enrichie dès qu'une zone enrichie est exploitée — les auteurs indiquent explicitement que les molécules de signalisation coordonnant ce phénomène dans le réseau hyphal restent inconnues. La propagation de signaux électriques dans le mycélium en est un candidat plausible.",
+    "q_ref16_title": "Global density and biomass of arbuscular mycorrhizal fungal networks",
+    "q_ref16_meta": "Stewart, Bisot, Cargill et al. (2026) · Science 392(6803), 1171–1176 · DOI 10.1126/science.adu4373",
+    "q_ref16_relevanz": "Première cartographie mondiale des réseaux mycorhiziens arbusculaires : environ 110 billiards de kilomètres d'hyphes dans les 15 premiers centimètres de sol à l'échelle mondiale, ~300 mégatonnes de biomasse — 4 à 6 fois la biomasse humaine. Montre l'ampleur physique du réseau qu'OpenMycoNet cherche à mesurer électriquement.",
     "q_sk_step": "! Perspective critique — Contexte scientifique",
     "q_sk_title": "Ce qui est réellement prouvé — et ce qui ne l'est pas",
     "q_sk_desc": "Toutes les affirmations populaires sur le « Wood Wide Web » ne sont pas suffisamment étayées par des études de terrain. OpenMycoNet intègre explicitement cette critique.",
@@ -1810,6 +1831,9 @@
     "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
     "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
     "q_ref08_relevanz": "L'étude de validation méthodologiquement la plus avancée à ce jour : électrodes sur PCB, cage de Faraday et contrôles biocides confirment l'origine biologique des signaux mycéliens — un appui méthodologique direct pour l'approche BioComm.",
+    "q_ref15_title": "Language of fungi derived from their electrical spiking activity",
+    "q_ref15_meta": "Adamatzky (2022) · Royal Society Open Science 9(4), 211926 · DOI 10.1098/rsos.211926 · Open Access",
+    "q_ref15_relevanz": "Analyse les motifs de spiking du mycélium fongique à la recherche de structures proches du langage (répartition de la longueur des mots, complexité des phrases) — l'étude individuelle la plus citée sur le « langage fongique » et probablement la source de l'affirmation selon laquelle les signaux existent bel et bien.",
     "q_s3_step": "Étape 03 — Mesurabilité, Capteurs & Reconnaissance de motifs IA",
     "q_s3_title": "De l'observation au calcul",
     "q_s3_desc": "Les travaux d'Andrew Adamatzky montrent que les signaux du mycélium sont techniquement utilisables — comme portes logiques, fréquences transmissibles, et interface directe avec l'IA.",
@@ -2115,12 +2139,12 @@
     "h2_spenden": "Apoyar<br>el <em>proyecto</em>",
     "h2_anmelden": "Forma parte<br>de la <em>red</em>",
     "h2_ueber": "Ciencia independiente<br>desde <em>abajo</em>",
-    "vision_p1": "Bajo nuestros pies se encuentra la red de comunicación más antigua y extensa de la Tierra. Los hongos micorrícicos llevan 400 millones de años conectando casi todas las plantas terrestres — transportan nutrientes, transmiten señales de advertencia y coordinan la vida en el suelo de maneras que apenas comenzamos a comprender. Emiten señales eléctricas. Medibles. Reproducibles. Y apenas descifradas hasta ahora.",
+    "vision_p1": "Bajo nuestros pies se encuentra la red de comunicación más antigua y extensa de la Tierra. Los hongos micorrícicos llevan <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">400 millones de años</a> conectando casi todas las plantas terrestres — transportan nutrientes, transmiten señales de advertencia y coordinan la vida en el suelo de maneras que apenas comenzamos a comprender. Emiten señales eléctricas. Medibles. Reproducibles. Y apenas descifradas hasta ahora.",
     "vision_p2": "¿Qué ocurre cuando dejamos de analizar los suelos solo desde el exterior — y empezamos a escuchar lo que la red misma está enviando? ¿Y si la planta lleva tiempo diciéndonos que tiene sed, antes de que podamos verlo? ¿Y si el propio suelo nos avisa de la llegada de una plaga, antes de que aparezca el primer daño?",
     "vision_p3": "No son preguntas especulativas. La base científica existe. Lo que falta son datos — muchos, de diferentes zonas climáticas, sustratos, estaciones. Ningún laboratorio puede proporcionar eso solo. Pero una comunidad mundial de personas que miden en su jardín, su bosque, su invernadero — sí puede.",
     "vision_quote": "La red transmite. Apenas hemos empezado a escuchar.",
     "vision_closing": "Cada nodo BioComm que entra en funcionamiento en cualquier parte del mundo nos acerca un paso más a la comprensión — para todos.",
-    "desc_warum": "Los hongos micorrícicos conectan más del 90% de todas las plantas terrestres. Envían señales eléctricas — medibles, reproducibles, enigmáticas. Juntos podemos entender qué significan.",
+    "desc_warum": "Los hongos micorrícicos conectan <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">~70% de todas las especies vegetales</a>. Envían señales eléctricas — medibles, reproducibles, enigmáticas. Juntos podemos entender qué significan.",
     "desc_mitmachen": "Los resultados y datos de la red están abiertos a todos — incluso sin operar tu propio nodo. Si quieres operar tú mismo un nodo BioComm, postúlate abajo para una de las plazas seleccionadas.",
     "desc_daten": "Las coordenadas GPS se redondean a 10×10 km — sin ubicación exacta. Sin datos personales. Todos los datos brutos accesibles públicamente.",
     "label_musik": "Música",
@@ -2194,7 +2218,7 @@
       },
       {
         "h": "Ciencia real",
-        "p": "Las señales existen de forma demostrable (Adamatzky et al., 2022). Tú ayudas a descubrir qué significan."
+        "p": "Las señales existen de forma demostrable (<a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" style=\"color:#6ee87e;\">Adamatzky et al., 2022</a>). Tú ayudas a descubrir qué significan."
       },
       {
         "h": "IA que sigue aprendiendo",
@@ -2260,11 +2284,11 @@
     "facts": [
       {
         "num": "400M",
-        "text": "millones de años — así de antiguos son las redes micorrícicas en la Tierra"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">millones de años — así de antiguos son las redes micorrícicas en la Tierra</a>"
       },
       {
-        "num": "90%",
-        "text": "de todas las plantas terrestres están conectadas a hongos micorrícicos"
+        "num": "~70%",
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e; text-decoration:underline;\">de todas las especies vegetales están conectadas a hongos micorrícicos</a>"
       },
       {
         "num": "8",
@@ -2301,6 +2325,9 @@
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
     "q_ref14_meta": "Cavagnaro, Smith, Smith & Jakobsen (2005) · Plant, Cell & Environment 28, 642–650 · DOI 10.1111/j.1365-3040.2005.01310.x",
     "q_ref14_relevanz": "Muestra que G. intraradices reduce deliberadamente la absorción de P de una zona del suelo no enriquecida en cuanto se explota un parche enriquecido — los autores señalan explícitamente que aún se desconocen las moléculas de señalización que coordinan esto en la red de hifas. La propagación de señales eléctricas en el micelio es un candidato plausible.",
+    "q_ref16_title": "Global density and biomass of arbuscular mycorrhizal fungal networks",
+    "q_ref16_meta": "Stewart, Bisot, Cargill et al. (2026) · Science 392(6803), 1171–1176 · DOI 10.1126/science.adu4373",
+    "q_ref16_relevanz": "Primer mapa global de redes micorrícicas arbusculares: unos 110 mil billones de kilómetros de hifas en los primeros 15 cm de suelo en todo el mundo, ~300 megatoneladas de biomasa — de 4 a 6 veces la biomasa humana. Muestra la escala física de la red que OpenMycoNet intenta medir eléctricamente.",
     "q_sk_step": "! Perspectiva crítica — Contexto científico",
     "q_sk_title": "Lo que realmente está probado — y lo que no",
     "q_sk_desc": "No todas las afirmaciones populares sobre el \"Wood Wide Web\" están suficientemente respaldadas por estudios de campo. OpenMycoNet incorpora explícitamente esta crítica.",
@@ -2310,6 +2337,9 @@
     "q_ref08_title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
     "q_ref08_meta": "Buffi et al. (2025) · iScience 28, 113484 · DOI 10.1016/j.isci.2025.113484 · Open Access",
     "q_ref08_relevanz": "El estudio de validación metodológicamente más avanzado hasta la fecha: electrodos en PCB, jaula de Faraday y controles con biocidas confirman el origen biológico de las señales miceliales — respaldo metodológico directo para el enfoque de BioComm.",
+    "q_ref15_title": "Language of fungi derived from their electrical spiking activity",
+    "q_ref15_meta": "Adamatzky (2022) · Royal Society Open Science 9(4), 211926 · DOI 10.1098/rsos.211926 · Open Access",
+    "q_ref15_relevanz": "Analiza los patrones de disparo (spiking) del micelio fúngico en busca de estructuras similares al lenguaje (distribución de la longitud de las palabras, complejidad de las frases) — el estudio individual más citado sobre el «lenguaje fúngico» y probablemente la fuente de la afirmación de que las señales existen de forma demostrable.",
     "q_s3_step": "Paso 03 — Medibilidad, Sensores & Reconocimiento de patrones IA",
     "q_s3_title": "De la observación al cálculo",
     "q_s3_desc": "El trabajo de Andrew Adamatzky muestra que las señales del micelio son técnicamente utilizables — como puertas lógicas, frecuencias transmisibles e interfaz directa con la IA.",

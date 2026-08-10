@@ -261,7 +261,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 1.5rem;">
-    <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p1">{{ t('vision_p1') }}</p>
+    <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n-html="vision_p1">{{ t('vision_p1') | safe }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">{{ t('vision_p2') }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:2.5rem;" data-i18n="vision_p3">{{ t('vision_p3') }}</p>
     <div id="vision-apps" style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:0.5rem;">
@@ -290,10 +290,10 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
-    <p class="section-desc" data-i18n="desc_warum">{{ t('desc_warum') }}</p>
+    <p class="section-desc" data-i18n-html="desc_warum">{{ t('desc_warum') | safe }}</p>
     <div class="cards-grid" id="cards-grid">
       {% for c in translations[current_lang()]['cards'] %}
-      <div class="card"><span class="card-icon">{{ card_svgs[loop.index0] | safe }}</span><h3>{{ c.h }}</h3><p>{{ c.p }}</p></div>
+      <div class="card"><span class="card-icon">{{ card_svgs[loop.index0] | safe }}</span><h3>{{ c.h }}</h3><p>{{ c.p | safe }}</p></div>
       {% endfor %}
     </div>
   </div>
@@ -604,7 +604,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     </div>
     <div class="facts" id="facts-grid">
       {% for f in translations[current_lang()]['facts'] %}
-      <div class="fact"><div class="fact-num">{{ f.num }}</div><p>{{ f.text }}</p></div>
+      <div class="fact"><div class="fact-num">{{ f.num }}</div><p>{{ f.text | safe }}</p></div>
       {% endfor %}
     </div>
   </div>
