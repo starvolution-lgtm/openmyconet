@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" rx="40" fill="#0a0f0a"/>
+  <g stroke="#2d6a2d" stroke-width="1.2" fill="none" opacity="0.5">
+    <line x1="30" y1="150" x2="55" y2="110"/>
+    <line x1="55" y1="110" x2="35" y2="70"/>
+    <line x1="55" y1="110" x2="90" y2="90"/>
+    <line x1="150" y1="150" x2="125" y2="110"/>
+    <line x1="125" y1="110" x2="145" y2="70"/>
+    <line x1="125" y1="110" x2="90" y2="90"/>
+    <line x1="90" y1="90" x2="90" y2="40"/>
+    <circle cx="55" cy="110" r="4" fill="#2d6a2d" stroke="none"/>
+    <circle cx="125" cy="110" r="4" fill="#2d6a2d" stroke="none"/>
+    <circle cx="90" cy="90" r="4" fill="#2d6a2d" stroke="none"/>
+  </g>
+  <circle cx="90" cy="28" r="8" fill="#4a9e4a"/>
+  <text x="90" y="155" text-anchor="middle"
+    font-family="Georgia, serif" font-size="110" font-weight="400"
+    fill="#7ec87e">M</text>
+</svg>
