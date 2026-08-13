@@ -45,6 +45,14 @@
         <option value="wiss_mitarbeiter" {% if filter_fachrolle == 'wiss_mitarbeiter' %}selected{% endif %}>Wiss. Mitarbeiter</option>
         <option value="student" {% if filter_fachrolle == 'student' %}selected{% endif %}>Student</option>
     </select>
+    &nbsp;
+    <label>Rolle: </label>
+    <select name="rolle" onchange="this.form.submit()">
+        <option value="">Alle</option>
+        <option value="mycelist" {% if filter_rolle == 'mycelist' %}selected{% endif %}>Mycelist</option>
+        <option value="hyphist" {% if filter_rolle == 'hyphist' %}selected{% endif %}>Hyphist</option>
+        <option value="sporist" {% if filter_rolle == 'sporist' %}selected{% endif %}>Sporist</option>
+    </select>
 </form>
 
 <table>
@@ -55,6 +63,7 @@
         <th>Land</th>
         <th>Gruppe</th>
         <th>Fachrolle</th>
+        <th>Rolle</th>
         <th>Bestätigt</th>
         <th>Registriert</th>
         <th></th>
@@ -73,6 +82,15 @@
                     <option value="wissenschaftler" {% if nutzer.fachrolle == 'wissenschaftler' %}selected{% endif %}>Wissenschaftler</option>
                     <option value="wiss_mitarbeiter" {% if nutzer.fachrolle == 'wiss_mitarbeiter' %}selected{% endif %}>Wiss. Mitarbeiter</option>
                     <option value="student" {% if nutzer.fachrolle == 'student' %}selected{% endif %}>Student</option>
+                </select>
+            </form>
+        </td>
+        <td>
+            <form method="POST" action="{{ url_for('admin.nutzer_rolle_setzen', nutzer_id=nutzer.id) }}">
+                <select name="rolle" onchange="this.form.submit()">
+                    <option value="mycelist" {% if nutzer.rolle == 'mycelist' %}selected{% endif %}>Mycelist</option>
+                    <option value="hyphist" {% if nutzer.rolle == 'hyphist' %}selected{% endif %}>Hyphist</option>
+                    <option value="sporist" {% if nutzer.rolle == 'sporist' %}selected{% endif %}>Sporist</option>
                 </select>
             </form>
         </td>

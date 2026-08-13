@@ -25,6 +25,8 @@ MIGRATIONS = [
     ('nutzer', 'fachrolle', 'VARCHAR(30)'),
     ('nutzer', 'login_token', 'VARCHAR(100)'),
     ('nutzer', 'login_token_angefordert_am', 'DATETIME'),
+    ('nutzer', 'rolle', "VARCHAR(20) DEFAULT 'mycelist'"),
+    ('foerderer', 'status_geaendert_am', 'DATETIME'),
 ]
 
 UMLAUT_MAP = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
@@ -77,6 +79,10 @@ def main():
             cur.execute(f'ALTER TABLE {tabelle} ADD COLUMN {spalte} {typ}')
             print(f'{tabelle}.{spalte} hinzugefügt.')
     backfill_slugs(cur)
+    # Bestehende Foerderer-Zeilen haben nach ALTER TABLE ein NULL status_geaendert_am --
+    # ohne Backfill wuerde die Verfalls-Pruefung (foerderer_verfall_pruefen.py) sie nie
+    # erfassen (NULL-Vergleich ist immer falsch). erstellt_am ist der sinnvollste Startwert.
+    cur.execute('UPDATE foerderer SET status_geaendert_am = erstellt_am WHERE status_geaendert_am IS NULL')
     # ALTER TABLE ADD COLUMN kennt in SQLite keine UNIQUE-Constraints -- Index separat anlegen,
     # damit auf bestehenden DBs dieselbe Eindeutigkeit gilt wie beim frischen db.create_all().
     cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS ix_nutzer_login_token ON nutzer (login_token)')

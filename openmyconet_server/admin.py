@@ -15,6 +15,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from extensions import db, mail
 from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung, Foerderer, Presseeintrag, Pressekandidat, Suchbegriff
+from roles import nutzer_finden_oder_anlegen, rolle_hochstufen
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -162,6 +163,7 @@ def change_password():
 # --- Nutzerverwaltung ---
 
 FACHROLLEN = ['wissenschaftler', 'wiss_mitarbeiter', 'student']
+ROLLEN = ['mycelist', 'hyphist', 'sporist']
 
 @admin_bp.route('/admin')
 @role_required('superadmin')
@@ -169,6 +171,7 @@ def admin():
     filter_gruppe = request.args.get('gruppe', '')
     filter_sprache = request.args.get('sprache', '')
     filter_fachrolle = request.args.get('fachrolle', '')
+    filter_rolle = request.args.get('rolle', '')
     query = Nutzer.query
     if filter_gruppe:
         query = query.filter_by(gruppe=filter_gruppe)
@@ -176,6 +179,8 @@ def admin():
         query = query.filter_by(sprache=filter_sprache)
     if filter_fachrolle:
         query = query.filter_by(fachrolle=filter_fachrolle)
+    if filter_rolle:
+        query = query.filter_by(rolle=filter_rolle)
     nutzer_liste = query.order_by(Nutzer.registriert_am.desc()).all()
     gesamt = Nutzer.query.count()
     bestaetigt = Nutzer.query.filter_by(bestaetigt=True).count()
@@ -184,7 +189,8 @@ def admin():
         nutzer_liste=nutzer_liste, gesamt=gesamt,
         bestaetigt=bestaetigt, unbestaetigt=unbestaetigt,
         filter_gruppe=filter_gruppe, filter_sprache=filter_sprache,
-        filter_fachrolle=filter_fachrolle, fachrollen=FACHROLLEN
+        filter_fachrolle=filter_fachrolle, fachrollen=FACHROLLEN,
+        filter_rolle=filter_rolle, rollen=ROLLEN
     )
 
 
@@ -206,6 +212,17 @@ def nutzer_fachrolle_setzen(nutzer_id):
     nutzer.fachrolle = wert if wert in FACHROLLEN else None
     db.session.commit()
     flash(f'Fachrolle von {nutzer.name} aktualisiert.')
+    return redirect(url_for('admin.admin'))
+
+
+@admin_bp.route('/admin/nutzer/rolle/<int:nutzer_id>', methods=['POST'])
+@role_required('superadmin')
+def nutzer_rolle_setzen(nutzer_id):
+    nutzer = Nutzer.query.get_or_404(nutzer_id)
+    wert = request.form.get('rolle', '').strip()
+    nutzer.rolle = wert if wert in ROLLEN else 'mycelist'
+    db.session.commit()
+    flash(f'Rolle von {nutzer.name} aktualisiert.')
     return redirect(url_for('admin.admin'))
 
 
@@ -546,10 +563,19 @@ def foerderer_admin():
         elif request.form.get('action') == 'activate':
             eintrag.status = 'active'
             eintrag.aktiviert_am = _dt.utcnow()
+            eintrag.status_geaendert_am = _dt.utcnow()
+            # Freigabe ist der Rollen-Upgrade-Zeitpunkt: bei Kooperation -> hyphist,
+            # bei Foerderer -> sporist (deckt manuelle Aktivierung ohne PayPal-IPN
+            # ab, z.B. Ueberweisung statt Online-Zahlung).
+            nutzer = nutzer_finden_oder_anlegen(
+                eintrag.ansprechpartner or eintrag.firma, eintrag.email, sprache='de',
+            )
+            rolle_hochstufen(nutzer, 'hyphist' if eintrag.typ == 'kooperation' else 'sporist')
             db.session.commit()
             nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
         elif request.form.get('action') == 'reject':
             eintrag.status = 'rejected'
+            eintrag.status_geaendert_am = _dt.utcnow()
             db.session.commit()
             nachricht = f'"{eintrag.firma}" wurde abgelehnt.'
         else:

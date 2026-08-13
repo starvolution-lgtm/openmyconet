@@ -22,6 +22,14 @@ class Nutzer(db.Model):
     # kann. Wird vom Admin nachgepflegt, kein Registrierungsformular-Feld.
     fachrolle = db.Column(db.String(30), nullable=True)  # 'wissenschaftler' | 'wiss_mitarbeiter' | 'student' | NULL
 
+    # Community-Rollen-Namenssystem (Eigennamen, unuebersetzt). Rangfolge
+    # mycelist < hyphist < sporist; rolle_hochstufen() in roles.py kapselt die
+    # Zustufung (nie herabstufen dort). Hyphist kann bei Inaktivitaet der
+    # zugehoerigen Kooperationsanfrage automatisch wieder auf mycelist
+    # zurueckfallen (siehe foerderer_verfall_pruefen.py), Sporist nicht (echte
+    # Zahlung).
+    rolle = db.Column(db.String(20), nullable=False, default='mycelist')  # 'mycelist' | 'hyphist' | 'sporist'
+
     # Magic-Link-Login: eigener Token getrennt vom Double-Opt-in-Token oben.
     # Jede neue Anfrage ueberschreibt den vorherigen Token (macht alte Links
     # automatisch ungueltig); Ablauf + Einmalgebrauch werden in dashboard.py geprueft.
@@ -117,7 +125,13 @@ class ContentBlock(db.Model):
 class Foerderer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(64), unique=True, nullable=False)
-    status = db.Column(db.String(20), default='pending')  # pending | active | expired | rejected
+    status = db.Column(db.String(20), default='pending')  # pending | active | expired | rejected | verfallen
+    # Zeitpunkt des letzten Statuswechsels (nicht erstellt_am!) -- Basis fuer die
+    # automatische Verfalls-Pruefung bei Kooperationsanfragen (2 Monate ohne
+    # Aktivitaet -> status='verfallen', siehe foerderer_verfall_pruefen.py).
+    # 'verfallen' ist nur fuer typ='kooperation' relevant; bezahlte foerderer-
+    # Eintraege verfallen nicht automatisch ueber dieses Feld.
+    status_geaendert_am = db.Column(db.DateTime, default=datetime.utcnow)
     firma = db.Column(db.String(120), nullable=False)
     beschreibung = db.Column(db.Text, nullable=False)
     website = db.Column(db.String(255), default='')

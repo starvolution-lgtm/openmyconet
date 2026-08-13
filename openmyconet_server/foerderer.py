@@ -24,6 +24,7 @@ from PIL import Image, UnidentifiedImageError
 
 from extensions import db, mail
 from models import Foerderer, RechnungsZaehler
+from roles import nutzer_finden_oder_anlegen, rolle_hochstufen
 from spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
@@ -324,6 +325,11 @@ def kooperation():
         db.session.add(foerderer)
         db.session.commit()
 
+        # Nutzer-Account bereits jetzt anlegen/verknuepfen (E-Mail-Abgleich) --
+        # rolle bleibt bewusst mycelist, das Hyphist-Upgrade erfolgt erst bei
+        # manueller Freigabe im Admin-Panel (siehe admin.py, action='activate').
+        nutzer_finden_oder_anlegen(data['ansprechpartner'], data['email'], sprache='de', ip=ip)
+
         _mail_kooperationsanfrage_admin(foerderer)
         eingereicht = True
         data = {}
@@ -409,10 +415,17 @@ def ipn():
 
     rechnung_nr = _naechste_rechnung_nr()
     foerderer.status = 'active'
+    foerderer.status_geaendert_am = datetime.utcnow()
     foerderer.paypal_txn_id = txn_id
     foerderer.rechnung_nr = rechnung_nr
     foerderer.aktiviert_am = datetime.utcnow()
     foerderer.betrag = betrag
+    # Zahlung abgeschlossen = Sporist-Upgrade-Zeitpunkt (im Gegensatz zu Hyphist,
+    # das erst bei manueller Admin-Freigabe hochgestuft wird, siehe admin.py).
+    nutzer = nutzer_finden_oder_anlegen(
+        foerderer.ansprechpartner or foerderer.firma, foerderer.email, sprache='de',
+    )
+    rolle_hochstufen(nutzer, 'sporist')
     db.session.commit()
 
     _rechnung_pdf_erzeugen(foerderer, rechnung_nr, betrag, txn_id)
