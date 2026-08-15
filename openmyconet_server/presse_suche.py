@@ -10,9 +10,21 @@ Urheberrecht). Das entspricht bewusst nicht der urspruenglichen "keine
 Automatisierung"-Vorgabe aus dem Presse-Auftrag, sondern automatisiert nur die
 Recherche -- die redaktionelle Kontrolle bleibt vollstaendig beim Menschen.
 
-GDELT limitiert auf eine Anfrage pro 5 Sekunden (informelle Policy, siehe
-Fehlermeldung der API) -- deshalb bewusst nur EIN Suchbegriff pro Sprache und
-eine Pause zwischen den Sprachen, statt mehrerer kombinierter Anfragen.
+GDELT limitiert offiziell auf eine Anfrage pro 5 Sekunden (informelle Policy,
+siehe Fehlermeldung der API) -- deshalb bewusst nur EIN Suchbegriff pro Sprache
+und eine Pause zwischen den Sprachen, statt mehrerer kombinierter Anfragen.
+
+Beobachtung vom 10.08.2026 (erster echter Cronjob-Lauf): Alle 5 Sprachanfragen
+scheiterten mit 429 Too Many Requests, obwohl die 5-Sekunden-Regel eingehalten
+wurde. Recherche ergab, dass GDELTs Rate-Limiting 2026 von mehreren Nutzern als
+unvorhersehbar und "klebrig" beschrieben wird -- einmal ausgeloest, hilft auch
+langsameres Nachfragen nicht zuverlaessig, unabhaengig vom eigenen Verhalten.
+Als Reaktion: Pause auf 20s erhoeht und ein browser-aehnlicher User-Agent
+ergaenzt (siehe REQUEST_HEADERS) -- beides ohne Garantie, da die Ursache nicht
+zweifelsfrei isoliert werden konnte. Der Fehlerfall ist bereits robust
+abgefangen (kein Absturz, klares Log, naechster Versuch automatisch am
+folgenden Montag) -- ein einzelner Fehlschlag ist bei diesem kostenlosen,
+informell limitierten Dienst kein Alarmsignal.
 
 Aufruf: python presse_suche.py (per Cronjob, z.B. woechentlich)
 """
@@ -27,7 +39,19 @@ from extensions import db
 from models import Pressekandidat, Suchbegriff
 
 GDELT_URL = 'https://api.gdeltproject.org/api/v2/doc/doc'
-PAUSE_ZWISCHEN_ANFRAGEN = 10  # Sekunden -- GDELT verlangt mindestens 5, Sicherheitsmarge gegen Bursts
+PAUSE_ZWISCHEN_ANFRAGEN = 20  # Sekunden -- GDELT verlangt offiziell nur 5, reale Erfahrungswerte
+# (auch von anderen Nutzern 2026 berichtet) zeigen aber unvorhersehbares, "klebriges"
+# Blocking-Verhalten unabhaengig vom eigenen Timing -- 20s ist zusaetzliche Marge,
+# keine Garantie.
+
+# Browser-aehnlicher User-Agent statt des requests-Standard-UA ("python-requests/x.y.z"),
+# der von manchen Diensten pauschal blockiert wird. Behebt das am 10.08.2026 beobachtete
+# Problem nicht nachweislich (siehe PAUSE_ZWISCHEN_ANFRAGEN-Kommentar), ist aber eine
+# kostenlose Absicherung ohne Nachteile.
+REQUEST_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                   '(KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+}
 
 # Suchbegriffe liegen NICHT mehr hier im Code, sondern in der Suchbegriff-
 # Tabelle -- editierbar unter /admin/presse-kandidaten, damit sie ohne
@@ -50,7 +74,7 @@ def _sprache_suchen(sprache, begriff, quellsprache):
     resp = requests.get(GDELT_URL, params={
         'query': begriff, 'mode': 'artlist', 'maxrecords': 15,
         'format': 'json', 'sourcelang': quellsprache,
-    }, timeout=20)
+    }, headers=REQUEST_HEADERS, timeout=20)
     resp.raise_for_status()
     text = resp.text.strip()
     if not text:
