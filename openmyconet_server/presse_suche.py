@@ -1,6 +1,5 @@
 """
-Presse-Kandidatensuche ueber GDELT (kostenlose, oeffentliche Nachrichten-
-Datenbank, keine API-Kosten, siehe https://www.gdeltproject.org/data.html).
+Presse-Kandidatensuche ueber Google Alerts (RSS-Feeds, kostenlos, kein API-Key).
 
 Findet NUR Kandidaten und legt sie als 'pending' in der Pressekandidat-Tabelle
 ab -- veroeffentlicht wird NIE automatisch. Ein Admin sichtet die Kandidaten
@@ -10,81 +9,95 @@ Urheberrecht). Das entspricht bewusst nicht der urspruenglichen "keine
 Automatisierung"-Vorgabe aus dem Presse-Auftrag, sondern automatisiert nur die
 Recherche -- die redaktionelle Kontrolle bleibt vollstaendig beim Menschen.
 
-GDELT limitiert offiziell auf eine Anfrage pro 5 Sekunden (informelle Policy,
-siehe Fehlermeldung der API) -- deshalb bewusst nur EIN Suchbegriff pro Sprache
-und eine Pause zwischen den Sprachen, statt mehrerer kombinierter Anfragen.
+Ersetzt die urspruengliche GDELT-Anbindung (siehe Git-Historie): GDELTs
+DOC-2.0-API scheiterte an zwei aufeinanderfolgenden Cronjob-Laeufen (10. und
+17.08.2026) durchgaengig mit "429 Too Many Requests", trotz grosszuegiger
+Pausen zwischen den Anfragen -- Recherche ergab, dass GDELTs Rate-Limiting
+2026 von mehreren Nutzern als unvorhersehbar und "klebrig" beschrieben wird.
+Bei einem tatsaechlichen Bedarf von nur 1-2 Suchen/Monat ist eine offiziell
+von Google angebotene, dauerhaft kostenlose Funktion (Google Alerts mit
+RSS-Zustellung statt E-Mail) die robustere Wahl -- kein Rate-Limit-Risiko,
+keine Kontolimits, kein API-Key.
 
-Beobachtung vom 10.08.2026 (erster echter Cronjob-Lauf): Alle 5 Sprachanfragen
-scheiterten mit 429 Too Many Requests, obwohl die 5-Sekunden-Regel eingehalten
-wurde. Recherche ergab, dass GDELTs Rate-Limiting 2026 von mehreren Nutzern als
-unvorhersehbar und "klebrig" beschrieben wird -- einmal ausgeloest, hilft auch
-langsameres Nachfragen nicht zuverlaessig, unabhaengig vom eigenen Verhalten.
-Als Reaktion: Pause auf 20s erhoeht und ein browser-aehnlicher User-Agent
-ergaenzt (siehe REQUEST_HEADERS) -- beides ohne Garantie, da die Ursache nicht
-zweifelsfrei isoliert werden konnte. Der Fehlerfall ist bereits robust
-abgefangen (kein Absturz, klares Log, naechster Versuch automatisch am
-folgenden Montag) -- ein einzelner Fehlschlag ist bei diesem kostenlosen,
-informell limitierten Dienst kein Alarmsignal.
+Voraussetzung: Ein Google Alert pro Sprache, manuell unter google.com/alerts
+angelegt (Zustellung: "RSS-Feed" statt E-Mail-Adresse, Quelle: "Nachrichten").
+Die 5 Feed-URLs werden -- wie zuvor die GDELT-Suchbegriffe -- unter
+/admin/presse-kandidaten in der Suchbegriff-Tabelle gepflegt (Feld "begriff"
+enthaelt jetzt die Feed-URL statt eines Suchworts, siehe presse_kandidaten.html).
 
-Aufruf: python presse_suche.py (per Cronjob, z.B. woechentlich)
+Bekannte Eigenheit von Google-Alerts-Feeds: Links zeigen nicht direkt auf den
+Artikel, sondern auf einen Google-Redirect (.../url?...&url=<Ziel>&...) -- die
+tatsaechliche Ziel-URL wird hier aus dem "url"-Parameter extrahiert. Titel
+enthalten teils HTML-Hervorhebungen (<b>...</b>) um den Suchbegriff, die
+entfernt werden.
+
+Aufruf: python presse_suche.py (per Cronjob, aktuell 2x monatlich)
 """
 
-import time
-from datetime import datetime
+import re
+from datetime import date
+from urllib.parse import urlparse, parse_qs
 
+import feedparser
 import requests
 
 from app import app
 from extensions import db
 from models import Pressekandidat, Suchbegriff
 
-GDELT_URL = 'https://api.gdeltproject.org/api/v2/doc/doc'
-PAUSE_ZWISCHEN_ANFRAGEN = 20  # Sekunden -- GDELT verlangt offiziell nur 5, reale Erfahrungswerte
-# (auch von anderen Nutzern 2026 berichtet) zeigen aber unvorhersehbares, "klebriges"
-# Blocking-Verhalten unabhaengig vom eigenen Timing -- 20s ist zusaetzliche Marge,
-# keine Garantie.
-
-# Browser-aehnlicher User-Agent statt des requests-Standard-UA ("python-requests/x.y.z"),
-# der von manchen Diensten pauschal blockiert wird. Behebt das am 10.08.2026 beobachtete
-# Problem nicht nachweislich (siehe PAUSE_ZWISCHEN_ANFRAGEN-Kommentar), ist aber eine
-# kostenlose Absicherung ohne Nachteile.
+# Browser-aehnlicher User-Agent -- manche Dienste blocken den requests-Standard-UA
+# ("python-requests/x.y.z") pauschal. Uebernommen aus der vorherigen GDELT-Anbindung.
 REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
                    '(KHTML, like Gecko) Chrome/124.0 Safari/537.36',
 }
 
-# Suchbegriffe liegen NICHT mehr hier im Code, sondern in der Suchbegriff-
-# Tabelle -- editierbar unter /admin/presse-kandidaten, damit sie ohne
-# Code-Deploy angepasst werden koennen (siehe seed_suchbegriffe.py fuer die
-# anfaengliche Befuellung). Bewusst ein einzelner, thematisch treffender
-# Suchbegriff pro Sprache statt mehrerer kombinierter Woerter -- UND-
-# verknuepfte Mehrwort-Queries lieferten im Test haeufiger 0 Treffer als ein
-# einzelner praeziser Begriff.
+_HTML_TAG_RE = re.compile(r'<[^>]+>')
 
 
-def _datum_parsen(seendate):
-    # GDELT-Format: "20260729T193000Z"
+def _titel_bereinigen(roh_titel):
+    """Entfernt HTML-Tags -- Google Alerts umschliesst den Treffer-Begriff im Titel
+    oft mit <b>...</b>."""
+    return _HTML_TAG_RE.sub('', roh_titel or '').strip()
+
+
+def _ziel_url_extrahieren(feed_link):
+    """Google-Alerts-Links zeigen auf einen Redirect (google.com/url?...&url=<Ziel>&...).
+    Extrahiert die tatsaechliche Ziel-URL aus dem "url"-Parameter. Falls kein solcher
+    Parameter gefunden wird (z.B. falls Google das Format aendert), wird der Original-
+    Link unveraendert zurueckgegeben, statt zu scheitern."""
     try:
-        return datetime.strptime(seendate, '%Y%m%dT%H%M%SZ').date()
-    except (TypeError, ValueError):
-        return None
+        qs = parse_qs(urlparse(feed_link).query)
+    except ValueError:
+        return feed_link
+    werte = qs.get('url')
+    return werte[0] if werte else feed_link
 
 
-def _sprache_suchen(sprache, begriff, quellsprache):
-    resp = requests.get(GDELT_URL, params={
-        'query': begriff, 'mode': 'artlist', 'maxrecords': 15,
-        'format': 'json', 'sourcelang': quellsprache,
-    }, headers=REQUEST_HEADERS, timeout=20)
+def _domain_aus_url(url):
+    netloc = urlparse(url).netloc
+    return netloc[4:] if netloc.startswith('www.') else netloc
+
+
+def _feed_lesen(feed_url):
+    resp = requests.get(feed_url, headers=REQUEST_HEADERS, timeout=20)
     resp.raise_for_status()
-    text = resp.text.strip()
-    if not text:
-        return []
-    if not text.startswith('{'):
-        # GDELT antwortet bei Rate-Limit-Ueberschreitung manchmal mit Status 200
-        # und einem Klartext-Hinweis statt eines Fehlerstatus -- ohne diesen Check
-        # gaebe es hier nur eine kryptische JSONDecodeError-Meldung.
-        raise ValueError(f'unerwartete Antwort (evtl. Rate-Limit): {text[:150]}')
-    return resp.json().get('articles', [])
+    feed = feedparser.parse(resp.content)
+    artikel = []
+    for entry in feed.entries:
+        ziel_url = _ziel_url_extrahieren(entry.get('link', ''))
+        if not ziel_url:
+            continue
+        datum = None
+        if entry.get('published_parsed'):
+            datum = date(*entry.published_parsed[:3])
+        artikel.append({
+            'title': _titel_bereinigen(entry.get('title', '')),
+            'url': ziel_url,
+            'domain': _domain_aus_url(ziel_url),
+            'datum': datum,
+        })
+    return artikel
 
 
 def kandidaten_suchen():
@@ -92,28 +105,26 @@ def kandidaten_suchen():
     with app.app_context():
         begriffe = Suchbegriff.query.filter_by(aktiv=True).all()
         if not begriffe:
-            print('Keine aktiven Suchbegriffe konfiguriert (siehe /admin/presse-kandidaten).')
+            print('Keine aktiven RSS-Feeds konfiguriert (siehe /admin/presse-kandidaten).')
             return 0
 
-        for i, sb in enumerate(begriffe):
-            if i > 0:
-                time.sleep(PAUSE_ZWISCHEN_ANFRAGEN)
+        for sb in begriffe:
             try:
-                artikel = _sprache_suchen(sb.sprache, sb.begriff, sb.quellsprache)
+                artikel = _feed_lesen(sb.begriff)
             except (requests.RequestException, ValueError) as fehler:
-                print(f'GDELT-Suche ({sb.sprache}) fehlgeschlagen: {fehler}')
+                print(f'Feed-Abruf ({sb.sprache}) fehlgeschlagen: {fehler}')
                 continue
 
             for a in artikel:
-                url = (a.get('url') or '').strip()
-                titel = (a.get('title') or '').strip()
+                url = a['url'].strip()
+                titel = a['title'].strip()
                 if not url or not titel:
                     continue
                 if Pressekandidat.query.filter_by(url=url).first():
                     continue  # bereits frueher gefunden (uebernommen, verworfen oder noch pending)
                 kandidat = Pressekandidat(
-                    titel=titel, url=url, quelle=a.get('domain', ''),
-                    datum=_datum_parsen(a.get('seendate')), sprache=sb.sprache,
+                    titel=titel, url=url, quelle=a['domain'],
+                    datum=a['datum'], sprache=sb.sprache,
                 )
                 db.session.add(kandidat)
                 neue += 1
