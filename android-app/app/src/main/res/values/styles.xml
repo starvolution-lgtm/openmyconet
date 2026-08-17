@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Kontrollzentrum" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
+    </style>
+
+    <!-- Startet ohne kurzes weisses Aufblitzen vor der Splash-Screen-Uebernahme
+         durch die TWA-Bibliothek. -->
+    <style name="Theme.Kontrollzentrum.Launcher" parent="Theme.Kontrollzentrum">
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

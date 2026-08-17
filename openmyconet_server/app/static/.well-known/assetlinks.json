@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "de.openmyconet.kontrollzentrum",
+      "sha256_cert_fingerprints": [
+        "TODO: SHA256-Fingerabdruck des Signing-Keys hier eintragen (siehe README-ANDROID.md, Schritt 3)"
+      ]
+    }
+  }
+]

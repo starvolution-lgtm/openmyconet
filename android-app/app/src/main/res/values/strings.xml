@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">Kontrollzentrum</string>
+    <string name="hostName">www.openmyconet.de</string>
+    <string name="launchUrl">https://www.openmyconet.de/dashboard</string>
+
+    <!-- Muss exakt zur assetlinks.json auf dem Server passen (siehe README-ANDROID.md) -->
+    <string name="asset_statements">[{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://www.openmyconet.de\"}}]</string>
+</resources>
