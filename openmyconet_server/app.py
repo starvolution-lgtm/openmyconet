@@ -89,7 +89,11 @@ _CSP = (
     f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
     f"img-src 'self' data: {_EIGENE_DOMAINS} https://unpkg.com https://*.tile.openstreetmap.org; "
     f"media-src 'self' {_EIGENE_DOMAINS}; "
-    f"connect-src 'self' {_EIGENE_DOMAINS} https://nominatim.openstreetmap.org; "
+    # unpkg.com + tile.openstreetmap.org muessen hier zusaetzlich zu script-/style-/
+    # img-src stehen: faengt der Service Worker (sw.js) eine Ressourcen-Anfrage ab und
+    # leitet sie per fetch() weiter, prueft der Browser diesen inneren Fetch gegen
+    # connect-src -- unabhaengig vom eigentlichen Ressourcentyp (CSS/JS/Bild).
+    f"connect-src 'self' {_EIGENE_DOMAINS} https://nominatim.openstreetmap.org https://unpkg.com https://*.tile.openstreetmap.org; "
     "frame-ancestors 'self'; "
     "object-src 'none'; "
     "base-uri 'self'; "
