@@ -1,6 +1,8 @@
 import pytest
 
 from conftest import eingeloggt
+from extensions import db as _db
+from models import Suchbegriff
 
 import kontrollzentrum
 
@@ -114,3 +116,38 @@ def test_cache_verhindert_doppelten_netzwerkzugriff_innerhalb_ttl(client, supera
 
     client.get('/admin/kontrollzentrum')
     assert aufrufe['n'] == erster_stand
+
+
+def _aktiven_suchbegriff_anlegen(app):
+    with app.app_context():
+        sb = Suchbegriff(sprache='de', begriff='https://example.com/feed.xml',
+                          quellsprache='german', aktiv=True)
+        _db.session.add(sb)
+        _db.session.commit()
+
+
+def test_presse_feed_grau_wenn_valide_aber_leer(client, app, superadmin, monkeypatch):
+    _netzwerk_checks_mocken(monkeypatch)
+    _aktiven_suchbegriff_anlegen(app)
+    # Gueltiges, aber leeres Feed-XML -- kein Fehler, nur (noch) keine Treffer.
+    leeres_feed = FakeResponse(content=b'<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>')
+    monkeypatch.setattr('kontrollzentrum.requests.get', lambda *a, **kw: leeres_feed)
+
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    resp = client.get('/admin/kontrollzentrum')
+    html = resp.get_data(as_text=True)
+    assert 'kz-tile neutral' in html
+    assert 'aber noch keine Treffer' in html
+
+
+def test_presse_feed_rot_bei_kaputtem_xml(client, app, superadmin, monkeypatch):
+    _netzwerk_checks_mocken(monkeypatch)
+    _aktiven_suchbegriff_anlegen(app)
+    kaputtes_feed = FakeResponse(content=b'das ist kein XML')
+    monkeypatch.setattr('kontrollzentrum.requests.get', lambda *a, **kw: kaputtes_feed)
+
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    resp = client.get('/admin/kontrollzentrum')
+    html = resp.get_data(as_text=True)
+    assert 'kz-tile fehler' in html
+    assert 'liefert kein gueltiges XML' in html

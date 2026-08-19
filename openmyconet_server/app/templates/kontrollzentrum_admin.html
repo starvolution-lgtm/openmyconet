@@ -12,11 +12,15 @@
   details.kz-tile { border-radius:8px; padding:0.9rem 1rem; min-height:70px; border:1px solid; }
   details.kz-tile.ok { background:var(--good-bg); border-color:var(--good); }
   details.kz-tile.fehler { background:var(--blocked-bg); border-color:var(--blocked); }
+  /* neutral (grau) ist bewusst nur fuer den Presse-Feed-Check: valide geladen,
+     aber (noch) keine Treffer -- kein Fehler, aber auch kein "alles gut". */
+  details.kz-tile.neutral { background:#e9e9e6; border-color:#8a8a82; }
   details.kz-tile summary { cursor:pointer; font-weight:600; list-style:none; }
   details.kz-tile summary::-webkit-details-marker { display:none; }
   details.kz-tile .kz-detail { margin:0.6rem 0 0; font-size:0.9em; }
   details.kz-tile.ok .kz-detail { color:var(--good); }
   details.kz-tile.fehler .kz-detail { color:var(--blocked); }
+  details.kz-tile.neutral .kz-detail { color:#5a5a52; }
 </style>
 {% endblock %}
 
@@ -31,11 +35,12 @@
   <a href="?refresh=1">↻ Jetzt aktualisieren</a>
 </div>
 
+{% set KZ_EMOJI = {'ok': '🟢', 'fehler': '🔴', 'neutral': '⚪'} %}
 <div class="kz-grid">
   {% for r in ergebnisse %}
-  <details class="kz-tile {{ 'ok' if r.ok else 'fehler' }}" {{ 'open' if not r.ok else '' }}>
-    <summary>{{ '🟢' if r.ok else '🔴' }} {{ r.titel }}</summary>
-    {% if not r.ok %}<p class="kz-detail">{{ r.detail }}</p>{% endif %}
+  <details class="kz-tile {{ r.status }}" {{ 'open' if r.status != 'ok' else '' }}>
+    <summary>{{ KZ_EMOJI.get(r.status, '❔') }} {{ r.titel }}</summary>
+    {% if r.status != 'ok' %}<p class="kz-detail">{{ r.detail }}</p>{% endif %}
   </details>
   {% endfor %}
 </div>
