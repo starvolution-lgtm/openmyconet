@@ -15,6 +15,7 @@ from dashboard import dashboard_bp
 from site_preview import site_preview_bp
 from site_live import site_live_bp
 from foerderer import foerderer_bp
+from kontrollzentrum import kontrollzentrum_bp
 from i18n import init_i18n
 
 load_dotenv()
@@ -56,6 +57,7 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(site_preview_bp)
 app.register_blueprint(site_live_bp)
 app.register_blueprint(foerderer_bp)
+app.register_blueprint(kontrollzentrum_bp)
 
 # Phase 4 Schritt 1 (Template-Pilot): asset()/live() referenzieren bis zum Asset-
 # Umzug (Schritt 4) weiterhin die Live-Domain, damit der Pilot ohne Datei-

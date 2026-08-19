@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}OpenMycoNet — Admin{% endblock %}</title>
 <link href="{{ asset('fonts.css') }}" rel="stylesheet">
 <link href="{{ asset('admin.css') }}" rel="stylesheet">
@@ -24,6 +25,7 @@
       {% if session.admin_role == 'superadmin' %}
       <a href="{{ url_for('admin.knoten_admin') }}">📡 Knoten</a>
       <a href="{{ url_for('admin.bewerbungen_admin') }}">🗺️ Bewerbungen</a>
+      <a href="{{ url_for('kontrollzentrum.kontrollzentrum') }}">🚦 Kontrollzentrum</a>
       {% endif %}
       <a href="{{ url_for('admin.spenden_admin') }}">💚 Spenden</a>
       <a href="{{ url_for('admin.foerderer_admin') }}">🤝 Förderer</a>
