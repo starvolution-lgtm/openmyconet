@@ -49,9 +49,7 @@
 <a href="{{ live('index.html') }}" class="nav-logo-link" style="display:flex; align-items:center; text-decoration:none;"><img src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet" style="height:52px; width:auto; display:block;"></a>
 {% endblock %}
 
-{% block mobile_menu_self_link %}
-<a href="{{ live('leihgeraete.html') }}" data-i18n="nav_leihgeraete">{{ t('nav_leihgeraete') }}</a>
-{% endblock %}
+{% block mobile_menu_self_link %}{% endblock %}
 
 {% block extra_css %}
 /* Farben direkt — keine CSS-Variablen für maximale iOS-Kompatibilität */
@@ -242,7 +240,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   <div class="hero-buttons">
     <a href="#anmelden" class="btn btn-green" data-i18n="btn_join">{{ t('btn_join') }}</a>
     <a href="#spenden" class="btn btn-amber" data-i18n="btn_support">{{ t('btn_support') }}</a>
-    <a href="{{ live('leihgeraete.html') }}" class="btn" data-i18n="btn_leihgeraet" style="border:1px solid #d4a030; color:#d4a030; background:transparent;">{{ t('btn_leihgeraet') }}</a>
+    <button type="button" onclick="document.getElementById('node-yes').checked=true; showNodePanel(true);" class="btn" data-i18n="btn_leihgeraet" style="border:1px solid #d4a030; color:#d4a030; background:transparent; cursor:pointer;">{{ t('btn_leihgeraet') }}</button>
     <button onclick="document.getElementById('omn-fab').click()" class="btn btn-amber" data-i18n="btn_fragen" style="cursor:pointer;border:1px solid #6ee87e;color:#6ee87e;background:transparent;">{{ t('btn_fragen') }}</button>
   </div>
 
@@ -264,7 +262,15 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n-html="vision_p1">{{ t('vision_p1') | safe }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">{{ t('vision_p2') }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p3">{{ t('vision_p3') }}</p>
-    <a href="{{ live('mykorrhiza-netzwerke.html') }}" class="btn btn-amber" style="margin-bottom:2.5rem;" data-i18n="link_myk_vertiefung">{{ t('link_myk_vertiefung') }}</a>
+    <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p4">{{ t('vision_p4') }}</p>
+    <p style="font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:400; color:#ffffff; line-height:1.5; font-style:italic; margin-bottom:1.5rem;" data-i18n="vision_quote">{{ t('vision_quote') }}</p>
+    <a href="{{ live('mykorrhiza-netzwerke.html') }}" class="btn btn-amber" style="margin-bottom:1.5rem;" data-i18n="link_myk_vertiefung">{{ t('link_myk_vertiefung') }}</a>
+    <div style="margin:1.5rem 0 2.5rem; padding:1.4rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #d4a030;">
+      <p style="color:#e8f5e0; font-size:1rem; line-height:1.75; margin-bottom:0.9rem;" data-i18n="vision_biocomm_intro">{{ t('vision_biocomm_intro') }}</p>
+      <a href="{{ live('biocomm') }}" class="btn btn-green" data-i18n="vision_biocomm_cta">{{ t('vision_biocomm_cta') }}</a>
+    </div>
+    <p class="section-label" data-i18n="vision_apps_h">{{ t('vision_apps_h') }}</p>
+    <p style="color:#a0c8a0; font-size:0.95rem; line-height:1.7; margin-bottom:1.5rem; max-width:700px;" data-i18n="vision_apps_intro">{{ t('vision_apps_intro') }}</p>
     <div id="vision-apps" style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:0.5rem;">
       {% for app in translations[current_lang()]['vision_apps'] %}
       <div style="flex:1 1 340px; padding:1.5rem; background-color:rgba(0,0,0,0.28); border-left:3px solid {{ '#3a9e5a' if loop.index0 == 5 else '#0a7050' }};">
@@ -275,7 +281,6 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       {% endfor %}
     </div>
     <div style="margin-top:1.5rem; padding:1rem 0 0; border-top:1px solid #0a6040;">
-      <p style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:400; color:#ffffff; line-height:1.5; font-style:italic;" data-i18n="vision_quote">{{ t('vision_quote') }}</p>
       <p style="margin-top:1rem; color:#a0c8a0; font-size:0.9rem;" data-i18n="vision_closing">{{ t('vision_closing') }}</p>
     </div>
   </div>
@@ -300,6 +305,20 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   </div>
 </section>
 
+<!-- BioComm — kompakter Bereich (BioComm_Seitenstruktur_und_Startseite_Aufgabe.md, Abschnitt 3) -->
+<section id="biocomm-teaser" style="background-color:#012a1e; border-top:1px solid #0a6040; padding:3rem clamp(1.5rem,5vw,5rem);">
+  <p class="section-label" data-i18n="biocomm_teaser_label">{{ t('biocomm_teaser_label') }}</p>
+  <h2 data-i18n-html="biocomm_teaser_h2" style="margin-bottom:1rem;">{{ t('biocomm_teaser_h2') | safe }}</h2>
+  <p class="section-desc" data-i18n="biocomm_teaser_p1">{{ t('biocomm_teaser_p1') }}</p>
+  <p style="color:#a0c8a0; font-size:1rem; line-height:1.8; max-width:760px; margin-top:1rem;" data-i18n="biocomm_teaser_p2">{{ t('biocomm_teaser_p2') }}</p>
+  <p style="color:#e8f5e0; font-style:italic; font-size:0.95rem; margin-top:1rem;" data-i18n="biocomm_teaser_p3">{{ t('biocomm_teaser_p3') }}</p>
+  <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.8rem;">
+    <a href="{{ live('biocomm') }}" class="btn btn-amber" data-i18n="biocomm_teaser_cta1">{{ t('biocomm_teaser_cta1') }}</a>
+    <a href="{{ live('biocomm/hardware') }}" class="btn btn-green" data-i18n="biocomm_teaser_cta2">{{ t('biocomm_teaser_cta2') }}</a>
+    <a href="{{ live('biocomm/software') }}" class="btn btn-green" data-i18n="biocomm_teaser_cta3">{{ t('biocomm_teaser_cta3') }}</a>
+  </div>
+</section>
+
 <!-- Mitmachen -->
 <section id="mitmachen" style="background-color:#024530;">
   <div style="position:relative; overflow:hidden; height:280px;">
@@ -314,7 +333,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <div class="steps-grid" id="steps-grid">
       {% set nums = ['01','02','03','04'] %}
       {% for s in translations[current_lang()]['steps'] %}
-      <div class="step"><span class="step-num">{{ nums[loop.index0] }}</span><h3>{{ s.h }}</h3><p>{{ s.p }}</p><p class="step-cost">{{ s.cost }}</p></div>
+      <div class="step"><span class="step-num">{{ nums[loop.index0] }}</span><h3>{{ s.h }}</h3><p>{{ s.p | safe }}</p><p class="step-cost">{{ s.cost }}</p></div>
       {% endfor %}
     </div>
     <div style="margin-top:1.5rem;">
@@ -341,6 +360,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       {% if not loop.last %}<div class="flow-arrow">→</div>{% endif %}
       {% endfor %}
     </div>
+    <p style="margin-top:1.5rem; color:#a0c8a0; font-size:0.9rem; max-width:700px;" data-i18n="desc_daten_note">{{ t('desc_daten_note') }}</p>
+    <a href="{{ live('biocomm/software') }}" class="btn btn-green" style="margin-top:1.5rem;" data-i18n="link_daten_biocomm">{{ t('link_daten_biocomm') }}</a>
   </div>
 </section>
 
@@ -522,7 +543,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <div style="margin-bottom:2rem;">
       <p id="node-req-title" style="font-family:'Lora',Georgia,serif; font-size:0.75rem; color:#d4a030; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:1rem;">{{ t('a_node_req_title') }}</p>
       <ul id="node-req-list" style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.5rem;">
-        {% for k in ['a_node_req_1','a_node_req_2','a_node_req_3','a_node_req_4','a_node_req_5','a_node_req_6','a_node_req_7','a_node_req_8'] %}
+        {% for k in ['a_node_req_1','a_node_req_2','a_node_req_3','a_node_req_4','a_node_req_5','a_node_req_6','a_node_req_7','a_node_req_8','a_node_req_9','a_node_req_10','a_node_req_11','a_node_req_12'] %}
         <li>{{ t(k) | safe }}</li>
         {% endfor %}
       </ul>
@@ -868,7 +889,7 @@ function renderRegForm(lang) {
   document.getElementById('node-submit-btn').textContent = A.node_submit;
 
   var reqList = document.getElementById('node-req-list');
-  var reqKeys = ['node_req_1','node_req_2','node_req_3','node_req_4','node_req_5','node_req_6','node_req_7','node_req_8'];
+  var reqKeys = ['node_req_1','node_req_2','node_req_3','node_req_4','node_req_5','node_req_6','node_req_7','node_req_8','node_req_9','node_req_10','node_req_11','node_req_12'];
   reqList.innerHTML = reqKeys.map(function(k) {
     return '<li>' + A[k] + '</li>';
   }).join('');
@@ -910,6 +931,17 @@ function closeNodePanel() {
   showNodePanel(false);
   document.getElementById('node-no').checked = true;
 }
+
+// Direkter Einstieg in die Node-Bewerbung von anderen Seiten aus (z.B.
+// bioelektrizitaet-biocomm.html, foerderer.html) -- Link auf '?node=1#anmelden',
+// oeffnet das Bewerbungs-Panel automatisch statt nur zum Formular zu scrollen.
+document.addEventListener('DOMContentLoaded', function() {
+  if (new URLSearchParams(window.location.search).get('node') === '1') {
+    var yesRadio = document.getElementById('node-yes');
+    if (yesRadio) yesRadio.checked = true;
+    showNodePanel(true);
+  }
+});
 
 function handleReg(e) {
   e.preventDefault();

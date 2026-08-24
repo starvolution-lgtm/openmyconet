@@ -1,0 +1,214 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('bcs_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('bcs_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm/software">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm/software?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm/software?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm/software?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm/software?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/software">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/biocomm/software">
+{% endblock %}
+
+{% block extra_css %}
+.article { max-width:900px; margin:0 auto; }
+.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
+.article p:last-child { margin-bottom:0; }
+.status-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.05em; text-transform:uppercase; padding:3px 10px; border-radius:4px; background:rgba(58,158,90,0.15); color:#6ee87e; border:1px solid rgba(58,158,90,0.35); margin-bottom:0.8rem; }
+.quote-line { font-style:italic; color:#a0c8a0; border-left:3px solid #3a9e5a; padding-left:1rem; margin:1.4rem 0; }
+.workflow-step { margin-bottom:2.6rem; }
+.workflow-step .step-head { display:flex; gap:1.2rem; align-items:baseline; margin-bottom:0.6rem; }
+.workflow-step .num { font-family:'JetBrains Mono',monospace; font-size:1.3rem; color:#d4a030; min-width:2.2rem; }
+.workflow-step h4 { color:#e8f5e0; font-size:1.1rem; }
+.workflow-step p { color:#c8e0c8; font-size:0.95rem; margin-bottom:0.6rem; margin-left:3.4rem; }
+.workflow-step .quote-line { margin-left:3.4rem; }
+.shot { display:block; width:100%; height:auto; border-radius:8px; border:1px solid #0a6040; box-shadow:0 4px 20px rgba(0,0,0,0.35); margin:1rem 0 1rem 3.4rem; max-width:calc(100% - 3.4rem); }
+.shot-crop { max-width:520px; }
+.hero-shot { display:block; width:100%; height:auto; border-radius:10px; border:1px solid #0a6040; box-shadow:0 8px 32px rgba(0,0,0,0.45); margin-top:1.6rem; }
+.loop-chain { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#6ee87e; text-align:center; padding:1.4rem; background:rgba(255,255,255,0.03); border-radius:8px; margin:1.4rem 0; line-height:2; }
+.deepen-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; margin-top:1.4rem; }
+.deepen-card h4 { color:#e8f5e0; font-size:1rem; margin-bottom:0.6rem; }
+.deepen-card p { color:#a0c8a0; font-size:0.9rem; line-height:1.7; margin-bottom:0.8rem; }
+.deepen-card img { width:100%; height:auto; border-radius:8px; border:1px solid #0a6040; box-shadow:0 4px 20px rgba(0,0,0,0.35); }
+.safety-callout { display:inline-block; margin-top:0.8rem; padding:0.4rem 0.8rem; background:rgba(58,158,90,0.12); border:1px solid rgba(58,158,90,0.35); border-radius:5px; color:#6ee87e; font-family:'JetBrains Mono',monospace; font-size:0.78rem; }
+.interp-box { border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:1.6rem 1.8rem; }
+.interp-title { font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin-bottom:1rem; }
+.interp-box p { font-size:0.95rem; }
+.interp-motto { font-style:italic; color:#e8f5e0; margin-top:0.4rem; margin-bottom:0; }
+.status-table { width:100%; border-collapse:collapse; margin-top:0.5rem; font-size:0.95rem; }
+.status-table tr { border-bottom:1px solid #0a6040; }
+.status-table td { padding:0.8rem 0.4rem; }
+.status-table td:first-child { color:#c8e0c8; }
+.status-table td:last-child { text-align:right; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.04em; text-transform:uppercase; }
+.status-implemented { color:#6ee87e; }
+.status-progress { color:#d4a030; }
+.status-pending { color:#a0c8a0; }
+@media(max-width:760px){
+  .shot, .hero-shot { margin-left:0; max-width:100%; }
+  .workflow-step p, .workflow-step .quote-line { margin-left:0; }
+  .deepen-grid { grid-template-columns:1fr; }
+}
+{% endblock %}
+
+{% block mobile_menu_self_link %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="bcs_label">{{ t('bcs_label') }}</p>
+    <h1 data-i18n="bcs_h1">{{ t('bcs_h1') }}</h1>
+    <span class="status-badge" data-i18n="bcs_sim_badge">{{ t('bcs_sim_badge') }}</span>
+    <p style="margin-top:1rem;" data-i18n="bcs_intro">{{ t('bcs_intro') }}</p>
+    <img class="hero-shot" src="{{ asset('sw_hero_observe.png') }}" alt="{{ t('bcs_hero_alt') }}" data-i18n-alt="bcs_hero_alt">
+  </div>
+</div>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="bcs_s1_h2">{{ t('bcs_s1_h2') }}</h2>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">1</div><h4 data-i18n="bcs_step_1_h">{{ t('bcs_step_1_h') }}</h4></div>
+      <p data-i18n="bcs_step_1_p">{{ t('bcs_step_1_p') }}</p>
+    </div>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">2</div><h4 data-i18n="bcs_step_2_h">{{ t('bcs_step_2_h') }}</h4></div>
+      <p data-i18n="bcs_step_2_p">{{ t('bcs_step_2_p') }}</p>
+      <p class="quote-line" data-i18n="bcs_step_2_quote">{{ t('bcs_step_2_quote') }}</p>
+      <img class="shot" src="{{ asset('sw_contextualize.png') }}" alt="{{ t('bcs_step_2_alt') }}" data-i18n-alt="bcs_step_2_alt">
+    </div>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">3</div><h4 data-i18n="bcs_step_3_h">{{ t('bcs_step_3_h') }}</h4></div>
+      <p data-i18n="bcs_step_3_p">{{ t('bcs_step_3_p') }}</p>
+      <img class="shot" src="{{ asset('sw_document.png') }}" alt="{{ t('bcs_step_3_alt') }}" data-i18n-alt="bcs_step_3_alt">
+    </div>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">4</div><h4 data-i18n="bcs_step_4_h">{{ t('bcs_step_4_h') }}</h4></div>
+      <p data-i18n="bcs_step_4_p">{{ t('bcs_step_4_p') }}</p>
+      <img class="shot" src="{{ asset('sw_analyze.png') }}" alt="{{ t('bcs_step_4_alt') }}" data-i18n-alt="bcs_step_4_alt">
+    </div>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">5</div><h4 data-i18n="bcs_step_5_h">{{ t('bcs_step_5_h') }}</h4></div>
+      <p data-i18n="bcs_step_5_p">{{ t('bcs_step_5_p') }}</p>
+      <p class="quote-line" data-i18n="bcs_step_5_quote">{{ t('bcs_step_5_quote') }}</p>
+      <img class="shot" src="{{ asset('sw_classify.png') }}" alt="{{ t('bcs_step_5_alt') }}" data-i18n-alt="bcs_step_5_alt">
+    </div>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">6</div><h4 data-i18n="bcs_step_6_h">{{ t('bcs_step_6_h') }}</h4></div>
+      <p data-i18n="bcs_step_6_p">{{ t('bcs_step_6_p') }}</p>
+      <p class="quote-line" data-i18n="bcs_step_6_quote">{{ t('bcs_step_6_quote') }}</p>
+      <img class="shot shot-crop" src="{{ asset('sw_stimulate_electrical.png') }}" alt="{{ t('bcs_step_6_alt') }}" data-i18n-alt="bcs_step_6_alt">
+    </div>
+
+    <div class="workflow-step">
+      <div class="step-head"><div class="num">7</div><h4 data-i18n="bcs_step_7_h">{{ t('bcs_step_7_h') }}</h4></div>
+      <p data-i18n="bcs_step_7_p">{{ t('bcs_step_7_p') }}</p>
+    </div>
+
+    <div class="workflow-step" style="margin-bottom:0;">
+      <div class="step-head"><div class="num">8</div><h4 data-i18n="bcs_step_8_h">{{ t('bcs_step_8_h') }}</h4></div>
+      <p data-i18n="bcs_step_8_p">{{ t('bcs_step_8_p') }}</p>
+    </div>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <h2 data-i18n="bcs_beyond_h2">{{ t('bcs_beyond_h2') }}</h2>
+    <p data-i18n="bcs_beyond_p">{{ t('bcs_beyond_p') }}</p>
+    <div class="deepen-card">
+      <img src="{{ asset('sw_stimulate_multimodal.png') }}" alt="{{ t('bcs_beyond_alt') }}" data-i18n-alt="bcs_beyond_alt">
+      <span class="safety-callout" data-i18n="bcs_safety_callout">{{ t('bcs_safety_callout') }}</span>
+    </div>
+  </div>
+</section>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <div class="interp-box">
+      <p class="interp-title" data-i18n="bcs_interp_title">{{ t('bcs_interp_title') }}</p>
+      <p data-i18n="bcs_interp_p1">{{ t('bcs_interp_p1') }}</p>
+      <p data-i18n="bcs_interp_p2">{{ t('bcs_interp_p2') }}</p>
+      <p class="interp-motto" data-i18n="bcs_interp_motto">{{ t('bcs_interp_motto') }}</p>
+    </div>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <h2 data-i18n="bcs_loop_h2">{{ t('bcs_loop_h2') }}</h2>
+    <span class="status-badge" data-i18n="bcs_sim_badge">{{ t('bcs_sim_badge') }}</span>
+    <div class="loop-chain" data-i18n="bcs_loop_chain">{{ t('bcs_loop_chain') }}</div>
+    <p data-i18n="bcs_loop_p">{{ t('bcs_loop_p') }}</p>
+  </div>
+</section>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="bcs_status_h2">{{ t('bcs_status_h2') }}</h2>
+    <table class="status-table">
+      {% for i in range(1,6) %}
+      <tr><td data-i18n="bcs_table_{{ i }}_area">{{ t('bcs_table_' ~ i ~ '_area') }}</td><td class="{{ 'status-implemented' if i in [1,2] else ('status-progress' if i == 3 else 'status-pending') }}" data-i18n="bcs_table_{{ i }}_status">{{ t('bcs_table_' ~ i ~ '_status') }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</section>
+
+<section class="cta-section" style="background-color:#012a1e;">
+  <div class="inner" style="text-align:center; padding:1rem 0;">
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+      <a href="{{ live('biocomm') }}" class="btn btn-green" data-i18n="bcs_cta_back">{{ t('bcs_cta_back') }}</a>
+      <a href="{{ live('biocomm/hardware') }}" class="btn btn-amber" data-i18n="bcs_cta_hw">{{ t('bcs_cta_hw') }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.bcs_page_title || 'OpenMycoNet';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.bcs_meta_desc || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-alt');
+    if (T[key] !== undefined) el.setAttribute('alt', T[key]);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
+{% endblock %}

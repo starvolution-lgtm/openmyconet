@@ -54,7 +54,9 @@ def foerderer_lang_redirect(lang):
 
 @site_live_bp.route('/leihgeraete.html')
 def leihgeraete():
-    return render_template('site/leihgeraete.html')
+    # Seite zugunsten von /biocomm/hardware eingestellt (24.08.2026) -- 301 statt
+    # hartem Entfernen, damit alte Links/Lesezeichen nicht ins Leere laufen.
+    return redirect(url_for('site_live.biocomm_hardware', **request.args), code=301)
 
 
 @site_live_bp.route('/quellennachweise.html')
@@ -86,6 +88,26 @@ def foerderer():
 @site_live_bp.route('/medien.html')
 def medien():
     return render_template('site/medien.html', current_page='medien')
+
+
+@site_live_bp.route('/wie-wir-arbeiten')
+def wie_wir_arbeiten():
+    return render_template('site/wie-wir-arbeiten.html', current_page='wie-wir-arbeiten')
+
+
+@site_live_bp.route('/biocomm')
+def biocomm():
+    return render_template('site/biocomm.html', current_page='biocomm')
+
+
+@site_live_bp.route('/biocomm/hardware')
+def biocomm_hardware():
+    return render_template('site/biocomm-hardware.html', current_page='biocomm-hardware')
+
+
+@site_live_bp.route('/biocomm/software')
+def biocomm_software():
+    return render_template('site/biocomm-software.html', current_page='biocomm-software')
 
 
 @site_live_bp.route('/presse')

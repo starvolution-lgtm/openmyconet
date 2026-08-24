@@ -1,0 +1,157 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('bc_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('bc_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/biocomm">
+{% endblock %}
+
+{% block extra_css %}
+.article { max-width:760px; margin:0 auto; }
+.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
+.article p:last-child { margin-bottom:0; }
+.article h3 { color:#e8f5e0; font-size:1.15rem; margin:1.6rem 0 0.9rem; }
+.status-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.05em; text-transform:uppercase; padding:3px 10px; border-radius:4px; background:rgba(212,160,48,0.15); color:#d4a030; border:1px solid rgba(212,160,48,0.35); margin-bottom:0.8rem; }
+.direction-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin:1.4rem 0; }
+.direction-card { background:rgba(255,255,255,0.03); border:1px solid #0a6040; border-radius:8px; padding:1.4rem; }
+.direction-card h4 { color:#e8f5e0; font-size:1rem; margin-bottom:0.6rem; }
+.direction-card p { font-size:0.95rem; color:#a0c8a0; margin-bottom:0; }
+.arch-chain { font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:#6ee87e; text-align:center; padding:1.4rem; background:rgba(255,255,255,0.03); border-radius:8px; margin:1.4rem 0; line-height:2.2; }
+.teaser-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin:1.4rem 0; }
+.teaser-card { background:rgba(255,255,255,0.03); border:1px solid #0a6040; border-radius:8px; padding:1.6rem; text-align:center; }
+.teaser-card h4 { color:#e8f5e0; margin-bottom:0.6rem; }
+.teaser-card a.btn { margin-top:0.8rem; }
+.status-table { width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:0.92rem; }
+.status-table th, .status-table td { text-align:left; padding:0.7rem 0.9rem; border-bottom:1px solid #0a6040; }
+.status-table th { color:#d4a030; font-family:'JetBrains Mono',monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; }
+.status-table td { color:#c8e0c8; }
+.quote-line { font-style:italic; color:#a0c8a0; border-left:3px solid #3a9e5a; padding-left:1rem; margin:1.4rem 0; }
+@media(max-width:760px){ .direction-grid, .teaser-grid { grid-template-columns:1fr; } }
+{% endblock %}
+
+{% block mobile_menu_self_link %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="bc_label">{{ t('bc_label') }}</p>
+    <h1 data-i18n="bc_h1">{{ t('bc_h1') }}</h1>
+    <p data-i18n="bc_intro">{{ t('bc_intro') }}</p>
+  </div>
+</div>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="bc_s1_h2">{{ t('bc_s1_h2') }}</h2>
+    <div class="direction-grid">
+      <div class="direction-card">
+        <h4 data-i18n="bc_s1_obs_h4">{{ t('bc_s1_obs_h4') }}</h4>
+        <p data-i18n="bc_s1_obs_p">{{ t('bc_s1_obs_p') }}</p>
+      </div>
+      <div class="direction-card">
+        <h4 data-i18n="bc_s1_int_h4">{{ t('bc_s1_int_h4') }}</h4>
+        <p data-i18n="bc_s1_int_p">{{ t('bc_s1_int_p') }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <h2 data-i18n="bc_s2_h2">{{ t('bc_s2_h2') }}</h2>
+    <div class="arch-chain" data-i18n="bc_s2_chain">{{ t('bc_s2_chain') }}</div>
+  </div>
+</section>
+
+<section style="background-color:#024530;">
+  <div class="inner article">
+    <h2 data-i18n="bc_s3_h2">{{ t('bc_s3_h2') }}</h2>
+    <div class="teaser-grid">
+      <div class="teaser-card">
+        <span class="status-badge" data-i18n="bc_hw_badge">{{ t('bc_hw_badge') }}</span>
+        <h4 data-i18n="bc_hw_h4">{{ t('bc_hw_h4') }}</h4>
+        <p data-i18n="bc_hw_p">{{ t('bc_hw_p') }}</p>
+        <a class="btn btn-green" href="{{ live('biocomm/hardware') }}" data-i18n="bc_hw_cta">{{ t('bc_hw_cta') }}</a>
+      </div>
+      <div class="teaser-card">
+        <span class="status-badge" style="background:rgba(58,158,90,0.15); color:#6ee87e; border-color:rgba(58,158,90,0.35);" data-i18n="bc_sw_badge">{{ t('bc_sw_badge') }}</span>
+        <h4 data-i18n="bc_sw_h4">{{ t('bc_sw_h4') }}</h4>
+        <p data-i18n="bc_sw_p">{{ t('bc_sw_p') }}</p>
+        <a class="btn btn-green" href="{{ live('biocomm/software') }}" data-i18n="bc_sw_cta">{{ t('bc_sw_cta') }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background-color:#012a1e;">
+  <div class="inner article">
+    <h2 data-i18n="bc_s4_h2">{{ t('bc_s4_h2') }}</h2>
+    <p data-i18n="bc_s4_p">{{ t('bc_s4_p') }}</p>
+    <table class="status-table">
+      <tr><th data-i18n="bc_th_area">{{ t('bc_th_area') }}</th><th data-i18n="bc_th_status">{{ t('bc_th_status') }}</th></tr>
+      {% for i in range(1,7) %}
+      <tr><td data-i18n="bc_status_{{ i }}_area">{{ t('bc_status_' ~ i ~ '_area') }}</td><td data-i18n="bc_status_{{ i }}_status">{{ t('bc_status_' ~ i ~ '_status') }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</section>
+
+<section class="cta-section" style="background-color:#024530;">
+  <div class="inner" style="text-align:center; padding:1rem 0;">
+    <p class="quote-line" style="display:inline-block; text-align:left;" data-i18n="bc_quote">{{ t('bc_quote') }}</p>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1rem;">
+      <a href="{{ live('biocomm/hardware') }}" class="btn btn-green" data-i18n="bc_cta_hw">{{ t('bc_cta_hw') }}</a>
+      <a href="{{ live('biocomm/software') }}" class="btn btn-amber" data-i18n="bc_cta_sw">{{ t('bc_cta_sw') }}</a>
+      <a href="{{ live('wie-wir-arbeiten') }}" class="btn btn-green" data-i18n="nav_wwa">{{ t('nav_wwa') }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.bc_page_title || 'OpenMycoNet';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.bc_meta_desc || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-alt');
+    if (T[key] !== undefined) el.setAttribute('alt', T[key]);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
+{% endblock %}

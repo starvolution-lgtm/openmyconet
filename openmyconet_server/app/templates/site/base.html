@@ -179,9 +179,20 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
     <li><a href="{{ live('index.html#mitmachen') }}" {% if current_page=='mitmachen' %}class="nav-active"{% endif %} data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a></li>
     <li><a href="{{ live('index.html#spenden') }}" {% if current_page=='spenden' %}class="nav-active"{% endif %} data-i18n="nav_spenden">{{ t('nav_spenden') }}</a></li>
     <li><a href="{{ live('index.html#anmelden') }}" {% if current_page=='anmelden' %}class="nav-active"{% endif %} data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a></li>
+    <li><a href="{{ live('wie-wir-arbeiten') }}" {% if current_page=='wie-wir-arbeiten' %}class="nav-active"{% endif %} data-i18n="nav_wwa">{{ t('nav_wwa') }}</a></li>
+    <li class="nav-dropdown-wrap">
+      <a href="{{ live('biocomm') }}" {% if current_page in ['biocomm','biocomm-hardware','biocomm-software'] %}class="nav-active"{% endif %}>BioComm</a>
+      <ul class="nav-dropdown-menu">
+        <li><a href="{{ live('biocomm/hardware') }}">Hardware</a></li>
+        <li><a href="{{ live('biocomm/software') }}">Software</a></li>
+      </ul>
+    </li>
     <li><a href="{{ live('medien.html') }}" {% if current_page=='medien' %}class="nav-active"{% endif %} data-i18n="nav_medien">{{ t('nav_medien') }}</a></li>
     <li><a href="{{ live('foerderer.html') }}" {% if current_page=='foerderer' %}class="nav-active"{% endif %} data-i18n="nav_foerderer">{{ t('nav_foerderer') }}</a></li>
+    {# Presse-Button vorübergehend ausgeblendet (2026-08-23): keine Pressemitteilungen vorhanden. Route/Template/GDELT-News bleiben unverändert im Backend, siehe site_live.py '/presse'. #}
+    {#
     <li><a href="{{ live('presse') }}" {% if current_page=='presse' %}class="nav-active"{% endif %} data-i18n="nav_presse">{{ t('nav_presse') }}</a></li>
+    #}
     <li><a href="{{ live('quellennachweise.html') }}" {% if current_page=='quellen' %}class="nav-active"{% endif %} data-i18n="nav_quellen">{{ t('nav_quellen') }}</a></li>
     <li><a href="{{ live('news') }}" {% if current_page=='news' %}class="nav-active"{% endif %} data-i18n="nav_news">{{ t('nav_news') }}</a></li>
   </ul>
@@ -207,9 +218,16 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
   <a href="{{ live('index.html#spenden') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_spenden">{{ t('nav_spenden') }}</a>
   <a href="{{ live('index.html#anmelden') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a>
   <a href="{{ live('index.html#ueber') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_ueber">{{ t('nav_ueber') }}</a>
+  <a href="{{ live('wie-wir-arbeiten') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_wwa">{{ t('nav_wwa') }}</a>
+  <a href="{{ live('biocomm') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;">BioComm</a>
+  <a href="{{ live('biocomm/hardware') }}" style="font-family:'Lora',Georgia,serif; font-size:0.95rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none;">Hardware</a>
+  <a href="{{ live('biocomm/software') }}" style="font-family:'Lora',Georgia,serif; font-size:0.95rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none;">Software</a>
   <a href="{{ live('medien.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_medien">{{ t('nav_medien') }}</a>
   <a href="{{ live('foerderer.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_foerderer">{{ t('nav_foerderer') }}</a>
+  {# Presse-Button vorübergehend ausgeblendet (2026-08-23), siehe Kommentar oben im Desktop-Menü #}
+  {#
   <a href="{{ live('presse') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_presse">{{ t('nav_presse') }}</a>
+  #}
   <a href="{{ live('quellennachweise.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_quellen">{{ t('nav_quellen') }}</a>
   <a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
   {% block mobile_menu_self_link %}{% endblock %}
