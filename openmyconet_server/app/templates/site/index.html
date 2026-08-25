@@ -261,9 +261,6 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 1.5rem;">
     <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n-html="vision_p1">{{ t('vision_p1') | safe }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">{{ t('vision_p2') }}</p>
-    <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p3">{{ t('vision_p3') }}</p>
-    <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p4">{{ t('vision_p4') }}</p>
-    <p style="font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:400; color:#ffffff; line-height:1.5; font-style:italic; margin-bottom:1.5rem;" data-i18n="vision_quote">{{ t('vision_quote') }}</p>
     <a href="{{ live('mykorrhiza-netzwerke.html') }}" class="btn btn-amber" style="margin-bottom:1.5rem;" data-i18n="link_myk_vertiefung">{{ t('link_myk_vertiefung') }}</a>
     <div style="margin:1.5rem 0 2.5rem; padding:1.4rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #d4a030;">
       <p style="color:#e8f5e0; font-size:1rem; line-height:1.75; margin-bottom:0.9rem;" data-i18n="vision_biocomm_intro">{{ t('vision_biocomm_intro') }}</p>
@@ -378,8 +375,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   <p class="section-desc" data-i18n="desc_kooperationen">{{ t('desc_kooperationen') }}</p>
 
   <div style="margin-top:1.5rem; margin-bottom:2rem; max-width:640px;">
-    <p data-i18n="koop_wege_label" style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.6rem;">{{ t('koop_wege_label') }}</p>
-    <p data-i18n-html="koop_wege_text" style="color:#b0d4b0; font-size:0.95rem; line-height:1.7; margin-bottom:1.2rem;">{{ t('koop_wege_text') | safe }}</p>
+    <p data-i18n-html="home_koop_teaser" style="color:#b0d4b0; font-size:0.95rem; line-height:1.7; margin-bottom:1.2rem;">{{ t('home_koop_teaser') | safe }}</p>
     <div style="display:flex; gap:1rem; flex-wrap:wrap;">
       <a href="https://api.openmyconet.de/foerderer/antrag"
         style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
@@ -481,6 +477,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       <label id="lbl-msg">{{ t('a_lbl_msg') }}</label>
       <textarea id="inp-msg" name="nachricht" style="height:80px;" placeholder="{{ t('a_ph_msg') }}"></textarea>
     </div>
+
+    <p id="role-intro" style="color:#a0c8a0; font-size:0.85rem; line-height:1.7; margin-top:0.5rem;">{{ t('a_role_intro') }}</p>
 
     <div class="form-group node-question-wrap" id="node-question-wrap" style="padding:1.2rem; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #6ee87e;">
       <p id="node-q-text" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee87e; margin-bottom:0.9rem;">{{ t('a_node_question') }}</p>

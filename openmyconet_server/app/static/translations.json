@@ -25,7 +25,7 @@
     "leih_page_title": "OpenMycoNet · BioComm-Knoten Leihgerät",
     "leih_seo_desc": "Kompaktes Open-Source-Messgerät für bioelektrische Signale in Mykorrhiza-Netzwerken. Kostenloser Leihknoten für Citizen Scientists — jetzt registrieren.",
     "leih_label": "Leihprogramm",
-    "leih_h1": "Der BioComm-Knoten<br><em>zum Ausleihen</em>",
+    "leih_h1": "Der BioComm-Knoten <em>zum Ausleihen</em>",
     "leih_status_label": "Projektstatus",
     "leih_status": "Hardware-Entwicklung abgeschlossen · Erste Geräte werden vorbereitet",
     "leih_preview_label": "So werden die Nodes aussehen",
@@ -58,10 +58,10 @@
       }
     ],
     "leih_how_label": "In fünf Schritten zum Messknoten",
-    "leih_preview_h2": "So werden die<br>Nodes <em>aussehen</em>",
+    "leih_preview_h2": "So werden die Nodes <em>aussehen</em>",
     "leih_ki_hint": "⚠ Diese Visualisierungen sind KI-generiert. Die echten Geräte werden zu ca. 80 % so aussehen — welches Farbdesign es letztlich wird, steht noch nicht fest.",
-    "leih_specs_h2": "Was der Knoten<br><em>kann</em>",
-    "leih_how_h2": "In fünf Schritten<br>zum <em>Messknoten</em>",
+    "leih_specs_h2": "Was der Knoten <em>kann</em>",
+    "leih_how_h2": "In fünf Schritten zum <em>Messknoten</em>",
     "leih_bridge_h2": "Die <em>Zentrale</em>",
     "leih_bridge_warning": "⚠ Die Funkanbindung (LoRa/WLAN) ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation und noch nicht ausgeliefert.",
     "leih_bridge_desc": "Die BioComm Bridge verbindet bis zu 4 Messknoten gleichzeitig per LoRa-Funk (Punkt-zu-Punkt, realistisch 1–3 km Reichweite im Wald) und leitet alle Daten per WLAN an die Zentrale weiter. Node 1–4 LEDs zeigen den Verbindungsstatus in Echtzeit.",
@@ -98,7 +98,7 @@
     "leih_back": "← Zurück zur Startseite",
     "nav_menu": "Menü",
     "btn_fragen": "⬤ Offene Fragen?",
-    "hero_sub": "Ein weltweites Citizen-Science-Netzwerk zur Erfassung bioelektrischer Signale aus Mykorrhiza- und Pilznetzwerken. Die Signale existieren — die Frage ist, was sie bedeuten.",
+    "hero_sub": "Ein weltweites Citizen-Science-Netzwerk zur Erfassung elektrischer Aktivität in Mykorrhiza- und Pilznetzwerken. Die Aktivität ist messbar — die Frage ist, was ihre Muster bedeuten.",
     "live_badge": "aktiver Knoten — werde der nächste",
     "btn_join": "Jetzt mitmachen",
     "btn_support": "Projekt unterstützen",
@@ -110,20 +110,19 @@
     "label_anmelden": "Registrierung",
     "label_ueber": "Das Projekt",
     "h2_vision": "Was möglich wird, wenn wir <em>verstehen</em>",
-    "h2_warum": "Ein Netzwerk<br>das <em>zuhört</em>",
-    "h2_mitmachen": "In vier Schritten<br>zum eigenen <em>Knoten</em>",
-    "h2_daten": "Wie Daten und<br>Schlussfolgerungen <em>fließen</em>",
-    "h2_spenden": "Das Projekt<br><em>unterstützen</em>",
-    "h2_anmelden": "Werde Teil des<br><em>Netzwerks</em>",
-    "h2_ueber": "Bürgerwissenschaft<br>von <em>unten</em>",
-    "vision_p1": "Unter unseren Füßen bilden Pilze weitreichende Netzwerke und interagieren mit Pflanzen, Mikroorganismen und ihrer Umwelt. <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">Mykorrhiza-Verbindungen begleiten Landpflanzen seit Hunderten Millionen Jahren</a> und spielen eine wichtige Rolle beim Nährstoffaustausch und in Ökosystemprozessen.",
-    "vision_p2": "Pilze zeigen außerdem messbare elektrische Aktivität. Was diese Signale darstellen, wie sie sich unter unterschiedlichen Umweltbedingungen verändern und ob sich reproduzierbare Muster bestimmten biologischen Prozessen zuordnen lassen, sind nach wie vor offene Forschungsfragen.",
-    "vision_p3": "Hier setzt OpenMycoNet an. Statt anzunehmen, was die Signale bedeuten, wollen wir sie unter vielen verschiedenen realen Bedingungen erfassen, ihren Umweltkontext dokumentieren und sie über Standorte, Substrate und Jahreszeiten hinweg vergleichen.",
+    "h2_warum": "Ein Netzwerk, das <em>zuhört</em>",
+    "h2_mitmachen": "So kommst du zu deinem eigenen <em>Knoten</em>",
+    "h2_daten": "Vom Messwert zur <em>Erkenntnis</em>",
+    "h2_spenden": "Das Projekt <em>unterstützen</em>",
+    "h2_anmelden": "Werde Teil des <em>Netzwerks</em>",
+    "h2_ueber": "Bürgerwissenschaft von <em>unten</em>",
+    "vision_p1": "Unter unseren Füßen bilden Pilze weitreichende Netzwerke und interagieren mit Pflanzen, Mikroorganismen und ihrer Umwelt — <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">Mykorrhiza-Verbindungen begleiten Landpflanzen seit Hunderten Millionen Jahren</a> und spielen eine wichtige Rolle beim Nährstoffaustausch und in Ökosystemprozessen. Pilze zeigen dabei auch messbare elektrische Aktivität, deren Bedeutung noch weitgehend offen ist: Was stellen diese Muster dar, wie verändern sie sich unter unterschiedlichen Bedingungen, und lassen sie sich bestimmten biologischen Prozessen zuordnen?",
+    "vision_p2": "Hier setzt OpenMycoNet an — nicht mit einer Annahme, sondern mit einer Methode: Wir erfassen die elektrische Aktivität unter vielen verschiedenen realen Bedingungen, dokumentieren ihren Umweltkontext und vergleichen sie über Standorte, Substrate und Jahreszeiten hinweg. Diese Breite kann kaum ein einzelnes Labor liefern — ein verteiltes Citizen-Science-Netzwerk kann dabei helfen, sie zu schaffen.",
     "vision_quote": "Wir messen nicht, um eine Geschichte zu bestätigen. Wir messen, um herauszufinden, was die Daten tatsächlich hergeben.",
     "vision_closing": "Unter unseren Füßen gibt es Signale. Wir haben gerade erst begonnen, sie zu verstehen. Jeder BioComm-Knoten, der in Betrieb geht, ergänzt einen wachsenden gemeinsamen Datensatz um eine weitere Beobachtung — und eine weitere Gelegenheit zu testen, was diese Signale zeigen können und was nicht.",
     "desc_warum": "Mykorrhiza-Pilze verbinden sich mit einem großen Teil der <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" style=\"color:#6ee87e;\">Landpflanzenarten</a>. Pilze erzeugen außerdem messbare elektrische Aktivität, deren biologische Bedeutung noch untersucht wird. OpenMycoNet bringt viele einzelne Beobachtungen zusammen, damit sich wiederkehrende Muster über Standorte, Substrate und Umweltbedingungen hinweg vergleichen lassen.",
     "desc_mitmachen": "Die veröffentlichten Ergebnisse und offenen Datensätze des Netzwerks stehen allen offen — einen Knoten zu betreiben ist keine Voraussetzung dafür. Wenn du selbst Messdaten beisteuern möchtest, kannst du dich bewerben, um einen der verfügbaren BioComm-Knoten zu betreiben.",
-    "desc_daten": "OpenMycoNet trennt drei Dinge, die nicht verwechselt werden sollten: Messdaten, Analyse und Interpretation. Standortangaben werden vor der Veröffentlichung in ihrer Genauigkeit reduziert, personenbezogene Angaben werden von den Forschungsdaten getrennt gehalten.",
+    "desc_daten": "OpenMycoNet trennt Messdaten, persönliche Angaben und wissenschaftliche Interpretation klar voneinander. Persönliche Daten und genaue Betreiberstandorte werden nicht veröffentlicht. Für die Forschung vorgesehene Messdaten werden zusammen mit den notwendigen, nicht personenbezogenen Kontextinformationen offen bereitgestellt.",
     "label_musik": "Musik",
     "musik_p1": "Die ältesten Netzwerke der Erde sprechen nicht mit Worten.<br>Sie verbinden, reagieren und erinnern.",
     "musik_p2": "Die Songs dieser Sammlung entstanden als musikalische Begleitung zu der Idee, genauer hinzuhören.",
@@ -131,10 +130,10 @@
     "musik_ki_hinweis": "Die Musik und Stimmen sind KI-generiert, Text ist von Robert Jank.",
     "player_more_link": "Mehr Musik?",
     "label_kooperationen": "Gemeinsam",
-    "h2_kooperationen": "Zwei Wege,<br><em>mitzuwirken</em>",
+    "h2_kooperationen": "Zwei Wege, <em>mitzuwirken</em>",
     "desc_kooperationen": "Unternehmen und Organisationen, die OpenMycoNet unterstützen und mit uns zusammenarbeiten.",
-    "koop_wege_label": "Zwei Wege, dabei zu sein",
-    "koop_wege_text": "OpenMycoNet wird durch unterschiedliche Formen des Beitrags unterstützt. Gewerbliche Förderer können finanziell beitragen; Kooperationspartner können Fachwissen, Infrastruktur, Forschungszugang, technische Fähigkeiten oder andere Gegenleistungen einbringen. Weder finanzielle Unterstützung noch Kooperation bestimmen das Ergebnis oder die Interpretation der OpenMycoNet-Forschung. Relevante Beziehungen und mögliche Interessenkonflikte werden offengelegt, wo sie von Bedeutung sind. Beide Formen der Beteiligung werden gleichrangig dargestellt, ohne eine wissenschaftliche Rangfolge zwischen ihnen zu erzeugen.",
+    "home_koop_teaser": "Unternehmen und Organisationen können OpenMycoNet auf zwei Arten unterstützen: Kooperationspartner (Hyphists) bringen zum Beispiel Fachwissen, Infrastruktur, Forschungszugang oder technische Fähigkeiten ein. Förderer (Sporists) unterstützen das Projekt finanziell. Beides kann sich ergänzen und beeinflusst weder Forschungsergebnisse noch deren Interpretation.",
+    "koop_wege_text": "OpenMycoNet wird durch unterschiedliche Formen des Beitrags unterstützt. Gewerbliche Förderer können finanziell beitragen; Kooperationspartner können Fachwissen, Infrastruktur, Forschungszugang, technische Fähigkeiten oder andere Ressourcen einbringen. Weder finanzielle Unterstützung noch Kooperation bestimmen das Ergebnis oder die Interpretation der OpenMycoNet-Forschung. Relevante Beziehungen und mögliche Interessenkonflikte werden offengelegt, wo sie von Bedeutung sind. Beide Formen der Beteiligung werden gleichrangig dargestellt, ohne eine wissenschaftliche Rangfolge zwischen ihnen zu erzeugen.",
     "koop_btn_foerderer": "✦ Gewerblicher Förderer werden →",
     "koop_btn_kooperation": "Kooperation anbieten/anfragen →",
     "koop_badge_foerderer": "Offizieller Förderer",
@@ -146,14 +145,14 @@
     "link_myk_vertiefung": "Wissenschaftliche Grundlagen vertiefen →",
     "desc_anmelden": "Trag dich ein — wir informieren dich wenn OpenMycoNet offiziell startet und schicken dir die Hardware-Anleitung.",
     "donate_p": "OpenMycoNet ist ein Citizen-Science-Projekt, das derzeit ohne institutionelle Forschungsförderung entwickelt wird. Serverbetrieb, Hardware-Entwicklung und laufende Projektarbeit werden durch freiwillige Beiträge und Kooperationen getragen. Unterstützung hilft, das Projekt möglich zu machen — sie bestimmt nicht, welche Ergebnisse erwartet, akzeptiert oder veröffentlicht werden.",
-    "donate_note": "Du kannst auch spenden ohne Dich registrieren zu müssen, aber wir würden uns freuen wenn Du es dennoch machst und so ein Teil des Netzwerks wirst.",
+    "donate_note": "Du kannst auch ohne Registrierung spenden. Wenn du Teil des Netzwerks werden und über das Projekt informiert bleiben möchtest, kannst du dich zusätzlich kostenlos registrieren.",
     "donate_claim": "Jeder Beitrag hilft, die Messungen und den gemeinsamen Datensatz zu erweitern.",
     "buch_label": "Gratisdownload",
     "buch_desc": "Eine Geschichte über die Symbiose der dritten Art",
     "buch_btn": "↓ Roman herunterladen",
     "buch_note": "PDF · kostenlos · Robert Jank · 2026",
-    "about_p1": "OpenMycoNet wurde von Robert Jank, unabhängigem Erfinder aus Maintal bei Frankfurt, initiiert — mit dem Ziel, bioelektrische Aktivität in Pilz- und Mykorrhiza-Systemen unter realen Bedingungen zu untersuchen.",
-    "about_p2": "Die dafür genutzte BioComm-Technologie umfasst geschützte technische Entwicklungen. OpenMycoNet kann diese Technologie für seine vorgesehene Forschungs- und Citizen-Science-Arbeit nutzen, während Schutzrechte und die Forschungsdaten des Projekts getrennt bleiben. <strong style=\"color:#e8f5e0;\">Prinzip: Proprietary Intelligence, Open Data.</strong> Technische Entwicklungen können geschützt bleiben. Zur Veröffentlichung vorgesehene Messdaten werden gemäß der Datenrichtlinie des Projekts offen bereitgestellt.",
+    "about_p1": "OpenMycoNet wurde von Robert Jank, einem unabhängigen Erfinder aus Maintal bei Frankfurt, initiiert — mit dem Ziel, bioelektrische Aktivität in Pilz- und Mykorrhiza-Systemen unter realen Bedingungen zu untersuchen.",
+    "about_p2": "Die dafür genutzte BioComm-Technologie umfasst geschützte technische Entwicklungen. OpenMycoNet nutzt diese Technologie für seine Forschungs- und Citizen-Science-Arbeit, während Schutzrechte und Forschungsdaten strikt getrennt bleiben. <strong style=\"color:#e8f5e0;\">Prinzip: Proprietary Intelligence, Open Data.</strong> Die Technik kann geschützt sein — an der Offenheit der Daten ändert das nichts.",
     "about_p3": "Die an OpenMycoNet beteiligten Personen und Organisationen können auch technische oder wirtschaftliche Interessen im Zusammenhang mit Anwendungen der Technologie haben. Solche Interessen ändern nichts am Maßstab, der an die Forschung angelegt wird: Messungen, negative Ergebnisse und widersprechende Evidenz müssen nach denselben Kriterien behandelt werden. <strong style=\"color:#e8f5e0;\">Interessen können bestehen. Sie entscheiden nicht, was die Daten zeigen dürfen.</strong>",
     "btn_contact": "Kontakt",
     "btn_register": "Jetzt registrieren",
@@ -170,7 +169,7 @@
       },
       {
         "label": "Bodenregeneration",
-        "text": "Elektrische und optische Stimulation von Pilznetzwerken ist experimentell untersuchbar, ihre Wirkung unter realen Bedingungen bleibt jedoch weitgehend offen. BioComm ist so konzipiert, dass es nicht nur Signale erfasst, sondern in späteren Forschungsphasen auch kontrollierte Stimulation und messbare Reaktionen untersuchen kann.",
+        "text": "BioComm kann Pilznetzwerke nicht nur messen, sondern auch gezielt elektrisch oder optisch stimulieren und die Reaktion messen — ob und wie das wirkt, ist offen.",
         "italic": "Kein angenommener Dialog mit dem Boden — eine experimentell überprüfbare Interaktion."
       },
       {
@@ -180,7 +179,7 @@
       },
       {
         "label": "Grundlagenforschung",
-        "text": "Studien berichten von strukturierter elektrischer Aktivität und spike-artigen Mustern in Pilzen. Einige Forschende haben statistische Ähnlichkeiten zwischen Pilz-Spike-Trains und anderen Signalsystemen untersucht. Was diese Muster biologisch bedeuten, ist weiterhin ungeklärt. OpenMycoNet will reale Datensätze beisteuern, die helfen können, diese Frage zu untersuchen.",
+        "text": "Studien berichten von strukturierter elektrischer Aktivität und spike-artigen Mustern in Pilzen. Was diese Muster biologisch bedeuten, ist offen — OpenMycoNet will reale Datensätze beisteuern, die bei der Klärung helfen können.",
         "italic": "Muster sind messbar. Bedeutung muss erst gezeigt werden."
       },
       {
@@ -218,7 +217,7 @@
     "steps": [
       {
         "h": "Zugang zu einem BioComm-Knoten erhalten",
-        "p": "Nach kuratierter Bewerbung ein BioComm-Messgerät als Leihgerät erhalten — Pfand ca. 100 € (finale Kosten folgen). Rückgabe jederzeit möglich.",
+        "p": "Nach erfolgreicher Bewerbung: BioComm-Messgerät als Leihgerät, Pfand ca. 100 € (finale Kosten folgen), Rückgabe jederzeit möglich.",
         "cost": "Pfand ca. 100 €"
       },
       {
@@ -240,27 +239,27 @@
     "flow_nodes": [
       {
         "h": "Dein Knoten",
-        "p": "Erfasst Signale und Umweltkontext"
+        "p": "Erfasst elektrische Aktivität und Umweltbedingungen."
       },
       {
         "h": "BioComm",
-        "p": "Bereitet Daten gemäß definiertem Workflow auf, verarbeitet und anonymisiert sie"
+        "p": "Bereitet die Messwerte nach einem festgelegten technischen Ablauf auf."
       },
       {
         "h": "OpenMycoNet",
-        "p": "Führt Messungen für vergleichende Analyse und Modellentwicklung zusammen"
+        "p": "Führt Messungen verschiedener Standorte und Bedingungen zusammen."
       },
       {
         "h": "Open Data",
-        "p": "Veröffentlichte Messdatensätze unter CC BY 4.0"
+        "p": "Zur Veröffentlichung vorgesehene Messdaten und Kontextinformationen stehen unter CC BY 4.0 offen zur Verfügung."
       },
       {
-        "h": "Analyse & Validierung",
-        "p": "Muster, Zusammenhänge und Modellergebnisse werden gegen dokumentierte Bedingungen geprüft"
+        "h": "Analyse",
+        "p": "Wir suchen nach wiederkehrenden Mustern und Zusammenhängen und prüfen sie gegen die dokumentierten Bedingungen."
       },
       {
-        "h": "Zurück ans Netzwerk",
-        "p": "Validierte Verbesserungen können künftige Messungen und Analysen informieren"
+        "h": "Zurück ins Netzwerk",
+        "p": "Belastbare Erkenntnisse helfen, künftige Messungen, Fragestellungen und Analysen gezielter weiterzuentwickeln."
       }
     ],
     "facts": [
@@ -279,10 +278,6 @@
       {
         "num": "bis zu 10 kHz",
         "text": "programmierbare Stimulationsausgabe"
-      },
-      {
-        "num": "~100 €",
-        "text": "Pfand für ein BioComm-Leihgerät (ca., finale Kosten folgen)"
       }
     ],
     "form_options": {
@@ -293,7 +288,7 @@
       "foerderer": "Gewerblicher Förderer — Firmeneintrag ab 50 €/Jahr"
     },
     "q_page_tag": "OpenMycoNet · Wissenschaftliche Grundlagen",
-    "q_h1_html": "Quellennachweise &amp;<br><em>Erkenntnispfad</em>",
+    "q_h1_html": "Quellennachweise &amp; <em>Erkenntnispfad</em>",
     "q_subtitle": "OpenMycoNet steht auf einem nachvollziehbaren wissenschaftlichen Fundament. Jeder Schritt unseres Erkenntnispfades — von der Mykorrhiza-Grundlagenforschung bis zur angewandten Citizen Science — ist durch publizierte Forschung belegt.",
     "q_intro_strong": "Transparenzhinweis:",
     "q_intro": "Nicht alle aufgeführten Arbeiten belegen die Ziele von OpenMycoNet direkt. Sie bilden das wissenschaftliche Fundament, auf dem unsere Fragen aufbauen — einschließlich kritischer Perspektiven. Wir messen, weil die Datenlage noch dünn ist, nicht weil alles bewiesen ist.",
@@ -462,7 +457,8 @@
     "a_opt_entwickler": "Softwareentwickler — an BioComm mitarbeiten",
     "a_opt_unterstuetzer": "Unterstützer — Projekt bekannt machen / helfen",
     "a_opt_foerderer": "Gewerblicher Förderer — zur Fördererseite",
-    "a_node_question": "Möchtest du einen eigenen BioComm-Knoten betreiben? Der Knotenbetrieb ist eine eigenständige Qualifikation — unabhängig davon, in welcher Rolle du als Mycelist, Hyphist oder Sporist mit OpenMycoNet verbunden bist.",
+    "a_role_intro": "Mit der Registrierung wirst du Mycelist und damit Teil der OpenMycoNet-Community. Wer zusätzlich mit OpenMycoNet kooperiert, kann Hyphist werden; wer das Projekt fördert, Sporist. Beide Rollen können sich ergänzen.",
+    "a_node_question": "Möchtest du zusätzlich einen BioComm-Knoten betreiben? Der Knotenbetrieb ist unabhängig von deiner Rolle im Netzwerk. Er ist eine zusätzliche Qualifikation, die Mycelists, Hyphists und Sporists gleichermaßen offensteht.",
     "a_node_yes": "Ja, ich bewerbe mich für einen Knoten",
     "a_node_no": "Nein",
     "a_submit": "Registrieren",
@@ -628,10 +624,10 @@
     "vision_biocomm_intro": "BioComm wird als technische Plattform für standardisierte Messung, kontextbezogene Erfassung und kontrollierte experimentelle Stimulation entwickelt.",
     "vision_biocomm_cta": "Wie BioComm funktioniert →",
     "vision_apps_h": "Mögliche Forschungsrichtungen",
-    "vision_apps_intro": "Was könnten uns diese Messungen eines Tages sagen? Die folgenden Punkte sind Forschungsrichtungen und mögliche Anwendungen — keine gesicherten Ergebnisse von OpenMycoNet. Ob und in welchem Umfang sie tatsächlich umsetzbar werden, hängt davon ab, welche reproduzierbaren Muster sich in den Daten tatsächlich finden lassen.",
-    "desc_daten_note": "Ein erkanntes Muster ist nicht automatisch eine Erklärung. OpenMycoNet unterscheidet zwischen dem, was gemessen wurde, was die Analyse nahelegt, und was die verfügbare Evidenz zu schließen erlaubt.",
+    "vision_apps_intro": "Was könnten diese Messungen eines Tages zeigen? Die folgenden Punkte sind Forschungsrichtungen, keine gesicherten Ergebnisse — ob und wie weit sie tragen, hängt davon ab, welche reproduzierbaren Muster sich tatsächlich in den Daten finden.",
+    "desc_daten_note": "Ein Muster ist noch keine Erklärung. Deshalb zeigen wir transparent, was gemessen wurde, was eine Analyse nahelegt und was sich daraus tatsächlich schließen lässt.",
     "biocomm_teaser_label": "Die Plattform",
-    "biocomm_teaser_h2": "BioComm — die technische Plattform<br>hinter <em>OpenMycoNet</em>",
+    "biocomm_teaser_h2": "BioComm — die technische Plattform hinter <em>OpenMycoNet</em>",
     "biocomm_teaser_p1": "BioComm bringt Messung, Umweltkontext, kontrollierte Stimulation, Dokumentation und Analyse in einem sich entwickelnden System zusammen.",
     "biocomm_teaser_p2": "Die Software-Umgebung ist bereits für Simulation und Funktionstests implementiert. Die Knoten-Hardware durchläuft aktuell eine Design-Revision, einschließlich LoRa-Integration, vor Hardware-/Software-Integration und Feldvalidierung.",
     "biocomm_teaser_p3": "Wir zeigen, was bereits funktioniert — und kennzeichnen klar, was noch in Entwicklung ist.",
