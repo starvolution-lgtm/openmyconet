@@ -466,7 +466,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     </div>
     <div class="form-group">
       <label id="lbl-role">{{ t('a_lbl_role') }}</label>
-      <select name="rolle" id="reg-role" onchange="checkRegRole(this)">
+      <select name="gruppe" id="reg-role" onchange="checkRegRole(this)">
         {% for opt_val, opt_key in [('interessent','a_opt_interessent'), ('wissenschaftler','a_opt_wissenschaftler'), ('entwickler','a_opt_entwickler'), ('unterstuetzer','a_opt_unterstuetzer'), ('foerderer','a_opt_foerderer')] %}
         <option value="{{ opt_val }}">{{ t(opt_key) }}</option>
         {% endfor %}
@@ -617,8 +617,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   <div class="about-grid">
     <div class="about-text">
       <p data-i18n="about_p1">{{ t('about_p1') | safe }}</p>
-      <p data-i18n="about_p2">{{ t('about_p2') | safe }}</p>
-      <p data-i18n="about_p3">{{ t('about_p3') | safe }}</p>
+      <p data-i18n-html="about_p2">{{ t('about_p2') | safe }}</p>
+      <p data-i18n-html="about_p3">{{ t('about_p3') | safe }}</p>
       <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
         <a href="mailto:kontakt@openmyconet.de" class="btn btn-amber" data-i18n="btn_contact">{{ t('btn_contact') }}</a>
         <button onclick="document.getElementById('omn-fab').click()" class="btn" data-i18n="btn_fragen" style="cursor:pointer; border:1px solid #6ee87e; color:#6ee87e; background:transparent;">{{ t('btn_fragen') }}</button>
@@ -695,24 +695,6 @@ function applyTranslations(lang) {
     var key = el.getAttribute('data-i18n-html');
     if (T[key]) el.innerHTML = T[key];
   });
-}
-
-// ─── Admin-editierbare Content-Blocks (Phase 1, unveraendert) ──
-function applyContentBlocks(lang) {
-  fetch('https://api.openmyconet.de/api/v1/content?seite=index&sprache=' + lang)
-    .then(function(r) { return r.ok ? r.json() : {}; })
-    .then(function(blocks) {
-      Object.keys(blocks).forEach(function(schluessel) {
-        var key = schluessel.replace(/^index_/, '');
-        document.querySelectorAll('[data-i18n="' + key + '"]').forEach(function(el) {
-          el.textContent = blocks[schluessel];
-        });
-        document.querySelectorAll('[data-i18n-html="' + key + '"]').forEach(function(el) {
-          el.innerHTML = blocks[schluessel];
-        });
-      });
-    })
-    .catch(function() { /* stiller Fallback auf statischen Text */ });
 }
 
 // ─── Dynamic section rendering (Instant-Umschalten per Flagge) ─
@@ -1156,7 +1138,6 @@ document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
     updateFlags(currentLang);
     applyTranslations(currentLang);
-    applyContentBlocks(currentLang);
     updateMeta(currentLang);
     renderDynamicSections(currentLang);
     renderRegForm(currentLang);
@@ -1176,7 +1157,6 @@ function setLang(lang) {
   else { url.searchParams.set('lang', lang); }
   window.history.replaceState({}, '', url);
   applyTranslations(lang);
-  applyContentBlocks(lang);
   updateMeta(lang);
   updateFlags(lang);
   renderDynamicSections(lang);

@@ -1,6 +1,8 @@
 # Content-Anschluss (ContentBlock ↔ Frontend)
 
-## Umgesetzt (Phase 1, index.html)
+**STATUS 25.08.2026: Für index.html wieder ENTFERNT.** `applyContentBlocks()` und ihre beiden Aufrufstellen wurden aus index.html gestrichen — die Startseite überschrieb den frisch redigierten `translations.json`-Text zur Laufzeit stillschweigend mit teils veralteten DB-Inhalten (u.a. noch der widersprüchliche Datenfluss-Satz "Alle Rohdaten öffentlich zugänglich" aus der Zeit vor der Textredaktion). Entscheidung: `translations.json` ist die einzige Textquelle, `/admin/inhalte` wurde für Startseitentexte nie genutzt. Die `ContentBlock`-Zeilen für `index_*` liegen noch in der DB, sind aber funktionslos und sollten aufgeräumt werden. Nicht auf andere Seiten übertragen (siehe Abschnitt unten — dort nie umgesetzt, bleibt jetzt auch so).
+
+## Umgesetzt (Phase 1, index.html) — historisch, siehe Status oben
 
 - **Namensraum-Konvention:** `schluessel` = `<seite>_<key>`, z.B. `index_hero_sub`. Kein Schema-Change nötig — reine String-Konvention, verhindert Kollisionen zwischen Seiten mit gleichnamigen Keys (z.B. `btn_contact` auf mehreren Seiten).
 - **Bulk-Endpoint:** `GET /api/v1/content?seite=<seite>&sprache=<lang>` (app.py) — liefert alle Blöcke mit `schluessel LIKE '<seite>_%'` als `{schluessel: inhalt}`-Dict. Der bestehende Einzel-Key-Endpoint (`/api/v1/content/<schluessel>`) bleibt unverändert bestehen.
