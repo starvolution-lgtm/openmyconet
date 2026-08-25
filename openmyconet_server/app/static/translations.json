@@ -379,23 +379,23 @@
     "f_steps": [
       {
         "num": "1. Eintrag gestalten",
-        "text": "— Firmenname, Beschreibung, Logo hochladen, Betrag wählen. Alles in einem Schritt."
+        "text": "— Firmenname, Beschreibung und Logo ergänzen und den gewünschten Jahresbeitrag wählen."
       },
       {
-        "num": "2. Vorschau prüfen",
-        "text": "— Sie sehen Ihren Eintrag genau so wie er erscheinen wird, bevor Sie zahlen."
+        "num": "2. Kurze Prüfung",
+        "text": "— wir prüfen, ob die Förderung thematisch zu OpenMycoNet passt. Das dauert in der Regel höchstens 48 Stunden."
       },
       {
         "num": "3. Beitrag leisten",
-        "text": "— ab 50 € / Jahr, sicher via PayPal. Keine Vorauszahlung vor der Vorschau."
+        "text": "— nach der Vorschau per PayPal oder Banküberweisung."
       },
       {
-        "num": "4. Sofort live",
-        "text": "— Ihr Eintrag erscheint automatisch nach Zahlungseingang. Rechnung kommt per E-Mail."
+        "num": "4. Eintrag veröffentlichen",
+        "text": "— nach Abschluss der Förderung wird Ihr Eintrag in der Fördererliste veröffentlicht."
       },
       {
-        "num": "5. Jährliche Erneuerung",
-        "text": "— 2–3 Monate vor Ablauf erhalten Sie eine E-Mail mit der Frage ob Sie die Förderpartnerschaft fortsetzen möchten. Kein Automatismus, kein Druck."
+        "num": "5. Jährliche Verlängerung",
+        "text": "— 2–3 Monate vor Ablauf fragen wir per E-Mail, ob Sie die Förderung fortsetzen möchten. Es gibt keine automatische Verlängerung."
       }
     ],
     "f_badge_example": "★ Offizieller Förderer ★  |  Beispiel-Eintrag",
