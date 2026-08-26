@@ -81,6 +81,10 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 /* Lang sidebar */
 #lang-sidebar { display:none; position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
 
+/* Sprachauswahl im mobilen Hamburger-Menue: feste Leiste am rechten Rand, immer sichtbar
+   unabhaengig von der Laenge der Navigationsliste (die sonst darueber hinausrollt). */
+.mobile-lang { position:fixed !important; top:50%; right:0.8rem; transform:translateY(-50%); margin-top:0 !important; flex-direction:column !important; gap:0.9rem !important; background:rgba(20,31,20,0.9); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 0.6rem; z-index:1000; }
+
 .nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
 .nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
 .nav-tool-btn:hover { opacity:0.85; transform:scale(1.05); }
@@ -211,7 +215,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 </nav>
 
 <!-- Mobile Overlay-Menü -->
-<div class="mobile-menu" id="mobileMenu" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem;">
+<div class="mobile-menu" id="mobileMenu" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem; overflow-y:auto; padding:5rem 5.5rem 3rem;">
   <button id="mobileClose" style="position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer;">✕</button>
   <a href="{{ live('index.html#warum') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_warum">{{ t('nav_warum') }}</a>
   <a href="{{ live('index.html#mitmachen') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a>
@@ -324,7 +328,7 @@ function renderFlagsInto(containerId, size) {
 
 function renderSidebar() {
   renderFlagsInto('lang-sidebar', 22);
-  renderFlagsInto('lang-flags-mobile', 28);
+  renderFlagsInto('lang-flags-mobile', 34);
   var sb = document.getElementById('lang-sidebar');
   if (sb && window.innerWidth > 900) sb.style.display = 'flex';
 }
