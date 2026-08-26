@@ -15,7 +15,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from extensions import db, mail
 from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung, Foerderer, Presseeintrag, Pressekandidat, Suchbegriff
-from roles import nutzer_finden_oder_anlegen, rolle_hochstufen
+from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -163,7 +163,6 @@ def change_password():
 # --- Nutzerverwaltung ---
 
 FACHROLLEN = ['wissenschaftler', 'wiss_mitarbeiter', 'student']
-ROLLEN = ['mycelist', 'hyphist', 'sporist']
 
 @admin_bp.route('/admin')
 @role_required('superadmin')
@@ -179,8 +178,12 @@ def admin():
         query = query.filter_by(sprache=filter_sprache)
     if filter_fachrolle:
         query = query.filter_by(fachrolle=filter_fachrolle)
-    if filter_rolle:
-        query = query.filter_by(rolle=filter_rolle)
+    if filter_rolle == 'hyphist':
+        query = query.filter_by(ist_hyphist=True)
+    elif filter_rolle == 'sporist':
+        query = query.filter_by(ist_sporist=True)
+    elif filter_rolle == 'mycelist':
+        query = query.filter_by(ist_hyphist=False, ist_sporist=False)
     nutzer_liste = query.order_by(Nutzer.registriert_am.desc()).all()
     gesamt = Nutzer.query.count()
     bestaetigt = Nutzer.query.filter_by(bestaetigt=True).count()
@@ -190,7 +193,7 @@ def admin():
         bestaetigt=bestaetigt, unbestaetigt=unbestaetigt,
         filter_gruppe=filter_gruppe, filter_sprache=filter_sprache,
         filter_fachrolle=filter_fachrolle, fachrollen=FACHROLLEN,
-        filter_rolle=filter_rolle, rollen=ROLLEN
+        filter_rolle=filter_rolle
     )
 
 
@@ -218,9 +221,11 @@ def nutzer_fachrolle_setzen(nutzer_id):
 @admin_bp.route('/admin/nutzer/rolle/<int:nutzer_id>', methods=['POST'])
 @role_required('superadmin')
 def nutzer_rolle_setzen(nutzer_id):
+    """Setzt Hyphist/Sporist als unabhaengige Checkboxen -- beide, eine, oder
+    keine kann aktiv sein (Mycelist ist immer impliziter Basisstatus)."""
     nutzer = Nutzer.query.get_or_404(nutzer_id)
-    wert = request.form.get('rolle', '').strip()
-    nutzer.rolle = wert if wert in ROLLEN else 'mycelist'
+    nutzer.ist_hyphist = bool(request.form.get('ist_hyphist'))
+    nutzer.ist_sporist = bool(request.form.get('ist_sporist'))
     db.session.commit()
     flash(f'Rolle von {nutzer.name} aktualisiert.')
     return redirect(url_for('admin.admin'))
@@ -570,7 +575,7 @@ def foerderer_admin():
             nutzer = nutzer_finden_oder_anlegen(
                 eintrag.ansprechpartner or eintrag.firma, eintrag.email, sprache='de',
             )
-            rolle_hochstufen(nutzer, 'hyphist' if eintrag.typ == 'kooperation' else 'sporist')
+            (hyphist_setzen if eintrag.typ == 'kooperation' else sporist_setzen)(nutzer)
             db.session.commit()
             nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
         elif request.form.get('action') == 'reject':
@@ -582,7 +587,7 @@ def foerderer_admin():
             fehler = 'Ungültige Aktion.'
 
     liste = Foerderer.query.order_by(
-        db.case((Foerderer.status == 'pending', 0), else_=1),
+        db.case((Foerderer.status.in_(['pending', 'zahlung_eingegangen']), 0), else_=1),
         Foerderer.erstellt_am.desc()
     ).all()
     return render_template('foerderer_admin.html', liste=liste, nachricht=nachricht, fehler=fehler)

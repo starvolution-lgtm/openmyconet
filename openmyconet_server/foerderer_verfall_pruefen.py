@@ -6,7 +6,7 @@ status='verfallen' zurueck. War der zugehoerige Nutzer durch diese Anfrage auf
 'hyphist' hochgestuft, faellt er zurueck auf 'mycelist'.
 
 Betrifft NUR Kooperationsanfragen. Bezahlte Foerderer (typ='foerderer',
-Rolle 'sporist') verfallen nicht automatisch -- echte Zahlung ist kein
+Sporist-Status) verfallen nicht automatisch -- echte Zahlung ist kein
 zeitlich befristeter Status.
 
 Aufruf: python foerderer_verfall_pruefen.py (per Cronjob, taeglich, gleiche
@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from app import app
 from extensions import db
 from models import Foerderer, Nutzer
-from roles import rolle_herabstufen_falls
+from roles import hyphist_entfernen
 
 VERFALLSFRIST = timedelta(days=60)
 
@@ -36,7 +36,7 @@ def verfall_pruefen():
             eintrag.status = 'verfallen'
             eintrag.status_geaendert_am = datetime.utcnow()
             nutzer = Nutzer.query.filter_by(email=eintrag.email).first()
-            rolle_herabstufen_falls(nutzer, von_rolle='hyphist')
+            hyphist_entfernen(nutzer)
             verfallen += 1
             print(f'Foerderer.id={eintrag.id} ("{eintrag.firma}") -> verfallen.')
 

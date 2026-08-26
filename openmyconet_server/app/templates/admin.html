@@ -49,7 +49,7 @@
     <label>Rolle: </label>
     <select name="rolle" onchange="this.form.submit()">
         <option value="">Alle</option>
-        <option value="mycelist" {% if filter_rolle == 'mycelist' %}selected{% endif %}>Mycelist</option>
+        <option value="mycelist" {% if filter_rolle == 'mycelist' %}selected{% endif %}>Nur Mycelist (kein Hyphist/Sporist)</option>
         <option value="hyphist" {% if filter_rolle == 'hyphist' %}selected{% endif %}>Hyphist</option>
         <option value="sporist" {% if filter_rolle == 'sporist' %}selected{% endif %}>Sporist</option>
     </select>
@@ -87,11 +87,8 @@
         </td>
         <td>
             <form method="POST" action="{{ url_for('admin.nutzer_rolle_setzen', nutzer_id=nutzer.id) }}">
-                <select name="rolle" onchange="this.form.submit()">
-                    <option value="mycelist" {% if nutzer.rolle == 'mycelist' %}selected{% endif %}>Mycelist</option>
-                    <option value="hyphist" {% if nutzer.rolle == 'hyphist' %}selected{% endif %}>Hyphist</option>
-                    <option value="sporist" {% if nutzer.rolle == 'sporist' %}selected{% endif %}>Sporist</option>
-                </select>
+                <label><input type="checkbox" name="ist_hyphist" value="1" {% if nutzer.ist_hyphist %}checked{% endif %} onchange="this.form.submit()"> Hyphist</label>
+                <label><input type="checkbox" name="ist_sporist" value="1" {% if nutzer.ist_sporist %}checked{% endif %} onchange="this.form.submit()"> Sporist</label>
             </form>
         </td>
         <td class="{{ 'ja' if nutzer.bestaetigt else 'nein' }}">{{ '✓' if nutzer.bestaetigt else '✗' }}</td>

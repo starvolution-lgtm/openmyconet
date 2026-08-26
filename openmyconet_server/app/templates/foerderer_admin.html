@@ -3,7 +3,7 @@
 {% block heading %}🤝 Förderer &amp; Kooperationen verwalten{% endblock %}
 {% block content %}
 
-<p class="info">Bezahlte Förderer-Einträge werden automatisch per PayPal aktiviert. Kooperationsanfragen (ohne Zahlung) landen hier als "pending" und müssen manuell freigegeben werden.</p>
+<p class="info">Bezahlte Förderer-Einträge landen nach der PayPal-Zahlung als "zahlung_eingegangen" hier und müssen inhaltlich geprüft und freigeschaltet werden (Zielvorgabe: max. 48h). Kooperationsanfragen (ohne Zahlung) landen als "pending" und müssen ebenfalls manuell freigegeben werden.</p>
 
 {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
 {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
@@ -13,7 +13,7 @@
 {% endif %}
 
 {% for f in liste %}
-<div class="karte {% if f.status == 'pending' %}pending{% endif %}">
+<div class="karte {% if f.status in ('pending', 'zahlung_eingegangen') %}pending{% endif %}">
     <div class="kopf">
         {% if f.logo_datei %}<img class="logo" src="{{ url_for('static', filename='uploads/foerderer/' + f.logo_datei) }}" alt="">{% endif %}
         <span class="firma">{{ f.firma }}</span>
@@ -31,6 +31,9 @@
     {% endif %}
     {% if f.typ == 'foerderer' %}
     <div class="feld"><label>Beitrag</label><p>{{ '%.2f'|format(f.betrag) }} € {% if f.paypal_txn_id %}· PayPal-Txn {{ f.paypal_txn_id }} · Rechnung {{ f.rechnung_nr }}{% endif %}</p></div>
+    {% if f.paypal_txn_id and f.status not in ('active', 'rejected') %}
+    <p class="err" style="margin-top:0.4rem;">⚠ Zahlung bereits eingegangen — bei Ablehnung muss manuell über PayPal erstattet werden.</p>
+    {% endif %}
     {% endif %}
 
     <div class="meta">

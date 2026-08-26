@@ -106,7 +106,10 @@ class _GefaelschteVerifyResponse:
         self.text = text
 
 
-def test_ipn_aktiviert_foerderer_bei_gueltiger_zahlung(client, app, monkeypatch):
+def test_ipn_setzt_zahlung_eingegangen_statt_sofort_aktiv(client, app, monkeypatch):
+    """Zahlung schaltet den Eintrag NICHT sofort live -- OpenMycoNet prueft erst
+    (siehe f_steps 'Kurze Pruefung' auf der Foerderer-Seite). Freischaltung
+    erfolgt separat durch die Admin-Aktion 'activate' (admin.py)."""
     monkeypatch.setenv('PAYPAL_EMAIL', 'verkaeufer@example.com')
     foerderer_id = _pending_foerderer(app)
     monkeypatch.setattr('foerderer.requests.post', lambda *a, **kw: _GefaelschteVerifyResponse('VERIFIED'))
@@ -120,14 +123,19 @@ def test_ipn_aktiviert_foerderer_bei_gueltiger_zahlung(client, app, monkeypatch)
 
     with app.app_context():
         foerderer = Foerderer.query.get(foerderer_id)
-        assert foerderer.status == 'active'
+        assert foerderer.status == 'zahlung_eingegangen'
         assert foerderer.paypal_txn_id == 'TXN123'
         assert foerderer.rechnung_nr
+        assert foerderer.aktiviert_am is None  # noch nicht freigeschaltet
 
         rechnung_pfad = os.path.join(app.instance_path, 'rechnungen', f'{foerderer.rechnung_nr}.pdf')
         assert os.path.exists(rechnung_pfad)
 
-    assert len(ausgehend) == 2  # Rechnungsmail an Foerderer + Benachrichtigung an Admin
+    assert len(ausgehend) == 2  # Rechnungsmail an Foerderer + Pruef-Benachrichtigung an Admin
+
+    # Oeffentliche Liste zeigt den Eintrag noch NICHT, solange kein Admin freigeschaltet hat.
+    resp_liste = client.get('/foerderer.html')
+    assert 'IPN Testfirma' not in resp_liste.get_data(as_text=True)
 
 
 def test_ipn_receiver_email_mismatch_bleibt_pending(client, app, monkeypatch):

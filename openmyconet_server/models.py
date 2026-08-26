@@ -22,13 +22,16 @@ class Nutzer(db.Model):
     # kann. Wird vom Admin nachgepflegt, kein Registrierungsformular-Feld.
     fachrolle = db.Column(db.String(30), nullable=True)  # 'wissenschaftler' | 'wiss_mitarbeiter' | 'student' | NULL
 
-    # Community-Rollen-Namenssystem (Eigennamen, unuebersetzt). Rangfolge
-    # mycelist < hyphist < sporist; rolle_hochstufen() in roles.py kapselt die
-    # Zustufung (nie herabstufen dort). Hyphist kann bei Inaktivitaet der
-    # zugehoerigen Kooperationsanfrage automatisch wieder auf mycelist
-    # zurueckfallen (siehe foerderer_verfall_pruefen.py), Sporist nicht (echte
+    # Community-Rollen-Namenssystem (Eigennamen, unuebersetzt). Orthogonale
+    # Felder statt Rang-Spalte: Mycelist ist der implizite Basisstatus jedes
+    # registrierten Nutzers (kein eigenes Feld noetig), Hyphist (Kooperations-
+    # partner) und Sporist (Foerderer) sind unabhaengig voneinander -- man kann
+    # beides gleichzeitig sein. Gesetzt/entfernt ueber roles.py, siehe dort.
+    # Hyphist faellt bei Inaktivitaet der zugehoerigen Kooperationsanfrage
+    # automatisch zurueck (foerderer_verfall_pruefen.py), Sporist nicht (echte
     # Zahlung).
-    rolle = db.Column(db.String(20), nullable=False, default='mycelist')  # 'mycelist' | 'hyphist' | 'sporist'
+    ist_hyphist = db.Column(db.Boolean, nullable=False, default=False)
+    ist_sporist = db.Column(db.Boolean, nullable=False, default=False)
 
     # Magic-Link-Login: eigener Token getrennt vom Double-Opt-in-Token oben.
     # Jede neue Anfrage ueberschreibt den vorherigen Token (macht alte Links
@@ -125,7 +128,10 @@ class ContentBlock(db.Model):
 class Foerderer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(64), unique=True, nullable=False)
-    status = db.Column(db.String(20), default='pending')  # pending | active | expired | rejected | verfallen
+    # pending (noch keine Zahlung/Antrag unbearbeitet) | zahlung_eingegangen (PayPal-
+    # Zahlung eingegangen, wartet auf inhaltliche Pruefung -- siehe foerderer.py ipn())
+    # | active | expired | rejected | verfallen
+    status = db.Column(db.String(20), default='pending')
     # Zeitpunkt des letzten Statuswechsels (nicht erstellt_am!) -- Basis fuer die
     # automatische Verfalls-Pruefung bei Kooperationsanfragen (2 Monate ohne
     # Aktivitaet -> status='verfallen', siehe foerderer_verfall_pruefen.py).

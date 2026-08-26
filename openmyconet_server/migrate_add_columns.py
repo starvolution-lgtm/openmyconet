@@ -26,6 +26,8 @@ MIGRATIONS = [
     ('nutzer', 'login_token', 'VARCHAR(100)'),
     ('nutzer', 'login_token_angefordert_am', 'DATETIME'),
     ('nutzer', 'rolle', "VARCHAR(20) DEFAULT 'mycelist'"),
+    ('nutzer', 'ist_hyphist', 'BOOLEAN DEFAULT 0'),
+    ('nutzer', 'ist_sporist', 'BOOLEAN DEFAULT 0'),
     ('foerderer', 'status_geaendert_am', 'DATETIME'),
 ]
 
@@ -79,6 +81,14 @@ def main():
             cur.execute(f'ALTER TABLE {tabelle} ADD COLUMN {spalte} {typ}')
             print(f'{tabelle}.{spalte} hinzugefügt.')
     backfill_slugs(cur)
+    # Rollenmodell-Umbau (26.08.2026): alte Rang-Spalte nutzer.rolle
+    # ('mycelist'|'hyphist'|'sporist') auf die neuen orthogonalen Boolean-Felder
+    # uebertragen. Die alte Spalte bleibt in der DB stehen (kein DROP COLUMN,
+    # um das Risiko auf der produktiven SQLite-DB nicht zu erhoehen), wird vom
+    # Code aber nicht mehr gelesen oder geschrieben.
+    cur.execute("UPDATE nutzer SET ist_hyphist = 1 WHERE rolle = 'hyphist' AND (ist_hyphist IS NULL OR ist_hyphist = 0)")
+    cur.execute("UPDATE nutzer SET ist_sporist = 1 WHERE rolle = 'sporist' AND (ist_sporist IS NULL OR ist_sporist = 0)")
+    print('Rollenmodell: nutzer.rolle -> ist_hyphist/ist_sporist uebertragen.')
     # Bestehende Foerderer-Zeilen haben nach ALTER TABLE ein NULL status_geaendert_am --
     # ohne Backfill wuerde die Verfalls-Pruefung (foerderer_verfall_pruefen.py) sie nie
     # erfassen (NULL-Vergleich ist immer falsch). erstellt_am ist der sinnvollste Startwert.

@@ -24,7 +24,7 @@ from PIL import Image, UnidentifiedImageError
 
 from extensions import db, mail
 from models import Foerderer, RechnungsZaehler
-from roles import nutzer_finden_oder_anlegen, rolle_hochstufen
+from roles import nutzer_finden_oder_anlegen
 from spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
@@ -414,18 +414,16 @@ def ipn():
         return '', 200  # bereits verarbeitet oder ungültig
 
     rechnung_nr = _naechste_rechnung_nr()
-    foerderer.status = 'active'
+    # Zahlung ist eingegangen, aber der Eintrag geht NICHT automatisch live --
+    # OpenMycoNet prueft erst, ob die Foerderung thematisch passt (siehe f_steps
+    # in translations.json, "Kurze Pruefung", max. 48h). Freischaltung + Sporist-
+    # Rollen-Upgrade erfolgen erst durch die Admin-Aktion 'activate' (admin.py),
+    # exakt wie beim manuellen Freigabe-Weg fuer Kooperationsanfragen.
+    foerderer.status = 'zahlung_eingegangen'
     foerderer.status_geaendert_am = datetime.utcnow()
     foerderer.paypal_txn_id = txn_id
     foerderer.rechnung_nr = rechnung_nr
-    foerderer.aktiviert_am = datetime.utcnow()
     foerderer.betrag = betrag
-    # Zahlung abgeschlossen = Sporist-Upgrade-Zeitpunkt (im Gegensatz zu Hyphist,
-    # das erst bei manueller Admin-Freigabe hochgestuft wird, siehe admin.py).
-    nutzer = nutzer_finden_oder_anlegen(
-        foerderer.ansprechpartner or foerderer.firma, foerderer.email, sprache='de',
-    )
-    rolle_hochstufen(nutzer, 'sporist')
     db.session.commit()
 
     _rechnung_pdf_erzeugen(foerderer, rechnung_nr, betrag, txn_id)
@@ -539,20 +537,22 @@ def _mail_foerderer(foerderer, rechnung_nr):
     download_url = f'{_base_url()}/foerderer/rechnung?nr={quote(rechnung_nr)}&token={quote(foerderer.token)}'
     ablauf = foerderer.laeuft_ab_am.strftime('%d.%m.%Y') if foerderer.laeuft_ab_am else '-'
     msg = Message(
-        subject=f'Ihr OpenMycoNet Förderer-Eintrag ist live – Rechnung {rechnung_nr}',
+        subject=f'Zahlungseingang bestätigt – Ihr OpenMycoNet Förderer-Eintrag, Rechnung {rechnung_nr}',
         recipients=[foerderer.email],
     )
     msg.body = f"""Sehr geehrte Damen und Herren,
 
-vielen Dank für Ihre Unterstützung von OpenMycoNet!
+vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihre Zahlung ist eingegangen.
 
-Ihr Förderer-Eintrag für "{foerderer.firma}" ist jetzt live:
+Wir prüfen kurz, ob Ihre Förderung thematisch zu OpenMycoNet passt (in der Regel
+maximal 48 Stunden). Danach wird Ihr Eintrag für "{foerderer.firma}" auf der
+Fördererseite veröffentlicht:
 {LIVE_FOERDERER_URL}
 
 Ihre Rechnung ({rechnung_nr}) können Sie hier herunterladen:
 {download_url}
 
-Die Partnerschaft läuft bis: {ablauf}
+Die Partnerschaft läuft ab Veröffentlichung ein Jahr.
 Ca. 2–3 Monate vor Ablauf melden wir uns zur Verlängerung.
 
 Mit freundlichen Grüßen
@@ -570,10 +570,10 @@ def _mail_admin(foerderer, rechnung_nr, betrag):
     if not admin_email:
         return
     msg = Message(
-        subject=f'Neuer Förderer: {foerderer.firma} ({rechnung_nr})',
+        subject=f'Prüfung ausstehend: Förderer-Zahlung von {foerderer.firma} ({rechnung_nr})',
         recipients=[admin_email],
     )
-    msg.body = f"""Neuer Förderer-Eintrag aktiviert:
+    msg.body = f"""Neue Förderer-Zahlung eingegangen, wartet auf Freigabe (max. 48h):
 
 Firma:    {foerderer.firma}
 Ansprechpartner: {foerderer.ansprechpartner or '(nicht angegeben)'}
@@ -583,7 +583,7 @@ Betrag:   {betrag:.2f} EUR
 Rechnung: {rechnung_nr}
 Kategorie: {foerderer.kategorie}
 
-Eintrag prüfen: {LIVE_FOERDERER_URL}
+Im Admin-Panel prüfen und freischalten: {_base_url()}/admin/foerderer
 """
     try:
         mail.send(msg)
