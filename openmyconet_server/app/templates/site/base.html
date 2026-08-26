@@ -6,7 +6,7 @@
 <title id="page-title">{% block title %}OpenMycoNet{% endblock %}</title>
 <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-<link rel="manifest" href="{{ asset('manifest.json') }}">
+{% if request.host in ('www.openmyconet.de', 'openmyconet.de') %}<link rel="manifest" href="{{ asset('manifest.json') }}">{% endif %}
 <meta name="theme-color" content="#024530">
 {% block robots %}{% if is_preview %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}{% endblock %}
 <meta name="author" content="Robert Jank">
