@@ -135,10 +135,19 @@
 .ref-badge.arxiv { background: var(--arxiv-bg);  color: var(--arxiv-text);}
 .ref-badge.book  { background: var(--book-bg);   color: var(--book-text); }
 .ref-badge.cs    { background: var(--cs-bg);     color: var(--cs-text);   }
+.ev-badge { font-family: 'JetBrains Mono',monospace; font-size: 0.6rem; letter-spacing: 0.04em; padding: 1px 5px; border-radius: 3px; white-space: nowrap; border: 1px solid; margin-top: 4px; display: inline-block; }
+.ev-badge.p   { color: #5ecfa0; border-color: #5ecfa0; background: rgba(94,207,160,0.1); }
+.ev-badge.r   { color: #6aabea; border-color: #6aabea; background: rgba(106,171,234,0.1); }
+.ev-badge.c   { color: var(--amber); border-color: var(--amber); background: var(--amber3); }
+.ev-badge.b   { color: #b48ef0; border-color: #b48ef0; background: rgba(180,142,240,0.1); }
+.ev-badge.pre { color: var(--text3); border-color: var(--text3); background: rgba(90,138,106,0.1); }
+.ev-badge.pop { color: var(--cs-text); border-color: var(--cs-text); background: rgba(212,168,71,0.1); }
 .ref-relevanz { font-size: 0.82rem; color: var(--accent); margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(10,112,80,0.25); line-height: 1.6; }
 .ref-relevanz::before { content: '→ OMN: '; color: var(--accent2); font-weight: 500; font-family: 'JetBrains Mono',monospace; font-size: 0.72rem; }
 .ref-relevanz.amber { color: var(--amber); border-top-color: rgba(212,160,48,0.25); }
 .ref-relevanz.amber::before { color: var(--amber2); }
+.ref-hypothesis { font-size: 0.82rem; color: var(--amber); margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(212,160,48,0.25); line-height: 1.6; font-style: italic; }
+.ref-hypothesis::before { content: '→ OMN-Forschungsfrage: '; color: var(--amber2); font-weight: 500; font-style: normal; font-family: 'JetBrains Mono',monospace; font-size: 0.72rem; }
 .ref-ext { font-family: 'JetBrains Mono',monospace; font-size: 0.9rem; color: var(--text3); align-self: center; flex-shrink: 0; }
 .ref:hover .ref-ext { color: var(--accent); }
 
@@ -281,7 +290,8 @@
         <div class="ref-body">
           <div class="ref-title">Suzanne Simard – How Trees Talk to Each Other</div>
           <div class="ref-meta">TED Talk (2016) · Grundlagenwerk: <em>Finding the Mother Tree</em>, Knopf 2021</div>
-          <div class="ref-relevanz">Belegt, dass Bäume über Mykorrhiza-Netzwerke aktiv Signale und Ressourcen austauschen – die biologische Grundannahme hinter OpenMycoNet.</div>
+          <div class="ref-relevanz">Populärwissenschaftliche Einordnung der Forschung zu Ressourcenaustausch über Mykorrhiza-Netzwerke – der Ausgangspunkt, der die Frage hinter OpenMycoNet aufgeworfen hat.</div>
+          <span class="ev-badge pop">Populärwiss. Einordnung</span>
         </div>
         <span class="ref-badge book">Buch / TED</span>
         <span class="ref-ext">↗</span>
@@ -291,7 +301,8 @@
         <div class="ref-body">
           <div class="ref-title">Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities</div>
           <div class="ref-meta">Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access</div>
-          <div class="ref-relevanz">Peer-reviewed Nachweis, dass Pflanzen über Mykorrhiza-Netzwerke komplexes adaptives Verhalten koordinieren.</div>
+          <div class="ref-relevanz">Fasst experimentelle Hinweise darauf zusammen, dass Mykorrhiza-Netzwerke physiologische und adaptive Reaktionen zwischen verbundenen Pflanzen beeinflussen können.</div>
+          <span class="ev-badge r">Review</span>
         </div>
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
@@ -302,6 +313,8 @@
           <div class="ref-title" data-i18n="q_ref14_title">{{ t('q_ref14_title') }}</div>
           <div class="ref-meta" data-i18n="q_ref14_meta">{{ t('q_ref14_meta') }}</div>
           <div class="ref-relevanz" data-i18n="q_ref14_relevanz">{{ t('q_ref14_relevanz') }}</div>
+          <div class="ref-hypothesis" data-i18n="q_ref14_hypothese">{{ t('q_ref14_hypothese') }}</div>
+          <span class="ev-badge p">Primärstudie</span>
         </div>
         <span class="ref-badge pmc">Wiley</span>
         <span class="ref-ext">↗</span>
@@ -312,6 +325,7 @@
           <div class="ref-title" data-i18n="q_ref16_title">{{ t('q_ref16_title') }}</div>
           <div class="ref-meta" data-i18n="q_ref16_meta">{{ t('q_ref16_meta') }}</div>
           <div class="ref-relevanz" data-i18n="q_ref16_relevanz">{{ t('q_ref16_relevanz') }}</div>
+          <span class="ev-badge p">Primärstudie</span>
         </div>
         <span class="ref-badge pmc">Science</span>
         <span class="ref-ext">↗</span>
@@ -331,7 +345,8 @@
         <div class="ref-body">
           <div class="ref-title">Positive citation bias and overinterpreted results lead to misinformation on common mycorrhizal networks in forests</div>
           <div class="ref-meta">Karst, Jones &amp; Hoeksema · Nature Ecology &amp; Evolution 7, 501–511 (2023) · DOI 10.1038/s41559-023-01986-1</div>
-          <div class="ref-relevanz amber">Zeigt, dass viele populäre Behauptungen der Feldforschung vorauseilen. Wir messen, weil die Datenlage noch dünn ist.</div>
+          <div class="ref-relevanz amber">Kritischer Review zur Evidenz für Common Mycorrhizal Networks in Wäldern. Die Autoren unterscheiden zwischen der Existenz solcher Netzwerke und weitergehenden Aussagen über häufigen Ressourcen- oder Signaltransfer sowie daraus abgeleitete „Mother Tree"-Narrative.</div>
+          <span class="ev-badge c">Kritischer Review</span>
         </div>
         <span class="ref-badge cs">Nature Ecol.</span>
         <span class="ref-ext">↗</span>
@@ -342,6 +357,7 @@
           <div class="ref-title">Rethinking the "Wood Wide Web" – Gespräch mit Dr. Justine Karst</div>
           <div class="ref-meta">Many Minds Podcast · DISI · Oktober 2024 · Dr. Justine Karst, Universität Alberta</div>
           <div class="ref-relevanz amber">Zugängliche Einordnung der wissenschaftlichen Debatte für Nicht-Fachpublikum.</div>
+          <span class="ev-badge pop">Populärwiss. Einordnung</span>
         </div>
         <span class="ref-badge cs">Podcast</span>
         <span class="ref-ext">↗</span>
@@ -352,6 +368,7 @@
           <div class="ref-title" data-i18n="q_ref18_title">{{ t('q_ref18_title') }}</div>
           <div class="ref-meta" data-i18n="q_ref18_meta">{{ t('q_ref18_meta') }}</div>
           <div class="ref-relevanz amber" data-i18n="q_ref18_relevanz">{{ t('q_ref18_relevanz') }}</div>
+          <span class="ev-badge r">Review</span>
         </div>
         <span class="ref-badge pmc">Wiley</span>
         <span class="ref-ext">↗</span>
@@ -370,8 +387,9 @@
         <span class="ref-num">03</span>
         <div class="ref-body">
           <div class="ref-title">Electrical signaling in fungi</div>
-          <div class="ref-meta">PMC11995700 · Aktueller Review · Bioelektrische Signalwege im Pilzmyzel</div>
-          <div class="ref-relevanz">Zeigt, dass Pilznetzwerke reproduzierbare elektrische Aktivität erzeugen – direkte Rechtfertigung für BioComm.</div>
+          <div class="ref-meta">Buffi et al. (2025) · FEMS Microbiology Reviews · DOI 10.1093/femsre/fuaf009 · PMC11995700</div>
+          <div class="ref-relevanz">Fasst den aktuellen Forschungsstand zu elektrischer Aktivität in filamentösen Pilzen zusammen und diskutiert Evidenz, Messmethoden, mögliche Artefakte und offene Fragen.</div>
+          <span class="ev-badge r">Review</span>
         </div>
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
@@ -380,8 +398,9 @@
         <span class="ref-num">04</span>
         <div class="ref-body">
           <div class="ref-title">The fungal grid – electrical signals and the Wood Wide Web hypothesis</div>
-          <div class="ref-meta">PMC10157304 · Elektrische Kommunikation als Grundlage des „Wood Wide Web"</div>
-          <div class="ref-relevanz">Verbindet elektrische Pilzsignale mit dem Konzept des Waldnetzwerks.</div>
+          <div class="ref-meta">Philip Hunter · PMC10157304 · Wissenschaftsjournalistische Einordnung</div>
+          <div class="ref-relevanz">Wissenschaftsjournalistische Einordnung der Forschung und Debatte um Pilz- und Mykorrhiza-Netzwerke – nützlich zur Orientierung, aber keine Primärstudie.</div>
+          <span class="ev-badge pop">Wissenschaftl. Einordnung</span>
         </div>
         <span class="ref-badge pmc">PMC</span>
         <span class="ref-ext">↗</span>
@@ -392,6 +411,7 @@
           <div class="ref-title" data-i18n="q_ref08_title">{{ t('q_ref08_title') }}</div>
           <div class="ref-meta" data-i18n="q_ref08_meta">{{ t('q_ref08_meta') }}</div>
           <div class="ref-relevanz" data-i18n="q_ref08_relevanz">{{ t('q_ref08_relevanz') }}</div>
+          <span class="ev-badge p">Primärstudie</span>
         </div>
         <span class="ref-badge pmc">iScience</span>
         <span class="ref-ext">↗</span>
@@ -402,6 +422,7 @@
           <div class="ref-title" data-i18n="q_ref15_title">{{ t('q_ref15_title') }}</div>
           <div class="ref-meta" data-i18n="q_ref15_meta">{{ t('q_ref15_meta') }}</div>
           <div class="ref-relevanz" data-i18n="q_ref15_relevanz">{{ t('q_ref15_relevanz') }}</div>
+          <span class="ev-badge p">Primärstudie / Interpretation</span>
         </div>
         <span class="ref-badge pmc">R. Soc. OS</span>
         <span class="ref-ext">↗</span>
@@ -416,32 +437,35 @@
         <div class="station-title" data-i18n="q_s3_title">{{ t('q_s3_title') }}</div>
         <div class="station-desc" data-i18n="q_s3_desc">{{ t('q_s3_desc') }}</div>
       </div>
-      <a class="ref" href="https://arxiv.org/abs/2112.07236" target="_blank" rel="noopener">
+      <a class="ref" href="https://doi.org/10.1007/s11787-022-00318-4" target="_blank" rel="noopener">
         <span class="ref-num">05</span>
         <div class="ref-body">
           <div class="ref-title">Logics in fungal mycelium networks (Adamatzky)</div>
-          <div class="ref-meta">arXiv:2112.07236 · Neuronales Spiking, logische Gatter, nicht-lineare Eigenschaften im Myzel</div>
+          <div class="ref-meta">Adamatzky, A. (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4</div>
           <div class="ref-relevanz">Belegt, dass Myzelsignale informationsverarbeitend sind – Basis für KI-gestützte Mustererkennung.</div>
+          <span class="ev-badge p">Peer-reviewte Studie</span>
         </div>
-        <span class="ref-badge arxiv">arXiv</span>
+        <span class="ref-badge arxiv">DOI</span>
         <span class="ref-ext">↗</span>
       </a>
-      <a class="ref" href="https://arxiv.org/abs/2304.10675" target="_blank" rel="noopener">
+      <a class="ref" href="https://doi.org/10.1016/j.biosystems.2023.104933" target="_blank" rel="noopener">
         <span class="ref-num">06</span>
         <div class="ref-body">
-          <div class="ref-title">Propagation of electrical signals by fungal mycelium composites</div>
-          <div class="ref-meta">arXiv:2304.10675 · Frequenzmodulierte Signalübertragung durch Myzel (100–10.000 Hz)</div>
-          <div class="ref-relevanz">Zeigt, dass Myzel Frequenzsignale zuverlässig überträgt – Grundlage für die Sensorauslegung des BioComm-Knotens.</div>
+          <div class="ref-title">Propagation of electrical signals by fungi</div>
+          <div class="ref-meta">Adamatzky et al. · BioSystems 229 (2023), 104933 · DOI 10.1016/j.biosystems.2023.104933</div>
+          <div class="ref-relevanz">In myzelgebundenen Kompositen konnten eingespeiste Frequenzen zwischen 100 und 10.000 Hz am Ausgang wiedererkannt werden. Die Ausgangsamplituden waren zwischen Wiederholungen jedoch nicht reproduzierbar.</div>
+          <span class="ev-badge p">Peer-reviewte Primärstudie</span>
         </div>
-        <span class="ref-badge arxiv">arXiv</span>
+        <span class="ref-badge arxiv">DOI</span>
         <span class="ref-ext">↗</span>
       </a>
       <a class="ref" href="https://arxiv.org/abs/2604.22947" target="_blank" rel="noopener">
         <span class="ref-num">07</span>
         <div class="ref-body">
-          <div class="ref-title">MIND – Mycoponically Integrated Network Device</div>
-          <div class="ref-meta">arXiv:2604.22947 · Bioelektrische Sensorik mit KI-Schnittstelle für lebende Pilznetzwerke · 2025</div>
-          <div class="ref-relevanz">Aktuellster Stand: Hardware-KI-Kopplung für lebende Myzelnetzwerke – konzeptionell direkt verwandt mit BioComm.</div>
+          <div class="ref-title">MIND – Mycelial Interface for Naturalistic Detection</div>
+          <div class="ref-meta">arXiv:2604.22947 · 24. April 2026</div>
+          <div class="ref-relevanz">Lebende Myzelnetzwerke werden als multimodale Biosensoren untersucht. Bioelektrische Antworten werden ausgewertet, um verschiedene Umweltreize bzw. räumliche Informationen zu unterscheiden. Konzeptionell mit Teilen des BioComm-Ansatzes verwandt, aber noch nicht peer-reviewed.</div>
+          <span class="ev-badge pre">Preprint</span>
         </div>
         <span class="ref-badge arxiv">arXiv</span>
         <span class="ref-ext">↗</span>
@@ -462,6 +486,7 @@
           <div class="ref-title">Entangled Life – Merlin Sheldrake</div>
           <div class="ref-meta">Random House 2020 · ISBN 978-0525510314 · Dt.: <em>Verwobenes Leben</em>, Ullstein 2021</div>
           <div class="ref-relevanz">Empfohlene Lektüre für neue OpenMycoNet-Mitglieder ohne Fachhintergrund.</div>
+          <span class="ev-badge pop">Populärwiss. Sachbuch</span>
         </div>
         <span class="ref-badge book">Buch</span>
         <span class="ref-ext">↗</span>
@@ -479,9 +504,10 @@
       <a class="ref" href="https://theoryandpractice.citizenscienceassociation.org/articles/10.5334/cstp.717" target="_blank" rel="noopener">
         <span class="ref-num">09</span>
         <div class="ref-body">
-          <div class="ref-title">iNaturalist as a citizen science platform – methodology and reach</div>
-          <div class="ref-meta">Citizen Science: Theory and Practice · DOI 10.5334/cstp.717 · Peer-reviewed</div>
-          <div class="ref-relevanz">Belegt methodisch, dass verteilte Laienmessungen wissenschaftlich valide Daten liefern.</div>
+          <div class="ref-title">State-of-the-Art of iNaturalist as a Source of Data on Ukrainian Fungi</div>
+          <div class="ref-meta">Prylutskyi &amp; Kapets (2024) · Citizen Science: Theory and Practice · DOI 10.5334/cstp.717</div>
+          <div class="ref-relevanz">Zeigt das große Potenzial von iNaturalist für Pilzdaten, diskutiert aber zugleich Identifikationsunsicherheit, räumliche und taxonomische Verzerrungen sowie die Bedeutung fachlicher Beteiligung.</div>
+          <span class="ev-badge b">Citizen-Science-Fallstudie</span>
         </div>
         <span class="ref-badge cs">Journal</span>
         <span class="ref-ext">↗</span>
@@ -491,7 +517,8 @@
         <div class="ref-body">
           <div class="ref-title">FunDive – Citizen Science für Pilzbiodiversität</div>
           <div class="ref-meta">citizenscience.eu · Vergleichsprojekt im Bereich mykologische Bürgerwissenschaft</div>
-          <div class="ref-relevanz">Zeigt, wie Citizen-Science-Infrastruktur für Pilzforschung in der Praxis aussieht.</div>
+          <div class="ref-relevanz">Praxisbeispiel dafür, wie großräumige Pilz-Citizen-Science mit standardisierten Protokollen sowie fachlicher und molekularer Validierung kombiniert werden kann – ein methodisches Vorbild, aber kein allgemeiner Beweis, dass jede Citizen-Science-Datenerhebung automatisch wissenschaftlich valide ist.</div>
+          <span class="ev-badge b">Praxis-/Projektbeispiel</span>
         </div>
         <span class="ref-badge cs">CS Platform</span>
         <span class="ref-ext">↗</span>
@@ -502,6 +529,7 @@
           <div class="ref-title" data-i18n="q_ref17_title">{{ t('q_ref17_title') }}</div>
           <div class="ref-meta" data-i18n="q_ref17_meta">{{ t('q_ref17_meta') }}</div>
           <div class="ref-relevanz" data-i18n="q_ref17_relevanz">{{ t('q_ref17_relevanz') }}</div>
+          <span class="ev-badge r">Review / Methodenübersicht</span>
         </div>
         <span class="ref-badge cs">Front. Ecol.</span>
         <span class="ref-ext">↗</span>
