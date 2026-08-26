@@ -47,7 +47,7 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
 db.init_app(app)
 mail.init_app(app)
-CORS(app, origins=['https://www.openmyconet.de', 'https://openmyconet.de'])
+CORS(app, origins=['https://www.openmyconet.de', 'https://openmyconet.de', 'https://api.openmyconet.de'])
 
 app.register_blueprint(admin_bp)
 app.register_blueprint(chatbot_bp)
