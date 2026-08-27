@@ -1,0 +1,37 @@
+# OpenMycoNet — Backend (Flask)
+
+Flask-SSR-App, live unter **https://api.openmyconet.de** (und Hauptdomain www.openmyconet.de).
+Blueprints in Einzeldateien im Projektroot: `app.py` (Einstieg + öffentliche/API-Routen),
+`admin.py`, `dashboard.py` (Nutzer-Login via Magic-Link), `foerderer.py`, `kollaboration.py`,
+`registrierung.py`, `bewerbung.py`, `rag_chatbot.py`, `presse_suche.py`, `kontrollzentrum.py`.
+Models zentral in `models.py`, DB-Erweiterungen `extensions.py`, i18n `i18n.py`.
+Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: `app/static/`.
+
+## Nicht durchsuchen
+`venv/`, `__pycache__/`, `instance/`, `dist/`, `*.db`, `app/static/uploads/` — nie relevant,
+bläht Suchen auf. Immer mit `path:`/`glob:` auf die echten Quelldateien eingrenzen.
+
+## Datenbank
+SQLite unter `instance/openmyconet.db`. **Kein Alembic.** Neue Spalten: Eintrag in
+`migrate_add_columns.py` (idempotentes `ALTER TABLE ADD COLUMN`). Neue Tabellen legt
+`db.create_all()` an. Feature-Migrationen als eigene `migrate_*.py` mit App-Context.
+
+## Tests
+`venv/Scripts/python.exe -m pytest -q -p no:warnings`
+Bekannt rot auf `main` (nicht anfassen): `test_presse` (`presse_suche.time`),
+`test_foerderer::test_kooperation_submit...` (Mail-Zähler). Tests nutzen temp-DBs.
+
+## Deployment (Prod, Hetzner VPS)
+Kein Git-Checkout auf dem Server → Deploy per **scp einzelner Dateien**.
+1. DB-Backup: `ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 "cp /home/omn/app/instance/openmyconet.db /home/omn/app/instance/openmyconet.db.bak-$(date +%Y%m%d-%H%M)"`
+2. `scp -i ~/.ssh/omn_deploy <datei> omn@77.42.64.162:/home/omn/app/` (Git-Bash: Quellpfad als `/c/Users/...`)
+3. Migration: `ssh ... "cd /home/omn/app && venv/bin/python migrate_*.py"`
+4. Reload ohne sudo: `MPID=$(pgrep -f 'gunicorn -w 2' | head -1); kill -HUP $MPID`
+5. Prüfen: `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5000/<route>` + extern.
+   Auth-Seiten per `venv/bin/python` test_client mit gesetzter Session rendern.
+BOM-Falle: vor UTF-8-Uploads sicherstellen, dass keine `ef bb bf`-Bytes am Dateianfang stehen.
+
+## Konventionen
+Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
+Rollen: `Nutzer.ist_hyphist` / `ist_sporist` (orthogonal). Nach Datei-Änderung an
+`git add`/`commit`/`push` erinnern (Repo-Root ist eine Ebene höher: `…/openmyconet`).
