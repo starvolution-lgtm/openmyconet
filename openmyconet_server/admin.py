@@ -8,14 +8,18 @@ from functools import wraps
 import bleach
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
-    session, flash, current_app
+    session, flash, current_app, abort, send_file
 )
 from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from extensions import db, mail
-from models import Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung, Foerderer, Presseeintrag, Pressekandidat, Suchbegriff
+from models import (
+    Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung,
+    Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, Aufgabe, KollaborationAnhang,
+)
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
+import kollaboration
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -576,6 +580,9 @@ def foerderer_admin():
                 eintrag.ansprechpartner or eintrag.firma, eintrag.email, sprache='de',
             )
             (hyphist_setzen if eintrag.typ == 'kooperation' else sporist_setzen)(nutzer)
+            # Eindeutige Zuordnung fuer den Kollaborationsbereich festhalten.
+            if nutzer and eintrag.nutzer_id is None:
+                eintrag.nutzer_id = nutzer.id
             db.session.commit()
             nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
         elif request.form.get('action') == 'reject':
@@ -591,6 +598,71 @@ def foerderer_admin():
         Foerderer.erstellt_am.desc()
     ).all()
     return render_template('foerderer_admin.html', liste=liste, nachricht=nachricht, fehler=fehler)
+
+
+# --- Kollaborationsbereich (Team-Seite) ---
+# Aufgabenliste + Kommentare je Kooperation, gespiegelt zur Partner-Ansicht in
+# dashboard.py. Kontaktdaten/Beschreibung/Logo sind hier bearbeitbar (ueber die
+# normale Foerderer-Verwaltung), im Kollaborationsbereich selbst nur Lesekontext.
+
+@admin_bp.route('/admin/kollaboration/foerderer/<int:foerderer_id>', methods=['GET', 'POST'])
+@login_required
+def kollaboration_foerderer(foerderer_id):
+    koop = Foerderer.query.get_or_404(foerderer_id)
+    if koop.typ != 'kooperation':
+        abort(404)
+    nachricht = fehler = None
+
+    if request.method == 'POST':
+        aktion = request.form.get('action')
+        if aktion == 'aufgabe_neu':
+            titel = (request.form.get('titel') or '').strip()
+            if not titel:
+                fehler = 'Bitte einen Titel angeben.'
+            else:
+                kollaboration.aufgabe_anlegen(koop, titel, request.form.get('beschreibung'), 'team')
+                nachricht = 'Aufgabe hinzugefügt.'
+        elif aktion == 'aufgabe_toggle':
+            aufgabe = Aufgabe.query.get_or_404(request.form.get('aufgabe_id', type=int))
+            if aufgabe.foerderer_id != koop.id:
+                abort(403)
+            kollaboration.aufgabe_status_wechseln(aufgabe, 'team')
+            nachricht = 'Aufgabenstatus geändert.'
+        elif aktion == 'kommentar_neu':
+            text = (request.form.get('text') or '').strip()
+            if not text:
+                fehler = 'Der Kommentar ist leer.'
+            else:
+                aufgabe_id = request.form.get('aufgabe_id', type=int) or None
+                if aufgabe_id:
+                    a = Aufgabe.query.get(aufgabe_id)
+                    if not a or a.foerderer_id != koop.id:
+                        abort(403)
+                _, anhang_fehler = kollaboration.kommentar_anlegen(
+                    koop, text, 'team', aufgabe_id=aufgabe_id,
+                    dateien=request.files.getlist('dateien'),
+                )
+                nachricht = 'Kommentar gespeichert.'
+                if anhang_fehler:
+                    fehler = ' '.join(anhang_fehler)
+        else:
+            fehler = 'Unbekannte Aktion.'
+
+    return render_template('kollaboration_admin.html',
+        modus='partnerschaft', kontext=koop,
+        titel_kontext=koop.firma,
+        aufgaben=kollaboration.aufgaben_fuer(koop),
+        kommentare=kollaboration.kommentare_fuer(koop),
+        nachricht=nachricht, fehler=fehler,
+    )
+
+
+@admin_bp.route('/admin/kollaboration/datei/<int:anhang_id>')
+@login_required
+def kollaboration_datei(anhang_id):
+    anhang = KollaborationAnhang.query.get_or_404(anhang_id)
+    return send_file(kollaboration.anhang_pfad(anhang), as_attachment=True,
+                     download_name=anhang.originalname or anhang.dateiname)
 
 
 # --- Presse ---

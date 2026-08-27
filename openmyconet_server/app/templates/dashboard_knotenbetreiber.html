@@ -2,6 +2,9 @@
 {% block title %}OpenMycoNet — Mein Dashboard{% endblock %}
 {% block content %}
     <h1>Willkommen, {{ nutzer.name }}</h1>
+    {% if nutzer.ist_hyphist %}
+    <p class="label"><a href="{{ url_for('dashboard.hyphist') }}">→ Zum Kooperationsbereich</a></p>
+    {% endif %}
     <div class="card">
         <p><span class="label">E-Mail:</span> {{ nutzer.email }}</p>
         {% if nutzer.fachrolle %}<p><span class="label">Fachrolle:</span> {{ nutzer.fachrolle }}</p>{% endif %}

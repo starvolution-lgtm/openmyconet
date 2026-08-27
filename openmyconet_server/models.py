@@ -153,6 +153,11 @@ class Foerderer(db.Model):
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
     aktiviert_am = db.Column(db.DateTime, nullable=True)
     laeuft_ab_am = db.Column(db.Date, nullable=True)
+    # Eindeutige Zuordnung zum Nutzer-Account des Ansprechpartners. Wird bei der
+    # Admin-Freigabe (admin.py action='activate') gesetzt, damit der Hyphist-
+    # Kollaborationsbereich (kollaboration.py) nicht mehr nur ueber E-Mail-
+    # Gleichheit joinen muss. NULL bei Alt-Eintraegen ohne Nutzer-Match.
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=True)
 
 class RechnungsZaehler(db.Model):
     jahr = db.Column(db.Integer, primary_key=True)
@@ -181,6 +186,63 @@ class Pressekandidat(db.Model):
     sprache = db.Column(db.String(10), default='de')
     gefunden_am = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='pending')  # pending | uebernommen | verworfen
+
+class Aufgabe(db.Model):
+    """Kollaborationsbereich: gemeinsame Aufgabenliste zwischen einem Partner und
+    dem OpenMycoNet-Team. EIN Kontext-FK ist gesetzt -- foerderer_id fuer den
+    Hyphist-Bereich (Foerderer.typ='kooperation'), knoten_id fuer den technisch
+    orientierten Knotenbetreiber-Bereich. knoten_id ist in v1 noch ungenutzt,
+    das Schema ist aber bereits vorbereitet. Die 'genau ein Kontext'-Invariante
+    wird beim Anlegen im Code erzwungen (kollaboration.py), nicht per DB-Constraint
+    (SQLite ALTER TABLE kann keine CHECKs nachtraeglich anlegen).
+    Kein Admin-Freigabeschritt -- rein interner Austausch, beide Seiten duerfen
+    Aufgaben anlegen und abschliessen."""
+    id = db.Column(db.Integer, primary_key=True)
+    foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True)
+    knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True)
+    titel = db.Column(db.String(200), nullable=False)
+    beschreibung = db.Column(db.Text, default='')
+    status = db.Column(db.String(20), default='offen')  # offen | erledigt
+    erstellt_von = db.Column(db.String(10), default='team')  # team | partner
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erledigt_am = db.Column(db.DateTime, nullable=True)
+
+    foerderer = db.relationship('Foerderer', backref=db.backref('aufgaben', lazy=True, cascade='all, delete-orphan'))
+    knoten = db.relationship('Knoten', backref=db.backref('aufgaben', lazy=True, cascade='all, delete-orphan'))
+
+
+class Kommentar(db.Model):
+    """Kollaborationsbereich: Kommentar-Thread, sichtbar nur zwischen dem jeweiligen
+    Partner und dem OpenMycoNet-Team. Wie Aufgabe an genau einen Kontext gehaengt.
+    Optional zusaetzlich an eine Aufgabe gebunden (aufgabe_id) -- sonst allgemeiner
+    Bereichs-Kommentar."""
+    id = db.Column(db.Integer, primary_key=True)
+    foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True)
+    knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True)
+    aufgabe_id = db.Column(db.Integer, db.ForeignKey('aufgabe.id', ondelete='CASCADE'), nullable=True)
+    text = db.Column(db.Text, nullable=False)
+    autor = db.Column(db.String(10), default='team')  # team | partner
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+
+    foerderer = db.relationship('Foerderer', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
+    knoten = db.relationship('Knoten', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
+    aufgabe = db.relationship('Aufgabe', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
+
+
+class KollaborationAnhang(db.Model):
+    """Datei-Anhang an einem Kommentar (z.B. Firmware-Log, Foto einer Fehlermeldung).
+    Liegt bewusst NICHT unter app/static/ -- die Dateien sind privat und werden nur
+    ueber eine auth-gepruefte Route ausgeliefert (dashboard.py / admin.py). Physisch
+    unter instance/uploads/kollaboration/."""
+    id = db.Column(db.Integer, primary_key=True)
+    kommentar_id = db.Column(db.Integer, db.ForeignKey('kommentar.id', ondelete='CASCADE'), nullable=False)
+    dateiname = db.Column(db.String(255), nullable=False)      # gespeicherter, zufaelliger Name
+    originalname = db.Column(db.String(255), default='')       # Anzeigename fuer den Download
+    groesse = db.Column(db.Integer, default=0)                 # Bytes
+    hochgeladen_am = db.Column(db.DateTime, default=datetime.utcnow)
+
+    kommentar = db.relationship('Kommentar', backref=db.backref('anhaenge', lazy=True, cascade='all, delete-orphan'))
+
 
 class Suchbegriff(db.Model):
     """Konfiguration fuer presse_suche.py -- im Admin unter /admin/presse-kandidaten

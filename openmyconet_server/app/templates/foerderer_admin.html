@@ -43,6 +43,9 @@
     </div>
 
     <div class="aktionen">
+        {% if f.typ == 'kooperation' %}
+        <a class="btn" href="{{ url_for('admin.kollaboration_foerderer', foerderer_id=f.id) }}">💬 Kollaboration</a>
+        {% endif %}
         {% if f.status != 'active' %}
         <form method="post" style="display:inline;">
             <input type="hidden" name="foerderer_id" value="{{ f.id }}">

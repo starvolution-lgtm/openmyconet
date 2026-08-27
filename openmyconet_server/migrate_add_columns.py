@@ -29,6 +29,7 @@ MIGRATIONS = [
     ('nutzer', 'ist_hyphist', 'BOOLEAN DEFAULT 0'),
     ('nutzer', 'ist_sporist', 'BOOLEAN DEFAULT 0'),
     ('foerderer', 'status_geaendert_am', 'DATETIME'),
+    ('foerderer', 'nutzer_id', 'INTEGER'),  # Kollaborationsbereich, siehe migrate_kollaboration.py (dort auch Backfill + neue Tabellen)
 ]
 
 UMLAUT_MAP = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
