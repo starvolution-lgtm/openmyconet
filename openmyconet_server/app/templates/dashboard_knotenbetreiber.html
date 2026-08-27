@@ -10,6 +10,9 @@
         {% if nutzer.fachrolle %}<p><span class="label">Fachrolle:</span> {{ nutzer.fachrolle }}</p>{% endif %}
     </div>
 
+    {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
+    {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
+
     <h2>Deine Knoten</h2>
     <table>
         <tr><th>Knoten-ID</th><th>Substrat</th><th>Status</th><th>Seit</th></tr>
@@ -22,4 +25,71 @@
         </tr>
         {% endfor %}
     </table>
+
+    {% for b in bereiche %}
+    {% set knoten = b.knoten %}
+    <h2 style="margin-top:36px;">Knoten {{ knoten.knoten_id }} — Betrieb &amp; Technik</h2>
+    <p class="label">Inbetriebnahme, Wartung, Fehlermeldungen, Firmware — nur zwischen dir und dem OpenMycoNet-Team sichtbar.</p>
+
+    <div class="card">
+        <h2>Aufgaben</h2>
+        <table>
+            <tr><th></th><th>Aufgabe</th><th>Von</th><th>Angelegt</th></tr>
+            {% for a in b.aufgaben %}
+            <tr>
+                <td>
+                    <form method="post" style="margin:0;">
+                        <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
+                        <input type="hidden" name="action" value="aufgabe_toggle">
+                        <input type="hidden" name="aufgabe_id" value="{{ a.id }}">
+                        <button type="submit" title="Status umschalten" style="padding:2px 8px;">
+                            {{ '✓' if a.status == 'erledigt' else '○' }}
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <strong{% if a.status == 'erledigt' %} style="text-decoration:line-through;opacity:0.6;"{% endif %}>{{ a.titel }}</strong>
+                    {% if a.beschreibung %}<br><span class="label">{{ a.beschreibung }}</span>{% endif %}
+                </td>
+                <td class="label">{{ 'Team' if a.erstellt_von == 'team' else 'Du' }}</td>
+                <td class="label">{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
+            </tr>
+            {% else %}
+            <tr><td></td><td class="label">Noch keine Aufgaben.</td><td></td><td></td></tr>
+            {% endfor %}
+        </table>
+
+        <form method="post" style="margin-top:16px;">
+            <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
+            <input type="hidden" name="action" value="aufgabe_neu">
+            <input type="text" name="titel" placeholder="Neue Aufgabe" required>
+            <input type="text" name="beschreibung" placeholder="Details (optional)">
+            <button type="submit">Aufgabe hinzufügen</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Kommentare</h2>
+        {% for k in b.kommentare %}
+        <div style="margin-bottom:14px;">
+            <span class="label">{{ 'OpenMycoNet-Team' if k.autor == 'team' else 'Du' }} · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</span>
+            <p style="margin:4px 0;white-space:pre-wrap;">{{ k.text }}</p>
+            {% for anhang in k.anhaenge %}
+            <div class="label">📎 <a href="{{ url_for('dashboard.kollaboration_datei', anhang_id=anhang.id) }}">{{ anhang.originalname or anhang.dateiname }}</a> ({{ (anhang.groesse / 1024) | round | int }} KB)</div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="label">Noch keine Kommentare.</p>
+        {% endfor %}
+
+        <form method="post" enctype="multipart/form-data" style="margin-top:16px;">
+            <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
+            <input type="hidden" name="action" value="kommentar_neu">
+            <textarea name="text" rows="3" placeholder="Kommentar schreiben…" required style="width:100%;padding:8px;background:#1a2a1a;color:#eee;border:1px solid #4caf50;border-radius:4px;box-sizing:border-box;"></textarea>
+            <input type="file" name="dateien" multiple>
+            <p class="label">Erlaubt: Bilder, PDF, TXT/LOG/CSV/JSON, ZIP — max. 5 MB pro Datei.</p>
+            <button type="submit">Kommentar senden</button>
+        </form>
+    </div>
+    {% endfor %}
 {% endblock %}

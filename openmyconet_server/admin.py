@@ -16,7 +16,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db, mail
 from models import (
     Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung,
-    Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, Aufgabe, KollaborationAnhang,
+    Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, KollaborationAnhang,
 )
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 import kollaboration
@@ -601,9 +601,9 @@ def foerderer_admin():
 
 
 # --- Kollaborationsbereich (Team-Seite) ---
-# Aufgabenliste + Kommentare je Kooperation, gespiegelt zur Partner-Ansicht in
-# dashboard.py. Kontaktdaten/Beschreibung/Logo sind hier bearbeitbar (ueber die
-# normale Foerderer-Verwaltung), im Kollaborationsbereich selbst nur Lesekontext.
+# Aufgabenliste + Kommentare, gespiegelt zur Partner-Ansicht in dashboard.py.
+# Hyphist: je Kooperation (modus 'partnerschaft'). Knotenbetreiber: je Knoten
+# (modus 'technisch'). POST-Logik gemeinsam in kollaboration.post_verarbeiten().
 
 @admin_bp.route('/admin/kollaboration/foerderer/<int:foerderer_id>', methods=['GET', 'POST'])
 @login_required
@@ -612,47 +612,27 @@ def kollaboration_foerderer(foerderer_id):
     if koop.typ != 'kooperation':
         abort(404)
     nachricht = fehler = None
-
     if request.method == 'POST':
-        aktion = request.form.get('action')
-        if aktion == 'aufgabe_neu':
-            titel = (request.form.get('titel') or '').strip()
-            if not titel:
-                fehler = 'Bitte einen Titel angeben.'
-            else:
-                kollaboration.aufgabe_anlegen(koop, titel, request.form.get('beschreibung'), 'team')
-                nachricht = 'Aufgabe hinzugefügt.'
-        elif aktion == 'aufgabe_toggle':
-            aufgabe = Aufgabe.query.get_or_404(request.form.get('aufgabe_id', type=int))
-            if aufgabe.foerderer_id != koop.id:
-                abort(403)
-            kollaboration.aufgabe_status_wechseln(aufgabe, 'team')
-            nachricht = 'Aufgabenstatus geändert.'
-        elif aktion == 'kommentar_neu':
-            text = (request.form.get('text') or '').strip()
-            if not text:
-                fehler = 'Der Kommentar ist leer.'
-            else:
-                aufgabe_id = request.form.get('aufgabe_id', type=int) or None
-                if aufgabe_id:
-                    a = Aufgabe.query.get(aufgabe_id)
-                    if not a or a.foerderer_id != koop.id:
-                        abort(403)
-                _, anhang_fehler = kollaboration.kommentar_anlegen(
-                    koop, text, 'team', aufgabe_id=aufgabe_id,
-                    dateien=request.files.getlist('dateien'),
-                )
-                nachricht = 'Kommentar gespeichert.'
-                if anhang_fehler:
-                    fehler = ' '.join(anhang_fehler)
-        else:
-            fehler = 'Unbekannte Aktion.'
-
+        nachricht, fehler = kollaboration.post_verarbeiten(koop, 'team', request.form, request.files)
     return render_template('kollaboration_admin.html',
-        modus='partnerschaft', kontext=koop,
-        titel_kontext=koop.firma,
+        modus='partnerschaft', kontext=koop, titel_kontext=koop.firma,
         aufgaben=kollaboration.aufgaben_fuer(koop),
         kommentare=kollaboration.kommentare_fuer(koop),
+        nachricht=nachricht, fehler=fehler,
+    )
+
+
+@admin_bp.route('/admin/kollaboration/knoten/<int:knoten_id>', methods=['GET', 'POST'])
+@login_required
+def kollaboration_knoten(knoten_id):
+    knoten = Knoten.query.get_or_404(knoten_id)
+    nachricht = fehler = None
+    if request.method == 'POST':
+        nachricht, fehler = kollaboration.post_verarbeiten(knoten, 'team', request.form, request.files)
+    return render_template('kollaboration_admin.html',
+        modus='technisch', kontext=knoten, titel_kontext=knoten.knoten_id,
+        aufgaben=kollaboration.aufgaben_fuer(knoten),
+        kommentare=kollaboration.kommentare_fuer(knoten),
         nachricht=nachricht, fehler=fehler,
     )
 

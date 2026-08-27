@@ -18,7 +18,7 @@ from flask import (
 from flask_mail import Message
 
 from extensions import db, mail
-from models import Nutzer, Bewerbung, Foerderer, KollaborationAnhang
+from models import Nutzer, Bewerbung, KollaborationAnhang
 from spam_schutz import ip_erlaubt
 import kollaboration
 
@@ -171,30 +171,40 @@ def bewerber():
     return render_template('dashboard_bewerber.html', nutzer=nutzer, bewerbung=bewerbung)
 
 
-@dashboard_bp.route('/dashboard/knotenbetreiber')
+@dashboard_bp.route('/dashboard/knotenbetreiber', methods=['GET', 'POST'])
 @login_required
 def knotenbetreiber():
     nutzer = _aktueller_nutzer()
     if not nutzer:
         return redirect(url_for('dashboard.login'))
-    return render_template('dashboard_knotenbetreiber.html', nutzer=nutzer, knoten_liste=nutzer.knoten)
+
+    knoten_liste = list(nutzer.knoten)
+    erlaubte_ids = {k.id for k in knoten_liste}
+    nachricht = fehler = None
+
+    if request.method == 'POST':
+        knoten_pk = request.form.get('knoten_pk', type=int)
+        if knoten_pk not in erlaubte_ids:
+            abort(403)
+        kontext = next(k for k in knoten_liste if k.id == knoten_pk)
+        nachricht, fehler = kollaboration.post_verarbeiten(kontext, 'partner', request.form, request.files)
+
+    bereiche = [{
+        'knoten': k,
+        'aufgaben': kollaboration.aufgaben_fuer(k),
+        'kommentare': kollaboration.kommentare_fuer(k),
+    } for k in knoten_liste]
+    return render_template('dashboard_knotenbetreiber.html', nutzer=nutzer,
+                           knoten_liste=knoten_liste, bereiche=bereiche,
+                           nachricht=nachricht, fehler=fehler)
 
 
-# --- Hyphist-Kollaborationsbereich ---
-# Aufgabenliste + Kommentare je bestehender, freigeschalteter Kooperation.
+# --- Kollaborationsbereich (Partner-Seite) ---
+# Hyphist: Aufgabenliste + Kommentare je bestehender, freigeschalteter Kooperation.
+# Knotenbetreiber: dasselbe je Knoten (technisch orientiert), siehe knotenbetreiber().
 # Kontaktdaten/Beschreibung/Logo werden angezeigt, sind aber admin-only (kein
 # Bearbeiten-Feld hier). Beide Seiten duerfen Aufgaben anlegen/abschliessen und
 # kommentieren -- kein Freigabeschritt (siehe Auftrag).
-
-def _kooperationen(nutzer):
-    """Freigeschaltete Kooperations-Datensaetze des Nutzers -- ueber die
-    eindeutige nutzer_id, mit E-Mail-Gleichheit als Fallback fuer Alt-Eintraege
-    ohne gesetzte nutzer_id."""
-    return (Foerderer.query
-            .filter(Foerderer.typ == 'kooperation', Foerderer.status == 'active')
-            .filter(db.or_(Foerderer.nutzer_id == nutzer.id, Foerderer.email == nutzer.email))
-            .order_by(Foerderer.firma.asc()).all())
-
 
 @dashboard_bp.route('/dashboard/hyphist', methods=['GET', 'POST'])
 @login_required
@@ -203,7 +213,7 @@ def hyphist():
     if not nutzer:
         return redirect(url_for('dashboard.login'))
 
-    kooperationen = _kooperationen(nutzer)
+    kooperationen = kollaboration.kooperationen_von(nutzer)
     erlaubte_ids = {k.id for k in kooperationen}
     nachricht = fehler = None
 
@@ -212,36 +222,7 @@ def hyphist():
         if foerderer_id not in erlaubte_ids:
             abort(403)
         kontext = next(k for k in kooperationen if k.id == foerderer_id)
-        aktion = request.form.get('action')
-
-        if aktion == 'aufgabe_neu':
-            titel = (request.form.get('titel') or '').strip()
-            if not titel:
-                fehler = 'Bitte einen Titel für die Aufgabe angeben.'
-            else:
-                kollaboration.aufgabe_anlegen(kontext, titel, request.form.get('beschreibung'), 'partner')
-                nachricht = 'Aufgabe hinzugefügt.'
-        elif aktion == 'aufgabe_toggle':
-            aufgabe = _aufgabe_im_kontext(request.form.get('aufgabe_id', type=int), erlaubte_ids)
-            kollaboration.aufgabe_status_wechseln(aufgabe, 'partner')
-            nachricht = 'Aufgabenstatus geändert.'
-        elif aktion == 'kommentar_neu':
-            text = (request.form.get('text') or '').strip()
-            if not text:
-                fehler = 'Der Kommentar ist leer.'
-            else:
-                aufgabe_id = request.form.get('aufgabe_id', type=int)
-                if aufgabe_id and not _aufgabe_im_kontext(aufgabe_id, erlaubte_ids, or_none=True):
-                    abort(403)
-                _, anhang_fehler = kollaboration.kommentar_anlegen(
-                    kontext, text, 'partner', aufgabe_id=aufgabe_id or None,
-                    dateien=request.files.getlist('dateien'),
-                )
-                nachricht = 'Kommentar gespeichert.'
-                if anhang_fehler:
-                    fehler = ' '.join(anhang_fehler)
-        else:
-            fehler = 'Unbekannte Aktion.'
+        nachricht, fehler = kollaboration.post_verarbeiten(kontext, 'partner', request.form, request.files)
 
     bereiche = [{
         'koop': k,
@@ -252,16 +233,6 @@ def hyphist():
                            nachricht=nachricht, fehler=fehler)
 
 
-def _aufgabe_im_kontext(aufgabe_id, erlaubte_foerderer_ids, or_none=False):
-    from models import Aufgabe
-    aufgabe = Aufgabe.query.get(aufgabe_id) if aufgabe_id else None
-    if not aufgabe or aufgabe.foerderer_id not in erlaubte_foerderer_ids:
-        if or_none:
-            return None
-        abort(403)
-    return aufgabe
-
-
 @dashboard_bp.route('/dashboard/kollaboration/datei/<int:anhang_id>')
 @login_required
 def kollaboration_datei(anhang_id):
@@ -269,8 +240,7 @@ def kollaboration_datei(anhang_id):
     if not nutzer:
         return redirect(url_for('dashboard.login'))
     anhang = KollaborationAnhang.query.get_or_404(anhang_id)
-    erlaubte_ids = [k.id for k in _kooperationen(nutzer)]
-    if not kollaboration.anhang_gehoert_zu_foerderer(anhang, erlaubte_ids):
+    if not kollaboration.anhang_sichtbar_fuer_nutzer(anhang, nutzer):
         abort(403)
     return send_file(kollaboration.anhang_pfad(anhang), as_attachment=True,
                      download_name=anhang.originalname or anhang.dateiname)

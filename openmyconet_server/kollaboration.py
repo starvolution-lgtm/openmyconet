@@ -119,6 +119,73 @@ def kommentar_anlegen(kontext, text, wer, aufgabe_id=None, dateien=None):
     return kommentar, fehler
 
 
+def post_verarbeiten(kontext, wer, form, files):
+    """Verarbeitet eine Aufgaben-/Kommentar-POST-Aktion fuer einen bereits
+    aufgeloesten UND autorisierten Kontext (Foerderer oder Knoten). Gibt
+    (nachricht, fehler) zurueck. Bricht mit 403 ab, wenn eine referenzierte
+    Aufgabe nicht zu diesem Kontext gehoert.
+
+    wer: 'team' | 'partner'. Von dashboard.py (partner) und admin.py (team)
+    gemeinsam genutzt -- die Routen kuemmern sich nur um Auth + Kontext-Aufloesung."""
+    from flask import abort
+    filt = kontext_filter(kontext)
+    aktion = form.get('action')
+
+    def _aufgabe_dieses_kontexts(aufgabe_id):
+        a = Aufgabe.query.get(aufgabe_id) if aufgabe_id else None
+        if a and all(getattr(a, spalte) == wert for spalte, wert in filt.items()):
+            return a
+        abort(403)
+
+    if aktion == 'aufgabe_neu':
+        titel = (form.get('titel') or '').strip()
+        if not titel:
+            return None, 'Bitte einen Titel für die Aufgabe angeben.'
+        aufgabe_anlegen(kontext, titel, form.get('beschreibung'), wer)
+        return 'Aufgabe hinzugefügt.', None
+
+    if aktion == 'aufgabe_toggle':
+        aufgabe_status_wechseln(_aufgabe_dieses_kontexts(form.get('aufgabe_id', type=int)), wer)
+        return 'Aufgabenstatus geändert.', None
+
+    if aktion == 'kommentar_neu':
+        text = (form.get('text') or '').strip()
+        if not text:
+            return None, 'Der Kommentar ist leer.'
+        aufgabe_id = form.get('aufgabe_id', type=int) or None
+        if aufgabe_id:
+            _aufgabe_dieses_kontexts(aufgabe_id)
+        _, anhang_fehler = kommentar_anlegen(
+            kontext, text, wer, aufgabe_id=aufgabe_id, dateien=files.getlist('dateien'),
+        )
+        return 'Kommentar gespeichert.', (' '.join(anhang_fehler) or None)
+
+    return None, 'Unbekannte Aktion.'
+
+
+# --- Zugriffs-Helfer (Nutzer-Seite) ---------------------------------------
+
+def kooperationen_von(nutzer):
+    """Freigeschaltete Kooperations-Datensaetze des Nutzers -- ueber die
+    eindeutige nutzer_id, mit E-Mail-Gleichheit als Fallback fuer Alt-Eintraege."""
+    from models import Foerderer
+    return (Foerderer.query
+            .filter(Foerderer.typ == 'kooperation', Foerderer.status == 'active')
+            .filter(db.or_(Foerderer.nutzer_id == nutzer.id, Foerderer.email == nutzer.email))
+            .order_by(Foerderer.firma.asc()).all())
+
+
+def anhang_sichtbar_fuer_nutzer(anhang, nutzer):
+    """Darf dieser Nutzer den Anhang laden? True, wenn der zugehoerige Kommentar
+    an eine seiner Kooperationen oder an einen seiner Knoten haengt."""
+    k = anhang.kommentar
+    if k.foerderer_id and k.foerderer_id in {f.id for f in kooperationen_von(nutzer)}:
+        return True
+    if k.knoten_id and k.knoten_id in {kn.id for kn in nutzer.knoten}:
+        return True
+    return False
+
+
 def _kommentar_kurzfassung(kommentar):
     text = ' '.join(kommentar.text.split())
     if len(text) > 120:
@@ -160,12 +227,6 @@ def _anhang_speichern(kommentar, datei):
 
 def anhang_pfad(anhang):
     return os.path.join(_anhang_verzeichnis(), anhang.dateiname)
-
-
-def anhang_gehoert_zu_foerderer(anhang, foerderer_ids):
-    """Zugriffspruefung: gehoert der Anhang zu einem der uebergebenen Foerderer-
-    Datensaetze? (foerderer_ids = die Kooperationen des eingeloggten Nutzers)"""
-    return anhang.kommentar.foerderer_id in set(foerderer_ids)
 
 
 # --- Benachrichtigung ----------------------------------------------------

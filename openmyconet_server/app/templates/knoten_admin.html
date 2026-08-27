@@ -38,6 +38,7 @@
         <th>Aktiv</th>
         <th>Angelegt</th>
         <th>Messungen</th>
+        <th></th>
     </tr>
     {% for knoten in knoten_liste %}
     <tr>
@@ -47,6 +48,7 @@
         <td class="aktiv">{{ '✓' if knoten.aktiv else '✗' }}</td>
         <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
         <td>{{ knoten.messungen|length }}</td>
+        <td><a class="btn" href="{{ url_for('admin.kollaboration_knoten', knoten_id=knoten.id) }}">💬 Kollaboration</a></td>
     </tr>
     {% endfor %}
 </table>
