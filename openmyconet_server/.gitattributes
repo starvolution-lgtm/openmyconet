@@ -1,0 +1,5 @@
+# Shell-Skripte im deploy/-Ordner laufen auf dem Linux-Server -> immer LF,
+# sonst brechen sie mit "\r command not found" ab, wenn Git sie auf Windows
+# mit CRLF auscheckt.
+deploy/*.sh text eol=lf
+*.sh text eol=lf
