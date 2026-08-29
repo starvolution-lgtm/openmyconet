@@ -245,7 +245,13 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
      siehe Skript weiter unten. Grosse Playlist-Ansicht (.omn-player) existiert nur auf Seiten,
      die sie im content-Block einbinden (index.html Hero, medien.html) -- dieses Audio-Element
      und der FAB sind aber auf jeder Seite vorhanden. -->
-<audio id="omn-audio" preload="metadata"></audio>
+<!-- preload="none": Der Player ist auf jeder Seite vorhanden, aber die MP3s
+     (~6 MB/Track) duerfen NICHT bei jedem Seitenaufbau angefasst werden -- das
+     saettigt auf Mobil die HTTP/1.1-Verbindungen und die gunicorn-Worker und
+     laesst die Navigation minutenlang haengen. Geladen wird erst beim ersten
+     Play (Nutzergeste), die gespeicherte Position wird dann via loadedmetadata
+     wiederhergestellt. -->
+<audio id="omn-audio" preload="none"></audio>
 <div id="omn-audio-fab" style="position:fixed; bottom:1.4rem; left:1.2rem; z-index:890; display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem;">
   <div id="omn-audio-panel" style="display:none; background:rgba(2,40,28,0.97); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 1.1rem; min-width:220px; box-shadow:0 4px 24px rgba(0,0,0,0.5); font-family:JetBrains Mono,monospace;">
     <div style="font-size:0.6rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.7rem;">Audio</div>
@@ -431,15 +437,21 @@ var OMN_TRACKS = [
     else { setPlayingUI(false); }
   }
 
-  OMN_TRACKS.forEach(function(t,i){
-    var a = new Audio();
-    a.preload = 'metadata';
-    a.src = OMN_ASSET_BASE + t.file;
-    a.addEventListener('loadedmetadata', function(){
-      var el = document.getElementById('omn-dur-'+i);
-      if(el) el.textContent = fmt(a.duration);
+  // Track-Dauern nur dort laden, wo die grosse Playlist mit Dauer-Anzeige
+  // ueberhaupt sichtbar ist (index.html Hero, medien.html). Auf allen anderen
+  // Seiten wuerde dieser Loop 5x mehrere MB nur fuer die Metadaten ziehen und
+  // den Seitenaufbau blockieren (siehe Kommentar am <audio>-Element).
+  if(hasBigPlayer){
+    OMN_TRACKS.forEach(function(t,i){
+      var a = new Audio();
+      a.preload = 'metadata';
+      a.src = OMN_ASSET_BASE + t.file;
+      a.addEventListener('loadedmetadata', function(){
+        var el = document.getElementById('omn-dur-'+i);
+        if(el) el.textContent = fmt(a.duration);
+      });
     });
-  });
+  }
 
   function saveState(){
     try {
