@@ -145,7 +145,7 @@ def home():
         return redirect(url_for('dashboard.login'))
     if nutzer.knoten:
         return redirect(url_for('dashboard.knotenbetreiber'))
-    if nutzer.ist_hyphist and _kooperationen(nutzer):
+    if nutzer.ist_hyphist and kollaboration.kooperationen_von(nutzer):
         return redirect(url_for('dashboard.hyphist'))
     if Bewerbung.query.filter_by(nutzer_id=nutzer.id).first():
         return redirect(url_for('dashboard.bewerber'))

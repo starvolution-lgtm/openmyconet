@@ -56,6 +56,31 @@ def test_partner_sieht_aktive_kooperation_und_legt_aufgabe_an(client, app):
     assert len(ausgehend) == 1  # Team wird benachrichtigt
 
 
+def test_dashboard_home_leitet_hyphist_in_kooperationsbereich(client, app):
+    """Regression: /dashboard (home) leitete mit 500 (NameError _kooperationen),
+    weil der Rollen-Redirect eine nicht existierende Hilfsfunktion aufrief."""
+    nid = _nutzer(app)
+    _koop(app, nutzer_id=nid)
+    _als_nutzer(client, nid)
+
+    resp = client.get('/dashboard')
+    assert resp.status_code == 302
+    assert resp.headers['Location'].endswith('/dashboard/hyphist')
+
+    resp = client.get('/dashboard', follow_redirects=True)
+    assert resp.status_code == 200
+    assert 'Koop GmbH' in resp.get_data(as_text=True)
+
+
+def test_dashboard_home_hyphist_ohne_kooperation_landet_in_basis(client, app):
+    nid = _nutzer(app)  # ist_hyphist=True, aber keine aktive Kooperation
+    _als_nutzer(client, nid)
+
+    resp = client.get('/dashboard')
+    assert resp.status_code == 302
+    assert resp.headers['Location'].endswith('/dashboard/basis')
+
+
 def test_partner_kann_nicht_in_fremde_kooperation_schreiben(client, app):
     nid = _nutzer(app, email='a@example.com')
     fremd = _koop(app, email='b@example.com', firma='Fremd GmbH')
