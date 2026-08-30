@@ -457,15 +457,15 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 
   <form class="form-wrap" id="reg-form" onsubmit="handleReg(event)" novalidate>
     <div class="form-group">
-      <label id="lbl-name">{{ t('a_lbl_name') }}</label>
+      <label id="lbl-name" for="inp-name">{{ t('a_lbl_name') }}</label>
       <input type="text" id="inp-name" autocomplete="name" name="name" placeholder="{{ t('a_ph_name') }}">
     </div>
     <div class="form-group">
-      <label id="lbl-email">{{ t('a_lbl_email') }}</label>
+      <label id="lbl-email" for="inp-email">{{ t('a_lbl_email') }}</label>
       <input type="email" id="inp-email" required autocomplete="email" name="email" placeholder="{{ t('a_ph_email') }}">
     </div>
     <div class="form-group">
-      <label id="lbl-role">{{ t('a_lbl_role') }}</label>
+      <label id="lbl-role" for="reg-role">{{ t('a_lbl_role') }}</label>
       <select name="gruppe" id="reg-role" onchange="checkRegRole(this)">
         {% for opt_val, opt_key in [('interessent','a_opt_interessent'), ('wissenschaftler','a_opt_wissenschaftler'), ('entwickler','a_opt_entwickler'), ('unterstuetzer','a_opt_unterstuetzer'), ('foerderer','a_opt_foerderer')] %}
         <option value="{{ opt_val }}">{{ t(opt_key) }}</option>
@@ -478,7 +478,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       </div>
     </div>
     <div class="form-group">
-      <label id="lbl-msg">{{ t('a_lbl_msg') }}</label>
+      <label id="lbl-msg" for="inp-msg">{{ t('a_lbl_msg') }}</label>
       <textarea id="inp-msg" name="nachricht" style="height:80px;" placeholder="{{ t('a_ph_msg') }}"></textarea>
     </div>
 
@@ -558,21 +558,21 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       <input type="hidden" name="type" value="node_bewerbung">
 
       <div class="form-group">
-        <label id="node-lbl-ansprechpartner">{{ t('a_node_lbl_ansprechpartner') }}</label>
-        <input type="text" id="node-inp-ansprechpartner" name="ansprechpartner" required placeholder="{{ t('a_node_ph_ansprechpartner') }}">
+        <label id="node-lbl-ansprechpartner" for="node-inp-ansprechpartner">{{ t('a_node_lbl_ansprechpartner') }}</label>
+        <input type="text" id="node-inp-ansprechpartner" name="ansprechpartner" required autocomplete="name" placeholder="{{ t('a_node_ph_ansprechpartner') }}">
       </div>
       <div class="form-group">
-        <label id="node-lbl-profession">{{ t('a_node_lbl_profession') }}</label>
-        <input type="text" id="node-inp-profession" name="profession" placeholder="{{ t('a_node_ph_profession') }}">
+        <label id="node-lbl-profession" for="node-inp-profession">{{ t('a_node_lbl_profession') }}</label>
+        <input type="text" id="node-inp-profession" name="profession" autocomplete="organization-title" placeholder="{{ t('a_node_ph_profession') }}">
       </div>
       <div class="form-group">
-        <label id="node-lbl-substrat">{{ t('a_node_lbl_substrat') }}</label>
-        <input type="text" id="node-inp-substrat" name="node_substrat" required placeholder="{{ t('a_node_ph_substrat') }}">
+        <label id="node-lbl-substrat" for="node-inp-substrat">{{ t('a_node_lbl_substrat') }}</label>
+        <input type="text" id="node-inp-substrat" name="node_substrat" required autocomplete="off" placeholder="{{ t('a_node_ph_substrat') }}">
       </div>
       <div class="form-group">
-        <label id="node-lbl-address">{{ t('a_node_lbl_address') }}</label>
+        <label id="node-lbl-address" for="node-inp-address">{{ t('a_node_lbl_address') }}</label>
         <div style="display:flex; gap:0.6rem;">
-          <input type="text" id="node-inp-address" name="adresse" style="flex:1;" placeholder="{{ t('a_node_ph_address') }}">
+          <input type="text" id="node-inp-address" name="adresse" autocomplete="street-address" style="flex:1;" placeholder="{{ t('a_node_ph_address') }}">
           <button type="button" id="node-geocode-btn" onclick="geocodeNodeAddress()" title="{{ t('a_node_geocode_btn') }}" style="flex:0 0 auto; padding:0 1rem; background:transparent; color:#f0b84a; border:1px solid #d4a030; cursor:pointer;">📍</button>
         </div>
         <p id="node-geocode-hint" style="font-size:0.75rem; color:#a0c8a0; margin-top:0.4rem;">{{ t('a_node_geocode_hint') }}</p>
@@ -582,7 +582,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
         <input type="hidden" id="node-inp-lon" name="lon">
       </div>
       <div class="form-group">
-        <label id="node-lbl-motivation">{{ t('a_node_lbl_motivation') }}</label>
+        <label id="node-lbl-motivation" for="node-inp-motivation">{{ t('a_node_lbl_motivation') }}</label>
         <textarea id="node-inp-motivation" name="motivation" required style="height:130px;" placeholder="{{ t('a_node_ph_motivation') }}"></textarea>
       </div>
       <div class="form-group">
