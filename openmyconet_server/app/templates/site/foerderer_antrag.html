@@ -144,34 +144,35 @@ input[type=number] { width:140px; }
   <form method="post" action="{{ url_for('foerderer.antrag') }}" enctype="multipart/form-data">
     <input type="hidden" name="action" value="preview">
     <div class="honeypot" aria-hidden="true">
-      <label>Website</label>
-      <input type="text" name="website_url" tabindex="-1" autocomplete="off">
+      <label>Website
+        <input type="text" name="website_url" tabindex="-1" autocomplete="off">
+      </label>
     </div>
 
     <div class="form-group">
-      <label id="lbl-firma">Firmenname *</label>
-      <input type="text" name="firma" value="{{ data.firma or '' }}" required maxlength="120" placeholder="Ihr Unternehmensname">
+      <label id="lbl-firma" for="firma">Firmenname *</label>
+      <input type="text" id="firma" name="firma" value="{{ data.firma or '' }}" required maxlength="120" autocomplete="organization" placeholder="Ihr Unternehmensname">
     </div>
 
     <div class="form-group">
-      <label id="lbl-ansprechpartner">Ansprechpartner <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(optional)</span></label>
-      <input type="text" name="ansprechpartner" value="{{ data.ansprechpartner or '' }}" maxlength="120" placeholder="Vor- und Nachname">
+      <label id="lbl-ansprechpartner" for="ansprechpartner">Ansprechpartner <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(optional)</span></label>
+      <input type="text" id="ansprechpartner" name="ansprechpartner" value="{{ data.ansprechpartner or '' }}" maxlength="120" autocomplete="name" placeholder="Vor- und Nachname">
     </div>
 
     <div class="form-group">
-      <label id="lbl-desc">Kurzbeschreibung * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(20–300 Zeichen, erscheint im Eintrag)</span></label>
-      <textarea name="beschreibung" required maxlength="300" placeholder="Was macht Ihr Unternehmen? Warum unterstützen Sie OpenMycoNet?">{{ data.beschreibung or '' }}</textarea>
+      <label id="lbl-desc" for="beschreibung">Kurzbeschreibung * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(20–300 Zeichen, erscheint im Eintrag)</span></label>
+      <textarea id="beschreibung" name="beschreibung" required maxlength="300" placeholder="Was macht Ihr Unternehmen? Warum unterstützen Sie OpenMycoNet?">{{ data.beschreibung or '' }}</textarea>
       <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; margin-top:4px;"><span id="char-count">0</span> / 300</div>
     </div>
 
     <div class="form-group">
-      <label id="lbl-website">Website</label>
-      <input type="url" name="website" value="{{ data.website or '' }}" placeholder="https://www.beispiel.de">
+      <label id="lbl-website" for="website">Website</label>
+      <input type="url" id="website" name="website" value="{{ data.website or '' }}" autocomplete="url" placeholder="https://www.beispiel.de">
     </div>
 
     <div class="form-group">
-      <label id="lbl-kategorie">Kategorie *</label>
-      <select name="kategorie" required>
+      <label id="lbl-kategorie" for="kategorie">Kategorie *</label>
+      <select id="kategorie" name="kategorie" required>
         <option value="">— bitte wählen —</option>
         {% for k in kategorien %}
           <option value="{{ k }}" {% if data.kategorie == k %}selected{% endif %}>{{ k }}</option>
@@ -180,16 +181,16 @@ input[type=number] { width:140px; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-logo">Logo <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
+      <label id="lbl-logo" for="logo">Logo <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
       <div class="logo-upload" onclick="this.querySelector('input').click()">
-        <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
+        <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
         <div class="logo-upload-label" id="logo-upload-label">📁 Logo hier ablegen oder klicken zum Auswählen</div>
         <img id="logo-preview" src="" alt="Vorschau">
       </div>
     </div>
 
     <div class="form-group">
-      <label id="lbl-betrag">Jahresbeitrag * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(mind. 50 €, frei wählbar)</span></label>
+      <label id="lbl-betrag" for="betrag-input">Jahresbeitrag * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(mind. 50 €, frei wählbar)</span></label>
       <div class="betrag-grid">
         {% for b in betrag_optionen %}
           <button type="button" class="betrag-btn {% if b == 50 %}active{% endif %}" onclick="setBetrag({{ b }}, this)">{{ b }} €</button>
@@ -197,14 +198,14 @@ input[type=number] { width:140px; }
       </div>
       <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem;">
         <span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#5a8a6a;">oder</span>
-        <input type="number" name="betrag" id="betrag-input" value="50" min="50" step="1" oninput="clearBetragBtns()" style="width:120px;">
+        <input type="number" name="betrag" id="betrag-input" value="50" min="50" step="1" autocomplete="off" oninput="clearBetragBtns()" style="width:120px;">
         <span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#5a8a6a;">€</span>
       </div>
     </div>
 
     <div class="form-group">
-      <label id="lbl-email">Ihre E-Mail-Adresse * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(für Rechnung und Erneuerung)</span></label>
-      <input type="email" name="email" value="{{ data.email or '' }}" required placeholder="ihre@email.de">
+      <label id="lbl-email" for="email">Ihre E-Mail-Adresse * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(für Rechnung und Erneuerung)</span></label>
+      <input type="email" id="email" name="email" value="{{ data.email or '' }}" required autocomplete="email" placeholder="ihre@email.de">
     </div>
 
     <button type="submit" class="btn btn-green" style="margin-top:0.5rem;" id="btn-submit">Vorschau anzeigen →</button>
