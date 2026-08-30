@@ -50,5 +50,20 @@
   {% block content %}{% endblock %}
 </div>
 {% block extra_js %}{% endblock %}
+<script>
+/* CSRF: haengt das Session-Token (siehe csrf.py) an jedes POST-Formular an,
+   damit neue Formulare kein manuelles Hidden-Feld brauchen. */
+(function () {
+  var t = {{ csrf_token()|tojson }};
+  document.querySelectorAll('form').forEach(function (f) {
+    var m = (f.getAttribute('method') || 'get').toLowerCase();
+    if (m === 'post' && !f.querySelector('input[name="_csrf"]')) {
+      var i = document.createElement('input');
+      i.type = 'hidden'; i.name = '_csrf'; i.value = t;
+      f.appendChild(i);
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -535,7 +535,6 @@ def _rechnung_pdf_erzeugen(foerderer, nr, betrag, txn_id):
 
 def _mail_foerderer(foerderer, rechnung_nr):
     download_url = f'{_base_url()}/foerderer/rechnung?nr={quote(rechnung_nr)}&token={quote(foerderer.token)}'
-    ablauf = foerderer.laeuft_ab_am.strftime('%d.%m.%Y') if foerderer.laeuft_ab_am else '-'
     msg = Message(
         subject=f'Zahlungseingang bestätigt – Ihr OpenMycoNet Förderer-Eintrag, Rechnung {rechnung_nr}',
         recipients=[foerderer.email],

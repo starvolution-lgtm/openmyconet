@@ -67,7 +67,7 @@ https://www.openmyconet.de
     try:
         mail.send(msg)
     except Exception as e:
-        fehler = f'Mailversand fehlgeschlagen: {str(e)}'
+        fehler = f'Mailversand fehlgeschlagen: {e!s}'
         if rollback_on_mail_fail:
             db.session.delete(nutzer)
             db.session.commit()
@@ -105,7 +105,7 @@ def api_register():
     if not email:
         return jsonify({"error": "E-Mail-Adresse fehlt."}), 400
 
-    nutzer, fehler = register_nutzer_core(name, email, sprache, land, gruppe, ip=ip)
+    _nutzer, fehler = register_nutzer_core(name, email, sprache, land, gruppe, ip=ip)
     if fehler:
         return jsonify({"error": fehler}), 400
     return jsonify({"ok": True})

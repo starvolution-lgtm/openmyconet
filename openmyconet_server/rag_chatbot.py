@@ -155,10 +155,15 @@ SYNONYMS = {
     "methodik": ["methodik", "feldforschung", "labor", "mycelist", "hyphist", "sporist", "knotenbetreiber", "sorgfalt", "unabhängig", "wissenschaftlich", "arbeiten"],
     "feldforschung": ["methodik", "feldforschung", "labor", "mycelist", "hyphist", "sporist", "knotenbetreiber", "sorgfalt", "unabhängig", "wissenschaftlich"],
     "mycelist": ["methodik", "mycelist", "hyphist", "sporist", "mitglied", "rolle", "knotenbetreiber"],
-    "software": ["software", "simulation", "testbetrieb", "closed loop", "implementiert", "biocomm", "live-monitor", "entwicklungsstatus"],
-    "hardware": ["hardware", "biocomm", "esp32", "lora", "bridge", "knoten", "node", "sonde", "gehäuse", "überarbeitung", "prototyp", "entwicklungsstatus"],
+    # DE+EN zusammengefuehrt: dieselben Keys standen frueher doppelt im Dict
+    # (einmal im DE-, einmal im EN-Block) -- der zweite Eintrag ueberschrieb den
+    # ersten stillschweigend, sodass DE-Anfragen die EN-Synonyme bekamen und
+    # umgekehrt Synonyme verloren gingen. expand_keywords() ist ohnehin
+    # sprachunabhaengig (iteriert alle Keys), daher hier bewusst die Vereinigung.
+    "software": ["software", "simulation", "testbetrieb", "test", "closed loop", "implementiert", "implemented", "biocomm", "live-monitor", "monitor", "entwicklungsstatus", "development status"],
+    "hardware": ["hardware", "biocomm", "esp32", "lora", "bridge", "knoten", "node", "sonde", "probe", "gehäuse", "enclosure", "überarbeitung", "revision", "prototyp", "prototype", "entwicklungsstatus", "development status"],
     "biocomm": ["biocomm", "messung", "stimulation", "plattform", "software", "hardware", "kanäle", "elektrode"],
-    "stimulation": ["stimulation", "reiz", "elektrisch", "optisch", "bidirektional", "amplitude", "frequenz"],
+    "stimulation": ["stimulation", "reiz", "stimulus", "elektrisch", "electrical", "optisch", "optical", "bidirektional", "bidirectional", "amplitude", "frequenz", "frequency"],
     "entwicklungsstand": ["entwicklungsstand", "entwicklungsstatus", "status", "überarbeitung", "geplant", "vorbereitung", "abgeschlossen", "fertigung", "implementiert", "ausstehend"],
     "entwicklung": ["entwicklung", "entwicklungsstatus", "status", "überarbeitung", "geplant", "vorbereitung", "abgeschlossen"],
     "leihgerät": ["leihgerät", "leihprogramm", "pfand", "kaution", "rückgabe", "edition", "gehäuse"],
@@ -176,13 +181,11 @@ SYNONYMS = {
     "cooperation": ["supporter", "cooperation", "sponsor", "support", "contribution", "partner", "logo", "category", "paypal", "company"],
     "methodology": ["methodology", "fieldwork", "laboratory", "mycelist", "hyphist", "sporist", "node operator", "rigor", "independent", "scientific"],
     "fieldwork": ["methodology", "fieldwork", "laboratory", "mycelist", "hyphist", "sporist", "node operator", "rigor", "independent"],
-    "software": ["software", "simulation", "test", "implemented", "closed loop", "biocomm", "monitor", "development status"],
-    "hardware": ["hardware", "biocomm", "esp32", "lora", "bridge", "node", "probe", "enclosure", "revision", "prototype", "development status"],
+    # "software"/"hardware"/"stimulation": siehe zusammengefuehrte Eintraege im DE-Block oben.
     "development": ["development", "status", "revision", "planned", "preparation", "complete", "pending", "implemented"],
     "deposit": ["deposit", "loan", "return", "borrow", "edition"],
     "cost": ["cost", "deposit", "loan", "contribution", "fee", "price", "euro"],
     "measure": ["measure", "measurement", "channels", "bioelectric", "electrode", "adc", "stimulation", "probe"],
-    "stimulation": ["stimulation", "stimulus", "electrical", "optical", "bidirectional", "amplitude", "frequency"],
     "music": ["music", "song", "brochure", "book", "novel", "media", "ai-generated"],
     # NL/FR/ES — grundlegend
     "beschikbaar": ["hardware", "tijdlijn", "knooppunt"],

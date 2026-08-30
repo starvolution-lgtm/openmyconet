@@ -30,6 +30,10 @@ def app():
         SQLALCHEMY_DATABASE_URI=f'sqlite:///{db_path}',
         MAIL_SUPPRESS_SEND=True,
         SERVER_NAME='testserver.local',
+        # CSRF-Schutz (csrf.py) fuer die meisten Tests aus -- die POST-Requests
+        # der Test-Clients schicken kein Token mit. test_csrf.py schaltet ihn
+        # gezielt wieder ein, um die Mechanik selbst zu pruefen.
+        CSRF_ENABLED=False,
     )
     # instance_path zeigt sonst auf den echten Projektordner -- ohne diese
     # Umleitung landen von Tests erzeugte Foerderer-Rechnungs-PDFs

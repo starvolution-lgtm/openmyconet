@@ -20,11 +20,13 @@ from flask_mail import Message
 from extensions import db, mail
 from models import Nutzer, Bewerbung, KollaborationAnhang
 from spam_schutz import ip_erlaubt
+from csrf import schuetze_blueprint
 import kollaboration
 
 logger = logging.getLogger(__name__)
 
 dashboard_bp = Blueprint('dashboard', __name__)
+schuetze_blueprint(dashboard_bp)  # CSRF-Pruefung fuer alle POST-Routen des Nutzer-Dashboards
 
 LINK_GUELTIG_MINUTEN = 30
 

@@ -1,0 +1,35 @@
+# Ruff-Konfiguration -- bewusst schmal gehalten, damit `ruff check` als
+# verlaessliches Signal gruen bleibt und nicht in Stil-Rauschen untergeht.
+#
+# Lauf:  venv/Scripts/python.exe -m ruff check .
+# Fix:   venv/Scripts/python.exe -m ruff check . --fix   (nur sichere Fixes)
+
+target-version = "py311"
+line-length = 120
+extend-exclude = ["venv", "instance", "dist", "app/static", ".pytest_cache", "scratchpad"]
+
+[lint]
+# F  = pyflakes (echte Bugs: ungenutzte Importe/Variablen, doppelte Dict-Keys ...)
+# E9 = Syntaxfehler
+# B  = flake8-bugbear (haeufige Fallstricke)
+# SIM/RUF = ausgewaehlte Vereinfachungen
+select = ["F", "E9", "B", "SIM", "RUF"]
+
+ignore = [
+    "E501",     # Zeilenlaenge -- der Bestand hat viele bewusst lange Strings/Dicts
+    "B008",     # Funktionsaufruf im Default-Argument -- bei Flask/SQLAlchemy ueblich
+    "SIM105",   # contextlib.suppress statt try/except/pass -- try/except ist hier lesbarer
+    "SIM108",   # Ternaer-Zwang -- oft weniger lesbar
+    "SIM103",   # "return cond" -- mehrere unabhaengige Guard-Checks sind lesbarer
+    "RUF001", "RUF002", "RUF003",  # Unicode-Confusables -- deutscher Text, viele Falschtreffer
+    "RUF012",   # ClassVar-Annotationspflicht fuer mutable Defaults -- SQLAlchemy-Models
+    "B904",     # raise ... from -- nachziehen, aber kein Blocker
+]
+
+# datetime.utcnow()-Deprecation (DTZ) ist bekannt und braucht eine DB-Migration
+# fuer die gespeicherten naiven Timestamps -- eigener Arbeitsschritt, siehe
+# Verbesserungs-Backlog. Solange NICHT als Lint-Fehler fuehren.
+
+[lint.per-file-ignores]
+"tests/*" = ["B011"]
+"migrate_*.py" = ["F401"]

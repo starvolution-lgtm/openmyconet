@@ -10,7 +10,6 @@ Nutzer-Anlage/Verknuepfung bei Kooperations-/Foerderer-Antraegen laeuft ueber
 E-Mail-Abgleich, exakt nach dem in bewerbung.py etablierten Muster (bestehenden
 Nutzer per E-Mail finden oder per register_nutzer_core neu anlegen).
 """
-from extensions import db
 from models import Nutzer
 from registrierung import register_nutzer_core
 

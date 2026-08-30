@@ -1,4 +1,4 @@
-from extensions import db, mail
+from extensions import mail
 from models import Nutzer
 
 

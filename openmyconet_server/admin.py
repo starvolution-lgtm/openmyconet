@@ -20,9 +20,11 @@ from models import (
 )
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 from spam_schutz import ip_erlaubt
+from csrf import schuetze_blueprint
 import kollaboration
 
 admin_bp = Blueprint('admin', __name__)
+schuetze_blueprint(admin_bp)  # CSRF-Pruefung fuer alle POST-Routen des Admin-Panels
 
 ALLOWED_IMAGE_EXT = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 UPLOAD_SUBDIR = os.path.join('uploads', 'news')
@@ -335,7 +337,7 @@ def newsletter():
                     mail.send(msg)
                     gesendet += 1
                 except Exception as e:
-                    fehler_liste.append(f'{nutzer.email}: {str(e)}')
+                    fehler_liste.append(f'{nutzer.email}: {e!s}')
             if fehler_liste:
                 fehler = f'Gesendet: {gesendet}, Fehler: {len(fehler_liste)}'
             else:

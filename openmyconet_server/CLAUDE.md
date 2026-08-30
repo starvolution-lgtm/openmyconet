@@ -18,8 +18,11 @@ SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sql
 `migrate_add_indexes.py` (`CREATE INDEX IF NOT EXISTS`). Neue Tabellen legt
 `db.create_all()` an. Feature-Migrationen als eigene `migrate_*.py` mit App-Context.
 
-## Tests
+## Tests & Lint
 `venv/Scripts/python.exe -m pytest -q -p no:warnings`
+`venv/Scripts/python.exe -m ruff check .` (Config: `ruff.toml`, muss grün bleiben;
+`--fix` nur sichere Fixes). `datetime.utcnow`-Deprecation (DTZ) ist bewusst nicht
+aktiviert — braucht eine DB-Migration der gespeicherten naiven Timestamps.
 Bekannt rot auf `main` (nicht anfassen): `test_presse` (`presse_suche.time`),
 `test_foerderer::test_kooperation_submit...` (Mail-Zähler). Tests nutzen temp-DBs.
 
@@ -34,6 +37,15 @@ Kein Git-Checkout auf dem Server → Deploy per **scp einzelner Dateien**.
 5. Prüfen: `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5000/<route>` + extern.
    Auth-Seiten per `venv/bin/python` test_client mit gesetzter Session rendern.
 BOM-Falle: vor UTF-8-Uploads sicherstellen, dass keine `ef bb bf`-Bytes am Dateianfang stehen.
+
+## Sicherheit
+CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
+Session-Token (Feld `_csrf` oder Header `X-CSRFToken`). `admin_base.html` /
+`dashboard_base.html` hängen es per Skript an jedes `<form method=post>` an, neue
+Formulare brauchen also nichts. Bewusst NICHT geschützt: `/api/register`,
+`/api/bewerbung`, `/api/chat` (cross-origin fetch von der statischen Website),
+`/foerderer/ipn` (PayPal), `/api/v1/messung` (Geräte). Tests: `CSRF_ENABLED=False`
+in conftest, eigener Nachweis in `test_csrf.py`.
 
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
