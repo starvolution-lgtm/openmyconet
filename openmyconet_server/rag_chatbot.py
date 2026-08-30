@@ -8,6 +8,7 @@ import os
 import re
 import json
 import logging
+from pathlib import Path
 from flask import Blueprint, request, jsonify
 import anthropic
 
@@ -19,10 +20,21 @@ logger = logging.getLogger(__name__)
 chatbot_bp = Blueprint("chatbot", __name__)
 
 # ---------------------------------------------------------------------------
-# Wissensbasis — aus translations.js extrahiert + manueller Zeitplan-Chunk
+# Wissensbasis
+#
+# Primärquelle: rag_chunks.json — von build_rag_index.py aus der echten
+# translations.json + der News-Tabelle generiert. Nach Textänderungen an der
+# Website `python build_rag_index.py` laufen lassen und die Datei mit
+# deployen (siehe Skript-Doku).
+#
+# Fällt die Datei weg oder ist sie defekt, greift die unten eingebettete
+# _FALLBACK_CHUNKS-Liste (eingefrorener Alt-Stand, hält den Bot notdürftig
+# lauffähig, ist aber veraltet).
 # ---------------------------------------------------------------------------
 
-CHUNKS = [
+_CHUNKS_FILE = Path(__file__).with_name("rag_chunks.json")
+
+_FALLBACK_CHUNKS = [
   {"id":1,"lang":"de","title":"Vision & Warum","text":"Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde. Mykorrhiza-Pilze verbinden seit 400 Millionen Jahren nahezu alle Landpflanzen miteinander — sie transportieren Nährstoffe, übermitteln Warnsignale und koordinieren das Leben im Boden auf eine Weise die wir gerade erst zu verstehen beginnen. Sie senden elektrische Signale. Messbar. Reproduzierbar. Und bisher kaum entschlüsselt. OpenMycoNet stellt die einfache aber weitreichende Frage: Was passiert wenn wir aufhören, Böden nur von außen zu analysieren — und stattdessen anfangen zuzuhören was das Netzwerk selbst sendet? Das Netzwerk sendet. Wir haben gerade erst angefangen zuzuhören. Jeder BioComm-Knoten der weltweit in Betrieb geht bringt uns einen Schritt näher an das Verständnis — für alle."},
   {"id":2,"lang":"de","title":"Über das Projekt","text":"OpenMycoNet wurde von Robert Jank, unabhängigem Erfinder aus Maintal bei Frankfurt, initiiert — ohne Institutszugehörigkeit, mit dem Ziel zu verstehen was Mykorrhiza-Netzwerke elektrisch signalisieren. Das zugrundeliegende System BioComm ist durch ein Gebrauchsmuster beim DPMA geschützt. Die Software wird als portable .exe bereitgestellt. Die Messdaten gehören der Gemeinschaft. Prinzip: Proprietary Intelligence, Open Data — das KI-Modell ist geschützt, die Daten die es trainieren sind frei."},
   {"id":3,"lang":"de","title":"Mitmachen & Knoten betreiben","text":"Die Ergebnisse und Daten des Netzwerks stehen allen offen — jeder kann sie einsehen, ganz ohne eigenen Knoten und ohne Vorkenntnisse. Einen eigenen BioComm-Knoten betreiben können aktuell nur ausgewählte Knotenbetreiber über eine kuratierte Bewerbung (Formular auf der Website), da die Hardware begrenzt ist. Kriterien sind unter anderem ein geeigneter Standort mit Substrat (Wald, Garten, Kompost, Blumentopf mit Pilz- oder Mykorrhiza-Substrat), WLAN-Verfügbarkeit in der Nähe des geplanten Bridge-Standorts sowie grundlegende Handhabung von Hardware; ein fachlicher oder wissenschaftlicher Bezug ist von Vorteil, aber keine Voraussetzung. Nach Zusage: BioComm-Messgerät als Leihgerät erhalten — Pfand ca. 100 € (finale Kosten folgen), Rückgabe jederzeit möglich. BioComm-Software kostenlos herunterladen — keine Installation, kein Python nötig. Elektroden ins Substrat setzen. Der Knoten funkt seine Messdaten per LoRa an eine BioComm Bridge in der Nähe (Punkt-zu-Punkt, realistisch 1–3 km Reichweite im Wald); die Bridge verbindet sich per WLAN mit der Zentrale und überträgt die Daten automatisch im Hintergrund. Diese Funkanbindung ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation und noch nicht ausgeliefert. Personenbezogene Daten und dein genauer Standort werden nicht veröffentlicht — deine für die Forschung vorgesehenen Messdaten werden zusammen mit den notwendigen, nicht personenbezogenen Kontextinformationen offen bereitgestellt."},
@@ -80,6 +92,24 @@ CHUNKS = [
   {"id":55,"lang":"es","title":"Cómo trabajamos — Metodología","text":"OpenMycoNet apuesta deliberadamente por la investigación de campo como complemento a la investigación de laboratorio: los estudios de laboratorio (p. ej. el trabajo electrofisiológico de Andrew Adamatzky) excluyen deliberadamente variables de perturbación como la humedad del suelo fluctuante o los gradientes de temperatura para demostrar mecanismos básicos de forma aislada — lo que los hace metodológicamente valiosos, pero también limita su capacidad explicativa para condiciones reales de ecosistema sujetas a perturbación. Lehmann y Rillig (2025) señalan una brecha sustancial en la investigación sobre CMN (Common Mycorrhizal Networks), en particular en lo relativo a estudios de campo y datos a nivel de ecosistema. OpenMycoNet distingue tres roles de membresía — Mycelist (miembro, base del proyecto), Hyphist (socio de cooperación) y Sporist (patrocinador) — de la cualificación de operador de nodo, independiente: cualquiera de los tres roles puede operar sensores tras una breve formación introductoria y un cuidado demostrado, independientemente de cuánto contribuya económicamente. El rigor científico significa: primero los datos de medición, después las afirmaciones sobre efectos; trabajar con un resultado abierto; declaraciones públicas sobre nuevos desarrollos solo una vez aclarado el estado de protección; documentación sistemática de las condiciones por parte de los operadores de nodos. En esta fase temprana, OpenMycoNet sigue deliberadamente un camino de desarrollo independiente para establecer primero la plataforma y la base de datos antes de decidir sobre colaboraciones institucionales — conservando el control sobre la propiedad intelectual, pero esto no sustituye la necesidad de rigor metodológico: el intercambio con científicos independientes es parte fija del trabajo."},
 ]
 
+
+def _load_chunks() -> list[dict]:
+    """rag_chunks.json laden; bei Fehler auf _FALLBACK_CHUNKS zurückfallen."""
+    try:
+        data = json.loads(_CHUNKS_FILE.read_text(encoding="utf-8"))
+        if isinstance(data, list) and data:
+            logger.info("RAG-Wissensbasis: %d Chunks aus %s", len(data), _CHUNKS_FILE.name)
+            return data
+        logger.warning("%s ist leer/ungültig — nutze _FALLBACK_CHUNKS", _CHUNKS_FILE.name)
+    except FileNotFoundError:
+        logger.warning("%s fehlt — nutze _FALLBACK_CHUNKS (veralteter Stand)", _CHUNKS_FILE.name)
+    except Exception as e:
+        logger.error("%s konnte nicht geladen werden (%s) — nutze _FALLBACK_CHUNKS", _CHUNKS_FILE.name, e)
+    return _FALLBACK_CHUNKS
+
+
+CHUNKS = _load_chunks()
+
 # ---------------------------------------------------------------------------
 # Spracherkennung
 # ---------------------------------------------------------------------------
@@ -117,6 +147,17 @@ SYNONYMS = {
     "methodik": ["methodik", "feldforschung", "labor", "mycelist", "hyphist", "sporist", "knotenbetreiber", "sorgfalt", "unabhängig", "wissenschaftlich", "arbeiten"],
     "feldforschung": ["methodik", "feldforschung", "labor", "mycelist", "hyphist", "sporist", "knotenbetreiber", "sorgfalt", "unabhängig", "wissenschaftlich"],
     "mycelist": ["methodik", "mycelist", "hyphist", "sporist", "mitglied", "rolle", "knotenbetreiber"],
+    "software": ["software", "simulation", "testbetrieb", "closed loop", "implementiert", "biocomm", "live-monitor", "entwicklungsstatus"],
+    "hardware": ["hardware", "biocomm", "esp32", "lora", "bridge", "knoten", "node", "sonde", "gehäuse", "überarbeitung", "prototyp", "entwicklungsstatus"],
+    "biocomm": ["biocomm", "messung", "stimulation", "plattform", "software", "hardware", "kanäle", "elektrode"],
+    "stimulation": ["stimulation", "reiz", "elektrisch", "optisch", "bidirektional", "amplitude", "frequenz"],
+    "entwicklungsstand": ["entwicklungsstand", "entwicklungsstatus", "status", "überarbeitung", "geplant", "vorbereitung", "abgeschlossen", "fertigung", "implementiert", "ausstehend"],
+    "entwicklung": ["entwicklung", "entwicklungsstatus", "status", "überarbeitung", "geplant", "vorbereitung", "abgeschlossen"],
+    "leihgerät": ["leihgerät", "leihprogramm", "pfand", "kaution", "rückgabe", "edition", "gehäuse"],
+    "kosten": ["kosten", "pfand", "kaution", "beitrag", "gebühr", "preis", "euro"],
+    "pfand": ["pfand", "kaution", "leihgerät", "leihprogramm", "rückgabe"],
+    "messen": ["messung", "kanäle", "bioelektrisch", "elektrode", "adc", "stimulation", "sonde"],
+    "musik": ["musik", "song", "broschüre", "buch", "roman", "medien", "ki-generiert"],
     # EN
     "available": ["hardware", "timeline", "available", "device", "node", "when", "delivery"],
     "join": ["join", "node", "hardware", "step", "electrode", "operate", "participate"],
@@ -127,6 +168,14 @@ SYNONYMS = {
     "cooperation": ["supporter", "cooperation", "sponsor", "support", "contribution", "partner", "logo", "category", "paypal", "company"],
     "methodology": ["methodology", "fieldwork", "laboratory", "mycelist", "hyphist", "sporist", "node operator", "rigor", "independent", "scientific"],
     "fieldwork": ["methodology", "fieldwork", "laboratory", "mycelist", "hyphist", "sporist", "node operator", "rigor", "independent"],
+    "software": ["software", "simulation", "test", "implemented", "closed loop", "biocomm", "monitor", "development status"],
+    "hardware": ["hardware", "biocomm", "esp32", "lora", "bridge", "node", "probe", "enclosure", "revision", "prototype", "development status"],
+    "development": ["development", "status", "revision", "planned", "preparation", "complete", "pending", "implemented"],
+    "deposit": ["deposit", "loan", "return", "borrow", "edition"],
+    "cost": ["cost", "deposit", "loan", "contribution", "fee", "price", "euro"],
+    "measure": ["measure", "measurement", "channels", "bioelectric", "electrode", "adc", "stimulation", "probe"],
+    "stimulation": ["stimulation", "stimulus", "electrical", "optical", "bidirectional", "amplitude", "frequency"],
+    "music": ["music", "song", "brochure", "book", "novel", "media", "ai-generated"],
     # NL/FR/ES — grundlegend
     "beschikbaar": ["hardware", "tijdlijn", "knooppunt"],
     "disponible": ["hardware", "calendrier", "nœud", "nodo"],
