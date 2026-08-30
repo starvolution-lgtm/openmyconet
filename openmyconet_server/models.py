@@ -42,7 +42,7 @@ class Nutzer(db.Model):
 class Knoten(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     knoten_id = db.Column(db.String(50), unique=True, nullable=False)
-    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=False)
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=False, index=True)
     lat_grob = db.Column(db.Float)
     lon_grob = db.Column(db.Float)
     substrat = db.Column(db.String(100), default='')
@@ -62,8 +62,8 @@ class Bewerbung(db.Model):
     lon = db.Column(db.Float, nullable=True)
     motivation = db.Column(db.Text)
     sprache = db.Column(db.String(10), default='de')
-    status = db.Column(db.String(20), default='neu')  # neu | in_pruefung | angenommen | abgelehnt | warteliste
-    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=True)
+    status = db.Column(db.String(20), default='neu', index=True)  # neu | in_pruefung | angenommen | abgelehnt | warteliste
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=True, index=True)
     nutzer = db.relationship('Nutzer')
     ip = db.Column(db.String(45), nullable=True)
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
@@ -81,6 +81,11 @@ class Messung(db.Model):
     luft_feuchte = db.Column(db.Float, nullable=True)    # %
     licht = db.Column(db.Float, nullable=True)           # Lux optional
 
+    # Zeitreihen-Tabelle: waechst mit jedem Knoten-Upload. Die typische Abfrage
+    # ist "Messungen eines Knotens, nach Zeit sortiert" -- dafuer ein
+    # zusammengesetzter Index (knoten_id, zeitstempel).
+    __table_args__ = (db.Index('ix_messung_knoten_zeit', 'knoten_id', 'zeitstempel'),)
+
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titel = db.Column(db.String(200), nullable=False)
@@ -90,7 +95,7 @@ class News(db.Model):
     slug = db.Column(db.String(250), unique=True, nullable=True)
     sprache = db.Column(db.String(10), default='de')
     bild_dateiname = db.Column(db.String(255), nullable=True)
-    veroeffentlicht = db.Column(db.DateTime, default=datetime.utcnow)
+    veroeffentlicht = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
 # --- Neue Modelle ---
 
@@ -107,7 +112,7 @@ class ChatLog(db.Model):
     answer = db.Column(db.Text, nullable=False)
     lang = db.Column(db.String(10), default='de')
     chunks_used = db.Column(db.Text, default='')
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
 class Spende(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -131,7 +136,7 @@ class Foerderer(db.Model):
     # pending (noch keine Zahlung/Antrag unbearbeitet) | zahlung_eingegangen (PayPal-
     # Zahlung eingegangen, wartet auf inhaltliche Pruefung -- siehe foerderer.py ipn())
     # | active | expired | rejected | verfallen
-    status = db.Column(db.String(20), default='pending')
+    status = db.Column(db.String(20), default='pending', index=True)
     # Zeitpunkt des letzten Statuswechsels (nicht erstellt_am!) -- Basis fuer die
     # automatische Verfalls-Pruefung bei Kooperationsanfragen (2 Monate ohne
     # Aktivitaet -> status='verfallen', siehe foerderer_verfall_pruefen.py).
@@ -157,7 +162,7 @@ class Foerderer(db.Model):
     # Admin-Freigabe (admin.py action='activate') gesetzt, damit der Hyphist-
     # Kollaborationsbereich (kollaboration.py) nicht mehr nur ueber E-Mail-
     # Gleichheit joinen muss. NULL bei Alt-Eintraegen ohne Nutzer-Match.
-    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=True)
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=True, index=True)
 
 class RechnungsZaehler(db.Model):
     jahr = db.Column(db.Integer, primary_key=True)
@@ -171,7 +176,7 @@ class Presseeintrag(db.Model):
     anreissertext = db.Column(db.Text, nullable=False)  # eigene Einordnung, kein Zitat aus dem Original
     datum = db.Column(db.Date, nullable=True)  # Veroeffentlichungsdatum des Presseartikels
     sprache = db.Column(db.String(10), default='de')
-    veroeffentlicht = db.Column(db.Boolean, default=False)
+    veroeffentlicht = db.Column(db.Boolean, default=False, index=True)
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Pressekandidat(db.Model):
@@ -185,7 +190,7 @@ class Pressekandidat(db.Model):
     datum = db.Column(db.Date, nullable=True)
     sprache = db.Column(db.String(10), default='de')
     gefunden_am = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), default='pending')  # pending | uebernommen | verworfen
+    status = db.Column(db.String(20), default='pending', index=True)  # pending | uebernommen | verworfen
 
 class Aufgabe(db.Model):
     """Kollaborationsbereich: gemeinsame Aufgabenliste zwischen einem Partner und
@@ -198,8 +203,8 @@ class Aufgabe(db.Model):
     Kein Admin-Freigabeschritt -- rein interner Austausch, beide Seiten duerfen
     Aufgaben anlegen und abschliessen."""
     id = db.Column(db.Integer, primary_key=True)
-    foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True)
-    knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True)
+    foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True, index=True)
+    knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True, index=True)
     titel = db.Column(db.String(200), nullable=False)
     beschreibung = db.Column(db.Text, default='')
     status = db.Column(db.String(20), default='offen')  # offen | erledigt
@@ -217,9 +222,9 @@ class Kommentar(db.Model):
     Optional zusaetzlich an eine Aufgabe gebunden (aufgabe_id) -- sonst allgemeiner
     Bereichs-Kommentar."""
     id = db.Column(db.Integer, primary_key=True)
-    foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True)
-    knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True)
-    aufgabe_id = db.Column(db.Integer, db.ForeignKey('aufgabe.id', ondelete='CASCADE'), nullable=True)
+    foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True, index=True)
+    knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True, index=True)
+    aufgabe_id = db.Column(db.Integer, db.ForeignKey('aufgabe.id', ondelete='CASCADE'), nullable=True, index=True)
     text = db.Column(db.Text, nullable=False)
     autor = db.Column(db.String(10), default='team')  # team | partner
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
@@ -235,7 +240,7 @@ class KollaborationAnhang(db.Model):
     ueber eine auth-gepruefte Route ausgeliefert (dashboard.py / admin.py). Physisch
     unter instance/uploads/kollaboration/."""
     id = db.Column(db.Integer, primary_key=True)
-    kommentar_id = db.Column(db.Integer, db.ForeignKey('kommentar.id', ondelete='CASCADE'), nullable=False)
+    kommentar_id = db.Column(db.Integer, db.ForeignKey('kommentar.id', ondelete='CASCADE'), nullable=False, index=True)
     dateiname = db.Column(db.String(255), nullable=False)      # gespeicherter, zufaelliger Name
     originalname = db.Column(db.String(255), default='')       # Anzeigename fuer den Download
     groesse = db.Column(db.Integer, default=0)                 # Bytes

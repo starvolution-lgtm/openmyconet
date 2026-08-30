@@ -14,8 +14,16 @@ import anthropic
 
 from extensions import db
 from models import ChatLog
+from spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
+
+# Rate-Limit fuer /api/chat: der Endpunkt loest pro Aufruf einen kostenpflichtigen
+# Anthropic-API-Call aus und ist bewusst ohne Login erreichbar -- ohne Limit kann
+# ein Skript beliebig viele Anfragen absetzen (API-Rechnung). 20 Anfragen pro
+# Stunde und IP reichen fuer eine echte Unterhaltung locker aus.
+CHAT_LIMIT = 20
+CHAT_WINDOW = 3600
 
 chatbot_bp = Blueprint("chatbot", __name__)
 
@@ -262,6 +270,9 @@ def chat():
 
     if not message:
         return jsonify({"error": "Kein Text übermittelt"}), 400
+
+    if not ip_erlaubt(request.remote_addr, "chat", limit=CHAT_LIMIT, window=CHAT_WINDOW):
+        return jsonify({"error": "Zu viele Anfragen — bitte in einer Stunde erneut versuchen."}), 429
 
     # Sprache erkennen
     lang = detect_language(message)

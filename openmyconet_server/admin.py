@@ -19,6 +19,7 @@ from models import (
     Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, KollaborationAnhang,
 )
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
+from spam_schutz import ip_erlaubt
 import kollaboration
 
 admin_bp = Blueprint('admin', __name__)
@@ -131,7 +132,13 @@ def login():
             ziel = 'admin.admin' if user.role == 'superadmin' else 'admin.news_admin'
             return redirect(url_for(ziel))
         else:
-            fehler = 'Falscher Benutzername oder Passwort.'
+            # Nur Fehlversuche zaehlen gegen das Rate-Limit -- ein erfolgreicher
+            # Login wird nie blockiert. 8 Fehlversuche pro 15 Minuten und IP
+            # bremsen Brute-Force, ohne legitime Vertipper zu bestrafen.
+            if not ip_erlaubt(request.remote_addr, 'admin_login', limit=8, window=900):
+                fehler = 'Zu viele Fehlversuche — bitte 15 Minuten warten.'
+            else:
+                fehler = 'Falscher Benutzername oder Passwort.'
     return render_template('login.html', fehler=fehler)
 
 

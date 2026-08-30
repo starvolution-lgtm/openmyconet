@@ -69,6 +69,9 @@ def _rate_limit_umgehen(monkeypatch):
     # gezielten Test der echten Rate-Limit-Logik).
     monkeypatch.setattr('registrierung.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('foerderer.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('dashboard.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('rag_chatbot.ip_erlaubt', lambda *a, **kw: True)
 
 
 @pytest.fixture()

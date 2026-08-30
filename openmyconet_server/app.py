@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, url_for, Response
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
 import os
 
 from extensions import db, mail
@@ -31,9 +33,48 @@ app = Flask(__name__,
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Konfiguration
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-key')
+# Kein stiller Fallback-Key mehr: ein geratener SECRET_KEY macht Session-Cookies
+# faelschbar (Admin-Login uebernehmbar). Fehlt der Key, soll die App gar nicht
+# erst starten, statt scheinbar zu laufen.
+_secret_key = os.getenv('SECRET_KEY')
+if not _secret_key:
+    raise RuntimeError(
+        "SECRET_KEY fehlt. In .env setzen, z. B.: "
+        'python -c "import secrets; print(secrets.token_hex(32))"'
+    )
+app.config['SECRET_KEY'] = _secret_key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///openmyconet.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# gunicorn laeuft mit -w 2: zwei Prozesse schreiben parallel in dieselbe SQLite-
+# Datei (Knoten-Uploads via /api/v1/messung + Admin). Ohne Wartezeit wirft der
+# zweite Writer sofort "database is locked". timeout laesst ihn stattdessen bis
+# zu 15 s auf die Sperre warten.
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'connect_args': {'timeout': 15}}
+
+
+@event.listens_for(Engine, 'connect')
+def _sqlite_pragmas(dbapi_connection, connection_record):
+    """Pro SQLite-Verbindung: WAL-Modus (Leser blockieren den Writer nicht mehr
+    und umgekehrt) + NORMAL-Sync (mit WAL absturzsicher, aber deutlich schneller)
+    + 15 s Busy-Timeout. journal_mode=WAL ist eine dauerhafte Eigenschaft der
+    Datei; die anderen Pragmas gelten pro Verbindung und werden hier neu gesetzt.
+
+    ACHTUNG Backup: Im WAL-Modus stecken die juengsten Transaktionen ggf. noch in
+    der -wal-Datei neben openmyconet.db. Vor `cp`-Backups einen Checkpoint fahren
+    (siehe CLAUDE.md, Deployment) oder openmyconet.db + -wal + -shm zusammen sichern.
+    """
+    cur = dbapi_connection.cursor()
+    cur.execute('PRAGMA journal_mode=WAL')
+    cur.execute('PRAGMA synchronous=NORMAL')
+    cur.execute('PRAGMA busy_timeout=15000')
+    cur.close()
+
+# Session-Cookie-Haertung. Secure = nur ueber HTTPS senden (nginx terminiert TLS,
+# siehe ProxyFix oben); HttpOnly = kein JS-Zugriff (XSS-Schutz); SameSite=Lax
+# = Cookie faehrt bei Cross-Site-POSTs nicht mit (CSRF-Grundschutz).
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024  # 6 MB Gesamt-Request (Bildupload Blog + Foerderer-Logo max. 5 MB
                                                      # -- 1 MB Puffer fuer Formularfelder/Multipart-Overhead, damit die
                                                      # eigene 5-MB-Fehlermeldung greift statt Werkzeugs generischer 413.

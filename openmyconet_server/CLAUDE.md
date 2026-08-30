@@ -12,8 +12,10 @@ Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: 
 bläht Suchen auf. Immer mit `path:`/`glob:` auf die echten Quelldateien eingrenzen.
 
 ## Datenbank
-SQLite unter `instance/openmyconet.db`. **Kein Alembic.** Neue Spalten: Eintrag in
-`migrate_add_columns.py` (idempotentes `ALTER TABLE ADD COLUMN`). Neue Tabellen legt
+SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sqlite_pragmas`).
+**Kein Alembic.** Neue Spalten: Eintrag in `migrate_add_columns.py` (idempotentes
+`ALTER TABLE ADD COLUMN`). Neue Indizes: `index=True` im Model **und** Eintrag in
+`migrate_add_indexes.py` (`CREATE INDEX IF NOT EXISTS`). Neue Tabellen legt
 `db.create_all()` an. Feature-Migrationen als eigene `migrate_*.py` mit App-Context.
 
 ## Tests
@@ -23,7 +25,9 @@ Bekannt rot auf `main` (nicht anfassen): `test_presse` (`presse_suche.time`),
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server → Deploy per **scp einzelner Dateien**.
-1. DB-Backup: `ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 "cp /home/omn/app/instance/openmyconet.db /home/omn/app/instance/openmyconet.db.bak-$(date +%Y%m%d-%H%M)"`
+1. DB-Backup (SQLite läuft im **WAL-Modus** → vor `cp` einen Checkpoint fahren, sonst
+   fehlen die jüngsten Transaktionen aus der `-wal`-Datei):
+   `ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 "cd /home/omn/app && venv/bin/python -c \"import sqlite3; sqlite3.connect('instance/openmyconet.db').execute('PRAGMA wal_checkpoint(TRUNCATE)')\" && cp instance/openmyconet.db instance/openmyconet.db.bak-$(date +%Y%m%d-%H%M)"`
 2. `scp -i ~/.ssh/omn_deploy <datei> omn@77.42.64.162:/home/omn/app/` (Git-Bash: Quellpfad als `/c/Users/...`)
 3. Migration: `ssh ... "cd /home/omn/app && venv/bin/python migrate_*.py"`
 4. Reload ohne sudo: `MPID=$(pgrep -f 'gunicorn -w 2' | head -1); kill -HUP $MPID`
