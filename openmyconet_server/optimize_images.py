@@ -35,6 +35,11 @@ BANNER_MAXBREITE = 1400
 ROLLE = ['wwa_role_mycelist', 'wwa_role_hyphist', 'wwa_role_sporist']
 ROLLE_KANTE = 440
 
+# Banner in medien.html -- Quelle sind die Master unter "Bilder Webseite/"
+# (nicht im static-Root, nicht deployt); der Master bleibt erhalten.
+MEDIEN_BANNER = ['Bild_Broschuere', 'buch_bg']
+MEDIEN_MASTER = os.path.join(STATIC, 'Bilder Webseite')
+
 
 def _resize_max(img, max_breite):
     if img.width <= max_breite:
@@ -92,6 +97,23 @@ def verarbeite_rolle(basis):
     _bericht(basis, alt_kb, [webp, png], img.size)
 
 
+def verarbeite_medien(basis):
+    webp = os.path.join(STATIC, basis + '.webp')
+    jpg = os.path.join(STATIC, basis + '.jpg')
+    if os.path.exists(webp) and os.path.exists(jpg):
+        print(f'{basis}: bereits optimiert — uebersprungen.')
+        return
+    src = os.path.join(MEDIEN_MASTER, basis + '.png')
+    if not os.path.exists(src):
+        print(f'{basis}: Master {src} fehlt — uebersprungen.')
+        return
+    alt_kb = os.path.getsize(src) // 1024
+    img = _resize_max(Image.open(src).convert('RGB'), BANNER_MAXBREITE)
+    img.save(webp, 'WEBP', quality=72, method=6)
+    img.save(jpg, 'JPEG', quality=78, optimize=True, progressive=True)
+    _bericht(basis, alt_kb, [webp, jpg], img.size)
+
+
 def _bericht(basis, alt_kb, ziele, groesse):
     neu_kb = sum(os.path.getsize(z) for z in ziele) // 1024
     namen = ' + '.join(os.path.basename(z) for z in ziele)
@@ -103,7 +125,9 @@ def main():
         verarbeite_banner(b)
     for b in ROLLE:
         verarbeite_rolle(b)
-    print('Fertig. app/templates/site/wie-wir-arbeiten.html nutzt bereits <picture>.')
+    for b in MEDIEN_BANNER:
+        verarbeite_medien(b)
+    print('Fertig. wie-wir-arbeiten.html + medien.html nutzen bereits <picture>.')
 
 
 if __name__ == '__main__':
