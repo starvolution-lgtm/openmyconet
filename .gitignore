@@ -221,3 +221,7 @@ openmyconet/config.php
 
 # Lokale Claude-Code-Dev-Tooling-Konfiguration (Preview-Server-Configs, maschinenspezifische Pfade)
 .claude/
+
+# Bild-Originale/Arbeitsordner (nur lokale Master, werden per optimize_images.py
+# zu app/static/*.webp/.jpg verkleinert -- nicht deployt, nicht versioniert)
+openmyconet_server/app/static/Bilder Webseite/

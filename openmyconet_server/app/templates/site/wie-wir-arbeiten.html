@@ -28,6 +28,9 @@
 .wwa-closing { font-style:italic; color:#a0c8a0 !important; border-left:3px solid #3a9e5a; padding-left:1rem; }
 .wwa-banner { position:relative; overflow:hidden; height:280px; }
 .wwa-banner img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.50) saturate(0.9); }
+/* <picture> transparent machen, damit die bestehenden ".wwa-banner img" /
+   ".wwa-role-card img"-Regeln unveraendert greifen. */
+.wwa-banner picture, .wwa-role-card picture { display:contents; }
 .wwa-banner .wwa-banner-text { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem); }
 .wwa-banner .wwa-banner-text h2 { margin-bottom:0; }
 .wwa-role-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; margin:1.4rem 0 1.8rem; }
@@ -53,7 +56,10 @@
 
 <section style="background-color:#024530;">
   <div class="wwa-banner">
-    <img src="{{ asset('wwa_feldforschung_bg.png') }}" alt="">
+    <picture>
+      <source srcset="{{ asset('wwa_feldforschung_bg.webp') }}" type="image/webp">
+      <img src="{{ asset('wwa_feldforschung_bg.jpg') }}" alt="">
+    </picture>
     <div class="wwa-banner-text">
       <h2 data-i18n="wwa_s1_h2">{{ t('wwa_s1_h2') }}</h2>
     </div>
@@ -68,7 +74,10 @@
 
 <section style="background-color:#012a1e;">
   <div class="wwa-banner">
-    <img src="{{ asset('wwa_beitrag_bg.png') }}" alt="">
+    <picture>
+      <source srcset="{{ asset('wwa_beitrag_bg.webp') }}" type="image/webp">
+      <img src="{{ asset('wwa_beitrag_bg.jpg') }}" alt="">
+    </picture>
     <div class="wwa-banner-text">
       <h2 data-i18n="wwa_s2_h2">{{ t('wwa_s2_h2') }}</h2>
     </div>
@@ -78,17 +87,26 @@
     <h3 data-i18n="wwa_s2_h3a" style="text-align:center;">{{ t('wwa_s2_h3a') }}</h3>
     <div class="wwa-role-grid">
       <div class="wwa-role-card">
-        <img src="{{ asset('wwa_role_mycelist.png') }}" alt="{{ t('wwa_role_mycelist_alt') }}" data-i18n-alt="wwa_role_mycelist_alt">
+        <picture>
+          <source srcset="{{ asset('wwa_role_mycelist.webp') }}" type="image/webp">
+          <img src="{{ asset('wwa_role_mycelist.png') }}" alt="{{ t('wwa_role_mycelist_alt') }}" data-i18n-alt="wwa_role_mycelist_alt">
+        </picture>
         <h4 data-i18n="wwa_role_mycelist_h4">{{ t('wwa_role_mycelist_h4') }}</h4>
         <p data-i18n="wwa_role_mycelist_p">{{ t('wwa_role_mycelist_p') }}</p>
       </div>
       <div class="wwa-role-card">
-        <img src="{{ asset('wwa_role_hyphist.png') }}" alt="{{ t('wwa_role_hyphist_alt') }}" data-i18n-alt="wwa_role_hyphist_alt">
+        <picture>
+          <source srcset="{{ asset('wwa_role_hyphist.webp') }}" type="image/webp">
+          <img src="{{ asset('wwa_role_hyphist.png') }}" alt="{{ t('wwa_role_hyphist_alt') }}" data-i18n-alt="wwa_role_hyphist_alt">
+        </picture>
         <h4 data-i18n="wwa_role_hyphist_h4">{{ t('wwa_role_hyphist_h4') }}</h4>
         <p data-i18n="wwa_role_hyphist_p">{{ t('wwa_role_hyphist_p') }}</p>
       </div>
       <div class="wwa-role-card">
-        <img src="{{ asset('wwa_role_sporist.png') }}" alt="{{ t('wwa_role_sporist_alt') }}" data-i18n-alt="wwa_role_sporist_alt">
+        <picture>
+          <source srcset="{{ asset('wwa_role_sporist.webp') }}" type="image/webp">
+          <img src="{{ asset('wwa_role_sporist.png') }}" alt="{{ t('wwa_role_sporist_alt') }}" data-i18n-alt="wwa_role_sporist_alt">
+        </picture>
         <h4 data-i18n="wwa_role_sporist_h4">{{ t('wwa_role_sporist_h4') }}</h4>
         <p data-i18n="wwa_role_sporist_p">{{ t('wwa_role_sporist_p') }}</p>
       </div>
@@ -101,7 +119,10 @@
 
 <section style="background-color:#024530;">
   <div class="wwa-banner">
-    <img src="{{ asset('wwa_sorgfalt_bg.png') }}" alt="">
+    <picture>
+      <source srcset="{{ asset('wwa_sorgfalt_bg.webp') }}" type="image/webp">
+      <img src="{{ asset('wwa_sorgfalt_bg.jpg') }}" alt="">
+    </picture>
     <div class="wwa-banner-text">
       <h2 data-i18n="wwa_s3_h2">{{ t('wwa_s3_h2') }}</h2>
     </div>
@@ -115,7 +136,10 @@
 
 <section style="background-color:#012a1e;">
   <div class="wwa-banner">
-    <img src="{{ asset('wwa_unabhaengigkeit_bg.png') }}" alt="">
+    <picture>
+      <source srcset="{{ asset('wwa_unabhaengigkeit_bg.webp') }}" type="image/webp">
+      <img src="{{ asset('wwa_unabhaengigkeit_bg.jpg') }}" alt="">
+    </picture>
     <div class="wwa-banner-text">
       <h2 data-i18n="wwa_s4_h2">{{ t('wwa_s4_h2') }}</h2>
     </div>
@@ -128,7 +152,10 @@
 
 <section style="background-color:#024530;">
   <div class="wwa-banner">
-    <img src="{{ asset('wwa_gemeinsam_forschen_bg.png') }}" alt="">
+    <picture>
+      <source srcset="{{ asset('wwa_gemeinsam_forschen_bg.webp') }}" type="image/webp">
+      <img src="{{ asset('wwa_gemeinsam_forschen_bg.jpg') }}" alt="">
+    </picture>
     <div class="wwa-banner-text">
       <h2 data-i18n="wwa_s5_h2">{{ t('wwa_s5_h2') }}</h2>
     </div>
