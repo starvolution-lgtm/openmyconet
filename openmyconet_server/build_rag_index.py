@@ -49,6 +49,10 @@ GROUPS = [
         "vision_quote", "vision_closing", "h2_vision", "meta_desc_index",
         "vision_biocomm_intro",
     ]),
+    ("ueber-das-projekt", "label_ueber", [
+        "about_", "h2_ueber", "footer_copy", "footer_impressum",
+        "q_footer_right",
+    ]),
     ("mykorrhiza-grundlagen", "myk_h1", [
         "desc_warum", "myk_s1_", "myk_s2_", "myk_s4_",
         "q_s1_", "q_ref1_", "q_ref2_", "q_ref14_", "q_ref16_",

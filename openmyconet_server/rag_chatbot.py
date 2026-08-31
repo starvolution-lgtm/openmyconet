@@ -155,6 +155,11 @@ SYNONYMS = {
     "methodik": ["methodik", "feldforschung", "labor", "mycelist", "hyphist", "sporist", "knotenbetreiber", "sorgfalt", "unabhängig", "wissenschaftlich", "arbeiten"],
     "feldforschung": ["methodik", "feldforschung", "labor", "mycelist", "hyphist", "sporist", "knotenbetreiber", "sorgfalt", "unabhängig", "wissenschaftlich"],
     "mycelist": ["methodik", "mycelist", "hyphist", "sporist", "mitglied", "rolle", "knotenbetreiber"],
+    "gegründet": ["gegründet", "initiiert", "robert jank", "erfinder", "maintal", "unabhängig"],
+    "gründer": ["gegründet", "initiiert", "robert jank", "erfinder", "maintal", "team", "founder"],
+    "erfinder": ["erfinder", "inventor", "robert jank", "initiiert", "gebrauchsmuster", "dpma", "maintal"],
+    "founded": ["founded", "initiated", "robert jank", "inventor", "maintal", "independent"],
+    "founder": ["founded", "initiated", "robert jank", "inventor", "maintal", "team"],
     # DE+EN zusammengefuehrt: dieselben Keys standen frueher doppelt im Dict
     # (einmal im DE-, einmal im EN-Block) -- der zweite Eintrag ueberschrieb den
     # ersten stillschweigend, sodass DE-Anfragen die EN-Synonyme bekamen und
