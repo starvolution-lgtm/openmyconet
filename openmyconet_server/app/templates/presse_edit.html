@@ -34,7 +34,7 @@
     <textarea name="anreissertext" rows="4" placeholder="Eigene kurze Einordnung, kein Zitat aus dem Original" required>{{ eintrag.anreissertext }}</textarea>
     <p class="u-muted-note">⚠️ Bitte nur eine eigene, kurze Einordnung schreiben — kein wörtliches Zitat und keinen Ausschnitt aus dem Originalartikel übernehmen, auch nicht verkürzt.</p>
 
-    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1rem;">
+    <label class="u-flex-gap-mt1">
         <input class="u-w-auto" type="checkbox" name="veroeffentlicht" {% if eintrag.veroeffentlicht %}checked{% endif %}> Veröffentlicht
     </label>
 

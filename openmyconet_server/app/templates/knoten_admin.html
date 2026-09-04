@@ -1,6 +1,12 @@
 {% extends "admin_base.html" %}
 {% block title %}OpenMycoNet — Knoten verwalten{% endblock %}
 {% block heading %}🍄 Knoten verwalten{% endblock %}
+{% block extra_css %}
+<style>
+.kn-1 { font-size:0.78em; word-break:break-all; }
+.kn-2 { font-size:0.75em; }
+</style>
+{% endblock %}
 {% block content %}
 
 {% if nachricht %}
@@ -51,11 +57,11 @@
         <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
         <td>{{ knoten.messungen|length }}</td>
         <td>
-            <code style="font-size:0.78em; word-break:break-all;">{{ knoten.api_key or '—' }}</code>
+            <code class="kn-1">{{ knoten.api_key or '—' }}</code>
             <form class="u-inline" method="POST" onsubmit="return confirm('Neuen API-Key für {{ knoten.knoten_id }}? Der alte wird sofort ungültig.');">
                 <input type="hidden" name="action" value="key_neu">
                 <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
-                <button type="submit" style="font-size:0.75em;">neu</button>
+                <button type="submit" class="kn-2">neu</button>
             </form>
         </td>
         <td><a class="btn" href="{{ url_for('admin.kollaboration_knoten', knoten_id=knoten.id) }}">💬 Kollaboration</a></td>

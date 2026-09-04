@@ -1,6 +1,11 @@
 {% extends "admin_base.html" %}
 {% block title %}OpenMycoNet — Fehlerprotokoll{% endblock %}
 {% block heading %}🚨 Fehlerprotokoll{% endblock %}
+{% block extra_css %}
+<style>
+.fe-1 { white-space:pre-wrap; font-size:0.75em; max-width:600px; }
+</style>
+{% endblock %}
 {% block content %}
 
 <p class="u-hint-sm">Unbehandelte Serverfehler (500) — siehe <code>errors.py</code>. Bei jedem neuen Fehlerort geht zusätzlich eine Mail raus (max. 1/Stunde je Ort).</p>
@@ -27,7 +32,7 @@
         <td>
             <details>
                 <summary>Traceback</summary>
-                <pre style="white-space:pre-wrap; font-size:0.75em; max-width:600px;">{{ f.traceback }}</pre>
+                <pre class="fe-1">{{ f.traceback }}</pre>
             </details>
         </td>
     </tr>

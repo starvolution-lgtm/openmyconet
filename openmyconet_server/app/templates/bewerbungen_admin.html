@@ -5,6 +5,9 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+.ba-1 { color:var(--ink-soft); }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -51,7 +54,7 @@
             {% elif b.nutzer %}
                 <span class="status-neu">registriert, unbestätigt</span>
             {% else %}
-                <span style="color:var(--ink-soft);">—</span>
+                <span class="ba-1">—</span>
             {% endif %}
         </td>
         <td>

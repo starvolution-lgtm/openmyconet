@@ -2,6 +2,12 @@
 {% block title %}OpenMycoNet — Presse verwalten{% endblock %}
 {% block heading %}📰 Presse verwalten{% endblock %}
 
+{% block extra_css %}
+<style>
+.pa-1 { margin-bottom:1.5rem; }
+</style>
+{% endblock %}
+
 {% block content %}
 
 {% if nachricht %}
@@ -11,7 +17,7 @@
     <p class="err">{{ fehler }}</p>
 {% endif %}
 
-<p style="margin-bottom:1.5rem;"><a href="{{ url_for('admin.presse_kandidaten') }}">→ Automatisch gefundene Kandidaten sichten</a></p>
+<p class="pa-1"><a href="{{ url_for('admin.presse_kandidaten') }}">→ Automatisch gefundene Kandidaten sichten</a></p>
 
 <h2>Neuen Presseeintrag anlegen</h2>
 <form method="POST">
@@ -40,7 +46,7 @@
     <textarea name="anreissertext" rows="4" placeholder="Eigene kurze Einordnung, kein Zitat aus dem Original — was berichtet die Quelle, warum ist es für OpenMycoNet relevant." required></textarea>
     <p class="u-muted-note">⚠️ Bitte nur eine eigene, kurze Einordnung schreiben — kein wörtliches Zitat und keinen Ausschnitt aus dem Originalartikel übernehmen, auch nicht verkürzt.</p>
 
-    <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1rem;">
+    <label class="u-flex-gap-mt1">
         <input class="u-w-auto" type="checkbox" name="veroeffentlicht"> Sofort veröffentlichen
     </label>
 

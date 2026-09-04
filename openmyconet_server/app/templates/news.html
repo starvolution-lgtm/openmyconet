@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block mobile_menu_self_link %}
-<a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
+<a href="{{ live('news') }}" class="nw-1" data-i18n="nav_news">{{ t('nav_news') }}</a>
 {% endblock %}
 
 {% block extra_css %}
@@ -34,6 +34,8 @@
 .pager { display:flex; align-items:center; justify-content:center; gap:1.5rem; margin:32px 0; color:#a0c8a0; font-size:0.9em; }
 .pager a { color:#6ee87e; text-decoration:none; font-weight:bold; }
 .pager a:hover { text-decoration:underline; }
+.nw-1 { font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
+.nw-2 { background-color:#012a1e; }
 {% endblock %}
 
 {% block content %}
@@ -44,7 +46,7 @@
   </div>
 </div>
 
-<section style="background-color:#012a1e;">
+<section class="nw-2">
   <div class="inner">
     <p class="ki-hinweis">ℹ️ Hinweis: Die Bilder in diesen Beiträgen sind KI-generiert.</p>
 

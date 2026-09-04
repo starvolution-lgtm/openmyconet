@@ -178,3 +178,6 @@ img.vorschau { max-width: 300px; display: block; margin-top: 0.6rem; border-radi
 .u-muted-note { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
 .u-muted-text { color: var(--muted); max-width: 60ch; }
 .u-pre-wrap { margin: 4px 0; white-space: pre-wrap; }
+.u-flex-gap-mt1 { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; }
+.u-maxw-420 { max-width: 420px; }
+.u-maxw-380-top { max-width: 380px; margin: 2rem auto 0; }
