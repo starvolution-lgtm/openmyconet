@@ -116,13 +116,18 @@ init_i18n(app)
 init_csrf(app)
 init_errors(app)
 
-# Sicherheits-Header. style-src kommt seit 2026-09-04 OHNE 'unsafe-inline' aus --
-# alle ~430 Inline-style=""-Attribute in den ueber HTTP ausgelieferten Templates
-# wurden auf CSS-Klassen umgestellt (siehe Commit-Historie "CSP-Haertung, N/N").
-# Einzige Ausnahme: newsletter_email.html (E-Mail-Koerper, hier nicht relevant,
-# da E-Mail-Clients kein CSP durchsetzen).
+# Sicherheits-Header. CSP erlaubt bewusst 'unsafe-inline' fuer script-src UND
+# style-src. Alle style=""-Attribute in den ueber HTTP ausgelieferten Templates
+# wurden zwar auf CSS-Klassen umgestellt (siehe Commit-Historie "CSP-Haertung,
+# N/N") -- ABER: das Kern-CSS von base.html/index.html/etc. liegt in Inline-
+# <style>-Bloecken im <head> (kein externes .css fuer den Grossteil des Sites),
+# und style-src blockiert OHNE 'unsafe-inline' nicht nur style=""-Attribute,
+# sondern auch komplette <style>-Bloecke -- das legt die gesamte Seitenoptik
+# lahm (am 04.09.2026 live passiert und sofort zurueckgerollt). 'unsafe-inline'
+# fuer style-src bleibt daher bestehen, bis die <style>-Bloecke in externe
+# .css-Dateien ausgelagert sind -- eigenes, separates Projekt.
 #
-# script-src erlaubt weiterhin bewusst 'unsafe-inline' -- die Templates nutzen
+# script-src ebenso bewusst mit 'unsafe-inline' -- die Templates nutzen
 # durchgaengig onclick=""/onchange=""-Attribute und Inline-<script>-Bloecke;
 # das Entfernen braeuchte eine Umstellung auf addEventListener (CSP-Nonces
 # decken Inline-Event-Handler-Attribute nicht ab) und ist ein eigenes,
@@ -137,7 +142,7 @@ _EIGENE_DOMAINS = "https://www.openmyconet.de https://openmyconet.de https://api
 _CSP = (
     f"default-src 'self' {_EIGENE_DOMAINS}; "
     f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net; "
-    f"style-src 'self' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+    f"style-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
     f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
     f"img-src 'self' data: {_EIGENE_DOMAINS} https://unpkg.com https://*.tile.openstreetmap.org; "
     f"media-src 'self' {_EIGENE_DOMAINS}; "
