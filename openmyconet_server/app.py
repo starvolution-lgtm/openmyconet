@@ -199,19 +199,42 @@ def news_exzerpt(inhalt, laenge=200):
     return text[:laenge].rsplit(' ', 1)[0] + '…'
 
 
+NEWS_PRO_SEITE = 12
+
+
+def _tag_treffer(spalte, tag):
+    """Exaktes Tag-Match in der Komma-Liste News.tags (kein eigenes Tag-Modell) --
+    ein reines LIKE '%tag%' wuerde z.B. 'myco' auch in 'mycology' finden. Deckt die
+    vier moeglichen Positionen ab (einziger Tag / erster / letzter / mittendrin);
+    LIKE-Sonderzeichen im Tag werden escaped, damit ein Tag mit % oder _ nicht als
+    Wildcard wirkt."""
+    escaped = tag.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+    return db.or_(
+        spalte == tag,
+        spalte.like(f'{escaped},%', escape='\\'),
+        spalte.like(f'%,{escaped}', escape='\\'),
+        spalte.like(f'%,{escaped},%', escape='\\'),
+    )
+
+
 @app.route('/news')
 def news():
     filter_sprache = request.args.get('sprache', '')
-    filter_tag = request.args.get('tag', '')
+    filter_tag = request.args.get('tag', '').strip()
+    page = request.args.get('page', 1, type=int)
+
     query = News.query
     if filter_sprache:
         query = query.filter_by(sprache=filter_sprache)
-    news_liste = query.order_by(News.veroeffentlicht.desc()).all()
     if filter_tag:
-        news_liste = [n for n in news_liste if filter_tag in (n.tags or '').split(',')]
-    for n in news_liste:
+        query = query.filter(_tag_treffer(News.tags, filter_tag))
+
+    pagination = query.order_by(News.veroeffentlicht.desc()).paginate(
+        page=page, per_page=NEWS_PRO_SEITE, error_out=False
+    )
+    for n in pagination.items:
         n.exzerpt = news_exzerpt(n.inhalt)
-    return render_template('news.html', news_liste=news_liste, filter_sprache=filter_sprache, filter_tag=filter_tag, current_page='news')
+    return render_template('news.html', pagination=pagination, filter_sprache=filter_sprache, filter_tag=filter_tag, current_page='news')
 
 
 @app.route('/news/<slug>')

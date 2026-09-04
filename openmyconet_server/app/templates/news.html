@@ -31,6 +31,9 @@
 .tags a { color:#2e7d32; text-decoration:none; margin-right:10px; font-size:0.9em; }
 .tags a:hover { text-decoration:underline; }
 .ki-hinweis { background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); color:#e8f5e0; font-size:0.85em; padding:10px 16px; border-radius:6px; margin-bottom:24px; }
+.pager { display:flex; align-items:center; justify-content:center; gap:1.5rem; margin:32px 0; color:#a0c8a0; font-size:0.9em; }
+.pager a { color:#6ee87e; text-decoration:none; font-weight:bold; }
+.pager a:hover { text-decoration:underline; }
 {% endblock %}
 
 {% block content %}
@@ -61,8 +64,8 @@
     <p class="tag-filter-hinweis">Gefiltert nach <strong>#{{ filter_tag }}</strong><a href="{{ url_for('news', sprache=filter_sprache) }}">✕ Filter zurücksetzen</a></p>
     {% endif %}
 
-    {% if news_liste %}
-      {% for news in news_liste %}
+    {% if pagination.items %}
+      {% for news in pagination.items %}
       <div class="artikel">
         <h2><a href="{{ url_for('news_detail', slug=news.slug) }}">{{ news.titel }}</a></h2>
         {% if news.untertitel %}<p class="untertitel">{{ news.untertitel }}</p>{% endif %}
@@ -81,6 +84,16 @@
         {% endif %}
       </div>
       {% endfor %}
+
+      <div class="pager">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('news', page=pagination.prev_num, sprache=filter_sprache, tag=filter_tag) }}">← Neuer</a>
+        {% endif %}
+        Seite {{ pagination.page }} von {{ pagination.pages }}
+        {% if pagination.has_next %}
+          <a href="{{ url_for('news', page=pagination.next_num, sprache=filter_sprache, tag=filter_tag) }}">Älter →</a>
+        {% endif %}
+      </div>
     {% else %}
       <p class="leer">Noch keine News vorhanden.</p>
     {% endif %}
