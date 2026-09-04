@@ -17,7 +17,7 @@ Einbinden in app.py:
 import json
 import os
 
-from flask import g, request
+from flask import g, request, jsonify
 
 LANGS = ['de', 'en', 'nl', 'fr', 'es']
 COOKIE_NAME = 'omn_lang'
@@ -59,6 +59,20 @@ def init_i18n(app):
         # Cookie schreiben, den der Nutzer nie bewusst gewaehlt hat.
         if request.args.get('lang') in LANGS:
             response.set_cookie(COOKIE_NAME, request.args.get('lang'), max_age=60 * 60 * 24 * 365, samesite='Lax')
+        return response
+
+    @app.route('/i18n/<lang>.json')
+    def i18n_json(lang):
+        """Ein einzelner Sprachblock aus translations.json. Der Client laedt nur
+        noch die aktuelle Sprache (+ 'de' als Fallback) statt aller fuenf --
+        translations.json ist ~416 KB, ein Block davon ~85 KB. Weitere Sprachen
+        werden beim Flaggen-Klick nachgeladen (base.html, omnEnsureLang)."""
+        if lang not in LANGS:
+            return jsonify({}), 404
+        response = jsonify(TRANSLATIONS.get(lang, {}))
+        # Moderat cachen: kurz genug, dass Textredaktionen zeitnah durchschlagen,
+        # lang genug, dass Sprachwechsel innerhalb einer Sitzung nicht neu laden.
+        response.headers['Cache-Control'] = 'public, max-age=300'
         return response
 
     app.jinja_env.globals['t'] = t

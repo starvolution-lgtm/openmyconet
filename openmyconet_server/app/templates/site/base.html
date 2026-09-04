@@ -293,14 +293,15 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 </footer>
 
 <script>
-// Einheitlicher i18n-Mechanismus (Phase 4 Schritt 2): translations.json ist die
-// einzige Datenquelle, server- und clientseitig. Die initiale Sprache steht
-// bereits serverseitig gerendert im HTML (ueber die t()-Jinja-Funktion in den
-// Templates) -- dieser fetch versorgt nur das weiterhin bestehende clientseitige
-// Instant-Umschalten per Flaggen-Klick (kein Reload).
-var TRANSLATIONS = {};
-var TRANSLATIONS_READY = fetch('{{ translations_json_url() }}').then(function(r) { return r.json(); }).then(function(data) { TRANSLATIONS = data; });
-
+// Einheitlicher i18n-Mechanismus: translations.json ist die einzige Datenquelle,
+// server- und clientseitig. Die initiale Sprache steht bereits serverseitig
+// gerendert im HTML (t()-Jinja-Funktion) -- der Client laedt per fetch nur die
+// Daten fuers Instant-Umschalten per Flaggen-Klick (kein Reload).
+//
+// Nicht mehr die komplette translations.json (~416 KB, alle 5 Sprachen), sondern
+// pro Sprache ein Block (/i18n/<lang>.json, ~85 KB). Initial nur die aktuelle
+// Sprache + 'de' (Fallback in allen apply*()-Funktionen); weitere Sprachen
+// werden beim ersten Flaggen-Klick nachgeladen.
 var FLAGS = {
   de: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>',
   en: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>',
@@ -322,13 +323,42 @@ function getLang() {
 
 var currentLang = getLang();
 
+// Pro Sprache genau ein fetch; das Ergebnis landet in TRANSLATIONS[lang].
+var TRANSLATIONS = {};
+var _langLaden = {};
+function omnEnsureLang(lang) {
+  if (LANGS.indexOf(lang) === -1) lang = 'de';
+  if (TRANSLATIONS[lang]) return Promise.resolve(TRANSLATIONS[lang]);
+  if (_langLaden[lang]) return _langLaden[lang];
+  var p = fetch('/i18n/' + lang + '.json')
+    .then(function(r) { return r.ok ? r.json() : {}; })
+    .then(function(d) { TRANSLATIONS[lang] = d; delete _langLaden[lang]; return d; })
+    .catch(function() { delete _langLaden[lang]; TRANSLATIONS[lang] = TRANSLATIONS[lang] || {}; return TRANSLATIONS[lang]; });
+  _langLaden[lang] = p;
+  return p;
+}
+// Seiten warten auf TRANSLATIONS_READY, bevor sie apply*(currentLang) aufrufen.
+var TRANSLATIONS_READY = Promise.all([omnEnsureLang('de'), omnEnsureLang(currentLang)]);
+
+// Flaggen-Klick: erst die Zielsprache laden, dann das seiteneigene setLang()
+// (das currentLang setzt, localStorage schreibt und neu rendert). Seiten ohne
+// eigenes setLang bekommen hier einen Minimal-Fallback.
+function omnSetLang(lang) {
+  return omnEnsureLang(lang).then(function() {
+    if (typeof setLang === 'function') { setLang(lang); return; }
+    currentLang = lang;
+    try { localStorage.setItem('omn_lang', lang); } catch (e) {}
+    if (typeof renderSidebar === 'function') renderSidebar();
+  });
+}
+
 function renderFlagsInto(containerId, size) {
   var el = document.getElementById(containerId);
   if (!el) return;
   el.innerHTML = LANGS.map(function(l) {
     var opacity = l === currentLang ? '1' : '0.45';
     var svg = size ? FLAGS[l].replace('width="20" height="14"', 'width="' + size + '" height="' + Math.round(size*0.7) + '"') : FLAGS[l];
-    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" onclick="setLang(\'' + l + '\')" style="opacity:' + opacity + '; display:inline-flex; cursor:pointer;">' + svg + '</a>';
+    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" onclick="omnSetLang(\'' + l + '\')" style="opacity:' + opacity + '; display:inline-flex; cursor:pointer;">' + svg + '</a>';
   }).join('');
 }
 
