@@ -14,7 +14,7 @@ import re
 import secrets
 import uuid
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import urlencode, quote
 
 import requests
@@ -26,6 +26,7 @@ from extensions import db, mail
 from models import Foerderer, RechnungsZaehler
 from roles import nutzer_finden_oder_anlegen
 from spam_schutz import ip_erlaubt
+from zeit import utcnow
 
 logger = logging.getLogger(__name__)
 
@@ -184,7 +185,7 @@ def antrag():
         }
 
         token = secrets.token_hex(32)
-        laeuft_ab = (datetime.utcnow() + timedelta(days=365)).date()
+        laeuft_ab = (utcnow() + timedelta(days=365)).date()
 
         foerderer = Foerderer(
             token=token,
@@ -420,7 +421,7 @@ def ipn():
     # Rollen-Upgrade erfolgen erst durch die Admin-Aktion 'activate' (admin.py),
     # exakt wie beim manuellen Freigabe-Weg fuer Kooperationsanfragen.
     foerderer.status = 'zahlung_eingegangen'
-    foerderer.status_geaendert_am = datetime.utcnow()
+    foerderer.status_geaendert_am = utcnow()
     foerderer.paypal_txn_id = txn_id
     foerderer.rechnung_nr = rechnung_nr
     foerderer.betrag = betrag
@@ -434,7 +435,7 @@ def ipn():
 
 
 def _naechste_rechnung_nr():
-    jahr = datetime.utcnow().year
+    jahr = utcnow().year
     zaehler = RechnungsZaehler.query.get(jahr)
     if not zaehler:
         zaehler = RechnungsZaehler(jahr=jahr, zaehler=0)
@@ -479,7 +480,7 @@ def _rechnung_pdf_erzeugen(foerderer, nr, betrag, txn_id):
     pdf.set_font('Helvetica', '', 10)
     felder = [
         ('Rechnungsnummer', nr),
-        ('Datum', datetime.utcnow().strftime('%d.%m.%Y')),
+        ('Datum', utcnow().strftime('%d.%m.%Y')),
         ('PayPal Transakt.-ID', txn_id),
     ]
     for lbl, val in felder:
@@ -519,7 +520,7 @@ def _rechnung_pdf_erzeugen(foerderer, nr, betrag, txn_id):
     pdf.multi_cell(
         0, 5,
         'Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).\n'
-        f'Bezahlt via PayPal am {datetime.utcnow().strftime("%d.%m.%Y")}.',
+        f'Bezahlt via PayPal am {utcnow().strftime("%d.%m.%Y")}.',
     )
     pdf.ln(4)
     pdf.set_font('Helvetica', '', 9)

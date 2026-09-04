@@ -23,6 +23,7 @@ from models import (
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 from spam_schutz import ip_erlaubt
 from csrf import schuetze_blueprint
+from zeit import utcnow
 import kollaboration
 
 admin_bp = Blueprint('admin', __name__)
@@ -590,7 +591,6 @@ def bewerbungen_admin():
 @admin_bp.route('/admin/foerderer', methods=['GET', 'POST'])
 @login_required
 def foerderer_admin():
-    from datetime import datetime as _dt
     nachricht = None
     fehler = None
     if request.method == 'POST':
@@ -604,8 +604,8 @@ def foerderer_admin():
             db.session.commit()
         elif request.form.get('action') == 'activate':
             eintrag.status = 'active'
-            eintrag.aktiviert_am = _dt.utcnow()
-            eintrag.status_geaendert_am = _dt.utcnow()
+            eintrag.aktiviert_am = utcnow()
+            eintrag.status_geaendert_am = utcnow()
             # Freigabe ist der Rollen-Upgrade-Zeitpunkt: bei Kooperation -> hyphist,
             # bei Foerderer -> sporist (deckt manuelle Aktivierung ohne PayPal-IPN
             # ab, z.B. Ueberweisung statt Online-Zahlung).
@@ -620,7 +620,7 @@ def foerderer_admin():
             nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
         elif request.form.get('action') == 'reject':
             eintrag.status = 'rejected'
-            eintrag.status_geaendert_am = _dt.utcnow()
+            eintrag.status_geaendert_am = utcnow()
             db.session.commit()
             nachricht = f'"{eintrag.firma}" wurde abgelehnt.'
         else:

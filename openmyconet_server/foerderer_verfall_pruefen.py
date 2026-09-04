@@ -12,12 +12,13 @@ zeitlich befristeter Status.
 Aufruf: python foerderer_verfall_pruefen.py (per Cronjob, taeglich, gleiche
 Infrastruktur wie presse_suche.py/cleanup_foerderer_previews.py)
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from app import app
 from extensions import db
 from models import Foerderer, Nutzer
 from roles import hyphist_entfernen
+from zeit import utcnow
 
 VERFALLSFRIST = timedelta(days=60)
 
@@ -25,7 +26,7 @@ VERFALLSFRIST = timedelta(days=60)
 def verfall_pruefen():
     verfallen = 0
     with app.app_context():
-        grenze = datetime.utcnow() - VERFALLSFRIST
+        grenze = utcnow() - VERFALLSFRIST
         kandidaten = Foerderer.query.filter(
             Foerderer.typ == 'kooperation',
             Foerderer.status.notin_(['verfallen', 'rejected']),
@@ -34,7 +35,7 @@ def verfall_pruefen():
 
         for eintrag in kandidaten:
             eintrag.status = 'verfallen'
-            eintrag.status_geaendert_am = datetime.utcnow()
+            eintrag.status_geaendert_am = utcnow()
             nutzer = Nutzer.query.filter_by(email=eintrag.email).first()
             hyphist_entfernen(nutzer)
             verfallen += 1

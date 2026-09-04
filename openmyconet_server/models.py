@@ -1,4 +1,4 @@
-from datetime import datetime
+from zeit import utcnow
 from extensions import db
 
 # --- Bestehende Modelle ---
@@ -13,7 +13,7 @@ class Nutzer(db.Model):
     bestaetigt = db.Column(db.Boolean, default=False)
     token = db.Column(db.String(100), unique=True)
     ip = db.Column(db.String(45), nullable=True)
-    registriert_am = db.Column(db.DateTime, default=datetime.utcnow)
+    registriert_am = db.Column(db.DateTime, default=utcnow)
     knoten = db.relationship('Knoten', backref='nutzer', lazy=True)
 
     # Fachrolle: reine Klassifizierung fuer spaetere Forum-Badges (Wissenschaftler/
@@ -47,7 +47,7 @@ class Knoten(db.Model):
     lon_grob = db.Column(db.Float)
     substrat = db.Column(db.String(100), default='')
     aktiv = db.Column(db.Boolean, default=True)
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
     # Geheimschluessel, mit dem sich das Geraet bei /api/v1/messung ausweist
     # (Header X-Api-Key). Wird beim Anlegen erzeugt, kann im Admin neu generiert
     # werden (bei Leak). nullable fuer Alt-Zeilen; migrate_add_columns.py fuellt sie.
@@ -70,12 +70,12 @@ class Bewerbung(db.Model):
     nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id'), nullable=True, index=True)
     nutzer = db.relationship('Nutzer')
     ip = db.Column(db.String(45), nullable=True)
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
 
 class Messung(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id'), nullable=False)
-    zeitstempel = db.Column(db.DateTime, default=datetime.utcnow)
+    zeitstempel = db.Column(db.DateTime, default=utcnow)
     kanal = db.Column(db.Integer)
     wert_uv = db.Column(db.Float)
     # Umgebungsdaten (optional)
@@ -99,7 +99,7 @@ class News(db.Model):
     slug = db.Column(db.String(250), unique=True, nullable=True)
     sprache = db.Column(db.String(10), default='de')
     bild_dateiname = db.Column(db.String(255), nullable=True)
-    veroeffentlicht = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    veroeffentlicht = db.Column(db.DateTime, default=utcnow, index=True)
 
 # --- Neue Modelle ---
 
@@ -108,7 +108,7 @@ class AdminUser(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='editor')  # 'superadmin' | 'editor'
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
 
 class ChatLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -116,21 +116,21 @@ class ChatLog(db.Model):
     answer = db.Column(db.Text, nullable=False)
     lang = db.Column(db.String(10), default='de')
     chunks_used = db.Column(db.Text, default='')
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    erstellt_am = db.Column(db.DateTime, default=utcnow, index=True)
 
 class Spende(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ziel_betrag = db.Column(db.Float, default=0)
     aktueller_betrag = db.Column(db.Float, default=0)
     sichtbar = db.Column(db.Boolean, default=False)
-    aktualisiert_am = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    aktualisiert_am = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
 
 class ContentBlock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     schluessel = db.Column(db.String(100), nullable=False)
     sprache = db.Column(db.String(10), default='de')
     inhalt = db.Column(db.Text, nullable=False)
-    aktualisiert_am = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    aktualisiert_am = db.Column(db.DateTime, default=utcnow, onupdate=utcnow)
 
     __table_args__ = (db.UniqueConstraint('schluessel', 'sprache', name='uq_contentblock_key_lang'),)
 
@@ -146,7 +146,7 @@ class Foerderer(db.Model):
     # Aktivitaet -> status='verfallen', siehe foerderer_verfall_pruefen.py).
     # 'verfallen' ist nur fuer typ='kooperation' relevant; bezahlte foerderer-
     # Eintraege verfallen nicht automatisch ueber dieses Feld.
-    status_geaendert_am = db.Column(db.DateTime, default=datetime.utcnow)
+    status_geaendert_am = db.Column(db.DateTime, default=utcnow)
     firma = db.Column(db.String(120), nullable=False)
     beschreibung = db.Column(db.Text, nullable=False)
     website = db.Column(db.String(255), default='')
@@ -159,7 +159,7 @@ class Foerderer(db.Model):
     logo_datei = db.Column(db.String(255), default='')
     paypal_txn_id = db.Column(db.String(128), default='')
     rechnung_nr = db.Column(db.String(32), default='')
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
     aktiviert_am = db.Column(db.DateTime, nullable=True)
     laeuft_ab_am = db.Column(db.Date, nullable=True)
     # Eindeutige Zuordnung zum Nutzer-Account des Ansprechpartners. Wird bei der
@@ -181,7 +181,7 @@ class Presseeintrag(db.Model):
     datum = db.Column(db.Date, nullable=True)  # Veroeffentlichungsdatum des Presseartikels
     sprache = db.Column(db.String(10), default='de')
     veroeffentlicht = db.Column(db.Boolean, default=False, index=True)
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
 
 class Pressekandidat(db.Model):
     """Von der GDELT-Suche automatisch gefundene, noch nicht freigegebene Presse-
@@ -193,7 +193,7 @@ class Pressekandidat(db.Model):
     quelle = db.Column(db.String(200), default='')
     datum = db.Column(db.Date, nullable=True)
     sprache = db.Column(db.String(10), default='de')
-    gefunden_am = db.Column(db.DateTime, default=datetime.utcnow)
+    gefunden_am = db.Column(db.DateTime, default=utcnow)
     status = db.Column(db.String(20), default='pending', index=True)  # pending | uebernommen | verworfen
 
 class Aufgabe(db.Model):
@@ -213,7 +213,7 @@ class Aufgabe(db.Model):
     beschreibung = db.Column(db.Text, default='')
     status = db.Column(db.String(20), default='offen')  # offen | erledigt
     erstellt_von = db.Column(db.String(10), default='team')  # team | partner
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
     erledigt_am = db.Column(db.DateTime, nullable=True)
 
     foerderer = db.relationship('Foerderer', backref=db.backref('aufgaben', lazy=True, cascade='all, delete-orphan'))
@@ -231,7 +231,7 @@ class Kommentar(db.Model):
     aufgabe_id = db.Column(db.Integer, db.ForeignKey('aufgabe.id', ondelete='CASCADE'), nullable=True, index=True)
     text = db.Column(db.Text, nullable=False)
     autor = db.Column(db.String(10), default='team')  # team | partner
-    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
 
     foerderer = db.relationship('Foerderer', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
     knoten = db.relationship('Knoten', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
@@ -248,7 +248,7 @@ class KollaborationAnhang(db.Model):
     dateiname = db.Column(db.String(255), nullable=False)      # gespeicherter, zufaelliger Name
     originalname = db.Column(db.String(255), default='')       # Anzeigename fuer den Download
     groesse = db.Column(db.Integer, default=0)                 # Bytes
-    hochgeladen_am = db.Column(db.DateTime, default=datetime.utcnow)
+    hochgeladen_am = db.Column(db.DateTime, default=utcnow)
 
     kommentar = db.relationship('Kommentar', backref=db.backref('anhaenge', lazy=True, cascade='all, delete-orphan'))
 
@@ -259,7 +259,7 @@ class Fehlerprotokoll(db.Model):
     aber genug um mitzubekommen, dass/wo auf Prod ueberhaupt ein 500 auftritt --
     vorher liefen gunicorns stdout/stderr ins Leere (kein Terminal, keine Logdatei)."""
     id = db.Column(db.Integer, primary_key=True)
-    zeitpunkt = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    zeitpunkt = db.Column(db.DateTime, default=utcnow, index=True)
     pfad = db.Column(db.String(300))
     methode = db.Column(db.String(10))
     ip = db.Column(db.String(45))

@@ -26,9 +26,13 @@ ignore = [
     "B904",     # raise ... from -- nachziehen, aber kein Blocker
 ]
 
-# datetime.utcnow()-Deprecation (DTZ) ist bekannt und braucht eine DB-Migration
-# fuer die gespeicherten naiven Timestamps -- eigener Arbeitsschritt, siehe
-# Verbesserungs-Backlog. Solange NICHT als Lint-Fehler fuehren.
+# DTZ (flake8-datetimez) bewusst NICHT selektiert: datetime.utcnow() ist seit
+# 04.09.2026 aus dem Code raus (zeit.utcnow(), siehe dort), aber die App
+# speichert weiterhin bewusst naive-aber-UTC Zeitstempel (SQLite kennt keine
+# Zeitzone) -- ein Wechsel auf echte tz-aware Werte braeuchte eine Migration
+# aller ~15 Zeitstempel-Spalten ohne echten Nutzen (siehe zeit.py-Docstring).
+# DTZ wuerde deshalb ueberall dort anschlagen, wo bewusst naiv gearbeitet wird
+# (z.B. Test-Fixtures, admin.py-Datumsfelder) -- reines Rauschen ohne Befund.
 
 [lint.per-file-ignores]
 "tests/*" = ["B011"]

@@ -8,7 +8,7 @@ Einbinden in app.py: from dashboard import dashboard_bp; app.register_blueprint(
 import logging
 import os
 import secrets
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import wraps
 
 from flask import (
@@ -20,6 +20,7 @@ from flask_mail import Message
 from extensions import db, mail
 from models import Nutzer, Bewerbung, KollaborationAnhang
 from spam_schutz import ip_erlaubt
+from zeit import utcnow
 from csrf import schuetze_blueprint
 import kollaboration
 
@@ -82,7 +83,7 @@ def _link_anfordern(email):
     if not nutzer:
         return
     nutzer.login_token = secrets.token_urlsafe(32)
-    nutzer.login_token_angefordert_am = datetime.utcnow()
+    nutzer.login_token_angefordert_am = utcnow()
     db.session.commit()
 
     base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
@@ -112,7 +113,7 @@ def auth(token):
     if not nutzer or not nutzer.login_token_angefordert_am:
         flash('Login-Link ungültig oder bereits verwendet.', 'error')
         return redirect(url_for('dashboard.login'))
-    if datetime.utcnow() - nutzer.login_token_angefordert_am > timedelta(minutes=LINK_GUELTIG_MINUTEN):
+    if utcnow() - nutzer.login_token_angefordert_am > timedelta(minutes=LINK_GUELTIG_MINUTEN):
         flash('Login-Link ist abgelaufen — bitte einen neuen anfordern.', 'error')
         return redirect(url_for('dashboard.login'))
 

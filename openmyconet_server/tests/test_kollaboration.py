@@ -1,10 +1,11 @@
 """Tests fuer den Hyphist-Kollaborationsbereich (Aufgaben + Kommentare + Anhaenge)."""
 import io
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from conftest import eingeloggt
 from extensions import db, mail
 from models import Nutzer, Foerderer, Knoten, Aufgabe, Kommentar, KollaborationAnhang
+from zeit import utcnow
 
 
 def _nutzer(app, email='partner@example.com', hyphist=True):
@@ -21,7 +22,7 @@ def _koop(app, email='partner@example.com', status='active', nutzer_id=None, fir
             token=f'tok-{firma}', status=status, typ='kooperation', firma=firma,
             beschreibung='Beschreibung der Kooperation.', email=email, betrag=0,
             ansprechpartner='Partner', nutzer_id=nutzer_id,
-            status_geaendert_am=datetime.utcnow() - timedelta(days=30),
+            status_geaendert_am=utcnow() - timedelta(days=30),
         )
         db.session.add(f)
         db.session.commit()
@@ -127,7 +128,7 @@ def test_aktivitaet_verschiebt_verfallsdatum(client, app):
     })
     with app.app_context():
         f = Foerderer.query.get(kid)
-        assert (datetime.utcnow() - f.status_geaendert_am) < timedelta(minutes=1)
+        assert (utcnow() - f.status_geaendert_am) < timedelta(minutes=1)
 
 
 def test_admin_kollaboration_seite_und_aufgabe(client, app, superadmin):

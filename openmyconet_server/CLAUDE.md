@@ -21,8 +21,11 @@ SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sql
 ## Tests & Lint
 `venv/Scripts/python.exe -m pytest -q -p no:warnings`
 `venv/Scripts/python.exe -m ruff check .` (Config: `ruff.toml`, muss grün bleiben;
-`--fix` nur sichere Fixes). `datetime.utcnow`-Deprecation (DTZ) ist bewusst nicht
-aktiviert — braucht eine DB-Migration der gespeicherten naiven Timestamps.
+`--fix` nur sichere Fixes). „Jetzt" **immer** über `zeit.utcnow()` (nie
+`datetime.utcnow()` — deprecated seit 3.12 — und nie `datetime.now(timezone.utc)`
+direkt, das wäre tz-aware und würde mit den bewusst naiven, in SQLite als UTC
+gespeicherten Zeitstempeln nicht mehr vergleichbar sein). DTZ (flake8-datetimez)
+ist deshalb bewusst nicht aktiviert, siehe `ruff.toml`.
 Suite ist grün, kein `xfail` mehr. Tests nutzen temp-DBs.
 CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
 

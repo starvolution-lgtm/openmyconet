@@ -12,7 +12,6 @@ Bereich) oder ein Knoten (Knotenbetreiber-Bereich, v1 noch nicht angebunden).
 import logging
 import os
 import uuid
-from datetime import datetime
 
 from flask import current_app
 from flask_mail import Message
@@ -20,6 +19,7 @@ from werkzeug.utils import secure_filename
 
 from extensions import db, mail
 from models import Aufgabe, Kommentar, KollaborationAnhang
+from zeit import utcnow
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ def _kooperation_aktivitaet_markieren(kontext):
     faelschlich auf 'verfallen' stuft. Nur fuer Kooperations-Foerderer relevant."""
     from models import Foerderer
     if isinstance(kontext, Foerderer) and kontext.typ == 'kooperation':
-        kontext.status_geaendert_am = datetime.utcnow()
+        kontext.status_geaendert_am = utcnow()
 
 
 # --- Schreiboperationen ----------------------------------------------------
@@ -85,7 +85,7 @@ def aufgabe_anlegen(kontext, titel, beschreibung, wer):
 
 def aufgabe_status_wechseln(aufgabe, wer):
     aufgabe.status = 'offen' if aufgabe.status == 'erledigt' else 'erledigt'
-    aufgabe.erledigt_am = datetime.utcnow() if aufgabe.status == 'erledigt' else None
+    aufgabe.erledigt_am = utcnow() if aufgabe.status == 'erledigt' else None
     kontext = aufgabe.foerderer or aufgabe.knoten
     _kooperation_aktivitaet_markieren(kontext)
     db.session.commit()
