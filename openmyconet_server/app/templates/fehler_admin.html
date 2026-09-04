@@ -3,7 +3,7 @@
 {% block heading %}🚨 Fehlerprotokoll{% endblock %}
 {% block content %}
 
-<p style="font-size:0.85em; color:#888;">Unbehandelte Serverfehler (500) — siehe <code>errors.py</code>. Bei jedem neuen Fehlerort geht zusätzlich eine Mail raus (max. 1/Stunde je Ort).</p>
+<p class="u-hint-sm">Unbehandelte Serverfehler (500) — siehe <code>errors.py</code>. Bei jedem neuen Fehlerort geht zusätzlich eine Mail raus (max. 1/Stunde je Ort).</p>
 
 {% if pagination.items %}
 <table>

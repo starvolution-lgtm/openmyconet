@@ -20,6 +20,7 @@ p { color:var(--text2); line-height:1.75; margin-bottom:1rem; }
 .btn-green { border-color:#0a7050; color:var(--accent); }
 .btn-green:hover { background:rgba(10,112,80,0.2); }
 .pending-note { font-family:var(--font-mono); font-size:0.7rem; color:var(--text2); background:rgba(0,0,0,0.18); border:1px solid var(--border); padding:0.75rem; margin-top:1.5rem; line-height:1.8; }
+.u-mt-1-5 { margin-top:1.5rem; }
 </style>
 </head>
 <body>
@@ -30,7 +31,7 @@ p { color:var(--text2); line-height:1.75; margin-bottom:1rem; }
   <p>Ihr Förderer-Eintrag für <strong>{{ foerderer.firma }}</strong> ist jetzt live.
   Vielen Dank für Ihre Unterstützung!</p>
   <p>Sie erhalten in Kürze eine Bestätigungs-E-Mail mit Ihrer Rechnung.</p>
-  <div style="margin-top:1.5rem;">
+  <div class="u-mt-1-5">
     {% if foerderer.rechnung_nr %}
     <a href="{{ url_for('foerderer.rechnung', nr=foerderer.rechnung_nr, token=foerderer.token) }}" class="btn" target="_blank">📄 Rechnung herunterladen</a>
     {% endif %}

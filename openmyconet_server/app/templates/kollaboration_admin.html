@@ -27,7 +27,7 @@
         {% for a in aufgaben %}
         <tr>
             <td style="width:2rem;">
-                <form method="post" style="display:inline;">
+                <form class="u-inline" method="post">
                     <input type="hidden" name="action" value="aufgabe_toggle">
                     <input type="hidden" name="aufgabe_id" value="{{ a.id }}">
                     <button type="submit" title="Status umschalten">{{ '✓' if a.status == 'erledigt' else '○' }}</button>
@@ -37,15 +37,15 @@
                 <strong{% if a.status == 'erledigt' %} style="text-decoration:line-through;opacity:0.6;"{% endif %}>{{ a.titel }}</strong>
                 {% if a.beschreibung %}<br><small>{{ a.beschreibung }}</small>{% endif %}
             </td>
-            <td style="text-align:center;">{{ 'Team' if a.erstellt_von == 'team' else 'Partner' }}</td>
-            <td style="text-align:center;">{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
+            <td class="u-center">{{ 'Team' if a.erstellt_von == 'team' else 'Partner' }}</td>
+            <td class="u-center">{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
         </tr>
         {% else %}
         <tr><td></td><td colspan="3">Noch keine Aufgaben.</td></tr>
         {% endfor %}
     </table>
 
-    <form method="post" style="margin-top:1rem;">
+    <form class="u-mt-1" method="post">
         <input type="hidden" name="action" value="aufgabe_neu">
         <input type="text" name="titel" placeholder="Neue Aufgabe" required>
         <input type="text" name="beschreibung" placeholder="Details (optional)">
@@ -67,7 +67,7 @@
     <p>Noch keine Kommentare.</p>
     {% endfor %}
 
-    <form method="post" enctype="multipart/form-data" style="margin-top:1rem;">
+    <form class="u-mt-1" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="kommentar_neu">
         <textarea name="text" rows="3" placeholder="Kommentar schreiben…" required style="width:100%;box-sizing:border-box;"></textarea>
         <input type="file" name="dateien" multiple>

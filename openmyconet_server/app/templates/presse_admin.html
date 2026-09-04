@@ -38,10 +38,10 @@
 
     <label>Anreißertext (2-3 Sätze)</label>
     <textarea name="anreissertext" rows="4" placeholder="Eigene kurze Einordnung, kein Zitat aus dem Original — was berichtet die Quelle, warum ist es für OpenMycoNet relevant." required></textarea>
-    <p style="font-size:0.85rem; color:var(--muted); margin-top:0.3rem;">⚠️ Bitte nur eine eigene, kurze Einordnung schreiben — kein wörtliches Zitat und keinen Ausschnitt aus dem Originalartikel übernehmen, auch nicht verkürzt.</p>
+    <p class="u-muted-note">⚠️ Bitte nur eine eigene, kurze Einordnung schreiben — kein wörtliches Zitat und keinen Ausschnitt aus dem Originalartikel übernehmen, auch nicht verkürzt.</p>
 
     <label style="display:flex; align-items:center; gap:0.5rem; margin-top:1rem;">
-        <input type="checkbox" name="veroeffentlicht" style="width:auto;"> Sofort veröffentlichen
+        <input class="u-w-auto" type="checkbox" name="veroeffentlicht"> Sofort veröffentlichen
     </label>
 
     <button type="submit">Speichern</button>
@@ -66,7 +66,7 @@
         <td>{{ eintrag.quelle }}</td>
         <td>{{ '✓ veröffentlicht' if eintrag.veroeffentlicht else 'Entwurf' }}</td>
         <td>
-            <a href="{{ url_for('admin.presse_edit', presse_id=eintrag.id) }}" style="margin-right:8px;">Bearbeiten</a>
+            <a class="u-mr-8" href="{{ url_for('admin.presse_edit', presse_id=eintrag.id) }}">Bearbeiten</a>
             <a href="{{ url_for('admin.presse_delete', presse_id=eintrag.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
         </td>
     </tr>

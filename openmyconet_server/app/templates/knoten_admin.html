@@ -30,7 +30,7 @@
 
 <hr>
 <h2>Registrierte Knoten</h2>
-<p style="font-size:0.85em; color:#888;">Der API-Key gehört in die Geräte-Konfiguration (Header <code>X-Api-Key</code> bei <code>/api/v1/messung</code>). Bei Verdacht auf Leak neu generieren.</p>
+<p class="u-hint-sm">Der API-Key gehört in die Geräte-Konfiguration (Header <code>X-Api-Key</code> bei <code>/api/v1/messung</code>). Bei Verdacht auf Leak neu generieren.</p>
 <table>
     <tr>
         <th>Knoten-ID</th>
@@ -52,7 +52,7 @@
         <td>{{ knoten.messungen|length }}</td>
         <td>
             <code style="font-size:0.78em; word-break:break-all;">{{ knoten.api_key or '—' }}</code>
-            <form method="POST" style="display:inline;" onsubmit="return confirm('Neuen API-Key für {{ knoten.knoten_id }}? Der alte wird sofort ungültig.');">
+            <form class="u-inline" method="POST" onsubmit="return confirm('Neuen API-Key für {{ knoten.knoten_id }}? Der alte wird sofort ungültig.');">
                 <input type="hidden" name="action" value="key_neu">
                 <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
                 <button type="submit" style="font-size:0.75em;">neu</button>

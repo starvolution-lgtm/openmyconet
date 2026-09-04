@@ -157,3 +157,24 @@ img.vorschau { max-width: 300px; display: block; margin-top: 0.6rem; border-radi
   .wrap { padding: 1.4rem 1rem 3rem; }
   .stats { flex-direction: column; }
 }
+
+/* ── Utility-Klassen (Migration von Inline-Styles, CSP-Haertung: style-src
+   soll ohne 'unsafe-inline' auskommen). Deckt wiederkehrende Muster ueber
+   alle admin_base.html-Templates ab. ── */
+.u-inline { display: inline; }
+.u-none { display: none; }
+.u-mr-8 { margin-right: 8px; }
+.u-mt-6 { margin-top: 6px; }
+.u-mt-16 { margin-top: 16px; }
+.u-mt-1 { margin-top: 1rem; }
+.u-mt-1-5 { margin-top: 1.5rem; }
+.u-mb-14 { margin-bottom: 14px; }
+.u-m0 { margin: 0; }
+.u-w-auto { width: auto; }
+.u-center { text-align: center; }
+.u-nowrap { white-space: nowrap; }
+.u-strike-faded { text-decoration: line-through; opacity: 0.6; }
+.u-hint-sm { font-size: 0.85em; color: #888; }
+.u-muted-note { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+.u-muted-text { color: var(--muted); max-width: 60ch; }
+.u-pre-wrap { margin: 4px 0; white-space: pre-wrap; }

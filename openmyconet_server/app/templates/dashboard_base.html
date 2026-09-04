@@ -28,6 +28,15 @@
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         th { text-align: left; color: #4caf50; padding: 6px 8px; font-size: 0.85em; }
         td { padding: 6px 8px; border-bottom: 1px solid #24342466; font-size: 0.9em; }
+
+        /* Utility-Klassen (Migration von Inline-Styles, CSP-Haertung) --
+           dieselben Klassennamen wie in admin.css, dashboard_*.html laedt
+           admin.css aber nicht, deshalb hier eine eigene, minimale Kopie
+           der tatsaechlich genutzten. */
+        .u-m0 { margin: 0; }
+        .u-mt-16 { margin-top: 16px; }
+        .u-mb-14 { margin-bottom: 14px; }
+        .u-pre-wrap { margin: 4px 0; white-space: pre-wrap; }
     </style>
 </head>
 <body>

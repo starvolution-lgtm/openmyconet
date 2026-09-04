@@ -47,20 +47,20 @@
         <a class="btn" href="{{ url_for('admin.kollaboration_foerderer', foerderer_id=f.id) }}">💬 Kollaboration</a>
         {% endif %}
         {% if f.status != 'active' %}
-        <form method="post" style="display:inline;">
+        <form class="u-inline" method="post">
             <input type="hidden" name="foerderer_id" value="{{ f.id }}">
             <input type="hidden" name="action" value="activate">
             <button type="submit" class="aktiv">✓ Freischalten</button>
         </form>
         {% endif %}
         {% if f.status != 'rejected' %}
-        <form method="post" style="display:inline;">
+        <form class="u-inline" method="post">
             <input type="hidden" name="foerderer_id" value="{{ f.id }}">
             <input type="hidden" name="action" value="reject">
             <button type="submit" class="ablehnen">Ablehnen</button>
         </form>
         {% endif %}
-        <form method="post" style="display:inline;" onsubmit="return confirm('Eintrag &quot;{{ f.firma }}&quot; wirklich endgültig löschen?');">
+        <form class="u-inline" method="post" onsubmit="return confirm('Eintrag &quot;{{ f.firma }}&quot; wirklich endgültig löschen?');">
             <input type="hidden" name="foerderer_id" value="{{ f.id }}">
             <input type="hidden" name="action" value="delete">
             <button type="submit" class="loeschen">Löschen</button>

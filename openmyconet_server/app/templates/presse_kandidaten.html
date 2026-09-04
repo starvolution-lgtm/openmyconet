@@ -6,10 +6,10 @@
 
 <p><a href="{{ url_for('admin.presse_admin') }}">← zurück zur Presseverwaltung</a></p>
 
-<p style="color:var(--muted); max-width:60ch;">Automatisch über Google-Alerts-RSS-Feeds gefundene Treffer zum Thema Mykorrhiza/Pilznetzwerke — <strong>nichts hier ist bereits veröffentlicht.</strong> Beim Übernehmen wird nur Titel/URL/Quelle vorausgefüllt, den Anreißertext schreibst du selbst.</p>
+<p class="u-muted-text">Automatisch über Google-Alerts-RSS-Feeds gefundene Treffer zum Thema Mykorrhiza/Pilznetzwerke — <strong>nichts hier ist bereits veröffentlicht.</strong> Beim Übernehmen wird nur Titel/URL/Quelle vorausgefüllt, den Anreißertext schreibst du selbst.</p>
 
 {% if not kandidaten %}
-<p style="margin-top:1.5rem;">Aktuell keine offenen Kandidaten.</p>
+<p class="u-mt-1-5">Aktuell keine offenen Kandidaten.</p>
 {% else %}
 <table>
     <tr>
@@ -27,9 +27,9 @@
         <td>{{ k.sprache }}</td>
         <td><a href="{{ k.url }}" target="_blank" rel="noopener">{{ k.titel }}</a></td>
         <td>{{ k.quelle }}</td>
-        <td style="white-space:nowrap;">
-            <a href="{{ url_for('admin.presse_kandidat_uebernehmen', kandidat_id=k.id) }}" style="margin-right:8px;">Übernehmen</a>
-            <form method="POST" style="display:inline;">
+        <td class="u-nowrap">
+            <a class="u-mr-8" href="{{ url_for('admin.presse_kandidat_uebernehmen', kandidat_id=k.id) }}">Übernehmen</a>
+            <form class="u-inline" method="POST">
                 <input type="hidden" name="kandidat_id" value="{{ k.id }}">
                 <input type="hidden" name="action" value="verwerfen">
                 <button type="submit" class="del" style="all:unset; cursor:pointer; color:#c0392b;">✕</button>
@@ -43,7 +43,7 @@
 <hr style="margin:2.5rem 0;">
 
 <h2>RSS-Feeds (Google Alerts)</h2>
-<p style="color:var(--muted); max-width:60ch;">Ein Google-Alerts-RSS-Feed pro Sprache — Änderungen wirken beim nächsten Cronjob-Lauf (aktuell 2× monatlich, am 1. und 15. um 8 Uhr). Nicht aktive Feeds werden übersprungen. Feed-URL erhältst du unter <a href="https://www.google.com/alerts" target="_blank" rel="noopener">google.com/alerts</a> — Alert anlegen, bei "Übermitteln an" "RSS-Feed" statt E-Mail wählen, dann auf der Alerts-Übersichtsseite das RSS-Symbol neben dem Alert öffnen.</p>
+<p class="u-muted-text">Ein Google-Alerts-RSS-Feed pro Sprache — Änderungen wirken beim nächsten Cronjob-Lauf (aktuell 2× monatlich, am 1. und 15. um 8 Uhr). Nicht aktive Feeds werden übersprungen. Feed-URL erhältst du unter <a href="https://www.google.com/alerts" target="_blank" rel="noopener">google.com/alerts</a> — Alert anlegen, bei "Übermitteln an" "RSS-Feed" statt E-Mail wählen, dann auf der Alerts-Übersichtsseite das RSS-Symbol neben dem Alert öffnen.</p>
 
 <table>
     <tr>
@@ -58,9 +58,9 @@
         <td><input type="text" name="sprache" form="sbform{{ sb.id }}" value="{{ sb.sprache }}" style="width:4em;"></td>
         <td><input type="text" name="begriff" form="sbform{{ sb.id }}" value="{{ sb.begriff }}" style="width:26em;"></td>
         <td><input type="text" name="quellsprache" form="sbform{{ sb.id }}" value="{{ sb.quellsprache }}" style="width:8em;"></td>
-        <td><input type="checkbox" name="aktiv" form="sbform{{ sb.id }}" style="width:auto;" {% if sb.aktiv %}checked{% endif %}></td>
-        <td style="white-space:nowrap;">
-            <button type="submit" form="sbform{{ sb.id }}" style="margin-right:8px;">Speichern</button>
+        <td><input class="u-w-auto" type="checkbox" name="aktiv" form="sbform{{ sb.id }}" {% if sb.aktiv %}checked{% endif %}></td>
+        <td class="u-nowrap">
+            <button class="u-mr-8" type="submit" form="sbform{{ sb.id }}">Speichern</button>
             <a href="{{ url_for('admin.suchbegriff_loeschen', suchbegriff_id=sb.id) }}" class="del" onclick="return confirm('RSS-Feed wirklich löschen?')">✕</a>
         </td>
     </tr>
@@ -70,7 +70,7 @@
 <form id="sbform{{ sb.id }}" method="POST" action="{{ url_for('admin.suchbegriff_speichern', suchbegriff_id=sb.id) }}"></form>
 {% endfor %}
 
-<h3 style="margin-top:1.5rem;">Neuen RSS-Feed hinzufügen</h3>
+<h3 class="u-mt-1-5">Neuen RSS-Feed hinzufügen</h3>
 <form method="POST" action="{{ url_for('admin.suchbegriff_neu') }}">
     <label>Sprache (Website-Sprachcode, z.B. de)</label>
     <input type="text" name="sprache" required>

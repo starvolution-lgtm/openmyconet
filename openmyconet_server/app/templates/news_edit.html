@@ -44,7 +44,7 @@
 
     <label>Inhalt</label>
     <div id="editor"></div>
-    <textarea name="inhalt" id="inhalt-feld" style="display:none;">{{ news.inhalt }}</textarea>
+    <textarea class="u-none" name="inhalt" id="inhalt-feld">{{ news.inhalt }}</textarea>
 
     <label>Tags (kommagetrennt, optional)</label>
     <input type="text" name="tags" value="{{ news.tags or '' }}" placeholder="z.B. Mykorrhiza, Forschung, Update">

@@ -45,7 +45,7 @@
 
     <label>Inhalt</label>
     <div id="editor"></div>
-    <textarea name="inhalt" id="inhalt-feld" style="display:none;"></textarea>
+    <textarea class="u-none" name="inhalt" id="inhalt-feld"></textarea>
 
     <label>Tags (kommagetrennt, optional)</label>
     <input type="text" name="tags" placeholder="z.B. Mykorrhiza, Forschung, Update">
@@ -70,8 +70,8 @@
         <td>{{ news.titel }}</td>
         <td>{% if news.bild_dateiname %}✓{% endif %}</td>
         <td>
-            {% if news.slug %}<a href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank" style="margin-right:8px;">Ansehen</a>{% endif %}
-            <a href="{{ url_for('admin.news_edit', news_id=news.id) }}" style="margin-right:8px;">Bearbeiten</a>
+            {% if news.slug %}<a class="u-mr-8" href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank">Ansehen</a>{% endif %}
+            <a class="u-mr-8" href="{{ url_for('admin.news_edit', news_id=news.id) }}">Bearbeiten</a>
             <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
         </td>
     </tr>
