@@ -44,6 +44,18 @@
 .btn:hover { background-color:#3a9e5a; }
 .form-note { margin-top:0.8rem; font-size:0.85rem; color:#b0d4b0; font-style:italic; }
 @media (max-width:600px) { .main { padding:4rem 1.2rem 3rem; } .main h1 { font-size:2rem; } }
+
+/* -- Migration foerderer.html Inline-Styles -> Klassen (CSP-Haertung, 8/N) -- */
+.fo-1 { color:#e8f5e0; font-size:1.1rem; max-width:680px; margin-bottom:2rem; }
+.fo-2 { color:#b0d4b0; font-size:0.95rem; max-width:640px; margin-bottom:1.5rem; }
+.fo-3 { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2.5rem; }
+.fo-4 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none; }
+.fo-5 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:transparent; border:1px solid #d4a030; color:#f0b84a; text-decoration:none; }
+.fo-6 { color:#a0c8a0; }
+.fo-7 { font-size:1.3rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem; }
+.fo-8 { font-size:0.95rem; color:#a0c8a0; text-align:center; margin-top:0.5rem; line-height:1.7; }
+.fo-9 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:1rem 2.5rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none; }
+.fo-10 { display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px; }
 {% endblock %}
 
 {% block content %}
@@ -51,7 +63,7 @@
   <p class="section-label" data-i18n="f_section_label">{{ t('f_section_label') }}</p>
   <h1 data-i18n-html="f_h1">{{ t('f_h1') | safe }}</h1>
 
-  <p data-i18n="f_intro_p1" style="color:#e8f5e0; font-size:1.1rem; max-width:680px; margin-bottom:2rem;">{{ t('f_intro_p1') }}</p>
+  <p class="fo-1" data-i18n="f_intro_p1">{{ t('f_intro_p1') }}</p>
 
   <h2 data-i18n="f_h2_vorteile">{{ t('f_h2_vorteile') }}</h2>
   <div class="vorteile">
@@ -76,14 +88,12 @@
 
   <h2 data-i18n="f_h2_liste">{{ t('f_h2_liste') }}</h2>
 
-  <p data-i18n-html="koop_wege_text" style="color:#b0d4b0; font-size:0.95rem; max-width:640px; margin-bottom:1.5rem;">{{ t('koop_wege_text') | safe }}</p>
-  <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2.5rem;">
-    <a href="https://api.openmyconet.de/foerderer/antrag"
-      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
+  <p class="fo-2" data-i18n-html="koop_wege_text">{{ t('koop_wege_text') | safe }}</p>
+  <div class="fo-3">
+    <a class="fo-4" href="https://api.openmyconet.de/foerderer/antrag">
       <span data-i18n="koop_btn_foerderer">{{ t('koop_btn_foerderer') }}</span>
     </a>
-    <a href="https://api.openmyconet.de/foerderer/kooperation"
-      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:transparent; border:1px solid #d4a030; color:#f0b84a; text-decoration:none;">
+    <a class="fo-5" href="https://api.openmyconet.de/foerderer/kooperation">
       <span data-i18n="koop_btn_kooperation">{{ t('koop_btn_kooperation') }}</span>
     </a>
   </div>
@@ -105,24 +115,23 @@
         <div class="foerderer-card">{{ inner }}</div>
       {% endif %}
     {% else %}
-      <p style="color:#a0c8a0;">Noch keine Förderer eingetragen.</p>
+      <p class="fo-6">Noch keine Förderer eingetragen.</p>
     {% endfor %}
   </div>
-  <p data-i18n="f_next_headline" style="font-size:1.3rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem;">{{ t('f_next_headline') }}</p>
-  <p data-i18n="f_next_sub" style="font-size:0.95rem; color:#a0c8a0; text-align:center; margin-top:0.5rem; line-height:1.7;">{{ t('f_next_sub') }}</p>
+  <p class="fo-7" data-i18n="f_next_headline">{{ t('f_next_headline') }}</p>
+  <p class="fo-8" data-i18n="f_next_sub">{{ t('f_next_sub') }}</p>
 
   <h2 data-i18n="f_h2_form">{{ t('f_h2_form') }}</h2>
   <p data-i18n="f_form_intro">{{ t('f_form_intro') }}</p>
 
   <div class="u-mt-1-5">
-    <a href="https://api.openmyconet.de/foerderer/antrag" class="btn" id="foerderer-btn"
-      style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:1rem 2.5rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
+    <a href="https://api.openmyconet.de/foerderer/antrag" class="btn fo-9" id="foerderer-btn">
       ✦ <span id="f-cta-label" data-i18n="f_submit">{{ t('f_submit') }}</span>
     </a>
     <p class="form-note u-mt-1" data-i18n="f_form_note">{{ t('f_form_note') }}</p>
   </div>
 
-  <a href="{{ live('index.html') }}" data-i18n="f_back" style="display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">{{ t('f_back') }}</a>
+  <a class="fo-10" href="{{ live('index.html') }}" data-i18n="f_back">{{ t('f_back') }}</a>
 </div>
 {% endblock %}
 
