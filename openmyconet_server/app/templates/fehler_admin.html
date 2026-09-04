@@ -1,0 +1,49 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Fehlerprotokoll{% endblock %}
+{% block heading %}🚨 Fehlerprotokoll{% endblock %}
+{% block content %}
+
+<p style="font-size:0.85em; color:#888;">Unbehandelte Serverfehler (500) — siehe <code>errors.py</code>. Bei jedem neuen Fehlerort geht zusätzlich eine Mail raus (max. 1/Stunde je Ort).</p>
+
+{% if pagination.items %}
+<table>
+    <tr>
+        <th>Zeit</th>
+        <th>Methode</th>
+        <th>Pfad</th>
+        <th>Typ</th>
+        <th>Nachricht</th>
+        <th>IP</th>
+        <th></th>
+    </tr>
+    {% for f in pagination.items %}
+    <tr>
+        <td>{{ f.zeitpunkt.strftime('%d.%m.%Y %H:%M') if f.zeitpunkt else '—' }}</td>
+        <td>{{ f.methode }}</td>
+        <td>{{ f.pfad }}</td>
+        <td>{{ f.fehlertyp }}</td>
+        <td>{{ f.nachricht }}</td>
+        <td>{{ f.ip }}</td>
+        <td>
+            <details>
+                <summary>Traceback</summary>
+                <pre style="white-space:pre-wrap; font-size:0.75em; max-width:600px;">{{ f.traceback }}</pre>
+            </details>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="pager">
+    {% if pagination.has_prev %}
+        <a href="?page={{ pagination.prev_num }}">← Neuer</a>
+    {% endif %}
+    Seite {{ pagination.page }} von {{ pagination.pages }}
+    {% if pagination.has_next %}
+        <a href="?page={{ pagination.next_num }}">Älter →</a>
+    {% endif %}
+</div>
+{% else %}
+    <p class="leer">Keine Fehler protokolliert. 🍄</p>
+{% endif %}
+{% endblock %}

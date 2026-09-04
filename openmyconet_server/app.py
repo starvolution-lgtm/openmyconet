@@ -20,6 +20,7 @@ from foerderer import foerderer_bp
 from kontrollzentrum import kontrollzentrum_bp
 from i18n import init_i18n
 from csrf import init_csrf
+from errors import init_errors
 
 load_dotenv()
 
@@ -113,6 +114,7 @@ app.jinja_env.globals['translations_json_url'] = lambda: '/translations.json'
 
 init_i18n(app)
 init_csrf(app)
+init_errors(app)
 
 # Sicherheits-Header. CSP erlaubt bewusst 'unsafe-inline' für script-src/style-src,
 # da die Templates aktuell durchgängig Inline-<script>- und style=""-Attribute

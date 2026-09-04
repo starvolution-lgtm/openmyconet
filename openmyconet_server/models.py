@@ -253,6 +253,21 @@ class KollaborationAnhang(db.Model):
     kommentar = db.relationship('Kommentar', backref=db.backref('anhaenge', lazy=True, cascade='all, delete-orphan'))
 
 
+class Fehlerprotokoll(db.Model):
+    """Unbehandelte Exceptions (errors.py) -- Admin-Ansicht unter /admin/fehler.
+    Kein Sentry/GlitchTip (weitere Infra, DSGVO-Frage bei externem Hosting),
+    aber genug um mitzubekommen, dass/wo auf Prod ueberhaupt ein 500 auftritt --
+    vorher liefen gunicorns stdout/stderr ins Leere (kein Terminal, keine Logdatei)."""
+    id = db.Column(db.Integer, primary_key=True)
+    zeitpunkt = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    pfad = db.Column(db.String(300))
+    methode = db.Column(db.String(10))
+    ip = db.Column(db.String(45))
+    fehlertyp = db.Column(db.String(120))
+    nachricht = db.Column(db.Text)
+    traceback = db.Column(db.Text)
+
+
 class Suchbegriff(db.Model):
     """Konfiguration fuer presse_suche.py -- im Admin unter /admin/presse-kandidaten
     editierbar, damit Suchbegriffe ohne Code-Deploy angepasst werden koennen."""

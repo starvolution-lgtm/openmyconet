@@ -56,6 +56,14 @@ siehe deploy-exclude.txt. Feature-Migrationen (`migrate_kollaboration.py` etc.) 
 manuell — release.sh fährt nur die beiden idempotenten. DB-Backup separat vor riskanten
 Migrationen (WAL: siehe DB-Abschnitt).
 
+## Fehler-Monitoring
+`errors.py` (`init_errors(app)`): unbehandelte Exceptions → rotierende Logdatei
+(`instance/logs/app.log`), Zeile in `Fehlerprotokoll` (Admin: `/admin/fehler`),
+ratenbegrenzte Mail an `ADMIN_NOTIFY_EMAIL`/`MAIL_USERNAME` (max. 1/Stunde je
+Fehlerort). Kein Sentry/GlitchTip (weitere Infra, DSGVO-Frage bei externem
+Hosting). HTTPExceptions (404/403/400 …) bleiben unangetastet. Grund: gunicorn
+läuft ohne Terminal/systemd-Journal — stdout/stderr gingen bisher ins Leere.
+
 ## Sicherheit
 CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
 Session-Token (Feld `_csrf` oder Header `X-CSRFToken`). `admin_base.html` /

@@ -18,6 +18,7 @@ from extensions import db, mail
 from models import (
     Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung,
     Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, KollaborationAnhang,
+    Fehlerprotokoll,
 )
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 from spam_schutz import ip_erlaubt
@@ -430,6 +431,18 @@ def chatlogs():
         query = query.filter_by(lang=filter_lang)
     pagination = query.order_by(ChatLog.erstellt_am.desc()).paginate(page=page, per_page=50, error_out=False)
     return render_template('chatlogs.html', pagination=pagination, filter_lang=filter_lang)
+
+
+# --- Fehlerprotokoll (errors.py) ---
+
+@admin_bp.route('/admin/fehler')
+@role_required('superadmin')
+def fehler_admin():
+    page = request.args.get('page', 1, type=int)
+    pagination = Fehlerprotokoll.query.order_by(Fehlerprotokoll.zeitpunkt.desc()).paginate(
+        page=page, per_page=50, error_out=False
+    )
+    return render_template('fehler_admin.html', pagination=pagination)
 
 
 # --- Spenden-Fortschrittsbalken ---

@@ -33,6 +33,7 @@
       <a href="{{ url_for('admin.inhalte_admin') }}">📝 Inhalte</a>
       {% if session.admin_role == 'superadmin' %}
       <a href="{{ url_for('admin.chatlogs') }}">💬 Chat-Logs</a>
+      <a href="{{ url_for('admin.fehler_admin') }}">🚨 Fehler</a>
       <a href="{{ url_for('admin.accounts') }}">🔑 Accounts</a>
       {% endif %}
       <a href="{{ url_for('admin.change_password') }}">Passwort</a>

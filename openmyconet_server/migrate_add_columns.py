@@ -110,6 +110,23 @@ def main():
         print(f'{len(ohne_key)} Knoten haben einen API-Key erhalten (im Admin unter /admin/knoten einsehbar).')
     cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS ix_knoten_api_key ON knoten (api_key)')
 
+    # Fehlerprotokoll (errors.py) -- neue Tabelle. db.create_all() legt sie auf
+    # frischen DBs an, aber unter gunicorn laeuft nie __main__ -> hier fuer
+    # bestehende Prod-DBs nachziehen.
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS fehlerprotokoll (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            zeitpunkt DATETIME,
+            pfad VARCHAR(300),
+            methode VARCHAR(10),
+            ip VARCHAR(45),
+            fehlertyp VARCHAR(120),
+            nachricht TEXT,
+            traceback TEXT
+        )
+    ''')
+    cur.execute('CREATE INDEX IF NOT EXISTS ix_fehlerprotokoll_zeitpunkt ON fehlerprotokoll (zeitpunkt)')
+
     conn.commit()
     conn.close()
 
