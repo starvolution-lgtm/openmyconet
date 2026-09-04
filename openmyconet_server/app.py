@@ -116,12 +116,17 @@ init_i18n(app)
 init_csrf(app)
 init_errors(app)
 
-# Sicherheits-Header. CSP erlaubt bewusst 'unsafe-inline' für script-src/style-src,
-# da die Templates aktuell durchgängig Inline-<script>- und style=""-Attribute
-# nutzen (285 Inline-Styles in 21 von 32 Templates) -- ein Nonce-basiertes
-# Entfernen von unsafe-inline waere ein eigenes, groesseres Refactoring-Projekt.
-# Alle anderen Direktiven sind strikt gesetzt; das ist eine echte Verbesserung
-# gegenueber "kein CSP", auch wenn es keine maximale Haertung ist.
+# Sicherheits-Header. style-src kommt seit 2026-09-04 OHNE 'unsafe-inline' aus --
+# alle ~430 Inline-style=""-Attribute in den ueber HTTP ausgelieferten Templates
+# wurden auf CSS-Klassen umgestellt (siehe Commit-Historie "CSP-Haertung, N/N").
+# Einzige Ausnahme: newsletter_email.html (E-Mail-Koerper, hier nicht relevant,
+# da E-Mail-Clients kein CSP durchsetzen).
+#
+# script-src erlaubt weiterhin bewusst 'unsafe-inline' -- die Templates nutzen
+# durchgaengig onclick=""/onchange=""-Attribute und Inline-<script>-Bloecke;
+# das Entfernen braeuchte eine Umstellung auf addEventListener (CSP-Nonces
+# decken Inline-Event-Handler-Attribute nicht ab) und ist ein eigenes,
+# separates Refactoring-Projekt.
 #
 # WICHTIG: asset()/live() (oben) verlinken Bilder/Skripte/Audio IMMER absolut auf
 # www.openmyconet.de, api_content() laeuft ueber api.openmyconet.de -- das ist
@@ -132,7 +137,7 @@ _EIGENE_DOMAINS = "https://www.openmyconet.de https://openmyconet.de https://api
 _CSP = (
     f"default-src 'self' {_EIGENE_DOMAINS}; "
     f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net; "
-    f"style-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+    f"style-src 'self' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
     f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
     f"img-src 'self' data: {_EIGENE_DOMAINS} https://unpkg.com https://*.tile.openstreetmap.org; "
     f"media-src 'self' {_EIGENE_DOMAINS}; "
