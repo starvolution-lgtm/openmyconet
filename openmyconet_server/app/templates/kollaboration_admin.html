@@ -2,6 +2,17 @@
 {% set techn = modus == 'technisch' %}
 {% block title %}OpenMycoNet — Kollaboration: {{ titel_kontext }}{% endblock %}
 {% block heading %}💬 Kollaboration — {{ titel_kontext }}{% endblock %}
+{% block extra_css %}
+<style>
+/* Migration Inline-Styles -> Klassen (CSP-Haertung) */
+.ka-1 { width:100%;border-collapse:collapse; }
+.ka-2 { text-align:left; }
+.ka-3 { width:2rem; }
+.ka-4 { margin-bottom:1rem;padding-bottom:0.6rem;border-bottom:1px solid #0002; }
+.ka-5 { margin:0.3rem 0;white-space:pre-wrap; }
+.ka-6 { width:100%;box-sizing:border-box; }
+</style>
+{% endblock %}
 {% block content %}
 
 <p class="info">
@@ -22,11 +33,11 @@
 
 <div class="karte">
     <h2>Aufgaben</h2>
-    <table style="width:100%;border-collapse:collapse;">
-        <tr><th></th><th style="text-align:left;">Aufgabe</th><th>Von</th><th>Angelegt</th></tr>
+    <table class="ka-1">
+        <tr><th></th><th class="ka-2">Aufgabe</th><th>Von</th><th>Angelegt</th></tr>
         {% for a in aufgaben %}
         <tr>
-            <td style="width:2rem;">
+            <td class="ka-3">
                 <form class="u-inline" method="post">
                     <input type="hidden" name="action" value="aufgabe_toggle">
                     <input type="hidden" name="aufgabe_id" value="{{ a.id }}">
@@ -34,7 +45,7 @@
                 </form>
             </td>
             <td>
-                <strong{% if a.status == 'erledigt' %} style="text-decoration:line-through;opacity:0.6;"{% endif %}>{{ a.titel }}</strong>
+                <strong{% if a.status == 'erledigt' %} class="u-strike-faded"{% endif %}>{{ a.titel }}</strong>
                 {% if a.beschreibung %}<br><small>{{ a.beschreibung }}</small>{% endif %}
             </td>
             <td class="u-center">{{ 'Team' if a.erstellt_von == 'team' else 'Partner' }}</td>
@@ -56,9 +67,9 @@
 <div class="karte">
     <h2>Kommentare</h2>
     {% for k in kommentare %}
-    <div style="margin-bottom:1rem;padding-bottom:0.6rem;border-bottom:1px solid #0002;">
+    <div class="ka-4">
         <small><strong>{{ 'Team' if k.autor == 'team' else 'Partner' }}</strong> · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</small>
-        <p style="margin:0.3rem 0;white-space:pre-wrap;">{{ k.text }}</p>
+        <p class="ka-5">{{ k.text }}</p>
         {% for anhang in k.anhaenge %}
         <div><small>📎 <a href="{{ url_for('admin.kollaboration_datei', anhang_id=anhang.id) }}">{{ anhang.originalname or anhang.dateiname }}</a> ({{ (anhang.groesse / 1024) | round | int }} KB)</small></div>
         {% endfor %}
@@ -69,7 +80,7 @@
 
     <form class="u-mt-1" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="kommentar_neu">
-        <textarea name="text" rows="3" placeholder="Kommentar schreiben…" required style="width:100%;box-sizing:border-box;"></textarea>
+        <textarea class="ka-6" name="text" rows="3" placeholder="Kommentar schreiben…" required></textarea>
         <input type="file" name="dateien" multiple>
         <p><small>Erlaubt: Bilder, PDF, TXT/LOG/CSV/JSON, ZIP — max. 5 MB pro Datei.</small></p>
         <button type="submit">Kommentar senden</button>

@@ -2,6 +2,18 @@
 {% block title %}OpenMycoNet — Presse-Kandidaten{% endblock %}
 {% block heading %}🔎 Presse-Kandidaten{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Migration Inline-Styles -> Klassen (CSP-Haertung) */
+.pk-1 { all:unset; cursor:pointer; color:#c0392b; }
+.pk-2 { margin:2.5rem 0; }
+.pk-3 { width:4em; }
+.pk-4 { width:26em; }
+.pk-5 { width:8em; }
+.pk-6 { width:100%; max-width:32em; }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <p><a href="{{ url_for('admin.presse_admin') }}">← zurück zur Presseverwaltung</a></p>
@@ -32,7 +44,7 @@
             <form class="u-inline" method="POST">
                 <input type="hidden" name="kandidat_id" value="{{ k.id }}">
                 <input type="hidden" name="action" value="verwerfen">
-                <button type="submit" class="del" style="all:unset; cursor:pointer; color:#c0392b;">✕</button>
+                <button type="submit" class="del pk-1">✕</button>
             </form>
         </td>
     </tr>
@@ -40,7 +52,7 @@
 </table>
 {% endif %}
 
-<hr style="margin:2.5rem 0;">
+<hr class="pk-2">
 
 <h2>RSS-Feeds (Google Alerts)</h2>
 <p class="u-muted-text">Ein Google-Alerts-RSS-Feed pro Sprache — Änderungen wirken beim nächsten Cronjob-Lauf (aktuell 2× monatlich, am 1. und 15. um 8 Uhr). Nicht aktive Feeds werden übersprungen. Feed-URL erhältst du unter <a href="https://www.google.com/alerts" target="_blank" rel="noopener">google.com/alerts</a> — Alert anlegen, bei "Übermitteln an" "RSS-Feed" statt E-Mail wählen, dann auf der Alerts-Übersichtsseite das RSS-Symbol neben dem Alert öffnen.</p>
@@ -55,9 +67,9 @@
     </tr>
     {% for sb in suchbegriffe %}
     <tr>
-        <td><input type="text" name="sprache" form="sbform{{ sb.id }}" value="{{ sb.sprache }}" style="width:4em;"></td>
-        <td><input type="text" name="begriff" form="sbform{{ sb.id }}" value="{{ sb.begriff }}" style="width:26em;"></td>
-        <td><input type="text" name="quellsprache" form="sbform{{ sb.id }}" value="{{ sb.quellsprache }}" style="width:8em;"></td>
+        <td><input class="pk-3" type="text" name="sprache" form="sbform{{ sb.id }}" value="{{ sb.sprache }}"></td>
+        <td><input class="pk-4" type="text" name="begriff" form="sbform{{ sb.id }}" value="{{ sb.begriff }}"></td>
+        <td><input class="pk-5" type="text" name="quellsprache" form="sbform{{ sb.id }}" value="{{ sb.quellsprache }}"></td>
         <td><input class="u-w-auto" type="checkbox" name="aktiv" form="sbform{{ sb.id }}" {% if sb.aktiv %}checked{% endif %}></td>
         <td class="u-nowrap">
             <button class="u-mr-8" type="submit" form="sbform{{ sb.id }}">Speichern</button>
@@ -76,7 +88,7 @@
     <input type="text" name="sprache" required>
 
     <label>RSS-Feed-URL (von google.com/alerts)</label>
-    <input type="text" name="begriff" required style="width:100%; max-width:32em;">
+    <input class="pk-6" type="text" name="begriff" required>
 
     <label>Sprache, nur zur Info (z.B. german, english, dutch, french, spanish)</label>
     <input type="text" name="quellsprache" required>
