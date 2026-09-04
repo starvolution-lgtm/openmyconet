@@ -3,3 +3,6 @@
 # mit CRLF auscheckt.
 deploy/*.sh text eol=lf
 *.sh text eol=lf
+# deploy-exclude.txt wird von rsync --exclude-from gelesen -> CRLF wuerde \r in die
+# Patterns bringen und den Schutz (instance/, .env, uploads ...) aushebeln.
+deploy/deploy-exclude.txt text eol=lf

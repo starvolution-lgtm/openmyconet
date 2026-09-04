@@ -29,10 +29,17 @@ Tests nutzen temp-DBs. CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem P
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem
-Server): Tarball → Staging → Import-Check → Code-Backup (`app.bak-<ts>`) → rsync nach
-`/home/omn/app` (lässt `instance/`, `.env`, `venv/`, `app/static/uploads/` in Ruhe) →
+Server): Tarball → Staging → Import-Check → Code-Backup (`app.bak-<ts>`) → `rsync -a
+--delete --exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` →
 `migrate_add_columns.py` + `migrate_add_indexes.py` → gunicorn HUP → Health-Check
 `curl localhost:5000` (bei ≠200 automatischer Rollback aus dem Backup).
+
+`deploy/deploy-exclude.txt` schützt vor `--delete`: `instance/`, `.env*`, `venv/`,
+`app/static/uploads/`, `*.log`, sowie **serververwaltete Grossmedien, die bewusst
+nicht im Git liegen** (~92 MB): `app/static/*.mp3` (Player-Tracks),
+`app/static/*.pdf` (Broschüren), `biocomm-bridge/komplett.png` (nur /preview/leihgeraete).
+Diese Datei **muss LF-Zeilenenden haben** (.gitattributes erzwingt das; release.sh
+strippt zusätzlich `\r` und bricht ab, wenn `/instance/` nicht geschützt ist).
 
 Lokal (PowerShell), deployt **exakt `HEAD`** (== was CI geprüft hat, also vorher committen):
 ```
@@ -43,11 +50,11 @@ ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 'bash /home/omn/app/deploy/release.sh 
 ```
 Rollback manuell: `ssh ... 'rsync -a --delete --exclude=/instance/ --exclude=/.env/ --exclude=/venv/ --exclude=/app/static/uploads/ /home/omn/app.bak-<ts>/ /home/omn/app/ && kill -HUP $(pgrep -o -f gunicorn)'`
 
-Noch **kein `--delete`** beim Vorwärts-rsync — ~12 Assets liegen live, aber nicht im Git
-(`cover-*.jpeg`, `biocomm-bridge.png`, `Das letzte Korn.pdf`, `icon-chat/faq.png` …).
-Erst die ins Git holen, dann `EXCLUDES` in release.sh um `--delete` erweitern.
-Feature-Migrationen (`migrate_kollaboration.py` etc.) bleiben manuell — release.sh fährt
-nur die beiden idempotenten. DB-Backup separat vor riskanten Migrationen (WAL: siehe DB-Abschnitt).
+Neue kleine Assets, die Templates referenzieren, gehören **ins Git** (`app/static/…`) —
+sonst löscht der `--delete`-Deploy sie. Grosse Medien (mp3/pdf) bleiben serververwaltet,
+siehe deploy-exclude.txt. Feature-Migrationen (`migrate_kollaboration.py` etc.) bleiben
+manuell — release.sh fährt nur die beiden idempotenten. DB-Backup separat vor riskanten
+Migrationen (WAL: siehe DB-Abschnitt).
 
 ## Sicherheit
 CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das

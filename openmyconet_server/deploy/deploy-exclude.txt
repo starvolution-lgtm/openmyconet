@@ -1,0 +1,26 @@
+# rsync-Ausschlussliste fuer release.sh (--exclude-from).
+# Diese Pfade fasst der Deploy NIE an: weder uebertragen noch (bei --delete) loeschen.
+# Pfade sind relativ zu /home/omn/app.
+
+# --- Persistente Daten / Umgebung / venv ---
+/instance/
+/.env
+/.env.save
+/venv/
+/.git/
+
+# --- Laufzeit-Artefakte ---
+__pycache__/
+*.pyc
+*.log
+
+# --- Nutzer-Uploads (Foerderer-Logos, News-Bilder) ---
+/app/static/uploads/
+
+# --- Serververwaltete Grossmedien (bewusst NICHT im Git, ~92 MB) ---
+# Broschueren-PDFs (mehrsprachig, mehrere Versionen), Audio-Tracks des Players,
+# das Buch-PDF, und zwei grosse Bilder der Preview-only-Seite /preview/leihgeraete.
+/app/static/*.mp3
+/app/static/*.pdf
+/app/static/biocomm-bridge.png
+/app/static/biocomm-komplett.png
