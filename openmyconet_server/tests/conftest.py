@@ -71,7 +71,7 @@ def client(app):
 
 
 @pytest.fixture(autouse=True)
-def _rate_limit_umgehen(monkeypatch):
+def _testumgebung(monkeypatch):
     # ip_erlaubt() schreibt in ein systemweites Temp-Verzeichnis, keyed nach
     # IP+Endpunkt -- ohne diesen Bypass wuerden wiederholte Testlaeufe sich
     # gegenseitig ins Rate-Limit laufen (siehe test_spam_schutz.py fuer einen
@@ -81,6 +81,12 @@ def _rate_limit_umgehen(monkeypatch):
     monkeypatch.setattr('dashboard.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('rag_chatbot.ip_erlaubt', lambda *a, **kw: True)
+    # Admin-/Team-Benachrichtigungen (foerderer.py, kollaboration.py) sind an
+    # ADMIN_NOTIFY_EMAIL bzw. MAIL_USERNAME geknuepft und werden sonst still
+    # uebersprungen. Lokal fuellte das eine ~/.env, in CI (keine .env) brachen
+    # dadurch die "Admin wird benachrichtigt"-Tests. Fest setzen macht sie
+    # unabhaengig von der Umgebung.
+    monkeypatch.setenv('ADMIN_NOTIFY_EMAIL', 'admin@openmyconet.test')
 
 
 @pytest.fixture()
