@@ -34,6 +34,10 @@
 .status-table td { color:#c8e0c8; }
 .quote-line { font-style:italic; color:#a0c8a0; border-left:3px solid #3a9e5a; padding-left:1rem; margin:1.4rem 0; }
 @media(max-width:760px){ .direction-grid, .teaser-grid { grid-template-columns:1fr; } }
+
+.bc-1 { background:rgba(58,158,90,0.15); color:#6ee87e; border-color:rgba(58,158,90,0.35); }
+.bc-2 { display:inline-block; text-align:left; }
+.bc-3 { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1rem; }
 {% endblock %}
 
 {% block mobile_menu_self_link %}{% endblock %}
@@ -81,7 +85,7 @@
         <a class="btn btn-green" href="{{ live('biocomm/hardware') }}" data-i18n="bc_hw_cta">{{ t('bc_hw_cta') }}</a>
       </div>
       <div class="teaser-card">
-        <span class="status-badge" style="background:rgba(58,158,90,0.15); color:#6ee87e; border-color:rgba(58,158,90,0.35);" data-i18n="bc_sw_badge">{{ t('bc_sw_badge') }}</span>
+        <span class="status-badge bc-1" data-i18n="bc_sw_badge">{{ t('bc_sw_badge') }}</span>
         <h4 data-i18n="bc_sw_h4">{{ t('bc_sw_h4') }}</h4>
         <p data-i18n="bc_sw_p">{{ t('bc_sw_p') }}</p>
         <a class="btn btn-green" href="{{ live('biocomm/software') }}" data-i18n="bc_sw_cta">{{ t('bc_sw_cta') }}</a>
@@ -105,8 +109,8 @@
 
 <section class="cta-section u-bg-a">
   <div class="inner u-center-pad">
-    <p class="quote-line" style="display:inline-block; text-align:left;" data-i18n="bc_quote">{{ t('bc_quote') }}</p>
-    <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1rem;">
+    <p class="quote-line bc-2" data-i18n="bc_quote">{{ t('bc_quote') }}</p>
+    <div class="bc-3">
       <a href="{{ live('biocomm/hardware') }}" class="btn btn-green" data-i18n="bc_cta_hw">{{ t('bc_cta_hw') }}</a>
       <a href="{{ live('biocomm/software') }}" class="btn btn-amber" data-i18n="bc_cta_sw">{{ t('bc_cta_sw') }}</a>
       <a href="{{ live('wie-wir-arbeiten') }}" class="btn btn-green" data-i18n="nav_wwa">{{ t('nav_wwa') }}</a>

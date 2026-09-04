@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block mobile_menu_self_link %}
-<a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
+<a class="nd-1" href="{{ live('news') }}" data-i18n="nav_news">{{ t('nav_news') }}</a>
 {% endblock %}
 
 {% block extra_css %}
@@ -33,17 +33,21 @@
 .tags a { color:#2e7d32; text-decoration:none; margin-right:10px; font-size:0.9em; }
 .tags a:hover { text-decoration:underline; }
 .ki-hinweis { background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); color:#e8f5e0; font-size:0.85em; padding:10px 16px; border-radius:6px; margin-bottom:24px; }
+
+.nd-1 { font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#f0b84a; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
+.nd-2 { font-size:clamp(1.6rem,4vw,2.2rem); }
+.nd-3 { background-color:#012a1e; }
 {% endblock %}
 
 {% block content %}
 <div class="page-header">
   <div class="inner">
     <p class="section-label">News</p>
-    <h1 style="font-size:clamp(1.6rem,4vw,2.2rem);">{{ artikel.titel }}</h1>
+    <h1 class="nd-2">{{ artikel.titel }}</h1>
   </div>
 </div>
 
-<section style="background-color:#012a1e;">
+<section class="nd-3">
   <div class="inner">
     <p class="ki-hinweis">ℹ️ Hinweis: Die Bilder in diesen Beiträgen sind KI-generiert.</p>
 

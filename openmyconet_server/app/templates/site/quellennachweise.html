@@ -159,6 +159,9 @@
   .page h1 { font-size: 1.7rem; }
   .ref-badge { display: none; }
 }
+
+.qn-1 { height:1.5rem; }
+.qn-2 { scroll-margin-top:110px; }
 {% endblock %}
 
 {% block mobile_menu_self_link %}{% endblock %}
@@ -168,7 +171,7 @@
 
   <a href="{{ live('index.html') }}" class="back-link" id="q-back-top" data-i18n="q_back">{{ t('q_back') }}</a>
 
-  <div style="height:1.5rem;"></div>
+  <div class="qn-1"></div>
 
   <div class="page-tag" data-i18n="q_page_tag">{{ t('q_page_tag') }}</div>
 
@@ -362,7 +365,7 @@
         <span class="ref-badge cs">Podcast</span>
         <span class="ref-ext">↗</span>
       </a>
-      <a class="ref" id="ref-18" href="https://nph.onlinelibrary.wiley.com/doi/full/10.1002/ppp3.10618" target="_blank" rel="noopener" style="scroll-margin-top:110px;">
+      <a class="ref qn-2" id="ref-18" href="https://nph.onlinelibrary.wiley.com/doi/full/10.1002/ppp3.10618" target="_blank" rel="noopener">
         <span class="ref-num">18</span>
         <div class="ref-body">
           <div class="ref-title" data-i18n="q_ref18_title">{{ t('q_ref18_title') }}</div>
@@ -416,7 +419,7 @@
         <span class="ref-badge pmc">iScience</span>
         <span class="ref-ext">↗</span>
       </a>
-      <a class="ref" id="ref-15" href="https://doi.org/10.1098/rsos.211926" target="_blank" rel="noopener" style="scroll-margin-top:110px;">
+      <a class="ref qn-2" id="ref-15" href="https://doi.org/10.1098/rsos.211926" target="_blank" rel="noopener">
         <span class="ref-num">15</span>
         <div class="ref-body">
           <div class="ref-title" data-i18n="q_ref15_title">{{ t('q_ref15_title') }}</div>

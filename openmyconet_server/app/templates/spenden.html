@@ -1,13 +1,19 @@
 {% extends "admin_base.html" %}
 {% block title %}OpenMycoNet — Spenden-Fortschritt{% endblock %}
 {% block heading %}💚 Spenden-Fortschritt{% endblock %}
+{% block extra_css %}
+<style>
+/* Migration Inline-Styles -> Klassen (CSP-Haertung) */
+.sp-maxw-480 { max-width:480px; }
+</style>
+{% endblock %}
 {% block content %}
 
 {% if nachricht %}
     <p class="msg">{{ nachricht }}</p>
 {% endif %}
 
-<form method="POST" style="max-width:480px;">
+<form method="POST" class="sp-maxw-480">
     <label>Zielbetrag (€)</label>
     <input type="number" step="0.01" min="0" name="ziel_betrag" value="{{ spende.ziel_betrag }}">
 
@@ -20,10 +26,13 @@
 </form>
 
 {% if spende.ziel_betrag %}
-<div class="bar-wrap" style="max-width:480px;">
-    <div class="bar" style="width: {{ [(spende.aktueller_betrag / spende.ziel_betrag * 100), 100] | min }}%;"></div>
+<div class="bar-wrap sp-maxw-480">
+    <div class="bar" id="spende-bar" data-pct="{{ [(spende.aktueller_betrag / spende.ziel_betrag * 100), 100] | min }}"></div>
 </div>
 <p class="info">{{ spende.aktueller_betrag }} € von {{ spende.ziel_betrag }} €</p>
+<script>
+document.getElementById('spende-bar').style.width = document.getElementById('spende-bar').dataset.pct + '%';
+</script>
 {% endif %}
 
 <p class="info">Öffentliche API: <code>GET /api/v1/spenden</code> — liefert die Werte nur, wenn "sichtbar" aktiv ist.</p>

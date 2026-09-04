@@ -41,13 +41,13 @@
                         <input type="hidden" name="foerderer_id" value="{{ koop.id }}">
                         <input type="hidden" name="action" value="aufgabe_toggle">
                         <input type="hidden" name="aufgabe_id" value="{{ a.id }}">
-                        <button type="submit" title="Status umschalten" style="padding:2px 8px;">
+                        <button type="submit" title="Status umschalten" class="dk-2">
                             {{ '✓' if a.status == 'erledigt' else '○' }}
                         </button>
                     </form>
                 </td>
                 <td>
-                    <strong{% if a.status == 'erledigt' %} style="text-decoration:line-through;opacity:0.6;"{% endif %}>{{ a.titel }}</strong>
+                    <strong{% if a.status == 'erledigt' %} class="u-strike-faded"{% endif %}>{{ a.titel }}</strong>
                     {% if a.beschreibung %}<br><span class="label">{{ a.beschreibung }}</span>{% endif %}
                 </td>
                 <td class="label">{{ 'Team' if a.erstellt_von == 'team' else 'Ihr' }}</td>
@@ -84,7 +84,7 @@
         <form class="u-mt-16" method="post" enctype="multipart/form-data">
             <input type="hidden" name="foerderer_id" value="{{ koop.id }}">
             <input type="hidden" name="action" value="kommentar_neu">
-            <textarea name="text" rows="3" placeholder="Kommentar schreiben…" required style="width:100%;padding:8px;background:#1a2a1a;color:#eee;border:1px solid #4caf50;border-radius:4px;box-sizing:border-box;"></textarea>
+            <textarea name="text" rows="3" placeholder="Kommentar schreiben…" required class="dk-3"></textarea>
             <input type="file" name="dateien" multiple>
             <p class="label">Erlaubt: Bilder, PDF, TXT/LOG/CSV/JSON, ZIP — max. 5 MB pro Datei.</p>
             <button type="submit">Kommentar senden</button>
