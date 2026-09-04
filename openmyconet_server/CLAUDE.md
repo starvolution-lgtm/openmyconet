@@ -28,16 +28,26 @@ Suite ist grün; 3 `xfail` in `test_presse` (mocken die alte GDELT-JSON-API,
 Tests nutzen temp-DBs. CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
 
 ## Deployment (Prod, Hetzner VPS)
-Kein Git-Checkout auf dem Server → Deploy per **scp einzelner Dateien**.
-1. DB-Backup (SQLite läuft im **WAL-Modus** → vor `cp` einen Checkpoint fahren, sonst
-   fehlen die jüngsten Transaktionen aus der `-wal`-Datei):
-   `ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 "cd /home/omn/app && venv/bin/python -c \"import sqlite3; sqlite3.connect('instance/openmyconet.db').execute('PRAGMA wal_checkpoint(TRUNCATE)')\" && cp instance/openmyconet.db instance/openmyconet.db.bak-$(date +%Y%m%d-%H%M)"`
-2. `scp -i ~/.ssh/omn_deploy <datei> omn@77.42.64.162:/home/omn/app/` (Git-Bash: Quellpfad als `/c/Users/...`)
-3. Migration: `ssh ... "cd /home/omn/app && venv/bin/python migrate_*.py"`
-4. Reload ohne sudo: `MPID=$(pgrep -f 'gunicorn -w 2' | head -1); kill -HUP $MPID`
-5. Prüfen: `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5000/<route>` + extern.
-   Auth-Seiten per `venv/bin/python` test_client mit gesetzter Session rendern.
-BOM-Falle: vor UTF-8-Uploads sicherstellen, dass keine `ef bb bf`-Bytes am Dateianfang stehen.
+Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem
+Server): Tarball → Staging → Import-Check → Code-Backup (`app.bak-<ts>`) → rsync nach
+`/home/omn/app` (lässt `instance/`, `.env`, `venv/`, `app/static/uploads/` in Ruhe) →
+`migrate_add_columns.py` + `migrate_add_indexes.py` → gunicorn HUP → Health-Check
+`curl localhost:5000` (bei ≠200 automatischer Rollback aus dem Backup).
+
+Lokal (PowerShell), deployt **exakt `HEAD`** (== was CI geprüft hat, also vorher committen):
+```
+cd C:\Users\wechs\Desktop\openmyconet
+git archive --format=tar.gz -o $env:TEMP\omn-release.tar.gz HEAD:openmyconet_server
+scp -i ~/.ssh/omn_deploy $env:TEMP\omn-release.tar.gz omn@77.42.64.162:/home/omn/incoming/release.tar.gz
+ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 'bash /home/omn/app/deploy/release.sh /home/omn/incoming/release.tar.gz'
+```
+Rollback manuell: `ssh ... 'rsync -a --delete --exclude=/instance/ --exclude=/.env/ --exclude=/venv/ --exclude=/app/static/uploads/ /home/omn/app.bak-<ts>/ /home/omn/app/ && kill -HUP $(pgrep -o -f gunicorn)'`
+
+Noch **kein `--delete`** beim Vorwärts-rsync — ~12 Assets liegen live, aber nicht im Git
+(`cover-*.jpeg`, `biocomm-bridge.png`, `Das letzte Korn.pdf`, `icon-chat/faq.png` …).
+Erst die ins Git holen, dann `EXCLUDES` in release.sh um `--delete` erweitern.
+Feature-Migrationen (`migrate_kollaboration.py` etc.) bleiben manuell — release.sh fährt
+nur die beiden idempotenten. DB-Backup separat vor riskanten Migrationen (WAL: siehe DB-Abschnitt).
 
 ## Sicherheit
 CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
