@@ -1,5 +1,6 @@
 import os
 import re
+import secrets
 import unicodedata
 import uuid
 from datetime import datetime
@@ -494,24 +495,34 @@ def knoten_admin():
     nachricht = None
     fehler = None
     if request.method == 'POST':
-        knoten_id = request.form.get('knoten_id', '').strip()
-        nutzer_email = request.form.get('nutzer_email', '').strip().lower()
-        substrat = request.form.get('substrat', '').strip()
-
-        nutzer = Nutzer.query.filter_by(email=nutzer_email).first()
-        if not nutzer:
-            fehler = f'Nutzer {nutzer_email} nicht gefunden.'
-        elif Knoten.query.filter_by(knoten_id=knoten_id).first():
-            fehler = f'Knoten-ID {knoten_id} bereits vergeben.'
+        if request.form.get('action') == 'key_neu':
+            knoten = Knoten.query.get(request.form.get('knoten_pk', type=int))
+            if knoten:
+                knoten.api_key = secrets.token_urlsafe(32)
+                db.session.commit()
+                nachricht = f'Neuer API-Key für {knoten.knoten_id} erzeugt — alten im Gerät ersetzen.'
+            else:
+                fehler = 'Knoten nicht gefunden.'
         else:
-            knoten = Knoten(
-                knoten_id=knoten_id,
-                nutzer_id=nutzer.id,
-                substrat=substrat
-            )
-            db.session.add(knoten)
-            db.session.commit()
-            nachricht = f'Knoten {knoten_id} angelegt!'
+            knoten_id = request.form.get('knoten_id', '').strip()
+            nutzer_email = request.form.get('nutzer_email', '').strip().lower()
+            substrat = request.form.get('substrat', '').strip()
+
+            nutzer = Nutzer.query.filter_by(email=nutzer_email).first()
+            if not nutzer:
+                fehler = f'Nutzer {nutzer_email} nicht gefunden.'
+            elif Knoten.query.filter_by(knoten_id=knoten_id).first():
+                fehler = f'Knoten-ID {knoten_id} bereits vergeben.'
+            else:
+                knoten = Knoten(
+                    knoten_id=knoten_id,
+                    nutzer_id=nutzer.id,
+                    substrat=substrat,
+                    api_key=secrets.token_urlsafe(32),
+                )
+                db.session.add(knoten)
+                db.session.commit()
+                nachricht = f'Knoten {knoten_id} angelegt!'
 
     knoten_liste = Knoten.query.order_by(Knoten.erstellt_am.desc()).all()
     nutzer_liste = Nutzer.query.filter_by(bestaetigt=True).all()

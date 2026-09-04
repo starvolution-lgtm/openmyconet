@@ -48,6 +48,10 @@ class Knoten(db.Model):
     substrat = db.Column(db.String(100), default='')
     aktiv = db.Column(db.Boolean, default=True)
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+    # Geheimschluessel, mit dem sich das Geraet bei /api/v1/messung ausweist
+    # (Header X-Api-Key). Wird beim Anlegen erzeugt, kann im Admin neu generiert
+    # werden (bei Leak). nullable fuer Alt-Zeilen; migrate_add_columns.py fuellt sie.
+    api_key = db.Column(db.String(64), unique=True, index=True, nullable=True)
     messungen = db.relationship('Messung', backref='knoten', lazy=True)
 
 class Bewerbung(db.Model):

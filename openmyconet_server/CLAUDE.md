@@ -43,10 +43,17 @@ BOM-Falle: vor UTF-8-Uploads sicherstellen, dass keine `ef bb bf`-Bytes am Datei
 CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
 Session-Token (Feld `_csrf` oder Header `X-CSRFToken`). `admin_base.html` /
 `dashboard_base.html` hängen es per Skript an jedes `<form method=post>` an, neue
-Formulare brauchen also nichts. Bewusst NICHT geschützt: `/api/register`,
+Formulare brauchen also nichts. Bewusst NICHT CSRF-geschützt: `/api/register`,
 `/api/bewerbung`, `/api/chat` (cross-origin fetch von der statischen Website),
-`/foerderer/ipn` (PayPal), `/api/v1/messung` (Geräte). Tests: `CSRF_ENABLED=False`
+`/foerderer/ipn` (PayPal), `/api/v1/messung`. Tests: `CSRF_ENABLED=False`
 in conftest, eigener Nachweis in `test_csrf.py`.
+
+`/api/v1/messung` (Geräte-Dateneingang) authentifiziert per **`Knoten.api_key`**
+(Header `X-Api-Key` oder `Authorization: Bearer`); der Key bestimmt den Knoten,
+`knoten_id` im Body ist obsolet. Key wird beim Anlegen erzeugt, im Admin unter
+`/admin/knoten` einsehbar + neu generierbar (`action=key_neu`). Eingaben werden
+typisiert geprüft (kein 500 mehr) + auf Plausibilität begrenzt; ungültige
+optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.py`.
 
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".

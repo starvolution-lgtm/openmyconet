@@ -8,6 +8,7 @@ Aufruf: python migrate_add_columns.py
 Sicher mehrfach ausführbar — prüft vorher, ob die Spalte schon existiert.
 """
 import re
+import secrets
 import sqlite3
 import os
 import unicodedata
@@ -30,6 +31,7 @@ MIGRATIONS = [
     ('nutzer', 'ist_sporist', 'BOOLEAN DEFAULT 0'),
     ('foerderer', 'status_geaendert_am', 'DATETIME'),
     ('foerderer', 'nutzer_id', 'INTEGER'),  # Kollaborationsbereich, siehe migrate_kollaboration.py (dort auch Backfill + neue Tabellen)
+    ('knoten', 'api_key', 'VARCHAR(64)'),  # Geraete-Authentifizierung fuer /api/v1/messung
 ]
 
 UMLAUT_MAP = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}
@@ -97,6 +99,17 @@ def main():
     # ALTER TABLE ADD COLUMN kennt in SQLite keine UNIQUE-Constraints -- Index separat anlegen,
     # damit auf bestehenden DBs dieselbe Eindeutigkeit gilt wie beim frischen db.create_all().
     cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS ix_nutzer_login_token ON nutzer (login_token)')
+
+    # Bestehende Knoten ohne API-Key einen erzeugen (sonst koennten sie nach dem
+    # Deploy keine Messungen mehr senden). Neue Knoten bekommen ihn im Admin.
+    cur.execute("SELECT id FROM knoten WHERE api_key IS NULL OR api_key = ''")
+    ohne_key = [row[0] for row in cur.fetchall()]
+    for knoten_id in ohne_key:
+        cur.execute('UPDATE knoten SET api_key = ? WHERE id = ?', (secrets.token_urlsafe(32), knoten_id))
+    if ohne_key:
+        print(f'{len(ohne_key)} Knoten haben einen API-Key erhalten (im Admin unter /admin/knoten einsehbar).')
+    cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS ix_knoten_api_key ON knoten (api_key)')
+
     conn.commit()
     conn.close()
 

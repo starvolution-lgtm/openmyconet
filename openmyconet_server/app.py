@@ -229,38 +229,73 @@ def news_sitemap():
     return Response(xml, mimetype='application/xml')
 
 
+def _messung_api_key():
+    """API-Key aus dem Request: Header `X-Api-Key` oder `Authorization: Bearer <key>`."""
+    key = request.headers.get('X-Api-Key', '').strip()
+    if key:
+        return key
+    auth = request.headers.get('Authorization', '')
+    if auth.lower().startswith('bearer '):
+        return auth[7:].strip()
+    return ''
+
+
+def _opt_messwert(data, key, lo, hi):
+    """Optionaler Umgebungs-Messwert: fehlt/ungueltig/ausserhalb Bereich -> None
+    (die Messung wird dann trotzdem gespeichert, nur ohne diesen Wert)."""
+    v = data.get(key)
+    if v is None:
+        return None
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return None
+    return v if lo <= v <= hi else None
+
+
 @app.route('/api/v1/messung', methods=['POST'])
 def api_messung():
-    data = request.get_json()
-    if not data:
-        return {'fehler': 'Kein JSON erhalten'}, 400
-
-    knoten_id = data.get('knoten_id')
-    kanal = data.get('kanal')
-    wert_uv = data.get('wert_uv')
-
-    if not all([knoten_id, kanal is not None, wert_uv is not None]):
-        return {'fehler': 'Fehlende Felder: knoten_id, kanal, wert_uv erforderlich'}, 400
-
-    # Knoten suchen oder anlegen
-    knoten = Knoten.query.filter_by(knoten_id=knoten_id).first()
+    # Authentifizierung: das Geraet weist sich per API-Key aus (nicht mehr nur
+    # ueber die knoten_id im Body -- die ist oeffentlich und faelschbar). Der Key
+    # bestimmt auch, zu welchem Knoten die Messung gehoert.
+    api_key = _messung_api_key()
+    if not api_key:
+        return {'fehler': 'API-Key fehlt (Header X-Api-Key oder Authorization: Bearer)'}, 401
+    knoten = Knoten.query.filter_by(api_key=api_key).first()
     if not knoten:
-        return {'fehler': f'Knoten {knoten_id} nicht registriert'}, 404
+        return {'fehler': 'Ungültiger API-Key'}, 401
+    if not knoten.aktiv:
+        return {'fehler': 'Knoten ist deaktiviert'}, 403
+
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return {'fehler': 'Body muss ein JSON-Objekt sein'}, 400
+
+    try:
+        kanal = int(data['kanal'])
+        wert_uv = float(data['wert_uv'])
+    except (KeyError, TypeError, ValueError):
+        return {'fehler': 'kanal (Ganzzahl) und wert_uv (Zahl) sind Pflichtfelder'}, 400
+
+    if not 0 <= kanal <= 7:
+        return {'fehler': 'kanal muss zwischen 0 und 7 liegen (8 Messkanäle)'}, 400
+    if not -500_000 <= wert_uv <= 500_000:
+        return {'fehler': 'wert_uv liegt ausserhalb des plausiblen Bereichs (±500000 µV)'}, 400
 
     messung = Messung(
         knoten_id=knoten.id,
-        kanal=int(kanal),
-        wert_uv=float(wert_uv),
-        boden_temp=data.get('boden_temp'),
-        boden_feuchte=data.get('boden_feuchte'),
-        luft_temp=data.get('luft_temp'),
-        luft_feuchte=data.get('luft_feuchte'),
-        licht=data.get('licht')
+        kanal=kanal,
+        wert_uv=wert_uv,
+        boden_temp=_opt_messwert(data, 'boden_temp', -60, 90),
+        boden_feuchte=_opt_messwert(data, 'boden_feuchte', 0, 100),
+        luft_temp=_opt_messwert(data, 'luft_temp', -60, 90),
+        luft_feuchte=_opt_messwert(data, 'luft_feuchte', 0, 100),
+        licht=_opt_messwert(data, 'licht', 0, 250_000),
     )
     db.session.add(messung)
     db.session.commit()
 
-    return {'status': 'ok', 'id': messung.id}, 201
+    return {'status': 'ok', 'id': messung.id, 'knoten_id': knoten.knoten_id}, 201
 
 
 @app.route('/api/v1/status', methods=['GET'])
