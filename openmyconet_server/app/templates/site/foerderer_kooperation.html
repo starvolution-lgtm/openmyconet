@@ -66,7 +66,7 @@ select option { background:#ffffff; color:#1a1a1a; }
   <div class="erfolg-box">
     <p id="erfolg-p1">Ihre Kooperationsanfrage ist bei uns eingegangen und wird von uns persönlich geprüft.</p>
     <p id="erfolg-p2">Wir melden uns per E-Mail bei Ihnen, sobald wir die Anfrage bearbeitet haben — meist innerhalb weniger Tage.</p>
-    <a href="{{ live('foerderer.html') }}" class="btn btn-amber" style="margin-top:1rem;" id="erfolg-back">← Zurück zur Fördererseite</a>
+    <a href="{{ live('foerderer.html') }}" class="btn btn-amber u-mt-1" id="erfolg-back">← Zurück zur Fördererseite</a>
   </div>
 
 {% elif preview %}
@@ -102,7 +102,7 @@ select option { background:#ffffff; color:#1a1a1a; }
     <input type="hidden" name="kategorie" value="{{ data.kategorie }}">
     <input type="hidden" name="email" value="{{ data.email }}">
     <input type="hidden" name="logo_datei" value="{{ data.logo }}">
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+    <div class="u-flex-wrap">
       <button type="submit" class="btn btn-green" id="btn-absenden">Anfrage absenden</button>
       <a href="{{ url_for('foerderer.kooperation') }}" class="btn btn-amber" id="btn-edit">← Angaben bearbeiten</a>
     </div>
@@ -138,13 +138,13 @@ select option { background:#ffffff; color:#1a1a1a; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-desc" for="beschreibung">Was bieten Sie an? * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(20–300 Zeichen, erscheint im Eintrag)</span></label>
+      <label id="lbl-desc" for="beschreibung">Was bieten Sie an? * <span class="u-hint">(20–300 Zeichen, erscheint im Eintrag)</span></label>
       <textarea id="beschreibung" name="beschreibung" required maxlength="300" placeholder="Was macht Ihre Organisation? Was bringen Sie in die Kooperation ein?">{{ data.beschreibung or '' }}</textarea>
       <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; margin-top:4px;"><span id="char-count">0</span> / 300</div>
     </div>
 
     <div class="form-group">
-      <label id="lbl-gegenleistung" for="gegenleistung_erwartet">Was wünschen Sie sich von OpenMycoNet? <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(optional, hilft uns bei der Prüfung)</span></label>
+      <label id="lbl-gegenleistung" for="gegenleistung_erwartet">Was wünschen Sie sich von OpenMycoNet? <span class="u-hint">(optional, hilft uns bei der Prüfung)</span></label>
       <textarea id="gegenleistung_erwartet" name="gegenleistung_erwartet" maxlength="300" placeholder="z.B. Erwähnung auf der Website, Verlinkung, Datenzugang, gemeinsame Aktionen …">{{ data.gegenleistung_erwartet or '' }}</textarea>
     </div>
 
@@ -164,7 +164,7 @@ select option { background:#ffffff; color:#1a1a1a; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-logo" for="logo">Logo <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
+      <label id="lbl-logo" for="logo">Logo <span class="u-hint">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
       <div class="logo-upload" onclick="this.querySelector('input').click()">
         <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
         <div class="logo-upload-label" id="logo-upload-label">📁 Logo hier ablegen oder klicken zum Auswählen</div>
@@ -173,7 +173,7 @@ select option { background:#ffffff; color:#1a1a1a; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-email" for="email">Ihre E-Mail-Adresse * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(für unsere Rückmeldung)</span></label>
+      <label id="lbl-email" for="email">Ihre E-Mail-Adresse * <span class="u-hint">(für unsere Rückmeldung)</span></label>
       <input type="email" id="email" name="email" value="{{ data.email or '' }}" required autocomplete="email" placeholder="ihre@email.de">
     </div>
 

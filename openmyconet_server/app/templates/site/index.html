@@ -259,13 +259,13 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <img src="{{ asset('vision_bg.jpg') }}" alt="" loading="lazy" decoding="async" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block; filter:brightness(0.55) saturate(0.9);">
     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
       <p class="section-label" data-i18n="label_vision">{{ t('label_vision') }}</p>
-      <h2 data-i18n-html="h2_vision" style="margin-bottom:0;">{{ t('h2_vision') | safe }}</h2>
+      <h2 class="u-mb-0" data-i18n-html="h2_vision">{{ t('h2_vision') | safe }}</h2>
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 1.5rem;">
     <p style="color:#e8f5e0; font-size:1.15rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n-html="vision_p1">{{ t('vision_p1') | safe }}</p>
     <p style="color:#a0c8a0; font-size:1.05rem; line-height:1.85; margin-bottom:1.5rem;" data-i18n="vision_p2">{{ t('vision_p2') }}</p>
-    <a href="{{ live('mykorrhiza-netzwerke.html') }}" class="btn btn-amber" style="margin-bottom:1.5rem;" data-i18n="link_myk_vertiefung">{{ t('link_myk_vertiefung') }}</a>
+    <a href="{{ live('mykorrhiza-netzwerke.html') }}" class="btn btn-amber u-mb-1-5" data-i18n="link_myk_vertiefung">{{ t('link_myk_vertiefung') }}</a>
     <div style="margin:1.5rem 0 2.5rem; padding:1.4rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #d4a030;">
       <p style="color:#e8f5e0; font-size:1rem; line-height:1.75; margin-bottom:0.9rem;" data-i18n="vision_biocomm_intro">{{ t('vision_biocomm_intro') }}</p>
       <a href="{{ live('biocomm') }}" class="btn btn-green" data-i18n="vision_biocomm_cta">{{ t('vision_biocomm_cta') }}</a>
@@ -293,7 +293,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <img src="{{ asset('warum_bg.jpg') }}" alt="" loading="lazy" decoding="async" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.50) saturate(0.85);">
     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
       <p class="section-label" data-i18n="label_warum">{{ t('label_warum') }}</p>
-      <h2 data-i18n-html="h2_warum" style="margin-bottom:0;">{{ t('h2_warum') | safe }}</h2>
+      <h2 class="u-mb-0" data-i18n-html="h2_warum">{{ t('h2_warum') | safe }}</h2>
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
@@ -309,7 +309,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 <!-- BioComm — kompakter Bereich (BioComm_Seitenstruktur_und_Startseite_Aufgabe.md, Abschnitt 3) -->
 <section id="biocomm-teaser" style="background-color:#012a1e; border-top:1px solid #0a6040; padding:3rem clamp(1.5rem,5vw,5rem);">
   <p class="section-label" data-i18n="biocomm_teaser_label">{{ t('biocomm_teaser_label') }}</p>
-  <h2 data-i18n-html="biocomm_teaser_h2" style="margin-bottom:1rem;">{{ t('biocomm_teaser_h2') | safe }}</h2>
+  <h2 class="u-mb-1" data-i18n-html="biocomm_teaser_h2">{{ t('biocomm_teaser_h2') | safe }}</h2>
   <p class="section-desc" data-i18n="biocomm_teaser_p1">{{ t('biocomm_teaser_p1') }}</p>
   <p style="color:#a0c8a0; font-size:1rem; line-height:1.8; max-width:760px; margin-top:1rem;" data-i18n="biocomm_teaser_p2">{{ t('biocomm_teaser_p2') }}</p>
   <p style="color:#e8f5e0; font-style:italic; font-size:0.95rem; margin-top:1rem;" data-i18n="biocomm_teaser_p3">{{ t('biocomm_teaser_p3') }}</p>
@@ -321,12 +321,12 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 </section>
 
 <!-- Mitmachen -->
-<section id="mitmachen" style="background-color:#024530;">
+<section class="u-bg-a" id="mitmachen">
   <div style="position:relative; overflow:hidden; height:280px;">
     <img src="{{ asset('mitmachen_bg.jpg') }}" alt="" loading="lazy" decoding="async" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.52) saturate(0.9);">
     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
       <p class="section-label" data-i18n="label_mitmachen">{{ t('label_mitmachen') }}</p>
-      <h2 data-i18n-html="h2_mitmachen" style="margin-bottom:0;">{{ t('h2_mitmachen') | safe }}</h2>
+      <h2 class="u-mb-0" data-i18n-html="h2_mitmachen">{{ t('h2_mitmachen') | safe }}</h2>
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
@@ -337,7 +337,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       <div class="step"><span class="step-num">{{ nums[loop.index0] }}</span><h3>{{ s.h }}</h3><p>{{ s.p | safe }}</p><p class="step-cost">{{ s.cost }}</p></div>
       {% endfor %}
     </div>
-    <div style="margin-top:1.5rem;">
+    <div class="u-mt-1-5">
       <a href="#anmelden" class="btn btn-green" data-i18n="btn_register">{{ t('btn_register') }}</a>
     </div>
   </div>
@@ -349,7 +349,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <img src="{{ asset('daten_bg.jpg') }}" alt="" loading="lazy" decoding="async" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.52) saturate(0.9);">
     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5rem);">
       <p class="section-label" data-i18n="label_daten">{{ t('label_daten') }}</p>
-      <h2 data-i18n-html="h2_daten" style="margin-bottom:0;">{{ t('h2_daten') | safe }}</h2>
+      <h2 class="u-mb-0" data-i18n-html="h2_daten">{{ t('h2_daten') | safe }}</h2>
     </div>
   </div>
   <div style="padding:2rem clamp(1.5rem,5vw,5rem) 3rem;">
@@ -362,7 +362,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       {% endfor %}
     </div>
     <p style="margin-top:1.5rem; color:#a0c8a0; font-size:0.9rem; max-width:700px;" data-i18n="desc_daten_note">{{ t('desc_daten_note') }}</p>
-    <a href="{{ live('biocomm/software') }}" class="btn btn-green" style="margin-top:1.5rem;" data-i18n="link_daten_biocomm">{{ t('link_daten_biocomm') }}</a>
+    <a href="{{ live('biocomm/software') }}" class="btn btn-green u-mt-1-5" data-i18n="link_daten_biocomm">{{ t('link_daten_biocomm') }}</a>
   </div>
 </section>
 
@@ -380,7 +380,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 
   <div style="margin-top:1.5rem; margin-bottom:2rem; max-width:640px;">
     <p data-i18n-html="home_koop_teaser" style="color:#b0d4b0; font-size:0.95rem; line-height:1.7; margin-bottom:1.2rem;">{{ t('home_koop_teaser') | safe }}</p>
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+    <div class="u-flex-wrap">
       <a href="https://api.openmyconet.de/foerderer/antrag"
         style="display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none;">
         <span data-i18n="koop_btn_foerderer">{{ t('koop_btn_foerderer') }}</span>
@@ -434,7 +434,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <div id="fee-box" style="margin-bottom:1.4rem; padding:0.9rem 1rem; border:1px solid #0a6040; background:rgba(0,0,0,0.18); font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#a0c8a0;">
       <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; line-height:1.6;">
         <input type="checkbox" id="cover-fees" onchange="updateFeeBox()" style="margin-top:3px; accent-color:#6ee87e; width:15px; height:15px; flex-shrink:0;">
-        <span id="fee-label"><span data-i18n="donate_fee_label">{{ t('donate_fee_label') }}</span>: <strong id="fee-amount" style="color:#f0b84a;">+0,72 €</strong> → Gesamt: <strong id="fee-total" style="color:#6ee87e;">15,72 €</strong></span>
+        <span id="fee-label"><span data-i18n="donate_fee_label">{{ t('donate_fee_label') }}</span>: <strong id="fee-amount" style="color:#f0b84a;">+0,72 €</strong> → Gesamt: <strong class="u-green" id="fee-total">15,72 €</strong></span>
       </label>
     </div>
 
@@ -486,7 +486,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 
     <div class="form-group node-question-wrap" id="node-question-wrap" style="padding:1.2rem; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #6ee87e;">
       <p id="node-q-text" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee87e; margin-bottom:0.9rem;">{{ t('a_node_question') }}</p>
-      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div class="u-flex-wrap">
         <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.9rem; color:#e8f5e0; text-transform:none; letter-spacing:0;">
           <input type="radio" name="node_interest" value="ja" id="node-yes" onchange="showNodePanel(true)" style="width:auto; accent-color:#f0b84a;">
           <span id="node-yes-label">{{ t('a_node_yes') }}</span>
@@ -498,7 +498,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       </div>
     </div>
 
-    <div class="form-group" style="margin-top:1rem;">
+    <div class="form-group u-mt-1">
       <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#a0c8a0;">
         <input type="checkbox" name="newsletter" id="inp-newsletter" style="width:auto; margin-top:3px; accent-color:#f0b84a; flex-shrink:0;">
         <span id="newsletter-label">{{ t('a_newsletter_label') }}</span>
@@ -507,7 +507,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
     <div class="form-group">
       <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#a0c8a0;">
         <input type="checkbox" name="privacy" id="inp-privacy" required style="width:auto; margin-top:3px; accent-color:#f0b84a; flex-shrink:0;">
-        <span id="privacy-label">{{ (t('a_privacy_label').replace('[Datenschutzerklärung]','<a href="' ~ live('datenschutz.html') ~ '" style="color:#6ee87e;">Datenschutzerklärung</a>').replace('[Privacy Policy]','<a href="' ~ live('datenschutz.html') ~ '" style="color:#6ee87e;">Privacy Policy</a>').replace('[Privacybeleid]','<a href="' ~ live('datenschutz.html') ~ '" style="color:#6ee87e;">Privacybeleid</a>').replace('[Politique de confidentialité]','<a href="' ~ live('datenschutz.html') ~ '" style="color:#6ee87e;">Politique de confidentialité</a>').replace('[Política de privacidad]','<a href="' ~ live('datenschutz.html') ~ '" style="color:#6ee87e;">Política de privacidad</a>') ~ ' *') | safe }}</span>
+        <span id="privacy-label">{{ (t('a_privacy_label').replace('[Datenschutzerklärung]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Datenschutzerklärung</a>').replace('[Privacy Policy]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Privacy Policy</a>').replace('[Privacybeleid]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Privacybeleid</a>').replace('[Politique de confidentialité]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Politique de confidentialité</a>').replace('[Política de privacidad]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Política de privacidad</a>') ~ ' *') | safe }}</span>
       </label>
     </div>
 
@@ -594,7 +594,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
       <div class="form-group">
         <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#a0c8a0;">
           <input type="checkbox" name="node_privacy" id="node-inp-privacy" required style="width:auto; margin-top:3px; accent-color:#f0b84a; flex-shrink:0;">
-          <span id="node-privacy-label">Ich habe die <a href="{{ live('datenschutz.html') }}" style="color:#6ee87e;">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Bewerberdaten zu. *</span>
+          <span id="node-privacy-label">Ich habe die <a class="u-green" href="{{ live('datenschutz.html') }}">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Bewerberdaten zu. *</span>
         </label>
       </div>
 
@@ -834,7 +834,7 @@ function renderRegForm(lang) {
   document.getElementById('reg-btn').textContent = A.submit;
 
   var privSpan = document.getElementById('privacy-label');
-  privSpan.innerHTML = A.privacy_label.replace('[Datenschutzerklärung]','<a href="datenschutz.html" style="color:#6ee87e;">Datenschutzerklärung</a>').replace('[Privacy Policy]','<a href="datenschutz.html" style="color:#6ee87e;">Privacy Policy</a>').replace('[Privacybeleid]','<a href="datenschutz.html" style="color:#6ee87e;">Privacybeleid</a>').replace('[Politique de confidentialité]','<a href="datenschutz.html" style="color:#6ee87e;">Politique de confidentialité</a>').replace('[Política de privacidad]','<a href="datenschutz.html" style="color:#6ee87e;">Política de privacidad</a>') + ' *';
+  privSpan.innerHTML = A.privacy_label.replace('[Datenschutzerklärung]','<a class="u-green" href="datenschutz.html">Datenschutzerklärung</a>').replace('[Privacy Policy]','<a class="u-green" href="datenschutz.html">Privacy Policy</a>').replace('[Privacybeleid]','<a class="u-green" href="datenschutz.html">Privacybeleid</a>').replace('[Politique de confidentialité]','<a class="u-green" href="datenschutz.html">Politique de confidentialité</a>').replace('[Política de privacidad]','<a class="u-green" href="datenschutz.html">Política de privacidad</a>') + ' *';
 
   var roleMap = [
     {val:'interessent',     key:'opt_interessent'},

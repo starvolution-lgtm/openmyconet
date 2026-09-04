@@ -58,12 +58,12 @@
 <div class="page-header">
   <div class="inner">
     <p class="section-label" id="leih-label" data-i18n="leih_label">{{ t('leih_label') }}</p>
-    <h1 id="leih-h1" data-i18n-html="leih_h1" style="text-align:center;">{{ t('leih_h1') | safe }}</h1>
+    <h1 class="u-center" id="leih-h1" data-i18n-html="leih_h1">{{ t('leih_h1') | safe }}</h1>
   </div>
 </div>
 
 <!-- Status -->
-<section style="background-color:#024530;">
+<section class="u-bg-a">
   <div class="inner">
     <p class="section-label" id="leih-status-label" data-i18n="leih_status_label">{{ t('leih_status_label') }}</p>
     <div class="status-box">
@@ -73,7 +73,7 @@
 </section>
 
 <!-- Preview -->
-<section style="background-color:#012a1e;">
+<section class="u-bg-b">
   <div class="inner">
     <p class="section-label" id="leih-preview-label" data-i18n="leih_preview_label">{{ t('leih_preview_label') }}</p>
     <h2 data-i18n-html="leih_preview_h2">{{ t('leih_preview_h2') | safe }}</h2>
@@ -96,7 +96,7 @@
 </section>
 
 <!-- Specs -->
-<section style="background-color:#024530;">
+<section class="u-bg-a">
   <div class="inner">
     <p class="section-label" id="leih-specs-label" data-i18n="leih_specs_label">{{ t('leih_specs_label') }}</p>
     <h2 data-i18n-html="leih_specs_h2">{{ t('leih_specs_h2') | safe }}</h2>
@@ -109,7 +109,7 @@
 </section>
 
 <!-- How it works -->
-<section style="background-color:#012a1e;">
+<section class="u-bg-b">
   <div class="inner">
     <p class="section-label" id="leih-how-label" data-i18n="leih_how_label">{{ t('leih_how_label') }}</p>
     <h2 data-i18n-html="leih_how_h2">{{ t('leih_how_h2') | safe }}</h2>
@@ -122,7 +122,7 @@
 </section>
 
 <!-- Bridge -->
-<section style="background-color:#024530;">
+<section class="u-bg-a">
   <div class="inner">
     <p class="section-label">BioComm Bridge</p>
     <h2 data-i18n-html="leih_bridge_h2">{{ t('leih_bridge_h2') | safe }}</h2>
@@ -145,7 +145,7 @@
 </section>
 
 <!-- Komplettsystem -->
-<section style="background-color:#012a1e;">
+<section class="u-bg-b">
   <div class="inner">
     <p class="section-label" data-i18n="leih_system_label">{{ t('leih_system_label') }}</p>
     <h2 data-i18n-html="leih_system_h2">{{ t('leih_system_h2') | safe }}</h2>
@@ -156,7 +156,7 @@
 
 <!-- CTA -->
 <section class="cta-section">
-  <div class="inner" style="text-align:center; padding:1rem 0;">
+  <div class="inner u-center-pad">
     <a href="{{ live('index.html#anmelden') }}" class="btn btn-green" id="leih-register-btn" data-i18n="leih_register_btn">{{ t('leih_register_btn') }}</a>
   </div>
 </section>

@@ -92,7 +92,7 @@ input[type=number] { width:140px; }
       <span>
         <span id="fee-label-text">Transaktionskosten übernehmen</span>:
         <strong id="fee-amt" style="color:#f0b84a;">+{{ ('%.2f'|format(data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
-        → Gesamt: <strong id="fee-total" style="color:#6ee87e;">{{ ('%.2f'|format(data.betrag + data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
+        → Gesamt: <strong class="u-green" id="fee-total">{{ ('%.2f'|format(data.betrag + data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
       </span>
     </label>
   </div>
@@ -108,13 +108,13 @@ input[type=number] { width:140px; }
     <input type="hidden" name="logo_datei" value="{{ data.logo }}">
     <input type="hidden" name="betrag" id="betrag-hidden" value="{{ data.betrag }}">
 
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+    <div class="u-flex-wrap">
       <button type="submit" class="btn btn-amber" style="font-size:0.85rem; padding:0.85rem 2rem;">
         <span id="pay-btn-label">💳 Jetzt zahlen —</span> <span id="pay-label">{{ ('%.2f'|format(data.betrag))|replace('.', ',') }} €</span> via PayPal
       </button>
       <a href="{{ url_for('foerderer.antrag') }}" class="btn btn-ghost" id="btn-edit" style="color:#a0c8a0;">← Eintrag bearbeiten</a>
     </div>
-    <p id="pay-note" class="hinweis" style="margin-top:1rem;">Nach erfolgreicher Zahlung wird Ihr Eintrag innerhalb von Minuten sichtbar. Sie erhalten eine Rechnung per E-Mail und als direkten Download.</p>
+    <p id="pay-note" class="hinweis u-mt-1">Nach erfolgreicher Zahlung wird Ihr Eintrag innerhalb von Minuten sichtbar. Sie erhalten eine Rechnung per E-Mail und als direkten Download.</p>
   </form>
 
   <script>
@@ -155,12 +155,12 @@ input[type=number] { width:140px; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-ansprechpartner" for="ansprechpartner">Ansprechpartner <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(optional)</span></label>
+      <label id="lbl-ansprechpartner" for="ansprechpartner">Ansprechpartner <span class="u-hint">(optional)</span></label>
       <input type="text" id="ansprechpartner" name="ansprechpartner" value="{{ data.ansprechpartner or '' }}" maxlength="120" autocomplete="name" placeholder="Vor- und Nachname">
     </div>
 
     <div class="form-group">
-      <label id="lbl-desc" for="beschreibung">Kurzbeschreibung * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(20–300 Zeichen, erscheint im Eintrag)</span></label>
+      <label id="lbl-desc" for="beschreibung">Kurzbeschreibung * <span class="u-hint">(20–300 Zeichen, erscheint im Eintrag)</span></label>
       <textarea id="beschreibung" name="beschreibung" required maxlength="300" placeholder="Was macht Ihr Unternehmen? Warum unterstützen Sie OpenMycoNet?">{{ data.beschreibung or '' }}</textarea>
       <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; margin-top:4px;"><span id="char-count">0</span> / 300</div>
     </div>
@@ -181,7 +181,7 @@ input[type=number] { width:140px; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-logo" for="logo">Logo <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
+      <label id="lbl-logo" for="logo">Logo <span class="u-hint">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
       <div class="logo-upload" onclick="this.querySelector('input').click()">
         <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
         <div class="logo-upload-label" id="logo-upload-label">📁 Logo hier ablegen oder klicken zum Auswählen</div>
@@ -190,7 +190,7 @@ input[type=number] { width:140px; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-betrag" for="betrag-input">Jahresbeitrag * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(mind. 50 €, frei wählbar)</span></label>
+      <label id="lbl-betrag" for="betrag-input">Jahresbeitrag * <span class="u-hint">(mind. 50 €, frei wählbar)</span></label>
       <div class="betrag-grid">
         {% for b in betrag_optionen %}
           <button type="button" class="betrag-btn {% if b == 50 %}active{% endif %}" onclick="setBetrag({{ b }}, this)">{{ b }} €</button>
@@ -204,7 +204,7 @@ input[type=number] { width:140px; }
     </div>
 
     <div class="form-group">
-      <label id="lbl-email" for="email">Ihre E-Mail-Adresse * <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a;">(für Rechnung und Erneuerung)</span></label>
+      <label id="lbl-email" for="email">Ihre E-Mail-Adresse * <span class="u-hint">(für Rechnung und Erneuerung)</span></label>
       <input type="email" id="email" name="email" value="{{ data.email or '' }}" required autocomplete="email" placeholder="ihre@email.de">
     </div>
 
