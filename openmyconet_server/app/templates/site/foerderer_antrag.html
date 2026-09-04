@@ -62,6 +62,19 @@ input[type=number] { width:140px; }
 
 .honeypot { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
 @media (max-width:600px) { .main { padding:5rem 1.2rem 3rem; } }
+
+/* -- Migration foerderer_antrag.html Inline-Styles -> Klassen (CSP-Haertung, 6/N) -- */
+.mg-fa-mono-hint { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#5a8a6a; }
+.fa-1 { color:#a0c8a0; margin-bottom:2rem; }
+.fa-2 { color:#f0b84a; }
+.fa-3 { font-size:0.85rem; padding:0.85rem 2rem; }
+.fa-4 { color:#a0c8a0; }
+.fa-5 { color:#a0c8a0; margin-bottom:2rem; max-width:540px; }
+.fa-6 { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; margin-top:4px; }
+.fa-7 { display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem; }
+.fa-8 { width:120px; }
+.fa-9 { margin-top:0.5rem; }
+.fa-10 { display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px; }
 {% endblock %}
 
 {% block content %}
@@ -69,7 +82,7 @@ input[type=number] { width:140px; }
 
 {% if preview %}
   <h1><span id="h1-preview">So sieht Ihr </span><em id="h1-preview-em">Eintrag</em><span id="h1-preview-suffix"> aus</span></h1>
-  <p id="preview-intro" style="color:#a0c8a0; margin-bottom:2rem;">Prüfen Sie Ihren Eintrag. Bei Zahlung wird er genau so in der Fördererlist sichtbar.</p>
+  <p class="fa-1" id="preview-intro">Prüfen Sie Ihren Eintrag. Bei Zahlung wird er genau so in der Fördererlist sichtbar.</p>
 
   <div class="preview-card">
     {% if data.logo %}
@@ -91,7 +104,7 @@ input[type=number] { width:140px; }
       <input type="checkbox" id="cover-fees" onchange="updateFee()">
       <span>
         <span id="fee-label-text">Transaktionskosten übernehmen</span>:
-        <strong id="fee-amt" style="color:#f0b84a;">+{{ ('%.2f'|format(data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
+        <strong class="fa-2" id="fee-amt">+{{ ('%.2f'|format(data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
         → Gesamt: <strong class="u-green" id="fee-total">{{ ('%.2f'|format(data.betrag + data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
       </span>
     </label>
@@ -109,10 +122,10 @@ input[type=number] { width:140px; }
     <input type="hidden" name="betrag" id="betrag-hidden" value="{{ data.betrag }}">
 
     <div class="u-flex-wrap">
-      <button type="submit" class="btn btn-amber" style="font-size:0.85rem; padding:0.85rem 2rem;">
+      <button type="submit" class="btn btn-amber fa-3">
         <span id="pay-btn-label">💳 Jetzt zahlen —</span> <span id="pay-label">{{ ('%.2f'|format(data.betrag))|replace('.', ',') }} €</span> via PayPal
       </button>
-      <a href="{{ url_for('foerderer.antrag') }}" class="btn btn-ghost" id="btn-edit" style="color:#a0c8a0;">← Eintrag bearbeiten</a>
+      <a href="{{ url_for('foerderer.antrag') }}" class="btn btn-ghost fa-4" id="btn-edit">← Eintrag bearbeiten</a>
     </div>
     <p id="pay-note" class="hinweis u-mt-1">Nach erfolgreicher Zahlung wird Ihr Eintrag innerhalb von Minuten sichtbar. Sie erhalten eine Rechnung per E-Mail und als direkten Download.</p>
   </form>
@@ -133,7 +146,7 @@ input[type=number] { width:140px; }
 
 {% else %}
   <h1><span id="h1-form">Förderer </span><em id="h1-form-em">werden</em></h1>
-  <p id="form-intro" style="color:#a0c8a0; margin-bottom:2rem; max-width:540px;">Gestalten Sie Ihren Eintrag — Sie sehen eine Vorschau bevor Sie zahlen. Keine Vorauszahlung, keine Verpflichtung.</p>
+  <p class="fa-5" id="form-intro">Gestalten Sie Ihren Eintrag — Sie sehen eine Vorschau bevor Sie zahlen. Keine Vorauszahlung, keine Verpflichtung.</p>
 
   {% if fehler %}
   <div class="fehler-box">
@@ -162,7 +175,7 @@ input[type=number] { width:140px; }
     <div class="form-group">
       <label id="lbl-desc" for="beschreibung">Kurzbeschreibung * <span class="u-hint">(20–300 Zeichen, erscheint im Eintrag)</span></label>
       <textarea id="beschreibung" name="beschreibung" required maxlength="300" placeholder="Was macht Ihr Unternehmen? Warum unterstützen Sie OpenMycoNet?">{{ data.beschreibung or '' }}</textarea>
-      <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; margin-top:4px;"><span id="char-count">0</span> / 300</div>
+      <div class="fa-6"><span id="char-count">0</span> / 300</div>
     </div>
 
     <div class="form-group">
@@ -196,10 +209,10 @@ input[type=number] { width:140px; }
           <button type="button" class="betrag-btn {% if b == 50 %}active{% endif %}" onclick="setBetrag({{ b }}, this)">{{ b }} €</button>
         {% endfor %}
       </div>
-      <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem;">
-        <span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#5a8a6a;">oder</span>
-        <input type="number" name="betrag" id="betrag-input" value="50" min="50" step="1" autocomplete="off" oninput="clearBetragBtns()" style="width:120px;">
-        <span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#5a8a6a;">€</span>
+      <div class="fa-7">
+        <span class="mg-fa-mono-hint">oder</span>
+        <input class="fa-8" type="number" name="betrag" id="betrag-input" value="50" min="50" step="1" autocomplete="off" oninput="clearBetragBtns()">
+        <span class="mg-fa-mono-hint">€</span>
       </div>
     </div>
 
@@ -208,12 +221,12 @@ input[type=number] { width:140px; }
       <input type="email" id="email" name="email" value="{{ data.email or '' }}" required autocomplete="email" placeholder="ihre@email.de">
     </div>
 
-    <button type="submit" class="btn btn-green" style="margin-top:0.5rem;" id="btn-submit">Vorschau anzeigen →</button>
+    <button type="submit" class="btn btn-green fa-9" id="btn-submit">Vorschau anzeigen →</button>
     <p class="hinweis" id="hinweis-text">* Pflichtfelder · Keine Vorauszahlung · Zahlung erst nach Vorschau-Bestätigung</p>
   </form>
 {% endif %}
 
-  <a href="{{ live('foerderer.html') }}" id="back-link" style="display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px;">← Fördererseite</a>
+  <a class="fa-10" href="{{ live('foerderer.html') }}" id="back-link">← Fördererseite</a>
 </div>
 {% endblock %}
 
