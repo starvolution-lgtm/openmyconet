@@ -48,6 +48,11 @@ def app():
     # SMTP-Server verschicken (real passiert, mit echten Rejections vom
     # Mailserver, bis dieser Fix eingebaut wurde).
     flask_app.extensions['mail'].suppress = True
+    # Ebenso: MAIL_DEFAULT_SENDER wird nur bei init_app() gelesen. Ohne einen
+    # Absender wirft flask_mail beim Senden "message does not specify a sender"
+    # -- lokal fiel das nicht auf, weil load_dotenv() eine ~/.env mit echtem
+    # Absender fand; in CI (keine .env) schlugen dadurch alle Mail-Tests fehl.
+    flask_app.extensions['mail'].default_sender = 'test@openmyconet.test'
 
     with flask_app.app_context():
         _db.create_all()
