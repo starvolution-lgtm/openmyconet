@@ -84,8 +84,11 @@ def test_kooperation_submit_legt_pending_an_und_benachrichtigt_admin(client, app
         assert foerderer is not None
         assert foerderer.status == 'pending'
         assert foerderer.typ == 'kooperation'
-    assert len(ausgehend) == 1
-    assert 'Kooperationsanfrage' in ausgehend[0].subject
+    # Zwei Mails: (1) Double-Opt-in fuer den neu angelegten/verknuepften Nutzer-
+    # Account des Ansprechpartners (nutzer_finden_oder_anlegen), (2) Admin-
+    # Benachrichtigung ueber die Kooperationsanfrage.
+    assert len(ausgehend) == 2
+    assert any('Kooperationsanfrage' in m.subject for m in ausgehend)
 
 
 def _pending_foerderer(app, **overrides):

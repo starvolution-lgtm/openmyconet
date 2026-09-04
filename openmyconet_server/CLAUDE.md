@@ -23,8 +23,9 @@ SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sql
 `venv/Scripts/python.exe -m ruff check .` (Config: `ruff.toml`, muss grün bleiben;
 `--fix` nur sichere Fixes). `datetime.utcnow`-Deprecation (DTZ) ist bewusst nicht
 aktiviert — braucht eine DB-Migration der gespeicherten naiven Timestamps.
-Bekannt rot auf `main` (nicht anfassen): `test_presse` (`presse_suche.time`),
-`test_foerderer::test_kooperation_submit...` (Mail-Zähler). Tests nutzen temp-DBs.
+Suite ist grün; 3 `xfail` in `test_presse` (mocken die alte GDELT-JSON-API,
+`presse_suche.py` nutzt inzwischen feedparser — brauchen Neufassung der Fakes).
+Tests nutzen temp-DBs. CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server → Deploy per **scp einzelner Dateien**.
