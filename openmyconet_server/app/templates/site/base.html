@@ -83,7 +83,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 
 /* Sprachauswahl im mobilen Hamburger-Menue: feste Leiste am rechten Rand, immer sichtbar
    unabhaengig von der Laenge der Navigationsliste (die sonst darueber hinausrollt). */
-.mobile-lang { position:fixed !important; top:50%; right:0.8rem; transform:translateY(-50%); margin-top:0 !important; flex-direction:column !important; gap:0.9rem !important; background:rgba(20,31,20,0.9); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 0.6rem; z-index:1000; }
+.mobile-lang { display:flex; align-items:center; position:fixed !important; top:50%; right:0.8rem; transform:translateY(-50%); margin-top:0 !important; flex-direction:column !important; gap:0.9rem !important; background:rgba(20,31,20,0.9); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 0.6rem; z-index:1000; }
 
 .nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
 .nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
@@ -163,6 +163,40 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 .omn-pl-item.active .omn-pl-name { color:#e8f5e0; }
 .omn-pl-dur { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; }
 
+/* ── Aus Inline-style-Attributen ausgelagert (CSP-Haertung: style-src soll
+   ohne 'unsafe-inline' auskommen). Nur in base.html verwendete Stellen --
+   Site-Templates bekommen ihre eigenen Klassen in ihrem extra_css-Block. ── */
+.nav-logo-link { display:flex; align-items:center; text-decoration:none; }
+.nav-logo-img { height:68px; width:auto; display:block; }
+.nav-tool-icon { width:48px; height:48px; display:block; }
+
+.mobile-menu { display:none; position:fixed; inset:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem; overflow-y:auto; padding:5rem 5.5rem 3rem; }
+.mobile-close-btn { position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; }
+.mobile-menu-link { font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
+.mobile-menu-sublink { font-family:'Lora',Georgia,serif; font-size:0.95rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
+
+.omn-audio-fab { position:fixed; bottom:1.4rem; left:1.2rem; z-index:890; display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem; }
+.omn-audio-panel { display:none; background:rgba(2,40,28,0.97); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 1.1rem; min-width:220px; box-shadow:0 4px 24px rgba(0,0,0,0.5); font-family:'JetBrains Mono',monospace; }
+.omn-audio-panel-title { font-size:0.6rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.7rem; }
+.omn-vol-row { display:flex; align-items:center; gap:0.6rem; }
+.omn-vol-label { font-size:0.6rem; color:#a0c8a0; letter-spacing:0.06em; min-width:60px; }
+.omn-vol-slider { flex:1; accent-color:#6ee87e; cursor:pointer; height:8px; }
+.omn-vol-pct-label { font-size:0.6rem; color:#6ee87e; min-width:32px; text-align:right; }
+.omn-vol-hint { font-size:0.55rem; color:#6a9a6a; letter-spacing:0.06em; margin-top:0.6rem; text-align:center; }
+/* Kleine FAB-Variante des grossen Playlist-Play-Buttons (.omn-play-btn, 40px/16px-Icons
+   oben) -- 2 Klassen auf demselben Element, hoehere Spezifitaet gewinnt unabhaengig
+   von der Regel-Reihenfolge. */
+.omn-play-btn-sm { width:26px; height:26px; }
+.omn-play-btn-sm svg { width:11px; height:11px; margin-left:0; }
+/* Pause-Icon ist per Default (nicht .playing) unsichtbar -- vorher nur ueber ein
+   inline style="display:none" auf jeder einzelnen svg.icon-pause sichergestellt. */
+.omn-play-btn svg.icon-pause { display:none; }
+.omn-fab-link { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline; }
+/* Flaggen-Links in #lang-sidebar/#lang-flags-mobile (renderFlagsInto() baut sie
+   per innerHTML) -- Aktiv-Zustand vorher per JS-gesetztem inline style="opacity". */
+.lang-flag { display:inline-flex; cursor:pointer; opacity:0.45; }
+.lang-flag-active { opacity:1; }
+
 {% block extra_css %}{% endblock %}
 </style>
 </head>
@@ -170,7 +204,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 
 <nav>
   {% block nav_logo %}
-  <a href="{{ live('index.html') }}" style="display:flex; align-items:center; text-decoration:none;"><img class="nav-logo-img" src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet" style="height:68px; width:auto; display:block;"></a>
+  <a href="{{ live('index.html') }}" class="nav-logo-link"><img class="nav-logo-img" src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet"></a>
   {% endblock %}
   <ul>
     <li class="nav-dropdown-wrap">
@@ -202,10 +236,10 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
   </ul>
   <div class="nav-tools">
     <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
-      <img src="{{ asset('icon-chat.png') }}" alt="Chat" style="width:48px; height:48px; display:block;">
+      <img class="nav-tool-icon" src="{{ asset('icon-chat.png') }}" alt="Chat">
     </button>
     <button class="nav-tool-btn nav-tool-faq" id="nav-faq-btn" aria-label="FAQ" title="FAQ">
-      <img src="{{ asset('icon-faq.png') }}" alt="FAQ" style="width:48px; height:48px; display:block;">
+      <img class="nav-tool-icon" src="{{ asset('icon-faq.png') }}" alt="FAQ">
     </button>
   </div>
   <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
@@ -215,27 +249,27 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 </nav>
 
 <!-- Mobile Overlay-Menü -->
-<div class="mobile-menu" id="mobileMenu" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem; overflow-y:auto; padding:5rem 5.5rem 3rem;">
-  <button id="mobileClose" style="position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer;">✕</button>
-  <a href="{{ live('index.html#warum') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_warum">{{ t('nav_warum') }}</a>
-  <a href="{{ live('index.html#mitmachen') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a>
-  <a href="{{ live('index.html#spenden') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_spenden">{{ t('nav_spenden') }}</a>
-  <a href="{{ live('index.html#anmelden') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a>
-  <a href="{{ live('index.html#ueber') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_ueber">{{ t('nav_ueber') }}</a>
-  <a href="{{ live('wie-wir-arbeiten') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_wwa">{{ t('nav_wwa') }}</a>
-  <a href="{{ live('biocomm') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;">BioComm</a>
-  <a href="{{ live('biocomm/hardware') }}" style="font-family:'Lora',Georgia,serif; font-size:0.95rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none;">Hardware</a>
-  <a href="{{ live('biocomm/software') }}" style="font-family:'Lora',Georgia,serif; font-size:0.95rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none;">Software</a>
-  <a href="{{ live('medien.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_medien">{{ t('nav_medien') }}</a>
-  <a href="{{ live('foerderer.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_foerderer">{{ t('nav_foerderer') }}</a>
+<div class="mobile-menu" id="mobileMenu">
+  <button id="mobileClose" class="mobile-close-btn">✕</button>
+  <a href="{{ live('index.html#warum') }}" class="mobile-menu-link" data-i18n="nav_warum">{{ t('nav_warum') }}</a>
+  <a href="{{ live('index.html#mitmachen') }}" class="mobile-menu-link" data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a>
+  <a href="{{ live('index.html#spenden') }}" class="mobile-menu-link" data-i18n="nav_spenden">{{ t('nav_spenden') }}</a>
+  <a href="{{ live('index.html#anmelden') }}" class="mobile-menu-link" data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a>
+  <a href="{{ live('index.html#ueber') }}" class="mobile-menu-link" data-i18n="nav_ueber">{{ t('nav_ueber') }}</a>
+  <a href="{{ live('wie-wir-arbeiten') }}" class="mobile-menu-link" data-i18n="nav_wwa">{{ t('nav_wwa') }}</a>
+  <a href="{{ live('biocomm') }}" class="mobile-menu-link">BioComm</a>
+  <a href="{{ live('biocomm/hardware') }}" class="mobile-menu-sublink">Hardware</a>
+  <a href="{{ live('biocomm/software') }}" class="mobile-menu-sublink">Software</a>
+  <a href="{{ live('medien.html') }}" class="mobile-menu-link" data-i18n="nav_medien">{{ t('nav_medien') }}</a>
+  <a href="{{ live('foerderer.html') }}" class="mobile-menu-link" data-i18n="nav_foerderer">{{ t('nav_foerderer') }}</a>
   {# Presse-Button vorübergehend ausgeblendet (2026-08-23), siehe Kommentar oben im Desktop-Menü #}
   {#
-  <a href="{{ live('presse') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_presse">{{ t('nav_presse') }}</a>
+  <a href="{{ live('presse') }}" class="mobile-menu-link" data-i18n="nav_presse">{{ t('nav_presse') }}</a>
   #}
-  <a href="{{ live('quellennachweise.html') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_quellen">{{ t('nav_quellen') }}</a>
-  <a href="{{ live('news') }}" style="font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;" data-i18n="nav_news">{{ t('nav_news') }}</a>
+  <a href="{{ live('quellennachweise.html') }}" class="mobile-menu-link" data-i18n="nav_quellen">{{ t('nav_quellen') }}</a>
+  <a href="{{ live('news') }}" class="mobile-menu-link" data-i18n="nav_news">{{ t('nav_news') }}</a>
   {% block mobile_menu_self_link %}{% endblock %}
-  <div class="mobile-lang" id="lang-flags-mobile" style="display:flex; gap:0.6rem; margin-top:1rem; align-items:center;"></div>
+  <div class="mobile-lang" id="lang-flags-mobile"></div>
 </div>
 
 <div id="lang-sidebar"><!-- Flags injected by JS --></div>
@@ -252,30 +286,28 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
      Play (Nutzergeste), die gespeicherte Position wird dann via loadedmetadata
      wiederhergestellt. -->
 <audio id="omn-audio" preload="none"></audio>
-<div id="omn-audio-fab" style="position:fixed; bottom:1.4rem; left:1.2rem; z-index:890; display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem;">
-  <div id="omn-audio-panel" style="display:none; background:rgba(2,40,28,0.97); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 1.1rem; min-width:220px; box-shadow:0 4px 24px rgba(0,0,0,0.5); font-family:JetBrains Mono,monospace;">
-    <div style="font-size:0.6rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.7rem;">Audio</div>
-    <div style="display:flex; align-items:center; gap:0.6rem;">
-      <span style="font-size:0.6rem; color:#a0c8a0; letter-spacing:0.06em; min-width:60px;">Lautst&#228;rke</span>
-      <input id="omn-vol-slider" type="range" min="0" max="1" step="0.02" value="0.66" style="flex:1; accent-color:#6ee87e; cursor:pointer; height:8px;">
-      <span id="omn-vol-pct" style="font-size:0.6rem; color:#6ee87e; min-width:32px; text-align:right;">66%</span>
+<div id="omn-audio-fab" class="omn-audio-fab">
+  <div id="omn-audio-panel" class="omn-audio-panel">
+    <div class="omn-audio-panel-title">Audio</div>
+    <div class="omn-vol-row">
+      <span class="omn-vol-label">Lautst&#228;rke</span>
+      <input id="omn-vol-slider" class="omn-vol-slider" type="range" min="0" max="1" step="0.02" value="0.66">
+      <span id="omn-vol-pct" class="omn-vol-pct-label">66%</span>
     </div>
-    <div style="font-size:0.55rem; color:#6a9a6a; letter-spacing:0.06em; margin-top:0.6rem; text-align:center;">Regler auf 0% = stumm</div>
+    <div class="omn-vol-hint">Regler auf 0% = stumm</div>
   </div>
-  <button class="omn-play-btn" id="omn-audio-btn" onclick="omnTogglePlay()" title="Play/Stop" aria-label="Play/Stop"
-    style="width:26px; height:26px;">
-    <svg class="icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="width:11px;height:11px;"><polygon points="3,1 15,8 3,15"/></svg>
-    <svg class="icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none;width:11px;height:11px;margin-left:0;"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
+  <button class="omn-play-btn omn-play-btn-sm" id="omn-audio-btn" onclick="omnTogglePlay()" title="Play/Stop" aria-label="Play/Stop">
+    <svg class="icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="3,1 15,8 3,15"/></svg>
+    <svg class="icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
   </button>
-  <button class="omn-play-btn" id="omn-vol-toggle-btn" onclick="omnAudioPanelToggle()" title="Lautstärke" aria-label="Lautstärke"
-    style="width:26px; height:26px;">
-    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="width:11px;height:11px;">
+  <button class="omn-play-btn omn-play-btn-sm" id="omn-vol-toggle-btn" onclick="omnAudioPanelToggle()" title="Lautstärke" aria-label="Lautstärke">
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
       <polygon points="1,6 4,6 8,2 8,14 4,10 1,10" fill="#ffffff"/>
       <path d="M10 5.3 C11.6 6.7 11.6 9.3 10 10.7" stroke="#ffffff" stroke-width="1.3" fill="none" stroke-linecap="round"/>
       <path d="M11.6 3.2 C14.2 5.3 14.2 10.7 11.6 12.8" stroke="#ffffff" stroke-width="1.3" fill="none" stroke-linecap="round"/>
     </svg>
   </button>
-  <a href="{{ live('medien.html') }}#musik" data-i18n="player_more_link" style="font-family:JetBrains Mono,monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline;">{{ t('player_more_link') }}</a>
+  <a href="{{ live('medien.html') }}#musik" data-i18n="player_more_link" class="omn-fab-link">{{ t('player_more_link') }}</a>
 </div>
 
 <main>
@@ -356,9 +388,9 @@ function renderFlagsInto(containerId, size) {
   var el = document.getElementById(containerId);
   if (!el) return;
   el.innerHTML = LANGS.map(function(l) {
-    var opacity = l === currentLang ? '1' : '0.45';
+    var aktivKlasse = l === currentLang ? ' lang-flag-active' : '';
     var svg = size ? FLAGS[l].replace('width="20" height="14"', 'width="' + size + '" height="' + Math.round(size*0.7) + '"') : FLAGS[l];
-    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" onclick="omnSetLang(\'' + l + '\')" style="opacity:' + opacity + '; display:inline-flex; cursor:pointer;">' + svg + '</a>';
+    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" class="lang-flag' + aktivKlasse + '" onclick="omnSetLang(\'' + l + '\')">' + svg + '</a>';
   }).join('');
 }
 
