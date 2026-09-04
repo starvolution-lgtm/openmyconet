@@ -23,9 +23,8 @@ SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sql
 `venv/Scripts/python.exe -m ruff check .` (Config: `ruff.toml`, muss grün bleiben;
 `--fix` nur sichere Fixes). `datetime.utcnow`-Deprecation (DTZ) ist bewusst nicht
 aktiviert — braucht eine DB-Migration der gespeicherten naiven Timestamps.
-Suite ist grün; 3 `xfail` in `test_presse` (mocken die alte GDELT-JSON-API,
-`presse_suche.py` nutzt inzwischen feedparser — brauchen Neufassung der Fakes).
-Tests nutzen temp-DBs. CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
+Suite ist grün, kein `xfail` mehr. Tests nutzen temp-DBs.
+CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem

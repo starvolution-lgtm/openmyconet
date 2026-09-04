@@ -1,32 +1,25 @@
-import pytest
+from urllib.parse import quote
+from xml.sax.saxutils import escape as _xml_escape
+
 import requests
 
 from conftest import eingeloggt
-
-# presse_suche.py wurde auf einen feedparser-basierten Feed-Reader umgebaut
-# (_feed_lesen, headers=REQUEST_HEADERS); die drei folgenden Tests mocken noch
-# die alte GDELT-JSON-API (params['sourcelang']). Sie brauchen eine echte
-# Neufassung der Fakes -- bis dahin xfail, damit CI grün bleibt.
-_PRESSE_SUCHE_UMBAU = pytest.mark.xfail(
-    reason="Tests mocken die alte GDELT-API, presse_suche.py nutzt jetzt feedparser — Neufassung nötig",
-    strict=False,
-)
 from extensions import db
 from models import Presseeintrag, Pressekandidat, Suchbegriff
 import presse_suche
 
 
 def _suchbegriffe_seed(app, **overrides_pro_sprache):
+    # begriff enthaelt seit der Google-Alerts-Umstellung eine Feed-URL, nicht
+    # mehr ein Suchwort (siehe presse_suche.py-Docstring) -- quellsprache wird
+    # von presse_suche.py nicht mehr gelesen, bleibt aber im Schema.
     with app.app_context():
-        for sprache, begriff, quellsprache in [
-            ('de', 'Mykorrhiza-Netzwerk', 'german'),
-            ('en', 'mycorrhizal network', 'english'),
-            ('nl', 'mycorrhiza netwerk', 'dutch'),
-            ('fr', 'réseau mycorhizien', 'french'),
-            ('es', 'red micorrícica', 'spanish'),
-        ]:
+        for sprache in ('de', 'en', 'nl', 'fr', 'es'):
             aktiv = overrides_pro_sprache.get(sprache, True)
-            db.session.add(Suchbegriff(sprache=sprache, begriff=begriff, quellsprache=quellsprache, aktiv=aktiv))
+            db.session.add(Suchbegriff(
+                sprache=sprache, begriff=f'https://feed.example/{sprache}.xml',
+                quellsprache=sprache, aktiv=aktiv,
+            ))
         db.session.commit()
 
 
@@ -199,60 +192,77 @@ def test_kandidat_verwerfen(client, app, superadmin):
         assert Pressekandidat.query.get(kandidat_id).status == 'verworfen'
 
 
-# --- GDELT-Suche (presse_suche.py) -- HTTP komplett gemockt, keine echten Anfragen ---
+# --- Google-Alerts-RSS-Suche (presse_suche.py) -- HTTP komplett gemockt ---
 
-class _GefaelschteResponse:
-    def __init__(self, text, status_code=200):
-        self.text = text
+def _atom_feed(entries):
+    """Baut ein minimales Atom-Feed-XML, wie es Google Alerts liefert: der Link
+    ist ein Google-Redirect mit der Zielseite im "url"-Query-Parameter, der
+    Titel kann (wie bei echten Alerts) HTML-Hervorhebungen enthalten."""
+    items = ''
+    for titel, ziel_url, veroeffentlicht in entries:
+        link = f'https://www.google.com/url?rct=j&sa=t&url={quote(ziel_url, safe="")}&ct=ga'
+        items += (
+            '<entry>'
+            f'<title>{_xml_escape(titel)}</title>'
+            f'<link href="{_xml_escape(link)}"/>'
+            f'<published>{veroeffentlicht}</published>'
+            '</entry>'
+        )
+    return ('<?xml version="1.0" encoding="UTF-8"?>'
+            '<feed xmlns="http://www.w3.org/2005/Atom">' + items + '</feed>')
+
+
+class _GefaelschteFeedAntwort:
+    def __init__(self, xml_text, status_code=200):
+        self.content = xml_text.encode('utf-8')
         self.status_code = status_code
 
     def raise_for_status(self):
         if self.status_code >= 400:
             raise requests.HTTPError(f'{self.status_code} Fehler')
 
-    def json(self):
-        import json
-        return json.loads(self.text)
 
-
-@_PRESSE_SUCHE_UMBAU
 def test_kandidaten_suchen_legt_neue_kandidaten_an(app, monkeypatch):
     _suchbegriffe_seed(app)
 
-    antworten = {
-        'de': '{"articles": [{"url": "https://example.com/de-1", "title": "DE Artikel", "domain": "beispiel.de", "seendate": "20260601T120000Z"}]}',
-        'en': '{"articles": []}',
-        'nl': '{}',
-        'fr': 'Please limit requests to one every 5 seconds',
-        'es': '{"articles": [{"url": "https://example.com/es-1", "title": "ES Articulo", "domain": "ejemplo.es", "seendate": "20260602T080000Z"}]}',
+    feeds = {
+        'https://feed.example/de.xml': _atom_feed([
+            ('DE <b>Artikel</b>', 'https://example.com/de-1', '2026-06-01T12:00:00Z'),
+        ]),
+        'https://feed.example/en.xml': _atom_feed([]),
+        'https://feed.example/nl.xml': _atom_feed([]),
+        'https://feed.example/es.xml': _atom_feed([
+            ('ES Articulo', 'https://example.com/es-1', '2026-06-02T08:00:00Z'),
+        ]),
     }
 
-    def fake_get(url, params=None, timeout=None):
-        sprache = {'german': 'de', 'english': 'en', 'dutch': 'nl', 'french': 'fr', 'spanish': 'es'}[params['sourcelang']]
-        return _GefaelschteResponse(antworten[sprache])
+    def fake_get(url, headers=None, timeout=None):
+        if url == 'https://feed.example/fr.xml':
+            return _GefaelschteFeedAntwort('', status_code=429)  # z.B. Rate-Limit -> wird uebersprungen
+        return _GefaelschteFeedAntwort(feeds[url])
 
     monkeypatch.setattr(presse_suche.requests, 'get', fake_get)
 
     with app.app_context():
         anzahl = presse_suche.kandidaten_suchen()
-        assert anzahl == 2  # de + es, en/nl leer, fr liefert Rate-Limit-Text und wird uebersprungen
+        assert anzahl == 2  # de + es, en/nl leer, fr schlaegt fehl und wird uebersprungen
 
         kandidaten = Pressekandidat.query.order_by(Pressekandidat.sprache).all()
         titel = {k.titel for k in kandidaten}
-        assert titel == {'DE Artikel', 'ES Articulo'}
+        assert titel == {'DE Artikel', 'ES Articulo'}  # HTML-Hervorhebung entfernt
 
 
-@_PRESSE_SUCHE_UMBAU
 def test_kandidaten_suchen_dedupliziert_gegen_bestehende(app, monkeypatch):
     _suchbegriffe_seed(app)
     with app.app_context():
         db.session.add(Pressekandidat(titel='Schon da', url='https://example.com/de-1', quelle='x', sprache='de'))
         db.session.commit()
 
-    def fake_get(url, params=None, timeout=None):
-        if params['sourcelang'] == 'german':
-            return _GefaelschteResponse('{"articles": [{"url": "https://example.com/de-1", "title": "DE Artikel", "domain": "beispiel.de", "seendate": "20260601T120000Z"}]}')
-        return _GefaelschteResponse('{"articles": []}')
+    feed_de = _atom_feed([('DE Artikel', 'https://example.com/de-1', '2026-06-01T12:00:00Z')])
+    feed_leer = _atom_feed([])
+
+    def fake_get(url, headers=None, timeout=None):
+        return _GefaelschteFeedAntwort(feed_de if url.endswith('/de.xml') else feed_leer)
 
     monkeypatch.setattr(presse_suche.requests, 'get', fake_get)
 
@@ -268,19 +278,18 @@ def test_kandidaten_suchen_ohne_suchbegriffe_gibt_null_zurueck(app, monkeypatch)
         assert presse_suche.kandidaten_suchen() == 0
 
 
-@_PRESSE_SUCHE_UMBAU
 def test_kandidaten_suchen_ignoriert_inaktive_suchbegriffe(app, monkeypatch):
     _suchbegriffe_seed(app, de=False)  # Deutsch deaktiviert, Rest aktiv
 
-    angefragte_sprachen = []
+    angefragte_urls = []
 
-    def fake_get(url, params=None, timeout=None):
-        angefragte_sprachen.append(params['sourcelang'])
-        return _GefaelschteResponse('{"articles": []}')
+    def fake_get(url, headers=None, timeout=None):
+        angefragte_urls.append(url)
+        return _GefaelschteFeedAntwort(_atom_feed([]))
 
     monkeypatch.setattr(presse_suche.requests, 'get', fake_get)
 
     with app.app_context():
         presse_suche.kandidaten_suchen()
-        assert 'german' not in angefragte_sprachen
-        assert 'english' in angefragte_sprachen
+        assert 'https://feed.example/de.xml' not in angefragte_urls
+        assert 'https://feed.example/en.xml' in angefragte_urls
