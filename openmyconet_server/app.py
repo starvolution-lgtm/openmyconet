@@ -143,15 +143,26 @@ init_i18n(app)
 init_csrf(app)
 init_errors(app)
 
-# Sicherheits-Header. style-src kommt seit 2026-09-05 OHNE 'unsafe-inline' aus:
-# alle style=""-Attribute (04.09., CSP-Haertung 1-11/N) UND alle Inline-
-# <style>-Bloecke (05.09., inkl. der beiden per JS injizierten <style>-
-# Elemente in biocomm-chat.js/biocomm-faq.js) sind auf CSS-Klassen bzw.
-# externe .css-Dateien umgestellt. Der erste Versuch (04.09., Commit 34f4c9d)
-# beruecksichtigte nur style=""-Attribute und legte binnen Minuten die
-# komplette Seitenoptik lahm, weil style-src auch <style>-Bloecke blockiert --
-# sofort zurueckgerollt (179c6f6), diesmal beide Faelle vorher vollstaendig
-# migriert und die Live-Seite nach dem Schalten tatsaechlich visuell geprueft.
+# Sicherheits-Header. CSP erlaubt bewusst 'unsafe-inline' fuer style-src.
+# Zwei Anlaeufe, style-src OHNE 'unsafe-inline' zu fahren, sind bereits
+# gescheitert:
+#   1. (04.09., Commit 34f4c9d, sofort zurueckgerollt in 179c6f6): nur
+#      style=""-Attribute migriert -- style-src blockiert aber AUCH komplette
+#      Inline-<style>-Bloecke, legte die gesamte Seitenoptik lahm.
+#   2. (05.09., Commit 8471062, zurueckgerollt hier): zusaetzlich alle
+#      <style>-Bloecke (inkl. der 2 per JS injizierten in biocomm-chat.js/
+#      biocomm-faq.js) auf externe .css-Dateien umgestellt und lokal + live
+#      auf "Refused to apply inline style" geprueft -- KEINE Verletzung
+#      gefunden. Trotzdem 26 echte Live-Verstoesse in der echten Chrome-
+#      DevTools-Konsole entdeckt: style-src blockiert auch direkte JS-
+#      Property-Zuweisungen wie element.style.display = 'block' bzw.
+#      element.style.opacity = '0' -- das war eine falsche Grundannahme
+#      waehrend der gesamten Migration (angenommen: nur style=""-Attribute
+#      und <style>-Bloecke sind betroffen, CSSOM-Zuweisungen seien exempt).
+#      Es gibt zig solcher Stellen im Code (Node-Panel-Toggle, "nach oben"-
+#      Button, Formular-Button-Farben beim Absenden, Fortschrittsbalken
+#      usw.) -- muessten erst alle auf classList.toggle()/CSS-Klassen
+#      umgestellt werden, bevor ein dritter Anlauf sinnvoll ist.
 #
 # script-src bleibt weiterhin bewusst mit 'unsafe-inline' -- die Templates
 # nutzen durchgaengig onclick=""/onchange=""-Attribute und Inline-<script>-
@@ -168,7 +179,7 @@ _EIGENE_DOMAINS = "https://www.openmyconet.de https://openmyconet.de https://api
 _CSP = (
     f"default-src 'self' {_EIGENE_DOMAINS}; "
     f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net; "
-    f"style-src 'self' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+    f"style-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
     f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
     f"img-src 'self' data: {_EIGENE_DOMAINS} https://unpkg.com https://*.tile.openstreetmap.org; "
     f"media-src 'self' {_EIGENE_DOMAINS}; "
