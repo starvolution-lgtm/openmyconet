@@ -105,7 +105,23 @@ app.register_blueprint(kontrollzentrum_bp)
 # Phase 4 Schritt 1 (Template-Pilot): asset()/live() referenzieren bis zum Asset-
 # Umzug (Schritt 4) weiterhin die Live-Domain, damit der Pilot ohne Datei-
 # Duplizierung testbar ist.
-app.jinja_env.globals['asset'] = lambda path: 'https://www.openmyconet.de/' + path
+#
+# asset() haengt einen ?v=<mtime>-Query-Parameter an -- nginx liefert statische
+# Dateien mit einem 30-Tage-Cache (max-age=2592000), ohne Versionierung wuerde
+# jede Aenderung an einer bereits besuchten Datei bei wiederkehrenden Besuchern
+# fuer bis zu 30 Tage unsichtbar bleiben (04.09./05.09.2026 live erlebt: eine
+# korrigierte biocomm-chat.js blieb bei Robert trotz Cache-leeren + Inkognito
+# unveraendert, weil der Browser-HTTP-Cache selbst -- nicht der Service Worker --
+# die alte Datei unter derselben URL hielt). Der Query-Parameter aendert sich
+# automatisch bei jedem Deploy, der die Datei anfasst, kein manuelles Hochzaehlen
+# noetig.
+def _asset_version(path):
+    try:
+        return int(os.path.getmtime(os.path.join(app.static_folder, path)))
+    except OSError:
+        return 0
+
+app.jinja_env.globals['asset'] = lambda path: f'https://www.openmyconet.de/{path}?v={_asset_version(path)}'
 app.jinja_env.globals['live'] = lambda path: 'https://www.openmyconet.de/' + path
 # translations.json ist Teil des neuen, vereinheitlichten i18n-Mechanismus (Schritt 2)
 # und liegt bereits lokal in app/static/ -- bewusst NICHT ueber asset()/Live-Domain,
