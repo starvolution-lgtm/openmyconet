@@ -121,7 +121,18 @@ def _asset_version(path):
     except OSError:
         return 0
 
-app.jinja_env.globals['asset'] = lambda path: f'https://www.openmyconet.de/{path}?v={_asset_version(path)}'
+
+def _asset_url(path):
+    # asset('') wird als Praefix fuer clientseitige String-Verkettung genutzt
+    # (siehe OMN_ASSET_BASE in site/base.html, z.B. OMN_ASSET_BASE + track.mp3)
+    # -- dafuer darf keine Query-String-Versionierung angehaengt werden, sonst
+    # verschmilzt der Dateiname mit dem ?v=-Wert zu einer kaputten URL.
+    if not path:
+        return 'https://www.openmyconet.de/'
+    return f'https://www.openmyconet.de/{path}?v={_asset_version(path)}'
+
+
+app.jinja_env.globals['asset'] = _asset_url
 app.jinja_env.globals['live'] = lambda path: 'https://www.openmyconet.de/' + path
 # translations.json ist Teil des neuen, vereinheitlichten i18n-Mechanismus (Schritt 2)
 # und liegt bereits lokal in app/static/ -- bewusst NICHT ueber asset()/Live-Domain,
