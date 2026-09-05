@@ -1,0 +1,6 @@
+body { font-family: sans-serif; max-width: 500px; margin: 60px auto; color: #eee; background: #0a0f0a; }
+h1 { color: #4caf50; }
+input, select { width: 100%; padding: 8px; margin: 6px 0 16px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; }
+button { background: #4caf50; color: #000; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.msg { color: #4caf50; margin-top: 16px; }
+.err { color: #f44336; margin-top: 16px; }

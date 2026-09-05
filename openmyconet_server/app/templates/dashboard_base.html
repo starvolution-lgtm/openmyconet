@@ -3,46 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}OpenMycoNet — Dashboard{% endblock %}</title>
-    <style>
-        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
-        h1, h2 { color: #4caf50; }
-        a { color: #4caf50; }
-        nav { margin-bottom: 30px; font-size: 0.9em; }
-        .msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
-        .err { color: #f44336; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
-        .card { background: #1a2a1a; padding: 20px; border-radius: 6px; margin: 16px 0; }
-        /* Mykorrhiza-Textur: nur auf dem Login-Bereich, reines Ambiente, extrem
-           geringe Deckkraft -- .card selbst bleibt unangetastet fuer alle anderen Views. */
-        .texture-card { position: relative; overflow: hidden; }
-        .texture-card::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: url('/mykorrhiza-tile.jpg');
-            background-repeat: repeat; background-size: 320px 320px;
-            opacity: 0.08; pointer-events: none; z-index: 0;
-        }
-        .texture-card > * { position: relative; z-index: 1; }
-        .label { color: #aaa; font-size: 0.85em; }
-        input, button { padding: 8px; margin: 6px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; box-sizing: border-box; }
-        input { width: 100%; }
-        button { cursor: pointer; font-weight: bold; padding: 10px 24px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        th { text-align: left; color: #4caf50; padding: 6px 8px; font-size: 0.85em; }
-        td { padding: 6px 8px; border-bottom: 1px solid #24342466; font-size: 0.9em; }
-
-        /* Utility-Klassen (Migration von Inline-Styles, CSP-Haertung) --
-           dieselben Klassennamen wie in admin.css, dashboard_*.html laedt
-           admin.css aber nicht, deshalb hier eine eigene, minimale Kopie
-           der tatsaechlich genutzten. */
-        .u-m0 { margin: 0; }
-        .u-mt-16 { margin-top: 16px; }
-        .u-mb-14 { margin-bottom: 14px; }
-        .u-pre-wrap { margin: 4px 0; white-space: pre-wrap; }
-        .u-strike-faded { text-decoration: line-through; opacity: 0.6; }
-        .dk-1 { margin-top:36px; }
-        .dk-2 { padding:2px 8px; }
-        .dk-3 { width:100%;padding:8px;background:#1a2a1a;color:#eee;border:1px solid #4caf50;border-radius:4px;box-sizing:border-box; }
-        .dl-honeypot { position:absolute; left:-9999px; }
-    </style>
+<link rel="stylesheet" href="{{ asset('dashboard-base.css') }}">
 </head>
 <body>
     <nav>
