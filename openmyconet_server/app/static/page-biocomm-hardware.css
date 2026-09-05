@@ -1,0 +1,27 @@
+.article { max-width:900px; margin:0 auto; }
+.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
+.article p:last-child { margin-bottom:0; }
+.article ul { margin:0 0 1.3rem; padding-left:1.3rem; }
+.article li { color:#c8e0c8; font-size:1.02rem; line-height:1.75; margin-bottom:0.5rem; }
+.status-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.05em; text-transform:uppercase; padding:3px 10px; border-radius:4px; background:rgba(0,0,0,0.28); color:#f2c14e; border:1px solid rgba(212,160,48,0.5); margin-bottom:0.8rem; }
+.arch-chain { font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:#6ee87e; text-align:center; padding:1.4rem; background:rgba(255,255,255,0.03); border-radius:8px; margin:1.4rem 0; line-height:2.2; }
+.quote-line { font-style:italic; color:#a0c8a0; border-left:3px solid #3a9e5a; padding-left:1rem; margin:1.4rem 0; }
+.status-steps { display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#a0c8a0; margin:1.4rem 0; }
+.status-steps span.step { padding:0.4rem 0.8rem; border:1px solid #0a6040; border-radius:5px; }
+.status-steps span.step.active { color:#d4a030; border-color:#d4a030; }
+.status-steps span.arrow { color:#3a9e5a; }
+.hero-shot { display:block; width:100%; height:auto; border-radius:10px; border:1px solid #0a6040; box-shadow:0 8px 32px rgba(0,0,0,0.45); margin-top:1.6rem; }
+.shot { display:block; width:100%; height:auto; border-radius:8px; border:1px solid #0a6040; box-shadow:0 4px 20px rgba(0,0,0,0.35); margin:1.2rem 0; }
+.shot-caption { text-align:center; color:#a0c8a0; font-size:0.82rem; margin-top:-0.6rem; margin-bottom:1.6rem; font-family:'JetBrains Mono',monospace; }
+.interp-box { border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:1.6rem 1.8rem; }
+.interp-title { font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin-bottom:1rem; }
+.interp-box p { font-size:0.95rem; }
+.interp-motto { font-style:italic; color:#e8f5e0; margin-top:0.4rem; margin-bottom:0; }
+.status-table { width:100%; border-collapse:collapse; margin-top:1.4rem; font-size:0.95rem; }
+.status-table tr { border-bottom:1px solid #0a6040; }
+.status-table td { padding:0.8rem 0.4rem; }
+.status-table td:first-child { color:#c8e0c8; }
+.status-table td:last-child { text-align:right; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.04em; text-transform:uppercase; }
+.status-implemented { color:#6ee87e; }
+.status-progress { color:#d4a030; }
+.status-pending { color:#a0c8a0; }

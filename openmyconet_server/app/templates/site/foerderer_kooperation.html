@@ -17,52 +17,7 @@
 {% endblock %}
 
 {% block extra_css %}
-.main { max-width:720px; margin:0 auto; padding:6rem 2rem 4rem; }
-.main h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,2.5rem); font-weight:400; color:#ffffff; margin-bottom:2rem; line-height:1.2; }
-.main h1 em { font-style:italic; color:#6ee87e; }
-.form-group { margin-bottom:1.4rem; }
-.form-group label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:#a0c8a0; margin-bottom:0.5rem; }
-input[type=text], input[type=email], input[type=url], textarea, select {
-  width:100%; padding:0.75rem 1rem;
-  background:#ffffff; border:1px solid #0a6040;
-  color:#1a1a1a; font-family:'Lora',Georgia,serif; font-size:1rem;
-  outline:none; transition:border-color 0.2s;
-}
-input::placeholder, textarea::placeholder { color:#8a8a8a; }
-input:focus, textarea:focus, select:focus { border-color:#6ee87e; }
-textarea { resize:vertical; min-height:100px; }
-select option { background:#ffffff; color:#1a1a1a; }
-
-.logo-upload { border:1px dashed #0a6040; padding:1.5rem; text-align:center; cursor:pointer; transition:border-color 0.2s; position:relative; }
-.logo-upload:hover { border-color:#6ee87e; }
-.logo-upload input { position:absolute; inset:0; opacity:0; cursor:pointer; }
-.logo-upload-label { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#5a8a6a; }
-#logo-preview { max-height:80px; max-width:200px; margin-top:0.75rem; display:none; }
-
-.fehler-box { background:rgba(200,40,40,0.15); border:1px solid #c82828; padding:1rem 1.2rem; margin-bottom:1.5rem; font-size:0.9rem; }
-.fehler-box ul { padding-left:1.2rem; }
-
-.preview-card { background:rgba(0,0,0,0.22); border:1px solid #0a6040; border-top:3px solid #d4a030; padding:1.5rem; margin-bottom:2rem; }
-.preview-card .preview-logo { max-height:60px; max-width:160px; margin-bottom:1rem; display:block; }
-.preview-card .preview-firma { font-family:'Playfair Display',serif; font-size:1.3rem; color:#fff; margin-bottom:0.4rem; }
-.preview-card .preview-kat { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#d4a030; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.75rem; }
-.preview-card .preview-label { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:#5a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-top:0.9rem; margin-bottom:0.3rem; }
-.preview-card .preview-desc { font-size:0.95rem; color:#a0c8a0; line-height:1.7; }
-.preview-card .preview-web { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; margin-top:0.75rem; }
-
-.hinweis { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#5a8a6a; line-height:1.8; margin-top:1rem; }
-.honeypot { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
-
-.erfolg-box { background:rgba(110,232,126,0.1); border:1px solid #0a7050; border-top:3px solid #6ee87e; padding:2rem; }
-.erfolg-box p { color:#a0c8a0; margin-bottom:0.75rem; }
-@media (max-width:600px) { .main { padding:5rem 1.2rem 3rem; } }
-
-/* -- Migration foerderer_kooperation.html Inline-Styles -> Klassen (CSP-Haertung, 9/N) -- */
-.fk-1 { color:#a0c8a0; margin-bottom:2rem; }
-.fk-2 { color:#a0c8a0; margin-bottom:2rem; max-width:540px; }
-.fk-3 { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; margin-top:4px; }
-.fk-4 { margin-top:0.5rem; }
-.fk-5 { display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px; }
+<link rel="stylesheet" href="{{ asset('page-foerderer-kooperation.css') }}">
 {% endblock %}
 
 {% block content %}

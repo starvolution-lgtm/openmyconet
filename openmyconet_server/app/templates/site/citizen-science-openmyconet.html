@@ -14,16 +14,7 @@
 {% endblock %}
 
 {% block extra_css %}
-.article { max-width:720px; margin:0 auto; }
-.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
-.article p:last-child { margin-bottom:0; }
-.article a { color:#6ee87e; text-decoration:underline; }
-.article a:hover { opacity:0.8; }
-.own-position-section { border-left:3px solid #3a9e5a; }
-.own-position-section .inner { padding-left:1.5rem; }
-@media(max-width:900px){
-  .own-position-section .inner { padding-left:1rem; }
-}
+<link rel="stylesheet" href="{{ asset('page-citizen-science-openmyconet.css') }}">
 {% endblock %}
 
 {% block mobile_menu_self_link %}{% endblock %}

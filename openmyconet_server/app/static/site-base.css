@@ -1,0 +1,208 @@
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; overflow-x:hidden; }
+body { background-color:#024530; color:#e8f5e0; font-family:'Lora',Georgia,serif; font-size:17px; line-height:1.75; overflow-x:hidden; -webkit-text-size-adjust:100%; }
+a { color:inherit; text-decoration:none; }
+
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:1rem clamp(1.5rem,5vw,5rem); background-color:rgba(2,69,48,0.97); border-bottom:1px solid #0a6040; }
+nav ul { list-style:none; display:flex; align-items:center; gap:1rem; position:absolute; left:50%; transform:translateX(-50%); }
+nav ul a { color:#a0c8a0; font-family:'Lora',Georgia,serif; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; transition:color 0.2s; }
+nav ul a:hover { color:#f0b84a; }
+nav ul a.nav-active { color:#f0b84a; border-bottom:1px solid #d4a030; padding-bottom:2px; }
+nav a[data-i18n="nav_news"] { color:#ffcf6b; padding:3px 9px; border-radius:5px; animation: nav-news-glow 1.6s ease-in-out infinite; }
+@keyframes nav-news-glow {
+  0%, 100% { background-color:rgba(240,184,74,0.08); box-shadow:0 0 6px rgba(240,184,74,0.3); text-shadow:0 0 4px rgba(240,184,74,0.5); }
+  50% { background-color:rgba(240,184,74,0.28); box-shadow:0 0 10px 2px rgba(240,184,74,0.9), 0 0 26px rgba(240,184,74,0.55); text-shadow:0 0 10px rgba(255,210,120,1), 0 0 20px rgba(240,184,74,0.85); }
+}
+.nav-back { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#a0c8a0; text-decoration:none; letter-spacing:0.06em; transition:color 0.2s; }
+.nav-back:hover { color:#f0b84a; }
+
+/* Dropdown fuer zusammengelegte Menuepunkte (aktuell: Warum + Ueber, zwei
+   unterschiedliche Sektionen auf index.html, die nicht direkt benachbart sind) */
+.nav-dropdown-wrap { position:relative; }
+.nav-dropdown-wrap > a { white-space:nowrap; }
+.nav-dropdown-menu {
+  display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  background-color:rgba(2,69,48,0.98); border:1px solid #0a6040; padding:0.4rem 0;
+  min-width:150px; list-style:none; z-index:101;
+}
+/* Unsichtbare Bruecke schliesst die Luecke zwischen Trigger und Menue --
+   ohne sie verliert .nav-dropdown-wrap:hover den Hover-Zustand beim
+   Durchqueren des Abstands, bevor die Maus das Menue erreicht (live
+   gemeldet: Dropdown schloss sich, sobald man auf "Warum"/"Ueber" zubewegte). */
+.nav-dropdown-menu::before { content:''; position:absolute; top:-0.7rem; left:0; right:0; height:0.7rem; }
+.nav-dropdown-menu { margin-top:0.7rem; }
+.nav-dropdown-wrap:hover .nav-dropdown-menu, .nav-dropdown-wrap:focus-within .nav-dropdown-menu { display:block; }
+.nav-dropdown-menu li { padding:0; }
+.nav-dropdown-menu a { display:block; padding:0.5rem 1.1rem; white-space:nowrap; }
+
+main { padding-top:5rem; }
+
+.page-header { padding:3rem clamp(1.5rem,5vw,5rem) 2rem; border-bottom:1px solid #0a6040; }
+.section-label { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3rem); font-weight:400; line-height:1.15; color:#ffffff; margin-bottom:1.5rem; }
+h1 em { font-style:italic; color:#6ee87e; }
+h2 { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,3vw,2rem); font-weight:400; color:#ffffff; margin-bottom:1.5rem; text-align:center; }
+h2 em { font-style:italic; color:#6ee87e; }
+
+section { padding:3rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; max-width:none; }
+.inner { max-width:860px; margin:0 auto; }
+
+/* CTA */
+.cta-section { background-color:#012a1e; text-align:center; }
+.btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.75rem 1.8rem; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition:background-color 0.2s, color 0.2s; }
+.btn-green { background-color:#0a7050; color:#ffffff; }
+.btn-green:hover { background-color:#3a9e5a; }
+.btn-amber { background-color:transparent; color:#f0b84a; border:1px solid #d4a030; }
+.btn-amber:hover { background-color:rgba(212,160,48,0.1); }
+
+/* Footer */
+footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; text-align:center; }
+.footer-logo { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#6ee87e; margin-bottom:0.5rem; }
+.footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#a0c8a0; line-height:2; }
+.footer-info a { color:#8af09a; text-decoration:underline; }
+
+/* Lang sidebar */
+#lang-sidebar { display:none; position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
+
+/* Sprachauswahl im mobilen Hamburger-Menue: feste Leiste am rechten Rand, immer sichtbar
+   unabhaengig von der Laenge der Navigationsliste (die sonst darueber hinausrollt). */
+.mobile-lang { display:flex; align-items:center; position:fixed !important; top:50%; right:0.8rem; transform:translateY(-50%); margin-top:0 !important; flex-direction:column !important; gap:0.9rem !important; background:rgba(20,31,20,0.9); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 0.6rem; z-index:1000; }
+
+.nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
+.nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
+.nav-tool-btn:hover { opacity:0.85; transform:scale(1.05); }
+#omn-fab, #omn-faq-fab { display:none !important; }
+.mg-cta-p-520 { color:#a0c8a0; margin-bottom:1.8rem; max-width:520px; margin-left:auto; margin-right:auto; }
+.mg-cta-p-560 { color:#a0c8a0; margin-bottom:1.8rem; max-width:560px; margin-left:auto; margin-right:auto; }
+
+.hamburger { display:none; flex-direction:row; align-items:center; gap:8px; cursor:pointer; padding:8px 12px; background:transparent; border:1px solid #0a6040; z-index:101; animation:hamburger-pulse 2.5s ease-in-out infinite; }
+.hamburger:hover { border-color:#6ee87e; background:rgba(110,232,126,0.08); animation:none; }
+.hamburger-bars { display:inline-flex !important; flex-direction:column; gap:5px; vertical-align:middle; }
+.hamburger-bars span { display:block; width:20px; height:2px; background:#e8f5e0; border-radius:2px; }
+.hamburger-label { font-family:'Lora',Georgia,serif; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:#e8f5e0; }
+@keyframes hamburger-pulse {
+  0%   { border-color:#0a6040; box-shadow:0 0 0 0 rgba(212,160,48,0); }
+  50%  { border-color:#d4a030; box-shadow:0 0 0 3px rgba(212,160,48,0.15); }
+  100% { border-color:#0a6040; box-shadow:0 0 0 0 rgba(212,160,48,0); }
+}
+@media(max-width:1180px){
+  nav ul { display:none !important; }
+  .hamburger { display:flex !important; }
+}
+@media(max-width:900px){
+  nav { padding:0.9rem 1.2rem; }
+  nav ul { display:none !important; }
+  .nav-tools { margin-left:auto; margin-right:0.5rem; gap:0.3rem; }
+  .nav-tool-btn img { width:38px; height:38px; }
+  #lang-sidebar { display:none !important; }
+  .hamburger { display:flex !important; }
+}
+@media(max-width:480px){
+  /* Schmale Handy-Breiten: Logo + Icons + Hamburger passen sonst nicht nebeneinander
+     (Nav lief bei ~375px Viewport auf 451px Inhaltsbreite auf, Hamburger wurde ueber
+     den rechten Rand hinausgeschoben -- 2026-08-02 per Handy-Screenshot gefunden). */
+  .nav-logo-img { height:44px !important; }
+  .hamburger-label { display:none; }
+  .hamburger { padding:8px 10px; gap:0; }
+  .nav-tools { gap:0.15rem; margin-right:0.3rem; }
+  .nav-tool-btn img { width:32px; height:32px; }
+}
+
+/* ── Persistenter Audio-Player (Mini-Playlist-Widget, auf index/medien) ── */
+.omn-player { margin-top:2rem; margin-left:auto; margin-right:auto; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #0a7050; max-width:520px; }
+.omn-cover-wrap { position:relative; width:100%; height:200px; overflow:hidden; }
+.omn-cover-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.6s ease; }
+.omn-cover-img.active { opacity:1; }
+.omn-cover-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(2,69,48,0) 40%, rgba(2,69,48,0.92) 100%); }
+.omn-player-main { display:flex; align-items:center; gap:1rem; padding:0.9rem 1.4rem; }
+.omn-controls { display:flex; align-items:center; gap:0.5rem; flex-shrink:0; }
+.omn-play-btn { width:40px; height:40px; border-radius:50%; background-color:#0a7050; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background-color 0.2s; flex-shrink:0; }
+.omn-play-btn:hover { background-color:#3a9e5a; }
+.omn-play-btn svg { width:16px; height:16px; fill:#ffffff; margin-left:2px; }
+.omn-play-btn.playing svg.icon-play { display:none; }
+.omn-play-btn.playing svg.icon-pause { display:block !important; }
+@keyframes omn-fab-pulse {
+  0%, 100% { box-shadow:0 2px 12px rgba(0,0,0,0.5), 0 0 0 0 rgba(110,232,126,0.55); }
+  50% { box-shadow:0 2px 12px rgba(0,0,0,0.5), 0 0 0 7px rgba(110,232,126,0); }
+}
+.omn-fab-pulse { animation: omn-fab-pulse 1.8s ease-in-out infinite; }
+.omn-next-btn { width:28px; height:28px; background:none; border:1px solid #0a6040; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color 0.2s; flex-shrink:0; border-radius:0; }
+.omn-next-btn:hover { border-color:#6ee87e; }
+.omn-next-btn svg { width:12px; height:12px; fill:#a0c8a0; }
+.omn-player-info { flex:1; min-width:0; }
+.omn-player-title { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#6ee87e; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.omn-player-sub { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#d4a030; letter-spacing:0.06em; margin-bottom:0.4rem; }
+.omn-progress-wrap { position:relative; height:3px; background-color:rgba(255,255,255,0.1); cursor:pointer; }
+.omn-progress-bar { height:3px; background-color:#0a7050; width:0%; transition:width 0.1s linear; }
+.omn-time { font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:#a0c8a0; margin-top:0.3rem; }
+.omn-playlist { border-top:1px solid #0a6040; }
+.omn-pl-item { display:flex; align-items:center; gap:0.8rem; padding:0.65rem 1.4rem; cursor:pointer; transition:background-color 0.15s; border-bottom:1px solid rgba(10,96,64,0.3); }
+.omn-pl-item:last-child { border-bottom:none; }
+.omn-pl-item:hover { background-color:rgba(10,112,80,0.15); }
+.omn-pl-item.active { background-color:rgba(10,112,80,0.22); }
+.omn-pl-thumb { width:32px; height:32px; object-fit:cover; flex-shrink:0; opacity:0.6; transition:opacity 0.2s; }
+.omn-pl-item.active .omn-pl-thumb { opacity:1; }
+.omn-pl-num { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; width:14px; text-align:center; flex-shrink:0; }
+.omn-pl-item.active .omn-pl-num { color:#6ee87e; }
+.omn-pl-name { font-family:'JetBrains Mono',monospace; font-size:0.66rem; color:#a0c8a0; letter-spacing:0.05em; flex:1; }
+.omn-pl-item.active .omn-pl-name { color:#e8f5e0; }
+.omn-pl-dur { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#0a6040; }
+
+/* ── Aus Inline-style-Attributen ausgelagert (CSP-Haertung: style-src soll
+   ohne 'unsafe-inline' auskommen). Nur in base.html verwendete Stellen --
+   Site-Templates bekommen ihre eigenen Klassen in ihrem extra_css-Block. ── */
+.nav-logo-link { display:flex; align-items:center; text-decoration:none; }
+.nav-logo-img { height:68px; width:auto; display:block; }
+.nav-tool-icon { width:48px; height:48px; display:block; }
+
+.mobile-menu { display:none; position:fixed; inset:0; background:rgba(2,69,48,0.97); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:1.8rem; overflow-y:auto; padding:5rem 5.5rem 3rem; }
+.mobile-close-btn { position:absolute; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; }
+.mobile-menu-link { font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#e8f5e0; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; }
+.mobile-menu-sublink { font-family:'Lora',Georgia,serif; font-size:0.95rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; }
+
+.omn-audio-fab { position:fixed; bottom:1.4rem; left:1.2rem; z-index:890; display:flex; flex-direction:column; align-items:flex-start; gap:0.5rem; }
+.omn-audio-panel { display:none; background:rgba(2,40,28,0.97); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 1.1rem; min-width:220px; box-shadow:0 4px 24px rgba(0,0,0,0.5); font-family:'JetBrains Mono',monospace; }
+.omn-audio-panel-title { font-size:0.6rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.7rem; }
+.omn-vol-row { display:flex; align-items:center; gap:0.6rem; }
+.omn-vol-label { font-size:0.6rem; color:#a0c8a0; letter-spacing:0.06em; min-width:60px; }
+.omn-vol-slider { flex:1; accent-color:#6ee87e; cursor:pointer; height:8px; }
+.omn-vol-pct-label { font-size:0.6rem; color:#6ee87e; min-width:32px; text-align:right; }
+.omn-vol-hint { font-size:0.55rem; color:#6a9a6a; letter-spacing:0.06em; margin-top:0.6rem; text-align:center; }
+/* Kleine FAB-Variante des grossen Playlist-Play-Buttons (.omn-play-btn, 40px/16px-Icons
+   oben) -- 2 Klassen auf demselben Element, hoehere Spezifitaet gewinnt unabhaengig
+   von der Regel-Reihenfolge. */
+.omn-play-btn-sm { width:26px; height:26px; }
+.omn-play-btn-sm svg { width:11px; height:11px; margin-left:0; }
+/* Pause-Icon ist per Default (nicht .playing) unsichtbar -- vorher nur ueber ein
+   inline style="display:none" auf jeder einzelnen svg.icon-pause sichergestellt. */
+.omn-play-btn svg.icon-pause { display:none; }
+.omn-fab-link { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline; }
+/* Flaggen-Links in #lang-sidebar/#lang-flags-mobile (renderFlagsInto() baut sie
+   per innerHTML) -- Aktiv-Zustand vorher per JS-gesetztem inline style="opacity". */
+.lang-flag { display:inline-flex; cursor:pointer; opacity:0.45; }
+.lang-flag-active { opacity:1; }
+
+/* ── Utility-Klassen (Migration von Inline-Styles, Phase 2: die Site-Templates).
+   Deckt die haeufigsten wiederkehrenden Inline-style-Muster ueber alle
+   site/*.html ab -- Einzelfaelle bekommen weiterhin eigene Klassen im
+   jeweiligen extra_css-Block des Templates. 'u-' = Utility, damit kein
+   Namenskonflikt mit den fachlichen Klassen (.omn-*, .nav-* etc.) entsteht. ── */
+.u-bg-a { background-color:#024530; }
+.u-bg-b { background-color:#012a1e; }
+.u-green { color:#6ee87e; }
+.u-hint { font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a; }
+.u-center { text-align:center; }
+.u-center-pad { text-align:center; padding:1rem 0; }
+.u-inline { display:inline; }
+.u-mt-1 { margin-top:1rem; }
+.u-mt-1-5 { margin-top:1.5rem; }
+.u-mt-2 { margin-top:2rem; }
+.u-mt-3 { margin-top:3rem; }
+.u-mb-0 { margin-bottom:0; }
+.u-mb-1 { margin-bottom:1rem; }
+.u-mb-1-5 { margin-bottom:1.5rem; }
+.u-pt-2 { padding-top:2rem; }
+.u-mr-8 { margin-right:8px; }
+.u-flex-wrap-center { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+.u-flex-wrap { display:flex; gap:1rem; flex-wrap:wrap; }
+

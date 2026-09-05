@@ -14,30 +14,7 @@
 {% endblock %}
 
 {% block extra_css %}
-.article { max-width:760px; margin:0 auto; }
-.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
-.article p:last-child { margin-bottom:0; }
-.article h3 { color:#e8f5e0; font-size:1.15rem; margin:1.6rem 0 0.9rem; }
-.status-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.05em; text-transform:uppercase; padding:3px 10px; border-radius:4px; background:rgba(212,160,48,0.15); color:#d4a030; border:1px solid rgba(212,160,48,0.35); margin-bottom:0.8rem; }
-.direction-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin:1.4rem 0; }
-.direction-card { background:rgba(255,255,255,0.03); border:1px solid #0a6040; border-radius:8px; padding:1.4rem; }
-.direction-card h4 { color:#e8f5e0; font-size:1rem; margin-bottom:0.6rem; }
-.direction-card p { font-size:0.95rem; color:#a0c8a0; margin-bottom:0; }
-.arch-chain { font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:#6ee87e; text-align:center; padding:1.4rem; background:rgba(255,255,255,0.03); border-radius:8px; margin:1.4rem 0; line-height:2.2; }
-.teaser-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin:1.4rem 0; }
-.teaser-card { background:rgba(255,255,255,0.03); border:1px solid #0a6040; border-radius:8px; padding:1.6rem; text-align:center; }
-.teaser-card h4 { color:#e8f5e0; margin-bottom:0.6rem; }
-.teaser-card a.btn { margin-top:0.8rem; }
-.status-table { width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:0.92rem; }
-.status-table th, .status-table td { text-align:left; padding:0.7rem 0.9rem; border-bottom:1px solid #0a6040; }
-.status-table th { color:#d4a030; font-family:'JetBrains Mono',monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; }
-.status-table td { color:#c8e0c8; }
-.quote-line { font-style:italic; color:#a0c8a0; border-left:3px solid #3a9e5a; padding-left:1rem; margin:1.4rem 0; }
-@media(max-width:760px){ .direction-grid, .teaser-grid { grid-template-columns:1fr; } }
-
-.bc-1 { background:rgba(58,158,90,0.15); color:#6ee87e; border-color:rgba(58,158,90,0.35); }
-.bc-2 { display:inline-block; text-align:left; }
-.bc-3 { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1rem; }
+<link rel="stylesheet" href="{{ asset('page-biocomm.css') }}">
 {% endblock %}
 
 {% block mobile_menu_self_link %}{% endblock %}
