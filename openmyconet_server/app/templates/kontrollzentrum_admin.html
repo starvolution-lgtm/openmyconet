@@ -5,23 +5,7 @@
 {% block extra_css %}
 <link rel="manifest" href="{{ asset('kontrollzentrum-manifest.json') }}">
 <meta name="theme-color" content="#3c6b4c">
-<style>
-  .kz-kopf { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.2rem; }
-  .kz-kopf .zeit { font-size:0.85em; color:var(--ink-soft, #666); }
-  .kz-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem; }
-  details.kz-tile { border-radius:8px; padding:0.9rem 1rem; min-height:70px; border:1px solid; }
-  details.kz-tile.ok { background:var(--good-bg); border-color:var(--good); }
-  details.kz-tile.fehler { background:var(--blocked-bg); border-color:var(--blocked); }
-  /* neutral (grau) ist bewusst nur fuer den Presse-Feed-Check: valide geladen,
-     aber (noch) keine Treffer -- kein Fehler, aber auch kein "alles gut". */
-  details.kz-tile.neutral { background:#e9e9e6; border-color:#8a8a82; }
-  details.kz-tile summary { cursor:pointer; font-weight:600; list-style:none; }
-  details.kz-tile summary::-webkit-details-marker { display:none; }
-  details.kz-tile .kz-detail { margin:0.6rem 0 0; font-size:0.9em; }
-  details.kz-tile.ok .kz-detail { color:var(--good); }
-  details.kz-tile.fehler .kz-detail { color:var(--blocked); }
-  details.kz-tile.neutral .kz-detail { color:#5a5a52; }
-</style>
+<link rel="stylesheet" href="{{ asset('admin-kontrollzentrum.css') }}">
 {% endblock %}
 
 {% block content %}

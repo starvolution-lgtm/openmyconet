@@ -1,0 +1,7 @@
+/* Migration Inline-Styles -> Klassen (CSP-Haertung) */
+.ka-1 { width:100%;border-collapse:collapse; }
+.ka-2 { text-align:left; }
+.ka-3 { width:2rem; }
+.ka-4 { margin-bottom:1rem;padding-bottom:0.6rem;border-bottom:1px solid #0002; }
+.ka-5 { margin:0.3rem 0;white-space:pre-wrap; }
+.ka-6 { width:100%;box-sizing:border-box; }

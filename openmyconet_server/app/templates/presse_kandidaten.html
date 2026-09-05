@@ -3,15 +3,7 @@
 {% block heading %}🔎 Presse-Kandidaten{% endblock %}
 
 {% block extra_css %}
-<style>
-/* Migration Inline-Styles -> Klassen (CSP-Haertung) */
-.pk-1 { all:unset; cursor:pointer; color:#c0392b; }
-.pk-2 { margin:2.5rem 0; }
-.pk-3 { width:4em; }
-.pk-4 { width:26em; }
-.pk-5 { width:8em; }
-.pk-6 { width:100%; max-width:32em; }
-</style>
+<link rel="stylesheet" href="{{ asset('admin-presse-kandidaten.css') }}">
 {% endblock %}
 
 {% block content %}

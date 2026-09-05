@@ -4,14 +4,7 @@
 
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-<style>
-    #editor { height: 220px; background: #fff; color: var(--ink); border-radius: 0 0 8px 8px; }
-    .ql-toolbar { background: var(--ground-raised); border-color: var(--line) !important; border-radius: 8px 8px 0 0; }
-    .ql-container { border-color: var(--line) !important; font-family: var(--serif); }
-    .ql-toolbar .ql-stroke { stroke: var(--ink); }
-    .ql-toolbar .ql-fill { fill: var(--ink); }
-    .ql-toolbar .ql-picker-label { color: var(--ink); }
-</style>
+<link rel="stylesheet" href="{{ asset('admin-news.css') }}">
 {% endblock %}
 
 {% block content %}
