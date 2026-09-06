@@ -34,7 +34,9 @@ headers = {
 
 print("Lade Google Fonts CSS...")
 req = urllib.request.Request(FONTS_URL, headers=headers)
-with urllib.request.urlopen(req) as response:
+# FONTS_URL/font_urls sind fest verdrahtete https://-Adressen (fonts.googleapis.com
+# bzw. fonts.gstatic.com); einmaliges Build-Hilfsskript, kein Nutzer-Input.
+with urllib.request.urlopen(req) as response:  # nosec B310
     css = response.read().decode("utf-8")
 
 print(f"CSS geladen ({len(css)} Zeichen)")
@@ -54,7 +56,7 @@ for url in font_urls:
     if not os.path.exists(local_path):
         print(f"  Lade: {filename}")
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req) as r:  # nosec B310
             with open(local_path, "wb") as f:
                 f.write(r.read())
     else:

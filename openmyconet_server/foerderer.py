@@ -13,7 +13,12 @@ import os
 import re
 import secrets
 import uuid
-import xml.etree.ElementTree as ET
+# defusedxml statt xml.etree: die geparste Datei ist ein vom Nutzer hochgeladenes
+# SVG -- ein bösartiges SVG mit <!DOCTYPE ... <!ENTITY>> koennte sonst per XXE
+# lokale Dateien lesen oder SSRF ausloesen. defusedxml deaktiviert Entities,
+# externe DTDs und Entity-Expansion und wirft dann eine DefusedXmlException.
+import defusedxml.ElementTree as ET
+from defusedxml.common import DefusedXmlException
 from datetime import timedelta
 from urllib.parse import urlencode, quote
 
@@ -73,8 +78,8 @@ def _logo_inhalt_gueltig(logo_file, ext):
     if ext == 'svg':
         try:
             root = ET.parse(logo_file).getroot()
-        except ET.ParseError:
-            return False, 'Logo: Datei ist kein gueltiges SVG (beschaedigt oder kein XML).'
+        except (ET.ParseError, DefusedXmlException):
+            return False, 'Logo: Datei ist kein gueltiges SVG (beschaedigt, kein XML oder unerlaubte Konstrukte).'
         finally:
             logo_file.seek(0)
         if not root.tag.endswith('svg'):

@@ -193,13 +193,61 @@ _CSP = (
 )
 
 
+# Permissions-Policy: schaltet Browser-Features ab, die die Seite nirgends nutzt
+# (geprueft: kein navigator.geolocation/mediaDevices/PaymentRequest/usb/... im
+# gesamten Frontend -- Adress-Geocoding laeuft ueber ein Textfeld + Nominatim-API,
+# nicht ueber die Browser-Geolocation). Reine Defense-in-Depth: falls je ein
+# kompromittiertes Drittskript reinkommt, kann es diese APIs trotzdem nicht nutzen.
+_PERMISSIONS_POLICY = (
+    "geolocation=(), camera=(), microphone=(), payment=(), usb=(), "
+    "bluetooth=(), serial=(), hid=(), midi=(), magnetometer=(), gyroscope=(), "
+    "accelerometer=(), autoplay=(self), fullscreen=(self), "
+    "interest-cohort=()"
+)
+
+
 @app.after_request
 def _sicherheits_header(response):
     response.headers['Content-Security-Policy'] = _CSP
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    # HSTS: erzwingt HTTPS im Browser fuer 1 Jahr (auch fuer Subdomains). Ohne
+    # 'preload' -- das erst nach laengerer stabiler Laufzeit + bewusster
+    # Anmeldung bei hstspreload.org, weil es praktisch nicht rueckgaengig zu
+    # machen ist. nginx macht den http->https-Redirect, aber ohne diesen Header
+    # koennte ein Angreifer im selben Netz den ersten (http-)Request abfangen.
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['Permissions-Policy'] = _PERMISSIONS_POLICY
+    # Isoliert den Browsing-Context von cross-origin geoeffneten Fenstern
+    # (Schutz vor Cross-Window-Angriffen / Spectre-artigem Side-Channel-Leaking).
+    # Alle window.open()-Aufrufe im Code nutzen bereits 'noopener', der PayPal-
+    # Flow ist eine volle Navigation (kein Popup mit opener) -- nichts bricht.
+    # (Cross-Origin-Resource-Policy bewusst NICHT gesetzt: bringt ohne COEP kaum
+    # Mehrwert und wuerde ein spaeteres Einbetten von OpenMycoNet-Assets/-Widgets
+    # auf anderen Seiten unnoetig blockieren.)
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
     return response
+
+
+# security.txt (RFC 9116) -- Anlaufstelle fuer Schwachstellenmeldungen.
+# Als Route statt statische Datei, weil nginx /.well-known/ je nach Config
+# ausblendet und die Route das Ablaufdatum an einer Stelle haelt.
+# WICHTIG: 'Expires' regelmaessig verlaengern (jaehrlich) -- ein abgelaufenes
+# security.txt gilt als ungueltig.
+_SECURITY_TXT = (
+    "Contact: mailto:kontakt@openmyconet.de\n"
+    "Expires: 2027-09-06T00:00:00.000Z\n"
+    "Preferred-Languages: de, en\n"
+    "Canonical: https://www.openmyconet.de/.well-known/security.txt\n"
+)
+
+
+@app.route('/.well-known/security.txt')
+@app.route('/security.txt')
+def _security_txt():
+    return _SECURITY_TXT, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
 
 # --- Öffentliche Routen ---
 # '/' und die anderen Hauptseiten-Routen sind jetzt in site_live.py (Phase 4,

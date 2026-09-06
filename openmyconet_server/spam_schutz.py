@@ -19,7 +19,10 @@ def ip_erlaubt(ip, key, limit=5, window=3600):
     """True, wenn unter dem Limit — zählt die Anfrage dabei gleich mit."""
     os.makedirs(RATE_DIR, exist_ok=True)
     ip = re.sub(r'[^a-fA-F0-9:.]', '', ip or '0')
-    rate_file = os.path.join(RATE_DIR, hashlib.md5(f'{ip}_{key}'.encode()).hexdigest() + '.json')
+    # MD5 nur als kurzer, dateisystemsicherer Name fuer die Rate-Limit-Datei --
+    # keine Sicherheitsfunktion (kein Passwort-Hash, keine Integritaetspruefung).
+    schluessel = hashlib.md5(f'{ip}_{key}'.encode(), usedforsecurity=False).hexdigest()
+    rate_file = os.path.join(RATE_DIR, schluessel + '.json')
 
     now = time.time()
     log = []

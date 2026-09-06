@@ -34,3 +34,9 @@ jobs:
 
       - name: Pytest
         run: python -m pytest -q -p no:warnings
+
+      - name: Bandit (SAST)
+        run: python -m bandit -r . -x ./venv,./tests,./__pycache__ -ll
+
+      - name: pip-audit (Abhaengigkeits-CVEs)
+        run: python -m pip_audit -r requirements.txt

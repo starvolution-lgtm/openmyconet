@@ -43,13 +43,14 @@ def test_mail_senden():
 if __name__ == '__main__':
     try:
         test_mail_senden()
-        urllib.request.urlopen(HC_PING_URL, timeout=10)
+        # feste https-Ping-URL (healthchecks.io), Cron-Skript, kein Nutzer-Input
+        urllib.request.urlopen(HC_PING_URL, timeout=10)  # nosec B310
         print('Test-Mail erfolgreich gesendet, healthchecks.io benachrichtigt.')
     except Exception as fehler:
         # Bewusst sofort den /fail-Endpunkt anstoßen statt nur zu schweigen --
         # healthchecks.io alarmiert dann ohne auf die Grace-Time warten zu muessen.
         try:
-            urllib.request.urlopen(HC_PING_URL + '/fail', timeout=10)
+            urllib.request.urlopen(HC_PING_URL + '/fail', timeout=10)  # nosec B310
         except Exception:
             pass
         print(f'Fehler beim Mail-Test: {fehler}')
