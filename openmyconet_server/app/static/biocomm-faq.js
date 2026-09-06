@@ -428,7 +428,7 @@ renderFaqPanel(getFaqLang());
 fab.addEventListener('click', function() {
   renderFaqPanel(getFaqLang());
   overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.body.classList.add('u-no-scroll');
   setTimeout(function() {
     var s = document.getElementById('omn-faq-search');
     if (s) s.focus();
@@ -437,13 +437,13 @@ fab.addEventListener('click', function() {
 
 closeBtnEl.addEventListener('click', function() {
   overlay.classList.remove('open');
-  document.body.style.overflow = '';
+  document.body.classList.remove('u-no-scroll');
 });
 
 overlay.addEventListener('click', function(e) {
   if (e.target === overlay) {
     overlay.classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.classList.remove('u-no-scroll');
   }
 });
 
@@ -466,7 +466,7 @@ overlay.addEventListener('input', function(e) {
 
   if (!term) {
     items.forEach(function(i) { i.classList.remove('hidden'); });
-    cats.forEach(function(c) { c.style.display = ''; });
+    cats.forEach(function(c) { c.classList.remove('faq-cat-hidden'); });
     return;
   }
 
@@ -486,7 +486,7 @@ overlay.addEventListener('input', function(e) {
   });
 
   cats.forEach(function(c) {
-    c.style.display = visibleCats[c.getAttribute('data-cat')] ? '' : 'none';
+    c.classList.toggle('faq-cat-hidden', !visibleCats[c.getAttribute('data-cat')]);
   });
 });
 
@@ -494,7 +494,7 @@ overlay.addEventListener('input', function(e) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape' && overlay.classList.contains('open')) {
     overlay.classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.classList.remove('u-no-scroll');
   }
 });
 

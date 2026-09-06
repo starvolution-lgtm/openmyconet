@@ -141,7 +141,7 @@
       <div class="logo-upload" onclick="this.querySelector('input').click()">
         <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
         <div class="logo-upload-label" id="logo-upload-label">📁 Logo hier ablegen oder klicken zum Auswählen</div>
-        <img id="logo-preview" src="" alt="Vorschau">
+        <img id="logo-preview" src="" alt="Vorschau" hidden>
       </div>
     </div>
 
@@ -186,7 +186,7 @@ function previewLogo(input) {
   var prev = document.getElementById('logo-preview');
   if (input.files && input.files[0]) {
     var reader = new FileReader();
-    reader.onload = function(e) { prev.src = e.target.result; prev.style.display = 'block'; };
+    reader.onload = function(e) { prev.src = e.target.result; prev.hidden = false; };
     reader.readAsDataURL(input.files[0]);
   }
 }

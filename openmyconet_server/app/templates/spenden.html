@@ -23,13 +23,8 @@
 </form>
 
 {% if spende.ziel_betrag %}
-<div class="bar-wrap sp-maxw-480">
-    <div class="bar" id="spende-bar" data-pct="{{ [(spende.aktueller_betrag / spende.ziel_betrag * 100), 100] | min }}"></div>
-</div>
+<progress class="spende-progress sp-maxw-480" max="100" value="{{ [(spende.aktueller_betrag / spende.ziel_betrag * 100), 100] | min }}"></progress>
 <p class="info">{{ spende.aktueller_betrag }} € von {{ spende.ziel_betrag }} €</p>
-<script>
-document.getElementById('spende-bar').style.width = document.getElementById('spende-bar').dataset.pct + '%';
-</script>
 {% endif %}
 
 <p class="info">Öffentliche API: <code>GET /api/v1/spenden</code> — liefert die Werte nur, wenn "sichtbar" aktiv ist.</p>

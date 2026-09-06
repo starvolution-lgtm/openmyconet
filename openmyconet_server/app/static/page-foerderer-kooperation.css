@@ -18,7 +18,7 @@ select option { background:#ffffff; color:#1a1a1a; }
 .logo-upload:hover { border-color:#6ee87e; }
 .logo-upload input { position:absolute; inset:0; opacity:0; cursor:pointer; }
 .logo-upload-label { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#5a8a6a; }
-#logo-preview { max-height:80px; max-width:200px; margin-top:0.75rem; display:none; }
+#logo-preview { max-height:80px; max-width:200px; margin-top:0.75rem; }
 
 .fehler-box { background:rgba(200,40,40,0.15); border:1px solid #c82828; padding:1rem 1.2rem; margin-bottom:1.5rem; font-size:0.9rem; }
 .fehler-box ul { padding-left:1.2rem; }

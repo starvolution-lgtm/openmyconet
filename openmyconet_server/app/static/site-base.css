@@ -206,3 +206,14 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 .u-flex-wrap-center { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
 .u-flex-wrap { display:flex; gap:1rem; flex-wrap:wrap; }
 
+
+/* ── CSP-Haertung: Zustands-Klassen statt element.style.x = ... ──────────────
+   style-src ohne 'unsafe-inline' blockiert auch direkte JS-Style-Zuweisungen,
+   nicht nur style=""-Attribute und <style>-Bloecke. Diese Klassen + das
+   [hidden]-Attribut ersetzen die frueheren .style.display/.style.opacity-
+   Umschaltungen im JS. */
+[hidden] { display: none !important; }
+.u-no-scroll { overflow: hidden; }
+.mobile-menu.is-open { display: flex; }
+.omn-audio-panel.is-open { display: block; }
+@media (min-width: 901px) { #lang-sidebar { display: flex; } }

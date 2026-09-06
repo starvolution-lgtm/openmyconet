@@ -305,7 +305,7 @@
         <option value="{{ opt_val }}">{{ t(opt_key) }}</option>
         {% endfor %}
       </select>
-      <div class="foerderer-hint-box" id="foerderer-hint">
+      <div class="foerderer-hint-box" id="foerderer-hint" hidden>
         <p class="ic-47" id="foerderer-hint-text">{{ t('a_foerderer_hint') }}</p>
         <a class="ic-48" href="{{ live('foerderer.html') }}" id="foerderer-hint-link">{{ t('a_foerderer_link') }}</a>
         <p class="ic-49" id="foerderer-hint-note">{{ t('a_foerderer_note') }}</p>
@@ -362,7 +362,7 @@
      Der bespoke Mini-Player (ltf-audio) entfaellt, "Listen to the Forest" ist
      jetzt Teil der zentralen Playlist (base.html), siehe medien.html. -->
 
-<div class="ic-55" id="node-panel">
+<div class="ic-55" id="node-panel" hidden>
   <button class="ic-56" onclick="closeNodePanel()">✕</button>
 
   <div class="ic-57">
@@ -410,8 +410,8 @@
           <button class="ic-67" type="button" id="node-geocode-btn" onclick="geocodeNodeAddress()" title="{{ t('a_node_geocode_btn') }}">📍</button>
         </div>
         <p class="ic-68" id="node-geocode-hint">{{ t('a_node_geocode_hint') }}</p>
-        <p class="ic-69" id="node-geocode-error"></p>
-        <div class="ic-70" id="node-geo-map"></div>
+        <p class="ic-69" id="node-geocode-error" hidden></p>
+        <div class="ic-70" id="node-geo-map" hidden></div>
         <input type="hidden" id="node-inp-lat" name="lat">
         <input type="hidden" id="node-inp-lon" name="lon">
       </div>
@@ -486,10 +486,7 @@
   if(!btn) return;
   function updateVisibility(){
     var half = (document.documentElement.scrollHeight - window.innerHeight) / 2;
-    var show = window.scrollY > half;
-    btn.style.display = 'flex';
-    btn.style.opacity = show ? '1' : '0';
-    btn.style.pointerEvents = show ? 'auto' : 'none';
+    btn.classList.toggle('is-visible', window.scrollY > half);
   }
   window.addEventListener('scroll', updateVisibility, {passive:true});
   updateVisibility();
@@ -720,29 +717,25 @@ function checkRegRole(sel) {
   var form = document.getElementById('reg-form');
   var btn = document.getElementById('reg-btn');
 
-  hint.style.display = isF ? 'block' : 'none';
-  nodeWrap.style.display = isF ? 'none' : 'block';
+  hint.hidden = !isF;
+  nodeWrap.hidden = isF;
+  form.classList.toggle('is-foerderer', isF);
 
   if (isF) {
-    form.querySelectorAll('input:not([type=radio]):not([type=checkbox]), textarea').forEach(function(el){ el.style.opacity='0.3'; el.disabled=true; });
-    btn.style.opacity='0.3'; btn.disabled=true;
+    form.querySelectorAll('input:not([type=radio]):not([type=checkbox]), textarea').forEach(function(el){ el.disabled=true; });
+    btn.disabled=true;
   } else {
-    form.querySelectorAll('input, textarea').forEach(function(el){ el.style.opacity='1'; el.disabled=false; });
-    btn.style.opacity='1'; btn.disabled=false;
+    form.querySelectorAll('input, textarea').forEach(function(el){ el.disabled=false; });
+    btn.disabled=false;
   }
   if (isF) { showNodePanel(false); document.getElementById('node-no').checked = true; }
 }
 
 function showNodePanel(show) {
   var panel = document.getElementById('node-panel');
-  if (show) {
-    panel.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    panel.scrollTop = 0;
-  } else {
-    panel.style.display = 'none';
-    document.body.style.overflow = '';
-  }
+  panel.hidden = !show;
+  document.body.classList.toggle('u-no-scroll', show);
+  if (show) panel.scrollTop = 0;
 }
 
 function closeNodePanel() {
@@ -777,16 +770,16 @@ function handleReg(e) {
     .then(function(resp) {
       if (resp && resp.ok) {
         btn.textContent = T.a_success;
-        btn.style.backgroundColor = '#3a9e5a';
+        btn.classList.add('btn-state-ok');
       } else {
         btn.textContent = T.a_error;
-        btn.style.backgroundColor = '#8b2020';
+        btn.classList.add('btn-state-err');
         btn.disabled = false;
       }
     })
     .catch(function() {
       btn.textContent = T.a_error;
-      btn.style.backgroundColor = '#8b2020';
+      btn.classList.add('btn-state-err');
       btn.disabled = false;
     });
 }
@@ -807,7 +800,7 @@ function nodeGeoClearLatLon() {
 }
 function nodeGeoShowMarker(lat, lon) {
   var mapEl = document.getElementById('node-geo-map');
-  mapEl.style.display = 'block';
+  mapEl.hidden = false;
   if (!nodeGeoMap) {
     nodeGeoMap = L.map('node-geo-map').setView([lat, lon], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -839,7 +832,7 @@ function geocodeNodeAddress() {
   var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
   var address = document.getElementById('node-inp-address').value.trim();
   var errEl = document.getElementById('node-geocode-error');
-  errEl.style.display = 'none';
+  errEl.hidden = true;
   if (!address) return;
 
   var btn = document.getElementById('node-geocode-btn');
@@ -849,7 +842,7 @@ function geocodeNodeAddress() {
     if (!result) {
       nodeGeoClearLatLon();
       errEl.textContent = T.a_node_geocode_error;
-      errEl.style.display = 'block';
+      errEl.hidden = false;
       return;
     }
     nodeGeoSetLatLon(result.lat, result.lon);
@@ -889,21 +882,16 @@ function submitNodeApplication() {
       if (resp && resp.ok) {
         var confirmNote = resp.bestaetigung_erforderlich ? (T.a_node_success_confirm || '') : '';
         btn.textContent = confirmNote + T.a_node_success;
-        btn.style.backgroundColor = '#3a9e5a';
-        btn.style.fontSize = '0.75rem';
-        btn.style.height = 'auto';
-        btn.style.whiteSpace = 'normal';
-        btn.style.lineHeight = '1.5';
-        btn.style.padding = '1rem';
+        btn.classList.add('btn-state-ok-multiline');
       } else {
         btn.textContent = T.a_node_error;
-        btn.style.backgroundColor = '#8b2020';
+        btn.classList.add('btn-state-err');
         btn.disabled = false;
       }
     })
     .catch(function() {
       btn.textContent = T.a_node_error;
-      btn.style.backgroundColor = '#8b2020';
+      btn.classList.add('btn-state-err');
       btn.disabled = false;
     });
 }

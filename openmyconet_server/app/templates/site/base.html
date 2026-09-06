@@ -214,11 +214,34 @@ function renderFlagsInto(containerId, size) {
 function renderSidebar() {
   renderFlagsInto('lang-sidebar', 22);
   renderFlagsInto('lang-flags-mobile', 34);
-  var sb = document.getElementById('lang-sidebar');
-  if (sb && window.innerWidth > 900) sb.style.display = 'flex';
+  // Sichtbarkeit von #lang-sidebar regelt jetzt eine @media(min-width:901px)-
+  // Regel in site-base.css (CSP-Haertung: keine .style.display-Zuweisung mehr).
 }
 renderSidebar();
 window.addEventListener('resize', renderSidebar);
+</script>
+
+<script>
+// ── CSP-sichere dynamische Styles ────────────────────────────────────────
+// style-src ohne 'unsafe-inline' blockiert element.style.x = ... genauso wie
+// <style>-Bloecke. Eine konstruierbare CSSStyleSheet ist davon ausgenommen
+// (der von der CSP-Spec vorgesehene Weg fuer dynamisches Styling). Fuer die
+// wenigen Stellen mit echten Laufzeitwerten (Audio-Fortschrittsbalken,
+// Lang-Sidebar-Position) statt direkter .style-Zuweisung.
+window.omnSetDynStyle = (function(){
+  var sheet = null, rules = {};
+  return function(key, cssText){
+    if (typeof CSSStyleSheet === 'undefined' || !('adoptedStyleSheets' in Document.prototype)) return;
+    try {
+      if (!sheet) {
+        sheet = new CSSStyleSheet();
+        document.adoptedStyleSheets = document.adoptedStyleSheets.concat(sheet);
+      }
+      rules[key] = cssText;
+      sheet.replaceSync(Object.keys(rules).map(function(k){ return rules[k]; }).join('\n'));
+    } catch(e) {}
+  };
+})();
 </script>
 
 <script>
@@ -302,7 +325,7 @@ var OMN_TRACKS = [
     current = idx;
     audio.src = OMN_ASSET_BASE + OMN_TRACKS[idx].file;
     if(titleEl) titleEl.textContent = OMN_TRACKS[idx].title;
-    if(bar) bar.style.width = '0%';
+    if(bar) omnSetDynStyle('audioBar', '.omn-progress-bar{width:0%}');
     if(timeEl) timeEl.textContent = '0:00 / 0:00';
     switchCover(idx);
     renderPlaylist();
@@ -345,7 +368,7 @@ var OMN_TRACKS = [
 
   var lastSave = 0;
   audio.addEventListener('timeupdate', function(){
-    if(bar && audio.duration){ bar.style.width=(audio.currentTime/audio.duration*100)+'%'; }
+    if(bar && audio.duration){ omnSetDynStyle('audioBar', '.omn-progress-bar{width:'+(audio.currentTime/audio.duration*100)+'%}'); }
     if(timeEl) timeEl.textContent = fmt(audio.currentTime)+' / '+fmt(audio.duration);
     var now = Date.now();
     if(now - lastSave > 2000){ lastSave = now; saveState(); }
@@ -354,7 +377,7 @@ var OMN_TRACKS = [
   audio.addEventListener('pause', saveState);
   audio.addEventListener('ended', function(){
     if(hasBigPlayer && current < OMN_TRACKS.length-1){ loadTrack(current+1, true); }
-    else { setPlayingUI(false); if(bar) bar.style.width='0%'; saveState(); }
+    else { setPlayingUI(false); if(bar) omnSetDynStyle('audioBar', '.omn-progress-bar{width:0%}'); saveState(); }
   });
   window.addEventListener('pagehide', saveState);
   window.addEventListener('beforeunload', saveState);
@@ -368,8 +391,7 @@ var OMN_TRACKS = [
   // ueber den Lautstaerkeregler im Panel (0% = stumm), kein eigener Mute-Zustand mehr. ──
   window.omnAudioPanelToggle = function(){
     panelOpen = !panelOpen;
-    var panel = document.getElementById('omn-audio-panel');
-    panel.style.display = panelOpen ? 'block' : 'none';
+    document.getElementById('omn-audio-panel').classList.toggle('is-open', panelOpen);
   };
 
   document.getElementById('omn-vol-slider').addEventListener('input', function(){
@@ -381,7 +403,7 @@ var OMN_TRACKS = [
   document.addEventListener('click', function(e){
     if(panelOpen && !document.getElementById('omn-audio-fab').contains(e.target)){
       panelOpen = false;
-      document.getElementById('omn-audio-panel').style.display = 'none';
+      document.getElementById('omn-audio-panel').classList.remove('is-open');
     }
   });
 
@@ -417,22 +439,9 @@ var OMN_TRACKS = [
 <script src="{{ asset('biocomm-faq.js') }}"></script>
 
 <script>
-function positionLangSidebar() {
-  var sb = document.getElementById('lang-sidebar');
-  if (!sb) return;
-  var social = document.getElementById('social-bar');
-  if (social && window.innerWidth > 900) {
-    var rect = social.getBoundingClientRect();
-    sb.style.top = 'auto';
-    sb.style.transform = 'none';
-    sb.style.bottom = (window.innerHeight - rect.top) + 'px';
-  } else {
-    sb.style.top = '50%';
-    sb.style.transform = 'translateY(-50%)';
-    sb.style.bottom = 'auto';
-  }
-}
-
+// Die Position von #lang-sidebar (auf index.html knapp ueber der Social-Bar,
+// sonst vertikal zentriert) regelt jetzt CSS -- eine @media(min-width:901px)-
+// Regel in page-index.css. Kein JS-Repositioning mehr (CSP-Haertung).
 document.addEventListener('DOMContentLoaded', function() {
   var chatBtn = document.getElementById('nav-chat-btn');
   if (chatBtn) chatBtn.addEventListener('click', function() {
@@ -444,8 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var fab = document.getElementById('omn-faq-fab');
     if (fab) fab.click();
   });
-  positionLangSidebar();
-  window.addEventListener('resize', positionLangSidebar);
 });
 </script>
 
@@ -455,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var btn  = document.getElementById('hamburger');
   var cls  = document.getElementById('mobileClose');
   if (!menu || !btn) return;
-  function openMenu()  { menu.style.display = 'flex'; }
-  function closeMenu() { menu.style.display = 'none'; }
+  function openMenu()  { menu.classList.add('is-open'); }
+  function closeMenu() { menu.classList.remove('is-open'); }
   btn.addEventListener('click', openMenu);
   if (cls) cls.addEventListener('click', closeMenu);
   menu.addEventListener('click', function(e){ if(e.target===menu) closeMenu(); });

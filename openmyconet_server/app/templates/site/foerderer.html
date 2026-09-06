@@ -171,33 +171,8 @@ document.addEventListener('DOMContentLoaded', function() {
   setVal(150);
 });
 
-// ─── Formular (derzeit ungenutzt, kein <form> auf der Seite -- aus dem
-// Original 1:1 uebernommen fuer Paritaet) ────────────────────────────────────
-function handleFoerderer(e) {
-  e.preventDefault();
-  var btn = document.getElementById('foerderer-btn');
-  var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
-  var form = e.target;
-  var data = new FormData(form);
-  btn.textContent = T.f_sending;
-  btn.disabled = true;
-  fetch('foerderer.php', { method:'POST', body:data })
-    .then(function(r){ return r.text(); })
-    .then(function(resp){
-      if(resp.trim()==='ok'){
-        btn.textContent = T.f_success;
-        btn.style.backgroundColor = '#3a9e5a';
-      } else {
-        btn.textContent = T.f_error;
-        btn.style.backgroundColor = '#8b2020';
-        btn.disabled = false;
-      }
-    })
-    .catch(function(){
-      btn.textContent = T.f_error;
-      btn.style.backgroundColor = '#8b2020';
-      btn.disabled = false;
-    });
-}
+// (Die fruehere handleFoerderer()-Funktion aus dem alten statischen Site-Stand
+// wurde 2026-09-06 entfernt -- sie war seit dem Flask-Umzug toter Code: kein
+// <form> auf dieser Seite, #foerderer-btn ist ein Link zu /foerderer/antrag.)
 </script>
 {% endblock %}

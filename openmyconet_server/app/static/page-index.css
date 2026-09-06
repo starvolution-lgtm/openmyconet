@@ -112,7 +112,7 @@ footer { padding:2.5rem 0; border-top:1px solid #0a6040; background-color:#02453
 .page-wrap { max-width:860px; margin:0 auto; padding:0 clamp(1.5rem,5vw,5rem); }
 .section-inner { max-width:1100px; margin:0 auto; }
 
-.foerderer-hint-box { display:none; margin-top:0.75rem; padding:1rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #d4a030; }
+.foerderer-hint-box { margin-top:0.75rem; padding:1rem; background-color:rgba(0,0,0,0.28); border-left:3px solid #d4a030; }
 
 /* ── Broschüre-CSS jetzt auf medien.html (Phase 4 Erweiterung 1b) ── */
 @media (min-width:601px) {
@@ -240,7 +240,7 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .ic-52 { padding:1.2rem; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-left:3px solid #6ee87e; }
 .ic-53 { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee87e; margin-bottom:0.9rem; }
 .ic-54 { margin:1rem 0 1.2rem; padding:0.8rem 1rem; background-color:#024530; border-left:2px solid #0a7050; }
-.ic-55 { display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000; background:rgba(2,69,48,0.97); overflow-y:auto; padding:2rem clamp(1.5rem,5vw,4rem); }
+.ic-55 { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000; background:rgba(2,69,48,0.97); overflow-y:auto; padding:2rem clamp(1.5rem,5vw,4rem); }
 .ic-56 { position:fixed; top:1.2rem; right:1.4rem; background:none; border:none; color:#e8f5e0; font-size:1.8rem; cursor:pointer; z-index:1001; line-height:1; }
 .ic-57 { max-width:680px; margin:0 auto; padding-top:3rem; }
 .ic-58 { font-family:'Lora',Georgia,serif; font-size:0.72rem; color:#d4a030; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.8rem; }
@@ -254,12 +254,30 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .ic-66 { flex:1; }
 .ic-67 { flex:0 0 auto; padding:0 1rem; background:transparent; color:#f0b84a; border:1px solid #d4a030; cursor:pointer; }
 .ic-68 { font-size:0.75rem; color:#a0c8a0; margin-top:0.4rem; }
-.ic-69 { font-size:0.75rem; color:#e88; margin-top:0.4rem; display:none; }
-.ic-70 { display:none; height:220px; margin-top:0.6rem; border:1px solid #0a6040; }
+.ic-69 { font-size:0.75rem; color:#e88; margin-top:0.4rem; }
+.ic-70 { height:220px; margin-top:0.6rem; border:1px solid #0a6040; }
 .ic-71 { height:130px; }
 .ic-72 { margin:1rem 0 1.5rem; padding:0.8rem 1rem; background-color:#024530; border-left:2px solid #0a7050; }
 .ic-73 { width:100%; }
 .ic-74 { margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
 .ic-75 { cursor:pointer; border:1px solid #6ee87e; color:#6ee87e; background:transparent; }
-.ic-76 { position:fixed; bottom:1.4rem; right:1.2rem; z-index:890; width:44px; height:44px; border-radius:50%; background-color:#0a7050; border:1px solid #0a6040; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 2px 12px rgba(0,0,0,0.5); transition:background-color 0.2s, opacity 0.25s; opacity:0; }
+.ic-76 { position:fixed; bottom:1.4rem; right:1.2rem; z-index:890; width:44px; height:44px; border-radius:50%; background-color:#0a7050; border:1px solid #0a6040; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 12px rgba(0,0,0,0.5); transition:background-color 0.2s, opacity 0.25s; opacity:0; pointer-events:none; }
+.ic-76.is-visible { opacity:1; pointer-events:auto; }
 .ic-77 { width:18px; height:18px; fill:#ffffff; }
+
+/* ── CSP-Haertung: Zustands-Klassen statt element.style.x = ... ────────────── */
+/* #lang-sidebar sitzt auf Desktop knapp ueber der Social-Bar (7 Icons a 42px,
+   vertikal zentriert -> Oberkante bei calc(50% - 147px)); ersetzt das
+   fruehere JS-Repositioning in base.html. */
+@media (min-width: 901px) {
+  #lang-sidebar { top:auto; transform:none; bottom:calc(50% + 147px); }
+}
+/* Registrierungsformular: bei Rolle "Foerderer" abgedimmt (statt .style.opacity je Feld) */
+#reg-form.is-foerderer input,
+#reg-form.is-foerderer textarea,
+#reg-form.is-foerderer #reg-btn { opacity:0.3; }
+/* Formular-Buttons: Zustandsfarbe nach dem Absenden (statt .style.backgroundColor) */
+.btn.btn-state-ok  { background-color:#3a9e5a; }
+.btn.btn-state-err { background-color:#8b2020; }
+/* Node-Bewerbung: Erfolgsmeldung mehrzeilig (statt 5x .style.*) */
+.btn.btn-state-ok-multiline { background-color:#3a9e5a; font-size:0.75rem; height:auto; white-space:normal; line-height:1.5; padding:1rem; }
