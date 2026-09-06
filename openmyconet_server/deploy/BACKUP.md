@@ -18,17 +18,13 @@ konsistent auch bei offener WAL, ohne Schreib-Lock auf die Live-DB, ohne
 
 ## Cron einrichten (einmalig, als `omn`)
 
-`crontab -e`, diese Zeile ergaenzen (vor den bestehenden 03:xx-Jobs):
-
 ```
-30 2 * * * cd /home/omn/app && bash deploy/backup_db.sh >> /home/omn/app/backup_db.log 2>&1
+bash /home/omn/app/deploy/install_backup_cron.sh
 ```
 
-Optional woechentlicher Restore-Check mit Alarm bei Fehler:
-
-```
-15 4 * * 1 cd /home/omn/app && bash deploy/restore_check.sh >> /home/omn/app/restore_check.log 2>&1 || curl -s https://hc-ping.com/<uuid>/fail
-```
+Trägt idempotent ein: DB-Backup täglich 02:30, Restore-Check montags 04:15.
+Beides loggt nach `/home/omn/app/*.log`. Bestehende Zeilen mit demselben
+Skriptnamen werden vorher entfernt.
 
 ## Restore-Check (safe, greift die Live-DB NIE an)
 
