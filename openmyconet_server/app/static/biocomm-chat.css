@@ -34,7 +34,9 @@
   display: none; flex-direction: column; overflow: hidden;
   font-family: 'Lora', Georgia, serif;
 }
-#omn-widget.omn-open { display: flex; }
+/* Im geoeffneten Zustand ueber dem FAQ-Overlay (9998), falls doch mal beide
+   Klassen gleichzeitig gesetzt sind. Regulaer schliesst jedes Widget das andere. */
+#omn-widget.omn-open { display: flex; z-index: 10000; }
 
 #omn-widget-header {
   background: #013020;

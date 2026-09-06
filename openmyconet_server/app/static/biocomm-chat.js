@@ -244,6 +244,11 @@
     widget.classList.toggle("omn-open", isOpen);
     fab.classList.toggle("omn-open-fab", isOpen);
     if (isOpen) {
+      // FAQ-Overlay schliessen, falls offen -- beide Widgets teilen sich denselben
+      // Bildschirmbereich und z-index; nie beide gleichzeitig offen.
+      const faqOverlay = document.getElementById("omn-faq-overlay");
+      if (faqOverlay) faqOverlay.classList.remove("open");
+      document.body.classList.remove("u-no-scroll");
       // Beim Öffnen aktuelle Seitensprache prüfen und ggf. umschalten
       const params = new URLSearchParams(window.location.search);
       const pageLang = params.get("lang") || "de"; // kein Parameter = Deutsch

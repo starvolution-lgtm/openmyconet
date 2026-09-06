@@ -426,6 +426,13 @@ renderFaqPanel(getFaqLang());
 
 // ── Events ───────────────────────────────────────────────────────────────
 fab.addEventListener('click', function() {
+  // Chat-Widget schliessen, falls offen -- beide teilen sich Bildschirmbereich
+  // und z-index; nie beide gleichzeitig offen.
+  var chatWidget = document.getElementById('omn-widget');
+  if (chatWidget && chatWidget.classList.contains('omn-open')) {
+    var chatFab = document.getElementById('omn-fab');
+    if (chatFab) chatFab.click();   // sauberer Toggle-Weg (setzt isOpen zurueck)
+  }
   renderFaqPanel(getFaqLang());
   overlay.classList.add('open');
   document.body.classList.add('u-no-scroll');
