@@ -82,9 +82,10 @@ lokale Backup unangetastet und bricht den Cron-Lauf nicht ab.
 
 ### Scharfschalten (einmalig)
 
-1. All-inkl-KAS -> **FTP**: entweder den vorhandenen FTP-Zugang nehmen oder
-   einen eigenen FTP-Nutzer nur fuers Backup anlegen. Passwort moeglichst
-   nur Buchstaben/Ziffern (landet in einer curl-Konfig).
+1. All-inkl-KAS -> **FTP** -> neuer FTP-Nutzer nur fuers Backup, Pfad
+   `/omn-backups`, Rechte lesen+schreiben+auflisten. Passwort per
+   "Automatisch generieren"; Sonderzeichen sind ok, nur nicht `" \ ` + `$`
+   (dann neu generieren).
 2. Werte in `/home/omn/app/.env` ergaenzen (die Datei ist server-verwaltet,
    nicht im Git):
 

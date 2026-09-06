@@ -9,7 +9,7 @@
 # .env-Schluessel (server-verwaltet, NICHT im Git):
 #   BACKUP_FTP_HOST   z.B. w0151a05.kasserver.com
 #   BACKUP_FTP_USER   FTP-Benutzername
-#   BACKUP_FTP_PASS   FTP-Passwort  (moeglichst nur Buchstaben/Ziffern)
+#   BACKUP_FTP_PASS   FTP-Passwort  (Sonderzeichen ok, ausser " \ ` $)
 #   BACKUP_FTP_DIR    Zielverzeichnis, z.B. /omn-backups   (default: /)
 #   BACKUP_FTP_KEEP   wie viele Backups auf der Gegenseite bleiben (default 30)
 #
@@ -25,8 +25,16 @@ test -f "$LOCAL" || { echo "FEHLER: Backup nicht gefunden: $LOCAL"; exit 1; }
 test -f "$ENV"   || { echo "Kein .env -- Offsite uebersprungen"; exit 0; }
 
 env_get() {
-    { grep -E "^$1=" "$ENV" 2>/dev/null | head -1 | cut -d= -f2- \
-        | sed -e 's/^[[:space:]]*//' -e "s/^['\"]//" -e "s/['\"][[:space:]]*\$//"; } || true
+    local v
+    v=$(grep -E "^$1=" "$ENV" 2>/dev/null | head -1 | cut -d= -f2-) || true
+    v=${v%$'\r'}
+    # nur umschliessende, zusammengehoerige Quotes entfernen (dotenv-Stil) --
+    # ein Sonderzeichen MITTEN im Passwort bleibt unangetastet.
+    case "$v" in
+        \"*\") v=${v#\"}; v=${v%\"} ;;
+        \'*\') v=${v#\'}; v=${v%\'} ;;
+    esac
+    printf '%s' "$v"
 }
 
 HOST=$(env_get BACKUP_FTP_HOST)
@@ -44,8 +52,12 @@ BASE="ftp://$HOST"
 CFG=$(mktemp)
 chmod 600 "$CFG"
 trap 'rm -f "$CFG"' EXIT
+# fuer die curl-Konfig (doppelt gequotet) muessen \ und " im Passwort escaped
+# werden -- alle anderen Sonderzeichen sind hier woertlich erlaubt.
+PASS_ESC=${PASS//\\/\\\\}
+PASS_ESC=${PASS_ESC//\"/\\\"}
 {
-    echo "user = \"$USER:$PASS\""
+    printf 'user = "%s:%s"\n' "$USER" "$PASS_ESC"
     echo "ssl-reqd"
     echo "connect-timeout = 20"
     echo "max-time = 180"
