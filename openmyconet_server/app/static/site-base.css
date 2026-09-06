@@ -190,6 +190,8 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 .u-bg-a { background-color:#024530; }
 .u-bg-b { background-color:#012a1e; }
 .u-green { color:#6ee87e; }
+.u-green-u { color:#6ee87e; text-decoration:underline; }
+.u-txt { color:#e8f5e0; }
 .u-hint { font-weight:400; text-transform:none; letter-spacing:0; color:#5a8a6a; }
 .u-center { text-align:center; }
 .u-center-pad { text-align:center; padding:1rem 0; }
