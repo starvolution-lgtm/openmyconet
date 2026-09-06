@@ -60,10 +60,11 @@ def check_csp_domains():
         if teil.strip().startswith('connect-src'):
             connect_src = teil
             break
-    benoetigt = ['unpkg.com', 'tile.openstreetmap.org', 'nominatim.openstreetmap.org']
+    # Leaflet/Quill liegen seit 09/2026 selbst gehostet ('self') -- kein unpkg mehr.
+    benoetigt = ['tile.openstreetmap.org', 'nominatim.openstreetmap.org']
     fehlend = [d for d in benoetigt if d not in connect_src]
     if fehlend:
-        return 'fehler', f'CSP: connect-src fehlt {", ".join(fehlend)} (Karten/Leaflet laden dann nicht)'
+        return 'fehler', f'CSP: connect-src fehlt {", ".join(fehlend)} (Kartenkacheln/Geocoding laden dann nicht)'
     return 'ok', ''
 
 
@@ -143,7 +144,7 @@ def _presse_feed_pruefen(feed_url, sprache):
 # vereinzelt zu einem IntegrityError unter Zeitdruck gefuehrt).
 SCHNELLE_CHECKS = [
     ('startseite', 'Website erreichbar', check_startseite_erreichbar),
-    ('csp', 'CSP-Header (Karten/Leaflet)', check_csp_domains),
+    ('csp', 'CSP-Header (Kartenkacheln/Geocoding)', check_csp_domains),
     ('sw', 'Service-Worker Admin-Ausschluss', check_sw_admin_ausschluss),
     ('db', 'Datenbank', check_datenbank),
     ('anthropic', 'Chatbot-API-Key', check_anthropic_key),

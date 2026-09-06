@@ -84,7 +84,7 @@ def test_csp_kachel_rot_wenn_domain_fehlt(client, superadmin, monkeypatch):
     resp = client.get('/admin/kontrollzentrum')
     html = resp.get_data(as_text=True)
     assert 'connect-src fehlt' in html
-    assert 'unpkg.com' in html
+    assert 'tile.openstreetmap.org' in html
 
 
 def test_csp_kachel_gruen_mit_echter_konfiguration(client, superadmin, monkeypatch):

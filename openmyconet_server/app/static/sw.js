@@ -1,5 +1,5 @@
 // OpenMycoNet Service Worker — Offline-Fähigkeit
-const CACHE = 'openmyconet-v16';
+const CACHE = 'openmyconet-v17';
 
 // Nach wie vielen ms ein haengender Netzwerk-Request abgebrochen wird. Ohne
 // dieses Limit blockiert ein "cache first, dann fetch" bei schlechtem Mobilfunk

@@ -179,16 +179,17 @@ init_errors(app)
 _EIGENE_DOMAINS = "https://www.openmyconet.de https://openmyconet.de https://api.openmyconet.de"
 _CSP = (
     f"default-src 'self' {_EIGENE_DOMAINS}; "
-    f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net; "
-    f"style-src 'self' {_EIGENE_DOMAINS} https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+    f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS}; "
+    f"style-src 'self' {_EIGENE_DOMAINS} https://fonts.googleapis.com; "
     f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
-    f"img-src 'self' data: {_EIGENE_DOMAINS} https://unpkg.com https://*.tile.openstreetmap.org; "
+    f"img-src 'self' data: {_EIGENE_DOMAINS} https://*.tile.openstreetmap.org; "
     f"media-src 'self' {_EIGENE_DOMAINS}; "
-    # unpkg.com + tile.openstreetmap.org muessen hier zusaetzlich zu script-/style-/
-    # img-src stehen: faengt der Service Worker (sw.js) eine Ressourcen-Anfrage ab und
-    # leitet sie per fetch() weiter, prueft der Browser diesen inneren Fetch gegen
-    # connect-src -- unabhaengig vom eigentlichen Ressourcentyp (CSS/JS/Bild).
-    f"connect-src 'self' {_EIGENE_DOMAINS} https://nominatim.openstreetmap.org https://unpkg.com https://*.tile.openstreetmap.org; "
+    # tile.openstreetmap.org muss hier zusaetzlich zu img-src stehen: faengt der
+    # Service Worker (sw.js) eine Ressourcen-Anfrage ab und leitet sie per fetch()
+    # weiter, prueft der Browser diesen inneren Fetch gegen connect-src -- unabhaengig
+    # vom eigentlichen Ressourcentyp (Bild). Leaflet + Quill liegen seit 09/2026
+    # selbst gehostet unter /vendor/ ('self'), daher kein unpkg/jsdelivr mehr.
+    f"connect-src 'self' {_EIGENE_DOMAINS} https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org; "
     "frame-ancestors 'self'; "
     "object-src 'none'; "
     "base-uri 'self'; "
