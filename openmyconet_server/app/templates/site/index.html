@@ -478,7 +478,7 @@
      base.html (Phase 4 Erweiterung 1d) -- Hero-Markup hier bleibt, wird von
      dort gesteuert. -->
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // "Nach oben"-Button: erscheint erst ab der Seitenmitte, damit er auf kurzen
 // Bildschirmen nicht schon direkt beim Laden sichtbar ist.
 (function(){
@@ -493,7 +493,7 @@
 })();
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // ─── Meta updates ─────────────────────────────────────────────
 var OG_LOCALES = {de:'de_DE',en:'en_US',nl:'nl_NL',fr:'fr_FR',es:'es_ES'};
 
@@ -988,7 +988,7 @@ function setLang(lang) {
 }
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/sw.js')
@@ -999,7 +999,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- Myzel Canvas Animation -->
-<script>
+<script nonce="{{ csp_nonce }}">
 (function(){
   var c=document.getElementById('mcHero');
   if(!c)return;

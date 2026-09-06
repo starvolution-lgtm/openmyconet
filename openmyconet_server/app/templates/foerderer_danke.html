@@ -29,7 +29,7 @@
   <p>Ihr Eintrag wird automatisch freigeschaltet sobald die Zahlung eingegangen ist.
   Sie erhalten dann eine E-Mail mit der Rechnung.</p>
   <div class="pending-note">Diese Seite automatisch neu laden: <strong id="countdown">30</strong> Sekunden</div>
-  <script>
+  <script nonce="{{ csp_nonce }}">
   var s = 30;
   setInterval(function(){ s--; document.getElementById('countdown').textContent = s; if(s<=0) location.reload(); }, 1000);
   </script>

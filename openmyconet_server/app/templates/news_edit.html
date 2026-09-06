@@ -48,7 +48,7 @@
 
 {% block extra_js %}
 <script src="{{ asset('vendor/quill/quill.js') }}"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
     const quill = new Quill('#editor', {
         theme: 'snow',
         modules: {

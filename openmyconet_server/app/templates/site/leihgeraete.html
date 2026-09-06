@@ -130,7 +130,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Edition images — same KI images as on main site
 var EDITION_IMGS = [
   { src: '{{ asset("node-forest-camouflage.png") }}', alt: 'Forest Camouflage Edition' },

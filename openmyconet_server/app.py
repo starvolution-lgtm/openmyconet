@@ -1,5 +1,5 @@
 import bleach
-from flask import Flask, render_template, request, url_for, Response
+from flask import Flask, render_template, request, url_for, Response, g
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
@@ -7,6 +7,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from datetime import timedelta
 import os
+import secrets
 
 import zeit
 
@@ -208,6 +209,20 @@ _PERMISSIONS_POLICY = (
     "accelerometer=(), autoplay=(self), fullscreen=(self), "
     "interest-cohort=()"
 )
+
+
+# Pro Response ein frischer CSP-Nonce. Inline-<script>-Bloecke tragen ihn als
+# nonce="{{ csp_nonce }}"; solange script-src noch 'unsafe-inline' erlaubt, ist
+# das folgenlos -- der Nonce wird erst scharf, wenn 'unsafe-inline' entfernt und
+# 'nonce-...' in die script-src-Direktive aufgenommen wird (eigener Schritt).
+@app.before_request
+def _csp_nonce_erzeugen():
+    g.csp_nonce = secrets.token_urlsafe(16)
+
+
+@app.context_processor
+def _csp_nonce_bereitstellen():
+    return {'csp_nonce': g.get('csp_nonce', '')}
 
 
 @app.after_request

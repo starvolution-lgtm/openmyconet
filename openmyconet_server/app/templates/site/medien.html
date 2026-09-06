@@ -120,7 +120,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 var PDF_FILES = {{ pdf_files | tojson }};
 var BROSCHUERE_OTHER_LANG = { de: 'Andere Sprache:', en: 'Other language:', nl: 'Andere taal:', fr: 'Autre langue :', es: 'Otro idioma:' };
 

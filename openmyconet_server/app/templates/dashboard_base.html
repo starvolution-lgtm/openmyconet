@@ -18,7 +18,7 @@
     {% endwith %}
 
     {% block content %}{% endblock %}
-<script>
+<script nonce="{{ csp_nonce }}">
 /* CSRF: haengt das Session-Token (siehe csrf.py) an jedes POST-Formular an. */
 (function () {
   var t = {{ csrf_token()|tojson }};

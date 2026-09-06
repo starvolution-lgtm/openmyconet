@@ -141,7 +141,7 @@
   </div>
 </footer>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // Einheitlicher i18n-Mechanismus: translations.json ist die einzige Datenquelle,
 // server- und clientseitig. Die initiale Sprache steht bereits serverseitig
 // gerendert im HTML (t()-Jinja-Funktion) -- der Client laedt per fetch nur die
@@ -221,7 +221,7 @@ renderSidebar();
 window.addEventListener('resize', renderSidebar);
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // ── CSP-sichere dynamische Styles ────────────────────────────────────────
 // style-src ohne 'unsafe-inline' blockiert element.style.x = ... genauso wie
 // <style>-Bloecke. Eine konstruierbare CSSStyleSheet ist davon ausgenommen
@@ -244,7 +244,7 @@ window.omnSetDynStyle = (function(){
 })();
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // ── Persistenter Audio-Player (zentral, alle Seiten) ──────────────────────
 // Track-Manifest: eine Quelle fuer die Hero-Playlist (index.html) und die
 // volle Playlist-Ansicht (medien.html). Zustand (Track/Position/Lautstaerke/
@@ -438,7 +438,7 @@ var OMN_TRACKS = [
 <script src="{{ asset('biocomm-chat.js') }}"></script>
 <script src="{{ asset('biocomm-faq.js') }}"></script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // Die Position von #lang-sidebar (auf index.html knapp ueber der Social-Bar,
 // sonst vertikal zentriert) regelt jetzt CSS -- eine @media(min-width:901px)-
 // Regel in page-index.css. Kein JS-Repositioning mehr (CSP-Haertung).
@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 (function() {
   var menu = document.getElementById('mobileMenu');
   var btn  = document.getElementById('hamburger');

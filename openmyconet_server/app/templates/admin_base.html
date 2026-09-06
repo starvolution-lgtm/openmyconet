@@ -57,7 +57,7 @@
   {% block content %}{% endblock %}
 </div>
 {% block extra_js %}{% endblock %}
-<script>
+<script nonce="{{ csp_nonce }}">
 /* CSRF: haengt das Session-Token (siehe csrf.py) an jedes POST-Formular an,
    damit neue Formulare kein manuelles Hidden-Feld brauchen. */
 (function () {

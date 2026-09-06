@@ -73,7 +73,7 @@
     <p id="pay-note" class="hinweis u-mt-1">Nach erfolgreicher Zahlung wird Ihr Eintrag innerhalb von Minuten sichtbar. Sie erhalten eine Rechnung per E-Mail und als direkten Download.</p>
   </form>
 
-  <script>
+  <script nonce="{{ csp_nonce }}">
   var baseAmt = {{ data.betrag }};
   function updateFee() {
     var checked = document.getElementById('cover-fees').checked;
@@ -174,7 +174,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 var ta = document.querySelector('textarea[name=beschreibung]');
 if (ta) {
   function updateCount() { document.getElementById('char-count').textContent = ta.value.length; }
@@ -201,7 +201,7 @@ function clearBetragBtns() {
 }
 </script>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 var ANTRAG_TRANS = {
   de: { page_title: 'Förderer werden – OpenMycoNet', back_link: '← Fördererseite', h1_preview: 'So sieht Ihr ', h1_preview_em: 'Eintrag', h1_preview_suffix: ' aus', h1_form: 'Förderer ', h1_form_em: 'werden', preview_intro: 'Prüfen Sie Ihren Eintrag. Bei Zahlung wird er genau so in der Fördererlist sichtbar.', form_intro: 'Gestalten Sie Ihren Eintrag — Sie sehen eine Vorschau bevor Sie zahlen. Keine Vorauszahlung, keine Verpflichtung.', fee_label: 'Transaktionskosten übernehmen', pay_btn_label: '💳 Jetzt zahlen —', pay_note: 'Nach erfolgreicher Zahlung wird Ihr Eintrag innerhalb von Minuten sichtbar. Sie erhalten eine Rechnung per E-Mail und als direkten Download.', lbl_firma: 'Firmenname *', lbl_ansprechpartner: 'Ansprechpartner (optional)', lbl_desc: 'Kurzbeschreibung *', lbl_website: 'Website', lbl_kategorie: 'Kategorie *', lbl_logo: 'Logo', lbl_betrag: 'Jahresbeitrag *', lbl_email: 'Ihre E-Mail-Adresse *', logo_upload: '📁 Logo hier ablegen oder klicken zum Auswählen', btn_submit: 'Vorschau anzeigen →', btn_edit: '← Eintrag bearbeiten', hinweis: '* Pflichtfelder · Keine Vorauszahlung · Zahlung erst nach Vorschau-Bestätigung' },
   en: { page_title: 'Become a Supporter – OpenMycoNet', back_link: '← Supporter page', h1_preview: 'This is how your ', h1_preview_em: 'listing', h1_preview_suffix: '', h1_form: 'Become a ', h1_form_em: 'supporter', preview_intro: 'Review your listing. After payment it will appear exactly like this in the supporters list.', form_intro: 'Design your own listing — you see a preview before you pay. No advance payment, no obligation.', fee_label: 'Cover transaction fees', pay_btn_label: '💳 Pay now —', pay_note: 'After successful payment your listing will be visible within minutes. You will receive an invoice by email and as a direct download.', lbl_firma: 'Company name *', lbl_ansprechpartner: 'Contact person (optional)', lbl_desc: 'Short description *', lbl_website: 'Website', lbl_kategorie: 'Category *', lbl_logo: 'Logo', lbl_betrag: 'Annual contribution *', lbl_email: 'Your email address *', logo_upload: '📁 Drop logo here or click to select', btn_submit: 'Show preview →', btn_edit: '← Edit listing', hinweis: '* Required fields · No advance payment · Payment only after preview confirmation' },
