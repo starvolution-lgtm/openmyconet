@@ -20,7 +20,7 @@
 
 <form method="GET">
     <label>Gruppe: </label>
-    <select name="gruppe" onchange="this.form.submit()">
+    <select name="gruppe" class="js-autosubmit">
         <option value="">Alle</option>
         <option value="allgemein" {% if filter_gruppe == 'allgemein' %}selected{% endif %}>Allgemein</option>
         <option value="biocomm" {% if filter_gruppe == 'biocomm' %}selected{% endif %}>BioComm</option>
@@ -29,7 +29,7 @@
     </select>
     &nbsp;
     <label>Sprache: </label>
-    <select name="sprache" onchange="this.form.submit()">
+    <select name="sprache" class="js-autosubmit">
         <option value="">Alle</option>
         <option value="de" {% if filter_sprache == 'de' %}selected{% endif %}>Deutsch</option>
         <option value="en" {% if filter_sprache == 'en' %}selected{% endif %}>English</option>
@@ -39,7 +39,7 @@
     </select>
     &nbsp;
     <label>Fachrolle: </label>
-    <select name="fachrolle" onchange="this.form.submit()">
+    <select name="fachrolle" class="js-autosubmit">
         <option value="">Alle</option>
         <option value="wissenschaftler" {% if filter_fachrolle == 'wissenschaftler' %}selected{% endif %}>Wissenschaftler</option>
         <option value="wiss_mitarbeiter" {% if filter_fachrolle == 'wiss_mitarbeiter' %}selected{% endif %}>Wiss. Mitarbeiter</option>
@@ -47,7 +47,7 @@
     </select>
     &nbsp;
     <label>Rolle: </label>
-    <select name="rolle" onchange="this.form.submit()">
+    <select name="rolle" class="js-autosubmit">
         <option value="">Alle</option>
         <option value="mycelist" {% if filter_rolle == 'mycelist' %}selected{% endif %}>Nur Mycelist (kein Hyphist/Sporist)</option>
         <option value="hyphist" {% if filter_rolle == 'hyphist' %}selected{% endif %}>Hyphist</option>
@@ -77,7 +77,7 @@
         <td>{{ nutzer.gruppe }}</td>
         <td>
             <form method="POST" action="{{ url_for('admin.nutzer_fachrolle_setzen', nutzer_id=nutzer.id) }}">
-                <select name="fachrolle" onchange="this.form.submit()">
+                <select name="fachrolle" class="js-autosubmit">
                     <option value="" {% if not nutzer.fachrolle %}selected{% endif %}>–</option>
                     <option value="wissenschaftler" {% if nutzer.fachrolle == 'wissenschaftler' %}selected{% endif %}>Wissenschaftler</option>
                     <option value="wiss_mitarbeiter" {% if nutzer.fachrolle == 'wiss_mitarbeiter' %}selected{% endif %}>Wiss. Mitarbeiter</option>
@@ -87,8 +87,8 @@
         </td>
         <td>
             <form method="POST" action="{{ url_for('admin.nutzer_rolle_setzen', nutzer_id=nutzer.id) }}">
-                <label><input type="checkbox" name="ist_hyphist" value="1" {% if nutzer.ist_hyphist %}checked{% endif %} onchange="this.form.submit()"> Hyphist</label>
-                <label><input type="checkbox" name="ist_sporist" value="1" {% if nutzer.ist_sporist %}checked{% endif %} onchange="this.form.submit()"> Sporist</label>
+                <label><input type="checkbox" name="ist_hyphist" value="1" {% if nutzer.ist_hyphist %}checked{% endif %} class="js-autosubmit"> Hyphist</label>
+                <label><input type="checkbox" name="ist_sporist" value="1" {% if nutzer.ist_sporist %}checked{% endif %} class="js-autosubmit"> Sporist</label>
             </form>
         </td>
         <td class="{{ 'ja' if nutzer.bestaetigt else 'nein' }}">{{ '✓' if nutzer.bestaetigt else '✗' }}</td>
@@ -97,7 +97,7 @@
             {% if not nutzer.bestaetigt %}
             <a class="aktion ok" href="{{ url_for('admin.nutzer_bestaetigen', nutzer_id=nutzer.id) }}">Bestätigen</a>
             {% endif %}
-            <a class="aktion del" href="{{ url_for('admin.nutzer_loeschen', nutzer_id=nutzer.id) }}" onclick="return confirm('{{ nutzer.name }} wirklich löschen?')">Löschen</a>
+            <a class="aktion del js-confirm" href="{{ url_for('admin.nutzer_loeschen', nutzer_id=nutzer.id) }}" data-confirm="{{ nutzer.name }} wirklich löschen?">Löschen</a>
         </td>
     </tr>
     {% endfor %}

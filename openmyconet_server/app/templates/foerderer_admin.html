@@ -63,7 +63,7 @@
             <button type="submit" class="ablehnen">Ablehnen</button>
         </form>
         {% endif %}
-        <form class="u-inline" method="post" onsubmit="return confirm('Eintrag &quot;{{ f.firma }}&quot; wirklich endgültig löschen?');">
+        <form class="u-inline js-confirm-submit" method="post" data-confirm="Eintrag „{{ f.firma }}“ wirklich endgültig löschen?">
             <input type="hidden" name="foerderer_id" value="{{ f.id }}">
             <input type="hidden" name="action" value="delete">
             <button type="submit" class="loeschen">Löschen</button>

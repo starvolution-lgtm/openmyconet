@@ -37,7 +37,7 @@
         <td>{{ acc.username }}</td>
         <td>{{ acc.role }}</td>
         <td>{{ acc.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</td>
-        <td><a href="{{ url_for('admin.account_delete', user_id=acc.id) }}" class="del" onclick="return confirm('Account wirklich löschen?')">✕</a></td>
+        <td><a href="{{ url_for('admin.account_delete', user_id=acc.id) }}" class="del js-confirm" data-confirm="Account wirklich löschen?">✕</a></td>
     </tr>
     {% endfor %}
 </table>

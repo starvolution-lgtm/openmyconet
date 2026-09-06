@@ -5,7 +5,7 @@
 
 <form method="GET">
     <label>Sprache: </label>
-    <select name="lang" onchange="this.form.submit()">
+    <select name="lang" class="js-autosubmit">
         <option value="">Alle</option>
         <option value="de" {% if filter_lang == 'de' %}selected{% endif %}>Deutsch</option>
         <option value="en" {% if filter_lang == 'en' %}selected{% endif %}>English</option>

@@ -65,7 +65,7 @@
         <td><input class="u-w-auto" type="checkbox" name="aktiv" form="sbform{{ sb.id }}" {% if sb.aktiv %}checked{% endif %}></td>
         <td class="u-nowrap">
             <button class="u-mr-8" type="submit" form="sbform{{ sb.id }}">Speichern</button>
-            <a href="{{ url_for('admin.suchbegriff_loeschen', suchbegriff_id=sb.id) }}" class="del" onclick="return confirm('RSS-Feed wirklich löschen?')">✕</a>
+            <a href="{{ url_for('admin.suchbegriff_loeschen', suchbegriff_id=sb.id) }}" class="del js-confirm" data-confirm="RSS-Feed wirklich löschen?">✕</a>
         </td>
     </tr>
     {% endfor %}

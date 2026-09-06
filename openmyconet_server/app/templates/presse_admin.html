@@ -71,7 +71,7 @@
         <td>{{ '✓ veröffentlicht' if eintrag.veroeffentlicht else 'Entwurf' }}</td>
         <td>
             <a class="u-mr-8" href="{{ url_for('admin.presse_edit', presse_id=eintrag.id) }}">Bearbeiten</a>
-            <a href="{{ url_for('admin.presse_delete', presse_id=eintrag.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
+            <a href="{{ url_for('admin.presse_delete', presse_id=eintrag.id) }}" class="del js-confirm" data-confirm="Wirklich löschen?">✕</a>
         </td>
     </tr>
     {% endfor %}

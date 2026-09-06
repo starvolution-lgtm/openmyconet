@@ -65,7 +65,7 @@
         <td>
             {% if news.slug %}<a class="u-mr-8" href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank">Ansehen</a>{% endif %}
             <a class="u-mr-8" href="{{ url_for('admin.news_edit', news_id=news.id) }}">Bearbeiten</a>
-            <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a>
+            <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del js-confirm" data-confirm="Wirklich löschen?">✕</a>
         </td>
     </tr>
     {% endfor %}

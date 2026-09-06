@@ -55,7 +55,7 @@
         <td>{{ knoten.messungen|length }}</td>
         <td>
             <code class="kn-1">{{ knoten.api_key or '—' }}</code>
-            <form class="u-inline" method="POST" onsubmit="return confirm('Neuen API-Key für {{ knoten.knoten_id }}? Der alte wird sofort ungültig.');">
+            <form class="u-inline js-confirm-submit" method="POST" data-confirm="Neuen API-Key für {{ knoten.knoten_id }}? Der alte wird sofort ungültig.">
                 <input type="hidden" name="action" value="key_neu">
                 <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
                 <button type="submit" class="kn-2">neu</button>

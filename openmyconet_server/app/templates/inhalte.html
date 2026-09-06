@@ -44,7 +44,7 @@
         <td>{{ block.sprache }}</td>
         <td>{{ block.inhalt[:120] }}{% if block.inhalt|length > 120 %}…{% endif %}</td>
         <td>{{ block.aktualisiert_am.strftime('%d.%m.%Y %H:%M') }}</td>
-        <td><a href="{{ url_for('admin.inhalte_delete', block_id=block.id) }}" class="del" onclick="return confirm('Wirklich löschen?')">✕</a></td>
+        <td><a href="{{ url_for('admin.inhalte_delete', block_id=block.id) }}" class="del js-confirm" data-confirm="Wirklich löschen?">✕</a></td>
     </tr>
     {% endfor %}
 </table>

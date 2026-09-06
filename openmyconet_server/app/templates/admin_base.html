@@ -71,6 +71,23 @@
     }
   });
 })();
+
+/* Ersetzt on*=-Attribute (CSP script-src ohne 'unsafe-inline' blockiert sie).
+   - .js-autosubmit: Select/Checkbox sendet sein Formular beim Aendern
+   - .js-confirm (Link) / form.js-confirm-submit: confirm()-Dialog aus data-confirm */
+document.querySelectorAll('.js-autosubmit').forEach(function (el) {
+  el.addEventListener('change', function () { if (el.form) el.form.submit(); });
+});
+document.querySelectorAll('.js-confirm').forEach(function (el) {
+  el.addEventListener('click', function (e) {
+    if (!window.confirm(el.getAttribute('data-confirm'))) e.preventDefault();
+  });
+});
+document.querySelectorAll('form.js-confirm-submit').forEach(function (f) {
+  f.addEventListener('submit', function (e) {
+    if (!window.confirm(f.getAttribute('data-confirm'))) e.preventDefault();
+  });
+});
 </script>
 </body>
 </html>
