@@ -52,6 +52,15 @@ def test_geschuetzte_seiten_sind_no_store(csrf_client):
     assert 'no-store' in r.headers.get('Cache-Control', '')
 
 
+def test_admin_login_leitet_auf_kanonischen_host(csrf_client):
+    # www./ohne-Sub -> api., damit die hostgebundene Session nicht abreisst.
+    r = csrf_client.get('/login', base_url='https://www.openmyconet.de')
+    assert r.status_code == 308
+    assert r.headers['Location'] == 'https://api.openmyconet.de/login'
+    # api. selbst wird nicht umgeleitet.
+    assert csrf_client.get('/login', base_url='https://api.openmyconet.de').status_code == 200
+
+
 def test_oeffentliche_json_api_ohne_token_nicht_blockiert(csrf_client):
     # /api/register ist bewusst NICHT csrf-geschuetzt (cross-origin fetch).
     r = csrf_client.post('/api/register', data={'name': 'A', 'email': ''})
