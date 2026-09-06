@@ -18,6 +18,12 @@ SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sql
 `migrate_add_indexes.py` (`CREATE INDEX IF NOT EXISTS`). Neue Tabellen legt
 `db.create_all()` an. Feature-Migrationen als eigene `migrate_*.py` mit App-Context.
 
+**Backup:** `deploy/backup_db.sh` (konsistenter Snapshot via Python-Online-Backup-
+API → `/home/omn/backups/*.db.gz`, rotiert 14 Tage) läuft täglich per Cron **und**
+in `release.sh` vor jeder Migration. `deploy/restore_check.sh` verifiziert ein
+Backup (integrity_check + Model-Load, greift die Live-DB nie an). Wiederherstellung
++ Cron-Setup + Offsite-Status: `deploy/BACKUP.md`. Offsite (All-inkl) noch offen.
+
 ## Tests & Lint
 `venv/Scripts/python.exe -m pytest -q -p no:warnings`
 `venv/Scripts/python.exe -m ruff check .` (Config: `ruff.toml`, muss grün bleiben;
@@ -33,10 +39,11 @@ CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem
 Server): Tarball → Staging → `pip install -r requirements.txt` (voll gepinnt) →
 Import-Check → Code-Backup (`app.bak-<ts>`) → `rsync -a --delete
---exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` →
-`migrate_add_columns.py` + `migrate_add_indexes.py` → gunicorn HUP → Health-Check
-`curl localhost:5000` (bei ≠200 automatischer Rollback aus dem Backup; Rollback
-stellt Code wieder her, nicht die venv-Pakete — requirements.txt ist gepinnt).
+--exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` → **DB-Backup
+(`deploy/backup_db.sh`)** → `migrate_add_columns.py` + `migrate_add_indexes.py`
+→ gunicorn HUP → Health-Check `curl localhost:5000` (bei ≠200 automatischer
+Rollback aus dem Code-Backup; Rollback stellt Code wieder her, **nicht die DB**
+und nicht die venv-Pakete — bei DB-Problemen `deploy/BACKUP.md`).
 Neue Runtime-Dependency also einfach in `requirements.txt` eintragen, release.sh
 installiert sie beim Deploy.
 
@@ -59,8 +66,8 @@ Rollback manuell: `ssh ... 'rsync -a --delete --exclude=/instance/ --exclude=/.e
 Neue kleine Assets, die Templates referenzieren, gehören **ins Git** (`app/static/…`) —
 sonst löscht der `--delete`-Deploy sie. Grosse Medien (mp3/pdf) bleiben serververwaltet,
 siehe deploy-exclude.txt. Feature-Migrationen (`migrate_kollaboration.py` etc.) bleiben
-manuell — release.sh fährt nur die beiden idempotenten. DB-Backup separat vor riskanten
-Migrationen (WAL: siehe DB-Abschnitt).
+manuell — release.sh fährt nur die beiden idempotenten (mit DB-Backup davor, s. o.).
+Vor einer manuellen Feature-Migration einmal `bash deploy/backup_db.sh` von Hand.
 
 ## Fehler-Monitoring
 `errors.py` (`init_errors(app)`): unbehandelte Exceptions → rotierende Logdatei

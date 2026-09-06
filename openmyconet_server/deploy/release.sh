@@ -15,11 +15,12 @@
 #   4. Backup des aktuellen Codes -> /home/omn/app.bak-<ts>
 #   5. rsync Staging -> /home/omn/app  (--delete; deploy/deploy-exclude.txt
 #      schuetzt instance/.env/venv/uploads/logs + serververwaltete Grossmedien)
-#   6. Migrationen (nur die idempotenten: add_columns + add_indexes)
-#   7. gunicorn HUP + Health-Check  ->  bei Fehler automatischer Rollback
-#      (Hinweis: ein Rollback stellt den CODE wieder her, nicht die venv-
-#      Pakete -- requirements.txt ist aber gepinnt, der Paketstand entspricht
-#      also dem getesteten. Downgrades notfalls von Hand.)
+#   6. DB-Backup (deploy/backup_db.sh) -- vor den Migrationen
+#   7. Migrationen (nur die idempotenten: add_columns + add_indexes)
+#   8. gunicorn HUP + Health-Check  ->  bei Fehler automatischer Rollback
+#      (Hinweis: ein Rollback stellt CODE wieder her, nicht die DB und nicht die
+#      venv-Pakete. requirements.txt ist gepinnt; ein DB-Backup liegt in
+#      /home/omn/backups -- Wiederherstellung siehe deploy/BACKUP.md.)
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
@@ -65,10 +66,13 @@ rsync -a --exclude-from="$EXCL" "$APP"/ "$BACKUP"/
 echo "[5/7] Dateien uebernehmen (--delete)"
 rsync -a --checksum --delete --exclude-from="$EXCL" "$STAGING"/ "$APP"/
 
-echo "[6/7] Migrationen"
+echo "[6/8] DB-Backup vor den Migrationen"
+bash "$APP/deploy/backup_db.sh"
+
+echo "[7/8] Migrationen"
 ( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
 
-echo "[7/7] Reload + Health-Check"
+echo "[8/8] Reload + Health-Check"
 if [ -n "$GPID" ]; then
     kill -HUP "$GPID"
 else
