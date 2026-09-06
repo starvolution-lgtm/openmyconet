@@ -70,15 +70,42 @@ Ein `kill -HUP` reicht, weil gunicorn ohne `--preload` laeuft; zur Sicherheit
 danach einmal `/admin` + eine Datenseite im Browser aufrufen. Die
 `*.vor-restore-*`-Dateien bleiben liegen, bis der Restore bestaetigt ist.
 
-## Offsite (Stand 2026-09-06: NUR lokal auf dem VPS -- TODO)
+## Offsite zu All-inkl (FTPS)
 
 Ein Backup nur auf demselben Hetzner-VPS schuetzt nicht vor Server- oder
-Account-Verlust. Geplant: Push zu **All-inkl** (anderer Anbieter/Standort) per
-SFTP. `deploy/backup_db.sh` ruft am Ende `deploy/backup_offsite.sh` auf, sobald
-diese Datei existiert **und** in `/home/omn/app/.env` `BACKUP_SFTP_HOST` gesetzt
-ist -- vorher wird der Schritt stillschweigend uebersprungen.
+Account-Verlust. `deploy/backup_offsite.sh` laedt jedes frische Backup per
+**FTPS** (curl, explizite TLS-Pflicht) zu All-inkl hoch und rotiert die
+Gegenseite. `backup_db.sh` ruft es automatisch auf, sobald in
+`/home/omn/app/.env` `BACKUP_FTP_HOST` gesetzt ist -- vorher wird der Schritt
+stillschweigend uebersprungen. Ein fehlgeschlagener Offsite-Push laesst das
+lokale Backup unangetastet und bricht den Cron-Lauf nicht ab.
 
-Zum Scharfschalten fehlen: SFTP-Host/-User des All-inkl-Zugangs, ein
-SSH-Key (oder App-spezifisches Passwort), Zielverzeichnis. Dann
-`backup_offsite.sh` anlegen (sftp-Batch: Datei hochladen + auf der Gegenseite
-die aeltesten ueber N loeschen).
+### Scharfschalten (einmalig)
+
+1. All-inkl-KAS -> **FTP**: entweder den vorhandenen FTP-Zugang nehmen oder
+   einen eigenen FTP-Nutzer nur fuers Backup anlegen. Passwort moeglichst
+   nur Buchstaben/Ziffern (landet in einer curl-Konfig).
+2. Werte in `/home/omn/app/.env` ergaenzen (die Datei ist server-verwaltet,
+   nicht im Git):
+
+   ```
+   BACKUP_FTP_HOST=w0151a05.kasserver.com
+   BACKUP_FTP_USER=<FTP-Benutzer>
+   BACKUP_FTP_PASS=<FTP-Passwort>
+   BACKUP_FTP_DIR=/omn-backups
+   BACKUP_FTP_KEEP=30
+   ```
+   (`BACKUP_FTP_DIR` wird automatisch angelegt; `KEEP` = wie viele Backups
+   auf All-inkl bleiben.)
+3. Testen:
+   ```
+   cd /home/omn/app
+   bash deploy/backup_offsite.sh "$(ls -1t /home/omn/backups/*.db.gz | head -1)"
+   ```
+   Muss `Offsite hochgeladen: ...` melden.
+
+### Restore aus dem Offsite-Backup
+
+Die `.db.gz` per FTP-Client (FileZilla o.ä.) oder `curl` herunterladen, dann
+die normale Restore-Prozedur oben. `restore_check.sh` funktioniert auch mit
+einer manuell in `/home/omn/backups/` abgelegten Datei als Argument.

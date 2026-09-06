@@ -57,7 +57,9 @@ ls -1t "$DEST"/openmyconet-*.db.gz 2>/dev/null | tail -n +$((KEEP + 1)) | while 
     echo "  rotiert: $(basename "$alt") geloescht"
 done
 
-# Offsite (optional, noch nicht scharf -- siehe deploy/BACKUP.md)
-if [ -f "$APP/deploy/backup_offsite.sh" ] && [ -f "$APP/.env" ] && grep -q '^BACKUP_SFTP_HOST=' "$APP/.env"; then
+# Offsite-Kopie zu All-inkl (FTPS), sobald in .env konfiguriert -- siehe
+# deploy/BACKUP.md. Ein fehlgeschlagener Offsite-Push laesst das lokale Backup
+# unangetastet und bricht den Cron-Lauf nicht ab.
+if [ -f "$APP/deploy/backup_offsite.sh" ] && [ -f "$APP/.env" ] && grep -q '^BACKUP_FTP_HOST=' "$APP/.env"; then
     bash "$APP/deploy/backup_offsite.sh" "$OUT.gz" || echo "WARN: Offsite-Push fehlgeschlagen (lokales Backup ist ok)"
 fi
