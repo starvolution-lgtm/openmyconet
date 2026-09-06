@@ -45,6 +45,13 @@ def test_get_braucht_kein_token(csrf_client):
     assert csrf_client.get('/login').status_code == 200
 
 
+def test_geschuetzte_seiten_sind_no_store(csrf_client):
+    # Session-gebundene Seiten duerfen nicht aus dem (bf)cache wiederhergestellt
+    # werden -- sonst Formular-Replay mit totem CSRF-Token.
+    r = csrf_client.get('/login')
+    assert 'no-store' in r.headers.get('Cache-Control', '')
+
+
 def test_oeffentliche_json_api_ohne_token_nicht_blockiert(csrf_client):
     # /api/register ist bewusst NICHT csrf-geschuetzt (cross-origin fetch).
     r = csrf_client.post('/api/register', data={'name': 'A', 'email': ''})

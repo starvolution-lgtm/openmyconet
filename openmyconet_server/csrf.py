@@ -59,10 +59,22 @@ def _pruefe():
         abort(400, description='CSRF-Token fehlt oder ist ungültig. Seite neu laden und erneut absenden.')
 
 
+def _kein_cache(response):
+    """Session-gebundene Seiten nie aus dem Browser-Cache (inkl. Back-/Forward-
+    Cache) wiederherstellen. Sonst kann ein Formular mit veraltetem CSRF-Token
+    erneut abgesendet werden -- die Pruefung schlaegt dann mit 400 fehl,
+    obwohl mit dem Nutzer alles stimmt (typisch im 2FA-Login-Ablauf, der
+    zwischendurch session.clear() macht)."""
+    response.headers['Cache-Control'] = 'no-store, private'
+    return response
+
+
 def schuetze_blueprint(blueprint):
-    """Haengt die Pruefung als before_request an den Blueprint. Muss beim
-    Blueprint-Modulimport laufen (vor register_blueprint)."""
+    """Haengt die CSRF-Pruefung (before_request) und den No-Store-Header
+    (after_request) an den Blueprint. Muss beim Blueprint-Modulimport laufen
+    (vor register_blueprint)."""
     blueprint.before_request(_pruefe)
+    blueprint.after_request(_kein_cache)
 
 
 def init_csrf(app):

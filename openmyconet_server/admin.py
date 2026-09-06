@@ -29,7 +29,7 @@ from models import (
 )
 from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 from spam_schutz import ip_erlaubt
-from csrf import schuetze_blueprint
+from csrf import schuetze_blueprint, csrf_token
 from zeit import utcnow
 import kollaboration
 
@@ -220,6 +220,10 @@ def login():
                 session.clear()
                 session['2fa_pending_user_id'] = user.id
                 session['2fa_pending_seit'] = utcnow().isoformat()
+                # CSRF-Token sofort neu in die (gerade geleerte) Session, damit
+                # es schon im Redirect-Cookie steckt und die 2FA-Seite es nicht
+                # erst per weiterem Set-Cookie nachreichen muss.
+                csrf_token()
                 return redirect(url_for('admin.login_2fa'))
             _admin_session_setzen(user)
             ziel = 'admin.admin' if user.role == 'superadmin' else 'admin.news_admin'
@@ -263,6 +267,7 @@ def login_2fa():
         elif _zweiter_faktor_ok(user, code):
             db.session.commit()   # evtl. verbrauchten Recovery-Code speichern
             session.clear()
+            csrf_token()           # frisches Token fuer die Folgeseiten
             _admin_session_setzen(user)
             ziel = 'admin.admin' if user.role == 'superadmin' else 'admin.news_admin'
             return redirect(url_for(ziel))
