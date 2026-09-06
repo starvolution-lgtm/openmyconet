@@ -9,12 +9,17 @@
 #
 # Ablauf:
 #   1. Tarball -> Staging-Verzeichnis
-#   2. Import-Check (laedt `import app` sauber?)
-#   3. Backup des aktuellen Codes -> /home/omn/app.bak-<ts>
-#   4. rsync Staging -> /home/omn/app  (--delete; deploy/deploy-exclude.txt
+#   2. pip install -r requirements.txt (voll gepinnt == was CI geprueft hat;
+#      no-op wenn nichts neu ist)
+#   3. Import-Check (laedt `import app` sauber?)
+#   4. Backup des aktuellen Codes -> /home/omn/app.bak-<ts>
+#   5. rsync Staging -> /home/omn/app  (--delete; deploy/deploy-exclude.txt
 #      schuetzt instance/.env/venv/uploads/logs + serververwaltete Grossmedien)
-#   5. Migrationen (nur die idempotenten: add_columns + add_indexes)
-#   6. gunicorn HUP + Health-Check  ->  bei Fehler automatischer Rollback
+#   6. Migrationen (nur die idempotenten: add_columns + add_indexes)
+#   7. gunicorn HUP + Health-Check  ->  bei Fehler automatischer Rollback
+#      (Hinweis: ein Rollback stellt den CODE wieder her, nicht die venv-
+#      Pakete -- requirements.txt ist aber gepinnt, der Paketstand entspricht
+#      also dem getesteten. Downgrades notfalls von Hand.)
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
@@ -40,7 +45,7 @@ aufraeumen() {
 }
 trap aufraeumen EXIT
 
-echo "[1/6] Auspacken -> $STAGING"
+echo "[1/7] Auspacken -> $STAGING"
 mkdir "$STAGING"
 tar xzf "$TARBALL" -C "$STAGING"
 test -f "$STAGING/app.py" || { echo "Tarball sieht falsch aus (kein app.py)"; exit 1; }
@@ -48,19 +53,22 @@ test -f "$STAGING/deploy/deploy-exclude.txt" || { echo "deploy-exclude.txt fehlt
 tr -d '\r' < "$STAGING/deploy/deploy-exclude.txt" > "$EXCL"   # CRLF -> LF, sonst greifen die Patterns nicht
 grep -qx '/instance/' "$EXCL" || { echo "deploy-exclude.txt schuetzt /instance/ nicht — Abbruch"; exit 1; }
 
-echo "[2/6] Import-Check"
+echo "[2/7] Abhaengigkeiten (requirements.txt)"
+"$PY" -m pip install -q -r "$STAGING/requirements.txt"
+
+echo "[3/7] Import-Check"
 ( cd "$STAGING" && SECRET_KEY=deploy-check "$PY" -c "import app; print('   import app OK')" )
 
-echo "[3/6] Backup -> $BACKUP"
+echo "[4/7] Backup -> $BACKUP"
 rsync -a --exclude-from="$EXCL" "$APP"/ "$BACKUP"/
 
-echo "[4/6] Dateien uebernehmen (--delete)"
+echo "[5/7] Dateien uebernehmen (--delete)"
 rsync -a --checksum --delete --exclude-from="$EXCL" "$STAGING"/ "$APP"/
 
-echo "[5/6] Migrationen"
+echo "[6/7] Migrationen"
 ( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
 
-echo "[6/6] Reload + Health-Check"
+echo "[7/7] Reload + Health-Check"
 if [ -n "$GPID" ]; then
     kill -HUP "$GPID"
 else

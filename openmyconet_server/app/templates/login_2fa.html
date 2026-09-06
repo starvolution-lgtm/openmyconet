@@ -1,0 +1,29 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Bestätigung{% endblock %}
+{% block header %}
+<header class="admin-top">
+  <div>
+    <span class="eyebrow">OpenMycoNet · Admin</span>
+    <h1>🔐 Zweiter Faktor</h1>
+  </div>
+</header>
+{% endblock %}
+{% block content %}
+<div class="u-maxw-380-top">
+  {% if fehler %}
+    <p class="err">{{ fehler }}</p>
+  {% endif %}
+
+  <p>Gib den 6-stelligen Code aus deiner Authenticator-App ein.
+     Kein Zugriff auf die App? Dann einen deiner Recovery-Codes.</p>
+
+  <form method="POST">
+    <label>Code</label>
+    <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
+           pattern="[0-9 -]*" required autofocus>
+    <button type="submit">Weiter</button>
+  </form>
+
+  <p><a href="{{ url_for('admin.logout') }}">Abbrechen</a></p>
+</div>
+{% endblock %}

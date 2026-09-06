@@ -1,0 +1,71 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Zwei-Faktor{% endblock %}
+{% block heading %}🔐 Zwei-Faktor-Authentifizierung{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-2fa.css') }}">{% endblock %}
+{% block content %}
+
+{% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
+{% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
+
+{% if recovery_codes %}
+  <div class="tfa-recovery-box">
+    <h2>Deine Recovery-Codes</h2>
+    <p><strong>Jetzt sichern.</strong> Jeder Code funktioniert genau einmal und
+       ersetzt bei Bedarf den Authenticator-Code beim Login. Sie werden nur
+       dieses eine Mal angezeigt.</p>
+    <ul class="tfa-code-liste">
+      {% for c in recovery_codes %}<li>{{ c }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if user.totp_aktiviert %}
+  <p>Status: <strong class="tfa-an">aktiv</strong>.
+     Beim Login wirst du nach dem Passwort nach einem Code gefragt.</p>
+  <p>Verbleibende Recovery-Codes: <strong>{{ recovery_rest }}</strong>{% if recovery_rest <= 2 %}
+     — bald neue erzeugen{% endif %}.</p>
+
+  <form method="POST" class="u-maxw-420">
+    <input type="hidden" name="aktion" value="recovery-neu">
+    <h2>Neue Recovery-Codes</h2>
+    <label>Passwort bestätigen</label>
+    <input type="password" name="passwort" required>
+    <button type="submit">Neue Codes erzeugen</button>
+  </form>
+
+  <form method="POST" class="u-maxw-420 tfa-deaktivieren">
+    <input type="hidden" name="aktion" value="deaktivieren">
+    <h2>Deaktivieren</h2>
+    <label>Passwort bestätigen</label>
+    <input type="password" name="passwort" required>
+    <button type="submit">Zwei-Faktor abschalten</button>
+  </form>
+
+{% elif qr_svg %}
+  <h2>Schritt 1 — App einrichten</h2>
+  <p>Scanne den Code mit einer Authenticator-App (z.&nbsp;B. Aegis, 2FAS,
+     Google Authenticator).</p>
+  <div class="tfa-qr">{{ qr_svg | safe }}</div>
+  <p>Oder den Schlüssel manuell eingeben:<br>
+     <code class="tfa-key">{{ manueller_schluessel }}</code></p>
+
+  <form method="POST" class="u-maxw-420">
+    <input type="hidden" name="aktion" value="bestaetigen">
+    <h2>Schritt 2 — bestätigen</h2>
+    <label>6-stelliger Code aus der App</label>
+    <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
+           pattern="[0-9 -]*" required autofocus>
+    <button type="submit">Aktivieren</button>
+  </form>
+
+{% else %}
+  <p>Dein Konto ist nur mit Passwort geschützt. Zwei-Faktor-Authentifizierung
+     (TOTP) macht einen gestohlenen Login wertlos, solange dein zweites Gerät
+     sicher ist.</p>
+  <form method="POST">
+    <input type="hidden" name="aktion" value="start">
+    <button type="submit">Einrichtung starten</button>
+  </form>
+{% endif %}
+
+{% endblock %}

@@ -109,6 +109,13 @@ class AdminUser(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='editor')  # 'superadmin' | 'editor'
     erstellt_am = db.Column(db.DateTime, default=utcnow)
+    # Zwei-Faktor (TOTP, RFC 6238). totp_secret ist der Base32-Seed (leer = nie
+    # eingerichtet), totp_aktiviert wird erst nach dem ersten bestaetigten Code
+    # gesetzt. totp_recovery: JSON-Liste von Passwort-Hashes der Einmal-Codes
+    # (fuer den Fall eines verlorenen Authenticators).
+    totp_secret = db.Column(db.String(32))
+    totp_aktiviert = db.Column(db.Boolean, default=False)
+    totp_recovery = db.Column(db.Text)
 
 class ChatLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)

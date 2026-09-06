@@ -32,6 +32,9 @@ MIGRATIONS = [
     ('foerderer', 'status_geaendert_am', 'DATETIME'),
     ('foerderer', 'nutzer_id', 'INTEGER'),  # Kollaborationsbereich, siehe migrate_kollaboration.py (dort auch Backfill + neue Tabellen)
     ('knoten', 'api_key', 'VARCHAR(64)'),  # Geraete-Authentifizierung fuer /api/v1/messung
+    ('admin_user', 'totp_secret', 'VARCHAR(32)'),      # Admin-2FA (TOTP)
+    ('admin_user', 'totp_aktiviert', 'BOOLEAN DEFAULT 0'),
+    ('admin_user', 'totp_recovery', 'TEXT'),
 ]
 
 UMLAUT_MAP = {'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss'}

@@ -31,10 +31,14 @@ CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem
-Server): Tarball → Staging → Import-Check → Code-Backup (`app.bak-<ts>`) → `rsync -a
---delete --exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` →
+Server): Tarball → Staging → `pip install -r requirements.txt` (voll gepinnt) →
+Import-Check → Code-Backup (`app.bak-<ts>`) → `rsync -a --delete
+--exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` →
 `migrate_add_columns.py` + `migrate_add_indexes.py` → gunicorn HUP → Health-Check
-`curl localhost:5000` (bei ≠200 automatischer Rollback aus dem Backup).
+`curl localhost:5000` (bei ≠200 automatischer Rollback aus dem Backup; Rollback
+stellt Code wieder her, nicht die venv-Pakete — requirements.txt ist gepinnt).
+Neue Runtime-Dependency also einfach in `requirements.txt` eintragen, release.sh
+installiert sie beim Deploy.
 
 `deploy/deploy-exclude.txt` schützt vor `--delete`: `instance/`, `.env*`, `venv/`,
 `app/static/uploads/`, `*.log`, sowie **serververwaltete Grossmedien, die bewusst

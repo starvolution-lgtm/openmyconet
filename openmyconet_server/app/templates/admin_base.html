@@ -37,6 +37,7 @@
       <a href="{{ url_for('admin.accounts') }}">🔑 Accounts</a>
       {% endif %}
       <a href="{{ url_for('admin.change_password') }}">Passwort</a>
+      <a href="{{ url_for('admin.zwei_faktor') }}">🔐 2FA</a>
       <a class="logout" href="{{ url_for('admin.logout') }}">Logout</a>
     </nav>
   </header>
@@ -47,6 +48,11 @@
       <p class="{{ 'err' if category == 'error' else 'msg' }}">{{ msg }}</p>
     {% endfor %}
   {% endwith %}
+
+  {% if session.admin_logged_in and not session.get('admin_2fa_aktiv') %}
+    <p class="err">🔐 Dein Konto hat noch keine Zwei-Faktor-Authentifizierung.
+      <a href="{{ url_for('admin.zwei_faktor') }}">Jetzt einrichten</a>.</p>
+  {% endif %}
 
   {% block content %}{% endblock %}
 </div>
