@@ -207,8 +207,19 @@ function renderFlagsInto(containerId, size) {
   el.innerHTML = LANGS.map(function(l) {
     var aktivKlasse = l === currentLang ? ' lang-flag-active' : '';
     var svg = size ? FLAGS[l].replace('width="20" height="14"', 'width="' + size + '" height="' + Math.round(size*0.7) + '"') : FLAGS[l];
-    return '<a href="javascript:void(0)" title="' + FLAG_TITLES[l] + '" class="lang-flag' + aktivKlasse + '" onclick="omnSetLang(\'' + l + '\')">' + svg + '</a>';
+    return '<a href="#" title="' + FLAG_TITLES[l] + '" class="lang-flag' + aktivKlasse + '" data-lang="' + l + '">' + svg + '</a>';
   }).join('');
+  // Delegierter Klick-Handler (einmal pro Container) statt inline onclick --
+  // ueberlebt den innerHTML-Rebuild, CSP script-src ohne 'unsafe-inline'.
+  if (!el.dataset.langWired) {
+    el.dataset.langWired = '1';
+    el.addEventListener('click', function(e) {
+      var a = e.target.closest('.lang-flag');
+      if (!a) return;
+      e.preventDefault();
+      omnSetLang(a.getAttribute('data-lang'));
+    });
+  }
 }
 
 function renderSidebar() {
@@ -312,7 +323,7 @@ var OMN_TRACKS = [
   function renderPlaylist(){
     if(!plEl) return;
     plEl.innerHTML = OMN_TRACKS.map(function(t,i){
-      return '<div class="omn-pl-item'+(i===current?' active':'')+'" onclick="omnSelectTrack('+i+')">'
+      return '<div class="omn-pl-item'+(i===current?' active':'')+'" data-idx="'+i+'">'
         +'<img class="omn-pl-thumb" src="'+OMN_ASSET_BASE+t.cover+'" alt="">'
         +'<span class="omn-pl-num">'+(i===current?'▶':(i+1))+'</span>'
         +'<span class="omn-pl-name">'+t.title+'</span>'
@@ -443,6 +454,10 @@ var OMN_TRACKS = [
   });
   document.querySelectorAll('.omn-next-btn').forEach(function(el){
     el.addEventListener('click', function(){ window.omnNext(); });
+  });
+  if (plEl) plEl.addEventListener('click', function(e){
+    var item = e.target.closest('.omn-pl-item');
+    if (item) window.omnSelectTrack(parseInt(item.getAttribute('data-idx'), 10));
   });
 })();
 </script>

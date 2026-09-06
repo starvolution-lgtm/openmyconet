@@ -416,7 +416,7 @@ function renderFaqPanel(lang) {
   });
 
   var footerHtml = '<div class="faq-footer">' + ui.footerText +
-    '<a href="javascript:void(0)" onclick="document.getElementById(\'omn-faq-overlay\').classList.remove(\'open\'); document.getElementById(\'omn-fab\').click();">' + ui.footerLink + '</a>' +
+    '<a href="#" class="faq-to-chat">' + ui.footerLink + '</a>' +
     '</div>';
 
   panelEl.innerHTML = headerHtml + contentHtml + footerHtml;
@@ -445,6 +445,18 @@ overlay.addEventListener('click', function(e) {
     overlay.classList.remove('open');
     document.body.classList.remove('u-no-scroll');
   }
+});
+
+// Footer-Link "Frag den Wissensvermittler" -> FAQ zu, Chat auf. Delegiert, da
+// der Link bei jedem Panel-Rebuild neu erzeugt wird (statt inline onclick --
+// CSP script-src ohne 'unsafe-inline').
+overlay.addEventListener('click', function(e) {
+  if (!e.target.closest('.faq-to-chat')) return;
+  e.preventDefault();
+  overlay.classList.remove('open');
+  document.body.classList.remove('u-no-scroll');
+  var chatFab = document.getElementById('omn-fab');
+  if (chatFab) chatFab.click();
 });
 
 // Akkordeon (delegiert auf overlay, funktioniert unabhaengig vom Panel-Rebuild)

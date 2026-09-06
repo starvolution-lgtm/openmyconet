@@ -166,11 +166,13 @@ init_errors(app)
 #      Diesmal lokal gegen den ECHTEN gehaerteten Header + alle interaktiven
 #      Elemente (Menue, Player, Node-Panel, Formulare, beide Widgets) geprueft.
 #
-# script-src bleibt weiterhin bewusst mit 'unsafe-inline' -- die Templates
-# nutzen durchgaengig onclick=""/onchange=""-Attribute und Inline-<script>-
-# Bloecke; das Entfernen braeuchte eine Umstellung auf addEventListener
-# (CSP-Nonces decken Inline-Event-Handler-Attribute nicht ab) und ist ein
-# eigenes, separates Refactoring-Projekt.
+# script-src kommt seit 2026-09-06 ebenfalls OHNE 'unsafe-inline' aus (4 Commits
+# "CSP script-src Vorbereitung N/N"): pro Response ein Nonce (g.csp_nonce, in
+# _sicherheits_header in den Header eingesetzt), den jeder Inline-<script>-Block
+# als nonce="{{ csp_nonce }}" traegt. Alle on*=-Attribute (Templates + die 2 per
+# JS-String erzeugten in base.html + 1 in biocomm-faq.js) wurden auf
+# addEventListener/Event-Delegation umgestellt -- Nonces decken Inline-Handler
+# NICHT ab. javascript:-URLs (Flaggen) ebenfalls ersetzt.
 #
 # WICHTIG: asset()/live() (oben) verlinken Bilder/Skripte/Audio IMMER absolut auf
 # www.openmyconet.de, api_content() laeuft ueber api.openmyconet.de -- das ist
@@ -180,7 +182,10 @@ init_errors(app)
 _EIGENE_DOMAINS = "https://www.openmyconet.de https://openmyconet.de https://api.openmyconet.de"
 _CSP = (
     f"default-src 'self' {_EIGENE_DOMAINS}; "
-    f"script-src 'self' 'unsafe-inline' {_EIGENE_DOMAINS}; "
+    # __CSP_NONCE__ wird in _sicherheits_header pro Response durch g.csp_nonce
+    # ersetzt. Kein 'unsafe-inline' mehr -- Inline-<script> laeuft nur mit Nonce,
+    # externe Skripte ueber 'self'/Domain-Allowlist.
+    f"script-src 'self' 'nonce-__CSP_NONCE__' {_EIGENE_DOMAINS}; "
     f"style-src 'self' {_EIGENE_DOMAINS} https://fonts.googleapis.com; "
     f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
     f"img-src 'self' data: {_EIGENE_DOMAINS} https://*.tile.openstreetmap.org; "
@@ -211,10 +216,10 @@ _PERMISSIONS_POLICY = (
 )
 
 
-# Pro Response ein frischer CSP-Nonce. Inline-<script>-Bloecke tragen ihn als
-# nonce="{{ csp_nonce }}"; solange script-src noch 'unsafe-inline' erlaubt, ist
-# das folgenlos -- der Nonce wird erst scharf, wenn 'unsafe-inline' entfernt und
-# 'nonce-...' in die script-src-Direktive aufgenommen wird (eigener Schritt).
+# Pro Response ein frischer CSP-Nonce. Jeder Inline-<script>-Block traegt ihn als
+# nonce="{{ csp_nonce }}"; _sicherheits_header setzt denselben Wert in die
+# script-src-Direktive ein. Ohne Nonce (z. B. sehr fruehe Fehler vor
+# before_request) faellt ein Zufallswert ein -> nichts matcht, fail-closed.
 @app.before_request
 def _csp_nonce_erzeugen():
     g.csp_nonce = secrets.token_urlsafe(16)
@@ -227,7 +232,8 @@ def _csp_nonce_bereitstellen():
 
 @app.after_request
 def _sicherheits_header(response):
-    response.headers['Content-Security-Policy'] = _CSP
+    nonce = g.get('csp_nonce') or secrets.token_urlsafe(16)
+    response.headers['Content-Security-Policy'] = _CSP.replace('__CSP_NONCE__', nonce)
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
