@@ -44,7 +44,7 @@
 
   <div class="fee-box">
     <label>
-      <input type="checkbox" id="cover-fees" onchange="updateFee()">
+      <input type="checkbox" id="cover-fees">
       <span>
         <span id="fee-label-text">Transaktionskosten übernehmen</span>:
         <strong class="fa-2" id="fee-amt">+{{ ('%.2f'|format(data.betrag * 0.0249 + 0.35))|replace('.', ',') }} €</strong>
@@ -85,6 +85,8 @@
     document.getElementById('pay-label').textContent = final.toFixed(2).replace('.',',') + ' €';
     document.getElementById('betrag-hidden').value   = final.toFixed(2);
   }
+  var _coverFees = document.getElementById('cover-fees');
+  if (_coverFees) _coverFees.addEventListener('change', updateFee);
   </script>
 
 {% else %}
@@ -138,8 +140,8 @@
 
     <div class="form-group">
       <label id="lbl-logo" for="logo">Logo <span class="u-hint">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
-      <div class="logo-upload" onclick="this.querySelector('input').click()">
-        <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
+      <div class="logo-upload">
+        <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml">
         <div class="logo-upload-label" id="logo-upload-label">📁 Logo hier ablegen oder klicken zum Auswählen</div>
         <img id="logo-preview" src="" alt="Vorschau" hidden>
       </div>
@@ -149,12 +151,12 @@
       <label id="lbl-betrag" for="betrag-input">Jahresbeitrag * <span class="u-hint">(mind. 50 €, frei wählbar)</span></label>
       <div class="betrag-grid">
         {% for b in betrag_optionen %}
-          <button type="button" class="betrag-btn {% if b == 50 %}active{% endif %}" onclick="setBetrag({{ b }}, this)">{{ b }} €</button>
+          <button type="button" class="betrag-btn {% if b == 50 %}active{% endif %}" data-betrag="{{ b }}">{{ b }} €</button>
         {% endfor %}
       </div>
       <div class="fa-7">
         <span class="mg-fa-mono-hint">oder</span>
-        <input class="fa-8" type="number" name="betrag" id="betrag-input" value="50" min="50" step="1" autocomplete="off" oninput="clearBetragBtns()">
+        <input class="fa-8" type="number" name="betrag" id="betrag-input" value="50" min="50" step="1" autocomplete="off">
         <span class="mg-fa-mono-hint">€</span>
       </div>
     </div>
@@ -191,14 +193,29 @@ function previewLogo(input) {
   }
 }
 
-function setBetrag(val, btn) {
-  document.querySelectorAll('.betrag-btn').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.getElementById('betrag-input').value = val;
-}
 function clearBetragBtns() {
   document.querySelectorAll('.betrag-btn').forEach(function(b){ b.classList.remove('active'); });
 }
+
+// Handler-Verdrahtung statt on*=-Attribute (CSP script-src ohne 'unsafe-inline').
+(function(){
+  var upload = document.querySelector('.logo-upload');
+  if (upload) upload.addEventListener('click', function(e){
+    var inp = upload.querySelector('input');
+    if (inp && e.target !== inp) inp.click();
+  });
+  var logo = document.getElementById('logo');
+  if (logo) logo.addEventListener('change', function(){ previewLogo(logo); });
+  var betragInput = document.getElementById('betrag-input');
+  if (betragInput) betragInput.addEventListener('input', clearBetragBtns);
+  document.querySelectorAll('.betrag-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.betrag-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      if (betragInput) betragInput.value = btn.getAttribute('data-betrag');
+    });
+  });
+})();
 </script>
 
 <script nonce="{{ csp_nonce }}">

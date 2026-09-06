@@ -113,11 +113,11 @@
     </div>
     <div class="omn-vol-hint">Regler auf 0% = stumm</div>
   </div>
-  <button class="omn-play-btn omn-play-btn-sm" id="omn-audio-btn" onclick="omnTogglePlay()" title="Play/Stop" aria-label="Play/Stop">
+  <button class="omn-play-btn omn-play-btn-sm" id="omn-audio-btn" title="Play/Stop" aria-label="Play/Stop">
     <svg class="icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="3,1 15,8 3,15"/></svg>
     <svg class="icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
   </button>
-  <button class="omn-play-btn omn-play-btn-sm" id="omn-vol-toggle-btn" onclick="omnAudioPanelToggle()" title="Lautstärke" aria-label="Lautstärke">
+  <button class="omn-play-btn omn-play-btn-sm" id="omn-vol-toggle-btn" title="Lautstärke" aria-label="Lautstärke">
     <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
       <polygon points="1,6 4,6 8,2 8,14 4,10 1,10" fill="#ffffff"/>
       <path d="M10 5.3 C11.6 6.7 11.6 9.3 10 10.7" stroke="#ffffff" stroke-width="1.3" fill="none" stroke-linecap="round"/>
@@ -430,6 +430,20 @@ var OMN_TRACKS = [
     loadTrack(0, false);
   }
   updateVolLabel();
+
+  // Handler-Verdrahtung statt on*=-Attribute (CSP script-src ohne 'unsafe-inline').
+  // Deckt den FAB (jede Seite) und den grossen Player (index.html, medien.html) ab.
+  [['omn-audio-btn', 'click', function(){ window.omnTogglePlay(); }],
+   ['omn-vol-toggle-btn', 'click', function(){ window.omnAudioPanelToggle(); }],
+   ['omn-play-btn', 'click', function(){ window.omnTogglePlay(); }],
+   ['omn-progress-wrap', 'click', function(e){ window.omnSeek(e); }]
+  ].forEach(function(w){
+    var el = document.getElementById(w[0]);
+    if (el) el.addEventListener(w[1], w[2]);
+  });
+  document.querySelectorAll('.omn-next-btn').forEach(function(el){
+    el.addEventListener('click', function(){ window.omnNext(); });
+  });
 })();
 </script>
 
@@ -469,6 +483,14 @@ document.addEventListener('DOMContentLoaded', function() {
   menu.addEventListener('click', function(e){ if(e.target===menu) closeMenu(); });
   menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
 })();
+</script>
+
+<script nonce="{{ csp_nonce }}">
+// Auswahlfelder, die ihr Formular beim Aendern absenden (Sprach-Filter auf
+// /presse.html und /news.html) -- statt onchange="this.form.submit()".
+document.querySelectorAll('select.js-autosubmit').forEach(function(sel){
+  sel.addEventListener('change', function(){ if (sel.form) sel.form.submit(); });
+});
 </script>
 </body>
 </html>

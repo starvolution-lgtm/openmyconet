@@ -127,8 +127,8 @@
 
     <div class="form-group">
       <label id="lbl-logo" for="logo">Logo <span class="u-hint">(JPG, PNG, WebP, GIF oder SVG · max. 5 MB)</span></label>
-      <div class="logo-upload" onclick="this.querySelector('input').click()">
-        <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" onchange="previewLogo(this)">
+      <div class="logo-upload">
+        <input type="file" id="logo" name="logo" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml">
         <div class="logo-upload-label" id="logo-upload-label">📁 Logo hier ablegen oder klicken zum Auswählen</div>
         <img id="logo-preview" src="" alt="Vorschau" hidden>
       </div>
@@ -165,6 +165,17 @@ function previewLogo(input) {
     reader.readAsDataURL(input.files[0]);
   }
 }
+
+// Handler-Verdrahtung statt on*=-Attribute (CSP script-src ohne 'unsafe-inline').
+(function(){
+  var upload = document.querySelector('.logo-upload');
+  if (upload) upload.addEventListener('click', function(e){
+    var inp = upload.querySelector('input');
+    if (inp && e.target !== inp) inp.click();
+  });
+  var logo = document.getElementById('logo');
+  if (logo) logo.addEventListener('change', function(){ previewLogo(logo); });
+})();
 </script>
 
 <script nonce="{{ csp_nonce }}">

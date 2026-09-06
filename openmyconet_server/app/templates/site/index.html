@@ -80,8 +80,8 @@
   <div class="hero-buttons">
     <a href="#anmelden" class="btn btn-green" data-i18n="btn_join">{{ t('btn_join') }}</a>
     <a href="#spenden" class="btn btn-amber" data-i18n="btn_support">{{ t('btn_support') }}</a>
-    <button type="button" onclick="document.getElementById('node-yes').checked=true; showNodePanel(true);" class="btn ic-8" data-i18n="btn_leihgeraet">{{ t('btn_leihgeraet') }}</button>
-    <button onclick="document.getElementById('omn-fab').click()" class="btn btn-amber ic-9" data-i18n="btn_fragen">{{ t('btn_fragen') }}</button>
+    <button type="button" id="btn-leihgeraet" class="btn ic-8" data-i18n="btn_leihgeraet">{{ t('btn_leihgeraet') }}</button>
+    <button class="btn btn-amber ic-9 js-open-chat" data-i18n="btn_fragen">{{ t('btn_fragen') }}</button>
   </div>
 
   </div></div>
@@ -258,16 +258,16 @@
   <div class="donate-box">
     <p data-i18n="donate_p">{{ t('donate_p') }}</p>
     <div class="amounts">
-      <button class="amt-btn" onclick="selectAmt(this,5)">5 €</button>
-      <button class="amt-btn active" onclick="selectAmt(this,15)">15 €</button>
-      <button class="amt-btn" onclick="selectAmt(this,35)">35 €</button>
-      <button class="amt-btn" onclick="selectAmt(this,50)">50 €</button>
-      <button class="amt-btn" onclick="selectAmt(this,100)">100 €</button>
+      <button class="amt-btn" data-amt="5">5 €</button>
+      <button class="amt-btn active" data-amt="15">15 €</button>
+      <button class="amt-btn" data-amt="35">35 €</button>
+      <button class="amt-btn" data-amt="50">50 €</button>
+      <button class="amt-btn" data-amt="100">100 €</button>
     </div>
 
     <div class="ic-41" id="fee-box">
       <label class="ic-42">
-        <input class="ic-43" type="checkbox" id="cover-fees" onchange="updateFeeBox()">
+        <input class="ic-43" type="checkbox" id="cover-fees">
         <span id="fee-label"><span data-i18n="donate_fee_label">{{ t('donate_fee_label') }}</span>: <strong class="ic-44" id="fee-amount">+0,72 €</strong> → Gesamt: <strong class="u-green" id="fee-total">15,72 €</strong></span>
       </label>
     </div>
@@ -289,7 +289,7 @@
   <h2 id="reg-h2">{{ t('a_h2') | safe }}</h2>
   <p class="section-desc" id="reg-intro">{{ t('a_intro') }}</p>
 
-  <form class="form-wrap" id="reg-form" onsubmit="handleReg(event)" novalidate>
+  <form class="form-wrap" id="reg-form" novalidate>
     <div class="form-group">
       <label id="lbl-name" for="inp-name">{{ t('a_lbl_name') }}</label>
       <input type="text" id="inp-name" autocomplete="name" name="name" placeholder="{{ t('a_ph_name') }}">
@@ -300,7 +300,7 @@
     </div>
     <div class="form-group">
       <label id="lbl-role" for="reg-role">{{ t('a_lbl_role') }}</label>
-      <select name="gruppe" id="reg-role" onchange="checkRegRole(this)">
+      <select name="gruppe" id="reg-role">
         {% for opt_val, opt_key in [('interessent','a_opt_interessent'), ('wissenschaftler','a_opt_wissenschaftler'), ('entwickler','a_opt_entwickler'), ('unterstuetzer','a_opt_unterstuetzer'), ('foerderer','a_opt_foerderer')] %}
         <option value="{{ opt_val }}">{{ t(opt_key) }}</option>
         {% endfor %}
@@ -322,11 +322,11 @@
       <p class="ic-53" id="node-q-text">{{ t('a_node_question') }}</p>
       <div class="u-flex-wrap">
         <label class="mg-radio-label">
-          <input class="mg-radio-accent" type="radio" name="node_interest" value="ja" id="node-yes" onchange="showNodePanel(true)">
+          <input class="mg-radio-accent" type="radio" name="node_interest" value="ja" id="node-yes">
           <span id="node-yes-label">{{ t('a_node_yes') }}</span>
         </label>
         <label class="mg-radio-label">
-          <input class="mg-radio-accent" type="radio" name="node_interest" value="nein" id="node-no" onchange="showNodePanel(false)" checked>
+          <input class="mg-radio-accent" type="radio" name="node_interest" value="nein" id="node-no" checked>
           <span id="node-no-label">{{ t('a_node_no') }}</span>
         </label>
       </div>
@@ -363,7 +363,7 @@
      jetzt Teil der zentralen Playlist (base.html), siehe medien.html. -->
 
 <div class="ic-55" id="node-panel" hidden>
-  <button class="ic-56" onclick="closeNodePanel()">✕</button>
+  <button class="ic-56" id="node-panel-close">✕</button>
 
   <div class="ic-57">
     <p class="ic-58" id="node-panel-label">Bewerbung</p>
@@ -388,7 +388,7 @@
       </div>
     </div>
 
-    <form id="node-form" onsubmit="handleNodeApply(event)" novalidate>
+    <form id="node-form" novalidate>
       <input type="hidden" name="type" value="node_bewerbung">
 
       <div class="form-group">
@@ -407,7 +407,7 @@
         <label id="node-lbl-address" for="node-inp-address">{{ t('a_node_lbl_address') }}</label>
         <div class="ic-65">
           <input class="ic-66" type="text" id="node-inp-address" name="adresse" autocomplete="street-address" placeholder="{{ t('a_node_ph_address') }}">
-          <button class="ic-67" type="button" id="node-geocode-btn" onclick="geocodeNodeAddress()" title="{{ t('a_node_geocode_btn') }}">📍</button>
+          <button class="ic-67" type="button" id="node-geocode-btn" title="{{ t('a_node_geocode_btn') }}">📍</button>
         </div>
         <p class="ic-68" id="node-geocode-hint">{{ t('a_node_geocode_hint') }}</p>
         <p class="ic-69" id="node-geocode-error" hidden></p>
@@ -457,7 +457,7 @@
       <p data-i18n-html="about_p3">{{ t('about_p3') | safe }}</p>
       <div class="ic-74">
         <a href="mailto:kontakt@openmyconet.de" class="btn btn-amber" data-i18n="btn_contact">{{ t('btn_contact') }}</a>
-        <button onclick="document.getElementById('omn-fab').click()" class="btn ic-75" data-i18n="btn_fragen">{{ t('btn_fragen') }}</button>
+        <button class="btn ic-75 js-open-chat" data-i18n="btn_fragen">{{ t('btn_fragen') }}</button>
       </div>
     </div>
     <div class="facts" id="facts-grid">
@@ -468,7 +468,7 @@
   </div>
 </section>
 
-<button class="ic-76" id="omn-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Nach oben" aria-label="Nach oben">
+<button class="ic-76" id="omn-to-top" title="Nach oben" aria-label="Nach oben">
   <svg class="ic-77" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><polygon points="8,2 14,10 10,10 10,14 6,14 6,10 2,10"/></svg>
 </button>
 {% endblock %}
@@ -986,7 +986,39 @@ function setLang(lang) {
   renderDynamicSections(lang);
   renderRegForm(lang);
 }
+
+// ── Handler-Verdrahtung statt on*=-Attribute (CSP script-src ohne 'unsafe-inline') ──
+(function(){
+  function byId(id){ return document.getElementById(id); }
+  var openChat = function(){ var f = byId('omn-fab'); if (f) f.click(); };
+  document.querySelectorAll('.js-open-chat').forEach(function(b){ b.addEventListener('click', openChat); });
+
+  var leih = byId('btn-leihgeraet');
+  if (leih) leih.addEventListener('click', function(){
+    var y = byId('node-yes'); if (y) y.checked = true;
+    showNodePanel(true);
+  });
+
+  document.querySelectorAll('.amt-btn').forEach(function(b){
+    b.addEventListener('click', function(){ selectAmt(b, parseInt(b.getAttribute('data-amt'), 10)); });
+  });
+
+  var cf = byId('cover-fees');       if (cf) cf.addEventListener('change', updateFeeBox);
+  var rf = byId('reg-form');         if (rf) rf.addEventListener('submit', handleReg);
+  var rr = byId('reg-role');         if (rr) rr.addEventListener('change', function(){ checkRegRole(rr); });
+  var ny = byId('node-yes');         if (ny) ny.addEventListener('change', function(){ showNodePanel(true); });
+  var nn = byId('node-no');          if (nn) nn.addEventListener('change', function(){ showNodePanel(false); });
+  var npc = byId('node-panel-close');if (npc) npc.addEventListener('click', closeNodePanel);
+  var nf = byId('node-form');        if (nf) nf.addEventListener('submit', handleNodeApply);
+  var ngb = byId('node-geocode-btn');if (ngb) ngb.addEventListener('click', geocodeNodeAddress);
+  var top = byId('omn-to-top');      if (top) top.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  document.querySelectorAll('.social-bar a[data-share]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); shareSocial(a.getAttribute('data-share')); });
+  });
+})();
 </script>
+
 
 <script nonce="{{ csp_nonce }}">
 if ('serviceWorker' in navigator) {
@@ -1060,11 +1092,11 @@ if ('serviceWorker' in navigator) {
 
 <!-- Social Sharing Floating Bar -->
 <div class="social-bar" id="social-bar">
-  <a href="#" onclick="shareSocial('facebook');return false;" aria-label="Facebook">
+  <a href="#" data-share="facebook" aria-label="Facebook">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
     <span class="tip">Facebook</span>
   </a>
-  <a href="#" onclick="shareSocial('x');return false;" aria-label="X">
+  <a href="#" data-share="x" aria-label="X">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     <span class="tip">X / Twitter</span>
   </a>
@@ -1072,19 +1104,19 @@ if ('serviceWorker' in navigator) {
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
     <span class="tip">Instagram</span>
   </a>
-  <a href="#" onclick="shareSocial('reddit');return false;" aria-label="Reddit">
+  <a href="#" data-share="reddit" aria-label="Reddit">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 12a2 2 0 0 0-3.37-1.45A10.06 10.06 0 0 0 12 9a10.06 10.06 0 0 0-4.63 1.55A2 2 0 1 0 5 13.1 4.94 4.94 0 0 0 5 14c0 2.76 3.13 5 7 5s7-2.24 7-5a4.94 4.94 0 0 0 0-.9A2 2 0 0 0 20 12z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/><path d="M9.5 17a4 4 0 0 0 5 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="16.5" cy="4.5" r="1.5"/><path d="M14 4.5h2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     <span class="tip">Reddit</span>
   </a>
-  <a href="#" onclick="shareSocial('linkedin');return false;" aria-label="LinkedIn">
+  <a href="#" data-share="linkedin" aria-label="LinkedIn">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
     <span class="tip">LinkedIn</span>
   </a>
-  <a href="#" onclick="shareSocial('whatsapp');return false;" aria-label="WhatsApp">
+  <a href="#" data-share="whatsapp" aria-label="WhatsApp">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.986-1.401A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
     <span class="tip">WhatsApp</span>
   </a>
-  <a href="#" onclick="shareSocial('mastodon');return false;" aria-label="Mastodon">
+  <a href="#" data-share="mastodon" aria-label="Mastodon">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.272-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.545-1.357 1.62v5.099H6.026V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.409 2.405 1.228l.518.869.519-.869c.533-.819 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg>
     <span class="tip">Mastodon</span>
   </a>
