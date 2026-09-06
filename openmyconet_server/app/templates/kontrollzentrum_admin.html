@@ -19,6 +19,15 @@
   <a href="?refresh=1">↻ Jetzt aktualisieren</a>
 </div>
 
+<div class="kz-aktionen">
+  <form method="POST" action="{{ url_for('admin.backup_jetzt') }}">
+    <button type="submit">💾 Backup jetzt</button>
+  </form>
+  <form method="POST" action="{{ url_for('admin.backup_restore_check') }}">
+    <button type="submit">🔁 Restore-Check jetzt</button>
+  </form>
+</div>
+
 {% set KZ_EMOJI = {'ok': '🟢', 'fehler': '🔴', 'neutral': '⚪'} %}
 <div class="kz-grid">
   {% for r in ergebnisse %}

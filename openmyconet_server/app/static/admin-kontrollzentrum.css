@@ -1,5 +1,8 @@
   .kz-kopf { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.2rem; }
   .kz-kopf .zeit { font-size:0.85em; color:var(--ink-soft, #666); }
+  .kz-aktionen { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.2rem; }
+  .kz-aktionen form { margin:0; }
+  .kz-aktionen button { cursor:pointer; }
   .kz-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.8rem; }
   details.kz-tile { border-radius:8px; padding:0.9rem 1rem; min-height:70px; border:1px solid; }
   details.kz-tile.ok { background:var(--good-bg); border-color:var(--good); }

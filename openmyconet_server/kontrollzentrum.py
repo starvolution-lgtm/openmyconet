@@ -15,6 +15,7 @@ kein "alles gut" -- alle anderen Checks liefern ausschliesslich ok/fehler
 (strikte 2-Farben-Ampel).
 """
 
+import glob
 import os
 import smtplib
 import time
@@ -89,6 +90,49 @@ def check_anthropic_key():
     return 'fehler', 'ANTHROPIC_API_KEY nicht gesetzt -- Chatbot kann nicht antworten'
 
 
+BACKUP_DIR = os.getenv('BACKUP_DIR', '/home/omn/backups')
+BACKUP_MAX_ALTER_H = 26   # taeglicher Cron 02:30 -> alles unter 26 h ist frisch
+
+
+def _juengstes_backup():
+    dateien = glob.glob(os.path.join(BACKUP_DIR, 'openmyconet-*.db.gz'))
+    if not dateien:
+        return None, 0, 0
+    neuste = max(dateien, key=os.path.getmtime)
+    alter_h = (time.time() - os.path.getmtime(neuste)) / 3600
+    gesamt_mb = sum(os.path.getsize(d) for d in dateien) / 1024 / 1024
+    return alter_h, len(dateien), gesamt_mb
+
+
+def check_backup():
+    """DB-Backup: ist ein frischer lokaler Snapshot da? (deploy/backup_db.sh)"""
+    if not os.path.isdir(BACKUP_DIR):
+        return None   # Verzeichnis fehlt (z.B. lokal) -> Kachel weglassen
+    alter_h, anzahl, gesamt_mb = _juengstes_backup()
+    if alter_h is None:
+        return 'fehler', f'Kein Backup in {BACKUP_DIR} -- Cron eingerichtet? (deploy/install_backup_cron.sh)'
+    detail = f'{anzahl} Backups, {gesamt_mb:.1f} MB, letztes vor {alter_h:.0f} h'
+    if alter_h > BACKUP_MAX_ALTER_H:
+        return 'fehler', f'Juengstes Backup ist {alter_h:.0f} h alt (> {BACKUP_MAX_ALTER_H} h) -- {detail}'
+    return 'ok', detail
+
+
+def check_backup_offsite():
+    """Offsite-Kopie zu All-inkl -- nur wenn konfiguriert (.env BACKUP_FTP_HOST)."""
+    if not os.path.isdir(BACKUP_DIR):
+        return None
+    marker = os.path.join(BACKUP_DIR, '.offsite-letzter-erfolg')
+    konfiguriert = bool(os.getenv('BACKUP_FTP_HOST'))
+    if not konfiguriert and not os.path.exists(marker):
+        return None   # nicht eingerichtet -> kein Fehler, Kachel weglassen
+    if not os.path.exists(marker):
+        return 'fehler', 'Offsite konfiguriert, aber noch kein erfolgreicher Upload'
+    alter_h = (time.time() - os.path.getmtime(marker)) / 3600
+    if alter_h > BACKUP_MAX_ALTER_H:
+        return 'fehler', f'Letzter Offsite-Upload vor {alter_h:.0f} h (> {BACKUP_MAX_ALTER_H} h)'
+    return 'ok', f'letzter Upload vor {alter_h:.0f} h'
+
+
 def check_mailserver():
     server = os.getenv('MAIL_SERVER')
     port = int(os.getenv('MAIL_PORT', 587))
@@ -148,6 +192,8 @@ SCHNELLE_CHECKS = [
     ('sw', 'Service-Worker Admin-Ausschluss', check_sw_admin_ausschluss),
     ('db', 'Datenbank', check_datenbank),
     ('anthropic', 'Chatbot-API-Key', check_anthropic_key),
+    ('backup', 'Datenbank-Backup', check_backup),
+    ('backup_offsite', 'Backup Offsite (All-inkl)', check_backup_offsite),
 ]
 
 # Echte Netzwerk-Checks (spuerbare Latenz moeglich) -- diese duerfen parallel

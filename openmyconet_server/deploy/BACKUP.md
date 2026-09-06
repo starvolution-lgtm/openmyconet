@@ -26,6 +26,15 @@ Trägt idempotent ein: DB-Backup täglich 02:30, Restore-Check montags 04:15.
 Beides loggt nach `/home/omn/app/*.log`. Bestehende Zeilen mit demselben
 Skriptnamen werden vorher entfernt.
 
+## Vom Kontrollzentrum aus (`/admin/kontrollzentrum`)
+
+- Zwei Kacheln: **Datenbank-Backup** (frischer lokaler Snapshot < 26 h?) und
+  **Backup Offsite (All-inkl)** (letzter Upload < 26 h? — Kachel erscheint nur,
+  wenn `BACKUP_FTP_HOST` gesetzt ist).
+- Zwei Buttons oben: **💾 Backup jetzt** und **🔁 Restore-Check jetzt** —
+  führen `deploy/backup_db.sh` bzw. `deploy/restore_check.sh` direkt aus und
+  zeigen die Ausgabe als Meldung. Auch vom Handy.
+
 ## Restore-Check (safe, greift die Live-DB NIE an)
 
 ```

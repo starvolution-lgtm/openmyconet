@@ -69,6 +69,8 @@ PASS_ESC=${PASS_ESC//\"/\\\"}
 # Hochladen (--ftp-create-dirs legt $DIR an, falls noetig)
 curl -K "$CFG" --ftp-create-dirs -T "$LOCAL" "$BASE$DIR/$NAME"
 echo "$(date '+%F %T')  Offsite hochgeladen: $DIR/$NAME"
+# Marker fuer das Kontrollzentrum (check_backup_offsite)
+date '+%F %T' > "$(dirname "$LOCAL")/.offsite-letzter-erfolg"
 
 # Rotation auf der Gegenseite
 mapfile -t REMOTE < <(curl -K "$CFG" --list-only "$BASE$DIR/" \
