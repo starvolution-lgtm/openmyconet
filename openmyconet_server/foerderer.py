@@ -18,6 +18,7 @@ import uuid
 # lokale Dateien lesen oder SSRF ausloesen. defusedxml deaktiviert Entities,
 # externe DTDs und Entity-Expansion und wirft dann eine DefusedXmlException.
 import defusedxml.ElementTree as ET
+import xml.etree.ElementTree as _stdET  # nur fuers Serialisieren (tostring), kein Parsen
 from defusedxml.common import DefusedXmlException
 from datetime import timedelta
 from urllib.parse import urlencode, quote
@@ -70,20 +71,80 @@ def _email_gueltig(email):
     return bool(re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email or ''))
 
 
+# SVG-Sanitisierung: hochgeladene Logos werden per <img> eingebunden (dort keine
+# Skriptausfuehrung), liegen aber unter einer oeffentlichen URL unter
+# www.openmyconet.de/ -- ohne CSP-Header (nginx liefert /uploads/ direkt aus).
+# Wird die .svg-Datei direkt aufgerufen, laeuft eingebettetes <script>/on*= in
+# unserer eigenen Origin -> Stored XSS. Deshalb: strikte Allowlist an Elementen,
+# keine Event-Handler, keine externen/js-Referenzen, keine url() in Styles.
+_SVG_NS = 'http://www.w3.org/2000/svg'
+_SVG_TAGS_OK = {
+    'svg', 'g', 'defs', 'title', 'desc', 'style', 'symbol', 'use',
+    'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon',
+    'text', 'tspan', 'textpath',
+    'lineargradient', 'radialgradient', 'stop', 'clippath', 'mask', 'pattern',
+}
+_SVG_URL_GIFT = re.compile(r'url\s*\(|@import|expression\s*\(|javascript:', re.I)
+
+
+def _svg_lokalname(tag):
+    return tag.rsplit('}', 1)[-1].lower() if isinstance(tag, str) else ''
+
+
+def _svg_bereinigen(roh_bytes):
+    """Gibt bereinigte SVG-Bytes zurueck oder None, wenn das Ergebnis kein
+    brauchbares SVG mehr ist."""
+    try:
+        root = ET.fromstring(roh_bytes)
+    except (ET.ParseError, DefusedXmlException):
+        return None
+    if _svg_lokalname(root.tag) != 'svg':
+        return None
+
+    def saeubere(el):
+        for kind in list(el):
+            if _svg_lokalname(kind.tag) not in _SVG_TAGS_OK:
+                el.remove(kind)
+            else:
+                saeubere(kind)
+        for name in list(el.attrib):
+            lname = _svg_lokalname(name)
+            wert = el.attrib[name]
+            if lname.startswith('on'):
+                del el.attrib[name]
+            elif lname in ('href', 'xlink:href') or name.endswith('}href'):
+                # nur interne Fragment-Referenzen (#id) erlauben
+                if not wert.strip().startswith('#'):
+                    del el.attrib[name]
+            elif lname == 'style' and _SVG_URL_GIFT.search(wert):
+                del el.attrib[name]
+
+    saeubere(root)
+    # <style>-Elemente mit externen/aktiven Konstrukten komplett leeren
+    for el in root.iter():
+        if _svg_lokalname(el.tag) == 'style' and el.text and _SVG_URL_GIFT.search(el.text):
+            el.text = ''
+
+    _stdET.register_namespace('', _SVG_NS)
+    return _stdET.tostring(root, encoding='utf-8')
+
+
 def _logo_inhalt_gueltig(logo_file, ext):
     """Prueft, ob die hochgeladene Datei ein echtes, nicht beschaedigtes Bild ist
-    und (bei Raster-Formaten) keine unsinnig hohe Aufloesung hat. Gibt (True, '')
-    bei Erfolg zurueck, sonst (False, Fehlermeldung). logo_file.seek(0) danach
-    noetig, da PIL/ET den Stream konsumieren."""
+    und (bei Raster-Formaten) keine unsinnig hohe Aufloesung hat. Bei SVG wird
+    der Inhalt zusaetzlich bereinigt und in den Stream zurueckgeschrieben.
+    Gibt (True, '') bei Erfolg zurueck, sonst (False, Fehlermeldung)."""
     if ext == 'svg':
-        try:
-            root = ET.parse(logo_file).getroot()
-        except (ET.ParseError, DefusedXmlException):
+        roh = logo_file.read()
+        logo_file.seek(0)
+        sauber = _svg_bereinigen(roh)
+        if sauber is None:
             return False, 'Logo: Datei ist kein gueltiges SVG (beschaedigt, kein XML oder unerlaubte Konstrukte).'
-        finally:
-            logo_file.seek(0)
-        if not root.tag.endswith('svg'):
-            return False, 'Logo: Datei ist kein gueltiges SVG.'
+        # bereinigte Fassung fuer den nachfolgenden .save()-Aufruf hinterlegen
+        logo_file.stream.seek(0)
+        logo_file.stream.truncate(0)
+        logo_file.stream.write(sauber)
+        logo_file.stream.seek(0)
         return True, ''
 
     try:

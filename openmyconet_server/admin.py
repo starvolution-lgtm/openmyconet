@@ -13,6 +13,7 @@ import bleach
 import pyotp
 import qrcode
 import qrcode.image.svg
+from PIL import Image, UnidentifiedImageError
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
     session, flash, current_app, abort, send_file
@@ -119,6 +120,15 @@ def save_news_image(file_storage):
     ext = file_storage.filename.rsplit('.', 1)[-1].lower()
     if ext not in ALLOWED_IMAGE_EXT:
         return False
+    # Nicht nur der Endung trauen: Pillow muss die Datei als echtes Bild
+    # erkennen. Faengt umbenannte Nicht-Bilder (HTML/SVG/Skript mit .png) und
+    # beschaedigte Uploads ab, bevor sie unter /static/ landen.
+    try:
+        Image.open(file_storage.stream).verify()
+    except (UnidentifiedImageError, OSError, ValueError):
+        return False
+    finally:
+        file_storage.stream.seek(0)
     filename = f'{uuid.uuid4().hex}.{ext}'
     upload_dir = os.path.join(current_app.static_folder, UPLOAD_SUBDIR)
     os.makedirs(upload_dir, exist_ok=True)
@@ -597,7 +607,7 @@ def news_admin():
         sprache = request.form.get('sprache', 'de')
         bild_dateiname = save_news_image(request.files.get('bild'))
         if bild_dateiname is False:
-            fehler = 'Ungültiges Bildformat (erlaubt: png, jpg, jpeg, webp, gif).'
+            fehler = 'Bild abgelehnt: kein gültiges Bild oder falsches Format (erlaubt: png, jpg, jpeg, webp, gif).'
         else:
             slug = generate_unique_slug(titel)
             news = News(titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags, sprache=sprache, bild_dateiname=bild_dateiname, slug=slug)
