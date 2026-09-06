@@ -363,9 +363,12 @@ def _backup_skript_laufen_lassen(skript, label):
     if not os.path.isfile(pfad):
         flash(f'{label}: {skript} nicht gefunden.', 'error')
         return
+    # gunicorn erbt ein abgespecktes PATH -- ohne dieses Env findet bash
+    # date/gzip/curl nicht (Code 127), wenn der Button das Skript startet.
+    umgebung = {**os.environ, 'PATH': '/usr/local/bin:/usr/bin:/bin'}
     try:
         r = subprocess.run(  # nosec B603 -- feste Skriptpfade aus dem Repo, keine Shell, kein Input
-            ['/bin/bash', pfad], cwd=current_app.root_path,
+            ['/bin/bash', pfad], cwd=current_app.root_path, env=umgebung,
             capture_output=True, text=True, timeout=180, check=False,
         )
         ausgabe = (r.stdout + r.stderr).strip()

@@ -10,13 +10,15 @@
 # - integrity_check auf dem Ergebnis; schlaegt sie fehl, wird das Backup NICHT
 #   behalten (Exit 2).
 # - gzip, dann Rotation: die letzten $KEEP Backups bleiben.
-# - Optionaler Offsite-Push, wenn deploy/backup_offsite.sh existiert und in
-#   der .env BACKUP_SFTP_HOST gesetzt ist (sonst uebersprungen).
+# - Optionaler Offsite-Push (FTPS zu All-inkl), wenn deploy/backup_offsite.sh
+#   existiert und in der .env BACKUP_FTP_HOST gesetzt ist (sonst uebersprungen).
 #
 # Cron (omn): taeglich 02:30, vor den bestehenden 03:xx-Cronjobs:
 #   30 2 * * * cd /home/omn/app && bash deploy/backup_db.sh >> /home/omn/app/backup_db.log 2>&1
 # ---------------------------------------------------------------------------
 set -euo pipefail
+# gunicorn (Button im Kontrollzentrum) erbt ein abgespecktes PATH.
+export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 APP=/home/omn/app
 PY="$APP/venv/bin/python3"

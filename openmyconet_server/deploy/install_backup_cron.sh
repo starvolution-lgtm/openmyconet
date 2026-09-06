@@ -10,6 +10,8 @@
 # gefahrlos mehrfach ausfuehrbar.
 # ---------------------------------------------------------------------------
 set -euo pipefail
+# gunicorn (Button im Kontrollzentrum) erbt ein abgespecktes PATH.
+export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 BACKUP_LINE='30 2 * * * cd /home/omn/app && bash deploy/backup_db.sh >> /home/omn/app/backup_db.log 2>&1'
 CHECK_LINE='15 4 * * 1 cd /home/omn/app && bash deploy/restore_check.sh >> /home/omn/app/restore_check.log 2>&1'

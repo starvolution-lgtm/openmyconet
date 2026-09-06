@@ -17,6 +17,8 @@
 # Echte Wiederherstellung in die Produktion: siehe deploy/BACKUP.md.
 # ---------------------------------------------------------------------------
 set -euo pipefail
+# gunicorn (Button im Kontrollzentrum) erbt ein abgespecktes PATH.
+export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 APP=/home/omn/app
 PY="$APP/venv/bin/python3"

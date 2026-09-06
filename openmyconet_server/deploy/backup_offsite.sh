@@ -17,6 +17,8 @@
 # eine temporaere curl-Konfig (chmod 600), nicht ueber die Kommandozeile.
 # ---------------------------------------------------------------------------
 set -euo pipefail
+# gunicorn (Button im Kontrollzentrum) erbt ein abgespecktes PATH.
+export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 LOCAL="${1:?Pfad zur Backup-Datei fehlt}"
 APP=/home/omn/app
