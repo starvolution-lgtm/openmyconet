@@ -5,7 +5,10 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from datetime import timedelta
 import os
+
+import zeit
 
 from extensions import db, mail
 from models import Nutzer, Knoten, Messung, News, Spende, ContentBlock
@@ -232,12 +235,15 @@ def _sicherheits_header(response):
 
 # security.txt (RFC 9116) -- Anlaufstelle fuer Schwachstellenmeldungen.
 # Als Route statt statische Datei, weil nginx /.well-known/ je nach Config
-# ausblendet und die Route das Ablaufdatum an einer Stelle haelt.
-# WICHTIG: 'Expires' regelmaessig verlaengern (jaehrlich) -- ein abgelaufenes
-# security.txt gilt als ungueltig.
+# ausblendet. 'Expires' wird beim Start auf ~13 Monate in der Zukunft gesetzt
+# (RFC 9116 empfiehlt < 1 Jahr Restlaufzeit) -- solange die App regelmaessig
+# neu deployt/durchgestartet wird, laeuft die Datei nie ab, kein Merkposten
+# noetig. Bei sehr langer Standzeit ohne Neustart wuerde sie irgendwann
+# ungueltig; das faellt dann im Monitoring auf.
+_SECURITY_EXPIRES = (zeit.utcnow() + timedelta(days=395)).strftime('%Y-%m-%dT00:00:00.000Z')
 _SECURITY_TXT = (
     "Contact: mailto:kontakt@openmyconet.de\n"
-    "Expires: 2027-09-06T00:00:00.000Z\n"
+    f"Expires: {_SECURITY_EXPIRES}\n"
     "Preferred-Languages: de, en\n"
     "Canonical: https://www.openmyconet.de/.well-known/security.txt\n"
 )
