@@ -1,7 +1,7 @@
 {
   "name": "OpenMycoNet — Listen to the Forest",
   "short_name": "OpenMycoNet",
-  "description": "Weltweites Citizen-Science-Netzwerk für bioelektrische Signale aus Mykorrhiza-Netzwerken",
+  "description": "Citizen-Science-Projekt im Aufbau: ein weltweit vernetzbares System für bioelektrische Signale aus Mykorrhiza-Netzwerken",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0f0a",

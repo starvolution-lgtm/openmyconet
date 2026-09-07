@@ -27,7 +27,7 @@ var FAQ_BY_LANG = {
   de: [
     { cat: 'Über OpenMycoNet', items: [
       { q: 'Was ist OpenMycoNet?',
-        a: 'Ein weltweites Citizen-Science-Netzwerk, das elektrische Aktivität in Mykorrhiza- und Pilznetzwerken erfasst — zusammen mit den Umweltbedingungen am Messort. Die Aktivität ist messbar; die Frage ist, was ihre wiederkehrenden Muster bedeuten.' },
+        a: 'Ein Citizen-Science-Projekt im Aufbau: ein weltweit vernetzbares System, das elektrische Aktivität in Mykorrhiza- und Pilznetzwerken erfasst — zusammen mit den Umweltbedingungen am Messort. Die Aktivität ist messbar; die Frage ist, was ihre wiederkehrenden Muster bedeuten.' },
       { q: 'Wer steht hinter dem Projekt?',
         a: 'OpenMycoNet wurde von Robert Jank initiiert, einem unabhängigen Erfinder aus Maintal bei Frankfurt, ohne Institutszugehörigkeit. Die genutzte BioComm-Technologie umfasst geschützte technische Entwicklungen; Schutzrechte und Forschungsdaten bleiben strikt getrennt.' },
       { q: 'Was wird gemessen?',
@@ -93,7 +93,7 @@ var FAQ_BY_LANG = {
   en: [
     { cat: 'About OpenMycoNet', items: [
       { q: 'What is OpenMycoNet?',
-        a: 'A global citizen science network that records electrical activity in mycorrhizal and fungal networks — together with the environmental conditions at the measurement site. The activity is measurable; the question is what its recurring patterns mean.' },
+        a: 'A citizen science project in the making: a system that can be networked worldwide, recording electrical activity in mycorrhizal and fungal networks — together with the environmental conditions at the measurement site. The activity is measurable; the question is what its recurring patterns mean.' },
       { q: 'Who is behind the project?',
         a: 'OpenMycoNet was initiated by Robert Jank, an independent inventor from Maintal near Frankfurt, without institutional affiliation. The BioComm technology used includes protected technical developments; intellectual property and research data are kept strictly separate.' },
       { q: 'What is being measured?',
@@ -159,7 +159,7 @@ var FAQ_BY_LANG = {
   nl: [
     { cat: 'Over OpenMycoNet', items: [
       { q: 'Wat is OpenMycoNet?',
-        a: 'Een wereldwijd citizen science-netwerk dat elektrische activiteit in mycorrhiza- en schimmelnetwerken registreert — samen met de omgevingsomstandigheden op de meetlocatie. De activiteit is meetbaar; de vraag is wat de terugkerende patronen ervan betekenen.' },
+        a: 'Een citizen science-project in opbouw: een wereldwijd koppelbaar systeem dat elektrische activiteit in mycorrhiza- en schimmelnetwerken registreert — samen met de omgevingsomstandigheden op de meetlocatie. De activiteit is meetbaar; de vraag is wat de terugkerende patronen ervan betekenen.' },
       { q: 'Wie staat er achter het project?',
         a: 'OpenMycoNet werd geïnitieerd door Robert Jank, een onafhankelijk uitvinder uit Maintal bij Frankfurt, zonder institutionele binding. De gebruikte BioComm-technologie omvat beschermde technische ontwikkelingen; beschermingsrechten en onderzoeksdata blijven strikt gescheiden.' },
       { q: 'Wat wordt er gemeten?',
@@ -225,7 +225,7 @@ var FAQ_BY_LANG = {
   fr: [
     { cat: "À propos d'OpenMycoNet", items: [
       { q: "Qu'est-ce qu'OpenMycoNet ?",
-        a: "Un réseau mondial de science citoyenne qui enregistre l'activité électrique dans les réseaux mycorhiziens et fongiques — ainsi que les conditions environnementales sur le site de mesure. L'activité est mesurable ; la question est ce que signifient ses motifs récurrents." },
+        a: "Un projet de science citoyenne en construction : un système interconnectable à l'échelle mondiale qui enregistre l'activité électrique dans les réseaux mycorhiziens et fongiques — ainsi que les conditions environnementales sur le site de mesure. L'activité est mesurable ; la question est ce que signifient ses motifs récurrents." },
       { q: 'Qui est derrière le projet ?',
         a: "OpenMycoNet a été initié par Robert Jank, inventeur indépendant de Maintal près de Francfort, sans appartenance institutionnelle. La technologie BioComm utilisée comprend des développements techniques protégés ; les droits de protection et les données de recherche restent strictement séparés." },
       { q: 'Que mesure-t-on ?',
@@ -291,7 +291,7 @@ var FAQ_BY_LANG = {
   es: [
     { cat: 'Sobre OpenMycoNet', items: [
       { q: '¿Qué es OpenMycoNet?',
-        a: 'Una red mundial de ciencia ciudadana que registra actividad eléctrica en redes micorrícicas y fúngicas — junto con las condiciones ambientales del lugar de medición. La actividad es medible; la pregunta es qué significan sus patrones recurrentes.' },
+        a: 'Un proyecto de ciencia ciudadana en construcción: un sistema conectable a escala mundial que registra actividad eléctrica en redes micorrícicas y fúngicas — junto con las condiciones ambientales del lugar de medición. La actividad es medible; la pregunta es qué significan sus patrones recurrentes.' },
       { q: '¿Quién está detrás del proyecto?',
         a: 'OpenMycoNet fue iniciado por Robert Jank, un inventor independiente de Maintal, cerca de Fráncfort, sin afiliación institucional. La tecnología BioComm utilizada incluye desarrollos técnicos protegidos; los derechos de protección y los datos de investigación se mantienen estrictamente separados.' },
       { q: '¿Qué se mide?',
