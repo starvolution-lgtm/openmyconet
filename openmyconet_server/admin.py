@@ -58,7 +58,7 @@ schuetze_blueprint(admin_bp)  # CSRF-Pruefung fuer alle POST-Routen des Admin-Pa
 
 ALLOWED_IMAGE_EXT = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 UPLOAD_SUBDIR = 'news'  # unter app.config['UPLOAD_ROOT']
-MAX_NEWS_DIM = 1600  # px laengste Kante -- News-Bilder werden beim Upload verkleinert
+MAX_NEWS_DIM = 1600  # px laengste Kante -- News-Bilder werden beim Upload verkleinert + nach WebP konvertiert
 
 NEWS_HTML_TAGS = ['p', 'br', 'strong', 'em', 'u', 's', 'blockquote', 'h1', 'h2', 'h3', 'ol', 'ul', 'li', 'a', 'img', 'span']
 NEWS_HTML_ATTRS = {
@@ -151,31 +151,27 @@ def save_news_image(file_storage):
     finally:
         file_storage.stream.seek(0)
 
-    filename = f'{uuid.uuid4().hex}.{ext}'
     upload_dir = os.path.join(current_app.config['UPLOAD_ROOT'], UPLOAD_SUBDIR)
     os.makedirs(upload_dir, exist_ok=True)
-    ziel = os.path.join(upload_dir, filename)
 
-    # Animierte GIFs nicht kaputt-resizen -- unveraendert speichern.
+    # Animierte GIFs unveraendert lassen -- WebP-Animation ueber Pillow ist
+    # fragil, und ein bewusst animiertes GIF soll animiert bleiben.
     if ext == 'gif':
-        file_storage.save(ziel)
+        filename = f'{uuid.uuid4().hex}.gif'
+        file_storage.save(os.path.join(upload_dir, filename))
         return filename
 
-    # Alles andere: auf MAX_NEWS_DIM verkleinern + neu kodieren. Ein 4000-px-
-    # Handy-Foto (mehrere MB) wird so ~150-300 KB -- gut fuer die Ladezeit und
-    # loest das "Request Entity Too Large" beim Veroeffentlichen.
+    # Alles andere -> auf MAX_NEWS_DIM verkleinern und als WebP speichern.
+    # WebP ist bei gleicher Qualitaet deutlich kleiner als JPEG/PNG; ein
+    # 4000-px-Handy-Foto (mehrere MB) wird so ~80-200 KB.
+    filename = f'{uuid.uuid4().hex}.webp'
     try:
         img = ImageOps.exif_transpose(Image.open(file_storage.stream))
         if max(img.size) > MAX_NEWS_DIM:
             img.thumbnail((MAX_NEWS_DIM, MAX_NEWS_DIM))
-        opts = {'optimize': True}
-        if ext in ('jpg', 'jpeg'):
-            if img.mode in ('RGBA', 'P', 'LA'):
-                img = img.convert('RGB')
-            opts['quality'] = 82
-        elif ext == 'webp':
-            opts['quality'] = 82
-        img.save(ziel, **opts)
+        if img.mode not in ('RGB', 'RGBA', 'L'):
+            img = img.convert('RGBA')
+        img.save(os.path.join(upload_dir, filename), 'WEBP', quality=82, method=6)
     except (UnidentifiedImageError, OSError, ValueError):
         return False
     finally:

@@ -83,9 +83,9 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['MAX_CONTENT_LENGTH'] = 12 * 1024 * 1024  # 12 MB Gesamt-Request. Handy-Fotos
                                                      # (News-Bild) sind oft 4-8 MB; die werden
-                                                     # serverseitig auf 1600 px verkleinert
-                                                     # (admin.save_news_image). Foerderer-Logo
-                                                     # bleibt bei 5 MB (eigene Meldung).
+                                                     # serverseitig auf 1600 px verkleinert + nach
+                                                     # WebP konvertiert (admin.save_news_image).
+                                                     # Foerderer-Logo bleibt bei 5 MB (eigene Meldung).
 
 # Wurzel fuer Nutzer-Uploads (News-Bilder, Foerderer-Logos). Prod: unter
 # static/, damit url_for('static', ...) sie ausliefert. Tests biegen das auf

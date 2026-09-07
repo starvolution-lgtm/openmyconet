@@ -87,7 +87,7 @@ def test_news_upload_akzeptiert_echtes_png(client, superadmin, monkeypatch):
     assert resp.status_code == 200
 
 
-def test_news_bild_wird_verkleinert(client, app, superadmin, monkeypatch):
+def test_news_bild_wird_verkleinert_und_webp(client, app, superadmin, monkeypatch):
     monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
 
@@ -104,10 +104,13 @@ def test_news_bild_wird_verkleinert(client, app, superadmin, monkeypatch):
     import os
     from PIL import Image as _Img
     pfad = os.path.join(app.config['UPLOAD_ROOT'], 'news')
-    datei = max(glob.glob(os.path.join(pfad, '*.jpg')), key=os.path.getmtime)
+    dateien = glob.glob(os.path.join(pfad, '*'))
+    datei = max(dateien, key=os.path.getmtime)
+    assert datei.endswith('.webp'), f'als {datei} gespeichert, nicht .webp'
     with _Img.open(datei) as im:
+        assert im.format == 'WEBP'
         assert max(im.size) <= 1600
-    assert os.path.getsize(datei) < gross  # deutlich kleiner
+    assert os.path.getsize(datei) < gross
 
 
 def test_413_gibt_freundliche_seite(client, superadmin, monkeypatch):
