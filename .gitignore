@@ -225,3 +225,10 @@ openmyconet/config.php
 # Bild-Originale/Arbeitsordner (nur lokale Master, werden per optimize_images.py
 # zu app/static/*.webp/.jpg verkleinert -- nicht deployt, nicht versioniert)
 openmyconet_server/app/static/Bilder Webseite/
+
+# Nutzer-Uploads sind serververwaltet (deploy-exclude.txt schuetzt sie vor
+# --delete). Nur die beiden echten Foerderer-Logo-Seeds sind bewusst im Git,
+# alles andere (Foerderer-Antrag-Vorschauen prev_*, News-Bilder, Test-Uploads)
+# bleibt lokal/serverseitig.
+openmyconet_server/app/static/uploads/foerderer/prev_*
+openmyconet_server/app/static/uploads/news/

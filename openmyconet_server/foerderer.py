@@ -53,7 +53,7 @@ KATEGORIEN = [
     'Sonstiges',
 ]
 ALLOWED_LOGO_EXT = {'jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'}
-LOGO_UPLOAD_SUBDIR = os.path.join('uploads', 'foerderer')
+LOGO_UPLOAD_SUBDIR = 'foerderer'  # unter app.config['UPLOAD_ROOT']
 MAX_LOGO_BYTES = 5 * 1024 * 1024  # 5 MB
 MAX_LOGO_DIMENSION = 4000  # px, nur fuer Raster-Formate -- verhindert ueberdimensionierte Dateien
 
@@ -229,7 +229,7 @@ def antrag():
                     if not gueltig:
                         fehler.append(fehlermeldung)
                     else:
-                        upload_dir = os.path.join(current_app.static_folder, LOGO_UPLOAD_SUBDIR)
+                        upload_dir = os.path.join(current_app.config['UPLOAD_ROOT'], LOGO_UPLOAD_SUBDIR)
                         os.makedirs(upload_dir, exist_ok=True)
                         logo_datei = f'prev_{uuid.uuid4().hex}.{ext}'
                         logo_file.save(os.path.join(upload_dir, logo_datei))
@@ -354,7 +354,7 @@ def kooperation():
                     if not gueltig:
                         fehler.append(fehlermeldung)
                     else:
-                        upload_dir = os.path.join(current_app.static_folder, LOGO_UPLOAD_SUBDIR)
+                        upload_dir = os.path.join(current_app.config['UPLOAD_ROOT'], LOGO_UPLOAD_SUBDIR)
                         os.makedirs(upload_dir, exist_ok=True)
                         logo_datei = f'prev_{uuid.uuid4().hex}.{ext}'
                         logo_file.save(os.path.join(upload_dir, logo_datei))

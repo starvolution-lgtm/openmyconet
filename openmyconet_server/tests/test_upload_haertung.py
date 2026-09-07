@@ -54,7 +54,7 @@ def test_logo_upload_speichert_bereinigtes_svg(client, app):
 
     import glob
     import os
-    pfad = os.path.join(app.static_folder, 'uploads', 'foerderer')
+    pfad = os.path.join(app.config['UPLOAD_ROOT'], 'foerderer')
     dateien = glob.glob(os.path.join(pfad, 'prev_*.svg'))
     assert dateien, 'kein Logo gespeichert -> Upload-Flow gebrochen'
     with open(max(dateien, key=os.path.getmtime), 'rb') as f:

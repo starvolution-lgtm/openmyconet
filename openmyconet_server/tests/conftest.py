@@ -25,6 +25,7 @@ from werkzeug.security import generate_password_hash
 def app():
     db_fd, db_path = tempfile.mkstemp(suffix='.db')
     instance_dir = tempfile.mkdtemp(suffix='_instance')
+    upload_dir = tempfile.mkdtemp(suffix='_uploads')
     flask_app.config.update(
         TESTING=True,
         SQLALCHEMY_DATABASE_URI=f'sqlite:///{db_path}',
@@ -34,6 +35,10 @@ def app():
         # der Test-Clients schicken kein Token mit. test_csrf.py schaltet ihn
         # gezielt wieder ein, um die Mechanik selbst zu pruefen.
         CSRF_ENABLED=False,
+        # Test-Uploads (News-Bild, Foerderer-Logo) in ein Temp-Verzeichnis --
+        # sonst landen prev_*.svg / Mini-PNGs im echten app/static/uploads/
+        # und wandern per git add -A ins Repo.
+        UPLOAD_ROOT=upload_dir,
     )
     # instance_path zeigt sonst auf den echten Projektordner -- ohne diese
     # Umleitung landen von Tests erzeugte Foerderer-Rechnungs-PDFs
@@ -63,6 +68,7 @@ def app():
     os.close(db_fd)
     os.unlink(db_path)
     shutil.rmtree(instance_dir, ignore_errors=True)
+    shutil.rmtree(upload_dir, ignore_errors=True)
 
 
 @pytest.fixture()

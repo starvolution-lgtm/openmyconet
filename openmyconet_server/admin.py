@@ -57,7 +57,7 @@ def _kanonischer_host():
 schuetze_blueprint(admin_bp)  # CSRF-Pruefung fuer alle POST-Routen des Admin-Panels
 
 ALLOWED_IMAGE_EXT = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
-UPLOAD_SUBDIR = os.path.join('uploads', 'news')
+UPLOAD_SUBDIR = 'news'  # unter app.config['UPLOAD_ROOT']
 
 NEWS_HTML_TAGS = ['p', 'br', 'strong', 'em', 'u', 's', 'blockquote', 'h1', 'h2', 'h3', 'ol', 'ul', 'li', 'a', 'img', 'span']
 NEWS_HTML_ATTRS = {
@@ -150,7 +150,7 @@ def save_news_image(file_storage):
     finally:
         file_storage.stream.seek(0)
     filename = f'{uuid.uuid4().hex}.{ext}'
-    upload_dir = os.path.join(current_app.static_folder, UPLOAD_SUBDIR)
+    upload_dir = os.path.join(current_app.config['UPLOAD_ROOT'], UPLOAD_SUBDIR)
     os.makedirs(upload_dir, exist_ok=True)
     file_storage.save(os.path.join(upload_dir, filename))
     return filename

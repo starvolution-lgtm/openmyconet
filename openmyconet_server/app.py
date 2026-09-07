@@ -85,6 +85,11 @@ app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024  # 6 MB Gesamt-Request (Bildu
                                                      # -- 1 MB Puffer fuer Formularfelder/Multipart-Overhead, damit die
                                                      # eigene 5-MB-Fehlermeldung greift statt Werkzeugs generischer 413.
 
+# Wurzel fuer Nutzer-Uploads (News-Bilder, Foerderer-Logos). Prod: unter
+# static/, damit url_for('static', ...) sie ausliefert. Tests biegen das auf
+# ein Temp-Verzeichnis um (conftest), sonst landen Test-Uploads im Repo.
+app.config['UPLOAD_ROOT'] = os.path.join(app.static_folder, 'uploads')
+
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = True
