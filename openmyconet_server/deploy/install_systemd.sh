@@ -22,21 +22,30 @@ cp "$APP/deploy/omn.service" "$UNIT_DIR/omn.service"
 echo "Unit  -> $UNIT_DIR/omn.service"
 systemctl --user daemon-reload
 
-if systemctl --user is-active --quiet omn; then
-    echo "Unit laeuft bereits -> restart mit neuer Datei"
-    systemctl --user restart omn
-else
-    # evtl. noch laufenden nohup-gunicorn (Alt-Start) sauber beenden
-    ALT=$(pgrep -o -f 'venv/bin/gunicorn' || true)
-    if [ -n "$ALT" ]; then
-        echo "Stoppe Alt-gunicorn (PID $ALT) ..."
-        kill "$ALT" 2>/dev/null || true
-        sleep 2
-    fi
-    systemctl --user enable --now omn
+# Port 5000 muss frei sein, bevor die Unit startet -- sonst scheitert der
+# gunicorn-Bind (Errno 98) und Restart=on-failure laesst die Unit flappen.
+# Das betrifft den allerersten Install (alter nohup-gunicorn haelt den Port).
+systemctl --user stop omn 2>/dev/null || true
+sleep 1
+frei=0
+for i in 1 2 3 4 5 6; do
+    pids=$(ss -H -ltnp 2>/dev/null | awk '/:5000 /{print}' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | sort -u)
+    if [ -z "$pids" ]; then frei=1; echo "Port 5000 frei (Runde $i)"; break; fi
+    echo "Port 5000 haelt: $pids -> kill -9 (Runde $i)"
+    # shellcheck disable=SC2086
+    kill -9 $pids 2>/dev/null || true
+    sleep 2
+done
+if [ "$frei" -ne 1 ]; then
+    echo "FEHLER: Port 5000 laesst sich nicht freiraeumen -- Abbruch."
+    ss -H -ltnp 2>/dev/null | grep ':5000 ' || true
+    exit 1
 fi
 
-sleep 2
+systemctl --user reset-failed omn 2>/dev/null || true
+systemctl --user enable --now omn
+sleep 3
+
 systemctl --user status omn --no-pager -l || true
 echo
 echo "Health-Check: $(curl -s -o /dev/null -m 10 -w '%{http_code}' http://127.0.0.1:5000/ || echo 000)  (200 = ok)"
