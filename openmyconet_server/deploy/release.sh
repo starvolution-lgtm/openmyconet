@@ -17,12 +17,18 @@
 #      schuetzt instance/.env/venv/uploads/logs + serververwaltete Grossmedien)
 #   6. DB-Backup (deploy/backup_db.sh) -- vor den Migrationen
 #   7. Migrationen (nur die idempotenten: add_columns + add_indexes)
-#   8. gunicorn HUP + Health-Check  ->  bei Fehler automatischer Rollback
+#   8. gunicorn reload (systemd-user-Unit 'omn' falls aktiv, sonst kill -HUP)
+#      + Health-Check  ->  bei Fehler automatischer Rollback
 #      (Hinweis: ein Rollback stellt CODE wieder her, nicht die DB und nicht die
 #      venv-Pakete. requirements.txt ist gepinnt; ein DB-Backup liegt in
 #      /home/omn/backups -- Wiederherstellung siehe deploy/BACKUP.md.)
+#      Unit installieren: deploy/install_systemd.sh (einmalig, + root:
+#      loginctl enable-linger omn).
 # ---------------------------------------------------------------------------
 set -euo pipefail
+# systemctl --user aus einem nicht-interaktiven ssh-Kommando braucht diese Env.
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
 APP=/home/omn/app
 TARBALL="${1:?Tarball-Pfad fehlt — Aufruf: release.sh <tarball>}"
@@ -34,19 +40,33 @@ PY="$APP/venv/bin/python"
 
 GPID=$(pgrep -o -f 'venv/bin/gunicorn' || true)
 
+# Reload-Weg: bevorzugt die systemd-user-Unit (Auto-Restart, Journald), sonst
+# der alte kill -HUP auf die gunicorn-Master-PID.
+gunicorn_neu_laden() {
+    if systemctl --user is-active --quiet omn 2>/dev/null; then
+        systemctl --user reload omn
+    elif [ -n "$GPID" ]; then
+        kill -HUP "$GPID"
+    else
+        echo "   WARN: weder systemd-Unit 'omn' aktiv noch ein gunicorn-Prozess gefunden."
+        echo "         Start:  systemctl --user start omn"
+        echo "         oder:   cd $APP && nohup venv/bin/gunicorn -w 2 -b 127.0.0.1:5000 app:app >/dev/null 2>&1 &"
+    fi
+}
+
 DEPLOY_OK=0
 aufraeumen() {
     if [ "$DEPLOY_OK" -ne 1 ] && [ -d "$BACKUP" ]; then
         echo ">>> FEHLER — Rollback aus $BACKUP"
         rsync -a --delete --exclude-from="$EXCL" "$BACKUP"/ "$APP"/
-        [ -n "$GPID" ] && kill -HUP "$GPID" 2>/dev/null || true
+        gunicorn_neu_laden 2>/dev/null || true
         echo ">>> Rollback fertig. Alter Stand wieder live."
     fi
     rm -rf "$STAGING" "$EXCL"
 }
 trap aufraeumen EXIT
 
-echo "[1/7] Auspacken -> $STAGING"
+echo "[1/8] Auspacken -> $STAGING"
 mkdir "$STAGING"
 tar xzf "$TARBALL" -C "$STAGING"
 test -f "$STAGING/app.py" || { echo "Tarball sieht falsch aus (kein app.py)"; exit 1; }
@@ -54,16 +74,16 @@ test -f "$STAGING/deploy/deploy-exclude.txt" || { echo "deploy-exclude.txt fehlt
 tr -d '\r' < "$STAGING/deploy/deploy-exclude.txt" > "$EXCL"   # CRLF -> LF, sonst greifen die Patterns nicht
 grep -qx '/instance/' "$EXCL" || { echo "deploy-exclude.txt schuetzt /instance/ nicht — Abbruch"; exit 1; }
 
-echo "[2/7] Abhaengigkeiten (requirements.txt)"
+echo "[2/8] Abhaengigkeiten (requirements.txt)"
 "$PY" -m pip install -q -r "$STAGING/requirements.txt"
 
-echo "[3/7] Import-Check"
+echo "[3/8] Import-Check"
 ( cd "$STAGING" && SECRET_KEY=deploy-check "$PY" -c "import app; print('   import app OK')" )
 
-echo "[4/7] Backup -> $BACKUP"
+echo "[4/8] Backup -> $BACKUP"
 rsync -a --exclude-from="$EXCL" "$APP"/ "$BACKUP"/
 
-echo "[5/7] Dateien uebernehmen (--delete)"
+echo "[5/8] Dateien uebernehmen (--delete)"
 rsync -a --checksum --delete --exclude-from="$EXCL" "$STAGING"/ "$APP"/
 
 echo "[6/8] DB-Backup vor den Migrationen"
@@ -73,12 +93,7 @@ echo "[7/8] Migrationen"
 ( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
 
 echo "[8/8] Reload + Health-Check"
-if [ -n "$GPID" ]; then
-    kill -HUP "$GPID"
-else
-    echo "   WARN: kein gunicorn-Prozess gefunden — bitte manuell starten:"
-    echo "         cd $APP && nohup venv/bin/gunicorn -w 2 -b 127.0.0.1:5000 app:app >/dev/null 2>&1 &"
-fi
+gunicorn_neu_laden
 sleep 3
 code=$(curl -s -o /dev/null -m 15 -w '%{http_code}' http://127.0.0.1:5000/ || echo 000)
 if [ "$code" = "200" ]; then

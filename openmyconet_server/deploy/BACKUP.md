@@ -68,14 +68,14 @@ done
 # 4. Backup einspielen
 gunzip -c "$B" > openmyconet.db
 
-# 5. gunicorn neu starten, damit alle Worker die neue Datei oeffnen
-kill -HUP $(pgrep -o -f 'venv/bin/gunicorn')
+# 5. gunicorn neu laden, damit alle Worker die neue Datei oeffnen
+systemctl --user reload omn      # ohne systemd: kill -HUP $(pgrep -o -f 'venv/bin/gunicorn')
 
 # 6. pruefen
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5000/
 ```
 
-Ein `kill -HUP` reicht, weil gunicorn ohne `--preload` laeuft; zur Sicherheit
+Ein `reload` (HUP) reicht, weil gunicorn ohne `--preload` laeuft; zur Sicherheit
 danach einmal `/admin` + eine Datenseite im Browser aufrufen. Die
 `*.vor-restore-*`-Dateien bleiben liegen, bis der Restore bestaetigt ist.
 

@@ -41,9 +41,15 @@ Server): Tarball → Staging → `pip install -r requirements.txt` (voll gepinnt
 Import-Check → Code-Backup (`app.bak-<ts>`) → `rsync -a --delete
 --exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` → **DB-Backup
 (`deploy/backup_db.sh`)** → `migrate_add_columns.py` + `migrate_add_indexes.py`
-→ gunicorn HUP → Health-Check `curl localhost:5000` (bei ≠200 automatischer
+→ gunicorn reload → Health-Check `curl localhost:5000` (bei ≠200 automatischer
 Rollback aus dem Code-Backup; Rollback stellt Code wieder her, **nicht die DB**
 und nicht die venv-Pakete — bei DB-Problemen `deploy/BACKUP.md`).
+
+**gunicorn läuft als systemd-user-Unit `omn`** (`deploy/omn.service`, installiert
+per `deploy/install_systemd.sh`; einmalig als root `loginctl enable-linger omn`).
+`Restart=on-failure`, Logs via `journalctl --user -u omn`. Bedienung:
+`systemctl --user {status,reload,restart} omn`. release.sh nutzt `reload`, fällt
+auf `kill -HUP` zurück, falls die Unit (noch) nicht aktiv ist.
 Neue Runtime-Dependency also einfach in `requirements.txt` eintragen, release.sh
 installiert sie beim Deploy.
 
@@ -61,7 +67,7 @@ git archive --format=tar.gz -o $env:TEMP\omn-release.tar.gz HEAD:openmyconet_ser
 scp -i ~/.ssh/omn_deploy $env:TEMP\omn-release.tar.gz omn@77.42.64.162:/home/omn/incoming/release.tar.gz
 ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 'bash /home/omn/app/deploy/release.sh /home/omn/incoming/release.tar.gz'
 ```
-Rollback manuell: `ssh ... 'rsync -a --delete --exclude=/instance/ --exclude=/.env/ --exclude=/venv/ --exclude=/app/static/uploads/ /home/omn/app.bak-<ts>/ /home/omn/app/ && kill -HUP $(pgrep -o -f gunicorn)'`
+Rollback manuell: `ssh ... 'rsync -a --delete --exclude=/instance/ --exclude=/.env/ --exclude=/venv/ --exclude=/app/static/uploads/ /home/omn/app.bak-<ts>/ /home/omn/app/ && systemctl --user reload omn'` (bzw. `kill -HUP $(pgrep -o -f gunicorn)` ohne systemd)
 
 Neue kleine Assets, die Templates referenzieren, gehören **ins Git** (`app/static/…`) —
 sonst löscht der `--delete`-Deploy sie. Grosse Medien (mp3/pdf) bleiben serververwaltet,
@@ -74,8 +80,9 @@ Vor einer manuellen Feature-Migration einmal `bash deploy/backup_db.sh` von Hand
 (`instance/logs/app.log`), Zeile in `Fehlerprotokoll` (Admin: `/admin/fehler`),
 ratenbegrenzte Mail an `ADMIN_NOTIFY_EMAIL`/`MAIL_USERNAME` (max. 1/Stunde je
 Fehlerort). Kein Sentry/GlitchTip (weitere Infra, DSGVO-Frage bei externem
-Hosting). HTTPExceptions (404/403/400 …) bleiben unangetastet. Grund: gunicorn
-läuft ohne Terminal/systemd-Journal — stdout/stderr gingen bisher ins Leere.
+Hosting). HTTPExceptions (404/403/400 …) bleiben unangetastet. Der
+`Fehlerprotokoll`-Weg entstand, als gunicorn noch ohne Journal lief; seit der
+systemd-Unit landet stdout/stderr zusätzlich in `journalctl --user -u omn`.
 
 ## Sicherheit
 CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
