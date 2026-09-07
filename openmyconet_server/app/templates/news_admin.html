@@ -74,26 +74,5 @@
 
 {% block extra_js %}
 <script src="{{ asset('vendor/quill/quill.js') }}"></script>
-<script nonce="{{ csp_nonce }}">
-    const quill = new Quill('#editor', {
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                [{ header: [1, 2, 3, false] }],
-                ['bold', 'italic', 'underline'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                ['link', 'image'],
-                ['clean']
-            ]
-        }
-    });
-    document.getElementById('news-form').addEventListener('submit', function (e) {
-        if (!quill.getText().trim()) {
-            e.preventDefault();
-            alert('Bitte einen Inhalt eingeben.');
-            return;
-        }
-        document.getElementById('inhalt-feld').value = quill.root.innerHTML;
-    });
-</script>
+<script src="{{ asset('admin-news-editor.js') }}"></script>
 {% endblock %}

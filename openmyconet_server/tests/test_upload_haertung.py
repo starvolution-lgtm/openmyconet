@@ -113,6 +113,42 @@ def test_news_bild_wird_verkleinert_und_webp(client, app, superadmin, monkeypatc
     assert os.path.getsize(datei) < gross
 
 
+def test_news_bild_upload_endpunkt(client, superadmin, monkeypatch):
+    monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+
+    buf = io.BytesIO()
+    Image.new('RGB', (2000, 1200), '#445566').save(buf, 'PNG')
+    buf.seek(0)
+    r = client.post('/admin/news/bild-upload', data={'bild': (buf, 'foto.png')},
+                    content_type='multipart/form-data')
+    assert r.status_code == 200
+    js = r.get_json()
+    assert js['url'].startswith('/uploads/news/') and js['url'].endswith('.webp')
+
+    r2 = client.post('/admin/news/bild-upload',
+                     data={'bild': (io.BytesIO(b'<script>x'), 'x.png')},
+                     content_type='multipart/form-data')
+    assert r2.status_code == 400 and 'fehler' in r2.get_json()
+
+    r3 = client.post('/admin/news/bild-upload', data={}, content_type='multipart/form-data')
+    assert r3.status_code == 400
+
+
+def test_news_bild_upload_nur_eingeloggt(client):
+    assert client.post('/admin/news/bild-upload').status_code == 302
+
+
+def test_sanitize_news_html_behaelt_uploads_img_strippt_data():
+    import admin
+    aus = admin.sanitize_news_html(
+        '<p>x</p><img src="/uploads/news/a.webp" alt="k">'
+        '<img src="data:image/png;base64,AAAA">'
+    )
+    assert '/uploads/news/a.webp' in aus
+    assert 'data:image' not in aus
+
+
 def test_413_gibt_freundliche_seite(client, superadmin, monkeypatch):
     monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')

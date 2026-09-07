@@ -642,6 +642,18 @@ def newsletter():
 
 # --- News / Blog ---
 
+@admin_bp.route('/admin/news/bild-upload', methods=['POST'])
+@login_required
+def news_bild_upload():
+    """Bild-Upload aus dem Quill-Editor -- speichert per save_news_image (Resize
+    + WebP) und gibt die URL zurueck, die der Editor als <img src> einfuegt
+    (statt Base64, das sanitize_news_html sonst wieder entfernt)."""
+    name = save_news_image(request.files.get('bild'))
+    if not name:
+        return {'fehler': 'Kein gültiges Bild (png, jpg, jpeg, webp, gif; max. 12 MB).'}, 400
+    return {'url': url_for('static', filename=f'uploads/news/{name}')}
+
+
 @admin_bp.route('/admin/news', methods=['GET', 'POST'])
 @login_required
 def news_admin():

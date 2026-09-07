@@ -62,6 +62,7 @@
    damit neue Formulare kein manuelles Hidden-Feld brauchen. */
 (function () {
   var t = {{ csrf_token()|tojson }};
+  window.omnCsrf = t;  // fuer AJAX-POSTs (z.B. Bild-Upload im News-Editor)
   document.querySelectorAll('form').forEach(function (f) {
     var m = (f.getAttribute('method') || 'get').toLowerCase();
     if (m === 'post' && !f.querySelector('input[name="_csrf"]')) {
