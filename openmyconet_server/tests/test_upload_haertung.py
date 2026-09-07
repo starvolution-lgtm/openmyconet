@@ -85,3 +85,38 @@ def test_news_upload_akzeptiert_echtes_png(client, superadmin, monkeypatch):
         'titel': 'Mit Bild', 'inhalt': 'Text', 'bild': (buf, 'echt.png'),
     }, content_type='multipart/form-data', follow_redirects=True)
     assert resp.status_code == 200
+
+
+def test_news_bild_wird_verkleinert(client, app, superadmin, monkeypatch):
+    monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+
+    buf = io.BytesIO()
+    Image.new('RGB', (4000, 3000), '#334455').save(buf, 'JPEG', quality=95)
+    buf.seek(0)
+    gross = len(buf.getvalue())
+    resp = client.post('/admin/news', data={
+        'titel': 'Grosses Bild', 'inhalt': 'x', 'bild': (buf, 'foto.jpg'),
+    }, content_type='multipart/form-data', follow_redirects=True)
+    assert resp.status_code == 200
+
+    import glob
+    import os
+    from PIL import Image as _Img
+    pfad = os.path.join(app.config['UPLOAD_ROOT'], 'news')
+    datei = max(glob.glob(os.path.join(pfad, '*.jpg')), key=os.path.getmtime)
+    with _Img.open(datei) as im:
+        assert max(im.size) <= 1600
+    assert os.path.getsize(datei) < gross  # deutlich kleiner
+
+
+def test_413_gibt_freundliche_seite(client, superadmin, monkeypatch):
+    monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    # MAX_CONTENT_LENGTH kuenstlich klein -> Formular-Parsing wirft 413
+    client.application.config['MAX_CONTENT_LENGTH'] = 500
+    resp = client.post('/admin/news', data={'titel': 'x', 'inhalt': 'y' * 4000})
+    assert resp.status_code == 413
+    body = resp.get_data(as_text=True)
+    assert 'Datei zu gross' in body
+    assert '/admin/news' in body  # Zurueck-Link zeigt auf die Admin-Seite

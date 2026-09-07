@@ -81,9 +81,11 @@ def _sqlite_pragmas(dbapi_connection, connection_record):
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024  # 6 MB Gesamt-Request (Bildupload Blog + Foerderer-Logo max. 5 MB
-                                                     # -- 1 MB Puffer fuer Formularfelder/Multipart-Overhead, damit die
-                                                     # eigene 5-MB-Fehlermeldung greift statt Werkzeugs generischer 413.
+app.config['MAX_CONTENT_LENGTH'] = 12 * 1024 * 1024  # 12 MB Gesamt-Request. Handy-Fotos
+                                                     # (News-Bild) sind oft 4-8 MB; die werden
+                                                     # serverseitig auf 1600 px verkleinert
+                                                     # (admin.save_news_image). Foerderer-Logo
+                                                     # bleibt bei 5 MB (eigene Meldung).
 
 # Wurzel fuer Nutzer-Uploads (News-Bilder, Foerderer-Logos). Prod: unter
 # static/, damit url_for('static', ...) sie ausliefert. Tests biegen das auf
@@ -280,6 +282,25 @@ _SECURITY_TXT = (
 @app.route('/security.txt')
 def _security_txt():
     return _SECURITY_TXT, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.errorhandler(413)
+def _zu_gross(_e):
+    """Werkzeugs nackte 'Request Entity Too Large'-Seite durch eine
+    verstaendliche ersetzen (MAX_CONTENT_LENGTH ueberschritten). Kein Inline-JS
+    -- die CSP der Seite verbietet 'unsafe-inline'/javascript:-Links."""
+    mb = app.config['MAX_CONTENT_LENGTH'] // (1024 * 1024)
+    zurueck = request.path if request.path.startswith('/admin') else '/'
+    return (
+        f'<!doctype html><html lang=de><meta charset=utf-8>'
+        f'<title>Datei zu gross</title>'
+        f'<h1>Datei zu gross</h1>'
+        f'<p>Der Upload ueberschreitet {mb}&nbsp;MB. Bitte das Bild verkleinern '
+        f'(z.&nbsp;B. am Handy die Bildgroesse reduzieren) und erneut versuchen.</p>'
+        f'<p><a href="{zurueck}">&larr; zurueck</a></p>',
+        413,
+        {'Content-Type': 'text/html; charset=utf-8'},
+    )
 
 
 # --- Öffentliche Routen ---

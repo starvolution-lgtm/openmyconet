@@ -13,7 +13,7 @@ import bleach
 import pyotp
 import qrcode
 import qrcode.image.svg
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
     session, flash, current_app, abort, send_file
@@ -58,6 +58,7 @@ schuetze_blueprint(admin_bp)  # CSRF-Pruefung fuer alle POST-Routen des Admin-Pa
 
 ALLOWED_IMAGE_EXT = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 UPLOAD_SUBDIR = 'news'  # unter app.config['UPLOAD_ROOT']
+MAX_NEWS_DIM = 1600  # px laengste Kante -- News-Bilder werden beim Upload verkleinert
 
 NEWS_HTML_TAGS = ['p', 'br', 'strong', 'em', 'u', 's', 'blockquote', 'h1', 'h2', 'h3', 'ol', 'ul', 'li', 'a', 'img', 'span']
 NEWS_HTML_ATTRS = {
@@ -149,10 +150,36 @@ def save_news_image(file_storage):
         return False
     finally:
         file_storage.stream.seek(0)
+
     filename = f'{uuid.uuid4().hex}.{ext}'
     upload_dir = os.path.join(current_app.config['UPLOAD_ROOT'], UPLOAD_SUBDIR)
     os.makedirs(upload_dir, exist_ok=True)
-    file_storage.save(os.path.join(upload_dir, filename))
+    ziel = os.path.join(upload_dir, filename)
+
+    # Animierte GIFs nicht kaputt-resizen -- unveraendert speichern.
+    if ext == 'gif':
+        file_storage.save(ziel)
+        return filename
+
+    # Alles andere: auf MAX_NEWS_DIM verkleinern + neu kodieren. Ein 4000-px-
+    # Handy-Foto (mehrere MB) wird so ~150-300 KB -- gut fuer die Ladezeit und
+    # loest das "Request Entity Too Large" beim Veroeffentlichen.
+    try:
+        img = ImageOps.exif_transpose(Image.open(file_storage.stream))
+        if max(img.size) > MAX_NEWS_DIM:
+            img.thumbnail((MAX_NEWS_DIM, MAX_NEWS_DIM))
+        opts = {'optimize': True}
+        if ext in ('jpg', 'jpeg'):
+            if img.mode in ('RGBA', 'P', 'LA'):
+                img = img.convert('RGB')
+            opts['quality'] = 82
+        elif ext == 'webp':
+            opts['quality'] = 82
+        img.save(ziel, **opts)
+    except (UnidentifiedImageError, OSError, ValueError):
+        return False
+    finally:
+        file_storage.stream.seek(0)
     return filename
 
 
