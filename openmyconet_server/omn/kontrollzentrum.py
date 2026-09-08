@@ -194,9 +194,9 @@ def _presse_feed_pruefen(feed_url, sprache):
     resp.raise_for_status()
     feed = feedparser.parse(resp.content)
     if feed.bozo:
-        return 'fehler', f'Presse-Feed ({sprache}) liefert kein gueltiges XML: {feed_url}'
+        return 'fehler', f'Presse-Feed ({sprache}) liefert kein gueltiges XML'
     if not feed.entries:
-        return 'neutral', f'Presse-Feed ({sprache}) lädt korrekt, aber noch keine Treffer: {feed_url}'
+        return 'neutral', f'Presse-Feed ({sprache}) lädt korrekt, aber noch keine Treffer'
     return 'ok', ''
 
 
