@@ -116,10 +116,13 @@ optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.
 
 ## Rund-Mails an Nutzer
 Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
-(Checkbox „per E-Mail benachrichtigen" beim Veröffentlichen unter `/admin/news`,
+(Checkbox + Sprach-Checkboxen beim Veröffentlichen unter `/admin/news`,
 `_news_benachrichtigung_senden` in `omn/admin.py`) gehen NUR an
 `Nutzer.bestaetigt == True` **und** `keine_mails == False`. Die News-Mail
-zusätzlich nur an `sprache == news.sprache`. Jede Rund-Mail trägt einen
+zusätzlich nur an die im Formular angehakten Spracheinstellungen
+(`request.form.getlist('mail_sprachen')`, gefiltert gegen `LANGS`) — die
+News-Sprache selbst ist dabei egal (eine englische „aktuelle Änderungen"-News
+kann bewusst an alle Sprachgruppen gehen). Jede Rund-Mail trägt einen
 tokengesicherten Abmelde-Link `/abmelden/<nutzer.token>` (Route in
 `omn/public.py`, GET = Bestätigungsseite gegen Prefetch, POST setzt
 `keine_mails`). Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das

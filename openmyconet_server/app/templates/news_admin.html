@@ -43,10 +43,22 @@
     <label>Tags (kommagetrennt, optional)</label>
     <input type="text" name="tags" placeholder="z.B. Mykorrhiza, Forschung, Update">
 
-    <label class="u-inline-check">
-        <input type="checkbox" name="mail_senden" value="1">
-        📧 Bestätigte Nutzer mit passender Sprache per E-Mail benachrichtigen (mit Link zum Beitrag)
-    </label>
+    <fieldset class="u-mail-box">
+        <legend>📧 Nach dem Veröffentlichen per E-Mail benachrichtigen</legend>
+        <label class="u-inline-check">
+            <input type="checkbox" name="mail_senden" value="1">
+            Benachrichtigung mit Link zum Beitrag senden an&nbsp;…
+        </label>
+        {% for code in langs %}
+        <label class="u-inline-check">
+            <input type="checkbox" name="mail_sprachen" value="{{ code }}" {% if code == 'de' %}checked{% endif %}>
+            {{ sprach_namen[code] }} <span class="info">({{ sprach_zahlen[code] }} Empfänger)</span>
+        </label>
+        {% endfor %}
+        <p class="info">Sprache = Spracheinstellung des Nutzers, nicht die der News.
+        Für eine News, die alle betrifft (z.&nbsp;B. Änderungs-Hinweise auf Englisch),
+        einfach alle Sprachen anhaken. Zahl = bestätigte Nutzer, die E-Mails erlauben.</p>
+    </fieldset>
 
     <button type="submit">Veröffentlichen</button>
 </form>

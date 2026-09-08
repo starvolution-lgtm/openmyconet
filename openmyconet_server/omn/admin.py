@@ -27,6 +27,7 @@ from omn.models import (
     Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, KollaborationAnhang,
     Fehlerprotokoll,
 )
+from omn.i18n import LANGS
 from omn.roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
 from omn.spam_schutz import ip_erlaubt
 from omn.csrf import schuetze_blueprint, csrf_token
@@ -643,14 +644,38 @@ def newsletter():
 
 # --- News / Blog ---
 
-def _news_benachrichtigung_senden(news):
-    """Schickt jeder/m bestaetigten Nutzer/in mit passender Spracheinstellung
-    (und ohne E-Mail-Abmeldung) eine Mail mit Anriss + Link zum Beitrag.
+SPRACH_NAMEN = {'de': 'Deutsch', 'en': 'English', 'nl': 'Nederlands', 'fr': 'Français', 'es': 'Español'}
+
+
+def _mail_sprach_zahlen():
+    """{sprachcode: Anzahl bestaetigter Nutzer, die E-Mails erlauben} -- fuer die
+    Empfaenger-Vorschau neben den Sprach-Checkboxen im News-Formular."""
+    zahlen = {code: 0 for code in LANGS}
+    zeilen = (
+        db.session.query(Nutzer.sprache, db.func.count(Nutzer.id))
+        .filter(Nutzer.bestaetigt.is_(True), Nutzer.keine_mails.is_(False))
+        .group_by(Nutzer.sprache)
+        .all()
+    )
+    for code, anzahl in zeilen:
+        if code in zahlen:
+            zahlen[code] = anzahl
+    return zahlen
+
+
+def _news_benachrichtigung_senden(news, sprachen):
+    """Schickt jeder/m bestaetigten Nutzer/in, deren Spracheinstellung in
+    `sprachen` liegt (und ohne E-Mail-Abmeldung), eine Mail mit Anriss + Link
+    zum Beitrag. Die News-Sprache selbst ist egal -- so kann z.B. eine englische
+    "aktuelle Aenderungen"-News bewusst an alle Sprachgruppen gehen.
     Gibt die Anzahl erfolgreich versendeter Mails zurueck."""
     from omn.public import news_exzerpt
 
-    empfaenger = Nutzer.query.filter_by(
-        bestaetigt=True, keine_mails=False, sprache=news.sprache
+    if not sprachen:
+        return 0
+    empfaenger = Nutzer.query.filter(
+        Nutzer.bestaetigt.is_(True), Nutzer.keine_mails.is_(False),
+        Nutzer.sprache.in_(sprachen),
     ).all()
     if not empfaenger:
         return 0
@@ -710,10 +735,15 @@ def news_admin():
             db.session.commit()
             nachricht = 'Beitrag veröffentlicht!'
             if request.form.get('mail_senden'):
-                anzahl = _news_benachrichtigung_senden(news)
-                nachricht += f' E-Mail an {anzahl} Nutzer ({sprache}) verschickt.'
+                mail_sprachen = [s for s in request.form.getlist('mail_sprachen') if s in LANGS]
+                if mail_sprachen:
+                    anzahl = _news_benachrichtigung_senden(news, mail_sprachen)
+                    nachricht += f' E-Mail an {anzahl} Nutzer ({", ".join(mail_sprachen)}) verschickt.'
+                else:
+                    nachricht += ' Kein Mail-Versand — keine Sprache ausgewählt.'
     news_liste = News.query.order_by(News.veroeffentlicht.desc()).all()
-    return render_template('news_admin.html', news_liste=news_liste, nachricht=nachricht, fehler=fehler)
+    return render_template('news_admin.html', news_liste=news_liste, nachricht=nachricht, fehler=fehler,
+                           langs=LANGS, sprach_namen=SPRACH_NAMEN, sprach_zahlen=_mail_sprach_zahlen())
 
 
 @admin_bp.route('/admin/news/edit/<int:news_id>', methods=['GET', 'POST'])
