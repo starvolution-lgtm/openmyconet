@@ -53,6 +53,10 @@ def test_mail_nur_an_gewaehlte_sprachen_und_bestaetigt(client, app, superadmin):
     assert '/abmelden/tok-de-ok@example.com' in m.body
     assert '/abmelden/tok-de-ok@example.com' in m.html
     assert 'Beitrag lesen' in m.html
+    # RFC 8058 One-Click-Unsubscribe
+    lu = dict(m.extra_headers)
+    assert lu['List-Unsubscribe'] == '<http://testserver.local/abmelden/tok-de-ok@example.com>'
+    assert lu['List-Unsubscribe-Post'] == 'List-Unsubscribe=One-Click'
 
 
 def test_englische_news_an_mehrere_sprachgruppen(client, app, superadmin):

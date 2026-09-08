@@ -14,7 +14,6 @@ Sicher mehrfach ausfuehrbar. Vorher DB-Backup ziehen (Schema-Aenderung).
 import sqlite3
 
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 
 
@@ -24,6 +23,7 @@ def _spalte_existiert(cur, tabelle, spalte):
 
 
 def main():
+    app = create_app()
     with app.app_context():
         db.create_all()
         print('db.create_all(): neue Tabellen (falls fehlend) angelegt.')

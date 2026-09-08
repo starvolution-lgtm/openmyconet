@@ -15,7 +15,6 @@ Infrastruktur wie presse_suche.py/cleanup_foerderer_previews.py)
 from datetime import timedelta
 
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import Foerderer, Nutzer
 from omn.roles import hyphist_entfernen
@@ -26,6 +25,7 @@ VERFALLSFRIST = timedelta(days=60)
 
 def verfall_pruefen():
     verfallen = 0
+    app = create_app()
     with app.app_context():
         grenze = utcnow() - VERFALLSFRIST
         kandidaten = Foerderer.query.filter(

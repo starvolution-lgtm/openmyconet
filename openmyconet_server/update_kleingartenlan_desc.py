@@ -5,7 +5,6 @@ Foerderer-Eintrags (von Robby vorgegebener Text).
 Aufruf: python update_kleingartenlan_desc.py
 """
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import Foerderer
 
@@ -16,11 +15,18 @@ NEUE_BESCHREIBUNG = (
     '(LEPMON) – und macht Natur für Besucher sichtbar und erlebbar.'
 )
 
-with app.app_context():
-    f = Foerderer.query.filter_by(firma='KleingartenLAN').first()
-    if not f:
-        print("FEHLER: KleingartenLAN-Eintrag nicht gefunden.")
-    else:
-        f.beschreibung = NEUE_BESCHREIBUNG
-        db.session.commit()
-        print(f"Aktualisiert (id={f.id}): {len(NEUE_BESCHREIBUNG)} Zeichen.")
+
+def main():
+    app = create_app()
+    with app.app_context():
+        f = Foerderer.query.filter_by(firma='KleingartenLAN').first()
+        if not f:
+            print("FEHLER: KleingartenLAN-Eintrag nicht gefunden.")
+        else:
+            f.beschreibung = NEUE_BESCHREIBUNG
+            db.session.commit()
+            print(f"Aktualisiert (id={f.id}): {len(NEUE_BESCHREIBUNG)} Zeichen.")
+
+
+if __name__ == "__main__":
+    main()

@@ -15,7 +15,6 @@ import secrets
 from datetime import datetime
 
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import Bewerbung, Nutzer
 
@@ -48,57 +47,63 @@ def get_or_create_bewerbung(**kwargs):
     return bewerbung
 
 
-with app.app_context():
-    # 1) Sebastián Martínez (Investigador) — Knoten-Bewerbung, 05.07.2026
-    nutzer_investigador = get_or_create_nutzer(
-        name='Sebastián Martínez', email='smartinez@inia.org.uy', sprache='es',
-        gruppe='biocomm', ip='167.116.164.197',
-        registriert_am=datetime(2026, 7, 5, 0, 23),
-    )
-    get_or_create_bewerbung(
-        name='Sebastián Martínez', email='smartinez@inia.org.uy', rolle='wissenschaftler',
-        profession='Investigador', substrat='', adresse='',
-        motivation=(
-            "Estoy muy interesado en el estudio propuesto para conocer las redes fúngicas "
-            "y en su posible utilización para el manejo y consevración de suelos y vegetación.\n"
-            "Soy investigador en micología y patología vegetal con años de experiencia.\n"
-            "Dirijo un laboratorio de micología/fitopatología con acceso a equipamiento referido "
-            "al tema de esta propuesta.\n"
-            "Poseo acceso a estaciones experimentales con bosques y praderas naturales y "
-            "experimentos de agricultura en campo e invernáculo."
-        ),
-        sprache='es', status='neu', nutzer_id=nutzer_investigador.id,
-        ip='167.116.164.197', erstellt_am=datetime(2026, 7, 5, 0, 23),
-    )
+def main():
+    app = create_app()
+    with app.app_context():
+        # 1) Sebastián Martínez (Investigador) — Knoten-Bewerbung, 05.07.2026
+        nutzer_investigador = get_or_create_nutzer(
+            name='Sebastián Martínez', email='smartinez@inia.org.uy', sprache='es',
+            gruppe='biocomm', ip='167.116.164.197',
+            registriert_am=datetime(2026, 7, 5, 0, 23),
+        )
+        get_or_create_bewerbung(
+            name='Sebastián Martínez', email='smartinez@inia.org.uy', rolle='wissenschaftler',
+            profession='Investigador', substrat='', adresse='',
+            motivation=(
+                "Estoy muy interesado en el estudio propuesto para conocer las redes fúngicas "
+                "y en su posible utilización para el manejo y consevración de suelos y vegetación.\n"
+                "Soy investigador en micología y patología vegetal con años de experiencia.\n"
+                "Dirijo un laboratorio de micología/fitopatología con acceso a equipamiento referido "
+                "al tema de esta propuesta.\n"
+                "Poseo acceso a estaciones experimentales con bosques y praderas naturales y "
+                "experimentos de agricultura en campo e invernáculo."
+            ),
+            sprache='es', status='neu', nutzer_id=nutzer_investigador.id,
+            ip='167.116.164.197', erstellt_am=datetime(2026, 7, 5, 0, 23),
+        )
 
-    # 2) Alice Longhena — Knoten-Bewerbung, 16.07.2026
-    nutzer_alice = get_or_create_nutzer(
-        name='Alice Longhena', email='alicelongh@gmail.com', sprache='fr',
-        gruppe='biocomm', ip='147.94.77.157',
-        registriert_am=datetime(2026, 7, 16, 14, 34),
-    )
-    get_or_create_bewerbung(
-        name='Alice Longhena', email='alicelongh@gmail.com', rolle='wissenschaftler',
-        profession='Postdoc physics networks neuroscience', substrat='', adresse='',
-        motivation=(
-            "My name is Alice I am a physics graduate and PhD in neuroscience, specialized in "
-            "complex networks analysis. I come from Italy, between Liguria and Toscana, part of "
-            "my family comes from the sea and the other from the Appennini mountains. I love the "
-            "forests where I grew up.\n"
-            "I got interested in mycorrhizal networks and I would love to learn more or "
-            "participate to a project of data collecting and analysis.\n"
-            "Right now I live in Marseille, France for my job. So I could collect data here. But "
-            "I would love to map and study the network in Liguria or the Appennini in the future."
-        ),
-        sprache='fr', status='neu', nutzer_id=nutzer_alice.id,
-        ip='147.94.77.157', erstellt_am=datetime(2026, 7, 16, 14, 34),
-    )
+        # 2) Alice Longhena — Knoten-Bewerbung, 16.07.2026
+        nutzer_alice = get_or_create_nutzer(
+            name='Alice Longhena', email='alicelongh@gmail.com', sprache='fr',
+            gruppe='biocomm', ip='147.94.77.157',
+            registriert_am=datetime(2026, 7, 16, 14, 34),
+        )
+        get_or_create_bewerbung(
+            name='Alice Longhena', email='alicelongh@gmail.com', rolle='wissenschaftler',
+            profession='Postdoc physics networks neuroscience', substrat='', adresse='',
+            motivation=(
+                "My name is Alice I am a physics graduate and PhD in neuroscience, specialized in "
+                "complex networks analysis. I come from Italy, between Liguria and Toscana, part of "
+                "my family comes from the sea and the other from the Appennini mountains. I love the "
+                "forests where I grew up.\n"
+                "I got interested in mycorrhizal networks and I would love to learn more or "
+                "participate to a project of data collecting and analysis.\n"
+                "Right now I live in Marseille, France for my job. So I could collect data here. But "
+                "I would love to map and study the network in Liguria or the Appennini in the future."
+            ),
+            sprache='fr', status='neu', nutzer_id=nutzer_alice.id,
+            ip='147.94.77.157', erstellt_am=datetime(2026, 7, 16, 14, 34),
+        )
 
-    # 3) Francis — reine Registrierung, 13.06.2026 (kein Knoten-Interesse)
-    get_or_create_nutzer(
-        name='Francis', email='tuxedo-tomcat.francis@gmx.de', sprache='de',
-        gruppe='allgemein', ip='45.148.18.132',
-        registriert_am=datetime(2026, 6, 13, 23, 35),
-    )
+        # 3) Francis — reine Registrierung, 13.06.2026 (kein Knoten-Interesse)
+        get_or_create_nutzer(
+            name='Francis', email='tuxedo-tomcat.francis@gmx.de', sprache='de',
+            gruppe='allgemein', ip='45.148.18.132',
+            registriert_am=datetime(2026, 6, 13, 23, 35),
+        )
 
-    print('Migration abgeschlossen.')
+        print('Migration abgeschlossen.')
+
+
+if __name__ == "__main__":
+    main()

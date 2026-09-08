@@ -46,7 +46,16 @@ from omn import create_app
 from omn.extensions import db
 from omn.models import Pressekandidat, Suchbegriff
 
-app = create_app()
+_app = None
+
+
+def _get_app():
+    """App-Instanz nur bei Bedarf bauen (Cron/__main__) -- `import presse_suche`
+    soll keine App aufbauen (Tests, Import-Check)."""
+    global _app
+    if _app is None:
+        _app = create_app()
+    return _app
 
 # Browser-aehnlicher User-Agent -- manche Dienste blocken den requests-Standard-UA
 # ("python-requests/x.y.z") pauschal. Uebernommen aus der vorherigen GDELT-Anbindung.
@@ -109,7 +118,7 @@ def kandidaten_suchen():
     # `with app.app_context()` wuerde in Tests die echte DB statt der Test-DB treffen.
     if has_app_context():
         return _kandidaten_suchen()
-    with app.app_context():
+    with _get_app().app_context():
         return _kandidaten_suchen()
 
 

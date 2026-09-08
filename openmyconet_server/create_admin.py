@@ -13,23 +13,29 @@ from werkzeug.security import generate_password_hash
 load_dotenv()
 
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import AdminUser
 
 username = os.getenv('ADMIN_USERNAME', 'admin')
 password = os.getenv('ADMIN_PASSWORD', 'changeme')
 
-with app.app_context():
-    db.create_all()
-    if AdminUser.query.filter_by(username=username).first():
-        print(f'Account "{username}" existiert bereits — nichts zu tun.')
-    else:
-        user = AdminUser(
-            username=username,
-            password_hash=generate_password_hash(password),
-            role='superadmin',
-        )
-        db.session.add(user)
-        db.session.commit()
-        print(f'Superadmin "{username}" angelegt.')
+
+def main():
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+        if AdminUser.query.filter_by(username=username).first():
+            print(f'Account "{username}" existiert bereits — nichts zu tun.')
+        else:
+            user = AdminUser(
+                username=username,
+                password_hash=generate_password_hash(password),
+                role='superadmin',
+            )
+            db.session.add(user)
+            db.session.commit()
+            print(f'Superadmin "{username}" angelegt.')
+
+
+if __name__ == "__main__":
+    main()

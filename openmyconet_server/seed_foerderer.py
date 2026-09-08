@@ -11,7 +11,6 @@ import secrets
 from datetime import datetime
 
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import Foerderer
 
@@ -48,20 +47,27 @@ EINTRAEGE = [
     ),
 ]
 
-with app.app_context():
-    for eintrag in EINTRAEGE:
-        vorhanden = Foerderer.query.filter_by(firma=eintrag['firma']).first()
-        if vorhanden:
-            print(f"Uebersprungen (existiert bereits): {eintrag['firma']}")
-            continue
-        f = Foerderer(
-            token=secrets.token_hex(32),
-            status='active',
-            erstellt_am=eintrag['aktiviert_am'],
-            **eintrag,
-        )
-        db.session.add(f)
-        print(f"Angelegt: {eintrag['firma']}")
-    db.session.commit()
 
-print("Fertig.")
+def main():
+    app = create_app()
+    with app.app_context():
+        for eintrag in EINTRAEGE:
+            vorhanden = Foerderer.query.filter_by(firma=eintrag['firma']).first()
+            if vorhanden:
+                print(f"Uebersprungen (existiert bereits): {eintrag['firma']}")
+                continue
+            f = Foerderer(
+                token=secrets.token_hex(32),
+                status='active',
+                erstellt_am=eintrag['aktiviert_am'],
+                **eintrag,
+            )
+            db.session.add(f)
+            print(f"Angelegt: {eintrag['firma']}")
+        db.session.commit()
+
+    print("Fertig.")
+
+
+if __name__ == "__main__":
+    main()

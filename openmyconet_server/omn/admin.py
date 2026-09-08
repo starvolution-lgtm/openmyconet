@@ -614,7 +614,8 @@ def newsletter():
                 try:
                     personalisiert = inhalt.replace('{name}', nutzer.name)
                     abmelde_url = url_for('abmelden', token=nutzer.token, _external=True)
-                    msg = Message(subject=betreff, recipients=[nutzer.email])
+                    msg = Message(subject=betreff, recipients=[nutzer.email],
+                                  extra_headers=_list_unsubscribe_header(abmelde_url))
                     msg.html = render_template('newsletter_email.html', inhalt=personalisiert, abmelde_url=abmelde_url)
                     msg.body = re.sub(r'<[^>]+>', '', personalisiert) + \
                         f'\n\n---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
@@ -645,6 +646,17 @@ def newsletter():
 # --- News / Blog ---
 
 SPRACH_NAMEN = {'de': 'Deutsch', 'en': 'English', 'nl': 'Nederlands', 'fr': 'Français', 'es': 'Español'}
+
+
+def _list_unsubscribe_header(abmelde_url):
+    """RFC 8058 One-Click-Abmeldung: Gmail/Yahoo verlangen das von Bulk-Sendern,
+    sonst Throttling/Spam-Ordner. Der Mail-Client zeigt einen "Abmelden"-Button
+    und schickt bei Klick ein POST an die URL (die /abmelden-Route meldet bei
+    POST direkt ab, GET zeigt die Bestaetigungsseite)."""
+    return {
+        'List-Unsubscribe': f'<{abmelde_url}>',
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    }
 
 
 def _mail_sprach_zahlen():
@@ -686,7 +698,10 @@ def _news_benachrichtigung_senden(news, sprachen):
     for n in empfaenger:
         try:
             abmelde_url = url_for('abmelden', token=n.token, _external=True)
-            msg = Message(subject=f'OpenMycoNet: {news.titel}', recipients=[n.email])
+            msg = Message(
+                subject=f'OpenMycoNet: {news.titel}', recipients=[n.email],
+                extra_headers=_list_unsubscribe_header(abmelde_url),
+            )
             msg.html = render_template(
                 'news_email.html', news=news, exzerpt=exzerpt, url=url, abmelde_url=abmelde_url
             )

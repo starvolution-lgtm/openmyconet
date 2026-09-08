@@ -8,7 +8,6 @@ Aufruf: python seed_suchbegriffe.py
 Sicher mehrfach ausfuehrbar -- ueberspringt bereits vorhandene Sprachen.
 """
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import Suchbegriff
 
@@ -20,13 +19,20 @@ SEED_DATA = [
     ('es', 'red micorrícica', 'spanish'),
 ]
 
-with app.app_context():
-    db.create_all()
-    angelegt = 0
-    for sprache, begriff, quellsprache in SEED_DATA:
-        if Suchbegriff.query.filter_by(sprache=sprache).first():
-            continue
-        db.session.add(Suchbegriff(sprache=sprache, begriff=begriff, quellsprache=quellsprache, aktiv=True))
-        angelegt += 1
-    db.session.commit()
-    print(f'{angelegt} Suchbegriffe angelegt (bereits vorhandene Sprachen uebersprungen).')
+
+def main():
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+        angelegt = 0
+        for sprache, begriff, quellsprache in SEED_DATA:
+            if Suchbegriff.query.filter_by(sprache=sprache).first():
+                continue
+            db.session.add(Suchbegriff(sprache=sprache, begriff=begriff, quellsprache=quellsprache, aktiv=True))
+            angelegt += 1
+        db.session.commit()
+        print(f'{angelegt} Suchbegriffe angelegt (bereits vorhandene Sprachen uebersprungen).')
+
+
+if __name__ == "__main__":
+    main()

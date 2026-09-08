@@ -14,14 +14,20 @@ Aufruf: python cleanup_content_blocks_index.py
 Sicher mehrfach ausfuehrbar -- loescht nur, wenn noch Zeilen vorhanden sind.
 """
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import ContentBlock
 
-with app.app_context():
-    treffer = ContentBlock.query.filter(ContentBlock.schluessel.like('index_%')).all()
-    anzahl = len(treffer)
-    for row in treffer:
-        db.session.delete(row)
-    db.session.commit()
-    print(f'{anzahl} ContentBlock-Zeilen mit Praefix "index_" geloescht.')
+
+def main():
+    app = create_app()
+    with app.app_context():
+        treffer = ContentBlock.query.filter(ContentBlock.schluessel.like('index_%')).all()
+        anzahl = len(treffer)
+        for row in treffer:
+            db.session.delete(row)
+        db.session.commit()
+        print(f'{anzahl} ContentBlock-Zeilen mit Praefix "index_" geloescht.')
+
+
+if __name__ == "__main__":
+    main()

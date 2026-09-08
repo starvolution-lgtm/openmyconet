@@ -11,7 +11,6 @@ schluessel+sprache-Kombinationen, ueberschreibt nichts (falls ein Editor
 den Text im Admin-Panel bereits angepasst hat).
 """
 from omn import create_app
-app = create_app()
 from omn.extensions import db
 from omn.models import ContentBlock
 
@@ -288,17 +287,24 @@ SEED_DATA = {
     }
 }
 
-with app.app_context():
-    angelegt = 0
-    uebersprungen = 0
-    for sprache, werte in SEED_DATA.items():
-        for key, inhalt in werte.items():
-            schluessel = f'index_{key}'
-            existing = ContentBlock.query.filter_by(schluessel=schluessel, sprache=sprache).first()
-            if existing:
-                uebersprungen += 1
-                continue
-            db.session.add(ContentBlock(schluessel=schluessel, sprache=sprache, inhalt=inhalt))
-            angelegt += 1
-    db.session.commit()
-    print(f'{angelegt} Content-Bloecke angelegt, {uebersprungen} bereits vorhanden uebersprungen.')
+
+def main():
+    app = create_app()
+    with app.app_context():
+        angelegt = 0
+        uebersprungen = 0
+        for sprache, werte in SEED_DATA.items():
+            for key, inhalt in werte.items():
+                schluessel = f'index_{key}'
+                existing = ContentBlock.query.filter_by(schluessel=schluessel, sprache=sprache).first()
+                if existing:
+                    uebersprungen += 1
+                    continue
+                db.session.add(ContentBlock(schluessel=schluessel, sprache=sprache, inhalt=inhalt))
+                angelegt += 1
+        db.session.commit()
+        print(f'{angelegt} Content-Bloecke angelegt, {uebersprungen} bereits vorhanden uebersprungen.')
+
+
+if __name__ == "__main__":
+    main()

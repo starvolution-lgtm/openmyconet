@@ -13,7 +13,9 @@ via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.
 `omn/extensions.py`, i18n `omn/i18n.py`. Wartungs-Scripts bleiben im Repo-Root
 (`migrate_*.py`, `seed_*.py`, `presse_suche.py`, `build_rag_index.py`,
 `create_admin.py`, `foerderer_verfall_pruefen.py`, `cleanup_*.py`, `update_*.py`);
-die App-nutzenden davon machen `from omn import create_app; app = create_app()`.
+die App-nutzenden davon bauen die App **in `def main()`** (`app = create_app()`
+dort, nicht im Modul-Body) hinter `if __name__ == "__main__": main()` — `import x`
+darf nie die DB anfassen (`tests/test_scripts_importierbar.py` erzwingt das).
 Import innerhalb `omn/` immer absolut (`from omn.models import ...`).
 Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: `app/static/`.
 
@@ -125,7 +127,10 @@ News-Sprache selbst ist dabei egal (eine englische „aktuelle Änderungen"-News
 kann bewusst an alle Sprachgruppen gehen). Jede Rund-Mail trägt einen
 tokengesicherten Abmelde-Link `/abmelden/<nutzer.token>` (Route in
 `omn/public.py`, GET = Bestätigungsseite gegen Prefetch, POST setzt
-`keine_mails`). Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das
+`keine_mails`) **und** die RFC-8058-Header `List-Unsubscribe` +
+`List-Unsubscribe-Post: List-Unsubscribe=One-Click`
+(`_list_unsubscribe_header` in `omn/admin.py`) — der POST auf dieselbe Route
+erledigt die One-Click-Abmeldung der Mail-Clients. Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das
 Flag. Versand ist synchron im Request (wie bisher) — bei stark wachsender
 Nutzerzahl auf einen Worker/Queue umstellen. Siehe `test_news_mail.py`.
 
