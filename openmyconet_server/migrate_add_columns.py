@@ -29,6 +29,7 @@ MIGRATIONS = [
     ('nutzer', 'rolle', "VARCHAR(20) DEFAULT 'mycelist'"),
     ('nutzer', 'ist_hyphist', 'BOOLEAN DEFAULT 0'),
     ('nutzer', 'ist_sporist', 'BOOLEAN DEFAULT 0'),
+    ('nutzer', 'keine_mails', 'BOOLEAN DEFAULT 0'),  # E-Mail-Abmeldung (Opt-out), /abmelden/<token>
     ('foerderer', 'status_geaendert_am', 'DATETIME'),
     ('foerderer', 'nutzer_id', 'INTEGER'),  # Kollaborationsbereich, siehe migrate_kollaboration.py (dort auch Backfill + neue Tabellen)
     ('knoten', 'api_key', 'VARCHAR(64)'),  # Geraete-Authentifizierung fuer /api/v1/messung
@@ -112,6 +113,16 @@ def main():
     if ohne_key:
         print(f'{len(ohne_key)} Knoten haben einen API-Key erhalten (im Admin unter /admin/knoten einsehbar).')
     cur.execute('CREATE UNIQUE INDEX IF NOT EXISTS ix_knoten_api_key ON knoten (api_key)')
+
+    # Der Abmelde-Link in Rundmails nutzt nutzer.token (Double-Opt-in-Token).
+    # Sehr alte Zeilen koennen NULL/'' haben -> einen erzeugen, sonst laesst sich
+    # fuer sie kein /abmelden/<token>-Link bauen.
+    cur.execute("SELECT id FROM nutzer WHERE token IS NULL OR token = ''")
+    ohne_token = [row[0] for row in cur.fetchall()]
+    for nutzer_id in ohne_token:
+        cur.execute('UPDATE nutzer SET token = ? WHERE id = ?', (secrets.token_urlsafe(32), nutzer_id))
+    if ohne_token:
+        print(f'{len(ohne_token)} Nutzer ohne token haben einen erhalten (fuer den Abmelde-Link).')
 
     # Fehlerprotokoll (errors.py) -- neue Tabelle. db.create_all() legt sie auf
     # frischen DBs an, aber unter gunicorn laeuft nie __main__ -> hier fuer

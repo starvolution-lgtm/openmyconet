@@ -114,6 +114,18 @@ in conftest, eigener Nachweis in `test_csrf.py`.
 typisiert geprüft (kein 500 mehr) + auf Plausibilität begrenzt; ungültige
 optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.py`.
 
+## Rund-Mails an Nutzer
+Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
+(Checkbox „per E-Mail benachrichtigen" beim Veröffentlichen unter `/admin/news`,
+`_news_benachrichtigung_senden` in `omn/admin.py`) gehen NUR an
+`Nutzer.bestaetigt == True` **und** `keine_mails == False`. Die News-Mail
+zusätzlich nur an `sprache == news.sprache`. Jede Rund-Mail trägt einen
+tokengesicherten Abmelde-Link `/abmelden/<nutzer.token>` (Route in
+`omn/public.py`, GET = Bestätigungsseite gegen Prefetch, POST setzt
+`keine_mails`). Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das
+Flag. Versand ist synchron im Request (wie bisher) — bei stark wachsender
+Nutzerzahl auf einen Worker/Queue umstellen. Siehe `test_news_mail.py`.
+
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
 Rollen: `Nutzer.ist_hyphist` / `ist_sporist` (orthogonal). Nach Datei-Änderung an

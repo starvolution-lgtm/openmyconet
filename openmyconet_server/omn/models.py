@@ -39,6 +39,12 @@ class Nutzer(db.Model):
     login_token = db.Column(db.String(100), unique=True, nullable=True)
     login_token_angefordert_am = db.Column(db.DateTime, nullable=True)
 
+    # E-Mail-Abmeldung (Opt-out). Gesetzt ueber den tokengesicherten
+    # /abmelden/<token>-Link (token = Double-Opt-in-Token oben), der in jeder
+    # Rundmail steht (Newsletter + News-Benachrichtigung). Transaktionale Mails
+    # (Doppel-Opt-in-Bestaetigung, Magic-Link-Login) ignorieren das Flag.
+    keine_mails = db.Column(db.Boolean, nullable=False, default=False)
+
 class Knoten(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     knoten_id = db.Column(db.String(50), unique=True, nullable=False)

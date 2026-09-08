@@ -173,6 +173,21 @@ def confirm(token):
     return f'Hallo {nutzer.name}, deine Registrierung ist jetzt bestätigt. Willkommen bei OpenMycoNet!'
 
 
+def abmelden(token):
+    """Tokengesicherter E-Mail-Abmelde-Link aus jeder Rundmail. GET zeigt eine
+    Bestaetigungsseite (kein Auto-Opt-out durch Mail-Client-/Scanner-Prefetch,
+    die machen GET); erst POST setzt `keine_mails`. Kein CSRF-Schutz (wie die
+    anderen public-Routen) -- der geheime Token in der URL ist die Autorisierung."""
+    nutzer = Nutzer.query.filter_by(token=token).first()
+    if not nutzer:
+        return render_template('abmelden.html', status='ungueltig'), 404
+    if request.method == 'POST':
+        nutzer.keine_mails = True
+        db.session.commit()
+        return render_template('abmelden.html', status='fertig', nutzer=nutzer)
+    return render_template('abmelden.html', status='fragen', nutzer=nutzer, token=token)
+
+
 def news_exzerpt(inhalt, laenge=200):
     text = bleach.clean(inhalt, tags=[], strip=True).strip()
     text = ' '.join(text.split())
@@ -345,6 +360,7 @@ def register(app):
     app.add_url_rule('/security.txt', 'security_txt', _security_txt)
     app.add_url_rule('/register', 'register', neuen_nutzer_registrieren, methods=['GET', 'POST'])
     app.add_url_rule('/confirm/<token>', 'confirm', confirm)
+    app.add_url_rule('/abmelden/<token>', 'abmelden', abmelden, methods=['GET', 'POST'])
     app.add_url_rule('/news', 'news', news)
     app.add_url_rule('/news/<slug>', 'news_detail', news_detail)
     app.add_url_rule('/news-sitemap.xml', 'news_sitemap', news_sitemap)

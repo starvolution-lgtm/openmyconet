@@ -18,7 +18,8 @@
 <td style="padding:32px; color:#eee; font-size:15px; line-height:1.7; white-space:pre-wrap;">{{ inhalt | safe }}</td>
 </tr>
 <tr>
-<td style="padding:20px 32px; background:#0d130d; color:#777; font-size:12px;">
+<td style="padding:20px 32px; background:#0d130d; color:#777; font-size:12px; line-height:1.6;">
+{% if abmelde_url %}<a href="{{ abmelde_url }}" style="color:#4caf50;">Keine E-Mails mehr erhalten</a> &nbsp;·&nbsp; {% endif %}
 OpenMycoNet · <a href="https://www.openmyconet.de" style="color:#4caf50;">www.openmyconet.de</a>
 </td>
 </tr>

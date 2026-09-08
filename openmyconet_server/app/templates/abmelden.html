@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>OpenMycoNet — E-Mail-Abmeldung</title>
+<link rel="stylesheet" href="{{ asset('register.css') }}">
+</head>
+<body>
+    <h1>🍄 OpenMycoNet</h1>
+    <h2>E-Mail-Abmeldung</h2>
+
+    {% if status == 'ungueltig' %}
+        <p class="err">Dieser Abmelde-Link ist ungültig. Möglicherweise wurde er
+        bereits verwendet oder ist nicht vollständig.</p>
+        <p><a href="https://www.openmyconet.de">← Zur Website</a></p>
+
+    {% elif status == 'fertig' %}
+        <p class="msg">Erledigt, {{ nutzer.name }}. An <strong>{{ nutzer.email }}</strong>
+        gehen ab sofort keine Newsletter und keine News-Benachrichtigungen mehr.</p>
+        <p>Wichtige transaktionale E-Mails (z.&nbsp;B. Login-Links) bekommst du weiterhin.
+        Dein Konto bleibt bestehen.</p>
+        <p><a href="https://www.openmyconet.de">← Zur Website</a></p>
+
+    {% else %}
+        <p>Sollen an <strong>{{ nutzer.email }}</strong> künftig keine Newsletter
+        und News-Benachrichtigungen mehr geschickt werden?</p>
+        <form method="POST" action="{{ url_for('abmelden', token=token) }}">
+            <button type="submit">Ja, abmelden</button>
+        </form>
+        <p><a href="https://www.openmyconet.de">Nein, doch nicht — zur Website</a></p>
+    {% endif %}
+</body>
+</html>

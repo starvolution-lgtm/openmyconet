@@ -598,7 +598,7 @@ def newsletter():
         inhalt = request.form.get('inhalt', '').strip()
         bestaetigt_senden = request.form.get('bestaetigt_senden', '')
 
-        query = Nutzer.query.filter_by(bestaetigt=True)
+        query = Nutzer.query.filter_by(bestaetigt=True, keine_mails=False)
         if gruppe:
             query = query.filter_by(gruppe=gruppe)
         if sprache:
@@ -612,10 +612,11 @@ def newsletter():
             for nutzer in empfaenger:
                 try:
                     personalisiert = inhalt.replace('{name}', nutzer.name)
+                    abmelde_url = url_for('abmelden', token=nutzer.token, _external=True)
                     msg = Message(subject=betreff, recipients=[nutzer.email])
-                    msg.html = render_template('newsletter_email.html', inhalt=personalisiert)
+                    msg.html = render_template('newsletter_email.html', inhalt=personalisiert, abmelde_url=abmelde_url)
                     msg.body = re.sub(r'<[^>]+>', '', personalisiert) + \
-                        '\n\n---\nOpenMycoNet · https://www.openmyconet.de'
+                        f'\n\n---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
                     mail.send(msg)
                     gesendet += 1
                 except Exception as e:
@@ -641,6 +642,40 @@ def newsletter():
 
 
 # --- News / Blog ---
+
+def _news_benachrichtigung_senden(news):
+    """Schickt jeder/m bestaetigten Nutzer/in mit passender Spracheinstellung
+    (und ohne E-Mail-Abmeldung) eine Mail mit Anriss + Link zum Beitrag.
+    Gibt die Anzahl erfolgreich versendeter Mails zurueck."""
+    from omn.public import news_exzerpt
+
+    empfaenger = Nutzer.query.filter_by(
+        bestaetigt=True, keine_mails=False, sprache=news.sprache
+    ).all()
+    if not empfaenger:
+        return 0
+
+    url = url_for('news_detail', slug=news.slug, _external=True)
+    exzerpt = news_exzerpt(news.inhalt, 240)
+    gesendet = 0
+    for n in empfaenger:
+        try:
+            abmelde_url = url_for('abmelden', token=n.token, _external=True)
+            msg = Message(subject=f'OpenMycoNet: {news.titel}', recipients=[n.email])
+            msg.html = render_template(
+                'news_email.html', news=news, exzerpt=exzerpt, url=url, abmelde_url=abmelde_url
+            )
+            msg.body = (
+                f'{news.titel}\n'
+                + (f'{news.untertitel}\n' if news.untertitel else '')
+                + f'\n{exzerpt}\n\nBeitrag lesen: {url}\n\n'
+                f'---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
+            )
+            mail.send(msg)
+            gesendet += 1
+        except Exception:
+            current_app.logger.exception('News-Benachrichtigung an %s fehlgeschlagen', n.email)
+    return gesendet
 
 @admin_bp.route('/admin/news/bild-upload', methods=['POST'])
 @login_required
@@ -674,6 +709,9 @@ def news_admin():
             db.session.add(news)
             db.session.commit()
             nachricht = 'Beitrag veröffentlicht!'
+            if request.form.get('mail_senden'):
+                anzahl = _news_benachrichtigung_senden(news)
+                nachricht += f' E-Mail an {anzahl} Nutzer ({sprache}) verschickt.'
     news_liste = News.query.order_by(News.veroeffentlicht.desc()).all()
     return render_template('news_admin.html', news_liste=news_liste, nachricht=nachricht, fehler=fehler)
 

@@ -70,6 +70,12 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
 input[type="checkbox"] { width: auto; }
 textarea { resize: vertical; }
+/* Checkbox + Text nebeneinander (statt Label als eigener Block darueber) */
+label.u-inline-check {
+  display: flex; align-items: flex-start; gap: 0.5rem;
+  font-family: var(--serif); font-size: 0.95rem; color: var(--ink);
+}
+label.u-inline-check input[type="checkbox"] { margin-top: 0.2rem; }
 
 button, .btn {
   font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.03em;
