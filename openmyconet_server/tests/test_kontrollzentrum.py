@@ -28,9 +28,10 @@ class FakeSMTP:
 
 
 class FakeResponse:
-    def __init__(self, status_code=200, content=b'<rss></rss>'):
+    def __init__(self, status_code=200, content=b'<rss></rss>', headers=None):
         self.status_code = status_code
         self.content = content
+        self.headers = headers or {}
 
     def raise_for_status(self):
         pass
@@ -151,3 +152,46 @@ def test_presse_feed_rot_bei_kaputtem_xml(client, app, superadmin, monkeypatch):
     html = resp.get_data(as_text=True)
     assert 'kz-tile fehler' in html
     assert 'liefert kein gueltiges XML' in html
+
+
+# --- Staging-Instanz-Check (check_staging) ---
+
+def _staging_dir_da(monkeypatch, tmp_path):
+    monkeypatch.setattr('omn.kontrollzentrum.STAGING_DIR', str(tmp_path))
+
+
+def test_staging_check_lokal_weggelassen(monkeypatch):
+    # Kein /home/omn/app-staging -> Kachel wird weggelassen (kein Fehler).
+    monkeypatch.setenv('OMN_ENV', 'prod')
+    monkeypatch.setattr('omn.kontrollzentrum.STAGING_DIR', '/gibt/es/nicht')
+    assert kontrollzentrum.check_staging() is None
+
+
+def test_staging_check_auf_staging_selbst_weggelassen(monkeypatch, tmp_path):
+    _staging_dir_da(monkeypatch, tmp_path)
+    monkeypatch.setenv('OMN_ENV', 'staging')
+    assert kontrollzentrum.check_staging() is None
+
+
+def test_staging_check_gruen_wenn_5001_antwortet(monkeypatch, tmp_path):
+    _staging_dir_da(monkeypatch, tmp_path)
+    monkeypatch.setenv('OMN_ENV', 'prod')
+    monkeypatch.setattr('omn.kontrollzentrum.requests.get',
+                        lambda *a, **kw: FakeResponse(200, headers={'X-OMN-Env': 'staging'}))
+    status, detail = kontrollzentrum.check_staging()
+    assert status == 'ok'
+    assert 'staging' in detail
+
+
+def test_staging_check_rot_wenn_5001_tot(monkeypatch, tmp_path):
+    import requests as _req
+    _staging_dir_da(monkeypatch, tmp_path)
+    monkeypatch.setenv('OMN_ENV', 'prod')
+
+    def boom(*a, **kw):
+        raise _req.ConnectionError('connection refused')
+
+    monkeypatch.setattr('omn.kontrollzentrum.requests.get', boom)
+    status, detail = kontrollzentrum.check_staging()
+    assert status == 'fehler'
+    assert '5001' in detail

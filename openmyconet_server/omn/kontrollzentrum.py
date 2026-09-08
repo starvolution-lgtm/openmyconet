@@ -161,6 +161,26 @@ def check_paypal():
     return 'ok', ''
 
 
+STAGING_HEALTH_URL = os.getenv('STAGING_HEALTH_URL', 'http://127.0.0.1:5001/')
+STAGING_DIR = '/home/omn/app-staging'
+
+
+def check_staging():
+    """Staging-Instanz (systemd-Unit omn-staging, gunicorn :5001) erreichbar?
+    Nur auf dem Prod-Server relevant -- lokal (kein STAGING_DIR) und auf Staging
+    selbst (OMN_ENV != prod) wird die Kachel weggelassen. Geht direkt an :5001
+    (an nginx/Basic-Auth vorbei) -- prueft "laeuft der Prozess", nicht TLS."""
+    if os.getenv('OMN_ENV', 'prod') != 'prod' or not os.path.isdir(STAGING_DIR):
+        return None
+    try:
+        resp = requests.get(STAGING_HEALTH_URL, headers=REQUEST_HEADERS, timeout=CHECK_TIMEOUT)
+    except requests.RequestException as e:
+        return 'fehler', f'Staging (:5001) nicht erreichbar -- omn-staging aus? ({e})'
+    if resp.status_code == 200:
+        return 'ok', f'omn-staging laeuft (X-OMN-Env: {resp.headers.get("X-OMN-Env", "?")})'
+    return 'fehler', f'Staging antwortet mit Status {resp.status_code}'
+
+
 def _presse_feed_pruefen(feed_url, sprache):
     """Reine Netzwerk-Funktion ohne DB-/App-Zugriff -- die Suchbegriff-Abfrage
     passiert VOR dem Thread-Pool im Hauptthread (siehe _alle_checks_ausfuehren),
@@ -201,6 +221,7 @@ SCHNELLE_CHECKS = [
 NETZ_CHECKS = [
     ('paypal', 'PayPal-Erreichbarkeit', check_paypal),
     ('mail', 'Mailserver', check_mailserver),
+    ('staging', 'Staging-Instanz (:5001)', check_staging),
 ]
 
 
