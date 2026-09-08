@@ -1,8 +1,12 @@
 # OpenMycoNet — Backend (Flask)
 
 Flask-SSR-App, live unter **https://api.openmyconet.de** (und Hauptdomain www.openmyconet.de).
-Blueprints in Einzeldateien im Projektroot: `app.py` (Einstieg + öffentliche/API-Routen),
-`admin.py`, `dashboard.py` (Nutzer-Login via Magic-Link), `foerderer.py`, `kollaboration.py`,
+App-Factory: `app.py` (`create_app(config=None)` + Bruecke `app = create_app()`
+fuer die Root-Scripts), WSGI-Einstieg `wsgi.py` (`wsgi:app`), Config in
+`config.py` (`Config` / `TestConfig`). Oeffentliche/API-Routen + Sicherheits-
+Header/CSP-Nonce in `public.py` (`register(app)`, **kein** Blueprint).
+Blueprints in Einzeldateien im Projektroot: `admin.py`, `dashboard.py`
+(Nutzer-Login via Magic-Link), `foerderer.py`, `kollaboration.py`,
 `registrierung.py`, `bewerbung.py`, `rag_chatbot.py`, `presse_suche.py`, `kontrollzentrum.py`.
 Models zentral in `models.py`, DB-Erweiterungen `extensions.py`, i18n `i18n.py`.
 Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: `app/static/`.
@@ -12,7 +16,7 @@ Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: 
 bläht Suchen auf. Immer mit `path:`/`glob:` auf die echten Quelldateien eingrenzen.
 
 ## Datenbank
-SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `app.py`, `_sqlite_pragmas`).
+SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `extensions.py`, `_sqlite_pragmas`).
 **Kein Alembic.** Neue Spalten: Eintrag in `migrate_add_columns.py` (idempotentes
 `ALTER TABLE ADD COLUMN`). Neue Indizes: `index=True` im Model **und** Eintrag in
 `migrate_add_indexes.py` (`CREATE INDEX IF NOT EXISTS`). Neue Tabellen legt

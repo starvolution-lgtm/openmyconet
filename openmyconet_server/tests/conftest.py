@@ -1,12 +1,13 @@
 """
 Gemeinsame Fixtures fuer alle Tests.
 
-Wichtig: app.py erzeugt die Flask-App als Modul-Singleton (kein App-Factory-
-Pattern) und laedt beim Import die echten .env-Werte. Fuer Tests wird direkt
-danach die DB-URI auf eine temporaere SQLite-Datei umgebogen (Flask-SQLAlchemy
-3.x baut die Engine erst beim ersten Zugriff, die Umstellung nach init_app()
-funktioniert deshalb noch), damit Tests niemals gegen die echte
-openmyconet.db laufen.
+Seit dem App-Factory-Umbau (2026-09): jeder Test bekommt ueber
+create_app(TestConfig) eine frische App. TestConfig traegt bereits
+CSRF_ENABLED=False, MAIL_SUPPRESS_SEND=True und einen Test-Absender -- die
+frueheren extensions['mail']-Hacks (Flask-Mail friert die Werte bei init_app
+ein) entfallen dadurch, weil mail.init_app jetzt NACH from_object(TestConfig)
+laeuft. DB + Uploads + instance_path zeigen pro Test auf Temp-Verzeichnisse,
+damit nie gegen die echte openmyconet.db / echte Uploads gelaufen wird.
 """
 
 import os
@@ -14,11 +15,12 @@ import shutil
 import tempfile
 
 import pytest
+from werkzeug.security import generate_password_hash
 
-from app import app as flask_app
+from app import create_app
+from config import TestConfig
 from extensions import db as _db
 from models import AdminUser
-from werkzeug.security import generate_password_hash
 
 
 @pytest.fixture()
@@ -26,42 +28,16 @@ def app():
     db_fd, db_path = tempfile.mkstemp(suffix='.db')
     instance_dir = tempfile.mkdtemp(suffix='_instance')
     upload_dir = tempfile.mkdtemp(suffix='_uploads')
-    flask_app.config.update(
-        TESTING=True,
-        SQLALCHEMY_DATABASE_URI=f'sqlite:///{db_path}',
-        MAIL_SUPPRESS_SEND=True,
-        SERVER_NAME='testserver.local',
-        # CSRF-Schutz (csrf.py) fuer die meisten Tests aus -- die POST-Requests
-        # der Test-Clients schicken kein Token mit. test_csrf.py schaltet ihn
-        # gezielt wieder ein, um die Mechanik selbst zu pruefen.
-        CSRF_ENABLED=False,
-        # Test-Uploads (News-Bild, Foerderer-Logo) in ein Temp-Verzeichnis --
-        # sonst landen prev_*.svg / Mini-PNGs im echten app/static/uploads/
-        # und wandern per git add -A ins Repo.
-        UPLOAD_ROOT=upload_dir,
-    )
-    # instance_path zeigt sonst auf den echten Projektordner -- ohne diese
-    # Umleitung landen von Tests erzeugte Foerderer-Rechnungs-PDFs
-    # (foerderer.py _rechnung_pdf_pfad()) im echten instance/rechnungen/,
-    # vermischt mit tatsaechlichen Rechnungen (real passiert, Testdatei
-    # OMN-2026-0001.pdf musste manuell wieder entfernt werden).
-    flask_app.instance_path = instance_dir
-    # Flask-Mail liest MAIL_SUPPRESS_SEND nur einmal bei init_app() (beim Import
-    # von app.py, noch vor der obigen Config-Aenderung) und legt das Ergebnis im
-    # Extension-State ab -- ein nachtraegliches app.config.update() greift daher
-    # NICHT mehr. Ohne diese Zeile wuerden Tests echte Mails ueber den echten
-    # SMTP-Server verschicken (real passiert, mit echten Rejections vom
-    # Mailserver, bis dieser Fix eingebaut wurde).
-    flask_app.extensions['mail'].suppress = True
-    # Ebenso: MAIL_DEFAULT_SENDER wird nur bei init_app() gelesen. Ohne einen
-    # Absender wirft flask_mail beim Senden "message does not specify a sender"
-    # -- lokal fiel das nicht auf, weil load_dotenv() eine ~/.env mit echtem
-    # Absender fand; in CI (keine .env) schlugen dadurch alle Mail-Tests fehl.
-    flask_app.extensions['mail'].default_sender = 'test@openmyconet.test'
 
-    with flask_app.app_context():
+    class _Cfg(TestConfig):
+        SQLALCHEMY_DATABASE_URI = f'sqlite:///{db_path}'
+        UPLOAD_ROOT = upload_dir
+
+    application = create_app(_Cfg, instance_path=instance_dir)
+
+    with application.app_context():
         _db.create_all()
-        yield flask_app
+        yield application
         _db.session.remove()
         _db.drop_all()
         _db.engine.dispose()
@@ -89,9 +65,8 @@ def _testumgebung(monkeypatch):
     monkeypatch.setattr('rag_chatbot.ip_erlaubt', lambda *a, **kw: True)
     # Admin-/Team-Benachrichtigungen (foerderer.py, kollaboration.py) sind an
     # ADMIN_NOTIFY_EMAIL bzw. MAIL_USERNAME geknuepft und werden sonst still
-    # uebersprungen. Lokal fuellte das eine ~/.env, in CI (keine .env) brachen
-    # dadurch die "Admin wird benachrichtigt"-Tests. Fest setzen macht sie
-    # unabhaengig von der Umgebung.
+    # uebersprungen. Fest setzen macht die "Admin wird benachrichtigt"-Tests
+    # unabhaengig von der Umgebung (lokal .env, CI keine .env).
     monkeypatch.setenv('ADMIN_NOTIFY_EMAIL', 'admin@openmyconet.test')
 
 

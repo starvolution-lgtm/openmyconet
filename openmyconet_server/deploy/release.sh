@@ -11,7 +11,7 @@
 #   1. Tarball -> Staging-Verzeichnis
 #   2. pip install -r requirements.txt (voll gepinnt == was CI geprueft hat;
 #      no-op wenn nichts neu ist)
-#   3. Import-Check (laedt `import app` sauber?)
+#   3. Import-Check (laedt `import wsgi` -> create_app() sauber?)
 #   4. Backup des aktuellen Codes -> /home/omn/app.bak-<ts>
 #   5. rsync Staging -> /home/omn/app  (--delete; deploy/deploy-exclude.txt
 #      schuetzt instance/.env/venv/uploads/logs + serververwaltete Grossmedien)
@@ -50,7 +50,7 @@ gunicorn_neu_laden() {
     else
         echo "   WARN: weder systemd-Unit 'omn' aktiv noch ein gunicorn-Prozess gefunden."
         echo "         Start:  systemctl --user start omn"
-        echo "         oder:   cd $APP && nohup venv/bin/gunicorn -w 2 -b 127.0.0.1:5000 app:app >/dev/null 2>&1 &"
+        echo "         oder:   cd $APP && nohup venv/bin/gunicorn -w 2 -b 127.0.0.1:5000 wsgi:app >/dev/null 2>&1 &"
     fi
 }
 
@@ -69,7 +69,7 @@ trap aufraeumen EXIT
 echo "[1/8] Auspacken -> $STAGING"
 mkdir "$STAGING"
 tar xzf "$TARBALL" -C "$STAGING"
-test -f "$STAGING/app.py" || { echo "Tarball sieht falsch aus (kein app.py)"; exit 1; }
+test -f "$STAGING/wsgi.py" || { echo "Tarball sieht falsch aus (kein wsgi.py)"; exit 1; }
 test -f "$STAGING/deploy/deploy-exclude.txt" || { echo "deploy-exclude.txt fehlt im Tarball"; exit 1; }
 tr -d '\r' < "$STAGING/deploy/deploy-exclude.txt" > "$EXCL"   # CRLF -> LF, sonst greifen die Patterns nicht
 grep -qx '/instance/' "$EXCL" || { echo "deploy-exclude.txt schuetzt /instance/ nicht — Abbruch"; exit 1; }
@@ -78,7 +78,7 @@ echo "[2/8] Abhaengigkeiten (requirements.txt)"
 "$PY" -m pip install -q -r "$STAGING/requirements.txt"
 
 echo "[3/8] Import-Check"
-( cd "$STAGING" && SECRET_KEY=deploy-check "$PY" -c "import app; print('   import app OK')" )
+( cd "$STAGING" && SECRET_KEY=deploy-check "$PY" -c "import wsgi; print('   import wsgi (create_app) OK')" )
 
 echo "[4/8] Backup -> $BACKUP"
 rsync -a --exclude-from="$EXCL" "$APP"/ "$BACKUP"/

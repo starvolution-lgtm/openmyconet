@@ -31,6 +31,11 @@ logger = logging.getLogger(__name__)
 
 
 def _logging_einrichten(app):
+    # Unter TESTING kein Datei-Logging: die App-Factory baut pro Test eine neue
+    # App (create_app), sonst wuerden sich Dutzende RotatingFileHandler auf dem
+    # Root-Logger stapeln, jeder auf ein bereits geloeschtes Temp-Verzeichnis.
+    if app.config.get('TESTING'):
+        return
     logdir = os.path.join(app.instance_path, 'logs')
     os.makedirs(logdir, exist_ok=True)
     handler = RotatingFileHandler(

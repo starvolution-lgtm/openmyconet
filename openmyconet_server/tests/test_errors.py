@@ -1,16 +1,20 @@
 """Testet errors.py: unbehandelte Exceptions werden protokolliert (Fehlerprotokoll-
 Tabelle) statt nur zu crashen, HTTPExceptions (404 etc.) bleiben unangetastet."""
-from app import app as _flask_app
+import pytest
+
 from errors import _unbehandelte_exception
 from extensions import db
 from models import Fehlerprotokoll
 
-# Muss beim Modul-Import (Testsammlung) passieren, nicht in einer Testfunktion --
-# Flask verbietet app.route() nach dem ersten bedienten Request, und andere
-# Tests haben zu dem Zeitpunkt laengst welche bedient.
-@_flask_app.route('/__test_boom__')
-def _test_boom():
-    raise RuntimeError('End-to-End-Testfehler')
+
+@pytest.fixture(autouse=True)
+def _boom_route(app):
+    """Registriert eine absichtlich crashende Route auf der frischen Test-App.
+    Function-scoped + vor jedem Request -> Flask laesst add_url_rule noch zu
+    (nach dem ersten bedienten Request waere es verboten)."""
+    @app.route('/__test_boom__')
+    def _test_boom():
+        raise RuntimeError('End-to-End-Testfehler')
 
 
 def test_normale_404_bleibt_unberuehrt(client):

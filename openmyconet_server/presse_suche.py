@@ -40,6 +40,7 @@ from urllib.parse import urlparse, parse_qs
 
 import feedparser
 import requests
+from flask import has_app_context
 
 from app import app
 from extensions import db
@@ -101,34 +102,45 @@ def _feed_lesen(feed_url):
 
 
 def kandidaten_suchen():
-    neue = 0
+    # Laeuft schon ein App-Context (Admin-Route, Tests), diesen nutzen -- sonst
+    # den der Bridge-App aufmachen (Cron / __main__). Seit dem App-Factory-Umbau
+    # ist `app` hier die per create_app() gebaute Bridge-Instanz; ein
+    # bedingungsloses `with app.app_context()` wuerde in Tests die echte DB
+    # statt der Test-DB treffen.
+    if has_app_context():
+        return _kandidaten_suchen()
     with app.app_context():
-        begriffe = Suchbegriff.query.filter_by(aktiv=True).all()
-        if not begriffe:
-            print('Keine aktiven RSS-Feeds konfiguriert (siehe /admin/presse-kandidaten).')
-            return 0
+        return _kandidaten_suchen()
 
-        for sb in begriffe:
-            try:
-                artikel = _feed_lesen(sb.begriff)
-            except (requests.RequestException, ValueError) as fehler:
-                print(f'Feed-Abruf ({sb.sprache}) fehlgeschlagen: {fehler}')
+
+def _kandidaten_suchen():
+    neue = 0
+    begriffe = Suchbegriff.query.filter_by(aktiv=True).all()
+    if not begriffe:
+        print('Keine aktiven RSS-Feeds konfiguriert (siehe /admin/presse-kandidaten).')
+        return 0
+
+    for sb in begriffe:
+        try:
+            artikel = _feed_lesen(sb.begriff)
+        except (requests.RequestException, ValueError) as fehler:
+            print(f'Feed-Abruf ({sb.sprache}) fehlgeschlagen: {fehler}')
+            continue
+
+        for a in artikel:
+            url = a['url'].strip()
+            titel = a['title'].strip()
+            if not url or not titel:
                 continue
-
-            for a in artikel:
-                url = a['url'].strip()
-                titel = a['title'].strip()
-                if not url or not titel:
-                    continue
-                if Pressekandidat.query.filter_by(url=url).first():
-                    continue  # bereits frueher gefunden (uebernommen, verworfen oder noch pending)
-                kandidat = Pressekandidat(
-                    titel=titel, url=url, quelle=a['domain'],
-                    datum=a['datum'], sprache=sb.sprache,
-                )
-                db.session.add(kandidat)
-                neue += 1
-            db.session.commit()
+            if Pressekandidat.query.filter_by(url=url).first():
+                continue  # bereits frueher gefunden (uebernommen, verworfen oder noch pending)
+            kandidat = Pressekandidat(
+                titel=titel, url=url, quelle=a['domain'],
+                datum=a['datum'], sprache=sb.sprache,
+            )
+            db.session.add(kandidat)
+            neue += 1
+        db.session.commit()
 
     return neue
 

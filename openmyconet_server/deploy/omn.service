@@ -10,7 +10,7 @@
 #   systemctl --user restart omn
 #   journalctl --user -u omn -f
 #
-# ExecStart zeigt bis Phase 2 des Factory-Umbaus auf app:app, danach auf wsgi:app.
+# ExecStart zeigt seit Phase 2 des Factory-Umbaus auf wsgi:app (create_app()).
 
 [Unit]
 Description=OpenMycoNet gunicorn (Flask backend)
@@ -18,7 +18,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/home/omn/app
-ExecStart=/home/omn/app/venv/bin/gunicorn -w 2 -b 127.0.0.1:5000 app:app
+ExecStart=/home/omn/app/venv/bin/gunicorn -w 2 -b 127.0.0.1:5000 wsgi:app
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartSec=3

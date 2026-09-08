@@ -77,7 +77,7 @@ def test_superadmin_sieht_dashboard_mit_gruenen_und_roten_kacheln(client, supera
 def test_csp_kachel_rot_wenn_domain_fehlt(client, superadmin, monkeypatch):
     _netzwerk_checks_mocken(monkeypatch)
     monkeypatch.setattr(
-        'app._CSP',
+        'public._CSP',
         "default-src 'self'; connect-src 'self' https://api.openmyconet.de;",
     )
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
