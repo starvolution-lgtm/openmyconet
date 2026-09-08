@@ -59,9 +59,12 @@ und nicht die venv-Pakete — bei DB-Problemen `deploy/BACKUP.md`).
 
 **gunicorn läuft als systemd-user-Unit `omn`** (`deploy/omn.service`, installiert
 per `deploy/install_systemd.sh`; einmalig als root `loginctl enable-linger omn`).
-`Restart=on-failure`, Logs via `journalctl --user -u omn`. Bedienung:
+`-w 2 -k gthread --threads 4` (IO-lastige Requests blockieren nicht den ganzen
+Prozess). `Restart=on-failure`, Logs via `journalctl --user -u omn`. Bedienung:
 `systemctl --user {status,reload,restart} omn`. release.sh nutzt `reload`, fällt
-auf `kill -HUP` zurück, falls die Unit (noch) nicht aktiv ist.
+auf `kill -HUP` zurück, falls die Unit (noch) nicht aktiv ist. **Ändert sich
+`omn.service` → nach dem Deploy einmal `bash deploy/install_systemd.sh`** (macht
+`restart`; `reload`/HUP zieht eine neue `ExecStart`-Zeile nicht).
 Schneller Gesundheits-Check (Unit-Status + Health + Journal), **quote-frei** —
 darum immer dieses Script statt einer Ad-hoc-`curl`-Zeile nutzen (die
 PowerShell→ssh-Quoting-Falle mit `"`/`%{...}` kann so nicht zuschlagen):
@@ -119,7 +122,7 @@ optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.
 ## Rund-Mails an Nutzer
 Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
 (Checkbox + Sprach-Checkboxen beim Veröffentlichen unter `/admin/news`,
-`_news_benachrichtigung_senden` in `omn/admin.py`) gehen NUR an
+`_news_nachrichten_bauen` in `omn/admin.py`) gehen NUR an
 `Nutzer.bestaetigt == True` **und** `keine_mails == False`. Die News-Mail
 zusätzlich nur an die im Formular angehakten Spracheinstellungen
 (`request.form.getlist('mail_sprachen')`, gefiltert gegen `LANGS`) — die
@@ -131,8 +134,13 @@ tokengesicherten Abmelde-Link `/abmelden/<nutzer.token>` (Route in
 `List-Unsubscribe-Post: List-Unsubscribe=One-Click`
 (`_list_unsubscribe_header` in `omn/admin.py`) — der POST auf dieselbe Route
 erledigt die One-Click-Abmeldung der Mail-Clients. Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das
-Flag. Versand ist synchron im Request (wie bisher) — bei stark wachsender
-Nutzerzahl auf einen Worker/Queue umstellen. Siehe `test_news_mail.py`.
+Flag. Die Nachrichten werden **synchron im Request gebaut** (Rendering,
+`url_for(_external=True)` braucht den Host-Header), der **SMTP-Versand läuft im
+Hintergrund** (`omn/mailer.py`, `versende_im_hintergrund` → Daemon-Thread mit
+EINER `mail.connect()`-Verbindung; unter `TESTING` synchron). Kein echtes
+Queue — bricht bei gunicorn-Neustart mitten im Batch ab (bei aktueller
+Nutzerzahl Sekundenbereich). Einzel-/Transaktionsmails bleiben direkt
+`mail.send()`. Siehe `test_news_mail.py` + `test_mailer.py`.
 
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
