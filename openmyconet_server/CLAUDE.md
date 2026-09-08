@@ -94,6 +94,18 @@ siehe deploy-exclude.txt. Feature-Migrationen (`migrate_kollaboration.py` etc.) 
 manuell — release.sh fährt nur die beiden idempotenten (mit DB-Backup davor, s. o.).
 Vor einer manuellen Feature-Migration einmal `bash deploy/backup_db.sh` von Hand.
 
+### Staging (`staging.openmyconet.de`, zweite Unit auf derselben VPS)
+`deploy/omn-staging.service` — gunicorn `-w 1` auf **Port 5001**, Verzeichnis
+`/home/omn/app-staging`, eigene venv, eigene DB, eigene `.env`
+(`OMN_ENV=staging` → roter Admin-Banner + Header `X-OMN-Env`; `MAIL_SUPPRESS_SEND=True`
+→ nie echte Mails; eigener `SECRET_KEY`). Deploy: `bash deploy/deploy_staging.sh
+<tarball>` (kein DB-Backup, kein Auto-Rollback — Staging darf kaputt sein).
+`bash deploy/staging_db_reset.sh` zieht die neueste Prod-Backup-DB nach Staging.
+Unit installieren: `bash deploy/install_systemd_staging.sh`. Einmalige
+Server-Einrichtung (DNS-A-Record, `.env`, nginx-Site + certbot + Basic-Auth als
+root): `deploy/nginx_staging_site.conf` + `deploy/env.staging.example`.
+Staging hat **keine** Grossmedien (mp3/pdf, per deploy-exclude ausgeschlossen).
+
 ## Fehler-Monitoring
 `omn/errors.py` (`init_errors(app)`): unbehandelte Exceptions → rotierende Logdatei
 (`instance/logs/app.log`), Zeile in `Fehlerprotokoll` (Admin: `/admin/fehler`),

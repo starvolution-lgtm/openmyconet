@@ -1,0 +1,28 @@
+# systemd user-Unit fuer die STAGING-Instanz des OpenMycoNet-Backends.
+#
+# Zweiter gunicorn auf Port 5001, eigenes Verzeichnis /home/omn/app-staging,
+# eigene DB, eigene .env (mit OMN_ENV=staging + MAIL_SUPPRESS_SEND=True).
+#
+# Installation (als User omn):  bash /home/omn/app/deploy/install_systemd_staging.sh
+# linger deckt beide Units ab (gleicher User omn).
+#
+# Bedienung:
+#   systemctl --user status omn-staging
+#   systemctl --user restart omn-staging
+#   journalctl --user -u omn-staging -f
+
+[Unit]
+Description=OpenMycoNet gunicorn (STAGING)
+After=network.target
+
+[Service]
+WorkingDirectory=/home/omn/app-staging
+ExecStart=/home/omn/app-staging/venv/bin/gunicorn -w 1 -k gthread --threads 4 --timeout 60 -b 127.0.0.1:5001 wsgi:app
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=3
+KillMode=mixed
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

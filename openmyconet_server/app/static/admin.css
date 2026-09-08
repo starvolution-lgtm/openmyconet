@@ -195,3 +195,12 @@ img.vorschau { max-width: 300px; display: block; margin-top: 0.6rem; border-radi
 .u-flex-gap-mt1 { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; }
 .u-maxw-420 { max-width: 420px; }
 .u-maxw-380-top { max-width: 380px; margin: 2rem auto 0; }
+
+/* Umgebungs-Banner (nur staging/dev, siehe admin_base.html + config.OMN_ENV) */
+.omn-env-banner {
+  position: sticky; top: 0; z-index: 999;
+  background: #b23c17; color: #fff;
+  font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
+  text-align: center; padding: 0.5rem 1rem;
+  letter-spacing: 0.02em;
+}

@@ -54,6 +54,13 @@ class Config:
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
+    # Staging setzt MAIL_SUPPRESS_SEND=True in seiner .env -> nie echte Mails.
+    # Auch fuer Prod ein Not-Aus ohne Deploy (ENV setzen + reload).
+    MAIL_SUPPRESS_SEND = os.getenv('MAIL_SUPPRESS_SEND', '').strip().lower() in ('1', 'true', 'yes', 'on')
+
+    # 'prod' | 'staging' (| beliebig). Steuert den Umgebungs-Banner im Admin +
+    # den Header X-OMN-Env. Staging setzt OMN_ENV=staging in seiner .env.
+    OMN_ENV = os.getenv('OMN_ENV', 'prod').strip() or 'prod'
 
 
 class TestConfig(Config):

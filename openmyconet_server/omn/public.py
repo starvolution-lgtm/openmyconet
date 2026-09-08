@@ -104,6 +104,9 @@ def _sicherheits_header(response):
     response.headers['Permissions-Policy'] = _PERMISSIONS_POLICY
     # Isoliert cross-origin geoeffnete Fenster (Spectre-artige Side-Channels).
     response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    umgebung = current_app.config.get('OMN_ENV', 'prod')
+    if umgebung != 'prod':
+        response.headers['X-OMN-Env'] = umgebung
     return response
 
 
@@ -372,6 +375,7 @@ def register(app):
 
     app.jinja_env.globals['asset'] = _asset_url
     app.jinja_env.globals['live'] = lambda path: 'https://www.openmyconet.de/' + path
+    app.jinja_env.globals['umgebung'] = lambda: app.config.get('OMN_ENV', 'prod')
     # translations.json liegt lokal in app/static/ -- bewusst NICHT ueber asset()
     # (die alte translations.js dort hat ein anderes Format).
     app.jinja_env.globals['translations_json_url'] = lambda: '/translations.json'

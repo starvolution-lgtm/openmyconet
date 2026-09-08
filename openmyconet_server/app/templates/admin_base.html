@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}OpenMycoNet — Admin{% endblock %}</title>
+<title>{% if umgebung() != 'prod' %}[{{ umgebung()|upper }}] {% endif %}{% block title %}OpenMycoNet — Admin{% endblock %}</title>
 <link href="{{ asset('fonts.css') }}" rel="stylesheet">
 <link href="{{ asset('admin.css') }}" rel="stylesheet">
 {% block extra_css %}{% endblock %}
 </head>
 <body>
+{% if umgebung() != 'prod' %}<div class="omn-env-banner">⚠ {{ umgebung()|upper }} — nicht die echte Seite. Änderungen hier landen NICHT auf openmyconet.de.</div>{% endif %}
 <div class="wrap">
   {% block header %}
   <header class="admin-top">
