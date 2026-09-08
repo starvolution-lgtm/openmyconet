@@ -22,28 +22,27 @@ cp "$APP/deploy/omn.service" "$UNIT_DIR/omn.service"
 echo "Unit  -> $UNIT_DIR/omn.service"
 systemctl --user daemon-reload
 
-# Port 5000 muss frei sein, bevor die Unit startet -- sonst scheitert der
-# gunicorn-Bind (Errno 98) und Restart=on-failure laesst die Unit flappen.
-# Das betrifft den allerersten Install (alter nohup-gunicorn haelt den Port).
-systemctl --user stop omn 2>/dev/null || true
-sleep 1
-frei=0
-for i in 1 2 3 4 5 6; do
-    pids=$(ss -H -ltnp 2>/dev/null | awk '/:5000 /{print}' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | sort -u)
-    if [ -z "$pids" ]; then frei=1; echo "Port 5000 frei (Runde $i)"; break; fi
-    echo "Port 5000 haelt: $pids -> kill -9 (Runde $i)"
-    # shellcheck disable=SC2086
-    kill -9 $pids 2>/dev/null || true
-    sleep 2
-done
-if [ "$frei" -ne 1 ]; then
-    echo "FEHLER: Port 5000 laesst sich nicht freiraeumen -- Abbruch."
-    ss -H -ltnp 2>/dev/null | grep ':5000 ' || true
-    exit 1
-fi
-
+# `restart` bringt die Unit atomar auf die neue ExecStart-Zeile (stop+start in
+# einem Schritt, kein manuelles Stoppen davor -- sonst ist die Site down, falls
+# das Skript dazwischen abbricht; 2026-09-08 genau so passiert, ~80 s Downtime).
 systemctl --user reset-failed omn 2>/dev/null || true
-systemctl --user enable --now omn
+systemctl --user enable omn >/dev/null 2>&1 || true
+
+if ! systemctl --user restart omn; then
+    echo "restart fehlgeschlagen -- Port 5000 freiraeumen (Errno 98?) und neu starten"
+    for i in 1 2 3 4 5 6; do
+        # `|| true`: findet grep nichts, ist die Pipeline unter -o pipefail 1 und
+        # `pids=$(...)` wuerde via set -e abbrechen.
+        pids=$(ss -H -ltnp 2>/dev/null | awk '/:5000 /{print}' | grep -oE 'pid=[0-9]+' | cut -d= -f2 | sort -u || true)
+        [ -z "$pids" ] && break
+        echo "Port 5000 haelt: $pids -> kill -9 (Runde $i)"
+        # shellcheck disable=SC2086
+        kill -9 $pids 2>/dev/null || true
+        sleep 2
+    done
+    systemctl --user reset-failed omn 2>/dev/null || true
+    systemctl --user start omn
+fi
 sleep 3
 
 systemctl --user status omn --no-pager -l || true
