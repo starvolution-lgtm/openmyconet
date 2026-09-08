@@ -56,12 +56,18 @@ mkdir -p "$APP/instance"
 rsync -a --checksum --delete --exclude-from="$EXCL" "$STAGING"/ "$APP"/
 
 echo "[6/6] Migrationen + Reload + Health"
-( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
-if systemctl --user is-active --quiet omn-staging 2>/dev/null; then
-    systemctl --user reload omn-staging
-else
-    echo "   Unit omn-staging nicht aktiv -> bash deploy/install_systemd_staging.sh"
+if [ -f "$APP/instance/openmyconet.db" ]; then
+    ( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
 fi
+
+if ! systemctl --user is-active --quiet omn-staging 2>/dev/null; then
+    echo "=== Dateien uebernommen. Unit omn-staging laeuft noch nicht -- weiter mit:"
+    echo "      bash /home/omn/app/deploy/install_systemd_staging.sh"
+    echo "      bash /home/omn/app/deploy/staging_db_reset.sh"
+    exit 0
+fi
+
+systemctl --user reload omn-staging
 sleep 3
 code=$(curl -s -o /dev/null -m 15 -w '%{http_code}' http://127.0.0.1:5001/ || echo 000)
 if [ "$code" = "200" ]; then
