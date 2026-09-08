@@ -237,8 +237,9 @@ def build_from_translations():
 def build_from_news(start_id):
     """News-Meldungen als eigene Chunks -- nur wenn die DB erreichbar ist."""
     try:
-        from app import app
-        from models import News
+        from omn import create_app
+        app = create_app()
+        from omn.models import News
     except Exception as e:  # pragma: no cover - nur ausserhalb App-Umgebung
         print(f"  News uebersprungen (Import fehlgeschlagen: {e})")
         return []

@@ -4,8 +4,8 @@ import json
 import pyotp
 from conftest import eingeloggt
 
-from extensions import db
-from models import AdminUser
+from omn.extensions import db
+from omn.models import AdminUser
 
 
 def test_setup_aktiviert_und_zeigt_recovery_codes(client, superadmin):

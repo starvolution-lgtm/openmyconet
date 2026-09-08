@@ -2,9 +2,9 @@
 Tabelle) statt nur zu crashen, HTTPExceptions (404 etc.) bleiben unangetastet."""
 import pytest
 
-from errors import _unbehandelte_exception
-from extensions import db
-from models import Fehlerprotokoll
+from omn.errors import _unbehandelte_exception
+from omn.extensions import db
+from omn.models import Fehlerprotokoll
 
 
 @pytest.fixture(autouse=True)

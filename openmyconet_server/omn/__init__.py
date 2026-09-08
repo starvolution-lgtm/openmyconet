@@ -1,10 +1,8 @@
-"""App-Factory fuer das OpenMycoNet-Backend.
+"""App-Factory fuer das OpenMycoNet-Backend (Package `omn`).
 
-Bis 2026-09 baute dieses Modul die Flask-App direkt beim Import (Modul-Singleton).
-Jetzt: create_app(config=None). Am Dateiende steht weiterhin `app = create_app()`
-als Bruecke -- `from app import app` funktioniert fuer die Wartungs-Scripts im
-Root + presse_suche.py unveraendert weiter (sauberer Schnitt in Phase 3, wenn
-alles nach omn/ wandert). Einstiegspunkt fuer gunicorn ist wsgi.py.
+`create_app(config=None)` -- kein Modul-Level-App-Singleton mehr. Einstieg fuer
+gunicorn: `wsgi.py` (`wsgi:app`). Wartungs-Scripts im Repo-Root bauen sich die
+App selbst: `from omn import create_app; app = create_app()`.
 """
 from pathlib import Path
 
@@ -14,25 +12,26 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 # config zuerst: sein Import ruft load_dotenv(), bevor die Blueprint-Module
 # unten evtl. Umgebungsvariablen beim Import auswerten.
-from config import Config
+from omn.config import Config
 # extensions importiert nebenbei _sqlite_pragmas (@event.listens_for global) --
 # muss vor dem ersten Engine-Connect passiert sein.
-from extensions import db, mail
-from admin import admin_bp
-from rag_chatbot import chatbot_bp
-from bewerbung import bewerbung_bp
-from registrierung import registrierung_bp
-from dashboard import dashboard_bp
-from site_preview import site_preview_bp
-from site_live import site_live_bp
-from foerderer import foerderer_bp
-from kontrollzentrum import kontrollzentrum_bp
-from i18n import init_i18n
-from csrf import init_csrf
-from errors import init_errors
-import public
+from omn.extensions import db, mail
+from omn.admin import admin_bp
+from omn.rag_chatbot import chatbot_bp
+from omn.bewerbung import bewerbung_bp
+from omn.registrierung import registrierung_bp
+from omn.dashboard import dashboard_bp
+from omn.site_preview import site_preview_bp
+from omn.site_live import site_live_bp
+from omn.foerderer import foerderer_bp
+from omn.kontrollzentrum import kontrollzentrum_bp
+from omn.i18n import init_i18n
+from omn.csrf import init_csrf
+from omn.errors import init_errors
+from omn import public
 
-_ROOT = Path(__file__).resolve().parent
+# omn/ liegt im Repo-Root; Templates/Static bleiben unter <root>/app/.
+_ROOT = Path(__file__).resolve().parent.parent
 
 
 def create_app(config=None, instance_path=None):
@@ -83,14 +82,3 @@ def create_app(config=None, instance_path=None):
     public.register(app)
 
     return app
-
-
-# --- Bruecke: Modul-Level-app fuer `from app import app` (Root-Scripts) ---
-app = create_app()
-
-
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        print('Datenbank initialisiert.')
-    app.run(debug=False)

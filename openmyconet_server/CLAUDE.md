@@ -1,14 +1,20 @@
 # OpenMycoNet — Backend (Flask)
 
 Flask-SSR-App, live unter **https://api.openmyconet.de** (und Hauptdomain www.openmyconet.de).
-App-Factory: `app.py` (`create_app(config=None)` + Bruecke `app = create_app()`
-fuer die Root-Scripts), WSGI-Einstieg `wsgi.py` (`wsgi:app`), Config in
-`config.py` (`Config` / `TestConfig`). Oeffentliche/API-Routen + Sicherheits-
-Header/CSP-Nonce in `public.py` (`register(app)`, **kein** Blueprint).
-Blueprints in Einzeldateien im Projektroot: `admin.py`, `dashboard.py`
-(Nutzer-Login via Magic-Link), `foerderer.py`, `kollaboration.py`,
-`registrierung.py`, `bewerbung.py`, `rag_chatbot.py`, `presse_suche.py`, `kontrollzentrum.py`.
-Models zentral in `models.py`, DB-Erweiterungen `extensions.py`, i18n `i18n.py`.
+Alle App-Module liegen im Package **`omn/`** (Repo-Root). App-Factory:
+`omn/__init__.py` (`create_app(config=None, instance_path=None)`, **kein** Modul-
+Level-`app` mehr), WSGI-Einstieg `wsgi.py` (`wsgi:app` -> `from omn import
+create_app`), Config in `omn/config.py` (`Config` / `TestConfig`). Oeffentliche/
+API-Routen + Sicherheits-Header/CSP-Nonce in `omn/public.py` (`register(app)`,
+**kein** Blueprint). Blueprints: `omn/admin.py`, `omn/dashboard.py` (Nutzer-Login
+via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.py`,
+`omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py`,
+`omn/site_live.py`, `omn/site_preview.py`. Models `omn/models.py`, DB-Erweiterungen
+`omn/extensions.py`, i18n `omn/i18n.py`. Wartungs-Scripts bleiben im Repo-Root
+(`migrate_*.py`, `seed_*.py`, `presse_suche.py`, `build_rag_index.py`,
+`create_admin.py`, `foerderer_verfall_pruefen.py`, `cleanup_*.py`, `update_*.py`);
+die App-nutzenden davon machen `from omn import create_app; app = create_app()`.
+Import innerhalb `omn/` immer absolut (`from omn.models import ...`).
 Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: `app/static/`.
 
 ## Nicht durchsuchen
@@ -16,7 +22,7 @@ Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: 
 bläht Suchen auf. Immer mit `path:`/`glob:` auf die echten Quelldateien eingrenzen.
 
 ## Datenbank
-SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `extensions.py`, `_sqlite_pragmas`).
+SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `omn/extensions.py`, `_sqlite_pragmas`).
 **Kein Alembic.** Neue Spalten: Eintrag in `migrate_add_columns.py` (idempotentes
 `ALTER TABLE ADD COLUMN`). Neue Indizes: `index=True` im Model **und** Eintrag in
 `migrate_add_indexes.py` (`CREATE INDEX IF NOT EXISTS`). Neue Tabellen legt
@@ -80,7 +86,7 @@ manuell — release.sh fährt nur die beiden idempotenten (mit DB-Backup davor, 
 Vor einer manuellen Feature-Migration einmal `bash deploy/backup_db.sh` von Hand.
 
 ## Fehler-Monitoring
-`errors.py` (`init_errors(app)`): unbehandelte Exceptions → rotierende Logdatei
+`omn/errors.py` (`init_errors(app)`): unbehandelte Exceptions → rotierende Logdatei
 (`instance/logs/app.log`), Zeile in `Fehlerprotokoll` (Admin: `/admin/fehler`),
 ratenbegrenzte Mail an `ADMIN_NOTIFY_EMAIL`/`MAIL_USERNAME` (max. 1/Stunde je
 Fehlerort). Kein Sentry/GlitchTip (weitere Infra, DSGVO-Frage bei externem
@@ -89,7 +95,7 @@ Hosting). HTTPExceptions (404/403/400 …) bleiben unangetastet. Der
 systemd-Unit landet stdout/stderr zusätzlich in `journalctl --user -u omn`.
 
 ## Sicherheit
-CSRF-Schutz (`csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
+CSRF-Schutz (`omn/csrf.py`) auf `admin_bp` + `dashboard_bp` — jedes POST braucht das
 Session-Token (Feld `_csrf` oder Header `X-CSRFToken`). `admin_base.html` /
 `dashboard_base.html` hängen es per Skript an jedes `<form method=post>` an, neue
 Formulare brauchen also nichts. Bewusst NICHT CSRF-geschützt: `/api/register`,

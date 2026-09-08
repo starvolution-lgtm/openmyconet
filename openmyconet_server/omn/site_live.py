@@ -8,9 +8,9 @@ Einbinden in app.py: from site_live import site_live_bp; app.register_blueprint(
 """
 from flask import Blueprint, render_template, redirect, url_for, request, abort
 
-from models import Foerderer, Presseeintrag
-from site_preview import FLOW_SVGS, CARD_SVGS
-from i18n import LANGS
+from omn.models import Foerderer, Presseeintrag
+from omn.site_preview import FLOW_SVGS, CARD_SVGS
+from omn.i18n import LANGS
 
 site_live_bp = Blueprint('site_live', __name__)
 

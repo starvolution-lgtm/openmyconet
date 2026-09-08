@@ -24,8 +24,8 @@ from flask import render_template, request
 from flask_mail import Message
 from werkzeug.exceptions import HTTPException
 
-from extensions import db, mail
-from spam_schutz import ip_erlaubt
+from omn.extensions import db, mail
+from omn.spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +81,7 @@ def _unbehandelte_exception(e):
     if isinstance(e, HTTPException):
         return e  # 404/403/400/... unveraendert durchreichen -- kein "Fehler"
 
-    from models import Fehlerprotokoll  # spaeter Import: keine Zirkularitaet beim App-Start
+    from omn.models import Fehlerprotokoll  # spaeter Import: keine Zirkularitaet beim App-Start
 
     traceback_text = tb_module.format_exc()
     logger.error('Unbehandelte Exception bei %s %s:\n%s', request.method, request.path, traceback_text)

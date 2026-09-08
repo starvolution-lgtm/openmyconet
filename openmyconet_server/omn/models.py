@@ -1,5 +1,5 @@
-from zeit import utcnow
-from extensions import db
+from omn.zeit import utcnow
+from omn.extensions import db
 
 # --- Bestehende Modelle ---
 

@@ -1,7 +1,7 @@
 """Testet die echte Rate-Limit-Logik selbst (in den anderen Testdateien wird
 sie bewusst per Fixture umgangen, siehe conftest.py)."""
 
-import spam_schutz
+from omn import spam_schutz
 
 
 def test_rate_limit_greift_nach_limit(tmp_path, monkeypatch):

@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 # (passiert beim Import dieser Datei).
 load_dotenv()
 
-_ROOT = Path(__file__).resolve().parent
+_ROOT = Path(__file__).resolve().parent.parent  # omn/ -> Repo-Root
 
 
 class Config:

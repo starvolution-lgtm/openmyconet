@@ -21,17 +21,17 @@ from flask import (
 from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from extensions import db, mail
-from models import (
+from omn.extensions import db, mail
+from omn.models import (
     Nutzer, Knoten, News, AdminUser, ChatLog, Spende, ContentBlock, Bewerbung,
     Foerderer, Presseeintrag, Pressekandidat, Suchbegriff, KollaborationAnhang,
     Fehlerprotokoll,
 )
-from roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
-from spam_schutz import ip_erlaubt
-from csrf import schuetze_blueprint, csrf_token
-from zeit import utcnow
-import kollaboration
+from omn.roles import nutzer_finden_oder_anlegen, hyphist_setzen, sporist_setzen
+from omn.spam_schutz import ip_erlaubt
+from omn.csrf import schuetze_blueprint, csrf_token
+from omn.zeit import utcnow
+from omn import kollaboration
 
 admin_bp = Blueprint('admin', __name__)
 

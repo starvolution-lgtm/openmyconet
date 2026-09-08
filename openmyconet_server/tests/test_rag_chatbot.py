@@ -2,7 +2,7 @@
 kurze, generische Woerter durften nicht mehr per Zufalls-Textfragment einen
 thematisch unverwandten Synonym-Key triggern (z.B. "daten" in "datenschutz")."""
 
-from rag_chatbot import expand_keywords, find_chunks
+from omn.rag_chatbot import expand_keywords, find_chunks
 
 
 def test_daten_triggert_nicht_mehr_datenschutz_synonyme():

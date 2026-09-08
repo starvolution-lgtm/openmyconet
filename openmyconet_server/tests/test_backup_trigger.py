@@ -4,8 +4,8 @@ import subprocess
 import pytest
 from conftest import eingeloggt
 
-import admin
-import kontrollzentrum
+from omn import admin
+from omn import kontrollzentrum
 
 
 @pytest.fixture(autouse=True)

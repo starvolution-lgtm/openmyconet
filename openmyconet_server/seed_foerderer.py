@@ -10,9 +10,10 @@ Aufruf: python seed_foerderer.py
 import secrets
 from datetime import datetime
 
-from app import app
-from extensions import db
-from models import Foerderer
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import Foerderer
 
 EINTRAEGE = [
     dict(

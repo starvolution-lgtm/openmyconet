@@ -11,7 +11,7 @@ Sprachumschalten (Flaggen-Klick, kein Reload) unveraendert weiterfunktioniert
 (loest das hreflang/Duplicate-Content-Thema aus Phase 1).
 
 Einbinden in app.py:
-    from i18n import init_i18n
+    from omn.i18n import init_i18n
     init_i18n(app)
 """
 import json
@@ -22,7 +22,8 @@ from flask import g, request, jsonify
 LANGS = ['de', 'en', 'nl', 'fr', 'es']
 COOKIE_NAME = 'omn_lang'
 
-_TRANSLATIONS_PATH = os.path.join(os.path.dirname(__file__), 'app', 'static', 'translations.json')
+# omn/i18n.py -> Repo-Root -> app/static/
+_TRANSLATIONS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'app', 'static', 'translations.json')
 with open(_TRANSLATIONS_PATH, encoding='utf-8') as _f:
     TRANSLATIONS = json.load(_f)
 

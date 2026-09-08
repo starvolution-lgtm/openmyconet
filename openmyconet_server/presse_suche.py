@@ -42,9 +42,11 @@ import feedparser
 import requests
 from flask import has_app_context
 
-from app import app
-from extensions import db
-from models import Pressekandidat, Suchbegriff
+from omn import create_app
+from omn.extensions import db
+from omn.models import Pressekandidat, Suchbegriff
+
+app = create_app()
 
 # Browser-aehnlicher User-Agent -- manche Dienste blocken den requests-Standard-UA
 # ("python-requests/x.y.z") pauschal. Uebernommen aus der vorherigen GDELT-Anbindung.
@@ -103,10 +105,8 @@ def _feed_lesen(feed_url):
 
 def kandidaten_suchen():
     # Laeuft schon ein App-Context (Admin-Route, Tests), diesen nutzen -- sonst
-    # den der Bridge-App aufmachen (Cron / __main__). Seit dem App-Factory-Umbau
-    # ist `app` hier die per create_app() gebaute Bridge-Instanz; ein
-    # bedingungsloses `with app.app_context()` wuerde in Tests die echte DB
-    # statt der Test-DB treffen.
+    # den der modul-eigenen `app` aufmachen (Cron / __main__). Ein bedingungsloses
+    # `with app.app_context()` wuerde in Tests die echte DB statt der Test-DB treffen.
     if has_app_context():
         return _kandidaten_suchen()
     with app.app_context():

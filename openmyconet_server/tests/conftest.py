@@ -17,10 +17,10 @@ import tempfile
 import pytest
 from werkzeug.security import generate_password_hash
 
-from app import create_app
-from config import TestConfig
-from extensions import db as _db
-from models import AdminUser
+from omn import create_app
+from omn.config import TestConfig
+from omn.extensions import db as _db
+from omn.models import AdminUser
 
 
 @pytest.fixture()
@@ -58,11 +58,11 @@ def _testumgebung(monkeypatch):
     # IP+Endpunkt -- ohne diesen Bypass wuerden wiederholte Testlaeufe sich
     # gegenseitig ins Rate-Limit laufen (siehe test_spam_schutz.py fuer einen
     # gezielten Test der echten Rate-Limit-Logik).
-    monkeypatch.setattr('registrierung.ip_erlaubt', lambda *a, **kw: True)
-    monkeypatch.setattr('foerderer.ip_erlaubt', lambda *a, **kw: True)
-    monkeypatch.setattr('dashboard.ip_erlaubt', lambda *a, **kw: True)
-    monkeypatch.setattr('admin.ip_erlaubt', lambda *a, **kw: True)
-    monkeypatch.setattr('rag_chatbot.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.registrierung.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.foerderer.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.dashboard.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.rag_chatbot.ip_erlaubt', lambda *a, **kw: True)
     # Admin-/Team-Benachrichtigungen (foerderer.py, kollaboration.py) sind an
     # ADMIN_NOTIFY_EMAIL bzw. MAIL_USERNAME geknuepft und werden sonst still
     # uebersprungen. Fest setzen macht die "Admin wird benachrichtigt"-Tests

@@ -4,7 +4,7 @@ Baut die App ueber die Factory frisch auf -- keine Abhaengigkeit vom
 Modul-Level-`app`-Singleton in app.py (der bleibt nur als Bruecke fuer die
 Wartungs-Scripts bestehen).
 """
-from app import create_app
+from omn import create_app
 
 app = create_app()
 

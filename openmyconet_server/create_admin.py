@@ -12,9 +12,10 @@ from werkzeug.security import generate_password_hash
 
 load_dotenv()
 
-from app import app
-from extensions import db
-from models import AdminUser
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import AdminUser
 
 username = os.getenv('ADMIN_USERNAME', 'admin')
 password = os.getenv('ADMIN_PASSWORD', 'changeme')

@@ -4,8 +4,8 @@ import secrets
 
 import pytest
 
-from extensions import db
-from models import Knoten, Messung, Nutzer
+from omn.extensions import db
+from omn.models import Knoten, Messung, Nutzer
 
 
 @pytest.fixture()

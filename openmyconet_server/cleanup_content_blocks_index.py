@@ -13,9 +13,10 @@ raeumt sie auf, damit niemand spaeter in der DB auf veraltete Texte stoesst.
 Aufruf: python cleanup_content_blocks_index.py
 Sicher mehrfach ausfuehrbar -- loescht nur, wenn noch Zeilen vorhanden sind.
 """
-from app import app
-from extensions import db
-from models import ContentBlock
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import ContentBlock
 
 with app.app_context():
     treffer = ContentBlock.query.filter(ContentBlock.schluessel.like('index_%')).all()

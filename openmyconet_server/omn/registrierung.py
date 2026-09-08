@@ -11,9 +11,9 @@ import secrets
 from flask import Blueprint, request, jsonify
 from flask_mail import Message
 
-from extensions import db, mail
-from models import Nutzer
-from spam_schutz import ip_erlaubt
+from omn.extensions import db, mail
+from omn.models import Nutzer
+from omn.spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
 

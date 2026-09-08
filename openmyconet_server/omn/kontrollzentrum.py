@@ -27,8 +27,8 @@ import feedparser
 import requests
 from flask import Blueprint, current_app, render_template, request
 
-from admin import role_required
-from models import Knoten, Suchbegriff
+from omn.admin import role_required
+from omn.models import Knoten, Suchbegriff
 
 kontrollzentrum_bp = Blueprint('kontrollzentrum', __name__)
 

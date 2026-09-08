@@ -17,12 +17,12 @@ from flask import (
 )
 from flask_mail import Message
 
-from extensions import db, mail
-from models import Nutzer, Bewerbung, KollaborationAnhang
-from spam_schutz import ip_erlaubt
-from zeit import utcnow
-from csrf import schuetze_blueprint
-import kollaboration
+from omn.extensions import db, mail
+from omn.models import Nutzer, Bewerbung, KollaborationAnhang
+from omn.spam_schutz import ip_erlaubt
+from omn.zeit import utcnow
+from omn.csrf import schuetze_blueprint
+from omn import kollaboration
 
 logger = logging.getLogger(__name__)
 

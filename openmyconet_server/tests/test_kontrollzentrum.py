@@ -1,10 +1,10 @@
 import pytest
 
 from conftest import eingeloggt
-from extensions import db as _db
-from models import Suchbegriff
+from omn.extensions import db as _db
+from omn.models import Suchbegriff
 
-import kontrollzentrum
+from omn import kontrollzentrum
 
 
 @pytest.fixture(autouse=True)
@@ -39,8 +39,8 @@ class FakeResponse:
 def _netzwerk_checks_mocken(monkeypatch):
     """PayPal-/Mail-Checks duerfen in Tests nie echte Netzwerk-/SMTP-Verbindungen
     aufbauen -- wie bei den bestehenden Foerderer-/Presse-Tests wird alles gemockt."""
-    monkeypatch.setattr('kontrollzentrum.requests.get', lambda *a, **kw: FakeResponse())
-    monkeypatch.setattr('kontrollzentrum.smtplib.SMTP', FakeSMTP)
+    monkeypatch.setattr('omn.kontrollzentrum.requests.get', lambda *a, **kw: FakeResponse())
+    monkeypatch.setattr('omn.kontrollzentrum.smtplib.SMTP', FakeSMTP)
     monkeypatch.setenv('PAYPAL_EMAIL', 'test@example.com')
     monkeypatch.setenv('MAIL_SERVER', 'smtp.example.com')
     monkeypatch.setenv('MAIL_USERNAME', 'test@example.com')
@@ -77,7 +77,7 @@ def test_superadmin_sieht_dashboard_mit_gruenen_und_roten_kacheln(client, supera
 def test_csp_kachel_rot_wenn_domain_fehlt(client, superadmin, monkeypatch):
     _netzwerk_checks_mocken(monkeypatch)
     monkeypatch.setattr(
-        'public._CSP',
+        'omn.public._CSP',
         "default-src 'self'; connect-src 'self' https://api.openmyconet.de;",
     )
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
@@ -102,8 +102,8 @@ def test_cache_verhindert_doppelten_netzwerkzugriff_innerhalb_ttl(client, supera
         aufrufe['n'] += 1
         return FakeResponse()
 
-    monkeypatch.setattr('kontrollzentrum.requests.get', fake_get)
-    monkeypatch.setattr('kontrollzentrum.smtplib.SMTP', FakeSMTP)
+    monkeypatch.setattr('omn.kontrollzentrum.requests.get', fake_get)
+    monkeypatch.setattr('omn.kontrollzentrum.smtplib.SMTP', FakeSMTP)
     monkeypatch.setenv('PAYPAL_EMAIL', 'test@example.com')
     monkeypatch.setenv('MAIL_SERVER', 'smtp.example.com')
     monkeypatch.setenv('MAIL_USERNAME', 'test@example.com')
@@ -131,7 +131,7 @@ def test_presse_feed_grau_wenn_valide_aber_leer(client, app, superadmin, monkeyp
     _aktiven_suchbegriff_anlegen(app)
     # Gueltiges, aber leeres Feed-XML -- kein Fehler, nur (noch) keine Treffer.
     leeres_feed = FakeResponse(content=b'<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>')
-    monkeypatch.setattr('kontrollzentrum.requests.get', lambda *a, **kw: leeres_feed)
+    monkeypatch.setattr('omn.kontrollzentrum.requests.get', lambda *a, **kw: leeres_feed)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     resp = client.get('/admin/kontrollzentrum')
@@ -144,7 +144,7 @@ def test_presse_feed_rot_bei_kaputtem_xml(client, app, superadmin, monkeypatch):
     _netzwerk_checks_mocken(monkeypatch)
     _aktiven_suchbegriff_anlegen(app)
     kaputtes_feed = FakeResponse(content=b'das ist kein XML')
-    monkeypatch.setattr('kontrollzentrum.requests.get', lambda *a, **kw: kaputtes_feed)
+    monkeypatch.setattr('omn.kontrollzentrum.requests.get', lambda *a, **kw: kaputtes_feed)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     resp = client.get('/admin/kontrollzentrum')

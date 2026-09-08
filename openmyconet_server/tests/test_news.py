@@ -3,8 +3,8 @@ alle Artikel und filterte Tags in Python -- das sollte weiterhin exakt matchen
 (kein 'myco' in 'mycology'), jetzt per SQL und mit Seitenumbruch."""
 from datetime import datetime, timedelta
 
-from extensions import db
-from models import News
+from omn.extensions import db
+from omn.models import News
 
 
 def _news(app, anzahl, **overrides):

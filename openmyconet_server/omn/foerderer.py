@@ -28,11 +28,11 @@ from flask import Blueprint, request, render_template, redirect, current_app, se
 from flask_mail import Message
 from PIL import Image, UnidentifiedImageError
 
-from extensions import db, mail
-from models import Foerderer, RechnungsZaehler
-from roles import nutzer_finden_oder_anlegen
-from spam_schutz import ip_erlaubt
-from zeit import utcnow
+from omn.extensions import db, mail
+from omn.models import Foerderer, RechnungsZaehler
+from omn.roles import nutzer_finden_oder_anlegen
+from omn.spam_schutz import ip_erlaubt
+from omn.zeit import utcnow
 
 logger = logging.getLogger(__name__)
 

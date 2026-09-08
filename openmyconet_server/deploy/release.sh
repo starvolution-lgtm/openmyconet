@@ -70,6 +70,7 @@ echo "[1/8] Auspacken -> $STAGING"
 mkdir "$STAGING"
 tar xzf "$TARBALL" -C "$STAGING"
 test -f "$STAGING/wsgi.py" || { echo "Tarball sieht falsch aus (kein wsgi.py)"; exit 1; }
+test -f "$STAGING/omn/__init__.py" || { echo "Tarball sieht falsch aus (kein omn/-Package)"; exit 1; }
 test -f "$STAGING/deploy/deploy-exclude.txt" || { echo "deploy-exclude.txt fehlt im Tarball"; exit 1; }
 tr -d '\r' < "$STAGING/deploy/deploy-exclude.txt" > "$EXCL"   # CRLF -> LF, sonst greifen die Patterns nicht
 grep -qx '/instance/' "$EXCL" || { echo "deploy-exclude.txt schuetzt /instance/ nicht — Abbruch"; exit 1; }

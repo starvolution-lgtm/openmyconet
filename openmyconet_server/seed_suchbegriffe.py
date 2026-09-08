@@ -7,9 +7,10 @@ Editierbar danach unter /admin/presse-kandidaten.
 Aufruf: python seed_suchbegriffe.py
 Sicher mehrfach ausfuehrbar -- ueberspringt bereits vorhandene Sprachen.
 """
-from app import app
-from extensions import db
-from models import Suchbegriff
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import Suchbegriff
 
 SEED_DATA = [
     ('de', 'Mykorrhiza-Netzwerk', 'german'),

@@ -10,9 +10,10 @@ Sicher mehrfach ausfuehrbar -- ueberspringt bereits vorhandene
 schluessel+sprache-Kombinationen, ueberschreibt nichts (falls ein Editor
 den Text im Admin-Panel bereits angepasst hat).
 """
-from app import app
-from extensions import db
-from models import ContentBlock
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import ContentBlock
 
 SEED_DATA = {
     "de": {

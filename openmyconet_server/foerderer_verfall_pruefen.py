@@ -14,11 +14,12 @@ Infrastruktur wie presse_suche.py/cleanup_foerderer_previews.py)
 """
 from datetime import timedelta
 
-from app import app
-from extensions import db
-from models import Foerderer, Nutzer
-from roles import hyphist_entfernen
-from zeit import utcnow
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import Foerderer, Nutzer
+from omn.roles import hyphist_entfernen
+from omn.zeit import utcnow
 
 VERFALLSFRIST = timedelta(days=60)
 

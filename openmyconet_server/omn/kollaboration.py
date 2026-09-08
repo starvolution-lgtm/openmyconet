@@ -17,9 +17,9 @@ from flask import current_app
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 
-from extensions import db, mail
-from models import Aufgabe, Kommentar, KollaborationAnhang
-from zeit import utcnow
+from omn.extensions import db, mail
+from omn.models import Aufgabe, Kommentar, KollaborationAnhang
+from omn.zeit import utcnow
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ MAX_ANHANG_BYTES = 5 * 1024 * 1024  # 5 MB pro Datei
 def kontext_filter(kontext):
     """Gibt die FK-Kwargs zurueck, mit denen Aufgabe/Kommentar an diesen Kontext
     gebunden bzw. abgefragt werden ('genau ein FK gesetzt'-Invariante)."""
-    from models import Foerderer, Knoten
+    from omn.models import Foerderer, Knoten
     if isinstance(kontext, Foerderer):
         return {'foerderer_id': kontext.id}
     if isinstance(kontext, Knoten):
@@ -62,7 +62,7 @@ def _kooperation_aktivitaet_markieren(kontext):
     status_geaendert_am zurueck, damit die 60-Tage-Verfallspruefung
     (foerderer_verfall_pruefen.py) eine aktiv bearbeitete Partnerschaft nicht
     faelschlich auf 'verfallen' stuft. Nur fuer Kooperations-Foerderer relevant."""
-    from models import Foerderer
+    from omn.models import Foerderer
     if isinstance(kontext, Foerderer) and kontext.typ == 'kooperation':
         kontext.status_geaendert_am = utcnow()
 
@@ -168,7 +168,7 @@ def post_verarbeiten(kontext, wer, form, files):
 def kooperationen_von(nutzer):
     """Freigeschaltete Kooperations-Datensaetze des Nutzers -- ueber die
     eindeutige nutzer_id, mit E-Mail-Gleichheit als Fallback fuer Alt-Eintraege."""
-    from models import Foerderer
+    from omn.models import Foerderer
     return (Foerderer.query
             .filter(Foerderer.typ == 'kooperation', Foerderer.status == 'active')
             .filter(db.or_(Foerderer.nutzer_id == nutzer.id, Foerderer.email == nutzer.email))
@@ -235,7 +235,7 @@ def _benachrichtige(kontext, autor, ereignis):
     """autor 'partner' -> Mail ans Team; autor 'team' -> Mail an den Partner.
     Bewusst knapp gehalten, analog zu den bestehenden Admin-Notify-Mails.
     Mailfehler werden nur geloggt, nie propagiert."""
-    from models import Foerderer
+    from omn.models import Foerderer
     base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
 
     if isinstance(kontext, Foerderer):

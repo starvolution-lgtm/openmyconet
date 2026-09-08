@@ -11,7 +11,7 @@ Einbinden in app.py: from site_preview import site_preview_bp; app.register_blue
 """
 from flask import Blueprint, render_template
 
-from models import Foerderer
+from omn.models import Foerderer
 
 site_preview_bp = Blueprint('site_preview', __name__)
 

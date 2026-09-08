@@ -4,9 +4,10 @@ bestehenden GPG-Projekt/KleingartenLAN-Eintraege.
 
 Aufruf: python update_foerderer_korrekturen.py
 """
-from app import app
-from extensions import db
-from models import Foerderer
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import Foerderer
 
 with app.app_context():
     gpg = Foerderer.query.filter_by(firma='GPG-Projekt GmbH').first()

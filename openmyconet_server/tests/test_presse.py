@@ -4,8 +4,8 @@ from xml.sax.saxutils import escape as _xml_escape
 import requests
 
 from conftest import eingeloggt
-from extensions import db
-from models import Presseeintrag, Pressekandidat, Suchbegriff
+from omn.extensions import db
+from omn.models import Presseeintrag, Pressekandidat, Suchbegriff
 import presse_suche
 
 

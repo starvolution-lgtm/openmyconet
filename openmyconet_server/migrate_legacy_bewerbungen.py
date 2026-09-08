@@ -14,9 +14,10 @@ verschickt — es handelt sich um historische Daten, keine Neuanmeldung.
 import secrets
 from datetime import datetime
 
-from app import app
-from extensions import db
-from models import Bewerbung, Nutzer
+from omn import create_app
+app = create_app()
+from omn.extensions import db
+from omn.models import Bewerbung, Nutzer
 
 
 def get_or_create_nutzer(name, email, sprache, gruppe, ip, registriert_am):

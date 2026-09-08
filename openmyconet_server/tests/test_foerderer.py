@@ -1,7 +1,7 @@
 import os
 
-from extensions import db, mail
-from models import Foerderer
+from omn.extensions import db, mail
+from omn.models import Foerderer
 
 GUELTIGE_ANTRAG_DATEN = {
     'action': 'preview',
@@ -115,7 +115,7 @@ def test_ipn_setzt_zahlung_eingegangen_statt_sofort_aktiv(client, app, monkeypat
     erfolgt separat durch die Admin-Aktion 'activate' (admin.py)."""
     monkeypatch.setenv('PAYPAL_EMAIL', 'verkaeufer@example.com')
     foerderer_id = _pending_foerderer(app)
-    monkeypatch.setattr('foerderer.requests.post', lambda *a, **kw: _GefaelschteVerifyResponse('VERIFIED'))
+    monkeypatch.setattr('omn.foerderer.requests.post', lambda *a, **kw: _GefaelschteVerifyResponse('VERIFIED'))
 
     with mail.record_messages() as ausgehend:
         resp = client.post('/foerderer/ipn', data={
@@ -144,7 +144,7 @@ def test_ipn_setzt_zahlung_eingegangen_statt_sofort_aktiv(client, app, monkeypat
 def test_ipn_receiver_email_mismatch_bleibt_pending(client, app, monkeypatch):
     monkeypatch.setenv('PAYPAL_EMAIL', 'verkaeufer@example.com')
     foerderer_id = _pending_foerderer(app, token='test-token-456')
-    monkeypatch.setattr('foerderer.requests.post', lambda *a, **kw: _GefaelschteVerifyResponse('VERIFIED'))
+    monkeypatch.setattr('omn.foerderer.requests.post', lambda *a, **kw: _GefaelschteVerifyResponse('VERIFIED'))
 
     resp = client.post('/foerderer/ipn', data={
         'payment_status': 'Completed', 'receiver_email': 'falsche-adresse@example.com',

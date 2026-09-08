@@ -13,10 +13,10 @@ from datetime import timedelta
 import bleach
 from flask import Response, current_app, g, render_template, request, url_for
 
-import zeit
-from extensions import db
-from models import ContentBlock, Knoten, Messung, News, Nutzer, Spende
-from registrierung import register_nutzer_core
+from omn import zeit
+from omn.extensions import db
+from omn.models import ContentBlock, Knoten, Messung, News, Nutzer, Spende
+from omn.registrierung import register_nutzer_core
 
 NEWS_PRO_SEITE = 12
 

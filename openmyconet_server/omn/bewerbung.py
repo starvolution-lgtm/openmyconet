@@ -8,10 +8,10 @@ import logging
 from flask import Blueprint, request, jsonify
 from flask_mail import Message
 
-from extensions import db, mail
-from models import Bewerbung, Nutzer
-from registrierung import register_nutzer_core
-from spam_schutz import ip_erlaubt
+from omn.extensions import db, mail
+from omn.models import Bewerbung, Nutzer
+from omn.registrierung import register_nutzer_core
+from omn.spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
 

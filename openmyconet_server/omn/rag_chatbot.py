@@ -12,9 +12,9 @@ from pathlib import Path
 from flask import Blueprint, request, jsonify
 import anthropic
 
-from extensions import db
-from models import ChatLog
-from spam_schutz import ip_erlaubt
+from omn.extensions import db
+from omn.models import ChatLog
+from omn.spam_schutz import ip_erlaubt
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,9 @@ chatbot_bp = Blueprint("chatbot", __name__)
 # lauffähig, ist aber veraltet).
 # ---------------------------------------------------------------------------
 
-_CHUNKS_FILE = Path(__file__).with_name("rag_chunks.json")
+# rag_chunks.json liegt im Repo-Root (build_rag_index.py schreibt es dorthin),
+# omn/rag_chatbot.py eine Ebene tiefer.
+_CHUNKS_FILE = Path(__file__).resolve().parent.parent / "rag_chunks.json"
 
 _FALLBACK_CHUNKS = [
   {"id":1,"lang":"de","title":"Vision & Warum","text":"Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde. Mykorrhiza-Pilze verbinden seit 400 Millionen Jahren nahezu alle Landpflanzen miteinander — sie transportieren Nährstoffe, übermitteln Warnsignale und koordinieren das Leben im Boden auf eine Weise die wir gerade erst zu verstehen beginnen. Sie senden elektrische Signale. Messbar. Reproduzierbar. Und bisher kaum entschlüsselt. OpenMycoNet stellt die einfache aber weitreichende Frage: Was passiert wenn wir aufhören, Böden nur von außen zu analysieren — und stattdessen anfangen zuzuhören was das Netzwerk selbst sendet? Das Netzwerk sendet. Wir haben gerade erst angefangen zuzuhören. Jeder BioComm-Knoten der weltweit in Betrieb geht bringt uns einen Schritt näher an das Verständnis — für alle."},

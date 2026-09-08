@@ -3,7 +3,7 @@ im ganzen Backend (models.py-Defaults, Token-Ablauf, Rechnungsjahr, Verfalls-
 pruefung). Muss weiterhin ein naives, aber korrektes UTC-Datetime liefern."""
 from datetime import datetime, timedelta, timezone
 
-from zeit import utcnow
+from omn.zeit import utcnow
 
 
 def test_liefert_naives_datetime():

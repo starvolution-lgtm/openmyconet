@@ -1,5 +1,5 @@
-from extensions import mail
-from models import Nutzer
+from omn.extensions import mail
+from omn.models import Nutzer
 
 
 def test_registrierung_erfolgreich(client, app):

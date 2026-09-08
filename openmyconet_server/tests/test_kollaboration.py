@@ -3,9 +3,9 @@ import io
 from datetime import timedelta
 
 from conftest import eingeloggt
-from extensions import db, mail
-from models import Nutzer, Foerderer, Knoten, Aufgabe, Kommentar, KollaborationAnhang
-from zeit import utcnow
+from omn.extensions import db, mail
+from omn.models import Nutzer, Foerderer, Knoten, Aufgabe, Kommentar, KollaborationAnhang
+from omn.zeit import utcnow
 
 
 def _nutzer(app, email='partner@example.com', hyphist=True):
