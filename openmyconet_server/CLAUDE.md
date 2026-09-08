@@ -60,6 +60,10 @@ per `deploy/install_systemd.sh`; einmalig als root `loginctl enable-linger omn`)
 `Restart=on-failure`, Logs via `journalctl --user -u omn`. Bedienung:
 `systemctl --user {status,reload,restart} omn`. release.sh nutzt `reload`, fällt
 auf `kill -HUP` zurück, falls die Unit (noch) nicht aktiv ist.
+Schneller Gesundheits-Check (Unit-Status + Health + Journal), **quote-frei** —
+darum immer dieses Script statt einer Ad-hoc-`curl`-Zeile nutzen (die
+PowerShell→ssh-Quoting-Falle mit `"`/`%{...}` kann so nicht zuschlagen):
+`ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 'bash /home/omn/app/deploy/status.sh'`
 Neue Runtime-Dependency also einfach in `requirements.txt` eintragen, release.sh
 installiert sie beim Deploy.
 
