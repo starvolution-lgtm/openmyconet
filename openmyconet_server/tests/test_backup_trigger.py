@@ -4,8 +4,8 @@ import subprocess
 import pytest
 from conftest import eingeloggt
 
-from omn import admin
 from omn import kontrollzentrum
+from omn.admin import wartung
 
 
 @pytest.fixture(autouse=True)
@@ -66,7 +66,7 @@ def test_backup_jetzt_ruft_skript_und_flasht(client, superadmin, monkeypatch):
         aufrufe.append(cmd)
         return subprocess.CompletedProcess(cmd, 0, stdout='Backup ok: xy.db.gz\n', stderr='')
 
-    monkeypatch.setattr(admin.subprocess, 'run', fake_run)
+    monkeypatch.setattr(wartung.subprocess, 'run', fake_run)
     monkeypatch.setattr('os.path.isfile', lambda p: True)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
@@ -81,7 +81,7 @@ def test_restore_check_route_meldet_fehlercode(client, superadmin, monkeypatch):
     def fake_run(cmd, **kw):
         return subprocess.CompletedProcess(cmd, 2, stdout='', stderr='integrity_check != ok\n')
 
-    monkeypatch.setattr(admin.subprocess, 'run', fake_run)
+    monkeypatch.setattr(wartung.subprocess, 'run', fake_run)
     monkeypatch.setattr('os.path.isfile', lambda p: True)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')

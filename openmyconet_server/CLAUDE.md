@@ -6,7 +6,11 @@ Alle App-Module liegen im Package **`omn/`** (Repo-Root). App-Factory:
 Level-`app` mehr), WSGI-Einstieg `wsgi.py` (`wsgi:app` -> `from omn import
 create_app`), Config in `omn/config.py` (`Config` / `TestConfig`). Oeffentliche/
 API-Routen + Sicherheits-Header/CSP-Nonce in `omn/public.py` (`register(app)`,
-**kein** Blueprint). Blueprints: `omn/admin.py`, `omn/dashboard.py` (Nutzer-Login
+**kein** Blueprint). Blueprints: `omn/admin/` (Paket, EIN Blueprint `admin_bp` —
+`core.py` hält Blueprint + kanonischer-Host-Redirect + CSRF + geteilte Decorators,
+Fachmodule `auth/uebersicht/news/wartung/inhalte/knoten/foerderer/presse.py` hängen
+ihre Routen an `admin_bp`, `__init__.py` re-exportiert `admin_bp`/`role_required`/
+`sanitize_news_html`), `omn/dashboard.py` (Nutzer-Login
 via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.py`,
 `omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py`,
 `omn/site_live.py`, `omn/site_preview.py`. Models `omn/models.py`, DB-Erweiterungen
@@ -134,7 +138,7 @@ optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.
 ## Rund-Mails an Nutzer
 Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
 (Checkbox + Sprach-Checkboxen beim Veröffentlichen unter `/admin/news`,
-`_news_nachrichten_bauen` in `omn/admin.py`) gehen NUR an
+`_news_nachrichten_bauen` in `omn/admin/news.py`) gehen NUR an
 `Nutzer.bestaetigt == True` **und** `keine_mails == False`. Die News-Mail
 zusätzlich nur an die im Formular angehakten Spracheinstellungen
 (`request.form.getlist('mail_sprachen')`, gefiltert gegen `LANGS`) — die
@@ -144,7 +148,7 @@ tokengesicherten Abmelde-Link `/abmelden/<nutzer.token>` (Route in
 `omn/public.py`, GET = Bestätigungsseite gegen Prefetch, POST setzt
 `keine_mails`) **und** die RFC-8058-Header `List-Unsubscribe` +
 `List-Unsubscribe-Post: List-Unsubscribe=One-Click`
-(`_list_unsubscribe_header` in `omn/admin.py`) — der POST auf dieselbe Route
+(`_list_unsubscribe_header` in `omn/admin/news.py`) — der POST auf dieselbe Route
 erledigt die One-Click-Abmeldung der Mail-Clients. Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das
 Flag. Die Nachrichten werden **synchron im Request gebaut** (Rendering,
 `url_for(_external=True)` braucht den Host-Header), der **SMTP-Versand läuft im

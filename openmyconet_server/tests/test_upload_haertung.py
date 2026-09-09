@@ -63,7 +63,7 @@ def test_logo_upload_speichert_bereinigtes_svg(client, app):
 
 
 def test_news_upload_lehnt_umbenannte_datei_ab(client, superadmin, monkeypatch):
-    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
 
     kein_bild = (io.BytesIO(b'<html><script>alert(1)</script></html>'), 'x.png')
@@ -75,7 +75,7 @@ def test_news_upload_lehnt_umbenannte_datei_ab(client, superadmin, monkeypatch):
 
 
 def test_news_upload_akzeptiert_echtes_png(client, superadmin, monkeypatch):
-    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
 
     buf = io.BytesIO()
@@ -88,7 +88,7 @@ def test_news_upload_akzeptiert_echtes_png(client, superadmin, monkeypatch):
 
 
 def test_news_bild_wird_verkleinert_und_webp(client, app, superadmin, monkeypatch):
-    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
 
     buf = io.BytesIO()
@@ -114,7 +114,7 @@ def test_news_bild_wird_verkleinert_und_webp(client, app, superadmin, monkeypatc
 
 
 def test_news_bild_upload_endpunkt(client, superadmin, monkeypatch):
-    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
 
     buf = io.BytesIO()
@@ -150,7 +150,7 @@ def test_sanitize_news_html_behaelt_uploads_img_strippt_data():
 
 
 def test_413_gibt_freundliche_seite(client, superadmin, monkeypatch):
-    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     # MAX_CONTENT_LENGTH kuenstlich klein -> Formular-Parsing wirft 413
     client.application.config['MAX_CONTENT_LENGTH'] = 500

@@ -61,7 +61,7 @@ def _testumgebung(monkeypatch):
     monkeypatch.setattr('omn.registrierung.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.foerderer.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.dashboard.ip_erlaubt', lambda *a, **kw: True)
-    monkeypatch.setattr('omn.admin.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.rag_chatbot.ip_erlaubt', lambda *a, **kw: True)
     # Admin-/Team-Benachrichtigungen (foerderer.py, kollaboration.py) sind an
     # ADMIN_NOTIFY_EMAIL bzw. MAIL_USERNAME geknuepft und werden sonst still
