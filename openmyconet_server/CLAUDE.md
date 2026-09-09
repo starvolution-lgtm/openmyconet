@@ -15,8 +15,10 @@ via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.
 `omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py`,
 `omn/site_live.py`, `omn/site_preview.py`. Models `omn/models.py`, DB-Erweiterungen
 `omn/extensions.py`, i18n `omn/i18n.py`. Wartungs-Scripts bleiben im Repo-Root
-(`migrate_*.py`, `seed_*.py`, `presse_suche.py`, `build_rag_index.py`,
-`create_admin.py`, `foerderer_verfall_pruefen.py`, `cleanup_*.py`, `update_*.py`);
+(`seed_*.py`, `presse_suche.py`, `build_rag_index.py`,
+`create_admin.py`, `foerderer_verfall_pruefen.py`, `cleanup_*.py`, `update_*.py`;
+Schema-Migrationen laufen über Alembic, s. u. — die restlichen alten
+`migrate_<feature>.py` sind nur noch Historie);
 die App-nutzenden davon bauen die App **in `def main()`** (`app = create_app()`
 dort, nicht im Modul-Body) hinter `if __name__ == "__main__": main()` — `import x`
 darf nie die DB anfassen (`tests/test_scripts_importierbar.py` erzwingt das).
@@ -54,16 +56,19 @@ inline-UNIQUE (batch-Rebuild, No-op auf frischen DBs). **Bewusst NICHT angefasst
 PG-Cutover automatisch sauber): fehlende DB-FKs `bewerbung.nutzer_id` /
 `foerderer.nutzer_id`, `news.slug` ohne UNIQUE, `foerderer.ansprechpartner` TEXT
 statt VARCHAR(120), `fehlerprotokoll.id` ohne NOT NULL. Diese 5 stehen als
-`LEGACY_DRIFT`-Allowlist in `test_migrations.py`.
+`LEGACY_DRIFT`-Allowlist in `test_migrations.py`. `27180ec9ca6f` = Aufräum-
+Migration (der erste Deploy nach der Aktivierung lief noch mit alter release.sh
+und hat `rolle` + `ix_nutzer_login_token` per `migrate_add_columns.py` erneut
+angelegt — beide werden hier wieder entfernt).
 
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
-`FLASK_APP=wsgi python -m flask db upgrade` (statt der alten
-`migrate_add_columns.py` / `migrate_add_indexes.py` — die bleiben als Historie im
-Repo, werden aber nicht mehr aufgerufen). Prod + Staging sind aktiviert
-(2026-09-09: `flask db stamp 959850bfc924` + `flask db upgrade head` via
-`deploy/alembic_activate.sh`, beide auf `966393848d7c`). Eine schon unter Alembic
-stehende DB adoptiert `deploy/alembic_activate.sh` nicht nochmal (Abbruch bei
-vorhandener `alembic_version`). Schema-Dump zum Abgleich: `deploy/schema_dump.py`.
+`FLASK_APP=wsgi python -m flask db upgrade`. `migrate_add_columns.py` /
+`migrate_add_indexes.py` sind **gelöscht** (legten die gedroppte `nutzer.rolle`
+bei jedem Aufruf neu an). Prod + Staging aktiviert (2026-09-09: `flask db stamp
+959850bfc924` + `flask db upgrade head` via `deploy/alembic_activate.sh`). Eine
+schon unter Alembic stehende DB adoptiert `alembic_activate.sh` nicht nochmal,
+fährt aber offene Migrationen nach (Backup + `flask db upgrade head`).
+Schema-Dump zum Abgleich: `deploy/schema_dump.py`.
 
 **Backup:** `deploy/backup_db.sh` (konsistenter Snapshot via Python-Online-Backup-
 API → `/home/omn/backups/*.db.gz`, rotiert 14 Tage) läuft täglich per Cron **und**

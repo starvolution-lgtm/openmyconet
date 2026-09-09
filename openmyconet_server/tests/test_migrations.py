@@ -166,3 +166,38 @@ def test_legacy_adoption(leere_db_app):
     assert zeile == [(1, 'Bestand', 1)], 'Bestandszeile verloren'
     unerwartet = rest - LEGACY_DRIFT
     assert not unerwartet, f'Neuer, nicht abgedeckter Drift nach Adoption: {unerwartet}'
+
+
+def test_prod_cleanup_reghosting(leere_db_app):
+    """Prod hat nach dem ersten Deploy `rolle` + `ix_nutzer_login_token` erneut
+    bekommen (alte migrate_add_columns.py-Kopie lief nochmal). 27180ec9ca6f muss
+    beide bei `upgrade` wieder entfernen -- idempotent, ohne Datenverlust."""
+    with leere_db_app.app_context():
+        dbfile = db.engine.url.database
+        con = sqlite3.connect(dbfile)
+        con.executescript(_LEGACY_SCHEMA)
+        con.commit()
+        con.close()
+        db.create_all()
+
+        stamp(revision=BASELINE_REV)
+        upgrade(revision='966393848d7c')  # nur bis zur Adoption
+
+        # simuliert den erneuten migrate_add_columns.py-Lauf
+        con = sqlite3.connect(dbfile)
+        con.execute("ALTER TABLE nutzer ADD COLUMN rolle VARCHAR(20) DEFAULT 'mycelist'")
+        con.execute('CREATE UNIQUE INDEX ix_nutzer_login_token ON nutzer (login_token)')
+        con.commit()
+        con.close()
+
+        upgrade()  # 27180ec9ca6f raeumt auf
+
+        con = sqlite3.connect(dbfile)
+        cols = {r[1] for r in con.execute('PRAGMA table_info(nutzer)')}
+        idx = {i[1] for i in con.execute('PRAGMA index_list(nutzer)')}
+        zeile = list(con.execute('SELECT id, name, ist_sporist FROM nutzer'))
+        con.close()
+
+    assert 'rolle' not in cols
+    assert 'ix_nutzer_login_token' not in idx
+    assert zeile == [(1, 'Bestand', 1)]

@@ -41,7 +41,10 @@ except sqlite3.OperationalError:
 ")"
 if [ -n "$vorhandene_version" ]; then
     echo "== alembic_version ist bereits gesetzt: $vorhandene_version"
-    echo "== Nichts zu tun. Fuer normale Upgrades: flask db upgrade"
+    echo "== -> nur noch offene Migrationen anwenden"
+    bash "$APP_DIR/deploy/backup_db.sh"
+    "$PY" -m flask db upgrade head
+    "$PY" -m flask db current
     exit 0
 fi
 
