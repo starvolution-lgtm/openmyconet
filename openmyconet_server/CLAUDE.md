@@ -49,7 +49,21 @@ direkt, das wäre tz-aware und würde mit den bewusst naiven, in SQLite als UTC
 gespeicherten Zeitstempeln nicht mehr vergleichbar sein). DTZ (flake8-datetimez)
 ist deshalb bewusst nicht aktiviert, siehe `ruff.toml`.
 Suite ist grün, kein `xfail` mehr. Tests nutzen temp-DBs.
-CI: `.github/workflows/ci.yml` (pytest + ruff bei jedem Push).
+CI: `.github/workflows/ci.yml` — Job `backend` (ruff + pytest + bandit + pip-audit)
+und Job `frontend-audit` bei jedem Push.
+
+### Frontend-Audit (`frontend-audit`-Job)
+Startet die App per gunicorn gegen eine leere SQLite (`db.create_all()`, kein
+Seed — die SSR-Seiten rendern ohne Daten) und prüft die 14 öffentlichen
+`site/*.html`-Seiten mit **Lighthouse CI** (`lighthouserc.json`: performance,
+accessibility, best-practices, seo) + **axe-core via pa11y-ci** (`.pa11yci.json`,
+WCAG2AA). Reports als CI-Artifact `frontend-audit`. **Baseline-Phase:**
+`continue-on-error: true` am Job, alle Lighthouse-Schwellen auf `warn` — der Job
+erfasst nur den Ist-Stand, blockiert nichts. Danach: accessibility/seo/
+best-practices in `lighthouserc.json` mit dem gemessenen Score als `minScore` auf
+`error` ziehen + `continue-on-error` entfernen (Ratsche gegen Verschlechterung);
+performance bleibt `warn` (Headless-CI-Score zu verrauscht). Lokal: `npx @lhci/cli
+autorun` bzw. `npx pa11y-ci` gegen einen laufenden Dev-Server.
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem

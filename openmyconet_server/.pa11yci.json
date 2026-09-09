@@ -1,0 +1,24 @@
+{
+  "defaults": {
+    "runners": ["axe"],
+    "standard": "WCAG2AA",
+    "timeout": 60000,
+    "chromeLaunchConfig": { "args": ["--no-sandbox"] }
+  },
+  "urls": [
+    "http://127.0.0.1:5000/",
+    "http://127.0.0.1:5000/biocomm",
+    "http://127.0.0.1:5000/biocomm/hardware",
+    "http://127.0.0.1:5000/biocomm/software",
+    "http://127.0.0.1:5000/presse",
+    "http://127.0.0.1:5000/medien.html",
+    "http://127.0.0.1:5000/foerderer.html",
+    "http://127.0.0.1:5000/leihgeraete.html",
+    "http://127.0.0.1:5000/mykorrhiza-netzwerke.html",
+    "http://127.0.0.1:5000/bioelektrizitaet-biocomm.html",
+    "http://127.0.0.1:5000/citizen-science-openmyconet.html",
+    "http://127.0.0.1:5000/wie-wir-arbeiten",
+    "http://127.0.0.1:5000/quellennachweise.html",
+    "http://127.0.0.1:5000/news"
+  ]
+}

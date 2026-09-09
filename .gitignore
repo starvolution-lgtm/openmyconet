@@ -232,3 +232,7 @@ openmyconet_server/app/static/Bilder Webseite/
 # bleibt lokal/serverseitig.
 openmyconet_server/app/static/uploads/foerderer/prev_*
 openmyconet_server/app/static/uploads/news/
+
+# Frontend-Audit-Artefakte (Lighthouse CI / pa11y) -- lokal + in der CI, nie ins Git
+openmyconet_server/lhci-report/
+openmyconet_server/.lighthouseci/

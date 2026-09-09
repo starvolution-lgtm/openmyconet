@@ -40,3 +40,68 @@ jobs:
 
       - name: pip-audit (Abhaengigkeits-CVEs)
         run: python -m pip_audit -r requirements.txt
+
+  # Frontend-Audit der SSR-Seiten (Lighthouse + axe via pa11y). Eigener Job,
+  # damit der Python-Job unberuehrt bleibt. BASELINE-PHASE: laeuft nicht-
+  # blockierend (continue-on-error), erfasst nur die Ausgangswerte. Danach
+  # werden die Lighthouse-Schwellen (lighthouserc.json) mit dem Ist-Score
+  # scharfgestellt und continue-on-error entfernt.
+  frontend-audit:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: openmyconet_server
+    env:
+      SECRET_KEY: ci-not-secret
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: openmyconet_server/requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Python-Abhaengigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: DB-Schema anlegen (leer, nur Tabellen)
+        run: python -c "from omn import create_app; from omn.extensions import db; app = create_app(); app.app_context().push(); db.create_all()"
+
+      - name: Server starten (gunicorn, leere SQLite)
+        run: |
+          gunicorn -w 2 -k gthread --threads 4 -b 127.0.0.1:5000 wsgi:app \
+            --pid "$RUNNER_TEMP/gunicorn.pid" --log-file "$RUNNER_TEMP/gunicorn.log" &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:5000/ >/dev/null && break || sleep 1
+          done
+          curl -sf http://127.0.0.1:5000/ >/dev/null || { echo "Server nicht erreichbar"; cat "$RUNNER_TEMP/gunicorn.log"; exit 1; }
+
+      - name: Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.14.0
+          lhci autorun --config=lighthouserc.json
+
+      - name: axe (pa11y-ci)
+        run: |
+          npm install -g pa11y-ci@3.1.0
+          pa11y-ci --config .pa11yci.json
+
+      - name: Server stoppen
+        if: always()
+        run: kill "$(cat "$RUNNER_TEMP/gunicorn.pid")" 2>/dev/null || true
+
+      - name: Audit-Reports als Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-audit
+          path: |
+            openmyconet_server/lhci-report
+            openmyconet_server/.lighthouseci
+          if-no-files-found: ignore
