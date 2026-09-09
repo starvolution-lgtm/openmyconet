@@ -91,7 +91,8 @@ jobs:
           lhci autorun --config=lighthouserc.json
 
       - name: axe (pa11y-ci)
-        continue-on-error: true  # noch informativ -- scharf nach den WCAG2AA-Fixes
+        if: ${{ !cancelled() }}   # auch laufen, wenn der Lighthouse-Schritt fehlschlug
+        continue-on-error: true   # noch informativ -- scharf nach den WCAG2AA-Fixes
         run: |
           npm install -g pa11y-ci@3.1.0
           pa11y-ci --config .pa11yci.json
