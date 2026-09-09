@@ -17,8 +17,8 @@ export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 
 BACKUP_LINE='30 2 * * * cd /home/omn/app && bash deploy/backup_db.sh >> /home/omn/app/backup_db.log 2>&1'
 CHECK_LINE='15 4 * * 1 cd /home/omn/app && bash deploy/restore_check.sh >> /home/omn/app/restore_check.log 2>&1'
-DRAIN_PROD='* * * * * /home/omn/app/deploy/mailqueue_drain.sh >> /home/omn/app/mailqueue.log 2>&1'
-DRAIN_STAGING='* * * * * /home/omn/app-staging/deploy/mailqueue_drain.sh >> /home/omn/app-staging/mailqueue.log 2>&1'
+DRAIN_PROD='* * * * * bash /home/omn/app/deploy/mailqueue_drain.sh >> /home/omn/app/mailqueue.log 2>&1'
+DRAIN_STAGING='* * * * * bash /home/omn/app-staging/deploy/mailqueue_drain.sh >> /home/omn/app-staging/mailqueue.log 2>&1'
 
 TMP=$(mktemp)
 trap 'rm -f "$TMP"' EXIT

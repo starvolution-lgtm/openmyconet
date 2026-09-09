@@ -2,9 +2,10 @@
 # ---------------------------------------------------------------------------
 # mailqueue_drain.sh -- sendet offene Rund-Mails aus der MailQueue (Server).
 #
-#   /home/omn/app/deploy/mailqueue_drain.sh
+#   bash /home/omn/app/deploy/mailqueue_drain.sh
 #
-# Laeuft per Cron jede Minute (install_backup_cron.sh traegt die Zeile ein).
+# Laeuft per Cron jede Minute (install_backup_cron.sh traegt die Zeile ein,
+# mit `bash`-Praefix -- das Skript braucht kein Execute-Bit).
 # flock -n verhindert, dass sich zwei Laeufe ueberholen -- ein noch laufender
 # Drain haelt den Lock, der naechste Tick steigt sofort wieder aus.
 #
