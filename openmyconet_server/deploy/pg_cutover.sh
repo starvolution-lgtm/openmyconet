@@ -43,12 +43,24 @@ grep -q '^DATABASE_URL=postgresql' "$APP_DIR/.env" || {
     exit 1
 }
 
-# Verbindung + Dialekt pruefen (die Leer-Pruefung macht pg_copy.py selbst)
-DIALEKT=$("$PY" -c "from omn import create_app; from omn.extensions import db; app=create_app(); ctx=app.app_context(); ctx.push(); print(db.engine.dialect.name)")
-if [ "$DIALEKT" != "postgresql" ]; then
-    echo "FEHLER: Engine-Dialekt ist '$DIALEKT', nicht postgresql -- .env pruefen."
-    exit 1
-fi
+# Echte Verbindung testen, BEVOR gunicorn gestoppt wird -- faengt falsches
+# Passwort / falschen DB-Namen ab, solange noch nichts angefasst ist.
+# (Die Leer-Pruefung des Ziels macht pg_copy.py selbst.)
+"$PY" - <<'PYEOF'
+import sys
+from omn import create_app
+from omn.extensions import db
+app = create_app()
+with app.app_context():
+    if db.engine.dialect.name != 'postgresql':
+        sys.exit(f'FEHLER: Engine-Dialekt ist {db.engine.dialect.name}, nicht postgresql -- .env pruefen.')
+    try:
+        with db.engine.connect() as c:
+            c.exec_driver_sql('SELECT 1')
+    except Exception as e:
+        sys.exit(f'FEHLER: keine Postgres-Verbindung -- {e.__class__.__name__}: {e}')
+print('   Postgres-Verbindung ok')
+PYEOF
 
 echo "== [1/6] gunicorn stoppen"
 systemctl --user stop "$UNIT"
