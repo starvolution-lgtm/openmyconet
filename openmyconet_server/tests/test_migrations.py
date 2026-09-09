@@ -99,21 +99,44 @@ def _signatur(eintrag):
     return f'{op_name}:{tab}:{m_col.group(1) if m_col else "?"}'
 
 
+PG_URL = (os.getenv('DATABASE_URL') or '').strip()
+nur_sqlite = pytest.mark.skipif(bool(PG_URL), reason='SQLite-spezifisch (rohes SQLite-DDL)')
+
+
 @pytest.fixture()
 def leere_db_app():
-    fd, pfad = tempfile.mkstemp(suffix='.db')
+    fd = pfad = None
+    if PG_URL:
+        db_uri = PG_URL
+    else:
+        fd, pfad = tempfile.mkstemp(suffix='.db')
+        db_uri = f'sqlite:///{pfad}'
     instance = tempfile.mkdtemp(suffix='_mig_instance')
 
     class _Cfg(TestConfig):
-        SQLALCHEMY_DATABASE_URI = f'sqlite:///{pfad}'
+        SQLALCHEMY_DATABASE_URI = db_uri
 
     app = create_app(_Cfg, instance_path=instance)
+    with app.app_context():
+        db.drop_all()  # Reste (v.a. bei geteiltem Postgres); alembic_version separat
+        try:
+            db.session.execute(db.text('DROP TABLE IF EXISTS alembic_version'))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
     yield app
     with app.app_context():
+        db.drop_all()
+        try:
+            db.session.execute(db.text('DROP TABLE IF EXISTS alembic_version'))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         db.session.remove()
         db.engine.dispose()
-    os.close(fd)
-    os.unlink(pfad)
+    if fd is not None:
+        os.close(fd)
+        os.unlink(pfad)
 
 
 def _drift(metadata=None):
@@ -139,6 +162,7 @@ def test_kein_schema_drift_frische_db(leere_db_app):
     assert diff == [], f'Modelle weichen von der Migrations-Kette ab:\n{diff}'
 
 
+@nur_sqlite
 def test_legacy_adoption(leere_db_app):
     """Prod-/Staging-Weg: bestehende Tabellen mit den ueber Jahre gewachsenen
     Abweichungen -> stamp Baseline -> upgrade head. Danach: rolle weg,
@@ -168,6 +192,7 @@ def test_legacy_adoption(leere_db_app):
     assert not unerwartet, f'Neuer, nicht abgedeckter Drift nach Adoption: {unerwartet}'
 
 
+@nur_sqlite
 def test_prod_cleanup_reghosting(leere_db_app):
     """Prod hat nach dem ersten Deploy `rolle` + `ix_nutzer_login_token` erneut
     bekommen (alte migrate_add_columns.py-Kopie lief nochmal). 27180ec9ca6f muss

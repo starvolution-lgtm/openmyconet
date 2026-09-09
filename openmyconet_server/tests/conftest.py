@@ -25,24 +25,36 @@ from omn.models import AdminUser
 
 @pytest.fixture()
 def app():
-    db_fd, db_path = tempfile.mkstemp(suffix='.db')
+    # DATABASE_URL gesetzt (CI-Matrix backend-postgres) -> gegen dieses Postgres,
+    # sonst wie bisher eine temp-SQLite-Datei pro Test. Schema in beiden Faellen
+    # per create_all/drop_all -- kein geteilter Zustand zwischen Tests.
+    pg_url = (os.getenv('DATABASE_URL') or '').strip()
+    db_fd = db_path = None
+    if pg_url:
+        db_uri = pg_url
+    else:
+        db_fd, db_path = tempfile.mkstemp(suffix='.db')
+        db_uri = f'sqlite:///{db_path}'
     instance_dir = tempfile.mkdtemp(suffix='_instance')
     upload_dir = tempfile.mkdtemp(suffix='_uploads')
 
     class _Cfg(TestConfig):
-        SQLALCHEMY_DATABASE_URI = f'sqlite:///{db_path}'
+        SQLALCHEMY_DATABASE_URI = db_uri
         UPLOAD_ROOT = upload_dir
 
     application = create_app(_Cfg, instance_path=instance_dir)
 
     with application.app_context():
+        if pg_url:
+            _db.drop_all()  # Reste eines abgebrochenen Laufs
         _db.create_all()
         yield application
         _db.session.remove()
         _db.drop_all()
         _db.engine.dispose()
-    os.close(db_fd)
-    os.unlink(db_path)
+    if db_fd is not None:
+        os.close(db_fd)
+        os.unlink(db_path)
     shutil.rmtree(instance_dir, ignore_errors=True)
     shutil.rmtree(upload_dir, ignore_errors=True)
 

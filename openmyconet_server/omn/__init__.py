@@ -59,13 +59,14 @@ def create_app(config=None, instance_path=None):
         )
 
     db.init_app(app)
-    # render_as_batch: SQLite kann ALTER TABLE nur eingeschraenkt -- Alembic baut
-    # betroffene Tabellen dafuer nach. Ab dem Postgres-Schritt dialekt-abhaengig.
+    # render_as_batch nur auf SQLite -- dort kann Alembic ALTER TABLE nur
+    # eingeschraenkt und baut betroffene Tabellen nach. Postgres macht echtes
+    # ALTER, da waere batch nur unnoetiger Tabellen-Rebuild.
     # compare_type: autogenerate erkennt sonst Spaltentyp-Aenderungen nicht.
     # compare_server_default bewusst AUS -- die Modelle nutzen Python-seitige
-    # default=, kaum server_default; auf SQLite meldet die Pruefung viele
-    # Falsch-Positive.
-    migrate.init_app(app, db, render_as_batch=True, compare_type=True)
+    # default=, kaum server_default; die Pruefung meldet sonst Falsch-Positive.
+    _batch = app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite')
+    migrate.init_app(app, db, render_as_batch=_batch, compare_type=True)
     mail.init_app(app)
     CORS(app, origins=['https://www.openmyconet.de', 'https://openmyconet.de', 'https://api.openmyconet.de'])
 

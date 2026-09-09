@@ -30,7 +30,19 @@ Templates: `app/templates/` (SSR-Seiten unter `app/templates/site/`), Statisch: 
 bläht Suchen auf. Immer mit `path:`/`glob:` auf die echten Quelldateien eingrenzen.
 
 ## Datenbank
-SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `omn/extensions.py`, `_sqlite_pragmas`).
+SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `omn/extensions.py`,
+`_sqlite_pragmas` — greift nur bei echten `sqlite3`-Verbindungen).
+
+**Engine per `DATABASE_URL` umstellbar** (`omn/config.py`, `_db_url()`): ohne die
+Variable → die lokale SQLite-Datei (Prod + Staging, unverändert). Gesetzt →
+PostgreSQL über psycopg3 (`postgres://` / `postgresql://` werden auf
+`postgresql+psycopg://` normalisiert), mit `pool_pre_ping` + `pool_recycle` statt
+des SQLite-`busy_timeout`. `render_as_batch` (Alembic) ist dann automatisch aus.
+Die CI-Matrix (`backend-postgres`-Job, `postgres:16`) fährt die komplette
+Testsuite gegen echtes PG — `conftest.py` + `test_migrations.py::leere_db_app`
+nehmen `DATABASE_URL` an (Schema pro Test via `create_all`/`drop_all`).
+Der eigentliche Umzug (PG auf der VPS, Daten-Cutover, `backup_db.sh` → `pg_dump`)
+ist Postgres-Block-Plan Schritt 3.
 
 **Migrationen: Alembic / Flask-Migrate** (`migrations/`, `migrate = Migrate()` in
 `omn/extensions.py`, `migrate.init_app(app, db, render_as_batch=True, compare_type=True)`
