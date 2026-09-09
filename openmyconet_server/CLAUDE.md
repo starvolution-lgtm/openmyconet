@@ -63,8 +63,10 @@ angelegt — beide werden hier wieder entfernt).
 
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
 `FLASK_APP=wsgi python -m flask db upgrade`. `migrate_add_columns.py` /
-`migrate_add_indexes.py` sind **gelöscht** (legten die gedroppte `nutzer.rolle`
-bei jedem Aufruf neu an). Prod + Staging aktiviert (2026-09-09: `flask db stamp
+`migrate_add_indexes.py` sind auf No-op-Stubs reduziert (legten die gedroppte
+`nutzer.rolle` bei jedem Aufruf neu an; Stub nur noch, damit alte, schon
+ausgerollte Deploy-Skript-Kopien nicht mit „file not found" abbrechen — löschbar,
+sobald überall die neuen Deploy-Skripte laufen). Prod + Staging aktiviert (2026-09-09: `flask db stamp
 959850bfc924` + `flask db upgrade head` via `deploy/alembic_activate.sh`). Eine
 schon unter Alembic stehende DB adoptiert `alembic_activate.sh` nicht nochmal,
 fährt aber offene Migrationen nach (Backup + `flask db upgrade head`).
