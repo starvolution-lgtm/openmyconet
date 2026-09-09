@@ -45,13 +45,14 @@ fi
 echo "== [3/5] Passwort erzeugen"
 PW=$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)
 
-echo "== [4/5] Rolle omn"
+echo "== [4/5] Rolle omn (LOGIN + CREATEDB)"
+# CREATEDB: restore_check.sh + staging_db_reset.sh legen Wegwerf-/Staging-DBs an.
 ROLLE_DA=$(su - postgres -c "psql -tAc \"SELECT 1 FROM pg_roles WHERE rolname='omn'\"")
 if [ "$ROLLE_DA" = "1" ]; then
-    su - postgres -c "psql -qc \"ALTER ROLE omn WITH LOGIN PASSWORD '$PW'\""
-    echo "   Rolle omn existierte -- Passwort neu gesetzt"
+    su - postgres -c "psql -qc \"ALTER ROLE omn WITH LOGIN CREATEDB PASSWORD '$PW'\""
+    echo "   Rolle omn existierte -- Passwort neu gesetzt, CREATEDB gesetzt"
 else
-    su - postgres -c "psql -qc \"CREATE ROLE omn WITH LOGIN PASSWORD '$PW'\""
+    su - postgres -c "psql -qc \"CREATE ROLE omn WITH LOGIN CREATEDB PASSWORD '$PW'\""
     echo "   Rolle omn angelegt"
 fi
 
@@ -74,6 +75,12 @@ printf 'postgresql+psycopg://omn:%s@127.0.0.1:5432/omn_prod\n'    "$PW" > /home/
 printf 'postgresql+psycopg://omn:%s@127.0.0.1:5432/omn_staging\n' "$PW" > /home/omn/pg_staging.url
 chown omn:omn /home/omn/pg_prod.url /home/omn/pg_staging.url
 chmod 600     /home/omn/pg_prod.url /home/omn/pg_staging.url
+
+# ~/.pgpass fuer die Wartungs-Skripte (pg_dump/pg_restore/psql als omn ohne
+# Passwort auf der Kommandozeile).
+printf '127.0.0.1:5432:*:omn:%s\n' "$PW" > /home/omn/.pgpass
+chown omn:omn /home/omn/.pgpass
+chmod 600     /home/omn/.pgpass
 
 echo
 echo "=================================================================="

@@ -95,7 +95,9 @@ BACKUP_MAX_ALTER_H = 26   # taeglicher Cron 02:30 -> alles unter 26 h ist frisch
 
 
 def _juengstes_backup():
-    dateien = glob.glob(os.path.join(BACKUP_DIR, 'openmyconet-*.db.gz'))
+    # *.dump = Postgres (pg_dump -Fc), *.db.gz = SQLite (Altbestand)
+    dateien = (glob.glob(os.path.join(BACKUP_DIR, 'openmyconet-*.dump'))
+               + glob.glob(os.path.join(BACKUP_DIR, 'openmyconet-*.db.gz')))
     if not dateien:
         return None, 0, 0
     neuste = max(dateien, key=os.path.getmtime)

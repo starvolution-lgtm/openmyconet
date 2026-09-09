@@ -84,11 +84,15 @@ schon unter Alembic stehende DB adoptiert `alembic_activate.sh` nicht nochmal,
 fährt aber offene Migrationen nach (Backup + `flask db upgrade head`).
 Schema-Dump zum Abgleich: `deploy/schema_dump.py`.
 
-**Backup:** `deploy/backup_db.sh` (konsistenter Snapshot via Python-Online-Backup-
-API → `/home/omn/backups/*.db.gz`, rotiert 14 Tage) läuft täglich per Cron **und**
-in `release.sh` vor jeder Migration. `deploy/restore_check.sh` verifiziert ein
-Backup (integrity_check + Model-Load, greift die Live-DB nie an). Wiederherstellung
-+ Cron-Setup + Offsite-Status: `deploy/BACKUP.md`. Offsite (All-inkl) noch offen.
+**Backup:** `deploy/backup_db.sh` erkennt an der `.env` die Engine: Postgres →
+`pg_dump -Fc` → `/home/omn/backups/openmyconet-<ts>.dump` (+ `pg_restore --list`-
+Check), SQLite → wie bisher `*.db.gz`. Rotiert 14 je Format, läuft täglich per
+Cron **und** in `release.sh` vor jeder Migration. `deploy/restore_check.sh`
+verifiziert das neueste Backup (`.dump` → `pg_restore` in Wegwerf-DB `omn_rc_<ts>`
++ Model-Load; `.db.gz` → SQLite-Variante), greift die Live-DB nie an. Verbindung
+via `/home/omn/.pgpass` (aus `setup_postgres.sh`, Mode 600; die Rolle `omn` hat
+`CREATEDB` für die Wegwerf-/Staging-DBs). Wiederherstellung, Rollback auf SQLite,
+Cron-Setup, Offsite: `deploy/BACKUP.md`.
 
 ## Tests & Lint
 `venv/Scripts/python.exe -m pytest -q -p no:warnings`

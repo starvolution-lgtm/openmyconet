@@ -1,20 +1,20 @@
 # DB-Backup & Restore
 
-Betrifft nur `instance/openmyconet.db` (SQLite, WAL-Modus). Code liegt im Git,
-Uploads/Grossmedien sind separat (`app/static/uploads/`, serververwaltete
-mp3/pdf).
+Seit dem Postgres-Cutover (2026-09) läuft die App auf **PostgreSQL 18**
+(`omn_prod` / `omn_staging`, Rolle `omn`, localhost). `deploy/backup_db.sh`
+erkennt an der `.env`, welche Engine aktiv ist, und macht das Passende — die
+SQLite-Pfade bleiben für den Altbestand drin.
 
-## Was laeuft
+## Was läuft
 
 | Wann | Was | Skript |
 |---|---|---|
-| taeglich 02:30 (Cron `omn`) | konsistenter Snapshot -> `/home/omn/backups/openmyconet-<ts>.db.gz`, `integrity_check`, Rotation (letzte 14) | `deploy/backup_db.sh` |
+| täglich 02:30 (Cron `omn`) | `pg_dump -Fc` → `/home/omn/backups/openmyconet-<ts>.dump`, `pg_restore --list`-Check, Rotation (letzte 14) | `deploy/backup_db.sh` |
 | bei jedem Deploy, vor den Migrationen | dasselbe (Schritt 6 in `release.sh`) | `deploy/backup_db.sh` |
-| manuell / woechentlich empfohlen | beweist, dass das neueste Backup wiederherstellbar ist | `deploy/restore_check.sh` |
+| montags 04:15 (Cron) / manuell | beweist, dass das neueste Backup wiederherstellbar ist | `deploy/restore_check.sh` |
 
-Der Snapshot nutzt die Python-Online-Backup-API (`sqlite3.Connection.backup`):
-konsistent auch bei offener WAL, ohne Schreib-Lock auf die Live-DB, ohne
-`sqlite3`-CLI (die ist auf dem Server nicht installiert).
+`pg_dump -Fc` ist das *custom format* (komprimiert, für `pg_restore`).
+Verbindung über `/home/omn/.pgpass` (von `setup_postgres.sh` angelegt, Mode 600).
 
 ## Cron einrichten (einmalig, als `omn`)
 
@@ -22,100 +22,70 @@ konsistent auch bei offener WAL, ohne Schreib-Lock auf die Live-DB, ohne
 bash /home/omn/app/deploy/install_backup_cron.sh
 ```
 
-Trägt idempotent ein: DB-Backup täglich 02:30, Restore-Check montags 04:15.
-Beides loggt nach `/home/omn/app/*.log`. Bestehende Zeilen mit demselben
-Skriptnamen werden vorher entfernt.
-
 ## Vom Kontrollzentrum aus (`/admin/kontrollzentrum`)
 
-- Zwei Kacheln: **Datenbank-Backup** (frischer lokaler Snapshot < 26 h?) und
-  **Backup Offsite (All-inkl)** (letzter Upload < 26 h? — Kachel erscheint nur,
-  wenn `BACKUP_FTP_HOST` gesetzt ist).
-- Zwei Buttons oben: **💾 Backup jetzt** und **🔁 Restore-Check jetzt** —
-  führen `deploy/backup_db.sh` bzw. `deploy/restore_check.sh` direkt aus und
-  zeigen die Ausgabe als Meldung. Auch vom Handy.
+- Kachel **Datenbank-Backup**: frischer lokaler Snapshot < 26 h? (`openmyconet-*.dump` **oder** `*.db.gz`)
+- Kachel **Backup Offsite (All-inkl)**: letzter FTPS-Upload < 26 h?
+- Buttons **💾 Backup jetzt** / **🔁 Restore-Check jetzt** — führen die Skripte direkt aus.
 
-## Restore-Check (safe, greift die Live-DB NIE an)
+## Restore-Check (greift die Live-DB NIE an)
 
 ```
 ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 'cd /home/omn/app && bash deploy/restore_check.sh'
 ```
 
-Prueft: gunzip, `integrity_check` + `quick_check`, erwartete Tabellen vorhanden
-und plausibel gefuellt, Alter des Datenstands, und laedt die SQLAlchemy-Models
-gegen die wiederhergestellte DB (findet Schema-Drift). Exit != 0 = Problem.
+`*.dump` → `pg_restore` in eine Wegwerf-DB `omn_rc_<ts>` (die Rolle `omn` hat
+`CREATEDB`), prüft Tabellen + Zeilen + lädt die SQLAlchemy-Models, dann `dropdb`.
+`*.db.gz` → SQLite-Variante (Altbestand). Exit != 0 = Problem.
 
-## Echte Wiederherstellung in die Produktion (Notfall, selten, bewusst)
+## Echte Wiederherstellung in die Produktion (Notfall)
 
 ```
 ssh -i ~/.ssh/omn_deploy omn@77.42.64.162
 cd /home/omn/app
 
-# 1. Backup auswaehlen
-ls -lt /home/omn/backups/
-B=/home/omn/backups/openmyconet-<ts>.db.gz
-
-# 2. vorher pruefen, dass es taugt
+# 1. Backup auswählen + prüfen
+ls -lt /home/omn/backups/*.dump
+B=/home/omn/backups/openmyconet-<ts>.dump
 bash deploy/restore_check.sh "$B"
 
-# 3. aktuelle Live-DB zur Seite legen (inkl. WAL/SHM)
-T=$(date +%Y%m%d-%H%M%S)
-cd instance
-for f in openmyconet.db openmyconet.db-wal openmyconet.db-shm; do
-  [ -f "$f" ] && mv -v "$f" "$f.vor-restore-$T"
-done
+# 2. App stoppen (keine Schreibzugriffe während des Restore)
+systemctl --user stop omn
 
-# 4. Backup einspielen
-gunzip -c "$B" > openmyconet.db
+# 3. omn_prod leeren + Dump einspielen
+#    (kein dropdb -- omn ist nicht Owner des Clusters; stattdessen Schema neu)
+FLASK_APP=wsgi venv/bin/python - <<'PY'
+from omn import create_app
+from omn.extensions import db
+with create_app().app_context():
+    db.drop_all()
+    with db.engine.begin() as c:
+        c.exec_driver_sql('DROP TABLE IF EXISTS alembic_version')
+PY
+pg_restore -h 127.0.0.1 -U omn -d omn_prod --no-owner "$B"
 
-# 5. gunicorn neu laden, damit alle Worker die neue Datei oeffnen
-systemctl --user reload omn      # ohne systemd: kill -HUP $(pgrep -o -f 'venv/bin/gunicorn')
-
-# 6. pruefen
+# 4. App starten + prüfen
+systemctl --user start omn
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5000/
+FLASK_APP=wsgi venv/bin/python -m flask db current
 ```
 
-Ein `reload` (HUP) reicht, weil gunicorn ohne `--preload` laeuft; zur Sicherheit
-danach einmal `/admin` + eine Datenseite im Browser aufrufen. Die
-`*.vor-restore-*`-Dateien bleiben liegen, bis der Restore bestaetigt ist.
+## Rollback auf SQLite (falls Postgres grundsätzlich Probleme macht)
 
-## Offsite zu All-inkl (FTPS)
+Die SQLite-Datei (`instance/openmyconet.db`, Stand Cutover-Zeitpunkt) liegt
+unangetastet daneben (`deploy-exclude.txt` schützt sie).
 
-Ein Backup nur auf demselben Hetzner-VPS schuetzt nicht vor Server- oder
-Account-Verlust. `deploy/backup_offsite.sh` laedt jedes frische Backup per
-**FTPS** (curl, explizite TLS-Pflicht) zu All-inkl hoch und rotiert die
-Gegenseite. `backup_db.sh` ruft es automatisch auf, sobald in
-`/home/omn/app/.env` `BACKUP_FTP_HOST` gesetzt ist -- vorher wird der Schritt
-stillschweigend uebersprungen. Ein fehlgeschlagener Offsite-Push laesst das
-lokale Backup unangetastet und bricht den Cron-Lauf nicht ab.
+```
+systemctl --user stop omn
+sed -i '/^DATABASE_URL=/d' /home/omn/app/.env
+systemctl --user start omn        # läuft wieder auf SQLite
+```
 
-### Scharfschalten (einmalig)
+Achtung: alle Schreibzugriffe **seit dem Cutover** sind dann nur in Postgres,
+nicht in dieser SQLite-Datei. Nur als Not-Aus gedacht, solange PG frisch ist.
 
-1. All-inkl-KAS -> **FTP** -> neuer FTP-Nutzer nur fuers Backup, Pfad
-   `/omn-backups`, Rechte lesen+schreiben+auflisten. Passwort per
-   "Automatisch generieren"; Sonderzeichen sind ok, nur nicht `" \ ` + `$`
-   (dann neu generieren).
-2. Werte in `/home/omn/app/.env` ergaenzen (die Datei ist server-verwaltet,
-   nicht im Git):
+## Offsite (All-inkl)
 
-   ```
-   BACKUP_FTP_HOST=w0151a05.kasserver.com
-   BACKUP_FTP_USER=<FTP-Benutzer>
-   BACKUP_FTP_PASS=<FTP-Passwort>
-   BACKUP_FTP_DIR=/omn-backups
-   BACKUP_FTP_KEEP=30
-   ```
-   (`BACKUP_FTP_DIR` wird automatisch angelegt; `KEEP` = wie viele Backups
-   auf All-inkl bleiben.)
-3. Testen:
-   ```
-   cd /home/omn/app
-   bash deploy/backup_offsite.sh "$(ls -1t /home/omn/backups/*.db.gz | head -1)"
-   ```
-   Muss `Offsite hochgeladen: ...` melden.
-
-### Restore aus dem Offsite-Backup
-
-Die `.db.gz` per FTP-Client (FileZilla o.ä.) oder `curl` herunterladen, dann
-die normale Restore-Prozedur oben. `restore_check.sh` funktioniert auch mit
-einer manuell in `/home/omn/backups/` abgelegten Datei als Argument.
+`deploy/backup_offsite.sh` lädt die jeweils frische Backup-Datei per FTPS hoch,
+sobald in der `.env` `BACKUP_FTP_HOST` etc. gesetzt sind (Schlüssel siehe
+Skript-Kopf). Funktioniert mit `.dump` genauso wie vorher mit `.db.gz`.
