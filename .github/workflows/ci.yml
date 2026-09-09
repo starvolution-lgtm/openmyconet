@@ -41,14 +41,14 @@ jobs:
       - name: pip-audit (Abhaengigkeits-CVEs)
         run: python -m pip_audit -r requirements.txt
 
-  # Frontend-Audit der SSR-Seiten (Lighthouse + axe via pa11y). Eigener Job,
-  # damit der Python-Job unberuehrt bleibt. BASELINE-PHASE: laeuft nicht-
-  # blockierend (continue-on-error), erfasst nur die Ausgangswerte. Danach
-  # werden die Lighthouse-Schwellen (lighthouserc.json) mit dem Ist-Score
-  # scharfgestellt und continue-on-error entfernt.
+  # Frontend-Audit der SSR-Seiten. Eigener Job, damit der Python-Job unberuehrt
+  # bleibt. Lighthouse (lighthouserc.json) ist der harte Gate: accessibility/
+  # best-practices/seo mit Ist-Score als minScore -> Ratsche gegen
+  # Verschlechterung, performance nur 'warn' (CI-Headless-Score zu verrauscht).
+  # Der axe/pa11y-Schritt ist noch informativ (continue-on-error am Schritt) --
+  # scharf, sobald die bekannten WCAG2AA-Verstoesse behoben sind.
   frontend-audit:
     runs-on: ubuntu-latest
-    continue-on-error: true
     defaults:
       run:
         working-directory: openmyconet_server
@@ -88,6 +88,7 @@ jobs:
           lhci autorun --config=lighthouserc.json
 
       - name: axe (pa11y-ci)
+        continue-on-error: true  # noch informativ -- scharf nach den WCAG2AA-Fixes
         run: |
           npm install -g pa11y-ci@3.1.0
           pa11y-ci --config .pa11yci.json

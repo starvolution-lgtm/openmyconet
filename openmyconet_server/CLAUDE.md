@@ -57,13 +57,14 @@ Startet die App per gunicorn gegen eine leere SQLite (`db.create_all()`, kein
 Seed — die SSR-Seiten rendern ohne Daten) und prüft die 14 öffentlichen
 `site/*.html`-Seiten mit **Lighthouse CI** (`lighthouserc.json`: performance,
 accessibility, best-practices, seo) + **axe-core via pa11y-ci** (`.pa11yci.json`,
-WCAG2AA). Reports als CI-Artifact `frontend-audit`. **Baseline-Phase:**
-`continue-on-error: true` am Job, alle Lighthouse-Schwellen auf `warn` — der Job
-erfasst nur den Ist-Stand, blockiert nichts. Danach: accessibility/seo/
-best-practices in `lighthouserc.json` mit dem gemessenen Score als `minScore` auf
-`error` ziehen + `continue-on-error` entfernen (Ratsche gegen Verschlechterung);
-performance bleibt `warn` (Headless-CI-Score zu verrauscht). Lokal: `npx @lhci/cli
-autorun` bzw. `npx pa11y-ci` gegen einen laufenden Dev-Server.
+WCAG2AA). Reports als CI-Artifact `frontend-audit`. **Lighthouse ist der harte
+Gate:** `accessibility` ≥ 0.80, `best-practices` ≥ 1.0, `seo` ≥ 0.92
+(Ist-Score-Ratsche, Stand 2026-09 — bei Verbesserung hochziehen), `performance`
+nur `warn` (Headless-CI-Score zu verrauscht). Der **axe/pa11y-Schritt ist noch
+informativ** (`continue-on-error` am Schritt) — scharfstellen, sobald die
+bekannten WCAG2AA-Verstöße behoben sind (target-size der `.lang-flag`s,
+color-contrast, link-in-text-block, heading-order, select-name). Lokal:
+`npx @lhci/cli autorun` bzw. `npx pa11y-ci` gegen einen laufenden Dev-Server.
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem
