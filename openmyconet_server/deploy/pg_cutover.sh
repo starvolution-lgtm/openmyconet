@@ -3,12 +3,13 @@
 # pg_cutover.sh -- SQLite -> PostgreSQL umschalten (Postgres-Block-Plan
 # Schritt 3, Phase 2 Staging / Phase 3 Prod).
 #
-#   bash /home/omn/app/deploy/pg_cutover.sh          'postgresql+psycopg://omn:PW@127.0.0.1:5432/omn_prod'
-#   bash /home/omn/app-staging/deploy/pg_cutover.sh  'postgresql+psycopg://omn:PW@127.0.0.1:5432/omn_staging'
+#   bash /home/omn/app/deploy/pg_cutover.sh
+#   bash /home/omn/app-staging/deploy/pg_cutover.sh
 #
-# Die URL wird als Argument uebergeben (nicht vorab in die .env eingetragen) --
-# so entsteht keine halbfertige .env, wenn etwas schiefgeht. In die .env kommt
-# die Zeile erst NACH erfolgreicher Kopie, kurz vor dem gunicorn-Start.
+# Die Verbindungs-URL kommt aus /home/omn/pg_{prod,staging}.url (von
+# setup_postgres.sh geschrieben) -- oder als Argument $1 (Vorrang). Sie wird
+# NICHT vorab in die .env eingetragen; das passiert erst NACH erfolgreicher
+# Kopie, kurz vor dem gunicorn-Start -- so entsteht keine halbfertige .env.
 #
 # Ablauf (kurzes hartes Fenster, ~20-30 s):
 #   0. Verbindung testen (SELECT 1)          <- schlaegt hier fehl -> nichts angefasst
@@ -27,20 +28,23 @@ set -euo pipefail
 export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-DB_URL="${1:-}"
-[ -n "$DB_URL" ] || { echo "FEHLER: DATABASE_URL als Argument uebergeben."; exit 1; }
-export DATABASE_URL="$DB_URL"     # create_app() liest das VOR der .env
-
 APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PY="$APP_DIR/venv/bin/python"
 cd "$APP_DIR"
 export FLASK_APP=wsgi
 
 case "$APP_DIR" in
-    *app-staging) UNIT=omn-staging; PORT=5001 ;;
-    *)           UNIT=omn;          PORT=5000 ;;
+    *app-staging) UNIT=omn-staging; PORT=5001; URLFILE=/home/omn/pg_staging.url ;;
+    *)           UNIT=omn;          PORT=5000; URLFILE=/home/omn/pg_prod.url ;;
 esac
 echo "== App: $APP_DIR  ->  Unit $UNIT (:$PORT)"
+
+DB_URL="${1:-}"
+if [ -z "$DB_URL" ]; then
+    [ -f "$URLFILE" ] || { echo "FEHLER: $URLFILE fehlt (setup_postgres.sh gelaufen?)"; exit 1; }
+    DB_URL=$(cat "$URLFILE")
+fi
+export DATABASE_URL="$DB_URL"     # create_app() liest das VOR der .env
 
 echo "== [0/6] Postgres-Verbindung testen"
 "$PY" - <<'PYEOF'

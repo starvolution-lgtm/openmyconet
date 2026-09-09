@@ -66,16 +66,22 @@ for DB in omn_prod omn_staging; do
     fi
 done
 
+# Fertige Verbindungs-URLs in Dateien schreiben -- pg_cutover.sh liest sie,
+# so muss das Passwort nirgends abgetippt/kopiert werden. NICHT in die .env
+# (das aktiviert PG erst der Cutover). Nach dem Cutover loeschen.
+umask 077
+printf 'postgresql+psycopg://omn:%s@127.0.0.1:5432/omn_prod\n'    "$PW" > /home/omn/pg_prod.url
+printf 'postgresql+psycopg://omn:%s@127.0.0.1:5432/omn_staging\n' "$PW" > /home/omn/pg_staging.url
+chown omn:omn /home/omn/pg_prod.url /home/omn/pg_staging.url
+chmod 600     /home/omn/pg_prod.url /home/omn/pg_staging.url
+
 echo
 echo "=================================================================="
-echo " PostgreSQL bereit. Jetzt in die .env-Dateien eintragen:"
+echo " PostgreSQL bereit. Verbindungs-URLs liegen in:"
+echo "   /home/omn/pg_prod.url"
+echo "   /home/omn/pg_staging.url"
 echo
-echo "   /home/omn/app/.env"
-echo "   DATABASE_URL=postgresql+psycopg://omn:$PW@127.0.0.1:5432/omn_prod"
-echo
-echo "   /home/omn/app-staging/.env"
-echo "   DATABASE_URL=postgresql+psycopg://omn:$PW@127.0.0.1:5432/omn_staging"
-echo
-echo " (noch NICHT eintragen, wenn der Cutover erst spaeter kommt -- die"
-echo "  Zeile aktiviert PG beim naechsten gunicorn-Reload.)"
+echo " -> pg_cutover.sh liest die passende Datei selbst. Kein Abtippen."
+echo "    Reihenfolge: erst Staging-Cutover, dann Prod. Danach beide"
+echo "    .url-Dateien loeschen (die URL steht dann in der jeweiligen .env)."
 echo "=================================================================="
