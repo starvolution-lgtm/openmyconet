@@ -34,11 +34,16 @@ def _asset_version(path):
 
 
 def _asset_url(path):
+    # Assets liegen normal unter www.openmyconet.de (nginx, 30-Tage-Cache).
+    # OMN_ASSET_BASE biegt den Ursprung um -- gesetzt vom Frontend-Audit-Job der
+    # CI, der die App lokal serviert und die echten Repo-CSS/JS pruefen soll
+    # (nicht die bereits deployten). Prod/Staging setzen es nicht -> unveraendert.
+    base = (os.getenv('OMN_ASSET_BASE') or 'https://www.openmyconet.de/').rstrip('/') + '/'
     # asset('') wird als Praefix fuer clientseitige String-Verkettung genutzt
     # (OMN_ASSET_BASE in site/base.html) -- dafuer keine Query-Versionierung.
     if not path:
-        return 'https://www.openmyconet.de/'
-    return f'https://www.openmyconet.de/{path}?v={_asset_version(path)}'
+        return base
+    return f'{base}{path}?v={_asset_version(path)}'
 
 
 # --- Sicherheits-Header ----------------------------------------------------

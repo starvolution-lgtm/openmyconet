@@ -6,7 +6,7 @@
 .workflow-step { margin-bottom:2.6rem; }
 .workflow-step .step-head { display:flex; gap:1.2rem; align-items:baseline; margin-bottom:0.6rem; }
 .workflow-step .num { font-family:'JetBrains Mono',monospace; font-size:1.3rem; color:#d4a030; min-width:2.2rem; }
-.workflow-step h4 { color:#e8f5e0; font-size:1.1rem; }
+.workflow-step h3 { color:#e8f5e0; font-size:1.1rem; }
 .workflow-step p { color:#c8e0c8; font-size:0.95rem; margin-bottom:0.6rem; margin-left:3.4rem; }
 .workflow-step .quote-line { margin-left:3.4rem; }
 .shot { display:block; width:100%; height:auto; border-radius:8px; border:1px solid #0a6040; box-shadow:0 4px 20px rgba(0,0,0,0.35); margin:1rem 0 1rem 3.4rem; max-width:calc(100% - 3.4rem); }

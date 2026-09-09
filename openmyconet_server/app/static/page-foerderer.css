@@ -31,10 +31,13 @@
 .fo-1 { color:#e8f5e0; font-size:1.1rem; max-width:680px; margin-bottom:2rem; }
 .fo-2 { color:#b0d4b0; font-size:0.95rem; max-width:640px; margin-bottom:1.5rem; }
 .fo-3 { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2.5rem; }
-.fo-4 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none; }
+/* a.fo-4 statt .fo-4: sonst gewinnt '.main a { color:#6ee87e }' (hoehere
+   Spezifitaet durch den Typ-Selektor) und der Button-Text wird gruen auf gruen
+   (Kontrast 3.9) statt des vorgesehenen Weiss. */
+a.fo-4 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none; }
 .fo-5 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:0.9rem 2rem; background:transparent; border:1px solid #d4a030; color:#f0b84a; text-decoration:none; }
 .fo-6 { color:#a0c8a0; }
 .fo-7 { font-size:1.3rem; color:#e8f5e0; font-weight:bold; text-align:center; margin-top:1.5rem; }
 .fo-8 { font-size:0.95rem; color:#a0c8a0; text-align:center; margin-top:0.5rem; line-height:1.7; }
-.fo-9 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:1rem 2.5rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none; }
+a.fo-9 { display:inline-flex; align-items:center; gap:0.6rem; font-size:0.85rem; padding:1rem 2.5rem; background:#0a7050; border:1px solid #6ee87e; color:#fff; text-decoration:none; }
 .fo-10 { display:inline-block; margin-top:3rem; font-family:'Lora',Georgia,serif; font-size:0.8rem; color:#00e5e5; letter-spacing:0.04em; text-transform:uppercase; text-decoration:none; border-bottom:1px solid #00e5e5; padding-bottom:2px; }

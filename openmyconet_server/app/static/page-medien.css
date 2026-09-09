@@ -27,7 +27,7 @@
 .mb-3 { font-family:'Lora',serif; font-size:1.05rem; color:#c8e6c0; line-height:1.8; margin-bottom:0.8rem; }
 .mb-4 { font-family:'Lora',serif; font-size:1.05rem; color:#c8e6c0; line-height:1.8; margin-bottom:1rem; }
 .mb-5 { font-family:'Lora',serif; font-size:1.4rem; color:#f0b84a; line-height:1.8; margin-bottom:2rem; text-align:center; font-style:italic; }
-.mb-6 { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5a8a6a; letter-spacing:0.05em; text-align:center; margin-bottom:1rem; }
+.mb-6 { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6a9a7a; letter-spacing:0.05em; text-align:center; margin-bottom:1rem; }
 .mb-7 { display:none;margin-left:0; }
 .mb-8 { padding:2.5rem clamp(1.5rem,5vw,5rem) 1.5rem; text-align:center; border-top:1px solid #0a6040; }
 .mb-9 { font-family:'Lora',Georgia,serif; font-size:1rem; font-weight:700; color:#f0b84a; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:1.2rem; }

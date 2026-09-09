@@ -170,7 +170,7 @@
     <div class="steps-grid" id="steps-grid">
       {% set nums = ['01','02','03','04'] %}
       {% for s in translations[current_lang()]['steps'] %}
-      <div class="step"><span class="step-num">{{ nums[loop.index0] }}</span><h3>{{ s.h }}</h3><p>{{ s.p | safe }}</p><p class="step-cost">{{ s.cost }}</p></div>
+      <div class="step"><span class="step-num" aria-hidden="true">{{ nums[loop.index0] }}</span><h3>{{ s.h }}</h3><p>{{ s.p | safe }}</p><p class="step-cost">{{ s.cost }}</p></div>
       {% endfor %}
     </div>
     <div class="u-mt-1-5">
@@ -193,7 +193,7 @@
     <div class="flow-row" id="flow-row">
       {% set flow_nodes = translations[current_lang()]['flow_nodes'] %}
       {% for n in flow_nodes %}
-      <div class="flow-node"><span class="flow-node-icon">{{ flow_svgs[loop.index0] | safe }}</span><h4>{{ n.h }}</h4><p>{{ n.p | safe }}</p></div>
+      <div class="flow-node"><span class="flow-node-icon">{{ flow_svgs[loop.index0] | safe }}</span><h3>{{ n.h }}</h3><p>{{ n.p | safe }}</p></div>
       {% if not loop.last %}<div class="flow-arrow">→</div>{% endif %}
       {% endfor %}
     </div>
@@ -560,7 +560,7 @@ function renderDynamicSections(lang) {
   if (stepsEl && T.steps) {
     var nums = ['01','02','03','04'];
     stepsEl.innerHTML = T.steps.map(function(s, i) {
-      return '<div class="step"><span class="step-num">' + nums[i] + '</span><h3>' + s.h + '</h3><p>' + s.p + '</p><p class="step-cost">' + s.cost + '</p></div>';
+      return '<div class="step"><span class="step-num" aria-hidden="true">' + nums[i] + '</span><h3>' + s.h + '</h3><p>' + s.p + '</p><p class="step-cost">' + s.cost + '</p></div>';
     }).join('');
   }
 
@@ -568,7 +568,7 @@ function renderDynamicSections(lang) {
   if (flowEl && T.flow_nodes) {
     var parts = [];
     T.flow_nodes.forEach(function(n, i) {
-      parts.push('<div class="flow-node"><span class="flow-node-icon">' + (FLOW_SVGS[i] || '') + '</span><h4>' + n.h + '</h4><p>' + n.p + '</p></div>');
+      parts.push('<div class="flow-node"><span class="flow-node-icon">' + (FLOW_SVGS[i] || '') + '</span><h3>' + n.h + '</h3><p>' + n.p + '</p></div>');
       if (i < T.flow_nodes.length - 1) parts.push('<div class="flow-arrow">→</div>');
     });
     flowEl.innerHTML = parts.join('');

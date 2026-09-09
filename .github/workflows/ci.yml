@@ -54,6 +54,9 @@ jobs:
         working-directory: openmyconet_server
     env:
       SECRET_KEY: ci-not-secret
+      # Assets aus der lokal servierten App laden (Repo-Stand), nicht von
+      # www.openmyconet.de -- sonst pruefte der Audit die deployten CSS/JS.
+      OMN_ASSET_BASE: "/"
     steps:
       - uses: actions/checkout@v4
 
