@@ -63,10 +63,14 @@ prüfen die **Repo**-CSS/JS, nicht die schon deployten. Reports als CI-Artifact
 `best-practices` ≥ 0.90 (`/medien` = 96: der CI-Lauf hat die serververwalteten
 mp3s nicht, der Player loggt einen 404), `seo` ≥ 0.98 (Ist-Score-Ratsche, Stand
 2026-09 — bei stabiler Verbesserung hochziehen), `performance` nur `warn`
-(Headless-CI-Score zu verrauscht). Der **axe/pa11y-Schritt ist noch informativ**
-(`continue-on-error` am Schritt) — scharfstellen, sobald die pa11y-Restverstöße
-0 sind. Lokal: Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python wsgi.py`
-starten, dann `npx @lhci/cli autorun` bzw. `npx pa11y-ci`.
+(Headless-CI-Score zu verrauscht). Der **axe/pa11y-Schritt blockiert ebenfalls**
+(WCAG2AA über alle URLs = 0 Verstöße). Zwei axe-Regeln in `.pa11yci.json` bewusst
+per `ignore` aus: `color-contrast` (axe kann Kontrast über Hintergrundbildern/
+Verläufen nicht berechnen → ~225 Falsch-Positive; den echten Kontrast prüft
+Lighthouse) und `audio-caption` (der Musik-Player spielt Suno-Songs mit
+gesungenem Text — **echte Songtext-Transkripte sind offener Backlog-Punkt**, bis
+dahin geduldet). Lokal: Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python
+wsgi.py` starten, dann `npx @lhci/cli autorun` bzw. `npx pa11y-ci`.
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem

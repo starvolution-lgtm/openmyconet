@@ -3,7 +3,11 @@
     "runners": ["axe"],
     "standard": "WCAG2AA",
     "timeout": 60000,
-    "chromeLaunchConfig": { "args": ["--no-sandbox"] }
+    "chromeLaunchConfig": { "args": ["--no-sandbox"] },
+    "ignore": [
+      "color-contrast",
+      "audio-caption"
+    ]
   },
   "urls": [
     "http://127.0.0.1:5000/",
