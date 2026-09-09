@@ -1,7 +1,7 @@
 """Vorprüfung vor dem Postgres-Cutover (Postgres-Block-Plan Schritt 3, Phase 0).
 
-Liest die aktuelle SQLite-DB **read-only** und prüft, was Postgres erzwingt und
-SQLite bisher ignoriert hat:
+Liest die aktuelle SQLite-DB **read-only** (nur SELECT) und prüft, was Postgres
+erzwingt und SQLite bisher ignoriert hat:
 
   1. VARCHAR(n)-Overflow -- ein Wert länger als die Modell-Länge
   2. news.slug-Duplikate (die PG-Baseline hat UNIQUE(slug))
@@ -13,7 +13,6 @@ Kein Eingriff. Exit 0 = sauber, Exit 1 = Befunde (Details im Bericht).
 
 Aufruf auf dem Server:  cd /home/omn/app && venv/bin/python deploy/pg_precheck.py
 """
-import sqlite3
 import sys
 
 
@@ -24,72 +23,71 @@ def main():
     from omn.extensions import db
 
     app = create_app()
-    with app.app_context():
-        db_pfad = db.engine.url.database
-        tabellen = list(db.metadata.sorted_tables)
-
-    con = sqlite3.connect(f'file:{db_pfad}?mode=ro', uri=True)
-    vorhandene = {r[0] for r in con.execute(
-        "SELECT name FROM sqlite_master WHERE type='table'")}
-
     befunde = []
 
-    def q1(sql, *p):
-        return con.execute(sql, p).fetchone()[0]
+    with app.app_context():
+        modell_tabellen = list(db.metadata.sorted_tables)
+        ist = sa.MetaData()
+        ist.reflect(bind=db.engine)  # das echte Ist-Schema der SQLite-Datei
 
-    for tab in tabellen:
-        if tab.name not in vorhandene:
-            print(f'  (Tabelle {tab.name} existiert in SQLite noch nicht -- übersprungen)')
-            continue
-        zeilen = q1(f'SELECT count(*) FROM "{tab.name}"')
+        with db.engine.connect() as con:
+            def anzahl(select_from, *bedingungen):
+                stmt = sa.select(sa.func.count()).select_from(select_from)
+                for b in bedingungen:
+                    stmt = stmt.where(b)
+                return con.execute(stmt).scalar() or 0
 
-        for col in tab.columns:
-            # 1. String-Länge
-            if isinstance(col.type, sa.String) and col.type.length:
-                zu_lang = q1(
-                    f'SELECT count(*) FROM "{tab.name}" '
-                    f'WHERE length(CAST("{col.name}" AS TEXT)) > ?', col.type.length)
-                if zu_lang:
-                    maxlen = q1(f'SELECT max(length(CAST("{col.name}" AS TEXT))) FROM "{tab.name}"')
-                    befunde.append(
-                        f'{tab.name}.{col.name}: {zu_lang} Wert(e) länger als '
-                        f'VARCHAR({col.type.length}) (max {maxlen})')
+            for mt in modell_tabellen:
+                it = ist.tables.get(mt.name)
+                if it is None:
+                    print(f'  (Tabelle {mt.name} existiert in SQLite noch nicht -- übersprungen)')
+                    continue
+                print(f'  {mt.name}: {anzahl(it)} Zeilen geprüft')
 
-            # 4. NULL in NOT-NULL-Spalte
-            if not col.nullable and not col.primary_key:
-                nullen = q1(f'SELECT count(*) FROM "{tab.name}" WHERE "{col.name}" IS NULL')
-                if nullen:
-                    befunde.append(
-                        f'{tab.name}.{col.name}: {nullen} NULL-Wert(e), Modell sagt NOT NULL')
+                for mc in mt.columns:
+                    ic = it.columns.get(mc.name)
+                    if ic is None:
+                        continue
 
-        # 3. verwaiste FKs
-        for fk in tab.foreign_keys:
-            ziel_tab = fk.column.table.name
-            ziel_col = fk.column.name
-            quell_col = fk.parent.name
-            if ziel_tab not in vorhandene:
-                continue
-            verwaist = q1(
-                f'SELECT count(*) FROM "{tab.name}" q '
-                f'WHERE q."{quell_col}" IS NOT NULL '
-                f'AND NOT EXISTS (SELECT 1 FROM "{ziel_tab}" z '
-                f'                WHERE z."{ziel_col}" = q."{quell_col}")')
-            if verwaist:
-                befunde.append(
-                    f'{tab.name}.{quell_col}: {verwaist} Zeile(n) zeigen auf '
-                    f'nicht existierende {ziel_tab}.{ziel_col}')
+                    if isinstance(mc.type, sa.String) and mc.type.length:
+                        laenge = sa.func.length(sa.cast(ic, sa.Text))
+                        zu_lang = anzahl(it, laenge > mc.type.length)
+                        if zu_lang:
+                            maxlen = con.execute(
+                                sa.select(sa.func.max(laenge)).select_from(it)).scalar()
+                            befunde.append(
+                                f'{mt.name}.{mc.name}: {zu_lang} Wert(e) länger als '
+                                f'VARCHAR({mc.type.length}) (max {maxlen})')
 
-        print(f'  {tab.name}: {zeilen} Zeilen geprüft')
+                    if not mc.nullable and not mc.primary_key:
+                        nullen = anzahl(it, ic.is_(None))
+                        if nullen:
+                            befunde.append(
+                                f'{mt.name}.{mc.name}: {nullen} NULL-Wert(e), Modell sagt NOT NULL')
 
-    # 2. slug-Duplikate
-    if 'news' in vorhandene:
-        dups = con.execute(
-            "SELECT slug, count(*) FROM news WHERE slug IS NOT NULL "
-            "GROUP BY slug HAVING count(*) > 1").fetchall()
-        for slug, n in dups:
-            befunde.append(f'news.slug: {n}x "{slug}" -- PG-Baseline hat UNIQUE(slug)')
+                for fk in mt.foreign_keys:
+                    ziel = ist.tables.get(fk.column.table.name)
+                    if ziel is None:
+                        continue
+                    qc = it.columns[fk.parent.name]
+                    zc = ziel.columns[fk.column.name]
+                    verwaist = anzahl(
+                        it, qc.is_not(None), ~sa.exists(sa.select(1).where(zc == qc)))
+                    if verwaist:
+                        befunde.append(
+                            f'{mt.name}.{fk.parent.name}: {verwaist} Zeile(n) zeigen auf '
+                            f'nicht existierende {ziel.name}.{fk.column.name}')
 
-    con.close()
+            news = ist.tables.get('news')
+            if news is not None:
+                dups = con.execute(
+                    sa.select(news.c.slug, sa.func.count())
+                    .where(news.c.slug.is_not(None))
+                    .group_by(news.c.slug)
+                    .having(sa.func.count() > 1)
+                ).all()
+                for slug, n in dups:
+                    befunde.append(f'news.slug: {n}x "{slug}" -- PG-Baseline hat UNIQUE(slug)')
 
     print()
     if befunde:
