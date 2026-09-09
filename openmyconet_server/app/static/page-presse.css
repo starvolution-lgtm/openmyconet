@@ -10,4 +10,4 @@
 .sprache-filter { margin-bottom:20px; color:#e8f5e0; }
 .sprache-filter select { background:#01301f; color:#e8f5e0; border:1px solid #0a6040; padding:6px; border-radius:4px; }
 .presse-disclaimer { background:rgba(240,184,74,0.12); border:1px solid rgba(240,184,74,0.4); color:#e8f5e0; font-size:0.9em; line-height:1.65; padding:14px 18px; border-radius:6px; margin-bottom:28px; }
-.presse-disclaimer a { color:#6ee87e; }
+.presse-disclaimer a { color:#6ee87e; text-decoration:underline; }

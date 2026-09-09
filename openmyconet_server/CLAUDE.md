@@ -59,10 +59,11 @@ Seed — die SSR-Seiten rendern ohne Daten) und prüft die 14 öffentlichen
 accessibility, best-practices, seo) + **axe-core via pa11y-ci** (`.pa11yci.json`,
 WCAG2AA). Der Job serviert die App mit `OMN_ASSET_BASE=/` → Lighthouse/pa11y
 prüfen die **Repo**-CSS/JS, nicht die schon deployten. Reports als CI-Artifact
-`frontend-audit`. **Lighthouse ist der harte Gate:** `accessibility` ≥ 0.85,
-`best-practices` ≥ 0.90, `seo` ≥ 0.95 (Ist-Score-Ratsche, Stand 2026-09 — bei
-stabiler Verbesserung hochziehen), `performance` nur `warn` (Headless-CI-Score zu
-verrauscht). Der **axe/pa11y-Schritt ist noch informativ**
+`frontend-audit`. **Lighthouse ist der harte Gate:** `accessibility` ≥ 0.95,
+`best-practices` ≥ 0.90 (`/medien` = 96: der CI-Lauf hat die serververwalteten
+mp3s nicht, der Player loggt einen 404), `seo` ≥ 0.98 (Ist-Score-Ratsche, Stand
+2026-09 — bei stabiler Verbesserung hochziehen), `performance` nur `warn`
+(Headless-CI-Score zu verrauscht). Der **axe/pa11y-Schritt ist noch informativ**
 (`continue-on-error` am Schritt) — scharfstellen, sobald die pa11y-Restverstöße
 0 sind. Lokal: Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python wsgi.py`
 starten, dann `npx @lhci/cli autorun` bzw. `npx pa11y-ci`.

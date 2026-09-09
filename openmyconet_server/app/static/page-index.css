@@ -57,7 +57,9 @@ h2 em { font-style:italic; color:#6ee87e; }
 /* ── Steps ── */
 .steps-grid { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap:1.5rem; counter-reset:steps; }
 .step { -webkit-box-flex:1; -webkit-flex:1 1 200px; flex:1 1 200px; padding:1.8rem; background-color:rgba(0,0,0,0.28); border:1px solid #0a6040; border-top:3px solid #d4a030; counter-increment:steps; position:relative; }
-.step-num { font-family:'JetBrains Mono',monospace; font-size:2rem; color:#0a6040; position:absolute; top:1rem; right:1.2rem; line-height:1; }
+/* aria-hidden (dekorative Nummerierung), aber Lighthouses color-contrast wertet
+   das nicht als Ausschluss -> Farbe trotzdem auf >=3:1 (grosser Text) heben. */
+.step-num { font-family:'JetBrains Mono',monospace; font-size:2rem; color:#4a8a68; position:absolute; top:1rem; right:1.2rem; line-height:1; }
 .step h3 { font-family:'Playfair Display',serif; font-size:1.15rem; color:#f0b84a; margin-bottom:0.6rem; }
 .step p { color:#a0c8a0; font-size:0.9rem; line-height:1.6; }
 .step-cost { margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; }
@@ -104,7 +106,8 @@ textarea { height:100px; resize:vertical; }
 footer { padding:2.5rem 0; border-top:1px solid #0a6040; background-color:#024530; }
 .footer-logo { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#6ee87e; margin-bottom:0.5rem; }
 .footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#a0c8a0; line-height:2; }
-.footer-info a { color:#6ee87e; text-decoration:none; }
+/* .footer-info a NICHT hier ueberschreiben -- site-base.css setzt Farbe +
+   Unterstrich (Link im Fliesstext muss ohne Farbe erkennbar bleiben). */
 
 @-webkit-keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
