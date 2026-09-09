@@ -12,9 +12,11 @@
 # - pg_hba: der Ubuntu-Default erlaubt host 127.0.0.1/32 scram-sha-256 schon;
 #   wird nur geprueft, nicht veraendert.
 #
-# Mehrfach ausfuehrbar: Rolle/DBs werden nur angelegt, wenn sie fehlen. Das
-# Passwort wird bei jedem Lauf NEU gesetzt und am Ende ausgegeben -- danach in
-# beide .env eintragen (NICHT durch Chats schicken):
+# Mehrfach ausfuehrbar: Rolle/DBs werden nur angelegt, wenn sie fehlen.
+# Passwort: existiert die Rolle schon (Cutover gelaufen), wird das bestehende
+# aus ~/.pgpass bzw. der Prod-.env recycelt -- die live .env-URLs bleiben gueltig.
+# Nur beim allerersten Lauf wird ein neues erzeugt; dann in beide .env eintragen
+# (NICHT durch Chats schicken):
 #   /home/omn/app/.env          DATABASE_URL=postgresql+psycopg://omn:<PW>@127.0.0.1:5432/omn_prod
 #   /home/omn/app-staging/.env  DATABASE_URL=postgresql+psycopg://omn:<PW>@127.0.0.1:5432/omn_staging
 # ---------------------------------------------------------------------------
@@ -42,15 +44,31 @@ else
     echo "   -> pruefe/ergaenze von Hand:  host all all 127.0.0.1/32 scram-sha-256"
 fi
 
-echo "== [3/5] Passwort erzeugen"
-PW=$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)
+echo "== [3/5] Passwort ermitteln"
+# Existiert die Rolle schon (Cutover gelaufen), NICHT neu setzen -- sonst
+# brechen die live .env-URLs. Bestehendes PW aus .pgpass oder der Prod-.env
+# recyceln; nur wenn nichts auffindbar ist, ein neues erzeugen.
+PW=""
+if [ -f /home/omn/.pgpass ]; then
+    PW=$(awk -F: '$4=="omn"{print $5; exit}' /home/omn/.pgpass || true)
+fi
+if [ -z "$PW" ] && [ -f /home/omn/app/.env ]; then
+    PW=$(grep -E '^DATABASE_URL=postgresql' /home/omn/app/.env | head -1 \
+         | sed -E 's#.*://omn:([^@]+)@.*#\1#' || true)
+fi
+if [ -z "$PW" ]; then
+    PW=$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)
+    echo "   neues Passwort erzeugt"
+else
+    echo "   bestehendes Passwort wiederverwendet (Rolle/Cutover schon da)"
+fi
 
 echo "== [4/5] Rolle omn (LOGIN + CREATEDB)"
 # CREATEDB: restore_check.sh + staging_db_reset.sh legen Wegwerf-/Staging-DBs an.
 ROLLE_DA=$(su - postgres -c "psql -tAc \"SELECT 1 FROM pg_roles WHERE rolname='omn'\"")
 if [ "$ROLLE_DA" = "1" ]; then
     su - postgres -c "psql -qc \"ALTER ROLE omn WITH LOGIN CREATEDB PASSWORD '$PW'\""
-    echo "   Rolle omn existierte -- Passwort neu gesetzt, CREATEDB gesetzt"
+    echo "   Rolle omn existierte -- LOGIN/CREATEDB gesetzt, Passwort unveraendert"
 else
     su - postgres -c "psql -qc \"CREATE ROLE omn WITH LOGIN CREATEDB PASSWORD '$PW'\""
     echo "   Rolle omn angelegt"
