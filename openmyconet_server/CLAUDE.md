@@ -41,10 +41,20 @@ git add migrations/ && commit
 ```
 `render_as_batch=True` weil SQLite `ALTER TABLE` nur eingeschränkt kann (Alembic
 baut betroffene Tabellen nach). Datenbackfills gehören mit in die Migration
-(`op.execute(...)`), nicht mehr in separate Skripte. `tests/test_migrations.py`
-erzwingt: `upgrade` läuft bis head **und** kein Schema-Drift (Modelle ==
-Migrations-Kette). Baseline-Revision `959850bfc924`, danach `966393848d7c`
-(entfernt die Geisterspalte `nutzer.rolle`).
+(`op.execute(...)`), nicht mehr in separate Skripte. `tests/test_migrations.py`:
+`test_kein_schema_drift_frische_db` (Neuinstallation = Modelle == Migrations-Kette,
+Null-Toleranz) + `test_legacy_adoption` (der Prod-Weg: bestehende Tabellen mit
+Alt-Abweichungen → `stamp` Baseline → `upgrade`, Rest-Drift == Allowlist).
+
+Baseline `959850bfc924` = sauberes Modell-Schema. `966393848d7c` = **Legacy-Adoption
+nutzer**: entfernt Geisterspalte `nutzer.rolle`, macht `ist_hyphist/ist_sporist/
+keine_mails` NOT NULL, ersetzt den separaten `ix_nutzer_login_token` durch den
+inline-UNIQUE (batch-Rebuild, No-op auf frischen DBs). **Bewusst NICHT angefasst**
+(auf SQLite alle wirkungslos, betroffene Tabellen haben echte Daten, werden beim
+PG-Cutover automatisch sauber): fehlende DB-FKs `bewerbung.nutzer_id` /
+`foerderer.nutzer_id`, `news.slug` ohne UNIQUE, `foerderer.ansprechpartner` TEXT
+statt VARCHAR(120), `fehlerprotokoll.id` ohne NOT NULL. Diese 5 stehen als
+`LEGACY_DRIFT`-Allowlist in `test_migrations.py`.
 
 **Deploy-seitig noch offen** (Postgres-Block-Plan Schritt 1, Phase C): `release.sh`
 Schritt 7 auf `flask db upgrade` umstellen; Prod-/Staging-DB einmalig
