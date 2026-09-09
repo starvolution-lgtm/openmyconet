@@ -19,6 +19,8 @@
     "http://127.0.0.1:5000/citizen-science-openmyconet.html",
     "http://127.0.0.1:5000/wie-wir-arbeiten",
     "http://127.0.0.1:5000/quellennachweise.html",
-    "http://127.0.0.1:5000/news"
+    "http://127.0.0.1:5000/news",
+    "http://127.0.0.1:5000/impressum.html",
+    "http://127.0.0.1:5000/datenschutz.html"
   ]
 }
