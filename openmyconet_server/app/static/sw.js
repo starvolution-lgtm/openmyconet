@@ -1,5 +1,5 @@
 // OpenMycoNet Service Worker — Offline-Fähigkeit
-const CACHE = 'openmyconet-v21';
+const CACHE = 'openmyconet-v22';
 
 // Nach wie vielen ms ein haengender Netzwerk-Request abgebrochen wird. Ohne
 // dieses Limit blockiert ein "cache first, dann fetch" bei schlechtem Mobilfunk
@@ -47,7 +47,7 @@ self.addEventListener('activate', function(e) {
   self.clients.claim();
 });
 
-// Fetch — Cache first, dann Netzwerk
+// Fetch — HTML-Navigationen network-first, Assets cache-first
 self.addEventListener('fetch', function(e) {
   // Nur GET-Anfragen cachen
   if (e.request.method !== 'GET') return;
@@ -75,6 +75,35 @@ self.addEventListener('fetch', function(e) {
 
   var istNavigation = e.request.mode === 'navigate';
 
+  // HTML-Navigationen: network-first. "Cache first" liefert wiederkehrenden
+  // Besuchern sonst beliebig alte SSR-Seiten aus (geaenderte Texte, neue News,
+  // aktualisierte Uebersetzungen erscheinen erst, wenn der Cache-Key hoch-
+  // gezaehlt wird). Also immer erst frisch ans Netz, den Cache nur als Offline-
+  // Fallback nutzen. Statische Assets bleiben cache-first (siehe unten).
+  if (istNavigation) {
+    e.respondWith(
+      fetchMitTimeout(e.request).then(function(response) {
+        // Erfolgreiche, nicht bereits umgeleitete Antworten fuer den Offline-
+        // Fall nachcachen. Eine redirected Response darf der SW bei einer
+        // Navigation nicht ausliefern (net::ERR_FAILED) -- also gar nicht erst
+        // ablegen.
+        if (response && response.status === 200 && !response.redirected) {
+          var clone = response.clone();
+          caches.open(CACHE).then(function(cache) { cache.put(e.request, clone); });
+        }
+        return response;
+      }).catch(function() {
+        // Netzwerk weg oder Timeout: exakte Seite aus dem Cache, sonst die
+        // Startseite als Offline-Fallback.
+        return caches.match(e.request).then(function(cached) {
+          return cached || caches.match('/');
+        });
+      })
+    );
+    return;
+  }
+
+  // Assets: cache first, dann Netzwerk
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       if (cached) return cached;
@@ -87,10 +116,8 @@ self.addEventListener('fetch', function(e) {
         });
         return response;
       }).catch(function() {
-        // Netzwerk weg oder Timeout: bei Navigationen die Startseite als
-        // Offline-Fallback, sonst den Fehler durchreichen (der Browser zeigt
+        // Netzwerk weg oder Timeout: Fehler durchreichen (der Browser zeigt
         // dann seine normale Fehlerseite statt minutenlang zu haengen).
-        if (istNavigation) return caches.match('/');
         return Response.error();
       });
     })
