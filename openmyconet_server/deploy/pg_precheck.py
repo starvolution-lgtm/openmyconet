@@ -13,7 +13,12 @@ Kein Eingriff. Exit 0 = sauber, Exit 1 = Befunde (Details im Bericht).
 
 Aufruf auf dem Server:  cd /home/omn/app && venv/bin/python deploy/pg_precheck.py
 """
+import os
 import sys
+
+# Das Skript liegt in deploy/ -- ohne das hier kommt deploy/ auf den sys.path
+# statt des Repo-Roots und `import omn` schlaegt fehl.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def main():
