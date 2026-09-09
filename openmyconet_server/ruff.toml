@@ -37,3 +37,5 @@ ignore = [
 [lint.per-file-ignores]
 "tests/*" = ["B011"]
 "migrate_*.py" = ["F401"]
+# Alembic generiert in jede Migration `import sqlalchemy as sa`, oft ungenutzt.
+"migrations/versions/*" = ["F401"]

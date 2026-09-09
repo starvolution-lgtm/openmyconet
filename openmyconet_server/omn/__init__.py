@@ -15,7 +15,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from omn.config import Config
 # extensions importiert nebenbei _sqlite_pragmas (@event.listens_for global) --
 # muss vor dem ersten Engine-Connect passiert sein.
-from omn.extensions import db, mail
+from omn.extensions import db, mail, migrate
 from omn.admin import admin_bp
 from omn.rag_chatbot import chatbot_bp
 from omn.bewerbung import bewerbung_bp
@@ -59,6 +59,13 @@ def create_app(config=None, instance_path=None):
         )
 
     db.init_app(app)
+    # render_as_batch: SQLite kann ALTER TABLE nur eingeschraenkt -- Alembic baut
+    # betroffene Tabellen dafuer nach. Ab dem Postgres-Schritt dialekt-abhaengig.
+    # compare_type: autogenerate erkennt sonst Spaltentyp-Aenderungen nicht.
+    # compare_server_default bewusst AUS -- die Modelle nutzen Python-seitige
+    # default=, kaum server_default; auf SQLite meldet die Pruefung viele
+    # Falsch-Positive.
+    migrate.init_app(app, db, render_as_batch=True, compare_type=True)
     mail.init_app(app)
     CORS(app, origins=['https://www.openmyconet.de', 'https://openmyconet.de', 'https://api.openmyconet.de'])
 

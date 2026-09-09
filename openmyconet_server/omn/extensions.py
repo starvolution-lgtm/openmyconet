@@ -1,3 +1,4 @@
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from sqlalchemy import event
@@ -5,6 +6,7 @@ from sqlalchemy.engine import Engine
 
 db = SQLAlchemy()
 mail = Mail()
+migrate = Migrate()
 
 
 @event.listens_for(Engine, 'connect')

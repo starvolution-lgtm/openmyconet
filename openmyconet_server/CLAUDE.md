@@ -29,10 +29,28 @@ bläht Suchen auf. Immer mit `path:`/`glob:` auf die echten Quelldateien eingren
 
 ## Datenbank
 SQLite unter `instance/openmyconet.db`, **WAL-Modus** (PRAGMA in `omn/extensions.py`, `_sqlite_pragmas`).
-**Kein Alembic.** Neue Spalten: Eintrag in `migrate_add_columns.py` (idempotentes
-`ALTER TABLE ADD COLUMN`). Neue Indizes: `index=True` im Model **und** Eintrag in
-`migrate_add_indexes.py` (`CREATE INDEX IF NOT EXISTS`). Neue Tabellen legt
-`db.create_all()` an. Feature-Migrationen als eigene `migrate_*.py` mit App-Context.
+
+**Migrationen: Alembic / Flask-Migrate** (`migrations/`, `migrate = Migrate()` in
+`omn/extensions.py`, `migrate.init_app(app, db, render_as_batch=True, compare_type=True)`
+in `create_app()`). Workflow bei Model-Änderung:
+```
+FLASK_APP=wsgi venv/Scripts/python.exe -m flask db migrate -m "beschreibung"
+# generierte Datei in migrations/versions/ REVIEWEN (autogenerate ist nicht perfekt)
+FLASK_APP=wsgi venv/Scripts/python.exe -m flask db upgrade   # lokal testen
+git add migrations/ && commit
+```
+`render_as_batch=True` weil SQLite `ALTER TABLE` nur eingeschränkt kann (Alembic
+baut betroffene Tabellen nach). Datenbackfills gehören mit in die Migration
+(`op.execute(...)`), nicht mehr in separate Skripte. `tests/test_migrations.py`
+erzwingt: `upgrade` läuft bis head **und** kein Schema-Drift (Modelle ==
+Migrations-Kette). Baseline-Revision `959850bfc924`, danach `966393848d7c`
+(entfernt die Geisterspalte `nutzer.rolle`).
+
+**Deploy-seitig noch offen** (Postgres-Block-Plan Schritt 1, Phase C): `release.sh`
+Schritt 7 auf `flask db upgrade` umstellen; Prod-/Staging-DB einmalig
+`flask db stamp 959850bfc924` (Baseline, **nicht** `head`) + `flask db upgrade head`.
+Bis dahin laufen weiter `migrate_add_columns.py` / `migrate_add_indexes.py` im
+Deploy (Sicherheitsnetz). Die alten einmaligen `migrate_*.py` bleiben als Historie.
 
 **Backup:** `deploy/backup_db.sh` (konsistenter Snapshot via Python-Online-Backup-
 API → `/home/omn/backups/*.db.gz`, rotiert 14 Tage) läuft täglich per Cron **und**
