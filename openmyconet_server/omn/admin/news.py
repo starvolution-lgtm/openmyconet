@@ -17,7 +17,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from omn.admin.core import admin_bp, login_required
 from omn.extensions import db
 from omn.i18n import LANGS
-from omn.mailer import versende_im_hintergrund
+from omn.mailer import mailqueue_einreihen
 from omn.models import News, Nutzer
 
 ALLOWED_IMAGE_EXT = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
@@ -154,7 +154,7 @@ def _news_nachrichten_bauen(news, sprachen):
     E-Mail-Abmeldung). Die News-Sprache selbst ist egal -- so kann z.B. eine
     englische "aktuelle Aenderungen"-News bewusst an alle Sprachgruppen gehen.
     Rendering laeuft synchron im Request (url_for(_external=True) braucht den
-    Host-Header); der Versand danach im Hintergrund (versende_im_hintergrund)."""
+    Host-Header); der Versand danach ueber die MailQueue (mailqueue_einreihen)."""
     from omn.public import news_exzerpt
 
     if not sprachen:
@@ -224,9 +224,10 @@ def newsletter():
                 msg.body = re.sub(r'<[^>]+>', '', personalisiert) + \
                     f'\n\n---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
                 nachrichten.append(msg)
-            versende_im_hintergrund(nachrichten)
-            nachricht = (f'Versand an {len(nachrichten)} Empfänger im Hintergrund gestartet. '
-                         f'Ergebnis im Journal (journalctl --user -u omn).')
+            mailqueue_einreihen(nachrichten)
+            nachricht = (f'{len(nachrichten)} Empfänger in die Mail-Queue gestellt. '
+                         f'Versand läuft im Hintergrund (jede Minute), Ergebnis im '
+                         f'Journal (journalctl --user -u omn).')
         else:
             beispiel_name = empfaenger[0].name if empfaenger else 'Beispielname'
             vorschau_inhalt = inhalt.replace('{name}', beispiel_name)
@@ -281,9 +282,9 @@ def news_admin():
                 mail_sprachen = [s for s in request.form.getlist('mail_sprachen') if s in LANGS]
                 if mail_sprachen:
                     nachrichten = _news_nachrichten_bauen(news, mail_sprachen)
-                    versende_im_hintergrund(nachrichten)
+                    mailqueue_einreihen(nachrichten)
                     nachricht += (f' E-Mail an {len(nachrichten)} Nutzer '
-                                  f'({", ".join(mail_sprachen)}) wird im Hintergrund versendet.')
+                                  f'({", ".join(mail_sprachen)}) in die Mail-Queue gestellt.')
                 else:
                     nachricht += ' Kein Mail-Versand — keine Sprache ausgewählt.'
     news_liste = News.query.order_by(News.veroeffentlicht.desc()).all()

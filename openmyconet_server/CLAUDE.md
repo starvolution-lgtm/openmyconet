@@ -14,7 +14,8 @@ ihre Routen an `admin_bp`, `__init__.py` re-exportiert `admin_bp`/`role_required
 via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.py`,
 `omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py`,
 `omn/site_live.py`, `omn/site_preview.py`. Models `omn/models.py`, DB-Erweiterungen
-`omn/extensions.py`, i18n `omn/i18n.py`. Wartungs-Scripts bleiben im Repo-Root
+`omn/extensions.py`, i18n `omn/i18n.py`, CLI-Kommandos `omn/cli.py`
+(`register_cli(app)`, aktuell `flask mail-queue-drain`). Wartungs-Scripts bleiben im Repo-Root
 (`seed_*.py`, `presse_suche.py`, `build_rag_index.py`,
 `create_admin.py`, `foerderer_verfall_pruefen.py`, `cleanup_*.py`, `update_*.py`;
 Schema-Migrationen laufen über Alembic, s. u. — die restlichen alten
@@ -227,12 +228,21 @@ tokengesicherten Abmelde-Link `/abmelden/<nutzer.token>` (Route in
 (`_list_unsubscribe_header` in `omn/admin/news.py`) — der POST auf dieselbe Route
 erledigt die One-Click-Abmeldung der Mail-Clients. Transaktionale Mails (Doppel-Opt-in, Magic-Link) ignorieren das
 Flag. Die Nachrichten werden **synchron im Request gebaut** (Rendering,
-`url_for(_external=True)` braucht den Host-Header), der **SMTP-Versand läuft im
-Hintergrund** (`omn/mailer.py`, `versende_im_hintergrund` → Daemon-Thread mit
-EINER `mail.connect()`-Verbindung; unter `TESTING` synchron). Kein echtes
-Queue — bricht bei gunicorn-Neustart mitten im Batch ab (bei aktueller
-Nutzerzahl Sekundenbereich). Einzel-/Transaktionsmails bleiben direkt
-`mail.send()`. Siehe `test_news_mail.py` + `test_mailer.py`.
+`url_for(_external=True)` braucht den Host-Header) und dann per
+`omn.mailer.mailqueue_einreihen` als **`MailQueue`-Zeilen** abgelegt (eine je
+Empfänger). Der SMTP-Versand läuft **ausserhalb des Requests**:
+`mailqueue_drain` (CLI `flask mail-queue-drain`, Cron jede Minute via
+`deploy/mailqueue_drain.sh` mit `flock`, für Prod + Staging) claimt einen Batch,
+öffnet EINE `mail.connect()`-Verbindung, arbeitet ihn ab. **Durable**: ein
+gunicorn-Neustart mitten im Versand verliert nichts, offene Zeilen bleiben in der
+DB. Fehlversuche bis `MAX_VERSUCHE` (3), dann `status='fehler'` + Journal-Log.
+`'sendet'`-Zeilen älter als 15 min → zurück auf `'offen'` (Crash-Recovery).
+`'gesendet'` wird 30 Tage als Audit-Spur behalten, dann im Drain gelöscht. Unter
+`TESTING` drained `mailqueue_einreihen` sofort synchron. Cron-Zeile einmalig:
+`bash deploy/install_backup_cron.sh` (trägt jetzt auch die beiden Drain-Zeilen
+ein). Einzel-/Transaktionsmails **und der Fehler-Alert** bleiben direkt
+`mail.send()` — sofort, Einzelempfänger, und der Alert darf nicht von der Queue
+abhängen. Siehe `test_news_mail.py`, `test_mailer.py`, `test_mailqueue.py`.
 
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".

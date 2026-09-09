@@ -21,14 +21,16 @@ import smtplib
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import feedparser
 import requests
 from flask import Blueprint, current_app, render_template, request
 
 from omn.admin import role_required
-from omn.models import Knoten, Suchbegriff
+from omn.extensions import db
+from omn.models import Knoten, MailQueue, Suchbegriff
+from omn.zeit import utcnow
 
 kontrollzentrum_bp = Blueprint('kontrollzentrum', __name__)
 
@@ -135,6 +137,26 @@ def check_backup_offsite():
     return 'ok', f'letzter Upload vor {alter_h:.0f} h'
 
 
+def check_mailqueue():
+    """MailQueue (Rund-Mails): der Cron-Drain (jede Minute) sollte 'offen' schnell
+    abbauen. 'fehler'-Zeilen sind endgueltig gescheiterte Rund-Mails, alte
+    'offen'/'sendet' heissen: der Drain laeuft nicht."""
+    if not db.inspect(db.engine).has_table('mail_queue'):
+        return None   # noch nicht migriert (z.B. alte lokale DB) -> Kachel weglassen
+    n_fehler = MailQueue.query.filter_by(status='fehler').count()
+    if n_fehler:
+        return 'fehler', f'{n_fehler} Rund-Mail(s) endgueltig fehlgeschlagen -- journalctl --user -u omn'
+    n_haenger = (MailQueue.query
+                 .filter(MailQueue.status.in_(('offen', 'sendet')),
+                         MailQueue.erstellt_am < utcnow() - timedelta(minutes=15))
+                 .count())
+    if n_haenger:
+        return 'fehler', (f'{n_haenger} Mail(s) seit >15 min unversandt -- Cron-Drain aktiv? '
+                          f'(deploy/install_backup_cron.sh)')
+    offen = MailQueue.query.filter_by(status='offen').count()
+    return 'ok', f'{offen} in Warteschlange' if offen else 'leer'
+
+
 def check_mailserver():
     server = os.getenv('MAIL_SERVER')
     port = int(os.getenv('MAIL_PORT', 587))
@@ -216,6 +238,7 @@ SCHNELLE_CHECKS = [
     ('anthropic', 'Chatbot-API-Key', check_anthropic_key),
     ('backup', 'Datenbank-Backup', check_backup),
     ('backup_offsite', 'Backup Offsite (All-inkl)', check_backup_offsite),
+    ('mailqueue', 'Mail-Queue (Rund-Mails)', check_mailqueue),
 ]
 
 # Echte Netzwerk-Checks (spuerbare Latenz moeglich) -- diese duerfen parallel

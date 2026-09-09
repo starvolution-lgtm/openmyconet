@@ -289,3 +289,24 @@ class Suchbegriff(db.Model):
     begriff = db.Column(db.String(200), nullable=False)  # GDELT-Suchbegriff
     quellsprache = db.Column(db.String(20), nullable=False)  # GDELT sourcelang-Parameter, z.B. "german"
     aktiv = db.Column(db.Boolean, default=True)
+
+
+class MailQueue(db.Model):
+    """Durable Warteschlange fuer Rund-Mails (Newsletter, News-Benachrichtigung).
+    Einzel-/Transaktionsmails (Magic-Link, Doppel-Opt-in, Foerderer, Fehler-Alert)
+    gehen weiter direkt ueber mail.send(). Gefuellt von omn.mailer.mailqueue_einreihen,
+    geleert vom Cron `flask mail-queue-drain` (deploy/mailqueue_drain.sh, jede Minute,
+    flock gegen Ueberlappung). Eine Zeile je Empfaenger. Ueberlebt einen
+    gunicorn-Neustart mitten im Versand -- genau das kann der alte Daemon-Thread nicht."""
+    id = db.Column(db.Integer, primary_key=True)
+    empfaenger = db.Column(db.String(255), nullable=False)
+    betreff = db.Column(db.String(300), nullable=False, default='')
+    body = db.Column(db.Text, nullable=False, default='')
+    html = db.Column(db.Text, nullable=True)
+    header_json = db.Column(db.Text, nullable=True)  # Message.extra_headers als JSON (List-Unsubscribe)
+    status = db.Column(db.String(10), nullable=False, default='offen', index=True)  # offen | sendet | gesendet | fehler
+    versuche = db.Column(db.Integer, nullable=False, default=0)
+    letzter_fehler = db.Column(db.String(500), nullable=True)
+    erstellt_am = db.Column(db.DateTime, nullable=False, default=utcnow, index=True)
+    claim_am = db.Column(db.DateTime, nullable=True)   # gesetzt beim Claim eines Drains -- Crash-Recovery haengt daran
+    gesendet_am = db.Column(db.DateTime, nullable=True)
