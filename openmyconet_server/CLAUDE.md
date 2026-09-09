@@ -56,11 +56,14 @@ PG-Cutover automatisch sauber): fehlende DB-FKs `bewerbung.nutzer_id` /
 statt VARCHAR(120), `fehlerprotokoll.id` ohne NOT NULL. Diese 5 stehen als
 `LEGACY_DRIFT`-Allowlist in `test_migrations.py`.
 
-**Deploy-seitig noch offen** (Postgres-Block-Plan Schritt 1, Phase C): `release.sh`
-Schritt 7 auf `flask db upgrade` umstellen; Prod-/Staging-DB einmalig
-`flask db stamp 959850bfc924` (Baseline, **nicht** `head`) + `flask db upgrade head`.
-Bis dahin laufen weiter `migrate_add_columns.py` / `migrate_add_indexes.py` im
-Deploy (Sicherheitsnetz). Die alten einmaligen `migrate_*.py` bleiben als Historie.
+**Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
+`FLASK_APP=wsgi python -m flask db upgrade` (statt der alten
+`migrate_add_columns.py` / `migrate_add_indexes.py` — die bleiben als Historie im
+Repo, werden aber nicht mehr aufgerufen). Prod + Staging sind aktiviert
+(2026-09-09: `flask db stamp 959850bfc924` + `flask db upgrade head` via
+`deploy/alembic_activate.sh`, beide auf `966393848d7c`). Eine schon unter Alembic
+stehende DB adoptiert `deploy/alembic_activate.sh` nicht nochmal (Abbruch bei
+vorhandener `alembic_version`). Schema-Dump zum Abgleich: `deploy/schema_dump.py`.
 
 **Backup:** `deploy/backup_db.sh` (konsistenter Snapshot via Python-Online-Backup-
 API → `/home/omn/backups/*.db.gz`, rotiert 14 Tage) läuft täglich per Cron **und**
@@ -105,7 +108,7 @@ Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft a
 Server): Tarball → Staging → `pip install -r requirements.txt` (voll gepinnt) →
 Import-Check → Code-Backup (`app.bak-<ts>`) → `rsync -a --delete
 --exclude-from=deploy/deploy-exclude.txt` nach `/home/omn/app` → **DB-Backup
-(`deploy/backup_db.sh`)** → `migrate_add_columns.py` + `migrate_add_indexes.py`
+(`deploy/backup_db.sh`)** → `flask db upgrade` (Alembic)
 → gunicorn reload → Health-Check `curl localhost:5000` (bei ≠200 automatischer
 Rollback aus dem Code-Backup; Rollback stellt Code wieder her, **nicht die DB**
 und nicht die venv-Pakete — bei DB-Problemen `deploy/BACKUP.md`).
@@ -143,9 +146,10 @@ Rollback manuell: `ssh ... 'rsync -a --delete --exclude=/instance/ --exclude=/.e
 
 Neue kleine Assets, die Templates referenzieren, gehören **ins Git** (`app/static/…`) —
 sonst löscht der `--delete`-Deploy sie. Grosse Medien (mp3/pdf) bleiben serververwaltet,
-siehe deploy-exclude.txt. Feature-Migrationen (`migrate_kollaboration.py` etc.) bleiben
-manuell — release.sh fährt nur die beiden idempotenten (mit DB-Backup davor, s. o.).
-Vor einer manuellen Feature-Migration einmal `bash deploy/backup_db.sh` von Hand.
+siehe deploy-exclude.txt. Schema- **und** Datenmigrationen laufen jetzt alle über
+`flask db upgrade` im Deploy (mit DB-Backup davor, s. o.) — auch Backfills gehören
+per `op.execute(...)` in die Alembic-Migration. Die alten `migrate_*.py` im
+Repo-Root sind nur noch Historie.
 
 ### Staging (`staging.openmyconet.de`, zweite Unit auf derselben VPS)
 `deploy/omn-staging.service` — gunicorn `-w 1` auf **Port 5001**, Verzeichnis

@@ -26,8 +26,9 @@ rm -f "$DEST"/openmyconet.db "$DEST"/openmyconet.db-wal "$DEST"/openmyconet.db-s
 gunzip -c "$NEUESTES" > "$DEST/openmyconet.db"
 echo "Staging-DB -> $DEST/openmyconet.db ($(du -h "$DEST/openmyconet.db" | cut -f1))"
 
-# etwaige neue Spalten des aktuellen Staging-Codes nachziehen
-( cd /home/omn/app-staging && venv/bin/python migrate_add_columns.py && venv/bin/python migrate_add_indexes.py )
+# Die kopierte Prod-DB traegt bereits alembic_version -- etwaige neueren
+# Migrationen des Staging-Codes nachziehen.
+( cd /home/omn/app-staging && FLASK_APP=wsgi venv/bin/python -m flask db upgrade )
 
 systemctl --user start omn-staging
 sleep 3

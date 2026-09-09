@@ -55,9 +55,9 @@ echo "[5/6] Dateien uebernehmen (--delete)"
 mkdir -p "$APP/instance"
 rsync -a --checksum --delete --exclude-from="$EXCL" "$STAGING"/ "$APP"/
 
-echo "[6/6] Migrationen + Reload + Health"
+echo "[6/6] Migrationen (Alembic) + Reload + Health"
 if [ -f "$APP/instance/openmyconet.db" ]; then
-    ( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
+    ( cd "$APP" && FLASK_APP=wsgi "$PY" -m flask db upgrade )
 fi
 
 if ! systemctl --user is-active --quiet omn-staging 2>/dev/null; then

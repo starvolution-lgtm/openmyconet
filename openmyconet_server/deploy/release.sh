@@ -90,8 +90,8 @@ rsync -a --checksum --delete --exclude-from="$EXCL" "$STAGING"/ "$APP"/
 echo "[6/8] DB-Backup vor den Migrationen"
 bash "$APP/deploy/backup_db.sh"
 
-echo "[7/8] Migrationen"
-( cd "$APP" && "$PY" migrate_add_columns.py && "$PY" migrate_add_indexes.py )
+echo "[7/8] Migrationen (Alembic)"
+( cd "$APP" && FLASK_APP=wsgi "$PY" -m flask db upgrade )
 
 echo "[8/8] Reload + Health-Check"
 gunicorn_neu_laden
