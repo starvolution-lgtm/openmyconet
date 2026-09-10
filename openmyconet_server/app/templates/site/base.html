@@ -102,7 +102,15 @@
      laesst die Navigation minutenlang haengen. Geladen wird erst beim ersten
      Play (Nutzergeste), die gespeicherte Position wird dann via loadedmetadata
      wiederhergestellt. -->
-<audio id="omn-audio" preload="none"></audio>
+<audio id="omn-audio" preload="none">
+  <!-- Songtext-Spur (WCAG 1.2.1): kein Browser rendert Captions fuer reines
+       <audio>, aber die Spur speist die Follow-along-Zeile im grossen Player
+       (cuechange) und macht die Texte fuer axe/Screenreader auffindbar. Die
+       lesbare Volltext-Fassung steht auf /medien.html. src wird pro Track von
+       loadTrack() gesetzt. -->
+  <track id="omn-cc" kind="captions" srclang="en" label="Lyrics (English)"
+         src="{{ asset('lyrics/listen-to-the-forest.vtt') }}">
+</audio>
 <div id="omn-audio-fab" class="omn-audio-fab">
   <div id="omn-audio-panel" class="omn-audio-panel">
     <div class="omn-audio-panel-title">Audio</div>
@@ -269,11 +277,11 @@ window.omnSetDynStyle = (function(){
 // Autoplay-Policy zu umgehen.
 var OMN_ASSET_BASE = '{{ asset("") }}';
 var OMN_TRACKS = [
-  { file:'listen-to-the-forest.mp3',       title:'Listen to the Forest',      cover:'cover-listen-to-the-forest.jpeg' },
-  { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'cover-listening-to-the-trees.jpeg' },
-  { file:'the-oldest-living-network.mp3', title:'The Oldest Living Network', cover:'cover-the-oldest-living-network.jpeg' },
-  { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg' },
-  { file:'nobody-funds-the-ground.mp3',    title:'Nobody Funds the Ground',   cover:'cover-nobody-funds-the-ground.jpeg' }
+  { file:'listen-to-the-forest.mp3',       title:'Listen to the Forest',      cover:'cover-listen-to-the-forest.jpeg',      vtt:'lyrics/listen-to-the-forest.vtt' },
+  { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'cover-listening-to-the-trees.jpeg',    vtt:'lyrics/listening-to-the-trees.vtt' },
+  { file:'the-oldest-living-network.mp3', title:'The Oldest Living Network', cover:'cover-the-oldest-living-network.jpeg', vtt:'lyrics/the-oldest-living-network.vtt' },
+  { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg',     vtt:'lyrics/three-ways-of-knowing.vtt' },
+  { file:'nobody-funds-the-ground.mp3',    title:'Nobody Funds the Ground',   cover:'cover-nobody-funds-the-ground.jpeg',   vtt:'lyrics/nobody-funds-the-ground.vtt' }
 ];
 
 (function(){
@@ -332,9 +340,25 @@ var OMN_TRACKS = [
     }).join('');
   }
 
+  var ccEl   = document.getElementById('omn-cc');
+  var nowEl  = document.getElementById('omn-now-line');   // Follow-along-Zeile, nur im grossen Player
+  if(ccEl && ccEl.track){
+    ccEl.track.mode = 'hidden';   // Cue-Events feuern, ohne dass etwas gerendert wird
+    ccEl.track.addEventListener('cuechange', function(){
+      if(!nowEl) return;
+      var c = ccEl.track.activeCues && ccEl.track.activeCues[0];
+      nowEl.textContent = c ? c.text.replace(/\s+/g, ' ') : '';
+    });
+  }
+
   function loadTrack(idx, autoplay, startAt){
     current = idx;
     audio.src = OMN_ASSET_BASE + OMN_TRACKS[idx].file;
+    if(ccEl && OMN_TRACKS[idx].vtt){
+      ccEl.src = OMN_ASSET_BASE + OMN_TRACKS[idx].vtt;
+      if(ccEl.track) ccEl.track.mode = 'hidden';
+    }
+    if(nowEl) nowEl.textContent = '';
     if(titleEl) titleEl.textContent = OMN_TRACKS[idx].title;
     if(bar) omnSetDynStyle('audioBar', '.omn-progress-bar{width:0%}');
     if(timeEl) timeEl.textContent = '0:00 / 0:00';

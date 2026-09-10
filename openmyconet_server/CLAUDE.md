@@ -119,13 +119,25 @@ prüfen die **Repo**-CSS/JS, nicht die schon deployten. Reports als CI-Artifact
 mp3s nicht, der Player loggt einen 404), `seo` ≥ 0.98 (Ist-Score-Ratsche, Stand
 2026-09 — bei stabiler Verbesserung hochziehen), `performance` nur `warn`
 (Headless-CI-Score zu verrauscht). Der **axe/pa11y-Schritt blockiert ebenfalls**
-(WCAG2AA über alle URLs = 0 Verstöße). Zwei axe-Regeln in `.pa11yci.json` bewusst
-per `ignore` aus: `color-contrast` (axe kann Kontrast über Hintergrundbildern/
-Verläufen nicht berechnen → ~225 Falsch-Positive; den echten Kontrast prüft
-Lighthouse) und `audio-caption` (der Musik-Player spielt Suno-Songs mit
-gesungenem Text — **echte Songtext-Transkripte sind offener Backlog-Punkt**, bis
-dahin geduldet). Lokal: Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python
-wsgi.py` starten, dann `npx @lhci/cli autorun` bzw. `npx pa11y-ci`.
+(WCAG2AA über alle URLs = 0 Verstöße). Nur `color-contrast` ist in `.pa11yci.json`
+per `ignore` aus (axe kann Kontrast über Hintergrundbildern/Verläufen nicht
+berechnen → ~225 Falsch-Positive; den echten Kontrast prüft Lighthouse).
+`audio-caption` ist **harter Gate** (seit den Songtexten, s. u.). Lokal:
+Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python wsgi.py` starten, dann
+`npx @lhci/cli autorun` bzw. `npx pa11y-ci`.
+
+### Songtexte / Musik-Player (WCAG 1.2.1)
+Der Player (`<audio id="omn-audio">` in `site/base.html`, Track-Manifest
+`OMN_TRACKS`, 5 Suno-Songs) hat eine WebVTT-Songtextspur je Track
+(`app/static/lyrics/*.vtt`, git-getrackt, klein). `<track kind="captions">` wird
+von `loadTrack()` pro Track umgeschaltet und speist die Follow-along-Zeile
+(`#omn-now-line`, `cuechange`, nur im grossen Player, `aria-hidden`). Die
+barrierefreie Volltext-Fassung steht als `<details>`-Liste unter dem Player auf
+`/medien.html` (`#songtexte`, i18n-Keys `musik_texte_label`/`musik_texte_hint`;
+die Texte selbst bleiben englisches Original). `mimetypes.add_type('text/vtt',
+'.vtt')` in `omn/__init__.py` sichert den MIME-Typ (Flask serviert die `.vtt`,
+nicht nginx). Neue/korrigierte Zeilen: `.srt` → `.vtt` (`WEBVTT`-Header, `,`→`.`
+im Zeitstempel) + den `<details>`-Block auf `medien.html` nachziehen.
 
 ## Deployment (Prod, Hetzner VPS)
 Kein Git-Checkout auf dem Server. Deploy über **`deploy/release.sh`** (läuft auf dem

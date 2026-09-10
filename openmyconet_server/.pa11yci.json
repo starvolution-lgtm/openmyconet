@@ -5,8 +5,7 @@
     "timeout": 60000,
     "chromeLaunchConfig": { "args": ["--no-sandbox"] },
     "ignore": [
-      "color-contrast",
-      "audio-caption"
+      "color-contrast"
     ]
   },
   "urls": [

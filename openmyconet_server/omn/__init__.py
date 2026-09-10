@@ -4,9 +4,15 @@
 gunicorn: `wsgi.py` (`wsgi:app`). Wartungs-Scripts im Repo-Root bauen sich die
 App selbst: `from omn import create_app; app = create_app()`.
 """
+import mimetypes
 from pathlib import Path
 
 from flask import Flask
+
+# WebVTT-Songtextspuren (app/static/lyrics/*.vtt): sicherstellen, dass Flasks
+# statischer Handler sie als text/vtt ausliefert -- sonst parst der Browser die
+# <track>-Spur nicht (haengt sonst am OS-mimetypes-Zustand).
+mimetypes.add_type('text/vtt', '.vtt')
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 

@@ -43,3 +43,17 @@
 .mg-broschuere-lang-val { font-family:monospace; font-size:0.6rem; color:#e8f5e0; margin-left:2px; }
 .mg-broschuere-lang-link { display:inline-flex; align-items:center; gap:3px; cursor:pointer; text-decoration:none; opacity:0.5; }
 .mg-broschuere-lang-link--active { opacity:1; border-bottom:1px solid #6ee87e; }
+
+/* ── Songtexte (WCAG 1.2.1: Transkript fuer die gesungenen Songs) ── */
+.omn-lyrics { max-width:580px; margin:2.5rem auto 0; }
+.omn-lyrics h2 { font-family:'Lora',Georgia,serif; font-size:1rem; font-weight:700; color:#f0b84a; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.5rem; }
+.omn-lyrics-hint { font-family:'JetBrains Mono',monospace; font-size:0.66rem; color:#a0c8a0; letter-spacing:0.04em; line-height:1.6; margin-bottom:1.2rem; }
+.omn-lyric { border-top:1px solid #0a6040; }
+.omn-lyric:last-child { border-bottom:1px solid #0a6040; }
+.omn-lyric summary { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#6ee87e; letter-spacing:0.06em; text-transform:uppercase; padding:0.8rem 0.2rem; cursor:pointer; list-style:none; display:flex; align-items:center; gap:0.6rem; }
+.omn-lyric summary::-webkit-details-marker { display:none; }
+.omn-lyric summary::before { content:"+"; color:#d4a030; font-size:0.9rem; width:1ch; }
+.omn-lyric[open] summary::before { content:"–"; }
+.omn-lyric summary:hover { color:#e8f5e0; }
+.omn-lyric summary:focus-visible { outline:2px solid #6ee87e; outline-offset:2px; }
+.omn-lyric-text { font-family:'Lora',Georgia,serif; font-size:0.92rem; line-height:1.85; color:#c8e6c0; white-space:pre-line; padding:0 0.2rem 1.2rem; }
