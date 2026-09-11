@@ -267,14 +267,13 @@ window.omnSetDynStyle = (function(){
 // ── Persistenter Audio-Player (zentral, alle Seiten) ──────────────────────
 // Track-Manifest: eine Quelle fuer die Hero-Playlist (index.html) und die
 // volle Playlist-Ansicht (medien.html). Zustand (Track/Position/Lautstaerke/
-// Mute) wird per localStorage ueber Seitenwechsel hinweg erhalten -- da es
-// sich um klassische Multi-Page-Navigation handelt (kein SPA), startet die
-// Wiedergabe nach einem Seitenwechsel bewusst PAUSIERT (Track/Position/
-// Lautstaerke sind schon wiederhergestellt) statt automatisch fortzusetzen:
-// Browser blockieren programmatisches audio.play() ohne Nutzergeste ohnehin
-// per Autoplay-Policy. Ein Klick auf Play im Player setzt fort -- das
-// erfuellt die Geste-Anforderung und wirkt "nahtlos", ohne die Browser-
-// Autoplay-Policy zu umgehen.
+// Mute/wasPlaying) wird per localStorage ueber Seitenwechsel hinweg erhalten
+// -- da es sich um klassische Multi-Page-Navigation handelt (kein SPA), wird
+// nach einem Seitenwechsel versucht, eine laufende Wiedergabe automatisch
+// fortzusetzen. Browser koennen programmatisches audio.play() ohne
+// Nutzergeste per Autoplay-Policy blockieren (NotAllowedError) -- in dem
+// Fall faengt loadTrack() das ab und zeigt den normalen pausierten Zustand
+// mit Play-Button, statt einen Fehler zu werfen.
 var OMN_ASSET_BASE = '{{ asset("") }}';
 var OMN_TRACKS = [
   { file:'listen-to-the-forest.mp3',       title:'Listen to the Forest',      cover:'cover-listen-to-the-forest.jpeg',      vtt:'lyrics/listen-to-the-forest.vtt' },
@@ -370,8 +369,17 @@ var OMN_TRACKS = [
         audio.removeEventListener('loadedmetadata', once);
       });
     }
-    if(autoplay){ audio.play(); setPlayingUI(true); }
-    else { setPlayingUI(false); }
+    if(autoplay){
+      // play() liefert ein Promise; ohne vorherige Nutzergeste auf dieser
+      // Domain kann der Browser mit NotAllowedError ablehnen (Autoplay-
+      // Policy) -- dann bleibt es beim normalen pausierten Zustand.
+      var p = audio.play();
+      if(p && typeof p.catch === 'function'){
+        p.then(function(){ setPlayingUI(true); }).catch(function(){ setPlayingUI(false); });
+      } else {
+        setPlayingUI(true);
+      }
+    } else { setPlayingUI(false); }
   }
 
   // Track-Dauern nur dort laden, wo die grosse Playlist mit Dauer-Anzeige
@@ -396,6 +404,7 @@ var OMN_TRACKS = [
         trackIndex: current,
         currentTime: audio.currentTime || 0,
         volume: audio.volume,
+        wasPlaying: !audio.paused,
         savedAt: Date.now()
       }));
     } catch(e) {}
@@ -443,7 +452,8 @@ var OMN_TRACKS = [
   });
 
   // Gespeicherten Zustand wiederherstellen (Track/Position/Lautstaerke/Mute) --
-  // bewusst OHNE Autoplay, siehe Erlaeuterung oben.
+  // lief die Wiedergabe beim Verlassen der letzten Seite, wird versucht,
+  // sie fortzusetzen (Fallback bei Autoplay-Block s. loadTrack()).
   var restored = null;
   try {
     var raw = localStorage.getItem(STORAGE_KEY);
@@ -459,7 +469,7 @@ var OMN_TRACKS = [
     audio.volume = (typeof restored.volume === 'number') ? restored.volume : DEFAULT_VOLUME;
     var vs = document.getElementById('omn-vol-slider');
     if(vs){ vs.value = audio.volume; }
-    loadTrack(restored.trackIndex % OMN_TRACKS.length, false, restored.currentTime || 0);
+    loadTrack(restored.trackIndex % OMN_TRACKS.length, !!restored.wasPlaying, restored.currentTime || 0);
   } else {
     audio.volume = DEFAULT_VOLUME;
     loadTrack(0, false);
