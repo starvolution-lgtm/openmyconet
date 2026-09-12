@@ -34,7 +34,7 @@ def test_vtt_datei_ist_wohlgeformt(stem):
 
 def test_manifest_und_vtt_decken_sich():
     base = (REPO / "app" / "templates" / "site" / "base.html").read_text(encoding="utf-8")
-    genannt = set(re.findall(r"vtt:'lyrics/([a-z-]+)\.vtt'", base))
+    genannt = set(re.findall(r'asset\("lyrics/([a-z-]+)\.vtt"\)', base))
     assert genannt == set(TRACKS)
     assert '<track id="omn-cc" kind="captions"' in base
 
