@@ -3,24 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 </head>
-<body style="margin:0; padding:0; background:#0a0f0a; font-family: Arial, Helvetica, sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f0a; padding:24px 0;">
+<body style="margin:0; padding:0; background:#012a1e; font-family:Georgia,'Times New Roman',serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#012a1e; padding:32px 0;">
 <tr>
 <td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#0f150f; border-radius:8px; overflow:hidden;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#024530; border-radius:6px; overflow:hidden;">
 <tr>
-<td style="background:#12200f; padding:24px 32px;">
-<span style="font-size:22px; color:#4caf50; font-weight:bold;">🍄 OpenMycoNet</span>
+<td style="background:#02241a; padding:22px 32px; border-bottom:1px solid #0a6040;">
+<img src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet" height="40" style="display:block; height:40px; width:auto; border:0;">
 </td>
 </tr>
 <tr>
-<td style="padding:32px; color:#eee; font-size:15px; line-height:1.7; white-space:pre-wrap;">{{ inhalt | safe }}</td>
+<td style="padding:36px 32px; color:#e8f5e0; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.7; white-space:pre-wrap;">{{ inhalt | safe }}</td>
 </tr>
 <tr>
-<td style="padding:20px 32px; background:#0d130d; color:#777; font-size:12px; line-height:1.6;">
-{% if abmelde_url %}<a href="{{ abmelde_url }}" style="color:#4caf50;">Keine E-Mails mehr erhalten</a> &nbsp;·&nbsp; {% endif %}
-OpenMycoNet · <a href="https://www.openmyconet.de" style="color:#4caf50;">www.openmyconet.de</a>
+<td style="padding:20px 32px; background:#02241a; border-top:1px solid #0a6040; color:#7ba38a; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.7;">
+{% if abmelde_url %}<a href="{{ abmelde_url }}" style="color:#6ee87e;">Keine E-Mails mehr erhalten</a> &nbsp;&middot;&nbsp; {% endif %}
+OpenMycoNet &middot; <a href="https://www.openmyconet.de" style="color:#6ee87e;">www.openmyconet.de</a>
 </td>
 </tr>
 </table>

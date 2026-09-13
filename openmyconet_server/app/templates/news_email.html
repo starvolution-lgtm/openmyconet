@@ -3,45 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 </head>
-<body style="margin:0; padding:0; background:#0a0f0a; font-family: Arial, Helvetica, sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f0a; padding:24px 0;">
+<body style="margin:0; padding:0; background:#012a1e; font-family:Georgia,'Times New Roman',serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#012a1e; padding:32px 0;">
 <tr>
 <td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#0f150f; border-radius:8px; overflow:hidden;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#024530; border-radius:6px; overflow:hidden;">
 <tr>
-<td style="background:#12200f; padding:24px 32px;">
-<span style="font-size:22px; color:#4caf50; font-weight:bold;">🍄 OpenMycoNet</span>
+<td style="background:#02241a; padding:22px 32px; border-bottom:1px solid #0a6040;">
+<img src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet" height="40" style="display:block; height:40px; width:auto; border:0;">
 </td>
 </tr>
 <tr>
-<td style="padding:32px 32px 8px 32px; color:#eee; font-size:20px; font-weight:bold; line-height:1.4;">
+<td style="padding:36px 32px 8px 32px; color:#ffffff; font-size:22px; font-weight:normal; line-height:1.4;">
 {{ news.titel }}
 </td>
 </tr>
 {% if news.untertitel %}
 <tr>
-<td style="padding:0 32px 8px 32px; color:#9ccc9c; font-size:15px; line-height:1.5;">
+<td style="padding:0 32px 8px 32px; color:#a0c8a0; font-size:15px; font-style:italic; line-height:1.5;">
 {{ news.untertitel }}
 </td>
 </tr>
 {% endif %}
 <tr>
-<td style="padding:12px 32px 8px 32px; color:#ccc; font-size:15px; line-height:1.7;">
+<td style="padding:14px 32px 8px 32px; color:#e8f5e0; font-size:15px; font-family:Arial,Helvetica,sans-serif; line-height:1.7;">
 {{ exzerpt }}
 </td>
 </tr>
 <tr>
-<td style="padding:20px 32px 32px 32px;">
-<a href="{{ url }}" style="display:inline-block; background:#4caf50; color:#0a0f0a; font-weight:bold; font-size:15px; text-decoration:none; padding:12px 24px; border-radius:6px;">Beitrag lesen &rarr;</a>
+<td style="padding:22px 32px 36px 32px;">
+<a href="{{ url }}" style="display:inline-block; background:#0a7050; color:#ffffff; font-family:Arial,Helvetica,sans-serif; font-weight:bold; font-size:14px; letter-spacing:0.03em; text-decoration:none; padding:12px 26px; border-radius:4px;">Beitrag lesen &rarr;</a>
 </td>
 </tr>
 <tr>
-<td style="padding:20px 32px; background:#0d130d; color:#777; font-size:12px; line-height:1.6;">
+<td style="padding:20px 32px; background:#02241a; border-top:1px solid #0a6040; color:#7ba38a; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.7;">
 Du bekommst diese Mail, weil du dich bei OpenMycoNet registriert hast.<br>
-<a href="{{ abmelde_url }}" style="color:#4caf50;">Keine E-Mails mehr erhalten</a>
-&nbsp;·&nbsp;
-<a href="https://www.openmyconet.de" style="color:#4caf50;">www.openmyconet.de</a>
+<a href="{{ abmelde_url }}" style="color:#6ee87e;">Keine E-Mails mehr erhalten</a>
+&nbsp;&middot;&nbsp;
+<a href="https://www.openmyconet.de" style="color:#6ee87e;">www.openmyconet.de</a>
 </td>
 </tr>
 </table>
