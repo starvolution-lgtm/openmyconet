@@ -23,6 +23,11 @@ select {
 }
 input:focus, select:focus, textarea:focus { border-color:#3a9e5a; }
 textarea { height:140px; resize:vertical; }
+/* Die generische appearance:none oben nimmt Checkboxen sonst jede sichtbare
+   Haken-Darstellung (Klick funktioniert, aber kein optisches Feedback) --
+   hier wieder auf nativ zurueckgesetzt, wie im Registrierungsformular
+   (page-index.css) fuer dieselbe Klasse. */
+input[type="checkbox"] { -webkit-appearance:auto; appearance:auto; }
 
 .mg-cb-label { display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#a0c8a0; }
 .mg-cb-accent { width:auto; margin-top:3px; accent-color:#f0b84a; flex-shrink:0; }
