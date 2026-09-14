@@ -6,7 +6,12 @@
 .datum { color:#888; font-size:0.85em; margin-bottom:16px; }
 .inhalt { line-height:1.7; color:#222; }
 .inhalt h1, .inhalt h2, .inhalt h3 { color:#1a1a1a; }
-.inhalt img, .artikel > img { max-width:100%; border-radius:6px; margin:8px 0; }
+/* display:block + margin:auto zentriert IMMER, unabhaengig davon, ob das
+   umgebende Quill-Element zufaellig ein zentriertes <h2> oder ein
+   linksbuendiges <p> ist (News-Bilder sollen unabhaengig vom Absatz-Tag
+   zuverlaessig mittig stehen -- vorher zufaellig nur ueber <h2>'s
+   text-align:center in site-base.css). */
+.inhalt img, .artikel > img { display:block; max-width:100%; border-radius:6px; margin:8px auto; }
 .inhalt a { color:#2e7d32; }
 .tags { margin-top:16px; }
 .tags a { color:#2e7d32; text-decoration:none; margin-right:10px; font-size:0.9em; }
