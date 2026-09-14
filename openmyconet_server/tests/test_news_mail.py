@@ -82,6 +82,65 @@ def test_checkbox_an_aber_keine_sprache_kein_versand(client, app, superadmin):
     assert 'keine Sprache' in r.get_data(as_text=True)
 
 
+def _news_bearbeiten(client, news_id, mail_senden=False, mail_sprachen=None):
+    daten = {'titel': 'Grosse Neuigkeit', 'untertitel': 'Untertitel',
+             'inhalt': 'Wir haben einen neuen Knoten im Wald.', 'sprache': 'de', 'tags': ''}
+    if mail_senden:
+        daten['mail_senden'] = '1'
+        daten['mail_sprachen'] = mail_sprachen if mail_sprachen is not None else []
+    return client.post(f'/admin/news/edit/{news_id}', data=daten, follow_redirects=True)
+
+
+def test_bearbeiten_ohne_checkbox_keine_mail(client, app, superadmin):
+    _nutzer(app, 'de1@example.com')
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    _news_posten(client, mail_senden=False)
+    with app.app_context():
+        news_id = News.query.filter_by(titel='Grosse Neuigkeit').first().id
+    with mail.record_messages() as ausgehend:
+        r = _news_bearbeiten(client, news_id, mail_senden=False)
+    assert r.status_code == 200
+    assert ausgehend == []
+
+
+def test_bearbeiten_kann_vergessene_sprache_nachtragen(client, app, superadmin):
+    """Deckt genau den realen Fall ab: beim urspruenglichen Veroeffentlichen wurde
+    eine Sprache vergessen -- die Bearbeiten-Seite muss das nachholen koennen,
+    ohne die News erneut anzulegen."""
+    _nutzer(app, 'de-ok@example.com', sprache='de')
+    _nutzer(app, 'fr-nachtrag@example.com', sprache='fr')
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+
+    with mail.record_messages() as erste_runde:
+        _news_posten(client, mail_senden=True, sprache='en', mail_sprachen=['de'])
+    assert {adr for m in erste_runde for adr in m.recipients} == {'de-ok@example.com'}
+
+    with app.app_context():
+        news_id = News.query.filter_by(titel='Grosse Neuigkeit').first().id
+
+    with mail.record_messages() as nachtrag:
+        r = _news_bearbeiten(client, news_id, mail_senden=True, mail_sprachen=['fr'])
+    assert r.status_code == 200
+    assert {adr for m in nachtrag for adr in m.recipients} == {'fr-nachtrag@example.com'}
+    assert 'in die Mail-Queue gestellt' in r.get_data(as_text=True)
+
+    with app.app_context():
+        assert News.query.count() == 1  # Nachtrag darf keine zweite News anlegen
+
+
+def test_bearbeiten_checkbox_an_aber_keine_sprache_kein_versand(client, app, superadmin):
+    _nutzer(app, 'de-u@example.com', sprache='de')
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    _news_posten(client, mail_senden=False)
+    with app.app_context():
+        news_id = News.query.filter_by(titel='Grosse Neuigkeit').first().id
+    with mail.record_messages() as ausgehend:
+        r = _news_bearbeiten(client, news_id, mail_senden=True, mail_sprachen=[])
+    assert r.status_code == 200
+    assert ausgehend == []
+    assert 'keine Sprache' in r.get_data(as_text=True)
+
+
 def test_abmelden_get_dann_post(client, app):
     _nutzer(app, 'weg@example.com', token='geheim-abc')
 

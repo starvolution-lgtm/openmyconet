@@ -42,6 +42,24 @@
     <label>Tags (kommagetrennt, optional)</label>
     <input type="text" name="tags" value="{{ news.tags or '' }}" placeholder="z.B. Mykorrhiza, Forschung, Update">
 
+    <fieldset class="u-mail-box">
+        <legend>📧 Benachrichtigung per E-Mail (nach-)senden</legend>
+        <label class="u-inline-check">
+            <input type="checkbox" name="mail_senden" value="1">
+            Benachrichtigung mit Link zum Beitrag senden an&nbsp;…
+        </label>
+        {% for code in langs %}
+        <label class="u-inline-check">
+            <input type="checkbox" name="mail_sprachen" value="{{ code }}">
+            {{ sprach_namen[code] }} <span class="info">({{ sprach_zahlen[code] }} Empfänger)</span>
+        </label>
+        {% endfor %}
+        <p class="info">Nichts ist vorausgewählt — nur anhaken, wenn hier tatsächlich
+        (erneut) benachrichtigt werden soll, z.&nbsp;B. weil beim ursprünglichen
+        Veröffentlichen eine Sprache vergessen wurde. Sprache = Spracheinstellung
+        des Nutzers, nicht die der News.</p>
+    </fieldset>
+
     <button type="submit">Speichern</button>
 </form>
 {% endblock %}

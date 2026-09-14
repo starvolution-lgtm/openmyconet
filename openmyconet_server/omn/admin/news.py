@@ -10,7 +10,7 @@ import unicodedata
 import uuid
 
 import bleach
-from flask import current_app, redirect, render_template, request, url_for
+from flask import current_app, flash, redirect, render_template, request, url_for
 from flask_mail import Message
 from PIL import Image, ImageOps, UnidentifiedImageError
 
@@ -312,8 +312,18 @@ def news_edit(news_id):
             if not news.slug:
                 news.slug = generate_unique_slug(news.titel)
             db.session.commit()
+            if request.form.get('mail_senden'):
+                mail_sprachen = [s for s in request.form.getlist('mail_sprachen') if s in LANGS]
+                if mail_sprachen:
+                    nachrichten = _news_nachrichten_bauen(news, mail_sprachen)
+                    mailqueue_einreihen(nachrichten)
+                    flash(f'E-Mail an {len(nachrichten)} Nutzer ({", ".join(mail_sprachen)}) '
+                          'in die Mail-Queue gestellt.')
+                else:
+                    flash('Kein Mail-Versand — keine Sprache ausgewählt.')
             return redirect(url_for('admin.news_admin'))
-    return render_template('news_edit.html', news=news, fehler=fehler)
+    return render_template('news_edit.html', news=news, fehler=fehler,
+                           langs=LANGS, sprach_namen=SPRACH_NAMEN, sprach_zahlen=_mail_sprach_zahlen())
 
 
 @admin_bp.route('/admin/news/delete/<int:news_id>')
