@@ -14,6 +14,7 @@ from omn.admin import (  # noqa: F401  -- Import registriert die Routen
     foerderer,
     inhalte,
     knoten,
+    kontakt,
     news,
     presse,
     uebersicht,

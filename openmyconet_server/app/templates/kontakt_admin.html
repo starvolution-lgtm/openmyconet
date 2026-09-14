@@ -1,0 +1,51 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Kontaktanfragen verwalten{% endblock %}
+{% block heading %}✉️ Kontaktanfragen verwalten{% endblock %}
+
+{% block content %}
+
+{% if nachricht %}
+    <p class="msg">{{ nachricht }}</p>
+{% endif %}
+{% if fehler %}
+    <p class="err">{{ fehler }}</p>
+{% endif %}
+
+<h2>Kontaktanfragen ({{ anfragen_liste|length }})</h2>
+<table>
+    <tr>
+        <th>#</th>
+        <th>Name / E-Mail / Telefon</th>
+        <th>Anliegen</th>
+        <th>Nachricht</th>
+        <th>Status</th>
+        <th>Eingegangen</th>
+    </tr>
+    {% for a in anfragen_liste %}
+    <tr>
+        <td>{{ a.id }}</td>
+        <td>{{ a.name or '—' }}<br><small>{{ a.email }}</small>{% if a.telefon %}<br><small>{{ a.telefon }}</small>{% endif %}</td>
+        <td>{{ a.anliegen }}</td>
+        <td>{{ a.nachricht[:200] }}{% if a.nachricht|length > 200 %}…{% endif %}</td>
+        <td>
+            <span class="status-{{ a.status }}">{{ a.status }}</span>
+            <form class="u-mt-6" method="POST">
+                <input type="hidden" name="anfrage_id" value="{{ a.id }}">
+                <select name="status">
+                    {% for s in status_optionen %}
+                    <option value="{{ s }}" {{ 'selected' if s == a.status else '' }}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Setzen</button>
+            </form>
+            <form class="u-mt-6 js-confirm-submit" method="POST" data-confirm="Kontaktanfrage #{{ a.id }} ({{ a.name or a.email }}) endgültig löschen?">
+                <input type="hidden" name="anfrage_id" value="{{ a.id }}">
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="loeschen">Löschen</button>
+            </form>
+        </td>
+        <td>{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

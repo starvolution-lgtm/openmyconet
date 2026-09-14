@@ -25,6 +25,7 @@ from omn.extensions import db, mail, migrate
 from omn.admin import admin_bp
 from omn.rag_chatbot import chatbot_bp
 from omn.bewerbung import bewerbung_bp
+from omn.kontakt import kontakt_bp
 from omn.registrierung import registrierung_bp
 from omn.dashboard import dashboard_bp
 from omn.site_preview import site_preview_bp
@@ -80,6 +81,7 @@ def create_app(config=None, instance_path=None):
     app.register_blueprint(admin_bp)
     app.register_blueprint(chatbot_bp)
     app.register_blueprint(bewerbung_bp)
+    app.register_blueprint(kontakt_bp)
     app.register_blueprint(registrierung_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(site_preview_bp)

@@ -1,0 +1,34 @@
+/* ── Kontaktinfo-Karten ── */
+.kontakt-info-grid { display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:1rem; }
+.kontakt-info-card { flex:1 1 260px; padding:1.3rem; background-color:rgba(0,0,0,0.22); border-left:3px solid #0a7050; }
+.kontakt-info-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.6rem; }
+.kontakt-info-value { display:inline-block; font-family:'Lora',Georgia,serif; font-size:1.1rem; color:#6ee87e; text-decoration:underline; word-break:break-word; }
+.kontakt-info-phone-row { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.3rem; flex-wrap:wrap; }
+.kontakt-info-phone-tag { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:#5f9a7e; letter-spacing:0.06em; text-transform:uppercase; min-width:4.5rem; }
+.kontakt-info-hint { margin-top:0.6rem; font-size:0.85rem; color:#a0c8a0; font-style:italic; }
+
+/* ── Formular (gleiches Grundmuster wie das Registrierungsformular auf
+   index.html, hier eigenstaendig fuer diese Seite) ── */
+.form-wrap { max-width:580px; margin-top:2rem; }
+.form-group { margin-bottom:1.3rem; }
+label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
+input, select, textarea {
+  width:100%; padding:0.8rem 1rem; background-color:#ffffff; border:1px solid #0a6040;
+  color:#1a1a1a; font-family:'Lora',serif; font-size:1rem; outline:none;
+  border-radius:0; -webkit-appearance:none; -moz-appearance:none; appearance:none;
+}
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a9e4a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 1rem center; padding-right:2.5rem; cursor:pointer;
+}
+input:focus, select:focus, textarea:focus { border-color:#3a9e5a; }
+textarea { height:140px; resize:vertical; }
+
+.mg-cb-label { display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; text-transform:none; letter-spacing:0; font-size:0.85rem; color:#a0c8a0; }
+.mg-cb-accent { width:auto; margin-top:3px; accent-color:#f0b84a; flex-shrink:0; }
+.mg-mono-hint { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; line-height:1.7; margin-top:0.5rem; }
+.kontakt-required-hint { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#5f9a7e; margin-top:1rem; }
+.mg-honeypot { position:absolute; left:-9999px; top:-9999px; }
+
+.btn.btn-state-ok  { background-color:#3a9e5a; }
+.btn.btn-state-err { background-color:#8b2020; }

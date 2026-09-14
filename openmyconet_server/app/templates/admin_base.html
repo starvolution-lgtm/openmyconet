@@ -26,6 +26,7 @@
       {% if session.admin_role == 'superadmin' %}
       <a href="{{ url_for('admin.knoten_admin') }}">📡 Knoten</a>
       <a href="{{ url_for('admin.bewerbungen_admin') }}">🗺️ Bewerbungen</a>
+      <a href="{{ url_for('admin.kontakt_admin') }}">✉️ Kontakt</a>
       <a href="{{ url_for('kontrollzentrum.kontrollzentrum') }}">🚦 Kontrollzentrum</a>
       {% endif %}
       <a href="{{ url_for('admin.spenden_admin') }}">💚 Spenden</a>

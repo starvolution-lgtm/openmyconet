@@ -50,6 +50,7 @@
     #}
     <li><a href="{{ live('quellennachweise.html') }}" {% if current_page=='quellen' %}class="nav-active"{% endif %} data-i18n="nav_quellen">{{ t('nav_quellen') }}</a></li>
     <li><a href="{{ live('news') }}" {% if current_page=='news' %}class="nav-active"{% endif %} data-i18n="nav_news">{{ t('nav_news') }}</a></li>
+    <li><a href="{{ live('kontakt') }}" {% if current_page=='kontakt' %}class="nav-active"{% endif %} data-i18n="nav_kontakt">{{ t('nav_kontakt') }}</a></li>
   </ul>
   <div class="nav-tools">
     <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
@@ -85,6 +86,7 @@
   #}
   <a href="{{ live('quellennachweise.html') }}" class="mobile-menu-link" data-i18n="nav_quellen">{{ t('nav_quellen') }}</a>
   <a href="{{ live('news') }}" class="mobile-menu-link" data-i18n="nav_news">{{ t('nav_news') }}</a>
+  <a href="{{ live('kontakt') }}" class="mobile-menu-link" data-i18n="nav_kontakt">{{ t('nav_kontakt') }}</a>
   {% block mobile_menu_self_link %}{% endblock %}
   <div class="mobile-lang" id="lang-flags-mobile"></div>
 </div>

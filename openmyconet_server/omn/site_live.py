@@ -95,6 +95,11 @@ def wie_wir_arbeiten():
     return render_template('site/wie-wir-arbeiten.html', current_page='wie-wir-arbeiten')
 
 
+@site_live_bp.route('/kontakt')
+def kontakt():
+    return render_template('site/kontakt.html', current_page='kontakt')
+
+
 @site_live_bp.route('/biocomm')
 def biocomm():
     return render_template('site/biocomm.html', current_page='biocomm')

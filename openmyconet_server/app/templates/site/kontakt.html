@@ -1,0 +1,200 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('kontakt_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('kontakt_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/kontakt">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/kontakt?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/kontakt?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/kontakt?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/kontakt?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/kontakt">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/kontakt">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('page-kontakt.css') }}">
+{% endblock %}
+
+{% block mobile_menu_self_link %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="kontakt_page_tag">{{ t('kontakt_page_tag') }}</p>
+    <h1 data-i18n-html="kontakt_h1">{{ t('kontakt_h1') | safe }}</h1>
+    <p data-i18n="kontakt_intro">{{ t('kontakt_intro') }}</p>
+  </div>
+</div>
+
+<section class="u-bg-a">
+  <div class="inner">
+    <div class="kontakt-info-grid">
+      <div class="kontakt-info-card">
+        <div class="kontakt-info-label" data-i18n="kontakt_info_email_label">{{ t('kontakt_info_email_label') }}</div>
+        <a class="kontakt-info-value" href="mailto:kontakt@openmyconet.de">kontakt@openmyconet.de</a>
+        <p class="kontakt-info-hint" data-i18n="kontakt_info_email_hint">{{ t('kontakt_info_email_hint') }}</p>
+      </div>
+      <div class="kontakt-info-card">
+        <div class="kontakt-info-label" data-i18n="kontakt_info_phone_label">{{ t('kontakt_info_phone_label') }}</div>
+        <p class="kontakt-info-phone-row">
+          <span class="kontakt-info-phone-tag" data-i18n="kontakt_info_phone_landline_label">{{ t('kontakt_info_phone_landline_label') }}</span>
+          <a class="kontakt-info-value" href="tel:+4961814346300">+49 6181 4346300</a>
+        </p>
+        <p class="kontakt-info-phone-row">
+          <span class="kontakt-info-phone-tag" data-i18n="kontakt_info_phone_mobile_label">{{ t('kontakt_info_phone_mobile_label') }}</span>
+          <a class="kontakt-info-value" href="tel:+491721314576">+49 172 1314576</a>
+        </p>
+        <p class="kontakt-info-hint" data-i18n="kontakt_info_phone_hint">{{ t('kontakt_info_phone_hint') }}</p>
+      </div>
+    </div>
+
+    <h2 class="u-mt-3" id="kontakt-form-h2" data-i18n="kontakt_form_h2">{{ t('kontakt_form_h2') }}</h2>
+
+    <form class="form-wrap" id="kontakt-form" novalidate>
+      <div class="form-group">
+        <label id="lbl-k-name" for="k-inp-name"><span data-i18n="kontakt_lbl_name">{{ t('kontakt_lbl_name') }}</span></label>
+        <input type="text" id="k-inp-name" autocomplete="name" name="name" placeholder="{{ t('kontakt_ph_name') }}">
+      </div>
+      <div class="form-group">
+        <label id="lbl-k-email" for="k-inp-email"><span data-i18n="kontakt_lbl_email">{{ t('kontakt_lbl_email') }}</span> <span aria-hidden="true">*</span></label>
+        <input type="email" id="k-inp-email" required autocomplete="email" name="email" placeholder="{{ t('kontakt_ph_email') }}">
+      </div>
+      <div class="form-group">
+        <label id="lbl-k-telefon" for="k-inp-telefon"><span data-i18n="kontakt_lbl_telefon">{{ t('kontakt_lbl_telefon') }}</span></label>
+        <input type="tel" id="k-inp-telefon" autocomplete="tel" name="telefon" placeholder="{{ t('kontakt_ph_telefon') }}">
+      </div>
+      <div class="form-group">
+        <label id="lbl-k-anliegen" for="k-anliegen"><span data-i18n="kontakt_lbl_anliegen">{{ t('kontakt_lbl_anliegen') }}</span> <span aria-hidden="true">*</span></label>
+        <select name="anliegen" id="k-anliegen" required>
+          {% for opt_val, opt_key in [('allgemein','kontakt_opt_allgemein'), ('presse','kontakt_opt_presse'), ('foerderung','kontakt_opt_foerderung'), ('technik','kontakt_opt_technik'), ('sonstiges','kontakt_opt_sonstiges')] %}
+          <option value="{{ opt_val }}">{{ t(opt_key) }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label id="lbl-k-nachricht" for="k-inp-nachricht"><span data-i18n="kontakt_lbl_nachricht">{{ t('kontakt_lbl_nachricht') }}</span> <span aria-hidden="true">*</span></label>
+        <textarea id="k-inp-nachricht" required name="nachricht" placeholder="{{ t('kontakt_ph_nachricht') }}"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="mg-cb-label">
+          <input class="mg-cb-accent" type="checkbox" name="privacy" id="k-inp-privacy" required>
+          <span id="k-privacy-label">{{ (t('kontakt_privacy_label').replace('[Datenschutzerklärung]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Datenschutzerklärung</a>').replace('[Privacy Policy]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Privacy Policy</a>').replace('[Privacybeleid]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Privacybeleid</a>').replace('[Politique de confidentialité]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Politique de confidentialité</a>').replace('[Política de privacidad]','<a class="u-green" href="' ~ live('datenschutz.html') ~ '">Política de privacidad</a>') ~ ' *') | safe }}</span>
+        </label>
+      </div>
+
+      <p class="kontakt-required-hint" id="k-required-hint" data-i18n="kontakt_required_hint">{{ t('kontakt_required_hint') }}</p>
+      <p class="mg-mono-hint" id="k-privacy-notice" data-i18n="kontakt_privacy_notice">{{ t('kontakt_privacy_notice') }}</p>
+
+      <div class="mg-honeypot" aria-hidden="true">
+        <label for="k-website">Website</label>
+        <input type="text" id="k-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button type="submit" class="btn btn-green" id="k-submit-btn">{{ t('kontakt_submit') }}</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.kontakt_page_title || 'OpenMycoNet';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.kontakt_meta_desc || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    if (T[key] !== undefined) el.innerHTML = T[key];
+  });
+
+  document.getElementById('k-inp-name').placeholder = T.kontakt_ph_name;
+  document.getElementById('k-inp-email').placeholder = T.kontakt_ph_email;
+  document.getElementById('k-inp-telefon').placeholder = T.kontakt_ph_telefon;
+  document.getElementById('k-inp-nachricht').placeholder = T.kontakt_ph_nachricht;
+  document.getElementById('k-submit-btn').textContent = T.kontakt_submit;
+
+  var anliegenMap = [
+    {val:'allgemein',  key:'kontakt_opt_allgemein'},
+    {val:'presse',     key:'kontakt_opt_presse'},
+    {val:'foerderung', key:'kontakt_opt_foerderung'},
+    {val:'technik',    key:'kontakt_opt_technik'},
+    {val:'sonstiges',  key:'kontakt_opt_sonstiges'}
+  ];
+  var sel = document.getElementById('k-anliegen');
+  var vorher = sel.value;
+  sel.innerHTML = anliegenMap.map(function(o) {
+    return '<option value="' + o.val + '">' + T[o.key] + '</option>';
+  }).join('');
+  sel.value = vorher;
+
+  var privSpan = document.getElementById('k-privacy-label');
+  privSpan.innerHTML = (T.kontakt_privacy_label || '')
+    .replace('[Datenschutzerklärung]', '<a class="u-green" href="datenschutz.html">Datenschutzerklärung</a>')
+    .replace('[Privacy Policy]', '<a class="u-green" href="datenschutz.html">Privacy Policy</a>')
+    .replace('[Privacybeleid]', '<a class="u-green" href="datenschutz.html">Privacybeleid</a>')
+    .replace('[Politique de confidentialité]', '<a class="u-green" href="datenschutz.html">Politique de confidentialité</a>')
+    .replace('[Política de privacidad]', '<a class="u-green" href="datenschutz.html">Política de privacidad</a>')
+    + ' *';
+}
+
+function handleKontakt(e) {
+  e.preventDefault();
+  var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
+  var btn = document.getElementById('k-submit-btn');
+  var privacyCb = document.getElementById('k-inp-privacy');
+  if (!privacyCb.checked) { privacyCb.focus(); return; }
+  var form = document.getElementById('kontakt-form');
+  if (!form.reportValidity()) return;
+  var data = new FormData(form);
+  btn.textContent = T.kontakt_sending;
+  btn.classList.remove('btn-state-ok', 'btn-state-err');
+  btn.disabled = true;
+  fetch('https://api.openmyconet.de/api/kontakt', { method:'POST', body:data })
+    .then(function(r){ return r.json(); })
+    .then(function(resp) {
+      if (resp && resp.ok) {
+        btn.textContent = T.kontakt_success;
+        btn.classList.add('btn-state-ok');
+        form.reset();
+      } else {
+        btn.textContent = T.kontakt_error;
+        btn.classList.add('btn-state-err');
+        btn.disabled = false;
+      }
+    })
+    .catch(function() {
+      btn.textContent = T.kontakt_error;
+      btn.classList.add('btn-state-err');
+      btn.disabled = false;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+  var kf = document.getElementById('kontakt-form');
+  if (kf) kf.addEventListener('submit', handleKontakt);
+});
+</script>
+{% endblock %}

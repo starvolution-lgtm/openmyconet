@@ -72,6 +72,7 @@ def _testumgebung(monkeypatch):
     # gezielten Test der echten Rate-Limit-Logik).
     monkeypatch.setattr('omn.registrierung.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.foerderer.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.kontakt.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.dashboard.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.rag_chatbot.ip_erlaubt', lambda *a, **kw: True)

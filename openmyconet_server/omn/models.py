@@ -78,6 +78,18 @@ class Bewerbung(db.Model):
     ip = db.Column(db.String(45), nullable=True)
     erstellt_am = db.Column(db.DateTime, default=utcnow)
 
+
+class Kontaktanfrage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(150), nullable=False)
+    telefon = db.Column(db.String(30))
+    anliegen = db.Column(db.String(50), nullable=False)
+    nachricht = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), default='neu', index=True)  # neu | bearbeitet | erledigt
+    ip = db.Column(db.String(45), nullable=True)
+    erstellt_am = db.Column(db.DateTime, default=utcnow)
+
 class Messung(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id'), nullable=False)
