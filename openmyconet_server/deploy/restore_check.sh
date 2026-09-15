@@ -40,6 +40,7 @@ if [[ "$SRC" == *.dump ]]; then
 
     pg_restore -h 127.0.0.1 -U omn -d "$RC_DB" --no-owner "$SRC"
 
+    cd "$APP"
     DATABASE_URL="$RC_URL" SECRET_KEY=restore-check REST_ERWARTET="$ERWARTET" \
         "$PY" - <<'PYEOF'
 import os
