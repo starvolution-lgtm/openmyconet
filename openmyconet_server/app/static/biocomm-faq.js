@@ -424,6 +424,33 @@ function renderFaqPanel(lang) {
 
 renderFaqPanel(getFaqLang());
 
+// ── FAQPage strukturierte Daten (SEO) ────────────────────────────────────
+// Das FAQ-Panel existiert (nur per CSS versteckt) bereits im DOM jeder Seite --
+// die Fragen/Antworten sind also tatsaechlicher, aufklappbarer Seiteninhalt,
+// wie von Google fuer FAQPage-Markup verlangt. Wird pro Sprache aus denselben
+// FAQ_BY_LANG-Daten erzeugt statt dupliziert gepflegt.
+function injectFaqSchema(lang) {
+  var faq = FAQ_BY_LANG[lang] || FAQ_BY_LANG.de;
+  var mainEntity = [];
+  faq.forEach(function(cat) {
+    cat.items.forEach(function(item) {
+      mainEntity.push({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a }
+      });
+    });
+  });
+  var existing = document.getElementById('omn-faq-schema');
+  if (existing) existing.remove();
+  var script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.id = 'omn-faq-schema';
+  script.textContent = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: mainEntity });
+  document.head.appendChild(script);
+}
+injectFaqSchema(getFaqLang());
+
 // ── Events ───────────────────────────────────────────────────────────────
 fab.addEventListener('click', function() {
   // Chat-Widget schliessen, falls offen -- beide teilen sich Bildschirmbereich

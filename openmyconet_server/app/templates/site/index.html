@@ -231,7 +231,7 @@
       {% set kurz = f.beschreibung[:90] + '…' if f.beschreibung|length > 90 else f.beschreibung %}
       {% set inner %}
         <div class="ic-32">
-          {% if f.logo_datei %}<img class="ic-33" src="{{ asset('uploads/foerderer/' + f.logo_datei) }}" alt="{{ f.firma }}">{% endif %}
+          {% if f.logo_datei %}<img class="ic-33" src="{{ asset('uploads/foerderer/' + f.logo_datei) }}" alt="{{ f.firma }}" loading="lazy" decoding="async">{% endif %}
         </div>
         <div class="ic-34">{{ f.firma }}</div>
         <div class="ic-35">{{ kurz }}</div>

@@ -29,17 +29,24 @@ with open(_TRANSLATIONS_PATH, encoding='utf-8') as _f:
 
 
 def resolve_lang():
-    """Gleiche Prioritaet wie das bisherige clientseitige getLang(): expliziter
-    ?lang=-Parameter -> gespeicherte Praeferenz (hier: Cookie statt localStorage,
-    serverseitig gibt es kein localStorage) -> Browser-Sprache -> 'de'."""
+    """Prioritaet: expliziter ?lang=-Parameter -> gespeicherte Praeferenz (hier:
+    Cookie statt localStorage, serverseitig gibt es kein localStorage) -> 'de'.
+
+    Bewusst KEIN Accept-Language-Fallback mehr (SEO-Fix 09/2026): die kanonische
+    URL ohne ?lang= ist das hreflang="de"/x-default-Ziel und muss Crawlern
+    deterministisch dieselbe (deutsche) Fassung liefern -- sonst sieht Googlebot
+    je nach Crawl-Durchlauf (unterschiedlicher Accept-Language-Header) mal
+    Deutsch, mal Englisch unter derselben kanonischen URL, was Canonical/
+    hreflang-Konsistenz untergraebt. Die Browsersprache wird weiterhin
+    verwendet -- aber rein clientseitig (getLang() in base.html), das direkt
+    nach dem ersten Rendern instant umschaltet, ohne Reload."""
     p = request.args.get('lang')
     if p in LANGS:
         return p
     cookie_lang = request.cookies.get(COOKIE_NAME)
     if cookie_lang in LANGS:
         return cookie_lang
-    best = request.accept_languages.best_match(LANGS)
-    return best or 'de'
+    return 'de'
 
 
 def t(key):

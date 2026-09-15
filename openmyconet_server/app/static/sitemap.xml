@@ -16,7 +16,105 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/"/>
   </url>
 
-  <!-- Fördererseite (eine URL, alle Sprachen per ?lang= Parameter) -->
+  <!-- BioComm (Übersicht) -->
+  <url>
+    <loc>https://www.openmyconet.de/biocomm</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm"/>
+  </url>
+
+  <!-- BioComm Hardware -->
+  <url>
+    <loc>https://www.openmyconet.de/biocomm/hardware</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm/hardware"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm/hardware?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm/hardware?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm/hardware?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm/hardware?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/hardware"/>
+  </url>
+
+  <!-- BioComm Software -->
+  <url>
+    <loc>https://www.openmyconet.de/biocomm/software</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm/software"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm/software?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm/software?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm/software?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm/software?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/software"/>
+  </url>
+
+  <!-- Mykorrhiza-Netzwerke (Pillar Page) -->
+  <url>
+    <loc>https://www.openmyconet.de/mykorrhiza-netzwerke.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/mykorrhiza-netzwerke.html"/>
+  </url>
+
+  <!-- Bioelektrizität & BioComm (Pillar Page) -->
+  <url>
+    <loc>https://www.openmyconet.de/bioelektrizitaet-biocomm.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/bioelektrizitaet-biocomm.html"/>
+  </url>
+
+  <!-- Citizen Science bei OpenMycoNet (Pillar Page) -->
+  <url>
+    <loc>https://www.openmyconet.de/citizen-science-openmyconet.html</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/citizen-science-openmyconet.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/citizen-science-openmyconet.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/citizen-science-openmyconet.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/citizen-science-openmyconet.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/citizen-science-openmyconet.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/citizen-science-openmyconet.html"/>
+  </url>
+
+  <!-- Wie wir arbeiten -->
+  <url>
+    <loc>https://www.openmyconet.de/wie-wir-arbeiten</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/wie-wir-arbeiten"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/wie-wir-arbeiten?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/wie-wir-arbeiten?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/wie-wir-arbeiten?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/wie-wir-arbeiten?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/wie-wir-arbeiten"/>
+  </url>
+
+  <!-- Fördererseite -->
   <url>
     <loc>https://www.openmyconet.de/foerderer.html</loc>
     <lastmod>2026-06-04</lastmod>
@@ -58,6 +156,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/leihgeraete.html"/>
   </url>
 
+  <!-- Kontakt -->
+  <url>
+    <loc>https://www.openmyconet.de/kontakt</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/kontakt"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/kontakt?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/kontakt?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/kontakt?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/kontakt?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/kontakt"/>
+  </url>
+
   <!-- Quellennachweise -->
   <url>
     <loc>https://www.openmyconet.de/quellennachweise.html</loc>
@@ -70,6 +182,14 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/quellennachweise.html?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/quellennachweise.html?lang=es"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/quellennachweise.html"/>
+  </url>
+
+  <!-- Presse (aus der Hauptnavigation vorübergehend ausgeblendet, Route bleibt live) -->
+  <url>
+    <loc>https://www.openmyconet.de/presse</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 
   <!-- News-Übersicht (einzelne Artikel stehen in news-sitemap.xml) -->

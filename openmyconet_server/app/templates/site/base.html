@@ -13,6 +13,29 @@
 <meta id="meta-description" name="description" content="{% block meta_description %}{% endblock %}">
 {% block hreflang %}{% endblock %}
 {% block extra_meta %}{% endblock %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.openmyconet.de/#organization",
+      "name": "OpenMycoNet",
+      "url": "https://www.openmyconet.de/",
+      "logo": "https://www.openmyconet.de/logo-openmyconet.png",
+      "founder": { "@type": "Person", "name": "Robert Jank" }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.openmyconet.de/#website",
+      "name": "OpenMycoNet",
+      "url": "https://www.openmyconet.de/",
+      "publisher": { "@id": "https://www.openmyconet.de/#organization" },
+      "inLanguage": ["de", "en", "nl", "fr", "es"]
+    }
+  ]
+}
+</script>
 <link href="/fonts.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('site-base.css') }}">
 {% block extra_css %}{% endblock %}

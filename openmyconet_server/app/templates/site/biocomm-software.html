@@ -11,6 +11,20 @@
 <link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm/software?lang=es">
 <link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/software">
 <link id="canonical" rel="canonical" href="https://www.openmyconet.de/biocomm/software">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.openmyconet.de/biocomm/software">
+<meta property="og:title" content="{{ t('bcs_page_title') }}">
+<meta property="og:description" content="{{ t('bcs_meta_desc') }}">
+<meta property="og:image" content="https://www.openmyconet.de/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="OpenMycoNet — Citizen Science für Mykorrhiza-Netzwerke">
+<meta property="og:locale" content="{{ {'de':'de_DE','en':'en_US','nl':'nl_NL','fr':'fr_FR','es':'es_ES'}[current_lang()] }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ t('bcs_page_title') }}">
+<meta name="twitter:description" content="{{ t('bcs_meta_desc') }}">
+<meta name="twitter:image" content="https://www.openmyconet.de/og-image.jpg">
 {% endblock %}
 
 {% block extra_css %}
@@ -42,31 +56,31 @@
     <div class="workflow-step">
       <div class="step-head"><div class="num">2</div><h3 data-i18n="bcs_step_2_h">{{ t('bcs_step_2_h') }}</h3></div>
       <p data-i18n="bcs_step_2_p">{{ t('bcs_step_2_p') }}</p>
-      <img class="shot" src="{{ asset('sw_contextualize.png') }}" alt="{{ t('bcs_step_2_alt') }}" data-i18n-alt="bcs_step_2_alt">
+      <img class="shot" src="{{ asset('sw_contextualize.png') }}" alt="{{ t('bcs_step_2_alt') }}" data-i18n-alt="bcs_step_2_alt" loading="lazy" decoding="async">
     </div>
 
     <div class="workflow-step">
       <div class="step-head"><div class="num">3</div><h3 data-i18n="bcs_step_3_h">{{ t('bcs_step_3_h') }}</h3></div>
       <p data-i18n="bcs_step_3_p">{{ t('bcs_step_3_p') }}</p>
-      <img class="shot" src="{{ asset('sw_document.png') }}" alt="{{ t('bcs_step_3_alt') }}" data-i18n-alt="bcs_step_3_alt">
+      <img class="shot" src="{{ asset('sw_document.png') }}" alt="{{ t('bcs_step_3_alt') }}" data-i18n-alt="bcs_step_3_alt" loading="lazy" decoding="async">
     </div>
 
     <div class="workflow-step">
       <div class="step-head"><div class="num">4</div><h3 data-i18n="bcs_step_4_h">{{ t('bcs_step_4_h') }}</h3></div>
       <p data-i18n="bcs_step_4_p">{{ t('bcs_step_4_p') }}</p>
-      <img class="shot" src="{{ asset('sw_analyze.png') }}" alt="{{ t('bcs_step_4_alt') }}" data-i18n-alt="bcs_step_4_alt">
+      <img class="shot" src="{{ asset('sw_analyze.png') }}" alt="{{ t('bcs_step_4_alt') }}" data-i18n-alt="bcs_step_4_alt" loading="lazy" decoding="async">
     </div>
 
     <div class="workflow-step">
       <div class="step-head"><div class="num">5</div><h3 data-i18n="bcs_step_5_h">{{ t('bcs_step_5_h') }}</h3></div>
       <p data-i18n="bcs_step_5_p">{{ t('bcs_step_5_p') }}</p>
-      <img class="shot" src="{{ asset('sw_classify.png') }}" alt="{{ t('bcs_step_5_alt') }}" data-i18n-alt="bcs_step_5_alt">
+      <img class="shot" src="{{ asset('sw_classify.png') }}" alt="{{ t('bcs_step_5_alt') }}" data-i18n-alt="bcs_step_5_alt" loading="lazy" decoding="async">
     </div>
 
     <div class="workflow-step">
       <div class="step-head"><div class="num">6</div><h3 data-i18n="bcs_step_6_h">{{ t('bcs_step_6_h') }}</h3></div>
       <p data-i18n="bcs_step_6_p">{{ t('bcs_step_6_p') }}</p>
-      <img class="shot shot-crop" src="{{ asset('sw_stimulate_electrical.png') }}" alt="{{ t('bcs_step_6_alt') }}" data-i18n-alt="bcs_step_6_alt">
+      <img class="shot shot-crop" src="{{ asset('sw_stimulate_electrical.png') }}" alt="{{ t('bcs_step_6_alt') }}" data-i18n-alt="bcs_step_6_alt" loading="lazy" decoding="async">
     </div>
 
     <div class="workflow-step">
@@ -86,7 +100,7 @@
     <h2 data-i18n="bcs_beyond_h2">{{ t('bcs_beyond_h2') }}</h2>
     <p data-i18n="bcs_beyond_p">{{ t('bcs_beyond_p') }}</p>
     <div class="deepen-card">
-      <img src="{{ asset('sw_stimulate_multimodal.png') }}" alt="{{ t('bcs_beyond_alt') }}" data-i18n-alt="bcs_beyond_alt">
+      <img src="{{ asset('sw_stimulate_multimodal.png') }}" alt="{{ t('bcs_beyond_alt') }}" data-i18n-alt="bcs_beyond_alt" loading="lazy" decoding="async">
       <span class="safety-callout" data-i18n="bcs_safety_callout">{{ t('bcs_safety_callout') }}</span>
     </div>
   </div>

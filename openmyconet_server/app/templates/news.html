@@ -50,7 +50,7 @@
         {% if news.untertitel %}<p class="untertitel">{{ news.untertitel }}</p>{% endif %}
         <p class="datum">{{ news.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ news.sprache }}</p>
         {% if news.bild_dateiname %}
-        <img src="{{ url_for('static', filename='uploads/news/' + news.bild_dateiname) }}" alt="">
+        <img src="{{ url_for('static', filename='uploads/news/' + news.bild_dateiname) }}" alt="" loading="lazy" decoding="async">
         {% endif %}
         <p class="exzerpt">{{ news.exzerpt }}</p>
         <a class="weiterlesen" href="{{ url_for('news_detail', slug=news.slug) }}">Weiterlesen →</a>

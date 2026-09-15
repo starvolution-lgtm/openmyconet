@@ -5,6 +5,20 @@
 
 {% block hreflang %}
 <link rel="canonical" href="https://www.openmyconet.de/medien.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.openmyconet.de/medien.html">
+<meta property="og:title" content="Medien – OpenMycoNet">
+<meta property="og:description" content="Broschüre, Musik und Roman zum OpenMycoNet-Projekt — gebündelt zum Anhören, Lesen und Herunterladen.">
+<meta property="og:image" content="https://www.openmyconet.de/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="OpenMycoNet — Citizen Science für Mykorrhiza-Netzwerke">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Medien – OpenMycoNet">
+<meta name="twitter:description" content="Broschüre, Musik und Roman zum OpenMycoNet-Projekt — gebündelt zum Anhören, Lesen und Herunterladen.">
+<meta name="twitter:image" content="https://www.openmyconet.de/og-image.jpg">
 {% endblock %}
 
 {% block extra_css %}
@@ -62,11 +76,11 @@
 
     <div class="omn-player">
       <div class="omn-cover-wrap">
-        <img class="omn-cover-img active" id="omn-cover-0" src="{{ asset('cover-listen-to-the-forest.jpeg') }}" alt="Listen to the Forest">
-        <img class="omn-cover-img"        id="omn-cover-1" src="{{ asset('cover-listening-to-the-trees.jpeg') }}" alt="Listening to the Trees">
-        <img class="omn-cover-img"        id="omn-cover-2" src="{{ asset('cover-the-oldest-living-network.jpeg') }}" alt="The Oldest Living Network">
-        <img class="omn-cover-img"        id="omn-cover-3" src="{{ asset('cover-three-ways-of-knowing.jpeg') }}" alt="Three Ways of Knowing">
-        <img class="omn-cover-img"        id="omn-cover-4" src="{{ asset('cover-nobody-funds-the-ground.jpeg') }}" alt="Nobody Funds the Ground">
+        <img class="omn-cover-img active" id="omn-cover-0" src="{{ asset('cover-listen-to-the-forest.jpeg') }}" alt="Listen to the Forest" loading="lazy" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-1" src="{{ asset('cover-listening-to-the-trees.jpeg') }}" alt="Listening to the Trees" loading="lazy" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-2" src="{{ asset('cover-the-oldest-living-network.jpeg') }}" alt="The Oldest Living Network" loading="lazy" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-3" src="{{ asset('cover-three-ways-of-knowing.jpeg') }}" alt="Three Ways of Knowing" loading="lazy" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-4" src="{{ asset('cover-nobody-funds-the-ground.jpeg') }}" alt="Nobody Funds the Ground" loading="lazy" decoding="async">
         <div class="omn-cover-overlay"></div>
       </div>
       <div class="omn-player-main">
@@ -251,7 +265,7 @@ We're running out of time to learn its language and its dance.</div>
 <section class="mb-11" id="buch">
   <picture>
     <source srcset="{{ asset('buch_bg.webp') }}" type="image/webp">
-    <img class="mb-12" src="{{ asset('buch_bg.jpg') }}" alt="">
+    <img class="mb-12" src="{{ asset('buch_bg.jpg') }}" alt="" loading="lazy" decoding="async">
   </picture>
   <div class="mb-13">
     <p class="section-label" id="buch-label" data-i18n="buch_label">{{ t('buch_label') }}</p>
