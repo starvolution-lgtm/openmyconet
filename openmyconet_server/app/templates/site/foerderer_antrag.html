@@ -36,7 +36,7 @@
     {% if data.ansprechpartner %}
     <div class="preview-desc">{{ data.ansprechpartner }}</div>
     {% endif %}
-    <div class="preview-desc">{{ data.beschreibung | replace('\n', '<br>') | safe }}</div>
+    <div class="preview-desc">{{ data.beschreibung }}</div>
     {% if data.website %}
       <div class="preview-web">🌐 {{ data.website }}</div>
     {% endif %}

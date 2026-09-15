@@ -28,7 +28,7 @@ select option { background:#ffffff; color:#1a1a1a; }
 .preview-card .preview-firma { font-family:'Playfair Display',serif; font-size:1.3rem; color:#fff; margin-bottom:0.4rem; }
 .preview-card .preview-kat { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#d4a030; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.75rem; }
 .preview-card .preview-label { font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:#5a8a6a; letter-spacing:0.1em; text-transform:uppercase; margin-top:0.9rem; margin-bottom:0.3rem; }
-.preview-card .preview-desc { font-size:0.95rem; color:#a0c8a0; line-height:1.7; }
+.preview-card .preview-desc { font-size:0.95rem; color:#a0c8a0; line-height:1.7; white-space:pre-wrap; }
 .preview-card .preview-web { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#6ee87e; margin-top:0.75rem; }
 
 .hinweis { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#5a8a6a; line-height:1.8; margin-top:1rem; }

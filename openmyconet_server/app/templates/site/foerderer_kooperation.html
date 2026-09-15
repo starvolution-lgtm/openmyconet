@@ -44,10 +44,10 @@
     <div class="preview-label" id="preview-label-ansprechpartner">Ansprechpartner</div>
     <div class="preview-desc">{{ data.ansprechpartner }}</div>
     <div class="preview-label" id="preview-label-angebot">Was Sie anbieten</div>
-    <div class="preview-desc">{{ data.beschreibung | replace('\n', '<br>') | safe }}</div>
+    <div class="preview-desc">{{ data.beschreibung }}</div>
     {% if data.gegenleistung_erwartet %}
     <div class="preview-label" id="preview-label-wunsch">Was Sie sich von OpenMycoNet wünschen</div>
-    <div class="preview-desc">{{ data.gegenleistung_erwartet | replace('\n', '<br>') | safe }}</div>
+    <div class="preview-desc">{{ data.gegenleistung_erwartet }}</div>
     {% endif %}
     {% if data.website %}
       <div class="preview-web">🌐 {{ data.website }}</div>
