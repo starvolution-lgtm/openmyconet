@@ -62,7 +62,12 @@ section { padding:3rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; max
 footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; text-align:center; }
 .footer-logo { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:#6ee87e; margin-bottom:0.5rem; }
 .footer-info { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#a0c8a0; line-height:2; }
-.footer-info a { color:#8af09a; text-decoration:underline; }
+/* display:inline-block + Padding/neg. Margin -- getBoundingClientRect() eines
+   reinen Inline-<a> folgt nur dem Text, nicht der line-height des Absatzes;
+   Impressum/Datenschutz/Startseite lagen dadurch unter der WCAG-Mindest-
+   Klickflaeche von 24 CSS-px (Lighthouse "Berührungszielbereiche"), s. auch
+   .lang-flag/.omn-fab-link. Negative Margin haelt den Textfluss unveraendert. */
+.footer-info a { display:inline-block; padding:5px 2px; margin:-5px -2px; color:#8af09a; text-decoration:underline; }
 
 /* Lang sidebar */
 #lang-sidebar { display:none; position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:199; flex-direction:column; align-items:center; gap:0.4rem; background:rgba(20,31,20,0.88); border:1px solid #0a6040; border-right:none; padding:0.6rem 0.45rem; border-radius:4px 0 0 4px; }
@@ -183,7 +188,10 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 /* Pause-Icon ist per Default (nicht .playing) unsichtbar -- vorher nur ueber ein
    inline style="display:none" auf jeder einzelnen svg.icon-pause sichergestellt. */
 .omn-play-btn svg.icon-pause { display:none; }
-.omn-fab-link { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline; }
+/* display:inline-block + vertikales Padding -- reiner Text/line-height kam bei
+   0.65rem nicht auf die WCAG-Mindest-Klickflaeche von 24 CSS-px (Lighthouse
+   "Berührungszielbereiche"), s. auch .lang-flag/.footer-info. */
+.omn-fab-link { display:inline-block; padding:7px 2px; margin:-7px -2px; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline; }
 /* Flaggen-Links in #lang-sidebar/#lang-flags-mobile (renderFlagsInto() baut sie
    per innerHTML) -- Aktiv-Zustand vorher per JS-gesetztem inline style="opacity". */
 /* min 24x24 CSS-px Klickflaeche (WCAG 2.2 "Target Size") -- das Flaggen-SVG
