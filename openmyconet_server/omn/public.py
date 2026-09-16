@@ -379,7 +379,17 @@ def register(app):
     app.add_url_rule('/api/v1/content', 'api_content_bulk', api_content_bulk)
 
     app.jinja_env.globals['asset'] = _asset_url
-    app.jinja_env.globals['live'] = lambda path: 'https://www.openmyconet.de/' + path
+    # live(): interne Nav-Links (Header/Footer/Mobile-Menue) zeigen bewusst auf
+    # eine feste Domain statt auf request.host -- Zweck ist, dass /preview/*-
+    # Seiten (site_preview.py, is_preview=True) zur echten Live-Seite statt zu
+    # einer nicht existierenden Preview-Route verlinken. Ohne Env-Unterscheidung
+    # fuehrte das auf Staging dazu, dass JEDER Nav-Link von staging.openmyconet.de
+    # zurueck nach www.openmyconet.de sprang -- Staging war so nie eigenstaendig
+    # durchklickbar. Live-Ziel folgt also der laufenden Umgebung.
+    _live_host = ('https://staging.openmyconet.de/'
+                  if app.config.get('OMN_ENV') == 'staging'
+                  else 'https://www.openmyconet.de/')
+    app.jinja_env.globals['live'] = lambda path: _live_host + path
     app.jinja_env.globals['umgebung'] = lambda: app.config.get('OMN_ENV', 'prod')
     # translations.json liegt lokal in app/static/ -- bewusst NICHT ueber asset()
     # (die alte translations.js dort hat ein anderes Format).
