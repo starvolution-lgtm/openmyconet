@@ -45,8 +45,6 @@
   "contactPoint": { "@type": "ContactPoint", "email": "kontakt@openmyconet.de", "contactType": "general" }
 }
 </script>
-<link rel="stylesheet" href="{{ asset('vendor/leaflet/leaflet.css') }}">
-<script src="{{ asset('vendor/leaflet/leaflet.js') }}"></script>
 {% endblock %}
 
 {% block nav_logo %}
@@ -63,7 +61,7 @@
 <!-- Hero -->
 <section class="hero ic-3">
   <div class="hero-img-wrap">
-    <img class="ic-4" src="{{ asset('hero_bg.jpg') }}" alt="">
+    <img class="ic-4" src="{{ asset('hero_bg.webp') }}" alt="" fetchpriority="high">
     <div class="ic-5"></div>
   </div>
   <div class="page-wrap"><div class="hero-content">
@@ -92,7 +90,7 @@
 <!-- Vision -->
 <section class="mg-section-band" id="vision">
   <div class="mg-imgband">
-    <img class="ic-10" src="{{ asset('vision_bg.jpg') }}" alt="" loading="lazy" decoding="async">
+    <img class="ic-10" src="{{ asset('vision_bg.webp') }}" alt="" loading="lazy" decoding="async">
     <div class="mg-overlay">
       <p class="section-label" data-i18n="label_vision">{{ t('label_vision') }}</p>
       <h2 class="u-mb-0" data-i18n-html="h2_vision">{{ t('h2_vision') | safe }}</h2>
@@ -785,6 +783,28 @@ function handleReg(e) {
 }
 
 // ─── Adress-Geocoding (Nominatim/OpenStreetMap) ───────────────
+// Leaflet wird NICHT mehr eager im <head> geladen (Lighthouse: ~55 KiB CSS+JS,
+// davon >20 KiB ungenutzt auf jedem Seitenaufruf) -- die Karte erscheint erst,
+// wenn die Adresssuche in der Knoten-Bewerbung einen Treffer liefert
+// (nodeGeoShowMarker). Also erst genau dann per <link>/<script> nachladen.
+var _leafletLadeVersuch = null;
+function ensureLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (_leafletLadeVersuch) return _leafletLadeVersuch;
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = '{{ asset("vendor/leaflet/leaflet.css") }}';
+  document.head.appendChild(link);
+  _leafletLadeVersuch = new Promise(function(resolve, reject) {
+    var script = document.createElement('script');
+    script.src = '{{ asset("vendor/leaflet/leaflet.js") }}';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  return _leafletLadeVersuch;
+}
+
 var nodeGeoMap = null;
 var nodeGeoMarker = null;
 var nodeGeoLastAddress = null;
@@ -799,23 +819,25 @@ function nodeGeoClearLatLon() {
   nodeGeoLastAddress = null;
 }
 function nodeGeoShowMarker(lat, lon) {
-  var mapEl = document.getElementById('node-geo-map');
-  mapEl.hidden = false;
-  if (!nodeGeoMap) {
-    nodeGeoMap = L.map('node-geo-map').setView([lat, lon], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(nodeGeoMap);
-    nodeGeoMarker = L.marker([lat, lon], { draggable: true }).addTo(nodeGeoMap);
-    nodeGeoMarker.on('dragend', function() {
-      var pos = nodeGeoMarker.getLatLng();
-      nodeGeoSetLatLon(pos.lat, pos.lng);
-    });
-  } else {
-    nodeGeoMap.setView([lat, lon], 13);
-    nodeGeoMarker.setLatLng([lat, lon]);
-  }
-  setTimeout(function() { nodeGeoMap.invalidateSize(); }, 100);
+  ensureLeaflet().then(function() {
+    var mapEl = document.getElementById('node-geo-map');
+    mapEl.hidden = false;
+    if (!nodeGeoMap) {
+      nodeGeoMap = L.map('node-geo-map').setView([lat, lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(nodeGeoMap);
+      nodeGeoMarker = L.marker([lat, lon], { draggable: true }).addTo(nodeGeoMap);
+      nodeGeoMarker.on('dragend', function() {
+        var pos = nodeGeoMarker.getLatLng();
+        nodeGeoSetLatLon(pos.lat, pos.lng);
+      });
+    } else {
+      nodeGeoMap.setView([lat, lon], 13);
+      nodeGeoMarker.setLatLng([lat, lon]);
+    }
+    setTimeout(function() { nodeGeoMap.invalidateSize(); }, 100);
+  });
 }
 
 function performNodeGeocode(address) {
