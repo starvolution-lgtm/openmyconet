@@ -9,7 +9,7 @@
 
 /* ── Formular (gleiches Grundmuster wie das Registrierungsformular auf
    index.html, hier eigenstaendig fuer diese Seite) ── */
-.form-wrap { max-width:580px; margin-top:2rem; }
+.form-wrap { max-width:580px; margin:2rem auto 0; }
 .form-group { margin-bottom:1.3rem; }
 label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:#a0c8a0; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.4rem; }
 input, select, textarea {

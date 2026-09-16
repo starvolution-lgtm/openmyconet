@@ -48,15 +48,15 @@
   {% endblock %}
   <ul>
     <li class="nav-dropdown-wrap">
-      <a href="{{ live('index.html#warum') }}" {% if current_page in ['warum','ueber'] %}class="nav-active"{% endif %} data-i18n="nav_info">{{ t('nav_info') }}</a>
+      <a href="{{ live('index.html#warum') }}" {% if current_page in ['warum','ueber','mitmachen','spenden','anmelden'] %}class="nav-active"{% endif %} data-i18n="nav_info">{{ t('nav_info') }}</a>
       <ul class="nav-dropdown-menu">
         <li><a href="{{ live('index.html#warum') }}" data-i18n="nav_warum">{{ t('nav_warum') }}</a></li>
         <li><a href="{{ live('index.html#ueber') }}" data-i18n="nav_ueber">{{ t('nav_ueber') }}</a></li>
+        <li><a href="{{ live('index.html#mitmachen') }}" data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a></li>
+        <li><a href="{{ live('index.html#spenden') }}" data-i18n="nav_spenden">{{ t('nav_spenden') }}</a></li>
+        <li><a href="{{ live('index.html#anmelden') }}" data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a></li>
       </ul>
     </li>
-    <li><a href="{{ live('index.html#mitmachen') }}" {% if current_page=='mitmachen' %}class="nav-active"{% endif %} data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a></li>
-    <li><a href="{{ live('index.html#spenden') }}" {% if current_page=='spenden' %}class="nav-active"{% endif %} data-i18n="nav_spenden">{{ t('nav_spenden') }}</a></li>
-    <li><a href="{{ live('index.html#anmelden') }}" {% if current_page=='anmelden' %}class="nav-active"{% endif %} data-i18n="nav_anmelden">{{ t('nav_anmelden') }}</a></li>
     <li><a href="{{ live('wie-wir-arbeiten') }}" {% if current_page=='wie-wir-arbeiten' %}class="nav-active"{% endif %} data-i18n="nav_wwa">{{ t('nav_wwa') }}</a></li>
     <li class="nav-dropdown-wrap">
       <a href="{{ live('biocomm') }}" {% if current_page in ['biocomm','biocomm-hardware','biocomm-software'] %}class="nav-active"{% endif %}>BioComm</a>
@@ -475,7 +475,12 @@ var OMN_TRACKS = [
   });
 
   document.addEventListener('click', function(e){
-    if(panelOpen && !document.getElementById('omn-audio-fab').contains(e.target)){
+    // Nur das Panel selbst und der Toggle-Button (der oeffnet/schliesst ueber
+    // omnAudioPanelToggle sein eigenes) schuetzen vor dem Schliessen -- nicht
+    // der ganze Fab: Play-Button, "Mehr Musik"-Link und die Fab-internen
+    // Abstaende liegen unterhalb des Reglers, sollten also wie der Rest der
+    // Seite als Aussenklick zaehlen.
+    if(panelOpen && !document.getElementById('omn-audio-panel').contains(e.target) && !e.target.closest('#omn-vol-toggle-btn')){
       panelOpen = false;
       document.getElementById('omn-audio-panel').classList.remove('is-open');
     }
