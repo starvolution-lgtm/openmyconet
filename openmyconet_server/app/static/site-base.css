@@ -66,7 +66,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
    reinen Inline-<a> folgt nur dem Text, nicht der line-height des Absatzes;
    Impressum/Datenschutz/Startseite lagen dadurch unter der WCAG-Mindest-
    Klickflaeche von 24 CSS-px (Lighthouse "Berührungszielbereiche"), s. auch
-   .lang-flag/.omn-fab-link. Negative Margin haelt den Textfluss unveraendert. */
+   .lang-flag. Negative Margin haelt den Textfluss unveraendert. */
 .footer-info a { display:inline-block; padding:5px 2px; margin:-5px -2px; color:#8af09a; text-decoration:underline; }
 
 /* Lang sidebar */
@@ -188,14 +188,11 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 /* Pause-Icon ist per Default (nicht .playing) unsichtbar -- vorher nur ueber ein
    inline style="display:none" auf jeder einzelnen svg.icon-pause sichergestellt. */
 .omn-play-btn svg.icon-pause { display:none; }
-/* display:inline-block + vertikales Padding -- reiner Text/line-height kam bei
-   0.65rem nicht auf die WCAG-Mindest-Klickflaeche von 24 CSS-px (Lighthouse
-   "Berührungszielbereiche"), s. auch .lang-flag/.footer-info. NUR nach unten
-   wachsen (padding-top:0) -- ein symmetrisches Padding+neg.Margin zog die
-   Klickflaeche zuvor in den Lautstaerke-Button darueber hinein (Fab-Spalte
-   hatte nur 8px gap) und loeste denselben Lighthouse-Fund erneut aus, nur mit
-   zu wenig statt zu kleiner Flaeche. Unten ist Platz (letztes Fab-Kind). */
-.omn-fab-link { display:inline-block; padding:0 2px 8px; margin:0 -2px -8px; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:#6ee87e; opacity:0.85; letter-spacing:0.04em; text-decoration:underline; }
+/* "Mehr Musik?"-Textlink durch einen runden Icon-Button ersetzt (Kreis +
+   Musiknote), passend zu Play/Lautstaerke daneben -- .omn-fab-link (reiner
+   Text bei 0.65rem) blieb trotz Padding-Tricks knapp unter der WCAG-
+   Mindest-Klickflaeche bzw. dem Mindestabstand zum Nachbar-Button. Die
+   26x26px-Kreisflaeche von .omn-play-btn-sm loest beides ohne Sonderfall. */
 /* Flaggen-Links in #lang-sidebar/#lang-flags-mobile (renderFlagsInto() baut sie
    per innerHTML) -- Aktiv-Zustand vorher per JS-gesetztem inline style="opacity". */
 /* min 24x24 CSS-px Klickflaeche (WCAG 2.2 "Target Size") -- das Flaggen-SVG
