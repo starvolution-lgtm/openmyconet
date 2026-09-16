@@ -36,6 +36,18 @@
   ]
 }
 </script>
+<!-- Preload der 4 "latin"-Schriftschnitte, die oberhalb des Folds auf praktisch
+     jeder Seite gebraucht werden (Nav/Labels, Ueberschriften inkl. <em>,
+     Fliesstext) -- fonts.css deklariert pro Familie/Schnitt 6-7 Unicode-Range-
+     Subsets (kyrillisch/griechisch/vietnamesisch/...), der Browser entdeckt
+     die noetigen erst nachdem fonts.css geladen+geparst ist. Das kostete laut
+     Lighthouse-Audit bis zu 534ms Warteschlangen-Latenz fuer genau diese
+     Kernschriften. Pfade MUESSEN exakt den relativen URLs in fonts.css
+     entsprechen (kein asset()/?v=), sonst laedt der Browser die Datei doppelt. -->
+<link rel="preload" href="/fonts/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_qiTXtHA-Q.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkq0.woff2" as="font" type="font/woff2" crossorigin>
 <link href="/fonts.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('site-base.css') }}">
 {% block extra_css %}{% endblock %}

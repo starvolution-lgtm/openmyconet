@@ -78,7 +78,7 @@
       {% set inner %}
         <div class="foerderer-badge" data-i18n="{% if f.typ == 'kooperation' %}koop_badge_kooperation{% else %}koop_badge_foerderer{% endif %}">{% if f.typ == 'kooperation' %}{{ t('koop_badge_kooperation') }}{% else %}{{ t('koop_badge_foerderer') }}{% endif %}</div>
         <div class="foerderer-logo-wrap">
-          {% if f.logo_datei %}<img src="{{ asset('uploads/foerderer/' + f.logo_datei) }}" alt="{{ f.firma }}" class="foerderer-logo" loading="lazy" decoding="async">{% endif %}
+          {% if f.logo_datei %}<img src="{{ asset('uploads/foerderer/' + f.logo_datei) }}" alt="{{ f.firma }}" class="foerderer-logo" width="160" height="100" loading="lazy" decoding="async">{% endif %}
         </div>
         <div class="foerderer-name">{{ f.firma }}</div>
         <div class="foerderer-desc">{{ f.beschreibung }}</div>
