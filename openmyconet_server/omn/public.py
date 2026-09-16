@@ -37,8 +37,15 @@ def _asset_url(path):
     # Assets liegen normal unter www.openmyconet.de (nginx, 30-Tage-Cache).
     # OMN_ASSET_BASE biegt den Ursprung um -- gesetzt vom Frontend-Audit-Job der
     # CI, der die App lokal serviert und die echten Repo-CSS/JS pruefen soll
-    # (nicht die bereits deployten). Prod/Staging setzen es nicht -> unveraendert.
-    base = (os.getenv('OMN_ASSET_BASE') or 'https://www.openmyconet.de/').rstrip('/') + '/'
+    # (nicht die bereits deployten). Staging hat eine eigene nginx-Static-Route
+    # (deploy/nginx_staging_site.conf) und damit eigene, ggf. noch nicht auf
+    # Prod deployte CSS/JS/Bilder -- ohne diese Unterscheidung testete Staging
+    # also immer die BEREITS AUF PROD LIVE Assets, nie die eigenen frisch
+    # deployten (analog zum live()-Fix fuer die Nav-Links).
+    default_base = ('https://staging.openmyconet.de/'
+                     if current_app.config.get('OMN_ENV') == 'staging'
+                     else 'https://www.openmyconet.de/')
+    base = (os.getenv('OMN_ASSET_BASE') or default_base).rstrip('/') + '/'
     # asset('') wird als Praefix fuer clientseitige String-Verkettung genutzt
     # (OMN_ASSET_BASE in site/base.html) -- dafuer keine Query-Versionierung.
     if not path:
