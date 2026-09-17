@@ -96,6 +96,8 @@ button:hover, .btn:hover { background: #2f5a3f; }
 button.aktiv { background: var(--good); border-color: var(--good); }
 button.ablehnen { background: var(--progress); border-color: var(--progress); }
 button.loeschen, .del { background: var(--blocked); border-color: var(--blocked); }
+button.sekundaer { background: transparent; color: var(--accent); }
+button.sekundaer:hover { background: var(--accent-soft); }
 a.del { color: var(--blocked); text-decoration: none; font-size: 0.85em; background: none; padding: 0; margin: 0; font-family: var(--mono); }
 
 /* --- Meldungen --- */

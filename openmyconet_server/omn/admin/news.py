@@ -8,6 +8,7 @@ import os
 import re
 import unicodedata
 import uuid
+from types import SimpleNamespace
 
 import anthropic
 import bleach
@@ -20,6 +21,7 @@ from omn.extensions import db
 from omn.i18n import LANGS
 from omn.mailer import mailqueue_einreihen
 from omn.models import News, Nutzer
+from omn.zeit import utcnow
 
 ALLOWED_IMAGE_EXT = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 UPLOAD_SUBDIR = 'news'  # unter app.config['UPLOAD_ROOT']
@@ -338,6 +340,39 @@ def news_bild_upload():
     if not name:
         return {'fehler': 'Kein gültiges Bild (png, jpg, jpeg, webp, gif; max. 12 MB).'}, 400
     return {'url': url_for('static', filename=f'uploads/news/{name}')}
+
+
+@admin_bp.route('/admin/news/vorschau', methods=['POST'])
+@login_required
+def news_vorschau():
+    """Rendert die echte news_detail.html/site-Vorlage mit den aktuell im
+    Formular stehenden (noch UNGESPEICHERTEN) Werten -- oeffnet als eigener
+    Tab (siehe admin-news-editor.js), damit das kleine Editor-Fenster nicht
+    mehr die einzige Ansicht auf den Beitrag ist. Legt nichts in der DB an;
+    ein neu ausgewaehltes Bild wird zwar schon auf die Platte geschrieben
+    (wie beim Quill-Inline-Bild-Upload auch), aber erst mit dem echten
+    Speichern einer News referenziert."""
+    from omn.public import news_exzerpt
+
+    titel = request.form.get('titel', '').strip() or '(kein Titel)'
+    untertitel = request.form.get('untertitel', '').strip() or None
+    inhalt = sanitize_news_html(request.form.get('inhalt', '').strip())
+    tags = request.form.get('tags', '').strip() or None
+    sprache = request.form.get('sprache', 'de')
+
+    bild_dateiname = save_news_image(request.files.get('bild'))
+    if not bild_dateiname:  # kein neues Bild ausgewaehlt ODER ungueltiges Format
+        bild_dateiname = request.form.get('bestehendes_bild') or None
+
+    artikel = SimpleNamespace(
+        titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags,
+        sprache=sprache, bild_dateiname=bild_dateiname,
+        veroeffentlicht=utcnow(), slug='vorschau-entwurf',
+    )
+    beschreibung = untertitel or news_exzerpt(inhalt, 160)
+    bild_url = url_for('static', filename='uploads/news/' + bild_dateiname) if bild_dateiname else None
+    return render_template('news_detail.html', artikel=artikel, beschreibung=beschreibung,
+                           bild_url=bild_url, current_page='news')
 
 
 @admin_bp.route('/admin/news', methods=['GET', 'POST'])

@@ -73,4 +73,67 @@
     }
     feld.value = quill.root.innerHTML;
   });
+
+  // Vorschau: oeffnet die echte Artikel-Vorlage in einem neuen Tab, mit den
+  // aktuell im Formular stehenden (noch ungespeicherten) Werten -- POST statt
+  // GET, damit der noch nicht hochgeladene Inhalt/Bild mitkommt, ohne
+  // irgendetwas in der DB anzulegen. Das ausgewaehlte Datei-Input-Element
+  // wird kurz in ein Temp-Formular gehaengt (haengt an derselben FileList)
+  // und danach wieder zurueckgehaengt, damit das eigentliche Speichern
+  // hinterher unveraendert funktioniert.
+  var vorschauBtn = document.getElementById('news-vorschau-btn');
+  if (vorschauBtn) {
+    vorschauBtn.addEventListener('click', function () {
+      feld.value = quill.root.innerHTML;
+
+      // Fenster synchron in der Klick-Geste oeffnen (sonst greift ggf. der
+      // Popup-Blocker) und per Namen zum Ziel des Formulars machen -- ein
+      // form.target='_blank' allein hat sich als nicht ueberall zuverlaessig
+      // erwiesen (landete beim Testen als GET ohne Formulardaten).
+      var vorschauFenster = window.open('', 'omn-vorschau-fenster');
+      if (!vorschauFenster) {
+        window.alert('Vorschau-Fenster wurde vom Browser blockiert -- bitte Popups für diese Seite erlauben.');
+        return;
+      }
+
+      var tempForm = document.createElement('form');
+      tempForm.method = 'POST';
+      tempForm.action = vorschauBtn.dataset.vorschauUrl;
+      tempForm.target = 'omn-vorschau-fenster';
+      tempForm.style.display = 'none';
+
+      function hidden(name, value) {
+        var i = document.createElement('input');
+        i.type = 'hidden'; i.name = name; i.value = value || '';
+        tempForm.appendChild(i);
+      }
+
+      ['titel', 'untertitel', 'tags'].forEach(function (name) {
+        var quelle = form.querySelector('[name="' + name + '"]');
+        hidden(name, quelle ? quelle.value : '');
+      });
+      hidden('inhalt', feld.value);
+      var spracheFeld = form.querySelector('select[name="sprache"]');
+      hidden('sprache', spracheFeld ? spracheFeld.value : (vorschauBtn.dataset.sprache || 'de'));
+      hidden('bestehendes_bild', vorschauBtn.dataset.bestehendesBild || '');
+      hidden('_csrf', window.omnCsrf || '');
+
+      var bildFeld = form.querySelector('input[name="bild"]');
+      var bildParent = bildFeld ? bildFeld.parentNode : null;
+      var bildNext = bildFeld ? bildFeld.nextSibling : null;
+      if (bildFeld) {
+        tempForm.enctype = 'multipart/form-data';
+        tempForm.appendChild(bildFeld);
+      }
+
+      document.body.appendChild(tempForm);
+      tempForm.submit();
+
+      if (bildFeld) {
+        if (bildNext) bildParent.insertBefore(bildFeld, bildNext);
+        else bildParent.appendChild(bildFeld);
+      }
+      document.body.removeChild(tempForm);
+    });
+  }
 })();

@@ -286,6 +286,24 @@ bekommen aber beim ersten Klick auf "Entwurf erzeugen" nachtraeglich eine
 Gruppe zugewiesen. Tests: `tests/test_news_uebersetzen.py` (Anthropic-Call
 gemockt, kein echter API-Traffic in der Suite).
 
+**Vorschau (Sept. 2026):** Weder das Anlege- noch das Uebersetzungsformular
+hatten bisher eine Vorschau -- nur "veroeffentlichen oder nicht", und das
+Quill-Editor-Fenster ist fuer eine echte Beurteilung zu klein.
+`omn/admin/news.py::news_vorschau` (`POST /admin/news/vorschau`) rendert
+**dieselbe** `news_detail.html`/`site/base.html`-Vorlage wie ein echter
+Artikel, mit den aktuell im Formular stehenden (noch UNGESPEICHERTEN) Werten
+-- legt nichts in der DB an. Der "👁 Vorschau"-Button (alle drei Formulare,
+Logik gemeinsam in `admin-news-editor.js`) baut dafuer client-seitig ein
+verstecktes Temp-Formular, haengt das Bild-Datei-Input-Element kurz um (damit
+ein noch nicht hochgeladenes Bild mit in die Vorschau kommt, ohne es doppelt
+waehlen zu muessen) und schickt es per POST in ein eigenes, vorher per
+`window.open('', 'omn-vorschau-fenster')` synchron in der Klick-Geste
+geoeffnetes Fenster (robuster als `form.target='_blank'` allein -- das
+landete im Test als GET ohne Formulardaten). Ein neu ausgewaehltes
+Vorschau-Bild wird dabei zwar schon auf die Platte geschrieben (wie beim
+Quill-Inline-Bild-Upload auch), aber nur referenziert, wenn spaeter tatsaechlich
+gespeichert wird. Tests: `tests/test_news_vorschau.py`.
+
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
 Rollen: `Nutzer.ist_hyphist` / `ist_sporist` (orthogonal). Nach Datei-Änderung an

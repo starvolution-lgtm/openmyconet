@@ -42,6 +42,10 @@ Nichts ist gespeichert — bitte gegenlesen/anpassen und erst dann veröffentlic
     <label>Tags (kommagetrennt, optional — von der Quelle übernommen)</label>
     <input type="text" name="tags" value="{{ quelle.tags or '' }}" placeholder="z.B. Mykorrhiza, Forschung, Update">
 
+    <button type="button" id="news-vorschau-btn" class="sekundaer"
+            data-vorschau-url="{{ url_for('admin.news_vorschau') }}"
+            data-sprache="{{ lang }}"
+            data-bestehendes-bild="{{ quelle.bild_dateiname or '' }}">👁 Vorschau</button>
     <button type="submit">Übersetzung veröffentlichen</button>
     <a class="u-ml-8" href="{{ url_for('admin.news_edit', news_id=quelle.id) }}">Abbrechen</a>
 </form>

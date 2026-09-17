@@ -60,6 +60,9 @@
         des Nutzers, nicht die der News.</p>
     </fieldset>
 
+    <button type="button" id="news-vorschau-btn" class="sekundaer"
+            data-vorschau-url="{{ url_for('admin.news_vorschau') }}"
+            data-bestehendes-bild="{{ news.bild_dateiname or '' }}">👁 Vorschau</button>
     <button type="submit">Speichern</button>
 </form>
 
