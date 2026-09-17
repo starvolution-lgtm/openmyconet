@@ -266,6 +266,26 @@ ein). Einzel-/Transaktionsmails **und der Fehler-Alert** bleiben direkt
 `mail.send()` — sofort, Einzelempfänger, und der Alert darf nicht von der Queue
 abhängen. Siehe `test_news_mail.py`, `test_mailer.py`, `test_mailqueue.py`.
 
+## News-Uebersetzung (Sept. 2026)
+
+`News.uebersetzung_gruppe` (UUID-Hex, von `news_admin()` bei jedem neuen
+Artikel frisch vergeben) verknuepft die bis zu 5 Sprachversionen EINER Story
+-- vorher war jede der 5 Zeilen komplett unabhaengig (eigenes Bild, eigene
+Tags, kein Bezug zueinander). `omn/admin/news.py::news_uebersetzen`
+(`GET/POST /admin/news/<id>/uebersetzen/<lang>`, verlinkt aus dem "🌍 Andere
+Sprachversionen"-Block auf `news_edit.html`) generiert per Anthropic-API
+(dieselbe wie `rag_chatbot.py`) einen Uebersetzungsentwurf (Titel/Untertitel/
+Inhalt-HTML, Tags/Bild von der Quelle uebernommen) -- landet NUR im
+Formular, News hat keinen eigenen Entwurfsstatus (die `veroeffentlicht`-Spalte
+ist ein reiner Zeitstempel), gespeichert wird also erst nach explizitem
+Klick auf "Übersetzung veröffentlichen". Fehlt der API-Key oder schlaegt der
+Call fehl, zeigt das Formular stattdessen den Originaltext zum selbst
+Uebersetzen (kein Absturz, kein Blockieren des Workflows). Alte, vor dieser
+Funktion angelegte News-Zeilen haben `uebersetzung_gruppe = NULL` -- harmlos,
+bekommen aber beim ersten Klick auf "Entwurf erzeugen" nachtraeglich eine
+Gruppe zugewiesen. Tests: `tests/test_news_uebersetzen.py` (Anthropic-Call
+gemockt, kein echter API-Traffic in der Suite).
+
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
 Rollen: `Nutzer.ist_hyphist` / `ist_sporist` (orthogonal). Nach Datei-Änderung an

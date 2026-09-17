@@ -1,0 +1,53 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Übersetzungsentwurf{% endblock %}
+{% block heading %}🍄 Übersetzungsentwurf: {{ sprach_namen[lang] }}{% endblock %}
+
+{% block extra_css %}
+<link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('admin-news-edit.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<p class="info">KI-Entwurf auf Basis von „{{ quelle.titel }}“ ({{ sprach_namen[quelle.sprache] }}).
+Nichts ist gespeichert — bitte gegenlesen/anpassen und erst dann veröffentlichen.</p>
+
+{% if entwurf.fehler %}
+    <p class="err">{{ entwurf.fehler }}</p>
+{% endif %}
+{% if fehler %}
+    <p class="err">{{ fehler }}</p>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data" id="news-form">
+    <label>Titel</label>
+    <input type="text" name="titel" value="{{ entwurf.titel }}" required>
+
+    <label>Untertitel (optional)</label>
+    <input type="text" name="untertitel" value="{{ entwurf.untertitel }}">
+
+    <label>Sprache</label>
+    <input type="text" value="{{ sprach_namen[lang] }}" disabled>
+
+    <label>Bild {% if quelle.bild_dateiname %}(von der Quelle übernommen — nur hochladen, um es für diese Sprache zu ersetzen){% else %}(optional){% endif %}</label>
+    {% if quelle.bild_dateiname %}
+        <img class="vorschau" src="{{ url_for('static', filename='uploads/news/' + quelle.bild_dateiname) }}" alt="">
+    {% endif %}
+    <input type="file" name="bild" accept="image/png,image/jpeg,image/webp,image/gif">
+
+    <label>Inhalt</label>
+    <div id="editor"></div>
+    <textarea class="u-none" name="inhalt" id="inhalt-feld">{{ entwurf.inhalt }}</textarea>
+
+    <label>Tags (kommagetrennt, optional — von der Quelle übernommen)</label>
+    <input type="text" name="tags" value="{{ quelle.tags or '' }}" placeholder="z.B. Mykorrhiza, Forschung, Update">
+
+    <button type="submit">Übersetzung veröffentlichen</button>
+    <a class="u-ml-8" href="{{ url_for('admin.news_edit', news_id=quelle.id) }}">Abbrechen</a>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ asset('vendor/quill/quill.js') }}"></script>
+<script src="{{ asset('admin-news-editor.js') }}"></script>
+{% endblock %}

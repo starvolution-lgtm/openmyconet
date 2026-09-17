@@ -9,8 +9,9 @@ import re
 import unicodedata
 import uuid
 
+import anthropic
 import bleach
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_mail import Message
 from PIL import Image, ImageOps, UnidentifiedImageError
 
@@ -188,6 +189,87 @@ def _news_nachrichten_bauen(news, sprachen):
     return nachrichten
 
 
+# --- KI-Uebersetzung (Entwurf) ---
+#
+# Loest das wiederkehrende "Text uebersetzen, Bild neu einfuegen, Tags neu
+# eintippen"-Problem beim Anlegen einer News in allen 5 Sprachen: statt einer
+# leeren Kopie liefert news_uebersetzen() einen KI-Uebersetzungsentwurf
+# (dieselbe Anthropic-API wie der Chatbot in omn/rag_chatbot.py), mit dem
+# Originalbild schon vorausgefuellt. Geht NIE direkt live -- der Entwurf
+# landet nur im Formular, gespeichert (= veroeffentlicht, News hat keinen
+# eigenen Entwurfsstatus) wird erst nach explizitem "Veroeffentlichen"-Klick,
+# genau wie beim normalen Anlegen.
+
+class NewsUebersetzungFehler(Exception):
+    """KI-Uebersetzung nicht moeglich (Key fehlt, API-Fehler, unerwartete
+    Antwortform) -- der Aufrufer faengt das und zeigt stattdessen den
+    Originaltext zum selbst Uebersetzen an, bricht also nie den Workflow ab."""
+
+
+def _uebersetzung_anfordern(news, ziel_sprache):
+    """Ruft die Anthropic-API einmal auf und gibt den rohen Antworttext zurueck.
+    Eigene Funktion, damit Tests das ohne echten API-Call monkeypatchen koennen."""
+    api_key = os.environ.get('ANTHROPIC_API_KEY')
+    if not api_key:
+        raise NewsUebersetzungFehler('ANTHROPIC_API_KEY nicht konfiguriert.')
+
+    prompt = (
+        f"Übersetze den folgenden News-Beitrag von OpenMycoNet ins {SPRACH_NAMEN[ziel_sprache]}. "
+        "Behalte alle HTML-Tags und Attribute im INHALT exakt bei, übersetze nur den "
+        "sichtbaren Text darin. Ton: informell (Du-Anrede bzw. das Äquivalent in der "
+        "Zielsprache), wie auf den übrigen Community-Seiten von OpenMycoNet. Antworte "
+        "NUR in exakt diesem Format, ohne zusätzliche Erklärungen oder Anführungszeichen:\n"
+        "TITEL: <übersetzter Titel>\n"
+        "UNTERTITEL: <übersetzter Untertitel, oder das Wort LEER falls keiner vorhanden ist>\n"
+        "INHALT:\n<übersetztes HTML, unverändert strukturiert>\n\n"
+        "---\n"
+        f"TITEL: {news.titel}\n"
+        f"UNTERTITEL: {news.untertitel or 'LEER'}\n"
+        f"INHALT:\n{news.inhalt}"
+    )
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4000,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return response.content[0].text
+    except anthropic.APIError as e:
+        raise NewsUebersetzungFehler(f'Anthropic-API-Fehler: {e}') from e
+
+
+def _uebersetzung_parsen(text, news):
+    """Zerlegt die TITEL:/UNTERTITEL:/INHALT:-Antwort. Fehlt ein Markerteil
+    (unerwartetes Modellverhalten), faellt genau dieses Feld auf den
+    Originaltext zurueck statt die ganze Uebersetzung zu verwerfen."""
+    titel_m = re.search(r'^TITEL:\s*(.*)$', text, re.MULTILINE)
+    untertitel_m = re.search(r'^UNTERTITEL:\s*(.*)$', text, re.MULTILINE)
+    inhalt_m = re.search(r'INHALT:\s*\n(.*)', text, re.DOTALL)
+
+    titel = titel_m.group(1).strip() if titel_m else news.titel
+    untertitel_roh = untertitel_m.group(1).strip() if untertitel_m else ''
+    untertitel = '' if untertitel_roh.upper() == 'LEER' else untertitel_roh
+    inhalt = inhalt_m.group(1).strip() if inhalt_m else news.inhalt
+    return {'titel': titel, 'untertitel': untertitel, 'inhalt': inhalt}
+
+
+def uebersetzungsentwurf_erzeugen(news, ziel_sprache):
+    """Liefert {titel, untertitel, inhalt, fehler}. `fehler` gesetzt heisst:
+    Uebersetzung fehlgeschlagen, die anderen Felder zeigen dafuer den
+    Originaltext (auf Deutsch/Quellsprache) zum selbst Uebersetzen."""
+    try:
+        text = _uebersetzung_anfordern(news, ziel_sprache)
+    except NewsUebersetzungFehler as e:
+        return {
+            'titel': news.titel, 'untertitel': news.untertitel or '', 'inhalt': news.inhalt,
+            'fehler': f'KI-Übersetzung nicht möglich ({e}) — Felder unten zeigen den Originaltext zum selbst Übersetzen.',
+        }
+    entwurf = _uebersetzung_parsen(text, news)
+    entwurf['fehler'] = None
+    return entwurf
+
+
 # --- Newsletter ---
 
 @admin_bp.route('/admin/newsletter', methods=['GET', 'POST'])
@@ -274,7 +356,8 @@ def news_admin():
             fehler = 'Bild abgelehnt: kein gültiges Bild oder falsches Format (erlaubt: png, jpg, jpeg, webp, gif).'
         else:
             slug = generate_unique_slug(titel)
-            news = News(titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags, sprache=sprache, bild_dateiname=bild_dateiname, slug=slug)
+            news = News(titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags, sprache=sprache,
+                        bild_dateiname=bild_dateiname, slug=slug, uebersetzung_gruppe=uuid.uuid4().hex)
             db.session.add(news)
             db.session.commit()
             nachricht = 'Beitrag veröffentlicht!'
@@ -322,8 +405,65 @@ def news_edit(news_id):
                 else:
                     flash('Kein Mail-Versand — keine Sprache ausgewählt.')
             return redirect(url_for('admin.news_admin'))
+
+    geschwister = (
+        News.query.filter_by(uebersetzung_gruppe=news.uebersetzung_gruppe).all()
+        if news.uebersetzung_gruppe else []
+    )
+    vorhandene_sprachen = {n.sprache: n for n in geschwister}
+    fehlende_sprachen = [code for code in LANGS if code not in vorhandene_sprachen]
+
     return render_template('news_edit.html', news=news, fehler=fehler,
-                           langs=LANGS, sprach_namen=SPRACH_NAMEN, sprach_zahlen=_mail_sprach_zahlen())
+                           langs=LANGS, sprach_namen=SPRACH_NAMEN, sprach_zahlen=_mail_sprach_zahlen(),
+                           vorhandene_sprachen=vorhandene_sprachen, fehlende_sprachen=fehlende_sprachen)
+
+
+@admin_bp.route('/admin/news/<int:news_id>/uebersetzen/<lang>', methods=['GET', 'POST'])
+@login_required
+def news_uebersetzen(news_id, lang):
+    """KI-Uebersetzungsentwurf einer bestehenden News in eine weitere Sprache.
+    GET: Entwurf erzeugen + Formular zum Gegenlesen anzeigen (nichts wird
+    gespeichert). POST: erst hier entsteht die neue, veroeffentlichte
+    News-Zeile -- mit demselben Bild wie die Quelle (kein Re-Upload noetig)
+    und in derselben uebersetzung_gruppe."""
+    quelle = News.query.get_or_404(news_id)
+    if lang not in LANGS or lang == quelle.sprache:
+        abort(400)
+
+    gruppe = quelle.uebersetzung_gruppe
+    if not gruppe:
+        gruppe = uuid.uuid4().hex
+        quelle.uebersetzung_gruppe = gruppe
+        db.session.commit()
+
+    bestehend = News.query.filter_by(uebersetzung_gruppe=gruppe, sprache=lang).first()
+    if bestehend:
+        return redirect(url_for('admin.news_edit', news_id=bestehend.id))
+
+    fehler = None
+    if request.method == 'POST':
+        titel = request.form.get('titel', '').strip()
+        untertitel = request.form.get('untertitel', '').strip() or None
+        inhalt = sanitize_news_html(request.form.get('inhalt', '').strip())
+        tags = normalize_tags(request.form.get('tags', ''))
+        neues_bild = save_news_image(request.files.get('bild'))
+        if neues_bild is False:
+            fehler = 'Ungültiges Bildformat (erlaubt: png, jpg, jpeg, webp, gif).'
+            entwurf = {'titel': titel, 'untertitel': untertitel or '', 'inhalt': inhalt, 'fehler': None}
+        else:
+            bild_dateiname = neues_bild or quelle.bild_dateiname
+            slug = generate_unique_slug(titel)
+            neu = News(titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags, sprache=lang,
+                       bild_dateiname=bild_dateiname, slug=slug, uebersetzung_gruppe=gruppe)
+            db.session.add(neu)
+            db.session.commit()
+            flash(f'Übersetzung ({SPRACH_NAMEN[lang]}) veröffentlicht!')
+            return redirect(url_for('admin.news_admin'))
+    else:
+        entwurf = uebersetzungsentwurf_erzeugen(quelle, lang)
+
+    return render_template('news_uebersetzen.html', quelle=quelle, lang=lang,
+                           sprach_namen=SPRACH_NAMEN, entwurf=entwurf, fehler=fehler)
 
 
 @admin_bp.route('/admin/news/delete/<int:news_id>')

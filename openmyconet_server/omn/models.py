@@ -118,6 +118,12 @@ class News(db.Model):
     sprache = db.Column(db.String(10), default='de')
     bild_dateiname = db.Column(db.String(255), nullable=True)
     veroeffentlicht = db.Column(db.DateTime, default=utcnow, index=True)
+    # Verknuepft die 5 Sprachversionen EINER Story (gemeinsame UUID-Hex-String,
+    # von news_admin() bei jedem neuen Artikel frisch vergeben). Alte, vor
+    # dieser Funktion angelegte Zeilen bleiben NULL/ungruppiert -- harmlos,
+    # der Admin sieht dort nur keine "andere Sprachen"-Vorschlaege. Siehe
+    # omn/admin/news.py::news_uebersetzen.
+    uebersetzung_gruppe = db.Column(db.String(36), nullable=True, index=True)
 
 # --- Neue Modelle ---
 
