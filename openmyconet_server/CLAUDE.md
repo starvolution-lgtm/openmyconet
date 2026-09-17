@@ -171,7 +171,17 @@ nicht im Git liegen** (~92 MB): `app/static/*.mp3` (Player-Tracks),
 Diese Datei **muss LF-Zeilenenden haben** (.gitattributes erzwingt das; release.sh
 strippt zusätzlich `\r` und bricht ab, wenn `/instance/` nicht geschützt ist).
 
-Lokal (PowerShell), deployt **exakt `HEAD`** (== was CI geprüft hat, also vorher committen):
+Lokal (PowerShell), deployt **exakt `HEAD`** (== was CI geprüft hat, also vorher committen).
+Bevorzugt per Wrapper-Skript (`deploy/local_deploy.ps1`, Sept. 2026 ergänzt,
+nachdem der `scp`-Schritt beim manuellen Ablauf zweimal vergessen wurde und
+`deploy_staging.sh` trotzdem klaglos ein veraltetes Tarball deployte — das
+Skript baut Tarball + Upload + Server-Deploy in einem Rutsch und zeigt den
+deployten Commit-Hash an):
+```
+.\deploy\local_deploy.ps1              # Staging (Default)
+.\deploy\local_deploy.ps1 -Target prod # Prod, fragt vorher nochmal nach
+```
+Manuell/einzeln (falls das Skript nicht passt oder zum Nachvollziehen, was es tut):
 ```
 cd C:\Users\wechs\Desktop\openmyconet
 git archive --format=tar.gz -o $env:TEMP\omn-release.tar.gz HEAD:openmyconet_server
