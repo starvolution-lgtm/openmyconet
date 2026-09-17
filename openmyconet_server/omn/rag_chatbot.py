@@ -204,7 +204,26 @@ SYNONYMS = {
     "methodiek": ["methodiek", "veldonderzoek", "mycelist", "hyphist", "sporist", "onafhankelijk"],
     "méthodologie": ["méthodologie", "terrain", "mycelist", "hyphist", "sporist", "indépendan"],
     "metodología": ["metodología", "campo", "mycelist", "hyphist", "sporist", "independien"],
+    # Mykorrhiza/Kohlenstoff: "mycorrhiza" (lat./engl. Schreibweise mit c) matcht
+    # sonst nicht die deutschen Chunks (durchgängig "mykorrhiza" mit y) -- ohne
+    # dieses Synonym landet z.B. "Studien zu Mycorrhiza und CO2" nicht im
+    # richtigen Chunk. "co2" selbst ist zu kurz fuer die Wortfilterung
+    # (len > 3) und wird vor expand_keywords per _normalize_query() auf
+    # "kohlenstoff" abgebildet -- der Synonym-Eintrag deckt daher zusaetzlich
+    # den direkten cross-lingualen Fall ab (z.B. "carbon" in einer sonst
+    # deutschen Anfrage).
+    "mycorrhiza": ["mycorrhiza", "mykorrhiza"],
+    "kohlenstoff": ["kohlenstoff", "carbon", "koolstof", "carbone", "carbono"],
 }
+
+# Kurzabkuerzungen, die als eigenstaendiges Wort nie die Mindestlaenge fuer
+# die Wortfilterung in find_chunks() erreichen (len > 3) und daher vor der
+# Tokenisierung textuell aufgeloest werden muessen, statt ueber SYNONYMS.
+_ABBREV_RE = re.compile(r"\bco2\b|\bco₂\b")
+
+
+def _normalize_query(text: str) -> str:
+    return _ABBREV_RE.sub("kohlenstoff", text)
 
 def expand_keywords(words: list[str]) -> list[str]:
     expanded = list(words)
@@ -229,7 +248,7 @@ def expand_keywords(words: list[str]) -> list[str]:
 
 def find_chunks(query: str, lang: str, top_k: int = 3) -> list[dict]:
     """Gibt die relevantesten Chunks für Sprache und Query zurück."""
-    words = [w for w in query.lower().split() if len(w) > 3]
+    words = [w for w in _normalize_query(query.lower()).split() if len(w) > 3]
     expanded = expand_keywords(words)
 
     lang_chunks = [c for c in CHUNKS if c["lang"] == lang]

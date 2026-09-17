@@ -38,3 +38,17 @@ def test_daten_allein_bevorzugt_nicht_mehr_datenschutz_chunk():
     # andere Chunks (z.B. "Messdaten") gleichwertig haben.
     ergebnis = find_chunks('Daten', 'de', top_k=1)
     assert ergebnis[0]['id'] != 4
+
+
+def test_mycorrhiza_lateinische_schreibweise_matcht_mykorrhiza_chunk():
+    # "Mycorrhiza" (c) matchte bisher nicht "Mykorrhiza" (y) in den deutschen
+    # Chunks -- eine Anfrage wie "Studien zu Mycorrhiza und CO2" fand dadurch
+    # den Chunk mit den Kohlenstoff-Studien (Soudzilovskaia/Hu/Mason) gar
+    # nicht. expand_keywords() muss jetzt "mykorrhiza" injizieren.
+    expanded = expand_keywords(['mycorrhiza'])
+    assert 'mykorrhiza' in expanded
+
+
+def test_co2_abkuerzung_wird_zu_kohlenstoff_normalisiert():
+    ergebnis = find_chunks('wo finde ich Studien zu Mycorrhiza und CO2', 'de', top_k=5)
+    assert any(c['slug'] == 'mykorrhiza-grundlagen' for c in ergebnis)
