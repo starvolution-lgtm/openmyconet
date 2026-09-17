@@ -56,6 +56,7 @@ GROUPS = [
     ("mykorrhiza-grundlagen", "myk_h1", [
         "desc_warum", "myk_s1_", "myk_s2_", "myk_s4_",
         "q_s1_", "q_ref1_", "q_ref2_", "q_ref14_", "q_ref16_",
+        "q_ref19_", "q_ref20_", "q_ref21_",
     ]),
     ("kritische-einordnung", "myk_s3_h2", [
         "myk_s3_", "q_sk_", "q_ref11_", "q_ref12_",
