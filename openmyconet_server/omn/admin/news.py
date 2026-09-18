@@ -63,6 +63,13 @@ def slugify(text):
     return text.strip('-') or 'artikel'
 
 
+def naechste_reihenfolge():
+    """Naechster freier Sortierwert -- landet damit ganz oben (wie neue
+    Artikel zuvor per veroeffentlicht automatisch oben landeten)."""
+    maximum = db.session.query(db.func.max(News.reihenfolge)).scalar()
+    return (maximum or 0) + 1
+
+
 def generate_unique_slug(titel):
     """Erzeugt einen eindeutigen URL-Slug aus dem Titel. Slugs sind nach dem
     Erstellen unveränderlich, damit einmal geteilte/indexierte Artikel-Links
@@ -392,7 +399,8 @@ def news_admin():
         else:
             slug = generate_unique_slug(titel)
             news = News(titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags, sprache=sprache,
-                        bild_dateiname=bild_dateiname, slug=slug, uebersetzung_gruppe=uuid.uuid4().hex)
+                        bild_dateiname=bild_dateiname, slug=slug, uebersetzung_gruppe=uuid.uuid4().hex,
+                        reihenfolge=naechste_reihenfolge())
             db.session.add(news)
             db.session.commit()
             nachricht = 'Beitrag veröffentlicht!'
@@ -405,7 +413,7 @@ def news_admin():
                                   f'({", ".join(mail_sprachen)}) in die Mail-Queue gestellt.')
                 else:
                     nachricht += ' Kein Mail-Versand — keine Sprache ausgewählt.'
-    news_liste = News.query.order_by(News.veroeffentlicht.desc()).all()
+    news_liste = News.query.order_by(News.reihenfolge.desc(), News.veroeffentlicht.desc()).all()
     return render_template('news_admin.html', news_liste=news_liste, nachricht=nachricht, fehler=fehler,
                            langs=LANGS, sprach_namen=SPRACH_NAMEN, sprach_zahlen=_mail_sprach_zahlen())
 
@@ -489,7 +497,8 @@ def news_uebersetzen(news_id, lang):
             bild_dateiname = neues_bild or quelle.bild_dateiname
             slug = generate_unique_slug(titel)
             neu = News(titel=titel, untertitel=untertitel, inhalt=inhalt, tags=tags, sprache=lang,
-                       bild_dateiname=bild_dateiname, slug=slug, uebersetzung_gruppe=gruppe)
+                       bild_dateiname=bild_dateiname, slug=slug, uebersetzung_gruppe=gruppe,
+                       reihenfolge=naechste_reihenfolge())
             db.session.add(neu)
             db.session.commit()
             flash(f'Übersetzung ({SPRACH_NAMEN[lang]}) veröffentlicht!')
@@ -507,4 +516,29 @@ def news_delete(news_id):
     news = News.query.get_or_404(news_id)
     db.session.delete(news)
     db.session.commit()
+    return redirect(url_for('admin.news_admin'))
+
+
+@admin_bp.route('/admin/news/<int:news_id>/verschieben/<richtung>')
+@login_required
+def news_verschieben(news_id, richtung):
+    """Vertauscht `reihenfolge` mit dem direkten Nachbarn in der aktuellen
+    Sortierung -- 'hoch' = mit dem naechsthoeheren Wert (rutscht in der Liste
+    nach oben), 'runter' = mit dem naechstniedrigeren. Legacy-Zeilen ohne
+    reihenfolge (NULL) bekommen dabei automatisch einen Wert zugewiesen."""
+    if richtung not in ('hoch', 'runter'):
+        abort(400)
+    news = News.query.get_or_404(news_id)
+    if news.reihenfolge is None:
+        news.reihenfolge = naechste_reihenfolge()
+        db.session.commit()
+
+    if richtung == 'hoch':
+        nachbar = News.query.filter(News.reihenfolge > news.reihenfolge).order_by(News.reihenfolge.asc()).first()
+    else:
+        nachbar = News.query.filter(News.reihenfolge < news.reihenfolge).order_by(News.reihenfolge.desc()).first()
+
+    if nachbar:
+        news.reihenfolge, nachbar.reihenfolge = nachbar.reihenfolge, news.reihenfolge
+        db.session.commit()
     return redirect(url_for('admin.news_admin'))

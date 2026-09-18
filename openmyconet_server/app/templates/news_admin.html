@@ -68,6 +68,7 @@
 <h2>Bestehende Beiträge</h2>
 <table>
     <tr>
+        <th></th>
         <th>Datum</th>
         <th>Sprache</th>
         <th>Titel</th>
@@ -76,6 +77,10 @@
     </tr>
     {% for news in news_liste %}
     <tr>
+        <td>
+            {% if not loop.first %}<a class="u-mr-8" href="{{ url_for('admin.news_verschieben', news_id=news.id, richtung='hoch') }}" title="Nach oben">▲</a>{% endif %}
+            {% if not loop.last %}<a href="{{ url_for('admin.news_verschieben', news_id=news.id, richtung='runter') }}" title="Nach unten">▼</a>{% endif %}
+        </td>
         <td>{{ news.veroeffentlicht.strftime('%d.%m.%Y') }}</td>
         <td>{{ news.sprache }}</td>
         <td>{{ news.titel }}</td>

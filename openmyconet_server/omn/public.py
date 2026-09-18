@@ -235,7 +235,7 @@ def news():
     if filter_tag:
         query = query.filter(_tag_treffer(News.tags, filter_tag))
 
-    pagination = query.order_by(News.veroeffentlicht.desc()).paginate(
+    pagination = query.order_by(News.reihenfolge.desc(), News.veroeffentlicht.desc()).paginate(
         page=page, per_page=NEWS_PRO_SEITE, error_out=False
     )
     for n in pagination.items:
@@ -255,7 +255,7 @@ def news_detail(slug):
 
 
 def news_sitemap():
-    alle_news = News.query.order_by(News.veroeffentlicht.desc()).all()
+    alle_news = News.query.order_by(News.reihenfolge.desc(), News.veroeffentlicht.desc()).all()
     xml = render_template('news_sitemap.xml', news_liste=alle_news)
     return Response(xml, mimetype='application/xml')
 

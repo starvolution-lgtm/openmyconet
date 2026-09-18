@@ -304,6 +304,23 @@ Vorschau-Bild wird dabei zwar schon auf die Platte geschrieben (wie beim
 Quill-Inline-Bild-Upload auch), aber nur referenziert, wenn spaeter tatsaechlich
 gespeichert wird. Tests: `tests/test_news_vorschau.py`.
 
+**Manuelle Reihenfolge (Sept. 2026):** Vorher ergab sich die Anzeigereihenfolge
+ausschliesslich aus `veroeffentlicht` -- nicht nachtraeglich sortierbar, ohne
+das Datum zu verbiegen. `News.reihenfolge` (Integer, hoeher = weiter oben) ist
+bewusst ein EIGENES Feld, unabhaengig vom angezeigten Datum. `▲`/`▼` in
+`news_admin.html` (Route `GET /admin/news/<id>/verschieben/<hoch|runter>`)
+vertauscht den Wert mit dem direkten Nachbarn in der aktuellen Sortierung.
+Neue Artikel (`news_admin()`, `news_uebersetzen()`) bekommen
+`max(reihenfolge)+1` (`naechste_reihenfolge()`), landen also weiterhin oben,
+wie zuvor per Datum automatisch. Alle drei Listen-Queries (Admin-Liste,
+`omn/public.py::news()`, `news_sitemap()`) sortieren nach
+`reihenfolge DESC, veroeffentlicht DESC` -- der zweite Schluessel ist
+absichtlich noch drin: haelt Alt-Zeilen mit `reihenfolge IS NULL` (Migration
+`fa5a744c1177` backfillt zwar alle bestehenden, aber z.B. Test-Fixtures/
+Skripte, die News direkt ohne `reihenfolge` anlegen, fallen sonst auf eine
+undefinierte DB-Reihenfolge zurueck) weiterhin in der gewohnten
+Datums-Reihenfolge. Tests: `tests/test_news_reihenfolge.py`.
+
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
 Rollen: `Nutzer.ist_hyphist` / `ist_sporist` (orthogonal). Nach Datei-Änderung an

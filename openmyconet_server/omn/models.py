@@ -124,6 +124,13 @@ class News(db.Model):
     # der Admin sieht dort nur keine "andere Sprachen"-Vorschlaege. Siehe
     # omn/admin/news.py::news_uebersetzen.
     uebersetzung_gruppe = db.Column(db.String(36), nullable=True, index=True)
+    # Manuelle Sortierung (hoeher = weiter oben), UNABHAENGIG von
+    # `veroeffentlicht` -- absichtlich getrennt, damit Umsortieren nicht das
+    # angezeigte Veroeffentlichungsdatum verfaelscht. Neue Artikel bekommen
+    # max(reihenfolge)+1 (landen oben, wie zuvor per Datum). ▲/▼ in
+    # news_admin.html vertauscht den Wert mit dem jeweiligen Nachbarn. Siehe
+    # omn/admin/news.py::news_verschieben.
+    reihenfolge = db.Column(db.Integer, nullable=True, index=True)
 
 # --- Neue Modelle ---
 
