@@ -64,7 +64,7 @@ GROUPS = [
     ("elektrische-aktivitaet", "myk2_h1", [
         "myk2_s1_", "myk2_s2_",
         "q_s2_", "q_s3_", "q_ref3_", "q_ref4_", "q_ref5_", "q_ref6_",
-        "q_ref7_", "q_ref08_", "q_ref15_",
+        "q_ref7_", "q_ref08_", "q_ref15_", "q_ref22_",
     ]),
     ("biocomm-plattform", "biocomm_teaser_h2", [
         "biocomm_teaser_", "bc_s1_", "bc_s2_", "bc_s3_", "bc_s4_", "bc_quote",
