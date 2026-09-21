@@ -30,7 +30,7 @@
     <form method="GET" class="sprache-filter">
       <label for="sprache-filter">Sprache: </label>
       <select id="sprache-filter" name="sprache" class="js-autosubmit">
-        <option value="">Alle</option>
+        <option value="alle" {% if filter_sprache == 'alle' %}selected{% endif %}>Alle</option>
         <option value="de" {% if filter_sprache == 'de' %}selected{% endif %}>Deutsch</option>
         <option value="en" {% if filter_sprache == 'en' %}selected{% endif %}>English</option>
         <option value="nl" {% if filter_sprache == 'nl' %}selected{% endif %}>Nederlands</option>

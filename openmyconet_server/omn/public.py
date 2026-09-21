@@ -225,12 +225,18 @@ def _tag_treffer(spalte, tag):
 
 
 def news():
-    filter_sprache = request.args.get('sprache', '')
+    # Kein ?sprache= im Request (erster Aufruf ueber die Navigation) -> Default
+    # auf die aktuelle Seitensprache (g.lang); 'alle' ist der explizite Opt-out
+    # dafuer (Auswahl "Alle" im Formular), keine weitere Bedeutung.
+    if 'sprache' in request.args:
+        filter_sprache = request.args.get('sprache', '').strip()
+    else:
+        filter_sprache = g.lang
     filter_tag = request.args.get('tag', '').strip()
     page = request.args.get('page', 1, type=int)
 
     query = News.query
-    if filter_sprache:
+    if filter_sprache and filter_sprache != 'alle':
         query = query.filter_by(sprache=filter_sprache)
     if filter_tag:
         query = query.filter(_tag_treffer(News.tags, filter_tag))
