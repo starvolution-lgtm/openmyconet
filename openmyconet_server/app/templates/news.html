@@ -79,3 +79,31 @@
   </div>
 </section>
 {% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+// Diese Seite braucht fuer einen Sprachwechsel echte, andere DB-Zeilen (kein
+// reines Text-Umschalten wie auf den anderen Seiten) -- deshalb hier abweichend
+// vom sonstigen "instant, kein Reload"-Verhalten: ein einmaliger Reload beim
+// ersten Laden, falls die ueber Flaggen-Klick/localStorage gewaehlte Sprache
+// vom serverseitigen Default (Cookie/Browsersprache) abweicht, und ein eigenes
+// setLang(), das Flaggen-Klicks direkt auf den ?sprache=-Filter umleitet.
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.has('sprache')) return;
+  var gewaehlt = getLang();
+  if (gewaehlt !== '{{ filter_sprache }}') {
+    params.set('sprache', gewaehlt);
+    window.location.replace(window.location.pathname + '?' + params.toString());
+  }
+})();
+
+function setLang(lang) {
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  url.searchParams.set('sprache', lang);
+  url.searchParams.delete('page');
+  window.location.href = url.toString();
+}
+</script>
+{% endblock %}
