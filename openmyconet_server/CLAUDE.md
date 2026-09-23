@@ -107,6 +107,12 @@ Cron-Setup, Offsite: `deploy/BACKUP.md`.
 direkt, das wäre tz-aware und würde mit den bewusst naiven, in SQLite als UTC
 gespeicherten Zeitstempeln nicht mehr vergleichbar sein). DTZ (flake8-datetimez)
 ist deshalb bewusst nicht aktiviert, siehe `ruff.toml`.
+**Neue Regel für neue Tabellen (Robby, 2026-09-23):** Neue Tabellen — zuerst die
+BioComm-Datenarchitektur (`sandbox.*` / `live.*`, Entwurf im Kontrollzentrum
+`11_BioComm_Sandkasten/`) — speichern Zeitpunkte als `timestamptz` (PostgreSQL,
+intern UTC) und arbeiten mit tz-aware Werten (`datetime.now(timezone.utc)` bzw.
+DB-`now()`). Bestehende Tabellen bleiben unverändert naiv-UTC mit `zeit.utcnow()`;
+naive und tz-aware Werte nie miteinander vergleichen.
 Suite ist grün, kein `xfail` mehr. Tests nutzen temp-DBs.
 CI: `.github/workflows/ci.yml` — Job `backend` (ruff + pytest + bandit + pip-audit)
 und Job `frontend-audit` bei jedem Push.
