@@ -23,8 +23,9 @@ _ROOT = Path(__file__).resolve().parent.parent  # omn/ -> Repo-Root
 
 
 def _db_url():
-    """DB-URL aus DATABASE_URL, sonst die bisherige lokale SQLite-Datei.
-    Prod/Staging setzen DATABASE_URL (noch) nicht -> unveraendert SQLite.
+    """DB-URL aus DATABASE_URL, sonst die lokale SQLite-Datei.
+    Prod/Staging setzen DATABASE_URL seit dem Cutover (2026-09-09) -> PostgreSQL 18;
+    ohne die Variable (lokal, CI-Job backend) -> SQLite.
     postgres:// bzw. postgresql:// werden auf den psycopg3-Treiber gezwungen
     (nicht das alte psycopg2)."""
     url = (os.getenv('DATABASE_URL') or '').strip() or 'sqlite:///openmyconet.db'
