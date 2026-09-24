@@ -23,6 +23,7 @@ from zoneinfo import ZoneInfo
 import sqlalchemy as sa
 from psycopg.types.range import Range
 
+from omn.eingang.format_v0 import GENESIS, batch_hash_berechnen, payload_hash_berechnen
 from omn.sandbox.modell import SAETTIGUNG_UV, Abdeckung, Bio, Reaktion, Umwelt
 from omn.sandbox.szenarien import (
     EC_DAUER_S, EC_EINSCHWING_S, GAIN, GENERATOR_VERSION, JAHR, LSB_UV, MODELL_VERSION, RATE_HZ,
@@ -40,7 +41,6 @@ except ImportError:                     # Python < 3.14 (z. B. lokale Alt-venv)
     def _komprimieren(b):
         return zlib.compress(b, 6), 'zlib-6'
 
-GENESIS = b'\x00' * 32                  # vorlaeufiger Genesis-Wert der Hash-Kette (C4 offen)
 QBIT = {'OUT_OF_RANGE': 1, 'SATURATED': 2, 'SENSOR_ERROR': 4, 'TIMING_UNCERTAIN': 8, 'INTERPOLATED': 16}
 
 # Umwelt-/SYSTEM-Kanaele: (Groesse, Rolle, Einheit, Intervall s, Hardwarekanal, Rauschen)
@@ -488,8 +488,9 @@ class Generator:
                 continue
             batch_zeilen, block_zeilen, prev = [], [], GENESIS
             for seq, (ende_s, inhalt, bloecke) in enumerate(liste, start=1):
-                payload_hash = _sha(b''.join(bl['payload'] for bl in bloecke))
-                bhash = _sha(prev + payload_hash + seq.to_bytes(8, 'big'))
+                # Pruefsummenkette nach Format v0 (omn/eingang/format_v0.py, C4 offen)
+                payload_hash = payload_hash_berechnen(bl['payload'] for bl in bloecke)
+                bhash = batch_hash_berechnen(prev, payload_hash, seq)
                 von = min(bl['t0'] for bl in bloecke)
                 batch_zeilen.append((r.id, seq, inhalt, Range(start + timedelta(seconds=von), start + timedelta(seconds=ende_s), '[)'),
                                      payload_hash, prev, bhash, f'{GENERATOR_VERSION}/{inhalt.lower()}', 'SAMPLE_BLOCKS',
