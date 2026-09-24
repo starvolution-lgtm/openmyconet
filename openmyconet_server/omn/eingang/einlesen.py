@@ -230,7 +230,10 @@ def _pruefen(c, s, paket, lauf):
         if kanal.sample_rate_hz is not None and abs(float(kanal.sample_rate_hz) - b.rate_hz) > 1e-9 * b.rate_hz:
             raise _Abgelehnt(f'{name}: Abtastrate {b.rate_hz} passt nicht zum Kanal ({kanal.sample_rate_hz})')
         erstes = b.zeitanker
-        letztes = erstes + timedelta(seconds=(b.anzahl - 1) / b.rate_hz)
+        try:
+            letztes = erstes + timedelta(seconds=(b.anzahl - 1) / b.rate_hz)
+        except OverflowError:
+            raise _Abgelehnt(f'{name}: Zeitspanne unplausibel')
         if erstes < paket.messzeitraum_von or letztes >= paket.messzeitraum_bis:
             raise _Abgelehnt(f'{name}: liegt nicht im Messzeitraum des Pakets')
         if erstes < lauf['started_at'] or (lauf['ended_at'] is not None and letztes > lauf['ended_at']):
@@ -245,7 +248,7 @@ def _pruefen(c, s, paket, lauf):
         breite = fmt.BYTES_JE_WERT.get(b.kodierung)
         if breite:
             try:
-                entpackt = fmt.entpacken(b.payload, b.kompression)
+                entpackt = fmt.entpacken(b.payload, b.kompression, hoechstens=b.anzahl * breite)
             except fmt.NichtDekodierbar:
                 entpackt = None
             except Exception:

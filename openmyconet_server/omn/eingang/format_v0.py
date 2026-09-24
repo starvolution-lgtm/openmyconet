@@ -23,12 +23,15 @@ import base64
 import binascii
 import hashlib
 import json
+import math
 from dataclasses import dataclass
 from datetime import datetime
 
 FORMAT_KENNUNG = 'omn-batch-v0'
 GENESIS = b'\x00' * 32
 INHALTE = ('RAW', 'AGGREGATE', 'EVENT', 'TELEMETRY', 'MIXED')   # wie CHECK an origin_batch
+BIGINT_MAX = 2**63 - 1            # batch_sequence_no, first_sample_index
+INTEGER_MAX = 2**31 - 1           # sample_count
 
 
 class PaketUnlesbar(ValueError):
@@ -205,8 +208,15 @@ def paket_lesen(rohdaten):
             geraete_qualitaet=None if q is None else _base64(q, f'bloecke[{i}].geraete_qualitaet')))
     if not bloecke:
         raise PaketUnlesbar('Paket ohne Bloecke')
+    sequenz = _feld(d, 'sequenz', int)
+    if not 0 <= sequenz <= BIGINT_MAX:
+        raise PaketUnlesbar('Feld sequenz: ausserhalb des Wertebereichs')
+    for b in bloecke:
+        if not (0 <= b.erster_index <= BIGINT_MAX and 0 <= b.anzahl <= INTEGER_MAX
+                and b.erster_index + b.anzahl <= BIGINT_MAX and math.isfinite(b.rate_hz)):
+            raise PaketUnlesbar('Block: Index, Anzahl oder Rate ausserhalb des Wertebereichs')
     return Paket(
-        geraet=_feld(d, 'geraet', str), lauf=_feld(d, 'lauf', str), sequenz=_feld(d, 'sequenz', int),
+        geraet=_feld(d, 'geraet', str), lauf=_feld(d, 'lauf', str), sequenz=sequenz,
         inhalt=inhalt, messzeitraum_von=_zeit(zeitraum[0], 'messzeitraum[0]'),
         messzeitraum_bis=_zeit(zeitraum[1], 'messzeitraum[1]'),
         vorgaenger_hash=_hash(_feld(d, 'vorgaenger_hash', str), 'vorgaenger_hash'),
@@ -225,19 +235,23 @@ class NichtDekodierbar(ValueError):
     """Kodierung/Kompression kennt dieser Eingang (noch) nicht."""
 
 
-def entpacken(payload, kompression):
+def entpacken(payload, kompression, hoechstens=None):
+    """Entpackt eine Blockpayload. hoechstens: Obergrenze in Byte (Schutz vor
+    Kompressionsbomben); wird sie ueberschritten, ist das Ergebnis laenger als
+    erlaubt und der Aufrufer lehnt ab."""
+    grenze = -1 if hoechstens is None else hoechstens + 1
     if kompression == 'none':
         return payload
     art = kompression.split('-', 1)[0]
     if art == 'zlib':
         import zlib
-        return zlib.decompress(payload)
+        return zlib.decompressobj().decompress(payload, max(grenze, 0))
     if art == 'zstd':
         try:
             from compression import zstd       # Python >= 3.14
         except ImportError:
             raise NichtDekodierbar('zstd braucht Python >= 3.14')
-        return zstd.decompress(payload)
+        return zstd.ZstdDecompressor().decompress(payload, grenze)
     raise NichtDekodierbar(f'Kompression {kompression!r} unbekannt')
 
 

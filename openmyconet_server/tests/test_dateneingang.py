@@ -8,10 +8,12 @@ deploy/biocomm_roles_setup.sql (Teil A3/A4) stellt die Fixture nach. Der
 Rechte-Test laeuft dann mit SET ROLE omn.
 """
 import dataclasses
+import json
 import os
 import tempfile
 import threading
 import time
+import zlib
 from datetime import timedelta
 
 import pytest
@@ -238,13 +240,14 @@ def test_fremder_kanal_und_unplausibles(ein_app):
             'Messzeitraum': neu(dataclasses.replace(bio, zeitanker=p.messzeitraum_von - timedelta(seconds=1)), temp),
             'doppelt im selben Paket': neu(bio, bio),
             'Payload-Laenge': neu(dataclasses.replace(bio, anzahl=bio.anzahl - 1), temp),
+            'Payload-Laenge ': neu(dataclasses.replace(bio, payload=zlib.compress(bytes(10**7))), temp),   # Bombe
             'gehoert nicht zu Geraet': neu(bio, temp, lauf='boot-99'),
             'unbekannt': neu(bio, temp, geraet='SBX-NODE-GIBTESNICHT'),
         }
         for erwartet, paket in faelle.items():
             e = _ein(paket)
             assert e.status == 'REJECTED', erwartet
-            assert erwartet in e.grund, (erwartet, e.grund)
+            assert erwartet.strip() in e.grund, (erwartet, e.grund)
         assert _eins('SELECT count(*) FROM sandbox.origin_batch WHERE acquisition_run_id = :r', r=k.lauf_id) == 0
         # danach geht das richtige Paket durch
         assert _ein(p).status == 'ACCEPTED'
@@ -253,7 +256,10 @@ def test_fremder_kanal_und_unplausibles(ein_app):
 def test_unlesbar_ohne_zuordnung(ein_app):
     from omn.eingang.einlesen import einliefern
     with ein_app.app_context():
-        for roh in (b'\xff\xfe kaputt', b'{"format": "omn-batch-v9"}', b'[1, 2]'):
+        from omn.eingang.format_v0 import paket_schreiben
+        riesig = json.loads(paket_schreiben(_knoten('UNLESBAR').pakete(1)[0]))
+        riesig['sequenz'] = 2**70
+        for roh in (b'\xff\xfe kaputt', b'{"format": "omn-batch-v9"}', b'[1, 2]', json.dumps(riesig).encode()):
             e = einliefern(db.engine, roh, transport_ref='kaputt.json')
             assert e.status == 'REJECTED' and e.grund.startswith('unlesbar')
             assert _eins('SELECT origin_batch_id FROM sandbox.batch_delivery WHERE id = :i', i=e.anlieferung_id) is None
