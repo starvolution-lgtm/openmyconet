@@ -6,6 +6,7 @@
   BioComm-Szenarien (omn/sandbox/). Nur PostgreSQL; versioniert, reproduzierbar.
 - `biocomm-einlesen` / `biocomm-verdichten` / `biocomm-testpakete` -- Prototyp
   des Dateneingangs fuer Messknoten-Pakete (omn/eingang/, SD-Import-Weg).
+- `biocomm-konflikt` -- offene Konflikte anzeigen bzw. manuell aufloesen.
 """
 import time
 from collections import Counter
@@ -77,10 +78,7 @@ def register_cli(app):
         if verdichten:
             laeufe = sorted({e.lauf_id for _, e in ergebnisse if e.lauf_id and e.status == 'ACCEPTED'})
             if laeufe:
-                st = verdichten_(db.engine, schema, laeufe)
-                click.echo(f'Verdichtet: {st["zeilen"]} in {st["laeufe"]} Messlaeufen')
-                for u in st['uebersprungen']:
-                    click.echo(f'  uebersprungen: {u}')
+                _verdichtung_melden(verdichten_(db.engine, schema, laeufe))
 
     @app.cli.command('biocomm-verdichten')
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='sandbox', show_default=True)
@@ -90,10 +88,40 @@ def register_cli(app):
         from omn.eingang.verdichtung import verdichten as verdichten_
         from omn.extensions import db
 
-        st = verdichten_(db.engine, schema, list(laeufe) or None)
-        click.echo(f'Verdichtet: {st["zeilen"]} in {st["laeufe"]} Messlaeufen')
-        for u in st['uebersprungen']:
-            click.echo(f'  uebersprungen: {u}')
+        _verdichtung_melden(verdichten_(db.engine, schema, list(laeufe) or None))
+
+    @app.cli.command('biocomm-konflikt')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='sandbox', show_default=True)
+    @click.option('--gewinner', type=int, default=None,
+                  help='origin_batch.id des Kandidaten, der CANONICAL werden soll. Ohne: offene Konflikte auflisten.')
+    @click.option('--von', 'bearbeitet_von', default=None, help='Wer entscheidet (Pflicht mit --gewinner).')
+    @click.option('--grund', 'begruendung', default=None, help='Begruendung (Pflicht mit --gewinner).')
+    @click.option('--verdichten', is_flag=True, help='Danach den Messlauf neu verdichten.')
+    def biocomm_konflikt(schema, gewinner, bearbeitet_von, begruendung, verdichten):
+        """Konflikte (8.1.2): auflisten oder einen Kandidaten manuell festlegen (MANUAL_REVIEW, protokolliert)."""
+        from omn.eingang.einlesen import kandidat_festlegen, offene_konflikte
+        from omn.eingang.verdichtung import verdichten as verdichten_
+        from omn.extensions import db
+
+        if gewinner is None:
+            zeilen = offene_konflikte(db.engine, schema)
+            if not zeilen:
+                click.echo('Keine offenen Konflikte.')
+            for z in zeilen:
+                click.echo(f'Lauf {z["lauf"]} Sequenz {z["sequenz"]}: Batch {z["batch"]} (angelegt {z["angelegt"]:%Y-%m-%d %H:%M},'
+                           f' {z["anlieferungen"]} Anlieferungen, Verweise von Nachfolgern: {z["nachfolger_verweise"]})')
+            return
+        if not bearbeitet_von or not begruendung:
+            raise click.UsageError('--von und --grund sind Pflicht')
+        try:
+            erg = kandidat_festlegen(db.engine, gewinner, bearbeitet_von, begruendung, schema=schema)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+        click.echo(f'Batch {gewinner} ist CANONICAL (Lauf {erg["lauf_id"]}, Sequenz {erg["sequenz"]}), protokolliert.')
+        if erg['weitere_aufgeloest']:
+            click.echo(f'Per Kettenbeweis zusaetzlich aufgeloest: {erg["weitere_aufgeloest"]}')
+        if verdichten:
+            _verdichtung_melden(verdichten_(db.engine, schema, [erg['lauf_id']]))
 
     @app.cli.command('biocomm-testpakete')
     @click.argument('ordner', type=click.Path(file_okay=False))
@@ -114,3 +142,10 @@ def register_cli(app):
         for p in k.pakete(anzahl):
             (ziel / f'{k.lauf}_{p.sequenz:08d}.json').write_bytes(paket_schreiben(p))
         click.echo(f'{anzahl} Pakete von {k.geraet} (Lauf {k.lauf}, id {k.lauf_id}) nach {ziel}')
+
+
+def _verdichtung_melden(st):
+    click.echo(f'Verdichtet: {st["zeilen"]} in {st["laeufe"]} Messlaeufen'
+               f' (davon neue Versionen {st["neue_versionen"]}, Grabsteine {st["grabsteine"]})')
+    for u in st['uebersprungen']:
+        click.echo(f'  uebersprungen: {u}')

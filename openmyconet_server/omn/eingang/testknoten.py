@@ -96,8 +96,9 @@ def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=time
                    d=dev, p=prb, l=EINGANG_BIO)
         hw_temp = q('INSERT INTO sandbox.hardware_channel (device_id, input_label) VALUES (:d, :l) RETURNING id',
                     d=dev, l=EINGANG_TEMP)
-        serie = q("INSERT INTO sandbox.series (series_code, site_id, substrate_code, title) VALUES (:c, :s, 'SOIL', :t)"
-                  ' RETURNING id', c=f'SBX-EINGANG-{name}', s=site, t=f'Test-Messknoten {name}')
+        serie = q("INSERT INTO sandbox.series (series_code, site_id, substrate_code, title, study_period)"
+                  " VALUES (:c, :s, 'SOIL', :t, tstzrange(:a, :e)) RETURNING id", c=f'SBX-EINGANG-{name}', s=site,
+                  t=f'Test-Messknoten {name}', a=start, e=start + timedelta(days=365))
         run = q('INSERT INTO sandbox.acquisition_run (series_id, device_id, device_configuration_id, node_run_key,'
                 ' started_at, ended_at, end_reason) VALUES (:s, :d, :c, :k, :a, :e, :g) RETURNING id',
                 s=serie, d=dev, c=cfg, k=lauf, a=start, e=ended_at, g='PLANNED_END' if ended_at else None)
