@@ -108,7 +108,7 @@ Stammdaten bleiben). Exakte Koordinaten schreibt er als `omn_geo`. Kontroll- und
 Stimulationsreihe teilen dieselbe synthetische Grundlage — die Differenz ist genau
 die Demo-Annahme. Ganzes Jahr: ~430 MB, lokal 5½ min. **Nicht im Backup** (siehe
 `deploy/BACKUP.md`), nach einem Restore neu generieren. `zlib`-Fallback, wo
-`compression.zstd` fehlt (CI läuft mit Python 3.12, Server mit 3.14).
+`compression.zstd` fehlt (Python < 3.14; CI und Server laufen seit 2026-09-24 beide mit 3.14).
 Tests: `tests/test_sandbox_generator.py` (nur PG, 20 Tage).
 
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren

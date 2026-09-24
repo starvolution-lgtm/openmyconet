@@ -34,7 +34,7 @@ try:                                    # Python >= 3.14 (Server)
 
     def _komprimieren(b):
         return _zstd.compress(b, level=3), 'zstd-3'
-except ImportError:                     # CI laeuft (noch) mit 3.12
+except ImportError:                     # Python < 3.14 (z. B. lokale Alt-venv)
     import zlib
 
     def _komprimieren(b):

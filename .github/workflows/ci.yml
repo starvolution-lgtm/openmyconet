@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.14"   # wie der Server (Ubuntu 26.04, venv 3.14)
           cache: pip
           cache-dependency-path: openmyconet_server/requirements-dev.txt
 
@@ -71,7 +71,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.14"   # wie der Server (Ubuntu 26.04, venv 3.14)
           cache: pip
           cache-dependency-path: openmyconet_server/requirements-dev.txt
 
@@ -102,7 +102,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.14"   # wie der Server (Ubuntu 26.04, venv 3.14)
           cache: pip
           cache-dependency-path: openmyconet_server/requirements.txt
 
