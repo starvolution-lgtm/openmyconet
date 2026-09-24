@@ -1,9 +1,11 @@
 {% extends "dashboard_base.html" %}
 {% block title %}OpenMycoNet — BioComm-Datenlabor (Simulation){% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ asset('datenlabor.css') }}">{% endblock %}
+{% block head %}<link href="/fonts.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('datenlabor.css') }}">{% endblock %}
 {% block body_class %}dl-breit{% endblock %}
 {% block content %}
-<h1>BioComm-Datenlabor</h1>
+<p class="dl-label">BioComm · Mitglieder-Bereich</p>
+<h1>BioComm-<em>Datenlabor</em></h1>
 
 <p class="dl-sim-banner" role="note">
     <strong>SIMULATION</strong> – berechnete Messwerte, echte Datenverarbeitung.
@@ -21,7 +23,20 @@
     </div>
 
     <div id="dl-inhalt" hidden>
-        <section class="card dl-steuerung" aria-label="Auswahl">
+        <section class="card dl-info" aria-labelledby="dl-info-titel">
+            <h2 id="dl-info-titel" class="dl-h2-klein">Über dieses Szenario</h2>
+            <p id="dl-kurz"></p>
+            <p id="dl-standort" class="label"></p>
+            <details>
+                <summary>Modellannahmen und Herkunft der Parameter</summary>
+                <p id="dl-hinweis" class="dl-hinweis"></p>
+                <p id="dl-parameter" class="dl-hinweis"></p>
+            </details>
+        </section>
+
+        <div class="dl-sw">
+        <div class="dl-sw-titel" aria-hidden="true"><span class="dl-sw-logo">BioComm</span> — Datenlabor · Simulation</div>
+        <section class="dl-panel dl-steuerung" aria-label="Auswahl">
             <div class="dl-feld">
                 <label for="dl-szenario">Szenario</label>
                 <select id="dl-szenario"></select>
@@ -47,18 +62,7 @@
             </fieldset>
         </section>
 
-        <section class="card" aria-labelledby="dl-info-titel">
-            <h2 id="dl-info-titel" class="dl-h2-klein">Über dieses Szenario</h2>
-            <p id="dl-kurz"></p>
-            <p id="dl-standort" class="label"></p>
-            <details>
-                <summary>Modellannahmen und Herkunft der Parameter</summary>
-                <p id="dl-hinweis" class="dl-hinweis"></p>
-                <p id="dl-parameter" class="dl-hinweis"></p>
-            </details>
-        </section>
-
-        <section class="card" aria-labelledby="dl-chart-titel">
+        <section class="dl-panel" aria-labelledby="dl-chart-titel">
             <div class="dl-kopf">
                 <h2 id="dl-chart-titel" class="dl-h2-klein">Verlauf</h2>
                 <div class="dl-ansichten" role="group" aria-label="Zeitraum">
@@ -105,7 +109,7 @@
             </ul>
         </section>
 
-        <section class="card" aria-labelledby="dl-ereignisse-titel">
+        <section class="dl-panel" aria-labelledby="dl-ereignisse-titel">
             <h2 id="dl-ereignisse-titel" class="dl-h2-klein">Ereignisse im Zeitraum</h2>
             <p id="dl-keine-ereignisse" class="label">Keine Stimulationen oder Qualitätskennzeichen in diesem Zeitraum.</p>
             <table id="dl-ereignisse" hidden>
@@ -114,7 +118,7 @@
             </table>
         </section>
 
-        <section class="card" id="dl-roh" aria-labelledby="dl-roh-titel">
+        <section class="dl-panel" id="dl-roh" aria-labelledby="dl-roh-titel">
             <h2 id="dl-roh-titel" class="dl-h2-klein">Rohdaten-Ausschnitt</h2>
             <p class="label">Einzelne Abtastwerte (250 pro Sekunde) aus den gespeicherten Rohdatenblöcken,
                beim Abruf mit der Kalibrierung des Messkanals in µV umgerechnet.
@@ -127,6 +131,7 @@
             <div class="dl-chart dl-chart-roh" id="dl-roh-chart"></div>
             <p id="dl-roh-meta" class="label"></p>
         </section>
+        </div>
     </div>
 </div>
 {% endblock %}

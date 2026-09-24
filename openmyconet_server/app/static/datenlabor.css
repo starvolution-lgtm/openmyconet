@@ -1,98 +1,151 @@
 /* BioComm-Datenlabor (datenlabor.html / datenlabor.js). Alle Farben hier,
-   das Skript setzt nur Klassen (CSP ohne 'unsafe-inline'). */
-body.dl-breit { max-width: 1100px; }
-body.dl-breit nav a { text-decoration: none; }
+   das Skript setzt nur Klassen (CSP ohne 'unsafe-inline').
+
+   Zwei Ebenen (Robby, 24.09.2026):
+   - Seitenrahmen wie die oeffentliche Website (site-base.css: Waldgruen,
+     Lora/Playfair/JetBrains Mono, Bernstein als Akzent)
+   - das eigentliche Dashboard als "Fenster" im Stil der BioComm-Software
+     (Schiefergrau, Cyan-Akzent, Kanalfarben wie im Live-Monitor)
+   Bernstein bleibt auf beiden Ebenen ausschliesslich das Zeichen fuer
+   SIMULATION (Banner + Wasserzeichen). */
+body.dl-breit {
+    --s-bg: #024530; --s-bg-tief: #012a1e; --s-text: #e8f5e0; --s-leise: #b9d4bf;
+    --s-linie: #0a6040; --s-akzent: #6ee87e; --s-amber: #f0b84a; --s-amber-rand: #d4a030;
+    --w-bg: #0f1216; --w-panel: #171b21; --w-feld: #0c0f13; --w-rand: #2a3038;
+    --w-text: #d7dde5; --w-leise: #8b949e; --w-cyan: #1ec8ff;
+    --k-reihe: #1ec8ff; --k-kontrolle: #2ecc71; --k-stim: #a77bff; --k-teil: #f39c12; --k-fehl: #e74c3c;
+    max-width: 1140px; background: var(--s-bg); color: var(--s-text);
+    font-family: 'Lora', Georgia, serif; line-height: 1.6;
+}
+body.dl-breit nav { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.04em; border-bottom: 1px solid var(--s-linie); padding-bottom: 12px; }
+body.dl-breit a { color: var(--s-akzent); text-decoration: none; }
+body.dl-breit a:hover { text-decoration: underline; }
+.dl-label { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--s-amber-rand); letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 6px; }
+body.dl-breit h1 { font-family: 'Playfair Display', serif; font-weight: 400; color: #fff; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 18px; }
+body.dl-breit h1 em { font-style: italic; color: var(--s-akzent); }
+body.dl-breit .label { color: var(--s-leise); }
 
 .dl-sim-banner {
-    border: 2px solid #ffb300; background: #2a2208; color: #ffe08a;
-    padding: 12px 16px; border-radius: 6px; line-height: 1.45;
+    border: 1px solid var(--s-amber-rand); border-left: 4px solid var(--s-amber); background: rgba(240, 184, 74, 0.08);
+    color: #ffe3a8; padding: 12px 16px; line-height: 1.5;
 }
-.dl-sim-banner strong { letter-spacing: 0.08em; }
+.dl-sim-banner strong { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; color: var(--s-amber); }
+
+/* Seitenebene: Karten wie auf der Website */
+body.dl-breit .card { background: var(--s-bg-tief); border: 1px solid var(--s-linie); border-radius: 0; }
+.dl-info h2 { font-family: 'Playfair Display', serif; font-weight: 400; color: #fff; }
+.dl-info summary { cursor: pointer; color: var(--s-akzent); }
 .dl-h2-klein { font-size: 1.15em; margin: 0 0 10px; }
-.dl-hinweis { color: #ccc; font-size: 0.9em; line-height: 1.5; }
+.dl-hinweis { color: var(--s-leise); font-size: 0.92em; line-height: 1.55; }
 .dl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------------------------------------------------------------------
+   Software-Fenster
+   --------------------------------------------------------------------- */
+.dl-sw {
+    margin: 22px 0; background: var(--w-bg); color: var(--w-text); border: 1px solid var(--w-rand);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 0.93rem; line-height: 1.45;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.dl-sw-titel { background: #1b1f25; border-bottom: 1px solid var(--w-rand); padding: 7px 12px; font-size: 0.82rem; color: var(--w-leise); }
+.dl-sw-logo { color: var(--w-cyan); font-weight: 700; }
+.dl-panel { background: var(--w-panel); border: 1px solid var(--w-rand); margin: 10px; padding: 14px 16px; }
+.dl-panel h2 { color: var(--w-cyan); font-family: inherit; font-weight: 600; text-align: left; }
+body.dl-breit .dl-sw .label { color: var(--w-leise); }
+.dl-sw .err { background: #2a1416; color: #ff8a80; }
 
 .dl-steuerung { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: flex-end; }
 .dl-feld { display: flex; flex-direction: column; min-width: 200px; flex: 1 1 200px; }
-.dl-feld label, .dl-filter label { color: #aaa; font-size: 0.85em; }
-.dl-filter { border: 1px solid #2e4a2e; border-radius: 4px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-.dl-filter legend { color: #aaa; font-size: 0.85em; }
-select, input[type="date"] {
-    padding: 7px; margin: 4px 0; background: #0f180f; color: #eee;
-    border: 1px solid #4caf50; border-radius: 4px;
+.dl-feld label, .dl-filter label, .dl-filter legend { color: var(--w-leise); font-size: 0.85em; }
+.dl-filter { border: 1px solid var(--w-rand); display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.dl-sw select, .dl-sw input[type="date"] {
+    padding: 7px; margin: 4px 0; background: var(--w-feld); color: var(--w-text);
+    border: 1px solid var(--w-rand); border-radius: 2px; font: inherit; width: auto;
 }
-input[type="date"] { width: auto; color-scheme: dark; }
+.dl-sw input[type="date"] { color-scheme: dark; }
 .dl-check { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9em; }
-.dl-check input { width: auto; margin: 0; }
+.dl-sw .dl-check input { width: auto; margin: 0; accent-color: var(--w-cyan); }
 
 .dl-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
-.dl-ansichten button, .dl-zeile button, .dl-mini { padding: 6px 12px; margin: 2px; font-weight: normal; }
-.dl-ansichten button[aria-pressed="true"] { background: #4caf50; color: #0a0f0a; font-weight: bold; }
+.dl-sw button {
+    padding: 6px 12px; margin: 2px; font: inherit; font-size: 0.9em; font-weight: normal;
+    background: #1c2129; color: var(--w-text); border: 1px solid var(--w-rand); border-radius: 0; cursor: pointer;
+}
+.dl-sw button:hover:not(:disabled) { border-color: var(--w-cyan); color: #fff; }
+/* Zeitraum-Knoepfe wie die Reiter der Software */
+.dl-ansichten button[aria-pressed="true"] { background: var(--w-bg); color: var(--w-cyan); border-color: var(--w-cyan); box-shadow: inset 0 -2px 0 var(--w-cyan); }
 .dl-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0; }
-.dl-mini { font-size: 0.85em; }
-button:disabled { opacity: 0.4; cursor: default; }
-button:focus-visible, select:focus-visible, input:focus-visible, .dl-fang:focus-visible { outline: 2px solid #ffb300; outline-offset: 2px; }
+.dl-sw .dl-mini { font-size: 0.82em; }
+.dl-sw button:disabled { opacity: 0.35; cursor: default; }
+.dl-sw button:focus-visible, .dl-sw select:focus-visible, .dl-sw input:focus-visible, .dl-fang:focus-visible,
+body.dl-breit a:focus-visible, .dl-info summary:focus-visible { outline: 2px solid var(--s-amber); outline-offset: 2px; }
 
-.dl-chart { margin-top: 10px; background: #0f180f; border-radius: 4px; min-height: 120px; }
+.dl-chart { margin-top: 10px; background: var(--w-bg); min-height: 120px; }
 .dl-chart[aria-busy="true"] { opacity: 0.55; }
 .dl-svg { display: block; width: 100%; height: auto; }
-.dl-leer-chart { padding: 40px 16px; text-align: center; color: #aaa; }
-.dl-gitter line { stroke: #24342466; stroke-width: 1; }
-.dl-rahmen { fill: none; stroke: #2e4a2e; }
-.dl-achse { fill: #9aa89a; font-size: 12px; font-family: sans-serif; }
+.dl-leer-chart { padding: 40px 16px; text-align: center; color: var(--w-leise); }
+.dl-gitter line { stroke: #232a33; stroke-width: 1; }
+.dl-rahmen { fill: none; stroke: var(--w-rand); }
+.dl-achse { fill: var(--w-leise); font-size: 12px; font-family: 'Segoe UI', system-ui, sans-serif; }
 .dl-rechts { text-anchor: end; }
 .dl-mitte { text-anchor: middle; }
 .dl-wasserzeichen {
-    fill: #ffb300; fill-opacity: 0.13; font-size: 84px; font-weight: bold; letter-spacing: 0.12em;
-    text-anchor: middle; font-family: sans-serif; pointer-events: none; user-select: none;
+    fill: #f0b84a; fill-opacity: 0.12; font-size: 84px; font-weight: bold; letter-spacing: 0.12em;
+    text-anchor: middle; font-family: 'JetBrains Mono', monospace; pointer-events: none; user-select: none;
 }
 
-.dl-band { fill: #4caf50; fill-opacity: 0.22; stroke: none; }
-.dl-mittel { fill: none; stroke: #7ee07f; stroke-width: 1.6; stroke-linejoin: round; }
-.dl-punkt { fill: #7ee07f; }
-.dl-kontrolle { fill: none; stroke: #6ab0ff; stroke-width: 1.4; stroke-dasharray: 5 3; }
-.dl-roh-linie { fill: none; stroke: #7ee07f; stroke-width: 1; }
-.dl-saett { fill: #ff5252; }
-.dl-cursor { stroke: #ffe08a; stroke-width: 1; stroke-dasharray: 2 2; pointer-events: none; }
+.dl-band { fill: var(--k-reihe); fill-opacity: 0.16; stroke: none; }
+.dl-mittel { fill: none; stroke: var(--k-reihe); stroke-width: 1.6; stroke-linejoin: round; }
+.dl-punkt { fill: var(--k-reihe); }
+.dl-kontrolle { fill: none; stroke: var(--k-kontrolle); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.dl-roh-linie { fill: none; stroke: var(--k-reihe); stroke-width: 1; }
+.dl-saett { fill: var(--k-fehl); }
+.dl-cursor { stroke: #f0f3f6; stroke-width: 1; stroke-dasharray: 2 2; pointer-events: none; }
 .dl-fang { fill: transparent; cursor: crosshair; }
 
+/* Stimulationen: Violett wie "Gesendete Stimuli" in der Software; Zustand
+   zusaetzlich ueber die Strichart (farbsehschwaeche-sicher) */
 .dl-stim line { stroke-width: 1.5; }
-.dl-stim-ok line { stroke: #ffb300; }
-.dl-stim-ok .dl-stim-kopf, .dl-stim-ok .dl-stim-dauer { fill: #ffb300; }
-.dl-stim-teil line { stroke: #ff8a3d; stroke-dasharray: 6 3; }
-.dl-stim-teil .dl-stim-kopf, .dl-stim-teil .dl-stim-dauer { fill: #ff8a3d; }
-.dl-stim-fehl line { stroke: #ff5252; stroke-dasharray: 3 3; }
-.dl-stim-fehl .dl-stim-kopf { fill: #ff5252; }
-.dl-stim-fehl .dl-stim-dauer { fill: #ff5252; }
-.dl-stim-dauer { fill-opacity: 0.18; }
+.dl-stim-ok line { stroke: var(--k-stim); }
+.dl-stim-ok .dl-stim-kopf, .dl-stim-ok .dl-stim-dauer { fill: var(--k-stim); }
+.dl-stim-teil line { stroke: var(--k-teil); stroke-dasharray: 6 3; }
+.dl-stim-teil .dl-stim-kopf, .dl-stim-teil .dl-stim-dauer { fill: var(--k-teil); }
+.dl-stim-fehl line { stroke: var(--k-fehl); stroke-dasharray: 2 3; }
+.dl-stim-fehl .dl-stim-kopf, .dl-stim-fehl .dl-stim-dauer { fill: var(--k-fehl); }
+.dl-stim-dauer { fill-opacity: 0.2; }
 .dl-stim .dl-stim-strich { stroke-dasharray: none; stroke-width: 1; }
 
 .dl-qual { fill-opacity: 0.16; }
-.dl-q-SATURATED { fill: #ff5252; }
-.dl-q-SENSOR_ERROR { fill: #d05ce3; }
-.dl-q-TIMING_UNCERTAIN { fill: #6ab0ff; }
-.dl-q-OUT_OF_RANGE { fill: #ff8a3d; }
-.dl-q-INTERPOLATED { fill: #aaaaaa; }
+.dl-q-SATURATED { fill: var(--k-fehl); }
+.dl-q-SENSOR_ERROR { fill: var(--k-teil); }
+.dl-q-TIMING_UNCERTAIN { fill: #b0bec5; }
+.dl-q-OUT_OF_RANGE { fill: #e67e22; }
+.dl-q-INTERPOLATED { fill: #7f8c8d; }
 
-.dl-ablesen { min-height: 1.4em; font-size: 0.9em; color: #ffe08a; margin: 8px 0 2px; }
+.dl-ablesen { min-height: 1.4em; font-size: 0.9em; color: #f0f3f6; margin: 8px 0 2px; font-variant-numeric: tabular-nums; }
 .dl-roh-zeit { font-variant-numeric: tabular-nums; min-width: 14em; text-align: center; }
 
-.dl-legende { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.85em; color: #ccc; }
+.dl-sw table { width: 100%; border-collapse: collapse; }
+.dl-sw th { color: var(--w-cyan); font-weight: 600; border-bottom: 1px solid var(--w-rand); }
+.dl-sw td { border-bottom: 1px solid #222831; }
+
+.dl-legende { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.84em; color: var(--w-leise); }
 .dl-legende li { display: inline-flex; align-items: center; gap: 6px; }
-.dl-l { display: inline-block; width: 22px; height: 10px; border-radius: 2px; }
-.dl-l-mittel { border-top: 2px solid #7ee07f; height: 0; }
-.dl-l-band { background: #4caf5038; }
-.dl-l-kontrolle { border-top: 2px dashed #6ab0ff; height: 0; }
-.dl-l-stim-ok { background: #ffb300; width: 4px; height: 14px; }
-.dl-l-stim-teil { background: #ff8a3d; width: 4px; height: 14px; }
-.dl-l-stim-fehl { border-left: 3px dashed #ff5252; width: 0; height: 14px; }
-.dl-l-qual { background: #ff525229; }
-.dl-l-luecke { height: 2px; background: linear-gradient(90deg, #7ee07f 0 8px, transparent 8px 14px, #7ee07f 14px); }
+.dl-l { display: inline-block; width: 22px; height: 10px; }
+.dl-l-mittel { border-top: 2px solid var(--k-reihe); height: 0; }
+.dl-l-band { background: rgba(30, 200, 255, 0.2); }
+.dl-l-kontrolle { border-top: 2px dashed var(--k-kontrolle); height: 0; }
+.dl-l-stim-ok { background: var(--k-stim); width: 4px; height: 14px; }
+.dl-l-stim-teil { border-left: 3px dashed var(--k-teil); width: 0; height: 14px; }
+.dl-l-stim-fehl { border-left: 3px dotted var(--k-fehl); width: 0; height: 14px; }
+.dl-l-qual { background: rgba(231, 76, 60, 0.3); }
+.dl-l-luecke { height: 2px; background: linear-gradient(90deg, var(--k-reihe) 0 8px, transparent 8px 14px, var(--k-reihe) 14px); }
 
 @media (max-width: 640px) {
+    body.dl-breit { padding: 0 12px; }
     .dl-feld { min-width: 100%; }
+    .dl-panel { margin: 8px 6px; padding: 12px 10px; }
     .dl-wasserzeichen { font-size: 64px; }
     .dl-roh-zeit { min-width: 0; }
     #dl-ereignisse { display: block; overflow-x: auto; }
-    body.dl-breit { padding: 0 12px; }
 }
