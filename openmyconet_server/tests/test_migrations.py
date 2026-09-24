@@ -20,6 +20,7 @@ from omn.extensions import db
 
 BASELINE_REV = '959850bfc924'
 BIOCOMM_REV = '3f1b2c4d5e6a'
+HEAD_REV = '8d4e2a6c1b70'
 BIOCOMM_VORHER = 'fa5a744c1177'
 BIOCOMM_SCHEMAS = ('sandbox', 'sandbox_private', 'live', 'live_private', 'biocomm_common')
 REGELN_SQL = os.path.join(os.path.dirname(__file__), 'sql', 'biocomm_regeln.sql')
@@ -258,7 +259,7 @@ def test_biocomm_migration_auf_sqlite_noop(leere_db_app):
     with leere_db_app.app_context():
         upgrade()
         rev = db.session.execute(db.text('SELECT version_num FROM alembic_version')).scalar()
-    assert rev == BIOCOMM_REV
+    assert rev == HEAD_REV
 
 
 @nur_postgres
