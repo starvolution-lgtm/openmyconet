@@ -29,7 +29,7 @@ jede Minute** (`deploy/mailqueue_drain.sh`, Prod + Staging, `flock` gegen
 ## Vom Kontrollzentrum aus (`/admin/kontrollzentrum`)
 
 - Kachel **Datenbank-Backup**: frischer lokaler Snapshot < 26 h? (`openmyconet-*.dump` **oder** `*.db.gz`)
-- Kachel **Backup Offsite (All-inkl)**: letzter FTPS-Upload < 26 h?
+- Kachel **Backup Offsite (All-inkl)**: entfällt seit 2026-09-24 (FTPS abgeschaltet, s. u.)
 - Buttons **💾 Backup jetzt** / **🔁 Restore-Check jetzt** — führen die Skripte direkt aus.
 
 ## Restore-Check (greift die Live-DB NIE an)
@@ -153,8 +153,12 @@ Geprüft am 2026-09-24: erster Lauf 125 MB Original → 85 MB auf der Box (5 s);
 +69 kB (Deduplizierung). Restore-Check auf der VPS und zusätzlich auf einem anderen Rechner
 (lokales PostgreSQL 18): 21/21 Tabellen mit identischen Zeilenzahlen, 24/24 Uploads, 16 Medien.
 
-## Offsite (All-inkl)
+## Offsite (All-inkl) — abgeschaltet seit 2026-09-24
 
-`deploy/backup_offsite.sh` lädt die jeweils frische Backup-Datei per FTPS hoch,
-sobald in der `.env` `BACKUP_FTP_HOST` etc. gesetzt sind (Schlüssel siehe
-Skript-Kopf). Funktioniert mit `.dump` genauso wie vorher mit `.db.gz`.
+Ersetzt durch die Storage Box (verschlüsselt, vollständiger Umfang). Die
+`BACKUP_FTP_*`-Einträge sind aus der Prod-`.env` entfernt, der Statusmarker
+`.offsite-letzter-erfolg` gelöscht; dadurch überspringt `backup_db.sh` den Upload
+und die Kachel „Backup Offsite (All-inkl)“ im Kontrollzentrum entfällt.
+`deploy/backup_offsite.sh` bleibt im Repo (wirkt nur, wenn `BACKUP_FTP_HOST`
+wieder gesetzt wird). Die dort bis 24.09.2026 liegenden unverschlüsselten Dumps
+(`/omn-backups`, 92 Dateien) löscht Robby im All-inkl-KAS.
