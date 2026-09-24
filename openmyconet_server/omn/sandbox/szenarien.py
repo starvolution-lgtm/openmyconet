@@ -74,12 +74,13 @@ STANDORTE = {
 HINWEIS_SIMULATION = (
     'SIMULATION – berechnete Messwerte, echte Datenverarbeitung. Die Messwerte dieses '
     'Szenarios stammen aus einem Rechenmodell, nicht von einem realen Pilznetzwerk. Sie '
-    'durchlaufen aber dieselbe Datenarchitektur, in der später die echten BioComm-Messungen '
-    'gespeichert werden: Herkunft von Gerät, Sonde und Messkanal, Aufzeichnungsplan mit '
-    'Messpausen, eine Prüfsummenkette über alle Datenpakete, Qualitätskennzeichen, Lücken als '
-    'Lücken statt Nullwerten und dieselbe Verdichtung zu Minuten- und Stundenwerten. Das '
-    'Szenario zeigt also, wie OpenMycoNet Messdaten erfasst, prüft und darstellt. Es ist kein '
-    f'Nachweis einer biologischen Reaktion. (Generator {GENERATOR_VERSION}, Modell {MODELL_VERSION})'
+    'durchlaufen aber dieselbe Datenarchitektur, die später auch für echte BioComm-Messungen '
+    'verwendet wird: Herkunft von Gerät, Sonde und Messkanal, Aufzeichnungsplan mit '
+    'Messpausen, Prüfsummenkette der Datenpakete innerhalb eines Messlaufs, '
+    'Qualitätskennzeichen, Lücken als Lücken statt Nullwerten sowie dieselbe Verdichtung zu '
+    'Minuten- und Stundenwerten. Das Szenario zeigt also, wie OpenMycoNet Messdaten erfasst, '
+    'prüft und darstellt. Es ist kein Nachweis einer biologischen Reaktion. '
+    f'(Generator {GENERATOR_VERSION}, Modell {MODELL_VERSION})'
 )
 
 
