@@ -1,0 +1,133 @@
+{% extends "dashboard_base.html" %}
+{% block title %}OpenMycoNet — BioComm-Datenlabor (Simulation){% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('datenlabor.css') }}">{% endblock %}
+{% block body_class %}dl-breit{% endblock %}
+{% block content %}
+<h1>BioComm-Datenlabor</h1>
+
+<p class="dl-sim-banner" role="note">
+    <strong>SIMULATION</strong> – berechnete Messwerte, echte Datenverarbeitung.
+    Alle Werte auf dieser Seite stammen aus einem Rechenmodell, nicht von einem realen Pilznetzwerk.
+    Sie liegen aber in derselben Datenbankstruktur, in der später die echten BioComm-Messungen
+    gespeichert werden, und werden genauso geprüft, verdichtet und dargestellt.
+</p>
+
+<div id="dl-app" data-api="{{ url_for('datenlabor.api_szenarien')|replace('/szenarien', '') }}">
+    <p id="dl-laden" class="label">Lade Szenarien …</p>
+
+    <div id="dl-leer" class="card" hidden>
+        <h2>Noch keine Szenario-Daten</h2>
+        <p>Auf diesem Server wurden die Simulationsszenarien noch nicht erzeugt. Schau bald wieder vorbei.</p>
+    </div>
+
+    <div id="dl-inhalt" hidden>
+        <section class="card dl-steuerung" aria-label="Auswahl">
+            <div class="dl-feld">
+                <label for="dl-szenario">Szenario</label>
+                <select id="dl-szenario"></select>
+            </div>
+            <div class="dl-feld">
+                <label for="dl-reihe">Messreihe</label>
+                <select id="dl-reihe"></select>
+            </div>
+            <div class="dl-feld">
+                <label for="dl-kanal">Messgröße</label>
+                <select id="dl-kanal"></select>
+            </div>
+            <fieldset class="dl-filter">
+                <legend>Filter</legend>
+                <label for="dl-f-substrat">Substrat</label>
+                <select id="dl-f-substrat"><option value="">alle</option></select>
+                <label for="dl-f-stim">Stimulation</label>
+                <select id="dl-f-stim">
+                    <option value="">alle</option>
+                    <option value="mit">mit Stimulation</option>
+                    <option value="ohne">ohne Stimulation</option>
+                </select>
+            </fieldset>
+        </section>
+
+        <section class="card" aria-labelledby="dl-info-titel">
+            <h2 id="dl-info-titel" class="dl-h2-klein">Über dieses Szenario</h2>
+            <p id="dl-kurz"></p>
+            <p id="dl-standort" class="label"></p>
+            <details>
+                <summary>Modellannahmen und Herkunft der Parameter</summary>
+                <p id="dl-hinweis" class="dl-hinweis"></p>
+                <p id="dl-parameter" class="dl-hinweis"></p>
+            </details>
+        </section>
+
+        <section class="card" aria-labelledby="dl-chart-titel">
+            <div class="dl-kopf">
+                <h2 id="dl-chart-titel" class="dl-h2-klein">Verlauf</h2>
+                <div class="dl-ansichten" role="group" aria-label="Zeitraum">
+                    <button type="button" data-ansicht="tag">24 h</button>
+                    <button type="button" data-ansicht="woche">7 Tage</button>
+                    <button type="button" data-ansicht="monat">30 Tage</button>
+                    <button type="button" data-ansicht="saison">Saison</button>
+                    <button type="button" data-ansicht="jahr">Jahr</button>
+                </div>
+            </div>
+            <div class="dl-zeile">
+                <button type="button" id="dl-zurueck" aria-label="Früherer Zeitraum">◀</button>
+                <label for="dl-datum" class="dl-sr">Startdatum</label>
+                <input type="date" id="dl-datum">
+                <label for="dl-saison" class="dl-sr">Jahreszeit</label>
+                <select id="dl-saison">
+                    <option value="winter">Winter</option>
+                    <option value="fruehling">Frühling</option>
+                    <option value="sommer">Sommer</option>
+                    <option value="herbst">Herbst</option>
+                </select>
+                <button type="button" id="dl-vor" aria-label="Späterer Zeitraum">▶</button>
+                <label class="dl-check"><input type="checkbox" id="dl-kontrolle"> Kontrollreihe einblenden</label>
+                <label class="dl-check"><input type="checkbox" id="dl-vollskala"> volle Skala (mit allen Spitzen)</label>
+            </div>
+            <div class="dl-zeile" id="dl-rohstunden-zeile">
+                <span class="label">Stunden mit Rohdaten (250 Hz):</span>
+                <span id="dl-rohstunden"></span>
+            </div>
+            <p id="dl-saison-hinweis" class="label" hidden></p>
+
+            <div class="dl-chart" id="dl-chart"></div>
+            <p id="dl-ablesen" class="dl-ablesen" aria-live="polite"></p>
+            <p id="dl-meta" class="label"></p>
+            <ul class="dl-legende" aria-label="Legende">
+                <li><span class="dl-l dl-l-mittel"></span>Mittelwert</li>
+                <li><span class="dl-l dl-l-band"></span>Minimum bis Maximum</li>
+                <li><span class="dl-l dl-l-kontrolle"></span>Kontrollreihe (Mittelwert)</li>
+                <li><span class="dl-l dl-l-stim-ok"></span>Stimulation ausgeführt</li>
+                <li><span class="dl-l dl-l-stim-teil"></span>teilweise</li>
+                <li><span class="dl-l dl-l-stim-fehl"></span>fehlgeschlagen / abgebrochen</li>
+                <li><span class="dl-l dl-l-qual"></span>Qualitätskennzeichen</li>
+                <li><span class="dl-l dl-l-luecke"></span>Lücke = keine Daten (nie als Null gezeichnet)</li>
+            </ul>
+        </section>
+
+        <section class="card" aria-labelledby="dl-ereignisse-titel">
+            <h2 id="dl-ereignisse-titel" class="dl-h2-klein">Ereignisse im Zeitraum</h2>
+            <p id="dl-keine-ereignisse" class="label">Keine Stimulationen oder Qualitätskennzeichen in diesem Zeitraum.</p>
+            <table id="dl-ereignisse" hidden>
+                <thead><tr><th>Zeit (Ortszeit)</th><th>Ereignis</th><th>Details</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section class="card" id="dl-roh" aria-labelledby="dl-roh-titel">
+            <h2 id="dl-roh-titel" class="dl-h2-klein">Rohdaten-Ausschnitt</h2>
+            <p class="label">Einzelne Abtastwerte (250 pro Sekunde) aus den gespeicherten Rohdatenblöcken,
+               beim Abruf mit der Kalibrierung des Messkanals in µV umgerechnet.
+               Wähle oben eine Rohdatenstunde oder in der Ereignisliste „Rohdaten ansehen“.</p>
+            <div class="dl-zeile">
+                <button type="button" id="dl-roh-zurueck" aria-label="10 Sekunden früher">◀ 10 s</button>
+                <span id="dl-roh-zeit" class="dl-roh-zeit"></span>
+                <button type="button" id="dl-roh-vor" aria-label="10 Sekunden später">10 s ▶</button>
+            </div>
+            <div class="dl-chart dl-chart-roh" id="dl-roh-chart"></div>
+            <p id="dl-roh-meta" class="label"></p>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ asset('datenlabor.js') }}" defer></script>{% endblock %}

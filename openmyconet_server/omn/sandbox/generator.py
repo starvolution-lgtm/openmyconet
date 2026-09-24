@@ -315,10 +315,13 @@ class Generator:
             kanaele += [(q, rolle, q, einheit, hw[label], 1 / iv, 'SOFTWARE_TIMER') for q, rolle, einheit, iv, label, _ in UMWELT_KANAELE]
             for key, rolle, groesse, einheit, hwid, rate, takt in kanaele:
                 gain = (GAIN, 'MANUAL') if key == 'bio' else (None, None)
+                # ADC-Kalibrierung am Kanal (Provenienz): Umrechnung Counts -> uV am
+                # Eingang = count * lsb_uv / gain. Das Dashboard liest sie von hier.
+                kalib = {'adc': 'ADS1115', 'pga_v': 0.256, 'lsb_uv': LSB_UV, 'ziel_einheit': 'uV'} if key == 'bio' else {}
                 cur.execute('INSERT INTO sandbox.measurement_channel (acquisition_run_id, device_id, hardware_channel_id,'
-                            ' channel_role, quantity_code, unit_code, data_kind, sample_rate_hz, sample_clock_source, gain, gain_source)'
-                            " VALUES (%s,%s,%s,%s,%s,%s,'RAW',%s,%s,%s,%s) RETURNING id",
-                            (r.id, dev, hwid, rolle, groesse, einheit, rate, takt, *gain))
+                            ' channel_role, quantity_code, unit_code, data_kind, sample_rate_hz, sample_clock_source, gain,'
+                            " gain_source, calibration) VALUES (%s,%s,%s,%s,%s,%s,'RAW',%s,%s,%s,%s,%s) RETURNING id",
+                            (r.id, dev, hwid, rolle, groesse, einheit, rate, takt, *gain, json.dumps(kalib)))
                 r.mc[(key, 'RAW')] = cur.fetchone()[0]
                 cur.execute('INSERT INTO sandbox.measurement_channel (acquisition_run_id, device_id, hardware_channel_id,'
                             ' channel_role, quantity_code, unit_code, data_kind, processing_origin, processing_version)'

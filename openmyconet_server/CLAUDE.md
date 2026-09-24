@@ -109,7 +109,25 @@ Stimulationsreihe teilen dieselbe synthetische Grundlage — die Differenz ist g
 die Demo-Annahme. Ganzes Jahr: ~430 MB, lokal 5½ min. **Nicht im Backup** (siehe
 `deploy/BACKUP.md`), nach einem Restore neu generieren. `zlib`-Fallback, wo
 `compression.zstd` fehlt (Python < 3.14; CI und Server laufen seit 2026-09-24 beide mit 3.14).
-Tests: `tests/test_sandbox_generator.py` (nur PG, 20 Tage).
+Tests: `tests/test_sandbox_generator.py` (nur PG, 20 Tage). Der bio-RAW-Kanal trägt
+seit Sept. 2026 die ADC-Kalibrierung in `measurement_channel.calibration`
+(`lsb_uv`, `pga_v`) — das Datenlabor rechnet Zählwerte daraus in µV um
+(`Zählwert × lsb_uv ÷ gain`), nie mit fest verdrahteten Konstanten.
+
+**BioComm-Datenlabor** (`omn/datenlabor.py`, Blueprint `datenlabor_bp`,
+`/dashboard/datenlabor`): geschütztes Dashboard über `sandbox.*` (nie `live.*`,
+nie `*_private`). Zugang per `mycelist_required`: eingeloggt **und**
+`Nutzer.bestaetigt`, Nutzer wird bei jedem Aufruf neu geladen; Seite → Redirect
+auf den Login, JSON-API (`/api/szenarien`, `/api/reihe`, `/api/roh`) → 401.
+Jede API-Antwort trägt `is_simulated: true`. Auflösung automatisch (≤ 48 h und
+vorhanden → `1min`, bis 45 Tage `1h`, darüber Tageswerte aus `1h`, in der
+Ortszeit des Standorts). Hemisphäre aus dem öffentlichen MGRS-Breitenband, nie
+aus den privaten Koordinaten. Frontend `app/templates/datenlabor.html` +
+`app/static/datenlabor.js` (eigene SVG-Diagramme, keine Fremdbibliothek, keine
+style-Attribute wegen CSP) + `datenlabor.css`; `dashboard_base.html` hat dafür
+die Blöcke `head`, `body_class`, `scripts` und den Datenlabor-Link in der
+Kopfzeile. Auf SQLite leerer Zustand. Tests: `tests/test_datenlabor.py`
+(Zugang auf allen Engines, Daten nur PG).
 
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
 `FLASK_APP=wsgi python -m flask db upgrade`. `migrate_add_columns.py` /

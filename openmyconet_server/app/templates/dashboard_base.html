@@ -2,13 +2,16 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}OpenMycoNet — Dashboard{% endblock %}</title>
 <link rel="stylesheet" href="{{ asset('dashboard-base.css') }}">
+{% block head %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <nav>
-        🍄 OpenMycoNet Dashboard
-        {% if nutzer %}· {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">Logout</a>{% endif %}
+        🍄 <a href="{{ url_for('dashboard.home') }}">OpenMycoNet Dashboard</a>
+        {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">BioComm-Datenlabor</a>
+        · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">Logout</a>{% endif %}
     </nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -32,5 +35,6 @@
   });
 })();
 </script>
+{% block scripts %}{% endblock %}
 </body>
 </html>
