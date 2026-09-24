@@ -55,10 +55,19 @@ def _owner_verbindung_noetig(conn):
     return bool(owner_da) and not ist_super and nutzer != OWNER
 
 
+def _owner_url(url):
+    """Verbindungs-URL als omn_owner OHNE Passwort (libpq nimmt es aus ~/.pgpass).
+    Bewusst URL.create statt url.set(password=None): set() ignoriert None und
+    liesse das Passwort von omn stehen -> 'password authentication failed for
+    user omn_owner' (auf Staging passiert, 2026-09-24)."""
+    return sa.engine.URL.create(
+        drivername=url.drivername, username=OWNER, password=None,
+        host=url.host, port=url.port, database=url.database, query=url.query)
+
+
 def _ausfuehren(conn, *sql_texte):
     if _owner_verbindung_noetig(conn):
-        url = conn.engine.url.set(username=OWNER, password=None)
-        engine = sa.create_engine(url)
+        engine = sa.create_engine(_owner_url(conn.engine.url))
         try:
             with engine.begin() as owner_conn:
                 for sql in sql_texte:

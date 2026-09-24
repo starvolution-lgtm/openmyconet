@@ -308,3 +308,26 @@ def test_biocomm_idempotent_und_downgrade(leere_db_app):
             "SELECT count(*) FROM pg_namespace WHERE nspname IN :s"
         ).bindparams(db.bindparam('s', expanding=True)), {'s': list(BIOCOMM_SCHEMAS)}).scalar()
     assert rest == 0
+
+
+def test_biocomm_owner_url_ohne_fremdes_passwort():
+    """Die omn_owner-Verbindung darf das Passwort aus DATABASE_URL (das von omn)
+    NICHT uebernehmen -- sonst schlaegt die Anmeldung fehl (Staging, 2026-09-24).
+    Laeuft auf jeder Engine, reine URL-Logik."""
+    import importlib.util
+
+    from sqlalchemy.engine import make_url
+
+    pfad = os.path.join(os.path.dirname(__file__), '..', 'migrations', 'versions',
+                        '3f1b2c4d5e6a_biocomm_schemas_sandbox_live.py')
+    spec = importlib.util.spec_from_file_location('mig_biocomm', pfad)
+    mig = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mig)
+
+    url = make_url('postgresql+psycopg://omn:geheim@127.0.0.1:5432/omn_staging?sslmode=disable')
+    owner = mig._owner_url(url)
+    assert owner.username == 'omn_owner'
+    assert owner.password is None
+    assert (owner.host, owner.port, owner.database) == ('127.0.0.1', 5432, 'omn_staging')
+    assert owner.drivername == 'postgresql+psycopg'
+    assert dict(owner.query) == {'sslmode': 'disable'}
