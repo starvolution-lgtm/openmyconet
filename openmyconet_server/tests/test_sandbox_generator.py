@@ -76,7 +76,7 @@ def test_umfang_und_trennung(gen_app):
         for t in ('site', 'series', 'sample_block', 'derived_aggregate', 'origin_batch'):
             assert _eins(f'SELECT count(*) FROM live.{t}') == 0
         # jede Szenario-Beschreibung sagt, dass es Simulation ist
-        assert _eins("SELECT count(*) FROM sandbox.sandbox_scenario WHERE model_assumption_note NOT LIKE 'SIMULATION.%'") == 0
+        assert _eins("SELECT count(*) FROM sandbox.sandbox_scenario WHERE model_assumption_note NOT LIKE 'SIMULATION – berechnete Messwerte, echte Datenverarbeitung.%'") == 0
 
 
 def test_stimulation_gegen_kontrolle(gen_app):

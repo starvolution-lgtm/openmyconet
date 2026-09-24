@@ -1,4 +1,4 @@
-"""Standorte und oeffentliche Szenarien v1 des BioComm-Sandkastens.
+"""Standorte und oeffentliche Szenarien des BioComm-Sandkastens (Version siehe SZENARIO_VERSION).
 
 Grundlage: Spezifikation v7, Abschnitt 4 (Kontrollzentrum 11_BioComm_Sandkasten).
 Entscheidungen Robby, 24.09.2026: Parametergrundlage ARBITRARY_DEMO, feste
@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 
 GENERATOR_VERSION = 'sbx-gen-1.0'
 MODELL_VERSION = 'sbx-modell-1.0'
-SZENARIO_VERSION = 1
+SZENARIO_VERSION = 2          # v2 (24.09.2026): neuer Simulationshinweis, Werte unveraendert
 JAHR = 2025
 
 # ADS1115 bei PGA +-0,256 V, INA333-Verstaerkung per DIP (Herkunft MANUAL)
@@ -67,10 +67,19 @@ STANDORTE = {
                               19.5, 1.2, 18.5, 1.5, 0.35, 30.0),
 }
 
+# Wortlaut abgestimmt mit Robby (24.09.2026, Szenario-Version 2): nur die Messwerte
+# sind berechnet, die Datenverarbeitung ist die echte. Bewusst NICHT
+# "faelschungssicher": die Pruefsummenkette macht Veraenderungen erkennbar, verhindert
+# sie aber nicht (dafuer braeuchte es Geraetesignaturen, Spezifikation v7 3.9).
 HINWEIS_SIMULATION = (
-    'SIMULATION. Alle Werte dieses Szenarios sind synthetisch erzeugt '
-    f'(Generator {GENERATOR_VERSION}, Modell {MODELL_VERSION}). Sie zeigen keine Messung '
-    'an einem realen Netzwerk und keinen Nachweis einer biologischen Reaktion.'
+    'SIMULATION – berechnete Messwerte, echte Datenverarbeitung. Die Messwerte dieses '
+    'Szenarios stammen aus einem Rechenmodell, nicht von einem realen Pilznetzwerk. Sie '
+    'durchlaufen aber dieselbe Datenarchitektur, in der später die echten BioComm-Messungen '
+    'gespeichert werden: Herkunft von Gerät, Sonde und Messkanal, Aufzeichnungsplan mit '
+    'Messpausen, eine Prüfsummenkette über alle Datenpakete, Qualitätskennzeichen, Lücken als '
+    'Lücken statt Nullwerten und dieselbe Verdichtung zu Minuten- und Stundenwerten. Das '
+    'Szenario zeigt also, wie OpenMycoNet Messdaten erfasst, prüft und darstellt. Es ist kein '
+    f'Nachweis einer biologischen Reaktion. (Generator {GENERATOR_VERSION}, Modell {MODELL_VERSION})'
 )
 
 

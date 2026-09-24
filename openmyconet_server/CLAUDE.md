@@ -98,7 +98,7 @@ Migration + neue SQL-Datei (`biocomm_0002_…`), die 0001er bleiben unverändert
 
 **Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
 [--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen
-Szenarien v1 (Spezifikation v7 4.1) auf der festen Jahresachse 2025 — Stundenwerte
+Szenarien (Version 2 seit 24.09.2026: Hinweis „berechnete Messwerte, echte Datenverarbeitung“, Werte wie v1; Spezifikation v7 4.1) auf der festen Jahresachse 2025 — Stundenwerte
 fürs Jahr, je Jahreszeit eine Woche Minutenwerte + eine Stunde Rohdaten (250 Hz,
 mit Stimulation bzw. den Störfällen des Datenqualitätsszenarios). Parametergrundlage
 `ARBITRARY_DEMO` (Robby, 24.09.2026); die Szenario-Texte in `szenarien.py` sind
