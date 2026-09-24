@@ -1,0 +1,49 @@
+/* Erklaerseite /biocomm/datenlabor (site/biocomm-datenlabor.html).
+   Farben wie die uebrigen BioComm-Seiten (page-biocomm-software.css);
+   Bernstein ist hier das Zeichen fuer "Simulation". */
+.article { max-width:900px; margin:0 auto; }
+.article p { color:#c8e0c8; font-size:1.02rem; line-height:1.85; margin-bottom:1.3rem; }
+.article p:last-child { margin-bottom:0; }
+.article h3 { color:#e8f5e0; font-size:1.05rem; margin-bottom:0.7rem; }
+.sim-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.05em; text-transform:uppercase; padding:4px 10px; border-radius:4px; background:rgba(240,184,74,0.12); color:#f0b84a; border:1px solid rgba(212,160,48,0.5); margin-bottom:0.8rem; }
+.cta-zeile { display:flex; flex-wrap:wrap; gap:0.8rem; margin-top:1.4rem; }
+.vorschau { margin:2rem 0 0; }
+.vorschau img { display:block; width:100%; height:auto; border-radius:10px; border:1px solid #0a6040; box-shadow:0 8px 32px rgba(0,0,0,0.45); }
+.vorschau figcaption { text-align:center; color:#a0c8a0; font-size:0.8rem; margin-top:0.7rem; font-family:'JetBrains Mono',monospace; }
+
+.vergleich { display:grid; grid-template-columns:1fr 1.4fr; gap:1.6rem; margin-top:1.4rem; }
+.vergleich-spalte { background:rgba(0,0,0,0.28); padding:1.4rem 1.6rem; border-top:3px solid #0a7050; }
+.spalte-berechnet { border-top-color:#d4a030; }
+.vergleich-spalte ul { margin:0; padding-left:1.1rem; }
+.vergleich-spalte li { color:#c8e0c8; font-size:0.95rem; line-height:1.65; margin-bottom:0.55rem; }
+.spalte-berechnet h3 { color:#f0b84a; }
+.spalte-echt h3 { color:#6ee87e; }
+
+.weg-kette { font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:#6ee87e; text-align:center; padding:1.4rem; background:rgba(255,255,255,0.03); border-radius:8px; margin:1.4rem 0; line-height:2; }
+
+.szen-raster { display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem; margin-top:1.4rem; }
+.szen-karte { background:rgba(255,255,255,0.03); border:1px solid #0a6040; border-radius:8px; padding:1.3rem; }
+.article .szen-karte h3 { font-size:0.98rem; }
+.article .szen-karte p { color:#a0c8a0; font-size:0.9rem; line-height:1.65; margin-bottom:0; }
+
+.tun-liste { margin:1rem 0 2rem; padding-left:1.2rem; }
+.tun-liste li { color:#c8e0c8; font-size:1rem; line-height:1.8; }
+
+.interp-box { border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:1.6rem 1.8rem; }
+.article .interp-title { font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin-bottom:1rem; }
+.article .interp-box p { font-size:0.95rem; }
+
+.faq-eintrag { border-bottom:1px solid #0a6040; padding:0.9rem 0; }
+.faq-eintrag summary { cursor:pointer; color:#e8f5e0; font-size:1.02rem; }
+.faq-eintrag summary:hover { color:#6ee87e; }
+.article .faq-eintrag p { margin:0.8rem 0 0.2rem; font-size:0.95rem; }
+
+.cta-text { color:#c8e0c8; max-width:640px; margin:0 auto 1.6rem; }
+
+@media(max-width:860px){
+  .vergleich { grid-template-columns:1fr; }
+  .szen-raster { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:560px){
+  .szen-raster { grid-template-columns:1fr; }
+}

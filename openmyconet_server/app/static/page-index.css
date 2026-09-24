@@ -284,3 +284,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .btn.btn-state-err { background-color:#8b2020; }
 /* Node-Bewerbung: Erfolgsmeldung mehrzeilig (statt 5x .style.*) */
 .btn.btn-state-ok-multiline { background-color:#3a9e5a; font-size:0.75rem; height:auto; white-space:normal; line-height:1.5; padding:1rem; }
+/* Hinweis auf das BioComm-Datenlabor im Mitmachen-Bereich */
+.bdl-hinweis { margin-top:2rem; max-width:640px; border:1px solid rgba(212,160,48,0.5); border-left:3px solid #f0b84a; background:rgba(0,0,0,0.22); padding:1.1rem 1.4rem; }
+.bdl-hinweis-titel { font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase; color:#f0b84a; margin-bottom:0.5rem; }
+.bdl-hinweis p { color:#c8e0c8; font-size:0.95rem; line-height:1.6; margin-bottom:0.6rem; }
+.bdl-hinweis a { color:#6ee87e; }

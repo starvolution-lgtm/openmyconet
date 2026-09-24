@@ -58,6 +58,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/software"/>
   </url>
 
+  <!-- BioComm Datenlabor (Erklaerseite) -->
+  <url>
+    <loc>https://www.openmyconet.de/biocomm/datenlabor</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm/datenlabor"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm/datenlabor?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm/datenlabor?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm/datenlabor?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm/datenlabor?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/datenlabor"/>
+  </url>
+
   <!-- Mykorrhiza-Netzwerke (Pillar Page) -->
   <url>
     <loc>https://www.openmyconet.de/mykorrhiza-netzwerke.html</loc>

@@ -202,3 +202,29 @@ def test_rohdaten_kalibriert(labor):
     # EC-Messfenster hh:00:00-00:35: planmaessige Aufzeichnungspause -> keine Samples
     pause = labor.get(API + f"/roh?reihe={r['id']}&von=2025-01-13T09:00:05Z&dauer=10").get_json()
     assert pause['samples'] == []
+
+
+# ---------------------------------------------------------------------------
+# Oeffentliche Erklaerseite /biocomm/datenlabor
+# ---------------------------------------------------------------------------
+def test_erklaerseite_oeffentlich(app):
+    c = app.test_client()
+    r = c.get('/biocomm/datenlabor')
+    assert r.status_code == 200
+    html = r.get_data(as_text=True)
+    assert 'Das BioComm-Datenlabor' in html
+    assert 'datenlabor_vorschau.webp' in html
+    assert 'index.html#anmelden' in html and 'dashboard/login' in html
+    assert 'kein Wirkungsnachweis' in html
+    # andere Sprache kommt serverseitig an
+    assert 'The BioComm Data Lab' in c.get('/biocomm/datenlabor?lang=en').get_data(as_text=True)
+
+
+def test_erklaerseite_verlinkt(app):
+    c = app.test_client()
+    for pfad in ('/biocomm', '/biocomm/software', '/'):
+        assert 'biocomm/datenlabor' in c.get(pfad).get_data(as_text=True), pfad
+    from pathlib import Path
+    static = Path(app.root_path).parent / 'app' / 'static'
+    assert 'biocomm/datenlabor' in (static / 'sitemap.xml').read_text(encoding='utf-8')
+    assert (static / 'datenlabor_vorschau.webp').stat().st_size > 10_000

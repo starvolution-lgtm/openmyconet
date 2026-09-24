@@ -13,6 +13,7 @@
     "http://127.0.0.1:5000/biocomm",
     "http://127.0.0.1:5000/biocomm/hardware",
     "http://127.0.0.1:5000/biocomm/software",
+    "http://127.0.0.1:5000/biocomm/datenlabor",
     "http://127.0.0.1:5000/presse",
     "http://127.0.0.1:5000/medien.html",
     "http://127.0.0.1:5000/foerderer.html",

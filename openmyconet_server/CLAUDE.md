@@ -127,7 +127,16 @@ aus den privaten Koordinaten. Frontend `app/templates/datenlabor.html` +
 style-Attribute wegen CSP) + `datenlabor.css`; `dashboard_base.html` hat dafür
 die Blöcke `head`, `body_class`, `scripts` und den Datenlabor-Link in der
 Kopfzeile. Auf SQLite leerer Zustand. Tests: `tests/test_datenlabor.py`
-(Zugang auf allen Engines, Daten nur PG).
+(Zugang auf allen Engines, Daten nur PG). Gestaltung: Seitenrahmen wie die
+Website (Waldgrün, Lora/Playfair), das Dashboard selbst als Fenster im Stil der
+BioComm-Software (Schiefergrau, Cyan); Bernstein nur für SIMULATION. Die Ansicht
+steht in der Adresse (`#szenario=…&reihe=…&ansicht=…&datum=…&kontrolle=1`), also
+verlinkbar. Öffentliche Erklärseite `/biocomm/datenlabor`
+(`site/biocomm-datenlabor.html`, i18n-Präfix `bdl_`, im BioComm-Menü, Sitemap,
+Lighthouse/pa11y, Hinweise auf `/biocomm` und im Mitmachen-Bereich der
+Startseite). Vorschaubild `app/static/datenlabor_vorschau.webp` = echte Aufnahme
+des Datenlabors (headless Chrome) mit SIMULATION-Band; bei sichtbaren Änderungen
+am Datenlabor neu aufnehmen.
 
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
 `FLASK_APP=wsgi python -m flask db upgrade`. `migrate_add_columns.py` /

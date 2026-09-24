@@ -115,6 +115,13 @@ def biocomm_software():
     return render_template('site/biocomm-software.html', current_page='biocomm-software')
 
 
+@site_live_bp.route('/biocomm/datenlabor')
+def biocomm_datenlabor():
+    # Oeffentliche Erklaerseite; das Datenlabor selbst (omn/datenlabor.py)
+    # liegt hinter dem Login unter /dashboard/datenlabor.
+    return render_template('site/biocomm-datenlabor.html', current_page='biocomm-datenlabor')
+
+
 @site_live_bp.route('/presse')
 def presse():
     filter_sprache = request.args.get('sprache', '')

@@ -164,7 +164,13 @@
     kanaeleFuellen();
     infoZeigen();
     rohstundenZeigen();
-    if (st.von === null) springeZuRoh(0); else ladeReihe();
+    if (start && start.datum) {
+      // Ansicht aus der Adresse (#...&datum=2025-01-13), nur beim ersten Laden
+      var d = start.datum.split('-').map(Number), r = aktReihe();
+      st.von = lokalZuUtc(d[0], d[1], d[2], 0, r.zeitzone);
+      start = null;
+      ladeReihe();
+    } else if (st.von === null) springeZuRoh(0); else ladeReihe();
   }
 
   function kanaeleFuellen() {
@@ -273,6 +279,7 @@
     var r = aktReihe();
     if (!r) return;
     ansichtKnoepfe();
+    adresseMerken(r);
     var zr = zeitraum(), nr = ++abrufNr, k = kontrollReihe();
     if (st.ansicht !== 'saison' && st.ansicht !== 'jahr') $('dl-datum').value = isoDatum(st.von, r.zeitzone);
     var p = { reihe: r.id, kanal: st.kanal, von: new Date(zr[0]).toISOString(), bis: new Date(zr[1]).toISOString() };
@@ -605,6 +612,33 @@
       ' · umgerechnet: Zählwert × LSB ÷ Verstärkung (aus der Kanal-Kalibrierung)';
   }
 
+  // ------------------------------------------- Ansicht in der Adresse ---
+  // #szenario=elektrisch&reihe=<code>&kanal=...&ansicht=woche&datum=2025-01-13
+  // &kontrolle=1 -- verlinkbare Ansichten (auch von der Erklaerseite aus).
+  var start = null;
+  function adresseLesen() {
+    var h = {};
+    (window.location.hash || '').replace(/^#/, '').split('&').forEach(function (teil) {
+      var kv = teil.split('=');
+      if (kv[0]) h[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1] || '');
+    });
+    if (h.szenario) st.szenario = h.szenario;
+    if (h.kanal && kanalInfo[h.kanal]) st.kanal = h.kanal;
+    if (ANSICHT_TAGE[h.ansicht] || h.ansicht === 'saison' || h.ansicht === 'jahr') st.ansicht = h.ansicht;
+    if (SAISON_TEXT[h.saison]) $('dl-saison').value = h.saison;
+    if (h.kontrolle === '1') $('dl-kontrolle').checked = true;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(h.datum || '')) start = { datum: h.datum };
+    else if (h.ansicht) start = { datum: '2025-01-13' };
+    return h.reihe || null;
+  }
+  function adresseMerken(r) {
+    var teile = ['szenario=' + st.szenario, 'reihe=' + encodeURIComponent(r.code), 'kanal=' + st.kanal, 'ansicht=' + st.ansicht];
+    if (st.ansicht === 'saison') teile.push('saison=' + $('dl-saison').value);
+    else if (st.ansicht !== 'jahr') teile.push('datum=' + isoDatum(st.von, r.zeitzone));
+    if ($('dl-kontrolle').checked) teile.push('kontrolle=1');
+    try { history.replaceState(null, '', '#' + teile.join('&')); } catch (e) { /* ohne Adresszeile egal */ }
+  }
+
   // ------------------------------------------------------------- Start ---
   function zeichneAlles() { ladeReihe(); }
 
@@ -653,6 +687,12 @@
     Object.keys(subs).forEach(function (k) { option($('dl-f-substrat'), k, SUBSTRAT_TEXT[k] || subs[k]); });
     $('dl-inhalt').hidden = false;
     verdrahten();
+    var reiheCode = adresseLesen();
+    if (reiheCode) {
+      j.szenarien.forEach(function (sc) {
+        sc.reihen.forEach(function (r) { if (r.code === reiheCode) { st.szenario = sc.key; st.reihe = r.id; } });
+      });
+    }
     szenarienFuellen();
   }).catch(function (e) {
     $('dl-laden').hidden = true;

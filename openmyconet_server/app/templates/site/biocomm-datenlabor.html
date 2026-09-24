@@ -1,0 +1,170 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('bdl_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('bdl_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/biocomm/datenlabor">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/biocomm/datenlabor?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/biocomm/datenlabor?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/biocomm/datenlabor?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/biocomm/datenlabor?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/biocomm/datenlabor">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/biocomm/datenlabor">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.openmyconet.de/biocomm/datenlabor">
+<meta property="og:title" content="{{ t('bdl_page_title') }}">
+<meta property="og:description" content="{{ t('bdl_meta_desc') }}">
+<meta property="og:image" content="https://www.openmyconet.de/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="OpenMycoNet — Citizen Science für Mykorrhiza-Netzwerke">
+<meta property="og:locale" content="{{ {'de':'de_DE','en':'en_US','nl':'nl_NL','fr':'fr_FR','es':'es_ES'}[current_lang()] }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ t('bdl_page_title') }}">
+<meta name="twitter:description" content="{{ t('bdl_meta_desc') }}">
+<meta name="twitter:image" content="https://www.openmyconet.de/og-image.jpg">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('page-biocomm-datenlabor.css') }}">
+{% endblock %}
+
+{% block mobile_menu_self_link %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="bdl_label">{{ t('bdl_label') }}</p>
+    <h1 data-i18n="bdl_h1">{{ t('bdl_h1') }}</h1>
+    <span class="sim-badge" data-i18n="bdl_badge">{{ t('bdl_badge') }}</span>
+    <p class="u-mt-1" data-i18n="bdl_intro">{{ t('bdl_intro') }}</p>
+    <div class="cta-zeile">
+      <a href="{{ live('index.html#anmelden') }}" class="btn btn-green" data-i18n="bdl_cta_register">{{ t('bdl_cta_register') }}</a>
+      <a href="{{ live('dashboard/login') }}" class="btn btn-amber" data-i18n="bdl_cta_login">{{ t('bdl_cta_login') }}</a>
+    </div>
+    <figure class="vorschau">
+      <img src="{{ asset('datenlabor_vorschau.webp') }}" width="1400" height="1044" alt="{{ t('bdl_hero_alt') }}" data-i18n-alt="bdl_hero_alt">
+      <figcaption data-i18n="bdl_hero_caption">{{ t('bdl_hero_caption') }}</figcaption>
+    </figure>
+  </div>
+</div>
+
+<section class="u-bg-a">
+  <div class="inner article">
+    <h2 data-i18n="bdl_echt_h2">{{ t('bdl_echt_h2') }}</h2>
+    <div class="vergleich">
+      <div class="vergleich-spalte spalte-berechnet">
+        <h3 data-i18n="bdl_berechnet_h">{{ t('bdl_berechnet_h') }}</h3>
+        <ul>
+          {% for i in range(1, 4) %}<li data-i18n="bdl_berechnet_{{ i }}">{{ t('bdl_berechnet_' ~ i) }}</li>{% endfor %}
+        </ul>
+      </div>
+      <div class="vergleich-spalte spalte-echt">
+        <h3 data-i18n="bdl_echt_h">{{ t('bdl_echt_h') }}</h3>
+        <ul>
+          {% for i in range(1, 7) %}<li data-i18n="bdl_echt_{{ i }}">{{ t('bdl_echt_' ~ i) }}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="u-bg-b">
+  <div class="inner article">
+    <h2 data-i18n="bdl_weg_h2">{{ t('bdl_weg_h2') }}</h2>
+    <div class="weg-kette" data-i18n="bdl_weg_chain">{{ t('bdl_weg_chain') }}</div>
+    <p data-i18n="bdl_weg_p">{{ t('bdl_weg_p') }}</p>
+  </div>
+</section>
+
+<section class="u-bg-a">
+  <div class="inner article">
+    <h2 data-i18n="bdl_szen_h2">{{ t('bdl_szen_h2') }}</h2>
+    <p data-i18n="bdl_szen_p">{{ t('bdl_szen_p') }}</p>
+    <div class="szen-raster">
+      {% for i in range(1, 7) %}
+      <div class="szen-karte">
+        <h3 data-i18n="bdl_szen_{{ i }}_h">{{ t('bdl_szen_' ~ i ~ '_h') }}</h3>
+        <p data-i18n="bdl_szen_{{ i }}_p">{{ t('bdl_szen_' ~ i ~ '_p') }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="u-bg-b">
+  <div class="inner article">
+    <h2 data-i18n="bdl_tun_h2">{{ t('bdl_tun_h2') }}</h2>
+    <ul class="tun-liste">
+      {% for i in range(1, 6) %}<li data-i18n="bdl_tun_{{ i }}">{{ t('bdl_tun_' ~ i) }}</li>{% endfor %}
+    </ul>
+    <div class="interp-box">
+      <p class="interp-title" data-i18n="bdl_interp_title">{{ t('bdl_interp_title') }}</p>
+      <p data-i18n="bdl_interp_p">{{ t('bdl_interp_p') }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="u-bg-a">
+  <div class="inner article">
+    <h2 data-i18n="bdl_faq_h2">{{ t('bdl_faq_h2') }}</h2>
+    {% for i in range(1, 5) %}
+    <details class="faq-eintrag">
+      <summary data-i18n="bdl_faq_{{ i }}_q">{{ t('bdl_faq_' ~ i ~ '_q') }}</summary>
+      <p data-i18n="bdl_faq_{{ i }}_a">{{ t('bdl_faq_' ~ i ~ '_a') }}</p>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="cta-section u-bg-b">
+  <div class="inner u-center-pad">
+    <h2 data-i18n="bdl_cta_h2">{{ t('bdl_cta_h2') }}</h2>
+    <p class="cta-text" data-i18n="bdl_cta_p">{{ t('bdl_cta_p') }}</p>
+    <div class="u-flex-wrap-center">
+      <a href="{{ live('index.html#anmelden') }}" class="btn btn-green" data-i18n="bdl_cta_register">{{ t('bdl_cta_register') }}</a>
+      <a href="{{ live('dashboard/login') }}" class="btn btn-amber" data-i18n="bdl_cta_login">{{ t('bdl_cta_login') }}</a>
+      <a href="{{ live('biocomm') }}" class="btn btn-amber" data-i18n="bdl_cta_back">{{ t('bdl_cta_back') }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('omn_lang', lang);
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || TRANSLATIONS.de;
+  document.getElementById('html-root').setAttribute('lang', lang);
+  document.title = T.bdl_page_title || 'OpenMycoNet';
+  var metaDesc = document.getElementById('meta-description'); if (metaDesc) metaDesc.setAttribute('content', T.bdl_meta_desc || '');
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-alt');
+    if (T[key] !== undefined) el.setAttribute('alt', T[key]);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
+{% endblock %}

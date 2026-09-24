@@ -77,6 +77,9 @@ GROUPS = [
     ("biocomm-software", "bcs_h1", [
         "bcs_", "bc_sw_", "bc_status_1",
     ]),
+    ("biocomm-datenlabor", "bdl_h1", [
+        "bdl_",
+    ]),
     ("entwicklungsstand", {
         "de": "Entwicklungsstand von Hardware & Software",
         "en": "Development status of hardware & software",

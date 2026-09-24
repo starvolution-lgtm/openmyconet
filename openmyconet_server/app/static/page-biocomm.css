@@ -12,6 +12,8 @@
 .teaser-card { background:rgba(255,255,255,0.03); border:1px solid #0a6040; border-radius:8px; padding:1.6rem; text-align:center; }
 .teaser-card h3 { color:#e8f5e0; font-size:1rem; margin-bottom:0.6rem; }
 .teaser-card a.btn { margin-top:0.8rem; }
+.teaser-card-breit { grid-column:1 / -1; border-color:rgba(212,160,48,0.5); }
+.bc-sim { background:rgba(240,184,74,0.12); color:#f0b84a; border-color:rgba(212,160,48,0.5); }
 .status-table { width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:0.92rem; }
 .status-table th, .status-table td { text-align:left; padding:0.7rem 0.9rem; border-bottom:1px solid #0a6040; }
 .status-table th { color:#d4a030; font-family:'JetBrains Mono',monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; }
