@@ -89,7 +89,7 @@
                 <label class="dl-check"><input type="checkbox" id="dl-vollskala"> volle Skala (mit allen Spitzen)</label>
             </div>
             <div class="dl-zeile" id="dl-rohstunden-zeile">
-                <span class="label">Stunden mit Rohdaten (250 Hz):</span>
+                <span class="label">Stunden mit Rohdaten (Simulation: 250 Werte/s):</span>
                 <span id="dl-rohstunden"></span>
             </div>
             <p id="dl-saison-hinweis" class="label" hidden></p>
@@ -97,15 +97,16 @@
             <div class="dl-chart" id="dl-chart"></div>
             <p id="dl-ablesen" class="dl-ablesen" aria-live="polite"></p>
             <p id="dl-meta" class="label"></p>
+            <details class="dl-technik"><summary>Technische Details</summary><p id="dl-technik" class="label"></p></details>
             <ul class="dl-legende" aria-label="Legende">
-                <li><span class="dl-l dl-l-mittel"></span>Mittelwert</li>
-                <li><span class="dl-l dl-l-band"></span>Minimum bis Maximum</li>
-                <li><span class="dl-l dl-l-kontrolle"></span>Kontrollreihe (Mittelwert)</li>
-                <li><span class="dl-l dl-l-stim-ok"></span>Stimulation ausgeführt</li>
-                <li><span class="dl-l dl-l-stim-teil"></span>teilweise</li>
-                <li><span class="dl-l dl-l-stim-fehl"></span>fehlgeschlagen / abgebrochen</li>
-                <li><span class="dl-l dl-l-qual"></span>Qualitätskennzeichen</li>
-                <li><span class="dl-l dl-l-luecke"></span>Lücke = keine Daten (nie als Null gezeichnet)</li>
+                <li data-legende="mittel"><span class="dl-l dl-l-mittel"></span>Mittelwert</li>
+                <li data-legende="band"><span class="dl-l dl-l-band"></span>Minimum bis Maximum</li>
+                <li data-legende="kontrolle" hidden><span class="dl-l dl-l-kontrolle"></span>Kontrollreihe (Mittelwert)</li>
+                <li data-legende="ok" hidden><span class="dl-l dl-l-stim-ok"></span>Stimulation ausgeführt</li>
+                <li data-legende="teil" hidden><span class="dl-l dl-l-stim-teil"></span>Stimulation teilweise ausgeführt</li>
+                <li data-legende="fehl" hidden><span class="dl-l dl-l-stim-fehl"></span>Stimulation fehlgeschlagen / abgebrochen</li>
+                <li data-legende="qual" hidden><span class="dl-l dl-l-qual"></span>Qualitätskennzeichen</li>
+                <li data-legende="luecke" hidden><span class="dl-l dl-l-luecke"></span>Lücke = keine Daten (nie als Null gezeichnet)</li>
             </ul>
         </section>
 
@@ -120,8 +121,9 @@
 
         <section class="dl-panel" id="dl-roh" aria-labelledby="dl-roh-titel">
             <h2 id="dl-roh-titel" class="dl-h2-klein">Rohdaten-Ausschnitt</h2>
-            <p class="label">Einzelne Abtastwerte (250 pro Sekunde) aus den gespeicherten Rohdatenblöcken,
-               beim Abruf mit der Kalibrierung des Messkanals in µV umgerechnet.
+            <p class="label">Einzelne Abtastwerte aus den gespeicherten Rohdatenblöcken, beim Abruf mit der
+               Kalibrierung des Messkanals in µV umgerechnet. Die Simulation zeichnet 250 Werte pro Sekunde auf;
+               die Datenarchitektur ist für bis zu 1000 Werte pro Sekunde je Messkanal ausgelegt.
                Wähle oben eine Rohdatenstunde oder in der Ereignisliste „Rohdaten ansehen“.</p>
             <div class="dl-zeile">
                 <button type="button" id="dl-roh-zurueck" aria-label="10 Sekunden früher">◀ 10 s</button>
@@ -130,6 +132,7 @@
             </div>
             <div class="dl-chart dl-chart-roh" id="dl-roh-chart"></div>
             <p id="dl-roh-meta" class="label"></p>
+            <details class="dl-technik"><summary>Technische Details</summary><p id="dl-roh-technik" class="label"></p></details>
         </section>
         </div>
     </div>

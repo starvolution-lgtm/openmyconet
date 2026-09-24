@@ -17,6 +17,8 @@ body.dl-breit {
     max-width: 1140px; background: var(--s-bg); color: var(--s-text);
     font-family: 'Lora', Georgia, serif; line-height: 1.6;
 }
+/* hidden muss gegen display:flex/inline-flex der Seitenregeln gewinnen */
+body.dl-breit [hidden] { display: none !important; }
 body.dl-breit nav { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.04em; border-bottom: 1px solid var(--s-linie); padding-bottom: 12px; }
 body.dl-breit a { color: var(--s-akzent); text-decoration: none; }
 body.dl-breit a:hover { text-decoration: underline; }
@@ -150,3 +152,9 @@ body.dl-breit a:focus-visible, .dl-info summary:focus-visible { outline: 2px sol
     .dl-roh-zeit { min-width: 0; }
     #dl-ereignisse { display: block; overflow-x: auto; }
 }
+
+/* Technische Details (Tabellennamen, Kodierung) fuer Neugierige, zugeklappt */
+.dl-technik { margin: 2px 0 6px; font-size: 0.85em; }
+.dl-technik summary { cursor: pointer; color: var(--w-leise); }
+.dl-technik summary:hover { color: var(--w-cyan); }
+.dl-technik p { margin: 6px 0 0; font-family: 'JetBrains Mono', monospace; font-size: 0.92em; word-break: break-word; }

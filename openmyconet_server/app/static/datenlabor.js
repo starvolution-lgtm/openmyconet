@@ -400,7 +400,9 @@
     var raster = RASTER[res.aufloesung];
     var alle = P.concat(K);
     $('dl-meta').textContent = '';
+    $('dl-technik').textContent = '';
     if (!P.length) {
+      legende({});
       box.textContent = '';
       var leer = document.createElement('p');
       leer.className = 'dl-leer-chart';
@@ -467,14 +469,37 @@
     }
     ablesen(f, P, K, res, tz);
 
+    var zustaende = {};
+    res.stimulationen.forEach(function (s) {
+      var t = s.start || s.versuch || s.geplant;
+      if (t === null || t < zr[0] || t > zr[1]) return;
+      zustaende[s.zustand === 'EXECUTED' ? 'ok' : (s.zustand === 'PARTIAL' ? 'teil' : 'fehl')] = true;
+    });
+    legende({
+      mittel: true, band: true, kontrolle: K.length > 0, ok: zustaende.ok, teil: zustaende.teil, fehl: zustaende.fehl,
+      qual: res.qualitaet.length > 0,
+      luecke: abschnitte(P, raster, tf).length > 1
+    });
+    $('dl-technik').textContent = 'Tabelle sandbox.derived_aggregate · Auflösung ' + res.aufloesung +
+      (res.aufloesung === '1d' ? ' (zur Anzeige aus 1h verdichtet)' : '') + ' · Messreihe ' + r.code +
+      ' · Messgröße ' + res.kanal + ' · Ereignisse aus sandbox.stimulation und sandbox.quality_annotation' +
+      (K.length ? ' · Kontrollreihe ' + (kontrollReihe() || {}).code : '');
+
     var n = P.reduce(function (a, p) { return a + p[5]; }, 0);
     var nErw = P.reduce(function (a, p) { return a + (p[6] || 0); }, 0);
     var aufl = { '1min': 'Minutenwerte', '1h': 'Stundenwerte', '1d': 'Tageswerte (aus Stundenwerten)' }[res.aufloesung];
     $('dl-meta').textContent = aufl + ' · ' + P.length + ' Zeitfenster · ' + zahl(n, 0) + ' Einzelwerte' +
       (nErw ? ' von ' + zahl(nErw, 0) + ' erwarteten (' + zahl(n / nErw * 100, 1) + ' %)' : '') +
-      ' · Ortszeit ' + tz + ' · Quelle: sandbox.derived_aggregate' +
+      ' · Ortszeit ' + tz + ' · Quelle: Sandbox · aggregierte Daten' +
       (sk.gekappt ? ' · Skala ohne seltene Spitzen (Extremwerte ' + zahl(sk.echtMin, 1) + ' bis ' + zahl(sk.echtMax, 1) + ' ' +
         res.einheit + ', „volle Skala“ zeigt sie)' : '');
+  }
+
+  // Legende: nur zeigen, was im Diagramm gerade tatsaechlich vorkommt
+  function legende(sichtbar) {
+    document.querySelectorAll('[data-legende]').forEach(function (li) {
+      li.hidden = !sichtbar[li.getAttribute('data-legende')];
+    });
   }
 
   // Maus/Tastatur: naechsten Punkt ablesen
@@ -594,6 +619,7 @@
         'während der stündlichen Leitfähigkeitsmessung (volle Stunde + 35 s) pausiert die Aufzeichnung planmäßig.';
       box.appendChild(leer);
       $('dl-roh-meta').textContent = '';
+      $('dl-roh-technik').textContent = '';
       return;
     }
     var werte = S.concat(K).map(function (s) { return s[1]; });
@@ -607,9 +633,15 @@
       el('circle', { cx: f.sx(s[0]), cy: f.sy(s[1]), r: 2, class: 'dl-saett' }, f.ebenen.oben);
     });
     var saett = S.filter(function (s) { return s[3]; }).length;
-    $('dl-roh-meta').textContent = S.length + ' Abtastwerte (' + res.rate_hz + ' Hz) · Sample-Index ' + S[0][2] + ' bis ' + S[S.length - 1][2] +
+    $('dl-roh-meta').textContent = S.length + ' Abtastwerte (Simulation: ' + res.rate_hz + ' pro Sekunde)' +
       (saett ? ' · ' + saett + ' Werte in ADC-Sättigung (rot)' : '') + (K.length ? ' · gestrichelt: Kontrollreihe' : '') +
-      ' · umgerechnet: Zählwert × LSB ÷ Verstärkung (aus der Kanal-Kalibrierung)';
+      ' · Quelle: Sandbox · Rohdaten, in µV umgerechnet';
+    var q = res.quelle || {};
+    $('dl-roh-technik').textContent = 'Tabelle sandbox.sample_block · Sample-Index ' + S[0][2] + ' bis ' + S[S.length - 1][2] +
+      (q.kodierung ? ' · Kodierung ' + q.kodierung : '') + (q.kompression ? ' · Kompression ' + q.kompression : '') +
+      (q.adc ? ' · ' + q.adc : '') + (q.lsb_uv ? ' · LSB ' + zahl(q.lsb_uv, 4) + ' µV' : '') +
+      (q.gain ? ' · Verstärkung ' + zahl(q.gain, 0) + ' (' + q.gain_quelle + ')' : '') +
+      ' · Umrechnung: Zählwert × LSB ÷ Verstärkung';
   }
 
   // ------------------------------------------- Ansicht in der Adresse ---

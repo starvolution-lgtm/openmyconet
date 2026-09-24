@@ -194,6 +194,9 @@ def test_rohdaten_kalibriert(labor):
     assert j['is_simulated'] is True and j['einheit'] == 'µV'
     s = j['samples']
     assert len(s) in (2500, 2501)
+    # Herkunft der Umrechnung kommt aus dem Messkanal, nicht aus Konstanten
+    assert j['rate_hz'] == 250
+    assert j['quelle']['lsb_uv'] == 7.8125 and j['quelle']['gain'] == 100 and j['quelle']['gain_quelle'] == 'MANUAL'
     idx = [x[2] for x in s]
     assert idx == sorted(idx) and idx[-1] - idx[0] == len(s) - 1
     # Umrechnung Zaehlwert * 7,8125 uV / Verstaerkung 100 -> Vielfache von 0,078125

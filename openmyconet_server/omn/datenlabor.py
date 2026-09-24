@@ -279,7 +279,7 @@ def api_roh(nutzer):
     bis = von + timedelta(seconds=dauer)
     bloecke = db.session.execute(text("""
         SELECT sb.time_anchor, sb.sample_rate_hz, sb.sample_count, sb.first_sample_index, sb.value_encoding,
-               sb.compression, sb.payload_inline, mc.gain, mc.calibration
+               sb.compression, sb.payload_inline, mc.gain, mc.calibration, mc.gain_source
           FROM sandbox.sample_block sb
           JOIN sandbox.measurement_channel mc ON mc.id = sb.measurement_channel_id
           JOIN sandbox.acquisition_run r ON r.id = mc.acquisition_run_id
@@ -287,12 +287,14 @@ def api_roh(nutzer):
            AND sb.time_anchor < :bis
            AND sb.time_anchor + make_interval(secs => (sb.sample_count / sb.sample_rate_hz)::float8) > :von
          ORDER BY sb.time_anchor"""), {'s': series_id, 'von': von, 'bis': bis}).all()
-    samples = []
-    for anker, rate, n, erster, enc, komp, payload, gain, kalib in bloecke:
+    samples, quelle = [], {}
+    for anker, rate, n, erster, enc, komp, payload, gain, kalib, gain_quelle in bloecke:
         if enc != 'int16le' or not kalib or 'lsb_uv' not in kalib or not gain:
             continue
         werte = struct.unpack(f'<{n}h', _entpacken(bytes(payload), komp))
         faktor = float(kalib['lsb_uv']) / float(gain)
+        quelle = {'kodierung': enc, 'kompression': komp, 'adc': kalib.get('adc'),
+                  'lsb_uv': float(kalib['lsb_uv']), 'gain': float(gain), 'gain_quelle': gain_quelle}
         rate = float(rate)
         a = max(0, int((von - anker).total_seconds() * rate))
         b = min(n, int((bis - anker).total_seconds() * rate) + 1)
@@ -300,5 +302,6 @@ def api_roh(nutzer):
         for i in range(a, b):
             samples.append([round(t0 + i * 1000 / rate, 1), round(werte[i] * faktor, 3), erster + i,
                             1 if abs(werte[i]) >= 32767 else 0])
-    return _antwort({'reihe': series_id, 'einheit': 'µV', 'rate_hz': 250,
+    return _antwort({'reihe': series_id, 'einheit': 'µV', 'rate_hz': int(rate) if bloecke else None,
+                     'quelle': quelle,
                      'felder': ['t_ms', 'wert', 'sample_index', 'saettigung'], 'samples': samples})
