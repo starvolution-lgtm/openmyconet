@@ -47,7 +47,16 @@ if printf '%s' "$DB_URL" | grep -q '^postgresql'; then
     # root_biocomm_rollen.sh dessen Passwort in ~/.pgpass eingetragen hat.
     DUMP_USER=omn
     grep -qE '^[^:]*:[^:]*:[^:]*:omn_owner:' "$PGPASSFILE" 2>/dev/null && DUMP_USER=omn_owner
-    pg_dump -Fc -Z 6 -h 127.0.0.1 -U "$DUMP_USER" -d "$PGDB" -f "$OUT"
+    # Generierte Sandbox-Daten nicht sichern: `flask sandbox-generieren` erzeugt sie
+    # jederzeit identisch neu. Struktur + Stammdaten (ref_*, substrate,
+    # coverage_mapping*) bleiben im Dump. pg_dump >= 17: --filter.
+    FILTER=$(mktemp); trap 'rm -f "$FILTER"' EXIT
+    psql -X -h 127.0.0.1 -U "$DUMP_USER" -d "$PGDB" -Atc \
+        "SELECT 'exclude table_data ' || quote_ident(schemaname) || '.' || quote_ident(tablename)
+           FROM pg_tables WHERE schemaname IN ('sandbox', 'sandbox_private')
+            AND tablename NOT LIKE 'ref\_%' AND tablename NOT IN ('substrate', 'coverage_mapping', 'coverage_mapping_version')" \
+        > "$FILTER"
+    pg_dump -Fc -Z 6 -h 127.0.0.1 -U "$DUMP_USER" -d "$PGDB" --filter="$FILTER" -f "$OUT"
 
     N_TABS=$(pg_restore --list "$OUT" | grep -c 'TABLE DATA' || true)
     if [ "$N_TABS" -lt 15 ]; then

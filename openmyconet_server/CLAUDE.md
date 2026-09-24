@@ -96,6 +96,21 @@ Backups dumpen deshalb als `omn_owner` (`pg_read_all_data WITH INHERIT TRUE`),
 `staging_db_reset.sh` tauscht nur `public` aus. Neue Schema-Änderungen = neue
 Migration + neue SQL-Datei (`biocomm_0002_…`), die 0001er bleiben unverändert.
 
+**Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
+[--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen
+Szenarien v1 (Spezifikation v7 4.1) auf der festen Jahresachse 2025 — Stundenwerte
+fürs Jahr, je Jahreszeit eine Woche Minutenwerte + eine Stunde Rohdaten (250 Hz,
+mit Stimulation bzw. den Störfällen des Datenqualitätsszenarios). Parametergrundlage
+`ARBITRARY_DEMO` (Robby, 24.09.2026); die Szenario-Texte in `szenarien.py` sind
+öffentlich. Feste Seeds → bytegleich reproduzierbar; (key, version) vorhanden →
+übersprungen, Neuaufbau nur mit `--zuruecksetzen` (TRUNCATE als `omn_owner`,
+Stammdaten bleiben). Exakte Koordinaten schreibt er als `omn_geo`. Kontroll- und
+Stimulationsreihe teilen dieselbe synthetische Grundlage — die Differenz ist genau
+die Demo-Annahme. Ganzes Jahr: ~430 MB, lokal 5½ min. **Nicht im Backup** (siehe
+`deploy/BACKUP.md`), nach einem Restore neu generieren. `zlib`-Fallback, wo
+`compression.zstd` fehlt (CI läuft mit Python 3.12, Server mit 3.14).
+Tests: `tests/test_sandbox_generator.py` (nur PG, 20 Tage).
+
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
 `FLASK_APP=wsgi python -m flask db upgrade`. `migrate_add_columns.py` /
 `migrate_add_indexes.py` sind auf No-op-Stubs reduziert (legten die gedroppte

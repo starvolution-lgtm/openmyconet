@@ -76,6 +76,19 @@ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5000/
 FLASK_APP=wsgi venv/bin/python -m flask db current
 ```
 
+### Sandbox-Daten sind NICHT im Backup (seit 2026-09-24)
+
+`backup_db.sh` und `backup_storagebox.sh` nehmen die **Inhalte** der generierten
+Sandbox-Tabellen aus (`pg_dump --filter`, Liste zur Laufzeit aus `pg_tables`:
+alles in `sandbox`/`sandbox_private` außer `ref_*`, `substrate`, `coverage_mapping*`).
+Struktur und Stammdaten bleiben im Dump. Grund: Der versionierte Generator
+erzeugt dieselben Daten jederzeit bytegleich neu (Jahr 2025: ~430 MB, 5–15 min),
+das spart Platz und Backup-Zeit (lokal getestet: Dump 144 MB → 0,4 MB).
+**Nach jeder Wiederherstellung** deshalb einmal:
+```
+cd /home/omn/app && FLASK_APP=wsgi venv/bin/python -m flask sandbox-generieren
+```
+
 ### BioComm-Schemas (sandbox/live) zurückspielen — nur wenn sie selbst beschädigt sind
 
 Seit der Migration `3f1b2c4d5e6a` gehören `biocomm_common`, `sandbox*`, `live*`

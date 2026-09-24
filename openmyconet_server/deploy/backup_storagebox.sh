@@ -55,21 +55,37 @@ STAGING_DB=$(db_aus_env /home/omn/app-staging/.env)
 DUMP_USER=omn
 grep -qE '^[^:]*:[^:]*:[^:]*:omn_owner:' "$PGPASSFILE" 2>/dev/null && DUMP_USER=omn_owner
 
-pg_dump -Fc -Z 0 -h 127.0.0.1 -U "$DUMP_USER" -d "$PROD_DB" -f "$ARBEIT/prod.dump" \
-    || fehler "pg_dump $PROD_DB fehlgeschlagen"
+# Generierte Sandbox-Daten nicht sichern: `flask sandbox-generieren` erzeugt sie
+# jederzeit identisch neu. Struktur + Stammdaten (ref_*, substrate,
+# coverage_mapping*) bleiben im Dump. pg_dump >= 17: --filter. Dieselbe Auswahl
+# (sandbox_daten.sql-Bedingung unten) gilt fuer die Referenzzaehlung.
+filter_fuer() {
+    psql -X -h 127.0.0.1 -U "$DUMP_USER" -d "$1" -Atc \
+        "SELECT 'exclude table_data ' || quote_ident(schemaname) || '.' || quote_ident(tablename)
+           FROM pg_tables WHERE schemaname IN ('sandbox', 'sandbox_private')
+            AND tablename NOT LIKE 'ref\_%' AND tablename NOT IN ('substrate', 'coverage_mapping', 'coverage_mapping_version')" \
+        > "$ARBEIT/filter_$1.txt"
+}
+filter_fuer "$PROD_DB" || fehler "Filterliste fuer $PROD_DB fehlgeschlagen"
+pg_dump -Fc -Z 0 -h 127.0.0.1 -U "$DUMP_USER" -d "$PROD_DB" --filter="$ARBEIT/filter_$PROD_DB.txt" \
+    -f "$ARBEIT/prod.dump" || fehler "pg_dump $PROD_DB fehlgeschlagen"
 N_TABS=$(pg_restore --list "$ARBEIT/prod.dump" | grep -c 'TABLE DATA' || true)
 [ "$N_TABS" -ge 15 ] || fehler "prod.dump enthaelt nur $N_TABS Tabellen"
 if [ -n "$STAGING_DB" ]; then
-    pg_dump -Fc -Z 0 -h 127.0.0.1 -U "$DUMP_USER" -d "$STAGING_DB" -f "$ARBEIT/staging.dump" \
-        || fehler "pg_dump $STAGING_DB fehlgeschlagen"
+    filter_fuer "$STAGING_DB" || fehler "Filterliste fuer $STAGING_DB fehlgeschlagen"
+    pg_dump -Fc -Z 0 -h 127.0.0.1 -U "$DUMP_USER" -d "$STAGING_DB" --filter="$ARBEIT/filter_$STAGING_DB.txt" \
+        -f "$ARBEIT/staging.dump" || fehler "pg_dump $STAGING_DB fehlgeschlagen"
 fi
 # Exakte Zeilenzahlen je Tabelle direkt nach dem Dump -- Referenz fuer den
 # Restore-Test (Schreibzugriffe dazwischen sind moeglich, daher dort nur Warnung).
+# Ohne die nicht gesicherten Sandbox-Daten (gleiche Bedingung wie filter_fuer).
 psql -h 127.0.0.1 -U "$DUMP_USER" -d "$PROD_DB" -Atq > "$ARBEIT/prod_tabellen.txt" 2>/dev/null <<'SQL' || true
-SELECT format('SELECT %L || ''='' || count(*) FROM %I.%I;', table_schema || '.' || table_name, table_schema, table_name)
-  FROM information_schema.tables
- WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog', 'information_schema')
- ORDER BY table_schema, table_name
+SELECT format('SELECT %L || ''='' || count(*) FROM %I.%I;', t.table_schema || '.' || t.table_name, t.table_schema, t.table_name)
+  FROM information_schema.tables t
+ WHERE t.table_type = 'BASE TABLE' AND t.table_schema NOT IN ('pg_catalog', 'information_schema')
+   AND NOT (t.table_schema IN ('sandbox', 'sandbox_private') AND t.table_name NOT LIKE 'ref\_%'
+            AND t.table_name NOT IN ('substrate', 'coverage_mapping', 'coverage_mapping_version'))
+ ORDER BY t.table_schema, t.table_name
 \gexec
 SQL
 crontab -l > "$ARBEIT/crontab.txt" 2>/dev/null || true
