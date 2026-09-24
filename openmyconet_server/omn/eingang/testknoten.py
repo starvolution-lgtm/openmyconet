@@ -19,6 +19,7 @@ from datetime import datetime, timedelta, timezone
 
 import sqlalchemy as sa
 
+from omn.eingang.einlesen import sql
 from omn.eingang.format_v0 import GENESIS, Block, paket_bauen
 
 EINGANG_BIO = 'U8/AIN0 über INA333'
@@ -80,7 +81,7 @@ def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=time
         raise ValueError(f'paket_s muss ein Vielfaches von {TEMP_INTERVALL_S} sein')
     geraet = f'SBX-NODE-EINGANG-{name}'
     with engine.begin() as c:
-        q = lambda sql, **p: c.execute(sa.text(sql), p).scalar()
+        q = lambda text, **p: c.execute(sa.text(text), p).scalar()
         site = q('SELECT id FROM sandbox.site WHERE site_code = :c', c=STANDORT)
         if site is None:
             site = q("INSERT INTO sandbox.site (site_code, grid_system, grid_cell_id) VALUES (:c, 'MGRS_10KM', '32UNB00')"
@@ -127,16 +128,14 @@ def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=time
 def pakete_aus_datenbank(engine, lauf_id, schema='sandbox'):
     """Exportiert die Batches eines Laufs (Ablage SAMPLE_BLOCKS) als Pakete v0,
     Bloecke in Speicherreihenfolge. Fuer Batches des Sandbox-Generators."""
-    if schema not in ('sandbox', 'live'):
-        raise ValueError(schema)
     s = schema
     with engine.connect() as c:
-        kopf = c.execute(sa.text(
-            f'SELECT d.device_serial, r.node_run_key FROM {s}.acquisition_run r JOIN {s}.device d ON d.id = r.device_id'
+        kopf = c.execute(sql(s,
+            'SELECT d.device_serial, r.node_run_key FROM {s}.acquisition_run r JOIN {s}.device d ON d.id = r.device_id'
             ' WHERE r.id = :r'), {'r': lauf_id}).one()
-        batches = c.execute(sa.text(
-            f'SELECT id, batch_sequence_no, batch_content, lower(measured_period) AS von, upper(measured_period) AS bis,'
-            f' previous_batch_hash FROM {s}.origin_batch'
+        batches = c.execute(sql(s,
+            'SELECT id, batch_sequence_no, batch_content, lower(measured_period) AS von, upper(measured_period) AS bis,'
+            ' previous_batch_hash FROM {s}.origin_batch'
             " WHERE acquisition_run_id = :r AND payload_location = 'SAMPLE_BLOCKS' ORDER BY batch_sequence_no"),
             {'r': lauf_id}).all()
         pakete = []
@@ -144,10 +143,10 @@ def pakete_aus_datenbank(engine, lauf_id, schema='sandbox'):
             bloecke = [Block(z.input_label, z.quantity_code, z.first_sample_index, z.sample_count, z.time_anchor,
                              float(z.sample_rate_hz), z.value_encoding, z.compression, bytes(z.payload_inline),
                              None if z.device_quality is None else bytes(z.device_quality))
-                       for z in c.execute(sa.text(
-                           f'SELECT hc.input_label, mc.quantity_code, sb.* FROM {s}.sample_block sb'
-                           f' JOIN {s}.measurement_channel mc ON mc.id = sb.measurement_channel_id'
-                           f' JOIN {s}.hardware_channel hc ON hc.id = mc.hardware_channel_id'
+                       for z in c.execute(sql(s,
+                           'SELECT hc.input_label, mc.quantity_code, sb.* FROM {s}.sample_block sb'
+                           ' JOIN {s}.measurement_channel mc ON mc.id = sb.measurement_channel_id'
+                           ' JOIN {s}.hardware_channel hc ON hc.id = mc.hardware_channel_id'
                            ' WHERE sb.origin_batch_id = :b ORDER BY sb.id'), {'b': b.id})]
             pakete.append(paket_bauen(kopf.device_serial, kopf.node_run_key, b.batch_sequence_no, b.batch_content,
                                       b.von, b.bis, bytes(b.previous_batch_hash), bloecke))

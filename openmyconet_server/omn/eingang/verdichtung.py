@@ -28,10 +28,9 @@ measurement_channel.calibration (lsb_uv) und gain, sonst nur gleiche Einheit.
 """
 from datetime import datetime, timedelta, timezone
 
-import sqlalchemy as sa
 
 from omn.eingang import format_v0 as fmt
-from omn.eingang.einlesen import _schema, sperren
+from omn.eingang.einlesen import _schema, sperren, sql
 
 AUFLOESUNGEN = (('1min', 60), ('1h', 3600))
 _EPOCHE = datetime(1970, 1, 1, tzinfo=timezone.utc)
@@ -45,8 +44,8 @@ def _us(t):
 def lueckenloser_anfang(c, s, lauf_id):
     """Groesstes k, fuer das Sequenz 1..k je einen CANONICAL- und LINKED-Kandidaten hat."""
     k = 0
-    for seq, kette in c.execute(sa.text(
-            f"SELECT batch_sequence_no, chain_state FROM {s}.origin_batch"
+    for seq, kette in c.execute(sql(s,
+            "SELECT batch_sequence_no, chain_state FROM {s}.origin_batch"
             " WHERE acquisition_run_id = :r AND batch_status = 'CANONICAL' ORDER BY batch_sequence_no"),
             {'r': lauf_id}):
         if seq != k + 1 or kette != 'LINKED':
@@ -61,8 +60,8 @@ def verdichten(engine, schema='sandbox', lauf_ids=None):
     s = _schema(schema)
     if lauf_ids is None:
         with engine.connect() as c:
-            lauf_ids = c.execute(sa.text(
-                f"SELECT DISTINCT acquisition_run_id FROM {s}.origin_batch WHERE batch_status = 'CANONICAL'"
+            lauf_ids = c.execute(sql(s,
+                "SELECT DISTINCT acquisition_run_id FROM {s}.origin_batch WHERE batch_status = 'CANONICAL'"
                 ' ORDER BY 1')).scalars().all()
     stat = {'laeufe': 0, 'zeilen': {a: 0 for a, _ in AUFLOESUNGEN}, 'uebersprungen': []}
     for lauf_id in lauf_ids:
@@ -77,12 +76,12 @@ def _lauf(c, s, lauf_id, stat):
     k = lueckenloser_anfang(c, s, lauf_id)
     if k == 0:
         return
-    paare = c.execute(sa.text(
-        f'SELECT roh.id AS roh_id, roh.unit_code AS roh_einheit, roh.calibration, roh.gain,'
-        f' abg.id AS abg_id, abg.unit_code AS abg_einheit'
-        f' FROM {s}.measurement_channel roh'
-        f' JOIN {s}.derived_channel_source q ON q.source_channel_id = roh.id'
-        f" JOIN {s}.measurement_channel abg ON abg.id = q.derived_channel_id AND abg.data_kind = 'DERIVED'"
+    paare = c.execute(sql(s,
+        'SELECT roh.id AS roh_id, roh.unit_code AS roh_einheit, roh.calibration, roh.gain,'
+        ' abg.id AS abg_id, abg.unit_code AS abg_einheit'
+        ' FROM {s}.measurement_channel roh'
+        ' JOIN {s}.derived_channel_source q ON q.source_channel_id = roh.id'
+        " JOIN {s}.measurement_channel abg ON abg.id = q.derived_channel_id AND abg.data_kind = 'DERIVED'"
         " WHERE roh.acquisition_run_id = :r AND roh.data_kind = 'RAW' ORDER BY roh.id"), {'r': lauf_id}).all()
     for p in paare:
         if p.roh_einheit == p.abg_einheit:
@@ -99,31 +98,31 @@ def _lauf(c, s, lauf_id, stat):
 
 
 def _kanal(c, s, lauf_id, k, roh_id, abg_id, faktor, stat):
-    filter_ = (f" FROM {s}.sample_block sb JOIN {s}.origin_batch ob ON ob.id = sb.origin_batch_id"
-               " WHERE sb.measurement_channel_id = :mc AND ob.acquisition_run_id = :r"
+    filter_ = (' FROM {s}.sample_block sb JOIN {s}.origin_batch ob ON ob.id = sb.origin_batch_id'
+               ' WHERE sb.measurement_channel_id = :mc AND ob.acquisition_run_id = :r'
                " AND ob.batch_status = 'CANONICAL' AND ob.batch_sequence_no <= :k")
     ende_sql = 'sb.time_anchor + make_interval(secs => (sb.sample_count / sb.sample_rate_hz)::double precision)'
     par = {'mc': roh_id, 'r': lauf_id, 'k': k}
-    grenze = c.execute(sa.text(f'SELECT max({ende_sql})' + filter_), par).scalar()
+    grenze = c.execute(sql(s, 'SELECT max(' + ende_sql + ')' + filter_), par).scalar()
     if grenze is None:
         return
     grenze_us = _us(grenze)
     ab_us = {}
     for aufl, breite in AUFLOESUNGEN:
-        letzte = c.execute(sa.text(
-            f'SELECT max(bucket_start) FROM {s}.derived_aggregate WHERE measurement_channel_id = :m AND resolution = :a'),
+        letzte = c.execute(sql(s,
+            'SELECT max(bucket_start) FROM {s}.derived_aggregate WHERE measurement_channel_id = :m AND resolution = :a'),
             {'m': abg_id, 'a': aufl}).scalar()
         ab_us[aufl] = None if letzte is None else _us(letzte) + breite * _US
     # nur Bloecke laden, die noch ein offenes Fenster erreichen koennen
     untergrenze = None if None in ab_us.values() else min(ab_us.values())
 
-    sql = ('SELECT sb.time_anchor, sb.sample_count, sb.sample_rate_hz, sb.value_encoding, sb.compression,'
+    abfrage = ('SELECT sb.time_anchor, sb.sample_count, sb.sample_rate_hz, sb.value_encoding, sb.compression,'
            ' sb.payload_inline' + filter_)
     if untergrenze is not None:
-        sql += f' AND {ende_sql} > :ab'
+        abfrage += ' AND ' + ende_sql + ' > :ab'
         par['ab'] = _EPOCHE + timedelta(microseconds=untergrenze)
     fenster = {aufl: {} for aufl, _ in AUFLOESUNGEN}      # aufl -> start_us -> [n, min, max, summe]
-    for b in c.execute(sa.text(sql + ' ORDER BY sb.time_anchor'), par):
+    for b in c.execute(sql(s, abfrage + ' ORDER BY sb.time_anchor'), par):
         werte = fmt.werte_dekodieren(fmt.entpacken(bytes(b.payload_inline), b.compression), b.value_encoding)
         t0, rate = _us(b.time_anchor), float(b.sample_rate_hz)
         for i, w in enumerate(werte):
@@ -145,8 +144,8 @@ def _kanal(c, s, lauf_id, k, roh_id, abg_id, faktor, stat):
         zeilen = [{'m': abg_id, 'a': aufl, 'b': _EPOCHE + timedelta(microseconds=start), 'n': n, 'lo': lo, 'hi': hi,
                    'mw': summe / n} for start, (n, lo, hi, summe) in sorted(fenster[aufl].items())]
         if zeilen:
-            erg = c.execute(sa.text(
-                f'INSERT INTO {s}.derived_aggregate (measurement_channel_id, resolution, bucket_start, samples_expected,'
+            erg = c.execute(sql(s,
+                'INSERT INTO {s}.derived_aggregate (measurement_channel_id, resolution, bucket_start, samples_expected,'
                 ' samples_recorded, value_min, value_max, value_mean, quality_mask)'
                 ' VALUES (:m, :a, :b, NULL, :n, :lo, :hi, :mw, 0) ON CONFLICT DO NOTHING'), zeilen)
             stat['zeilen'][aufl] += max(erg.rowcount, 0)

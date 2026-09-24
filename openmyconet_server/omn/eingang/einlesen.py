@@ -80,6 +80,13 @@ def _schema(schema):
     return schema
 
 
+def sql(schema, text):
+    """SQL-Text fuer das Zielschema: `{s}` wird durch das Schema ersetzt, das
+    vorher gegen die Positivliste SCHEMAS geprueft wird. Werte laufen immer
+    als gebundene Parameter, nie in den Text."""
+    return sa.text(text.replace('{s}', _schema(schema)))
+
+
 def _jetzt():
     return datetime.now(timezone.utc)
 
@@ -119,8 +126,8 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
     with engine.begin() as c:
         bridge_id = None
         if bridge:
-            bridge_id = c.execute(sa.text(
-                f"SELECT id FROM {s}.device WHERE device_serial = :b AND device_role = 'BRIDGE'"), {'b': bridge}).scalar()
+            bridge_id = c.execute(sql(s,
+                "SELECT id FROM {s}.device WHERE device_serial = :b AND device_role = 'BRIDGE'"), {'b': bridge}).scalar()
             if bridge_id is None:
                 raise ValueError(f'Bridge {bridge!r} unbekannt')
         lauf, lauf_grund = _lauf_finden(c, s, paket) if paket else (None, None)
@@ -134,8 +141,8 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
 
 def _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, transport, bridge_id, transport_ref,
                  empfangen_um):
-    schon = c.execute(sa.text(
-        f'SELECT id, delivery_status, origin_batch_id FROM {s}.batch_delivery'
+    schon = c.execute(sql(s,
+        'SELECT id, delivery_status, origin_batch_id FROM {s}.batch_delivery'
         ' WHERE transport_code = :t AND transport_hash = :h AND bridge_device_id IS NOT DISTINCT FROM :b'
         ' ORDER BY id LIMIT 1'), {'t': transport, 'h': thash, 'b': bridge_id}).first()
     if schon:
@@ -172,14 +179,14 @@ def ordner_einlesen(engine, pfad, **kwargs):
 # Pruefen
 # ---------------------------------------------------------------------------
 def _lauf_finden(c, s, paket):
-    geraet = c.execute(sa.text(f'SELECT id, device_role FROM {s}.device WHERE device_serial = :g'),
+    geraet = c.execute(sql(s, 'SELECT id, device_role FROM {s}.device WHERE device_serial = :g'),
                        {'g': paket.geraet}).first()
     if geraet is None:
         return None, f'Geraet {paket.geraet!r} unbekannt'
     if geraet.device_role != 'NODE':
         return None, f'Geraet {paket.geraet!r} ist kein Messknoten'
-    lauf = c.execute(sa.text(
-        f'SELECT id, started_at, ended_at FROM {s}.acquisition_run WHERE device_id = :d AND node_run_key = :k'),
+    lauf = c.execute(sql(s,
+        'SELECT id, started_at, ended_at FROM {s}.acquisition_run WHERE device_id = :d AND node_run_key = :k'),
         {'d': geraet.id, 'k': paket.lauf}).mappings().first()
     if lauf is None:
         return None, f'Messlauf {paket.lauf!r} gehoert nicht zu Geraet {paket.geraet!r}'
@@ -198,9 +205,9 @@ def _pruefen(c, s, paket, lauf):
         raise _Abgelehnt('batch_hash stimmt nicht (Vorgaenger-Hash, payload_hash, Sequenz)')
 
     kanaele = {}
-    for z in c.execute(sa.text(
-            f'SELECT mc.id, hc.input_label, mc.quantity_code, mc.data_kind, mc.sample_rate_hz'
-            f' FROM {s}.measurement_channel mc JOIN {s}.hardware_channel hc ON hc.id = mc.hardware_channel_id'
+    for z in c.execute(sql(s,
+            'SELECT mc.id, hc.input_label, mc.quantity_code, mc.data_kind, mc.sample_rate_hz'
+            ' FROM {s}.measurement_channel mc JOIN {s}.hardware_channel hc ON hc.id = mc.hardware_channel_id'
             ' WHERE mc.acquisition_run_id = :r'), {'r': lauf['id']}):
         kanaele.setdefault((z.input_label, z.quantity_code), []).append(z)
 
@@ -258,8 +265,8 @@ def kettenstatus(c, s, lauf_id, sequenz, vorgaenger_hash):
         if vorgaenger_hash == fmt.GENESIS:
             return 'LINKED', None
         return 'PREDECESSOR_MISSING', 'Sequenz 1 verweist nicht auf den Genesis-Wert'
-    vorg = c.execute(sa.text(
-        f"SELECT batch_hash FROM {s}.origin_batch WHERE acquisition_run_id = :r AND batch_sequence_no = :n"
+    vorg = c.execute(sql(s,
+        "SELECT batch_hash FROM {s}.origin_batch WHERE acquisition_run_id = :r AND batch_sequence_no = :n"
         " AND batch_status = 'CANONICAL'"), {'r': lauf_id, 'n': sequenz - 1}).first()
     if vorg is None:
         return 'PREDECESSOR_MISSING', f'Vorgaenger {sequenz - 1} fehlt noch oder ist strittig'
@@ -272,20 +279,20 @@ def _nachfolger_neu_bewerten(c, s, lauf_id, sequenz):
     """Bewertet die Kandidaten auf sequenz + 1 neu. Liefert die Zahl der
     Kandidaten, die dadurch LINKED wurden."""
     nachgezogen = 0
-    for z in c.execute(sa.text(
-            f'SELECT id, previous_batch_hash, chain_state FROM {s}.origin_batch'
+    for z in c.execute(sql(s,
+            'SELECT id, previous_batch_hash, chain_state FROM {s}.origin_batch'
             ' WHERE acquisition_run_id = :r AND batch_sequence_no = :n'), {'r': lauf_id, 'n': sequenz + 1}).all():
         neu, _ = kettenstatus(c, s, lauf_id, sequenz + 1, bytes(z.previous_batch_hash))
         if neu != z.chain_state:
-            c.execute(sa.text(f'UPDATE {s}.origin_batch SET chain_state = :k, status_changed_at = now() WHERE id = :i'),
+            c.execute(sql(s, 'UPDATE {s}.origin_batch SET chain_state = :k, status_changed_at = now() WHERE id = :i'),
                       {'k': neu, 'i': z.id})
             nachgezogen += neu == 'LINKED'
     return nachgezogen
 
 
 def _anlieferung(c, s, anl, status, grund, batch_id=None, **extra):
-    aid = c.execute(sa.text(
-        f'INSERT INTO {s}.batch_delivery (origin_batch_id, transport_code, bridge_device_id, bridge_role,'
+    aid = c.execute(sql(s,
+        'INSERT INTO {s}.batch_delivery (origin_batch_id, transport_code, bridge_device_id, bridge_role,'
         ' received_at, transport_ref, transport_hash, delivery_status, status_reason)'
         ' VALUES (:ob, :t, :b, :br, :e, :ref, :h, :st, :g) RETURNING id'),
         {**anl, 'ob': batch_id, 'st': status, 'g': grund}).scalar()
@@ -299,8 +306,8 @@ def _batch_anlegen(c, s, paket, lauf_id, status, kette, basis, inline=None):
         # Quarantaene: das ganze Paket inline, damit eine spaetere manuelle
         # Aufloesung die Bloecke noch schreiben kann.
         ort, fmt_kennung, groesse = 'INLINE', fmt.FORMAT_KENNUNG + '/paket-json', len(inline)
-    return c.execute(sa.text(
-        f'INSERT INTO {s}.origin_batch (acquisition_run_id, batch_sequence_no, batch_content, measured_period,'
+    return c.execute(sql(s,
+        'INSERT INTO {s}.origin_batch (acquisition_run_id, batch_sequence_no, batch_content, measured_period,'
         ' payload_hash, previous_batch_hash, batch_hash, payload_format, payload_location, payload_inline,'
         ' payload_size_bytes, batch_status, chain_state, status_basis)'
         " VALUES (:r, :n, :inh, tstzrange(:von, :bis, '[)'), :ph, :vh, :bh, :pf, :ort, :inl, :gr, :st, :k, :sb)"
@@ -313,8 +320,8 @@ def _batch_anlegen(c, s, paket, lauf_id, status, kette, basis, inline=None):
 
 def _ueberschneidung(c, s, bloecke):
     for b, mc in bloecke:
-        treffer = c.execute(sa.text(
-            f'SELECT origin_batch_id FROM {s}.sample_block WHERE measurement_channel_id = :mc'
+        treffer = c.execute(sql(s,
+            'SELECT origin_batch_id FROM {s}.sample_block WHERE measurement_channel_id = :mc'
             ' AND sample_index_range && int8range(:a, :e) LIMIT 1'),
             {'mc': mc, 'a': b.erster_index, 'e': b.erster_index + b.anzahl}).scalar()
         if treffer is not None:
@@ -325,8 +332,8 @@ def _ueberschneidung(c, s, bloecke):
 def _konflikt(c, s, paket, rohdaten, lauf_id, anl, kette, grund, konkurrenten):
     bid = _batch_anlegen(c, s, paket, lauf_id, 'CONFLICT', kette, None, inline=rohdaten)
     if KONFLIKT_STUFT_BESTEHENDEN_ZURUECK and konkurrenten:
-        c.execute(sa.text(
-            f"UPDATE {s}.origin_batch SET batch_status = 'CONFLICT', status_basis = NULL, status_changed_at = now()"
+        c.execute(sql(s,
+            "UPDATE {s}.origin_batch SET batch_status = 'CONFLICT', status_basis = NULL, status_changed_at = now()"
             " WHERE acquisition_run_id = :r AND batch_sequence_no = :n AND batch_status = 'CANONICAL'"),
             {'r': lauf_id, 'n': paket.sequenz})
         _nachfolger_neu_bewerten(c, s, lauf_id, paket.sequenz)
@@ -335,8 +342,8 @@ def _konflikt(c, s, paket, rohdaten, lauf_id, anl, kette, grund, konkurrenten):
 
 def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
     r = lauf['id']
-    kandidaten = c.execute(sa.text(
-        f'SELECT id, payload_hash, batch_hash, batch_status, chain_state FROM {s}.origin_batch'
+    kandidaten = c.execute(sql(s,
+        'SELECT id, payload_hash, batch_hash, batch_status, chain_state FROM {s}.origin_batch'
         ' WHERE acquisition_run_id = :r AND batch_sequence_no = :n ORDER BY id'),
         {'r': r, 'n': paket.sequenz}).all()
     for k in kandidaten:
@@ -362,8 +369,8 @@ def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
     try:
         with c.begin_nested():
             bid = _batch_anlegen(c, s, paket, r, 'CANONICAL', kette, 'SINGLE_CANDIDATE')
-            c.execute(sa.text(
-                f'INSERT INTO {s}.sample_block (acquisition_run_id, measurement_channel_id, origin_batch_id,'
+            c.execute(sql(s,
+                'INSERT INTO {s}.sample_block (acquisition_run_id, measurement_channel_id, origin_batch_id,'
                 ' first_sample_index, sample_count, time_anchor, sample_rate_hz, value_encoding, compression,'
                 ' payload_location, payload_inline, payload_hash, device_quality)'
                 " VALUES (:r, :mc, :ob, :i, :n, :t, :hz, :enc, :komp, 'INLINE', :p, :ph, :q)"),
@@ -388,9 +395,9 @@ def _schon_verdichtet(c, s, bloecke):
     hinweise = []
     for b, mc in bloecke:
         ende = b.zeitanker + timedelta(seconds=b.anzahl / b.rate_hz)
-        n = c.execute(sa.text(
-            f'SELECT count(*) FROM {s}.derived_aggregate a'
-            f' JOIN {s}.derived_channel_source d ON d.derived_channel_id = a.measurement_channel_id'
+        n = c.execute(sql(s,
+            'SELECT count(*) FROM {s}.derived_aggregate a'
+            ' JOIN {s}.derived_channel_source d ON d.derived_channel_id = a.measurement_channel_id'
             " WHERE d.source_channel_id = :mc AND a.bucket_start < :e"
             " AND a.bucket_start + CASE a.resolution WHEN '1s' THEN interval '1 second'"
             " WHEN '1min' THEN interval '1 minute' ELSE interval '1 hour' END > :a"),
