@@ -94,7 +94,11 @@ und öffnet für ihren Teil eine eigene Verbindung als `omn_owner` (Passwort aus
 `deploy/root_biocomm_rollen.sh <db>` (root), **dann** die Migration deployen.
 Backups dumpen deshalb als `omn_owner` (`pg_read_all_data WITH INHERIT TRUE`),
 `staging_db_reset.sh` tauscht nur `public` aus. Neue Schema-Änderungen = neue
-Migration + neue SQL-Datei (`biocomm_0002_…`), die 0001er bleiben unverändert.
+Migration + neue SQL-Datei, die 0001er bleiben unverändert. **Schema v2** (Migration
+`8d4e2a6c1b70`, `biocomm_0002_schema.sql` + `_rechte.sql` + `_zurueck.sql`): Kern-Änderung
+einmal in `biocomm_common.core_0002` für beide Kerne (versionierte Aggregate, Sicht
+`derived_aggregate_current`, `candidate_resolution_log`, `kandidat_festlegen`, Index auf
+`batch_delivery`), siehe Dateneingang. Nächste Änderung = `biocomm_0003_…`.
 
 **Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
 [--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen
@@ -115,30 +119,44 @@ seit Sept. 2026 die ADC-Kalibrierung in `measurement_channel.calibration`
 (`Zählwert × lsb_uv ÷ gain`), nie mit fest verdrahteten Konstanten.
 Die Prüfsummenkette rechnet er mit `omn/eingang/format_v0.py` (dieselbe Quelle wie der Eingang).
 
-**BioComm-Dateneingang, Prototyp** (`omn/eingang/`, seit 24.09.2026,
-Bericht `docs/dateneingang_prototyp_bericht.md`): nimmt Datenpakete eines Messknotens
-an, unabhängig von Flask-Requests, Zielschema als Parameter (`sandbox`/`live`, nur PG).
+**BioComm-Dateneingang** (`omn/eingang/`, seit 24./25.09.2026, Berichte
+`docs/dateneingang_prototyp_bericht.md` + `docs/dateneingang_teil2_bericht.md`, Stand
+`docs/dateneingang_status.md`): nimmt Datenpakete eines Messknotens an, unabhängig von
+Flask-Requests, Zielschema als Parameter (`sandbox`/`live`, nur PG).
 `format_v0.py` = Paketformat + Kette (**vorläufig, C4 offen**, Genesis 32 Null-Bytes,
 Beschreibung `docs/dateneingang_format_v0.md`), `einlesen.py` = eine Anlieferung in
-einer Transaktion: prüfen (Lauf gehört zum Gerät, Kanäle RAW und im Lauf, Rate,
-Zeitraum, Länge, beide Hashes) → neu `CANONICAL` + danach `sample_block`, gleicher
-Kandidat → `DUPLICATE`, anderer Kandidat auf dem Platz oder überlappende Indizes →
-`CONFLICT` (nie automatisch aufgelöst, 8.1.2 offen; der bisher kanonische wird
-ebenfalls `CONFLICT`, Schalter `KONFLIKT_STUFT_BESTEHENDEN_ZURUECK`), ungültig →
-`REJECTED` mit Grund. `chain_state` lokal (Vorgänger n−1 kanonisch mit passendem
-Hash bzw. Genesis), wartende Nachfolger werden nachgezogen. Sperre je Messlauf per
-`pg_advisory_xact_lock`. Gleiche Anlieferung (Transport + Bridge + `transport_hash`)
-→ nichts geschrieben (`SCHON_EINGELESEN`, Import idempotent). SQL immer über
-`sql(schema, text)` (Positivliste, Bandit). `verdichtung.py` = getrennter Schritt,
-nur abgeschlossene Zeitfenster aus dem lückenlosen Kettenanfang, `INSERT … ON CONFLICT
-DO NOTHING` (omn darf `derived_aggregate` nicht ändern; Annahme V1: je Kanal kommen
-Samples in Sequenzreihenfolge). `testknoten.py` = Test-Messknoten in `sandbox`.
-CLI: `flask biocomm-einlesen <datei|ordner> [--schema sandbox|live] [--transport
+einer Transaktion: Größengrenzen (`MAX_PAKET_BYTES`, `MAX_ENTPACKT_BYTES`), prüfen
+(Lauf gehört zum Gerät, Kanäle RAW und im Lauf, Rate, Zeitraum, Länge, beide Hashes)
+→ neu `CANONICAL` + danach `sample_block`, gleicher Kandidat → `DUPLICATE`, anderer
+Kandidat auf dem Platz oder überlappende Indizes → `CONFLICT` (kein Kandidat gewinnt
+nach Eingangsreihenfolge, der bisher kanonische wird ebenfalls `CONFLICT`), ungültig →
+`REJECTED` mit Grund. **Konflikte (8.1.2, Robby 24.09.2026):** automatisch nur per
+Kettenbeweis (kanonischer Nachfolger verweist per `previous_batch_hash` auf genau
+einen Kandidaten → `CANONICAL`/`SUCCESSOR_LINK`, auch wenn der Nachfolger später
+kommt, rückwärts mehrstufig), sonst manuell `flask biocomm-konflikt [--gewinner ID
+--von NAME --grund TEXT]` (`MANUAL_REVIEW`). Beides über
+`biocomm_common.kandidat_festlegen` (SECURITY DEFINER, Eigentümer `omn_owner`): tauscht
+die `sample_block`-Zeilen und schreibt `candidate_resolution_log` (nur einfügen).
+`omn` hat weiter **kein** DELETE; `sample_block` lässt DELETE nur in dieser Funktion zu
+(Markierung `biocomm.kandidat_festlegen` + Tabelleneigentümer). `chain_state` lokal
+(Vorgänger n−1 kanonisch mit passendem Hash bzw. Genesis), Nachfolger werden
+nachgezogen. Sperre je Messlauf per `pg_advisory_xact_lock` (auch in der Funktion).
+Gleiche Anlieferung (Transport + Bridge + `transport_hash`, Index) → `SCHON_EINGELESEN`.
+SQL immer über `sql(schema, text)` (Positivliste, Bandit). `verdichtung.py` =
+getrennter Schritt, **versionierte Aggregate** (Migration `8d4e2a6c1b70`,
+`biocomm_0002_*.sql`): Fenster werden berechnet, sobald sie abgeschlossen sind (auch
+über Lücken), geänderte Grundlage (`origin_batch.status_changed_at` >
+`computed_at`, beides `clock_timestamp()`) → neue `aggregate_version`, keine Daten
+mehr → Grabstein (`samples_recorded = 0`), `samples_expected` aus Lauf und
+Aufzeichnungsplan. **Leser nur über `derived_aggregate_current`** (jüngste Version,
+ohne Grabsteine) und `sample_block` nur mit `origin_batch.batch_status = 'CANONICAL'`
+(Datenlabor so umgestellt). `testknoten.py` = Test-Messknoten in `sandbox`. CLI:
+`flask biocomm-einlesen <datei|ordner> [--schema sandbox|live] [--transport
 SD_IMPORT|LORA|BLE|USB] [--bridge SERIAL] [--verdichten]`, `flask biocomm-verdichten
-[--lauf ID]`, `flask biocomm-testpakete <ordner> --name X`. Kein HTTP-Endpunkt
-(Geräte-Authentifizierung offen). Keine Schema- oder Rechteänderung. Tests:
-`tests/test_dateneingang.py` (nur PG; legt fehlende Rollen `omn_owner`/`omn_geo`/`omn` als NOLOGIN an und
-prüft den Weg mit `SET ROLE omn`).
+[--lauf ID]`, `flask biocomm-konflikt`, `flask biocomm-testpakete <ordner> --name X`.
+Kein HTTP-Endpunkt (Geräte-Authentifizierung offen). Tests: `tests/test_dateneingang.py`
+(nur PG; legt fehlende Rollen `omn_owner`/`omn_geo`/`omn` als NOLOGIN an, stellt die
+Grundrechte des Rollen-Skripts nach und prüft den Weg mit `SET ROLE omn`).
 
 **BioComm-Datenlabor** (`omn/datenlabor.py`, Blueprint `datenlabor_bp`,
 `/dashboard/datenlabor`): geschütztes Dashboard über `sandbox.*` (nie `live.*`,

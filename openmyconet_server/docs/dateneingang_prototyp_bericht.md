@@ -1,5 +1,9 @@
 # Bericht: Prototyp Dateneingang für BioComm-Messknoten
 
+> **Teilweise überholt** durch `docs/dateneingang_teil2_bericht.md` (25.09.2026): Verdichtung ist jetzt
+> versioniert (Annahme V1 nicht mehr nötig), Konflikte werden per Kettenbeweis bzw. manuell aufgelöst,
+> das Datenlabor filtert auf `CANONICAL`, Größengrenzen und Index sind umgesetzt.
+
 Stand 24.09.2026 · Branch `dateneingang-prototyp` (von `main` 11f5022), nicht nach
 `main` gemergt, nichts deployt, kein Server angefasst.
 

@@ -57,6 +57,7 @@ als Anlieferung `REJECTED` mit Grund festgehalten.
 
 ## Offen für C4
 
-Binärformat statt JSON, Abschlussmarke eines Messlaufs (letzte Sequenznummer),
+Binärformat statt JSON, Blockangaben (Kanal, Index, Anzahl, Zeitanker, Rate, Kodierung)
+in den `payload_hash` aufnehmen (heute nur die Payloads gedeckt), Abschlussmarke eines Messlaufs (letzte Sequenznummer),
 Node-seitige Aggregate und Ereignisse (heute nur RAW-Blöcke), Auswertung von
 `geraete_qualitaet`, Genesis-Wert (z. B. aus Gerät und Lauf abgeleitet statt Nullen).
