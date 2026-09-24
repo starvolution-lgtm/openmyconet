@@ -67,6 +67,7 @@ class Ergebnis:
     kette: str = None                 # chain_state des Batches
     nachgezogen: int = 0              # Nachfolger, die dadurch LINKED wurden
     hinweise: list = field(default_factory=list)
+    lauf_id: int = None               # acquisition_run.id, soweit zugeordnet
 
 
 class _Abgelehnt(Exception):
@@ -125,25 +126,33 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
         lauf, lauf_grund = _lauf_finden(c, s, paket) if paket else (None, None)
         sperren(c, s, f'lauf:{lauf["id"]}' if lauf else f'transport:{thash.hex()}')
 
-        schon = c.execute(sa.text(
-            f'SELECT id, delivery_status, origin_batch_id FROM {s}.batch_delivery'
-            ' WHERE transport_code = :t AND transport_hash = :h AND bridge_device_id IS NOT DISTINCT FROM :b'
-            ' ORDER BY id LIMIT 1'), {'t': transport, 'h': thash, 'b': bridge_id}).first()
-        if schon:
-            return Ergebnis('SCHON_EINGELESEN', f'schon eingelesen (Anlieferung {schon.id}, {schon.delivery_status})',
-                            schon.id, schon.origin_batch_id)
+        erg = _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, transport, bridge_id,
+                           transport_ref, empfangen_um)
+        erg.lauf_id = lauf['id'] if lauf else None
+        return erg
 
-        anl = {'t': transport, 'b': bridge_id, 'br': 'BRIDGE' if bridge_id else None, 'e': empfangen_um,
-               'ref': transport_ref, 'h': thash}
-        if paket is None:
-            return _anlieferung(c, s, anl, 'REJECTED', f'unlesbar: {unlesbar}')
-        if lauf is None:
-            return _anlieferung(c, s, anl, 'REJECTED', lauf_grund)
-        try:
-            bloecke = _pruefen(c, s, paket, lauf)
-        except _Abgelehnt as e:
-            return _anlieferung(c, s, anl, 'REJECTED', str(e))
-        return _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl)
+
+def _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, transport, bridge_id, transport_ref,
+                 empfangen_um):
+    schon = c.execute(sa.text(
+        f'SELECT id, delivery_status, origin_batch_id FROM {s}.batch_delivery'
+        ' WHERE transport_code = :t AND transport_hash = :h AND bridge_device_id IS NOT DISTINCT FROM :b'
+        ' ORDER BY id LIMIT 1'), {'t': transport, 'h': thash, 'b': bridge_id}).first()
+    if schon:
+        return Ergebnis('SCHON_EINGELESEN', f'schon eingelesen (Anlieferung {schon.id}, {schon.delivery_status})',
+                        schon.id, schon.origin_batch_id)
+
+    anl = {'t': transport, 'b': bridge_id, 'br': 'BRIDGE' if bridge_id else None, 'e': empfangen_um,
+           'ref': transport_ref, 'h': thash}
+    if paket is None:
+        return _anlieferung(c, s, anl, 'REJECTED', f'unlesbar: {unlesbar}')
+    if lauf is None:
+        return _anlieferung(c, s, anl, 'REJECTED', lauf_grund)
+    try:
+        bloecke = _pruefen(c, s, paket, lauf)
+    except _Abgelehnt as e:
+        return _anlieferung(c, s, anl, 'REJECTED', str(e))
+    return _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl)
 
 
 def ordner_einlesen(engine, pfad, **kwargs):
