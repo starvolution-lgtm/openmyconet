@@ -78,6 +78,24 @@ Migration (der erste Deploy nach der Aktivierung lief noch mit alter release.sh
 und hat `rolle` + `ix_nutzer_login_token` per `migrate_add_columns.py` erneut
 angelegt — beide werden hier wieder entfernt).
 
+**BioComm-Schemas (Migration `3f1b2c4d5e6a`, nur PostgreSQL):** `biocomm_common`
+(Funktionen, `btree_gist`), `sandbox` + `sandbox_private`, `live` + `live_private` —
+beide Kerne aus EINER Quelle (`biocomm_common.create_core`), SQL in
+`migrations/sql/biocomm_0001_schema.sql` (+ `_rechte.sql`), Entwurf/Begründungen im
+Kontrollzentrum `11_BioComm_Sandkasten/`. Englische Tabellennamen (Spezifikation v7),
+`timestamptz`. **Keine SQLAlchemy-Modelle** dafür; Autogenerate/Drift-Test sehen nur
+`public` (`include_schemas` aus). Auf SQLite ist die Migration ein No-op; Tests
+(Parität, 43 Regeln aus `tests/sql/biocomm_regeln.sql`, Idempotenz, Downgrade)
+laufen nur im PG-Job. **Rollentrennung (Variante A):** Schemas gehören `omn_owner`,
+Web-Rolle `omn` darf lesen/einfügen + einzelne Statusspalten ändern, **nichts** in
+`*_private` (exakte Koordinaten, nur `omn_geo`). Die Migration läuft wie alle als `omn`
+und öffnet für ihren Teil eine eigene Verbindung als `omn_owner` (Passwort aus
+`~/.pgpass`; `omn` ist bewusst kein Mitglied). Reihenfolge je DB: **erst**
+`deploy/root_biocomm_rollen.sh <db>` (root), **dann** die Migration deployen.
+Backups dumpen deshalb als `omn_owner` (`pg_read_all_data WITH INHERIT TRUE`),
+`staging_db_reset.sh` tauscht nur `public` aus. Neue Schema-Änderungen = neue
+Migration + neue SQL-Datei (`biocomm_0002_…`), die 0001er bleiben unverändert.
+
 **Deploy:** `release.sh` / `deploy_staging.sh` / `staging_db_reset.sh` fahren
 `FLASK_APP=wsgi python -m flask db upgrade`. `migrate_add_columns.py` /
 `migrate_add_indexes.py` sind auf No-op-Stubs reduziert (legten die gedroppte

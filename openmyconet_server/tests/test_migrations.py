@@ -12,13 +12,17 @@ import tempfile
 import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
-from flask_migrate import stamp, upgrade
+from flask_migrate import downgrade, stamp, upgrade
 
 from omn import create_app
 from omn.config import TestConfig
 from omn.extensions import db
 
 BASELINE_REV = '959850bfc924'
+BIOCOMM_REV = '3f1b2c4d5e6a'
+BIOCOMM_VORHER = 'fa5a744c1177'
+BIOCOMM_SCHEMAS = ('sandbox', 'sandbox_private', 'live', 'live_private', 'biocomm_common')
+REGELN_SQL = os.path.join(os.path.dirname(__file__), 'sql', 'biocomm_regeln.sql')
 
 # nutzer-Tabelle so, wie sie ueber Jahre per ALTER TABLE ADD COLUMN auf
 # Prod/Staging gewachsen ist. Plus die weiteren Legacy-Quirks anderer Tabellen
@@ -119,24 +123,28 @@ def leere_db_app():
     app = create_app(_Cfg, instance_path=instance)
     with app.app_context():
         db.drop_all()  # Reste (v.a. bei geteiltem Postgres); alembic_version separat
-        try:
-            db.session.execute(db.text('DROP TABLE IF EXISTS alembic_version'))
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
+        _aufraeumen_extra()
     yield app
     with app.app_context():
         db.drop_all()
-        try:
-            db.session.execute(db.text('DROP TABLE IF EXISTS alembic_version'))
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
+        _aufraeumen_extra()
         db.session.remove()
         db.engine.dispose()
     if fd is not None:
         os.close(fd)
         os.unlink(pfad)
+
+
+def _aufraeumen_extra():
+    """alembic_version + (nur Postgres) die BioComm-Schemas der Migration
+    3f1b2c4d5e6a -- die kennt db.drop_all() nicht, weil es keine Modelle dafuer gibt."""
+    try:
+        db.session.execute(db.text('DROP TABLE IF EXISTS alembic_version'))
+        if db.engine.dialect.name == 'postgresql':
+            db.session.execute(db.text('DROP SCHEMA IF EXISTS ' + ', '.join(BIOCOMM_SCHEMAS) + ' CASCADE'))
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
 
 
 def _drift(metadata=None):
@@ -226,3 +234,77 @@ def test_prod_cleanup_reghosting(leere_db_app):
     assert 'rolle' not in cols
     assert 'ix_nutzer_login_token' not in idx
     assert zeile == [(1, 'Bestand', 1)]
+
+
+# --- BioComm-Schemas (Migration 3f1b2c4d5e6a) ---------------------------------
+nur_postgres = pytest.mark.skipif(not PG_URL, reason='BioComm-Schemas gibt es nur auf PostgreSQL')
+
+
+def _schemas_und_tabellen():
+    zeilen = db.session.execute(db.text(
+        "SELECT table_schema, table_name FROM information_schema.tables"
+        " WHERE table_schema IN :s AND table_type = 'BASE TABLE'"
+    ).bindparams(db.bindparam('s', expanding=True)), {'s': list(BIOCOMM_SCHEMAS)}).all()
+    ergebnis = {}
+    for schema, tabelle in zeilen:
+        ergebnis.setdefault(schema, set()).add(tabelle)
+    return ergebnis
+
+
+def test_biocomm_migration_auf_sqlite_noop(leere_db_app):
+    """Auf SQLite (lokal, CI-Job backend) legt die Migration nichts an."""
+    if PG_URL:
+        pytest.skip('SQLite-Pfad')
+    with leere_db_app.app_context():
+        upgrade()
+        rev = db.session.execute(db.text('SELECT version_num FROM alembic_version')).scalar()
+    assert rev == BIOCOMM_REV
+
+
+@nur_postgres
+def test_biocomm_schemas_paritaet(leere_db_app):
+    """sandbox und live aus einer Quelle: identische Tabellen, bis auf die
+    Sandbox-exklusiven Szenario-Tabellen; private Koordinaten je eigenes Schema."""
+    with leere_db_app.app_context():
+        upgrade()
+        t = _schemas_und_tabellen()
+    assert t['sandbox'] - t['live'] == {'sandbox_scenario', 'sandbox_scenario_series'}
+    assert t['live'] - t['sandbox'] == set()
+    assert t['live_private'] == t['sandbox_private'] == {'site_location_private'}
+    assert {'origin_batch', 'sample_block', 'quality_annotation', 'recording_plan_interval'} <= t['live']
+
+
+@nur_postgres
+def test_biocomm_regeln(leere_db_app):
+    """Die 43 Regeltests aus dem Entwurf (Konflikt-Batch, Ist-Zeiten,
+    Unveraenderlichkeit, Exclusion auf sample_index, ...). Das Skript bricht
+    bei jeder Abweichung mit 'TEST FEHLGESCHLAGEN' ab und rollt am Ende zurueck."""
+    with open(REGELN_SQL, encoding='utf-8') as f:
+        regeln = f.read()
+    with leere_db_app.app_context():
+        upgrade()
+        conn = db.engine.raw_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(regeln)
+            conn.rollback()
+        finally:
+            conn.close()
+
+
+@nur_postgres
+def test_biocomm_idempotent_und_downgrade(leere_db_app):
+    """Ein zweiter Lauf (Version zurueckgesetzt, Schemas noch da) laeuft durch;
+    downgrade entfernt die Schemas vollstaendig."""
+    with leere_db_app.app_context():
+        upgrade()
+        stamp(revision=BIOCOMM_VORHER)
+        upgrade()                                   # Schemas schon da -> No-op
+        assert set(_schemas_und_tabellen()) == set(BIOCOMM_SCHEMAS) - {'biocomm_common'}
+        downgrade(revision=BIOCOMM_VORHER)
+        db.session.commit()
+        assert _schemas_und_tabellen() == {}
+        rest = db.session.execute(db.text(
+            "SELECT count(*) FROM pg_namespace WHERE nspname IN :s"
+        ).bindparams(db.bindparam('s', expanding=True)), {'s': list(BIOCOMM_SCHEMAS)}).scalar()
+    assert rest == 0
