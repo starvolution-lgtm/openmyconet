@@ -91,13 +91,18 @@ Schema-Dump zum Abgleich: `deploy/schema_dump.py`.
 
 **Backup:** `deploy/backup_db.sh` erkennt an der `.env` die Engine: Postgres →
 `pg_dump -Fc` → `/home/omn/backups/openmyconet-<ts>.dump` (+ `pg_restore --list`-
-Check), SQLite → wie bisher `*.db.gz`. Rotiert 14 je Format, läuft täglich per
+Check), SQLite → wie bisher `*.db.gz`. Rotiert 3 je Format (Historie: Storage Box, s. u.), läuft täglich per
 Cron **und** in `release.sh` vor jeder Migration. `deploy/restore_check.sh`
 verifiziert das neueste Backup (`.dump` → `pg_restore` in Wegwerf-DB `omn_rc_<ts>`
 + Model-Load; `.db.gz` → SQLite-Variante), greift die Live-DB nie an. Verbindung
 via `/home/omn/.pgpass` (aus `setup_postgres.sh`, Mode 600; die Rolle `omn` hat
 `CREATEDB` für die Wegwerf-/Staging-DBs). Wiederherstellung, Rollback auf SQLite,
 Cron-Setup, Offsite: `deploy/BACKUP.md`.
+**Externes Haupt-Backup (seit 2026-09-24): Hetzner Storage Box per BorgBackup**
+(verschlüsselt, dedupliziert; `deploy/backup_storagebox.sh`, täglich 03:15 als
+systemd-**User**-Timer von `omn`, Restore-Check dienstags, Wächter bei > 30 h
+ohne Erfolg, Alarm-Mail ohne DB). Konfiguration unter `/home/omn/.config/omn-backup/`
+(nicht im Git), Notfallplan in `deploy/BACKUP.md`.
 
 ## Tests & Lint
 `venv/Scripts/python.exe -m pytest -q -p no:warnings`

@@ -27,7 +27,9 @@ export PGPASSFILE="${PGPASSFILE:-/home/omn/.pgpass}"
 APP=/home/omn/app
 PY="$APP/venv/bin/python3"
 DEST=/home/omn/backups
-KEEP=14
+# Lokal nur noch als schnelle Rueckfallebene (Deploy-Rollback, Tippfehler);
+# die Historie liegt verschluesselt auf der Storage Box (backup_storagebox.sh).
+KEEP=3
 TS=$(date +%Y-%m-%d-%H%M%S)
 ENV_FILE="$APP/.env"
 mkdir -p "$DEST"

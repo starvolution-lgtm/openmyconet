@@ -9,7 +9,7 @@ SQLite-Pfade bleiben für den Altbestand drin.
 
 | Wann | Was | Skript |
 |---|---|---|
-| täglich 02:30 (Cron `omn`) | `pg_dump -Fc` → `/home/omn/backups/openmyconet-<ts>.dump`, `pg_restore --list`-Check, Rotation (letzte 14) | `deploy/backup_db.sh` |
+| täglich 02:30 (Cron `omn`) | `pg_dump -Fc` → `/home/omn/backups/openmyconet-<ts>.dump`, `pg_restore --list`-Check, Rotation (letzte **3**, schnelle Rückfallebene; Historie auf der Storage Box) | `deploy/backup_db.sh` |
 | bei jedem Deploy, vor den Migrationen | dasselbe (Schritt 6 in `release.sh`) | `deploy/backup_db.sh` |
 | montags 04:15 (Cron) / manuell | beweist, dass das neueste Backup wiederherstellbar ist | `deploy/restore_check.sh` |
 
@@ -143,9 +143,15 @@ Danach `.env`, `.pgpass`, Uploads, Medien an ihren Platz, `prod.dump` per `pg_re
 nginx-Konfiguration übernehmen, Zertifikate per certbot neu ausstellen.
 
 **Snapshots der Storage Box** (Hetzner-Konsole, automatisch täglich, 10 Stände) schützen zusätzlich:
-Sie sind per SSH nur lesbar (`.zfs` ist schreibgeschützt) und lassen sich nur in der Hetzner-Konsole
-löschen. Löscht ein Angreifer mit dem VPS-Schlüssel das Repository, liegt es in den Snapshots
-noch bis zu 10 Tage zurück vor.
+Das Backup-Unterkonto `u675874-sub1` sieht das Snapshot-Verzeichnis `.zfs` gar nicht (geprüft
+2026-09-24); beim Hauptkonto ist es laut Hetzner schreibgeschützt. Snapshots lassen sich also nur in
+der Hetzner-Konsole löschen oder zurückspielen. Löscht ein Angreifer mit dem VPS-Schlüssel das
+Repository, liegt es in den Snapshots noch bis zu 10 Tage zurück vor (Wiederherstellung dann über
+die Konsole: Snapshot zurücksetzen).
+
+Geprüft am 2026-09-24: erster Lauf 125 MB Original → 85 MB auf der Box (5 s); zweiter Lauf
++69 kB (Deduplizierung). Restore-Check auf der VPS und zusätzlich auf einem anderen Rechner
+(lokales PostgreSQL 18): 21/21 Tabellen mit identischen Zeilenzahlen, 24/24 Uploads, 16 Medien.
 
 ## Offsite (All-inkl)
 
