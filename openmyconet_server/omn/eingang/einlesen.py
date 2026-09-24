@@ -15,7 +15,7 @@ Ablauf je Anlieferung, alles in EINER Transaktion:
    - gleicher (Lauf, Sequenz, payload_hash, batch_hash) -> Anlieferung DUPLICATE
      am bestehenden Kandidaten;
    - anderer Kandidat auf demselben Sequenzplatz -> CONFLICT (beide bleiben,
-     Aufloesung spaeter manuell, 8.1.2 ist NICHT entschieden);
+     kein Kandidat gewinnt nach Eingangsreihenfolge);
    - Sample-Indizes ueberschneiden sich mit schon gespeicherten Bloecken
      desselben Kanals -> ebenfalls CONFLICT;
    - sonst neuer Kandidat: origin_batch CANONICAL (SINGLE_CANDIDATE), DANACH die
@@ -24,6 +24,19 @@ Ablauf je Anlieferung, alles in EINER Transaktion:
    passendem batch_hash vorliegt bzw. bei Sequenz 1 der Genesis-Wert passt,
    sonst PREDECESSOR_MISSING. Danach wird der Nachfolger (Sequenz + 1) neu
    bewertet -- so werden wartende Nachfolger nachgezogen.
+7. Kettenbeweis (Entscheidung Robby zu 8.1.2, 24.09.2026): Verweist ein
+   kanonischer Nachfolger per previous_batch_hash auf GENAU einen Kandidaten
+   eines strittigen Platzes, wird dieser CANONICAL (status_basis
+   SUCCESSOR_LINK), die anderen bleiben CONFLICT in Quarantaene. Geprueft wird
+   nach jedem Konflikt und nach jedem neuen kanonischen Batch, also auch, wenn
+   der Nachfolger erst nach dem Konflikt eintrifft. Ohne Beweis bleibt der Platz
+   strittig bis zur manuellen Aufloesung (kandidat_festlegen(), CLI
+   `flask biocomm-konflikt`). Beides laeuft ueber die Datenbankfunktion
+   biocomm_common.kandidat_festlegen (SECURITY DEFINER, Protokoll in
+   candidate_resolution_log); omn selbst loescht nie.
+
+Groessengrenzen: Pakete ueber MAX_PAKET_BYTES (roh) oder MAX_ENTPACKT_BYTES
+(Summe der entpackten Blockpayloads) werden REJECTED, bevor etwas entpackt wird.
 
 Nebenlaeufigkeit: Jede Anlieferung nimmt vor dem ersten Lesen der Kandidaten
 pg_advisory_xact_lock je (Schema, Messlauf). Anlieferungen desselben Laufs
@@ -34,6 +47,8 @@ Rechte: Der Eingang braucht nur SELECT/INSERT und die freigegebenen Status-
 spalten (origin_batch: batch_status, chain_state, status_basis,
 status_changed_at). batch_delivery wird nur eingefuegt, nie geaendert.
 """
+import base64
+import json
 import os
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -55,6 +70,12 @@ TRANSPORTE = ('LORA', 'BLE', 'SD_IMPORT', 'USB')
 # CONFLICT ("wer zuerst kommt").
 KONFLIKT_STUFT_BESTEHENDEN_ZURUECK = True
 
+# Groessengrenzen je Paket (Prototyp-Werte, Pflichtpunkt vor Live). Ein Paket
+# mit 60 s Bio-Rohdaten bei 250 Hz hat rund 25 KB.
+MAX_PAKET_BYTES = 4 * 1024 * 1024
+MAX_ENTPACKT_BYTES = 32 * 1024 * 1024
+AUTOMATISCH = 'Eingang (automatisch)'
+
 
 @dataclass
 class Ergebnis:
@@ -68,6 +89,7 @@ class Ergebnis:
     nachgezogen: int = 0              # Nachfolger, die dadurch LINKED wurden
     hinweise: list = field(default_factory=list)
     lauf_id: int = None               # acquisition_run.id, soweit zugeordnet
+    aufgeloest: list = field(default_factory=list)   # per Kettenbeweis CANONICAL gewordene Batches
 
 
 class _Abgelehnt(Exception):
@@ -118,10 +140,14 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
     if empfangen_um.tzinfo is None:
         raise ValueError('empfangen_um braucht eine Zeitzone')
     thash = fmt.sha256(rohdaten)
-    try:
-        paket, unlesbar = fmt.paket_lesen(rohdaten), None
-    except fmt.PaketUnlesbar as e:
-        paket, unlesbar = None, str(e)
+    paket, unlesbar = None, None
+    if len(rohdaten) > MAX_PAKET_BYTES:
+        unlesbar = f'Paket zu gross: {len(rohdaten)} Byte (hoechstens {MAX_PAKET_BYTES})'
+    else:
+        try:
+            paket = fmt.paket_lesen(rohdaten)
+        except fmt.PaketUnlesbar as e:
+            unlesbar = f'unlesbar: {e}'
 
     with engine.begin() as c:
         bridge_id = None
@@ -152,7 +178,7 @@ def _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, trans
     anl = {'t': transport, 'b': bridge_id, 'br': 'BRIDGE' if bridge_id else None, 'e': empfangen_um,
            'ref': transport_ref, 'h': thash}
     if paket is None:
-        return _anlieferung(c, s, anl, 'REJECTED', f'unlesbar: {unlesbar}')
+        return _anlieferung(c, s, anl, 'REJECTED', unlesbar)
     if lauf is None:
         return _anlieferung(c, s, anl, 'REJECTED', lauf_grund)
     try:
@@ -204,25 +230,20 @@ def _pruefen(c, s, paket, lauf):
     if paket.batch_hash_ist() != paket.batch_hash:
         raise _Abgelehnt('batch_hash stimmt nicht (Vorgaenger-Hash, payload_hash, Sequenz)')
 
-    kanaele = {}
-    for z in c.execute(sql(s,
-            'SELECT mc.id, hc.input_label, mc.quantity_code, mc.data_kind, mc.sample_rate_hz'
-            ' FROM {s}.measurement_channel mc JOIN {s}.hardware_channel hc ON hc.id = mc.hardware_channel_id'
-            ' WHERE mc.acquisition_run_id = :r'), {'r': lauf['id']}):
-        kanaele.setdefault((z.input_label, z.quantity_code), []).append(z)
+    for b in paket.bloecke:
+        if b.kodierung not in fmt.BYTES_JE_WERT:
+            raise _Abgelehnt(f'Kodierung {b.kodierung!r} unbekannt')
+    entpackt_summe = sum(b.anzahl * fmt.BYTES_JE_WERT[b.kodierung] for b in paket.bloecke)
+    if entpackt_summe > MAX_ENTPACKT_BYTES:
+        raise _Abgelehnt(f'Paket entpackt zu gross: {entpackt_summe} Byte (hoechstens {MAX_ENTPACKT_BYTES})')
 
+    kanaele = _kanaele(c, s, lauf['id'])
     ergebnis, belegt = [], {}
     for i, b in enumerate(paket.bloecke):
         name = f'Block {i} ({b.eingang} / {b.groesse})'
-        treffer = kanaele.get((b.eingang, b.groesse))
-        if not treffer:
-            raise _Abgelehnt(f'{name}: Kanal gehoert nicht zum Messlauf')
-        roh = [z for z in treffer if z.data_kind == 'RAW']
-        if not roh:
-            raise _Abgelehnt(f'{name}: Kanal ist nicht RAW')
-        if len(roh) > 1:
-            raise _Abgelehnt(f'{name}: Kanal nicht eindeutig')
-        kanal = roh[0]
+        kanal, fehler = _roh_kanal(kanaele, b)
+        if fehler:
+            raise _Abgelehnt(f'{name}: {fehler}')
         if b.anzahl <= 0 or b.erster_index < 0:
             raise _Abgelehnt(f'{name}: Sample-Index-Bereich unplausibel')
         if not b.rate_hz > 0:
@@ -243,20 +264,42 @@ def _pruefen(c, s, paket, lauf):
             if bereich[0] < e and a < bereich[1]:
                 raise _Abgelehnt(f'{name}: Sample-Indizes doppelt im selben Paket')
         belegt.setdefault(kanal.id, []).append(bereich)
-        # Laenge gegen Anzahl. Unbekannte Kodierung/Kompression (z. B. zstd
-        # unter Python < 3.14): bleibt ungeprueft, das Paket wird trotzdem angenommen.
-        breite = fmt.BYTES_JE_WERT.get(b.kodierung)
-        if breite:
-            try:
-                entpackt = fmt.entpacken(b.payload, b.kompression, hoechstens=b.anzahl * breite)
-            except fmt.NichtDekodierbar:
-                entpackt = None
-            except Exception:
-                raise _Abgelehnt(f'{name}: Payload laesst sich nicht entpacken ({b.kompression})')
-            if entpackt is not None and len(entpackt) != b.anzahl * breite:
-                raise _Abgelehnt(f'{name}: Payload-Laenge passt nicht zu {b.anzahl} Werten {b.kodierung}')
+        # Laenge gegen Anzahl. Unbekannte Kompression (z. B. zstd unter
+        # Python < 3.14): Laenge bleibt ungeprueft, das Paket wird angenommen.
+        breite = fmt.BYTES_JE_WERT[b.kodierung]
+        try:
+            entpackt = fmt.entpacken(b.payload, b.kompression, hoechstens=b.anzahl * breite)
+        except fmt.NichtDekodierbar:
+            entpackt = None
+        except Exception:
+            raise _Abgelehnt(f'{name}: Payload laesst sich nicht entpacken ({b.kompression})')
+        if entpackt is not None and len(entpackt) != b.anzahl * breite:
+            raise _Abgelehnt(f'{name}: Payload-Laenge passt nicht zu {b.anzahl} Werten {b.kodierung}')
         ergebnis.append((b, kanal.id))
     return ergebnis
+
+
+def _kanaele(c, s, lauf_id):
+    kanaele = {}
+    for z in c.execute(sql(s,
+            'SELECT mc.id, hc.input_label, mc.quantity_code, mc.data_kind, mc.sample_rate_hz'
+            ' FROM {s}.measurement_channel mc JOIN {s}.hardware_channel hc ON hc.id = mc.hardware_channel_id'
+            ' WHERE mc.acquisition_run_id = :r'), {'r': lauf_id}):
+        kanaele.setdefault((z.input_label, z.quantity_code), []).append(z)
+    return kanaele
+
+
+def _roh_kanal(kanaele, block):
+    """(Kanalzeile, None) oder (None, Fehlertext)."""
+    treffer = kanaele.get((block.eingang, block.groesse))
+    if not treffer:
+        return None, 'Kanal gehoert nicht zum Messlauf'
+    roh = [z for z in treffer if z.data_kind == 'RAW']
+    if not roh:
+        return None, 'Kanal ist nicht RAW'
+    if len(roh) > 1:
+        return None, 'Kanal nicht eindeutig'
+    return roh[0], None
 
 
 # ---------------------------------------------------------------------------
@@ -287,7 +330,7 @@ def _nachfolger_neu_bewerten(c, s, lauf_id, sequenz):
             ' WHERE acquisition_run_id = :r AND batch_sequence_no = :n'), {'r': lauf_id, 'n': sequenz + 1}).all():
         neu, _ = kettenstatus(c, s, lauf_id, sequenz + 1, bytes(z.previous_batch_hash))
         if neu != z.chain_state:
-            c.execute(sql(s, 'UPDATE {s}.origin_batch SET chain_state = :k, status_changed_at = now() WHERE id = :i'),
+            c.execute(sql(s, 'UPDATE {s}.origin_batch SET chain_state = :k, status_changed_at = clock_timestamp() WHERE id = :i'),
                       {'k': neu, 'i': z.id})
             nachgezogen += neu == 'LINKED'
     return nachgezogen
@@ -312,8 +355,9 @@ def _batch_anlegen(c, s, paket, lauf_id, status, kette, basis, inline=None):
     return c.execute(sql(s,
         'INSERT INTO {s}.origin_batch (acquisition_run_id, batch_sequence_no, batch_content, measured_period,'
         ' payload_hash, previous_batch_hash, batch_hash, payload_format, payload_location, payload_inline,'
-        ' payload_size_bytes, batch_status, chain_state, status_basis)'
-        " VALUES (:r, :n, :inh, tstzrange(:von, :bis, '[)'), :ph, :vh, :bh, :pf, :ort, :inl, :gr, :st, :k, :sb)"
+        ' payload_size_bytes, batch_status, chain_state, status_basis, status_changed_at)'
+        " VALUES (:r, :n, :inh, tstzrange(:von, :bis, '[)'), :ph, :vh, :bh, :pf, :ort, :inl, :gr, :st, :k, :sb,"
+        ' clock_timestamp())'
         ' RETURNING id'),
         {'r': lauf_id, 'n': paket.sequenz, 'inh': paket.inhalt, 'von': paket.messzeitraum_von,
          'bis': paket.messzeitraum_bis, 'ph': paket.payload_hash, 'vh': paket.vorgaenger_hash,
@@ -336,11 +380,18 @@ def _konflikt(c, s, paket, rohdaten, lauf_id, anl, kette, grund, konkurrenten):
     bid = _batch_anlegen(c, s, paket, lauf_id, 'CONFLICT', kette, None, inline=rohdaten)
     if KONFLIKT_STUFT_BESTEHENDEN_ZURUECK and konkurrenten:
         c.execute(sql(s,
-            "UPDATE {s}.origin_batch SET batch_status = 'CONFLICT', status_basis = NULL, status_changed_at = now()"
+            "UPDATE {s}.origin_batch SET batch_status = 'CONFLICT', status_basis = NULL, status_changed_at = clock_timestamp()"
             " WHERE acquisition_run_id = :r AND batch_sequence_no = :n AND batch_status = 'CANONICAL'"),
             {'r': lauf_id, 'n': paket.sequenz})
         _nachfolger_neu_bewerten(c, s, lauf_id, paket.sequenz)
-    return _anlieferung(c, s, anl, 'CONFLICT', grund + '; Aufloesung manuell (MANUAL_REVIEW)', bid, kette=kette)
+    aufgeloest = kettenbeweise_pruefen(c, s, lauf_id, [paket.sequenz]) if konkurrenten else []
+    if aufgeloest:
+        grund += f'; per Kettenbeweis aufgeloest zugunsten Batch {aufgeloest[0]}'
+    elif konkurrenten:
+        grund += '; offen bis Kettenbeweis oder manuelle Aufloesung (MANUAL_REVIEW)'
+    else:
+        grund += '; Ueberschneidung, manuell pruefen'
+    return _anlieferung(c, s, anl, 'CONFLICT', grund, bid, kette=kette, aufgeloest=aufgeloest)
 
 
 def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
@@ -385,16 +436,20 @@ def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
         return _konflikt(c, s, paket, rohdaten, r, anl, kette,
                          f'Sample-Bloecke kollidieren ({type(e.orig).__name__})', [])
     nachgezogen = _nachfolger_neu_bewerten(c, s, r, paket.sequenz)
+    aufgeloest = kettenbeweise_pruefen(c, s, r, [paket.sequenz - 1])
+    if aufgeloest:
+        kette, kettengrund = kettenstatus(c, s, r, paket.sequenz, paket.vorgaenger_hash)
     hinweise = _schon_verdichtet(c, s, bloecke)
+    if aufgeloest:
+        hinweise.append(f'Kettenbeweis: Batch {", ".join(map(str, aufgeloest))} jetzt CANONICAL')
     grund = '; '.join([g for g in (kettengrund, *hinweise) if g]) or None
     return _anlieferung(c, s, anl, 'ACCEPTED', grund, bid, kette=kette, nachgezogen=nachgezogen,
-                        hinweise=hinweise)
+                        hinweise=hinweise, aufgeloest=aufgeloest)
 
 
 def _schon_verdichtet(c, s, bloecke):
-    """Hinweis, wenn ein Block in einen schon verdichteten Zeitraum faellt
-    (derived_aggregate ist fuer omn nur einfuegbar, die Verdichtung wird dann
-    NICHT korrigiert -- siehe verdichtung.py und Bericht)."""
+    """Hinweis, wenn ein Block in einen schon verdichteten Zeitraum faellt. Die
+    naechste Verdichtung schreibt fuer diese Fenster eine neue Version."""
     hinweise = []
     for b, mc in bloecke:
         ende = b.zeitanker + timedelta(seconds=b.anzahl / b.rate_hz)
@@ -406,5 +461,112 @@ def _schon_verdichtet(c, s, bloecke):
             " WHEN '1min' THEN interval '1 minute' ELSE interval '1 hour' END > :a"),
             {'mc': mc, 'a': b.zeitanker, 'e': ende}).scalar()
         if n:
-            hinweise.append(f'{b.eingang} / {b.groesse}: {n} schon verdichtete Zeitraeume betroffen (veraltet)')
+            hinweise.append(f'{b.eingang} / {b.groesse}: {n} verdichtete Fenster bekommen eine neue Version')
     return hinweise
+
+
+# ---------------------------------------------------------------------------
+# Konfliktaufloesung (Kettenbeweis automatisch, sonst manuell)
+# ---------------------------------------------------------------------------
+def _festlegen(c, s, batch_id, grundlage, bearbeitet_von=None, begruendung=None):
+    """Ruft biocomm_common.kandidat_festlegen. Hat der Gewinner noch keine
+    sample_block-Zeilen, werden sie aus seinem Quarantaene-Paket gelesen (das
+    Format kennt nur format_v0.py) und als jsonb uebergeben."""
+    z = c.execute(sql(s,
+        'SELECT b.acquisition_run_id, b.payload_format, b.payload_inline,'
+        ' EXISTS (SELECT 1 FROM {s}.sample_block sb WHERE sb.origin_batch_id = b.id) AS hat_bloecke'
+        ' FROM {s}.origin_batch b WHERE b.id = :b'), {'b': batch_id}).first()
+    if z is None:
+        raise ValueError(f'Batch {batch_id} unbekannt')
+    bloecke = None
+    if not z.hat_bloecke:
+        if z.payload_format != fmt.FORMAT_KENNUNG + '/paket-json' or z.payload_inline is None:
+            raise ValueError(f'Batch {batch_id}: Payload-Format {z.payload_format!r} nicht lesbar')
+        paket = fmt.paket_lesen(bytes(z.payload_inline))
+        kanaele = _kanaele(c, s, z.acquisition_run_id)
+        bloecke = []
+        for b in paket.bloecke:
+            kanal, fehler = _roh_kanal(kanaele, b)
+            if fehler:
+                raise ValueError(f'Batch {batch_id}: {fehler}')
+            bloecke.append({'kanal': kanal.id, 'erster_index': b.erster_index, 'anzahl': b.anzahl,
+                            'zeitanker': b.zeitanker.isoformat(), 'rate_hz': b.rate_hz, 'kodierung': b.kodierung,
+                            'kompression': b.kompression, 'payload': base64.b64encode(b.payload).decode('ascii'),
+                            'geraete_qualitaet': None if b.geraete_qualitaet is None
+                            else base64.b64encode(b.geraete_qualitaet).decode('ascii')})
+    return c.execute(sa.text(
+        'SELECT biocomm_common.kandidat_festlegen(:s, :b, :g, CAST(:j AS jsonb), :v, :r)'),
+        {'s': _schema(s), 'b': batch_id, 'g': grundlage, 'j': None if bloecke is None else json.dumps(bloecke),
+         'v': bearbeitet_von, 'r': begruendung}).scalar()
+
+
+def kettenbeweise_pruefen(c, s, lauf_id, plaetze):
+    """Loest strittige Sequenzplaetze per Kettenbeweis auf und arbeitet sich
+    rueckwaerts weiter (ein neu kanonischer Batch kann seinen Vorgaenger
+    beweisen). Liefert die Liste der CANONICAL gewordenen Batch-IDs."""
+    aufgeloest, offen, gesehen = [], [p for p in plaetze if p >= 1], set()
+    while offen:
+        p = offen.pop()
+        if p in gesehen:
+            continue
+        gesehen.add(p)
+        kandidaten = c.execute(sql(s,
+            'SELECT id, batch_hash, batch_status FROM {s}.origin_batch'
+            ' WHERE acquisition_run_id = :r AND batch_sequence_no = :n'), {'r': lauf_id, 'n': p}).all()
+        if len(kandidaten) < 2 or any(k.batch_status == 'CANONICAL' for k in kandidaten):
+            continue
+        verweise = {bytes(h) for (h,) in c.execute(sql(s,
+            "SELECT previous_batch_hash FROM {s}.origin_batch WHERE acquisition_run_id = :r"
+            " AND batch_sequence_no = :n AND batch_status = 'CANONICAL'"), {'r': lauf_id, 'n': p + 1})}
+        bewiesen = [k for k in kandidaten if k.batch_status == 'CONFLICT' and bytes(k.batch_hash) in verweise]
+        if len(bewiesen) != 1:
+            continue
+        try:
+            with c.begin_nested():
+                _festlegen(c, s, bewiesen[0].id, 'SUCCESSOR_LINK', AUTOMATISCH,
+                           f'Nachfolger {p + 1} verweist per previous_batch_hash auf diesen Kandidaten')
+        except (sa.exc.DBAPIError, ValueError, fmt.PaketUnlesbar):
+            continue                    # z. B. Bloecke kollidieren: Platz bleibt strittig (manuell)
+        aufgeloest.append(bewiesen[0].id)
+        _nachfolger_neu_bewerten(c, s, lauf_id, p)
+        offen.append(p - 1)
+    return aufgeloest
+
+
+def kandidat_festlegen(engine, batch_id, bearbeitet_von, begruendung, *, schema='sandbox'):
+    """Manuelle Aufloesung (MANUAL_REVIEW): Batch `batch_id` wird CANONICAL.
+    Eine Transaktion; Fehler der Datenbankfunktion -> ValueError mit ihrem Text."""
+    s = _schema(schema)
+    with engine.begin() as c:
+        z = c.execute(sql(s, 'SELECT acquisition_run_id, batch_sequence_no FROM {s}.origin_batch WHERE id = :b'),
+                      {'b': batch_id}).first()
+        if z is None:
+            raise ValueError(f'Batch {batch_id} unbekannt')
+        sperren(c, s, f'lauf:{z.acquisition_run_id}')
+        try:
+            with c.begin_nested():
+                _festlegen(c, s, batch_id, 'MANUAL_REVIEW', bearbeitet_von, begruendung)
+        except sa.exc.DBAPIError as e:
+            raise ValueError(e.orig.diag.message_primary or str(e.orig))
+        _nachfolger_neu_bewerten(c, s, z.acquisition_run_id, z.batch_sequence_no)
+        weitere = kettenbeweise_pruefen(c, s, z.acquisition_run_id, [z.batch_sequence_no - 1])
+    return {'lauf_id': z.acquisition_run_id, 'sequenz': z.batch_sequence_no, 'weitere_aufgeloest': weitere}
+
+
+def offene_konflikte(engine, schema='sandbox'):
+    """Strittige Plaetze: Sequenzplaetze mit CONFLICT-Kandidaten und ohne
+    kanonischen Kandidaten, je Kandidat mit Anlieferungen und Verweisen der Nachfolger."""
+    s = _schema(schema)
+    with engine.connect() as c:
+        return [dict(z._mapping) for z in c.execute(sql(s,
+            "SELECT b.acquisition_run_id AS lauf, b.batch_sequence_no AS sequenz, b.id AS batch,"
+            " b.created_at AS angelegt, b.chain_state AS kette,"
+            " (SELECT count(*) FROM {s}.batch_delivery d WHERE d.origin_batch_id = b.id) AS anlieferungen,"
+            " (SELECT count(*) FROM {s}.origin_batch n WHERE n.acquisition_run_id = b.acquisition_run_id"
+            "   AND n.batch_sequence_no = b.batch_sequence_no + 1 AND n.previous_batch_hash = b.batch_hash)"
+            "   AS nachfolger_verweise"
+            " FROM {s}.origin_batch b"
+            " WHERE b.batch_status = 'CONFLICT' AND NOT EXISTS (SELECT 1 FROM {s}.origin_batch k"
+            "   WHERE k.acquisition_run_id = b.acquisition_run_id AND k.batch_sequence_no = b.batch_sequence_no"
+            "   AND k.batch_status = 'CANONICAL')"
+            " ORDER BY 1, 2, 3"))]
