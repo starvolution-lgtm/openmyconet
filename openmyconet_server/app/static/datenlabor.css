@@ -9,7 +9,7 @@
    Bernstein bleibt auf beiden Ebenen ausschliesslich das Zeichen fuer
    SIMULATION (Banner + Wasserzeichen). */
 body.dl-breit {
-    --s-bg: #024530; --s-bg-tief: #012a1e; --s-text: #e8f5e0; --s-leise: #b9d4bf;
+    --s-bg: #024530; --s-karte: rgba(0, 0, 0, 0.28); --s-text: #e8f5e0; --s-fliess: #c8e0c8; --s-leise: #a0c8a0;
     --s-linie: #0a6040; --s-akzent: #6ee87e; --s-amber: #f0b84a; --s-amber-rand: #d4a030;
     --w-bg: #0f1216; --w-panel: #171b21; --w-feld: #0c0f13; --w-rand: #2a3038;
     --w-text: #d7dde5; --w-leise: #8b949e; --w-cyan: #1ec8ff;
@@ -32,7 +32,8 @@ body.dl-breit .label { color: var(--s-leise); }
 .dl-sim-banner strong { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; color: var(--s-amber); }
 
 /* Seitenebene: Karten wie auf der Website */
-body.dl-breit .card { background: var(--s-bg-tief); border: 1px solid var(--s-linie); border-radius: 0; }
+body.dl-breit .card { background: var(--s-karte); border: none; border-radius: 0; }
+#dl-kurz { color: var(--s-fliess); }
 .dl-info h2 { font-family: 'Playfair Display', serif; font-weight: 400; color: #fff; }
 .dl-info summary { cursor: pointer; color: var(--s-akzent); }
 .dl-h2-klein { font-size: 1.15em; margin: 0 0 10px; }
