@@ -113,6 +113,32 @@ Tests: `tests/test_sandbox_generator.py` (nur PG, 20 Tage). Der bio-RAW-Kanal tr
 seit Sept. 2026 die ADC-Kalibrierung in `measurement_channel.calibration`
 (`lsb_uv`, `pga_v`) — das Datenlabor rechnet Zählwerte daraus in µV um
 (`Zählwert × lsb_uv ÷ gain`), nie mit fest verdrahteten Konstanten.
+Die Prüfsummenkette rechnet er mit `omn/eingang/format_v0.py` (dieselbe Quelle wie der Eingang).
+
+**BioComm-Dateneingang, Prototyp** (`omn/eingang/`, seit 24.09.2026,
+Bericht `docs/dateneingang_prototyp_bericht.md`): nimmt Datenpakete eines Messknotens
+an, unabhängig von Flask-Requests, Zielschema als Parameter (`sandbox`/`live`, nur PG).
+`format_v0.py` = Paketformat + Kette (**vorläufig, C4 offen**, Genesis 32 Null-Bytes,
+Beschreibung `docs/dateneingang_format_v0.md`), `einlesen.py` = eine Anlieferung in
+einer Transaktion: prüfen (Lauf gehört zum Gerät, Kanäle RAW und im Lauf, Rate,
+Zeitraum, Länge, beide Hashes) → neu `CANONICAL` + danach `sample_block`, gleicher
+Kandidat → `DUPLICATE`, anderer Kandidat auf dem Platz oder überlappende Indizes →
+`CONFLICT` (nie automatisch aufgelöst, 8.1.2 offen; der bisher kanonische wird
+ebenfalls `CONFLICT`, Schalter `KONFLIKT_STUFT_BESTEHENDEN_ZURUECK`), ungültig →
+`REJECTED` mit Grund. `chain_state` lokal (Vorgänger n−1 kanonisch mit passendem
+Hash bzw. Genesis), wartende Nachfolger werden nachgezogen. Sperre je Messlauf per
+`pg_advisory_xact_lock`. Gleiche Anlieferung (Transport + Bridge + `transport_hash`)
+→ nichts geschrieben (`SCHON_EINGELESEN`, Import idempotent). SQL immer über
+`sql(schema, text)` (Positivliste, Bandit). `verdichtung.py` = getrennter Schritt,
+nur abgeschlossene Zeitfenster aus dem lückenlosen Kettenanfang, `INSERT … ON CONFLICT
+DO NOTHING` (omn darf `derived_aggregate` nicht ändern; Annahme V1: je Kanal kommen
+Samples in Sequenzreihenfolge). `testknoten.py` = Test-Messknoten in `sandbox`.
+CLI: `flask biocomm-einlesen <datei|ordner> [--schema sandbox|live] [--transport
+SD_IMPORT|LORA|BLE|USB] [--bridge SERIAL] [--verdichten]`, `flask biocomm-verdichten
+[--lauf ID]`, `flask biocomm-testpakete <ordner> --name X`. Kein HTTP-Endpunkt
+(Geräte-Authentifizierung offen). Keine Schema- oder Rechteänderung. Tests:
+`tests/test_dateneingang.py` (nur PG; legt fehlende Rollen `omn_owner`/`omn_geo`/`omn` als NOLOGIN an und
+prüft den Weg mit `SET ROLE omn`).
 
 **BioComm-Datenlabor** (`omn/datenlabor.py`, Blueprint `datenlabor_bp`,
 `/dashboard/datenlabor`): geschütztes Dashboard über `sandbox.*` (nie `live.*`,
