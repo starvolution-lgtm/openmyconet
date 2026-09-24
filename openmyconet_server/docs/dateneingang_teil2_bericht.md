@@ -126,7 +126,9 @@ unverändert, die Änderung gilt über `biocomm_common.core_0002` für `sandbox`
   - Lesen von `*_private`.
 - **Migrationstests:** Die 43 Regeltests, die Schema-Parität, die Idempotenz und das
   Downgrade laufen mit Schema v2 grün.
-- **CI auf dem letzten Commit:** siehe Pull Request (Abschnitt Lieferung).
+- **CI:** alle drei Jobs grün (backend, backend-postgres mit PostgreSQL 18 / Python 3.14,
+  frontend-audit) auf `d49d4ce` (letzter Code-Commit) und `434080d`. Pull Request:
+  https://github.com/starvolution-lgtm/openmyconet/pull/2 (Merge durch Robby bzw. die lokale Sitzung).
 
 ## Neue oder geänderte Annahmen
 

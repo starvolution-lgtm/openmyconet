@@ -11,11 +11,12 @@ Stand: 25.09.2026 · Branch `dateneingang-prototyp` · Bearbeitung: Cody (Cloud-
 | C2. Größengrenzen je Paket | erledigt | `test_groessengrenzen` |
 | C3. Index `batch_delivery.transport_hash` | erledigt | `test_index_fuer_schon_eingelesen` |
 | C4. Test „Kanal nur als DERIVED“ | erledigt | `test_kanal_nur_als_derived` |
-| D. Pull Request nach `main` | offen bis CI grün | siehe Bericht Teil 2 |
+| D. Pull Request nach `main` | offen, CI grün, Merge durch Robby / lokale Sitzung | https://github.com/starvolution-lgtm/openmyconet/pull/2 |
 | Deploy Staging/Prod | nicht beauftragt | lokale Sitzung mit Robby |
 
 **Tests:** lokal PostgreSQL 16.13 (264 bestanden) und SQLite (230 bestanden), Ruff und
-Bandit grün. PostgreSQL 18 nur in der CI.
+Bandit grün. CI (backend, backend-postgres mit PostgreSQL 18 und Python 3.14, frontend-audit)
+grün auf `d49d4ce` (letzter Code-Commit) und `434080d`; danach nur noch diese Doku-Änderung.
 
 **Offen, nicht beauftragt:** HTTP-Endpunkt, Geräte-Authentifizierung, C4 (Format),
 Node-Aggregate, Geräte-Qualität, Uhrkorrekturen, Objektspeicher für RAW.
