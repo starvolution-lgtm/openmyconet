@@ -6,3 +6,7 @@ deploy/*.sh text eol=lf
 # deploy-exclude.txt wird von rsync --exclude-from gelesen -> CRLF wuerde \r in die
 # Patterns bringen und den Schutz (instance/, .env, uploads ...) aushebeln.
 deploy/deploy-exclude.txt text eol=lf
+# SQL-Dateien laufen per psql/Migration auf dem Linux-Server -> LF (sonst
+# enthielte git archive bei core.autocrlf=true CRLF; psql-Meta-Befehle wie
+# \if / \gset sollen kein \r mitbekommen).
+*.sql text eol=lf
