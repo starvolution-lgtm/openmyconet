@@ -88,6 +88,65 @@ systemctl --user start omn        # läuft wieder auf SQLite
 Achtung: alle Schreibzugriffe **seit dem Cutover** sind dann nur in Postgres,
 nicht in dieser SQLite-Datei. Nur als Not-Aus gedacht, solange PG frisch ist.
 
+## Storage Box (Hetzner BX11, BorgBackup) — externes Haupt-Backup
+
+Verschlüsselt (`repokey-blake2`), dedupliziert, komprimiert (zstd), täglich.
+Werkzeug **BorgBackup 1.4** (Ubuntu-Paket), Gegenstelle `borg-1.4` auf der Box.
+
+| Wann | Was | Skript / Unit (systemd **User**-Timer von `omn`) |
+|---|---|---|
+| täglich 03:15 | frische Dumps `omn_prod` + `omn_staging`, `.env`s, `.pgpass`, Uploads, mp3/pdf, `instance/`, Crontab, User-Units, `/etc/nginx` → `borg create`; Aufbewahrung 14 täglich / 8 wöchentlich / 12 monatlich | `deploy/backup_storagebox.sh`, `omn-backup-storagebox.timer` |
+| dienstags 04:30 | `borg check` + neuestes Archiv in Wegwerf-DB `omn_rc_sb_<ts>` zurückspielen, Zeilenzahlen/Dateien prüfen | `deploy/restore_check_storagebox.sh`, `omn-restore-check-storagebox.timer` |
+| täglich 12:00 | Alarm, wenn letzter Erfolg > 30 h | `deploy/backup_waechter.sh`, `omn-backup-waechter.timer` |
+
+Fehler → Mail (`deploy/backup_alarm.py`, SMTP aus `.env`, ohne DB) und, falls
+`HC_PING_URL` gesetzt, healthchecks.io. Status: `systemctl --user list-timers`,
+`journalctl --user -u omn-backup-storagebox -n 50`.
+
+Konfiguration (nicht im Git): `/home/omn/.config/omn-backup/` (Mode 700):
+`borg.env` (Unterkonto, Host), `passphrase`, `known_hosts`, `borg-key-export.txt`;
+SSH-Schlüssel `/home/omn/.ssh/storagebox_backup` (nur für Backups).
+**Passphrase + Repo-Schlüssel liegen zusätzlich offline bei Robby** — ohne beide
+ist das Repository nicht lesbar, auch nicht für Hetzner.
+
+Einrichtung (einmalig): root `deploy/root_backup_vorbereitung.sh` →
+`deploy/borg_einrichten.sh schluessel <unterkonto> <host>` →
+`schluessel-hochladen` (interaktiv, Passwort des Unterkontos) → `pruefen` →
+`init` → `deploy/install_storagebox_timer.sh`.
+
+### Notfallplan: Wiederherstellung aus der Storage Box
+
+**Fall A — VPS lebt, Datenbank kaputt:**
+```
+ssh -i ~/.ssh/omn_deploy omn@77.42.64.162
+cd /home/omn/app && . deploy/borg_common.sh && konf_laden
+borg list                                   # Archive ansehen
+A=omn-2026-09-24_0315                       # gewünschtes Archiv
+mkdir -p ~/restore && cd ~/restore
+borg extract ::$A home/omn/.cache/omn-backup-staging/prod.dump
+# dann weiter wie oben "Echte Wiederherstellung in die Produktion", Schritt 1-4,
+# mit B=~/restore/home/omn/.cache/omn-backup-staging/prod.dump
+```
+
+**Fall B — VPS weg (neuer Server):** neuen Server aufsetzen (Ubuntu, `setup_postgres.sh`,
+App per `release.sh`), `apt install borgbackup`, dann **mit Passphrase und
+Repo-Schlüssel aus Robbys Offline-Ablage**:
+```
+export BORG_REPO=ssh://<unterkonto>@<host>:23/./omn-borg
+export BORG_REMOTE_PATH=borg-1.4
+# neuen SSH-Schlüssel erzeugen und per install-ssh-key hinterlegen (Passwort des Unterkontos)
+borg key import "$BORG_REPO" borg-key-export.txt   # nur falls der Schlüssel fehlt (repokey liegt im Repo)
+borg list                                          # fragt nach der Passphrase
+borg extract ::<archiv>                            # stellt /home/omn/... und /etc/nginx wieder her
+```
+Danach `.env`, `.pgpass`, Uploads, Medien an ihren Platz, `prod.dump` per `pg_restore` einspielen,
+nginx-Konfiguration übernehmen, Zertifikate per certbot neu ausstellen.
+
+**Snapshots der Storage Box** (Hetzner-Konsole, automatisch täglich, 10 Stände) schützen zusätzlich:
+Sie sind per SSH nur lesbar (`.zfs` ist schreibgeschützt) und lassen sich nur in der Hetzner-Konsole
+löschen. Löscht ein Angreifer mit dem VPS-Schlüssel das Repository, liegt es in den Snapshots
+noch bis zu 10 Tage zurück vor.
+
 ## Offsite (All-inkl)
 
 `deploy/backup_offsite.sh` lädt die jeweils frische Backup-Datei per FTPS hoch,
