@@ -42,7 +42,12 @@ if printf '%s' "$DB_URL" | grep -q '^postgresql'; then
     OUT="$DEST/openmyconet-$TS.dump"
     ROT_GLOB="openmyconet-*.dump"
 
-    pg_dump -Fc -Z 6 -h 127.0.0.1 -U omn -d "$PGDB" -f "$OUT"
+    # Seit den BioComm-Schemas (Rollen-Variante A) darf omn die privaten
+    # Koordinaten nicht lesen -> Dump als omn_owner (pg_read_all_data), sobald
+    # root_biocomm_rollen.sh dessen Passwort in ~/.pgpass eingetragen hat.
+    DUMP_USER=omn
+    grep -qE '^[^:]*:[^:]*:[^:]*:omn_owner:' "$PGPASSFILE" 2>/dev/null && DUMP_USER=omn_owner
+    pg_dump -Fc -Z 6 -h 127.0.0.1 -U "$DUMP_USER" -d "$PGDB" -f "$OUT"
 
     N_TABS=$(pg_restore --list "$OUT" | grep -c 'TABLE DATA' || true)
     if [ "$N_TABS" -lt 15 ]; then

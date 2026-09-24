@@ -44,14 +44,16 @@ test -s "$STAGE/prod.dump" || fehler "prod.dump fehlt im Archiv $ARCHIV"
 
 echo "== 3. pg_restore in Wegwerf-DB $RC_DB"
 createdb -h 127.0.0.1 -U omn "$RC_DB" || fehler "createdb $RC_DB fehlgeschlagen"
-pg_restore -h 127.0.0.1 -U omn -d "$RC_DB" --no-owner --exit-on-error "$STAGE/prod.dump" \
+pg_restore -h 127.0.0.1 -U omn -d "$RC_DB" --no-owner --no-acl --exit-on-error "$STAGE/prod.dump" \
     || fehler "pg_restore aus ::$ARCHIV fehlgeschlagen"
 
 echo "== 4. Vollstaendigkeit"
 N=0
 while IFS='=' read -r tab soll; do
     [ -n "$tab" ] || continue
-    ist=$(psql -h 127.0.0.1 -U omn -d "$RC_DB" -Atc "SELECT count(*) FROM \"$tab\"" 2>/dev/null || echo FEHLT)
+    # Referenzliste: "schema.tabelle=n" (aeltere Archive: nur "tabelle=n" -> public)
+    case "$tab" in *.*) sch=${tab%%.*}; tb=${tab#*.} ;; *) sch=public; tb=$tab ;; esac
+    ist=$(psql -h 127.0.0.1 -U omn -d "$RC_DB" -Atc "SELECT count(*) FROM \"$sch\".\"$tb\"" 2>/dev/null || echo FEHLT)
     N=$((N + 1))
     if [ "$ist" = "FEHLT" ]; then
         echo "  FEHLER  $tab: Tabelle fehlt"; PROBLEME=$((PROBLEME + 1))

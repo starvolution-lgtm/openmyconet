@@ -66,13 +66,31 @@ with create_app().app_context():
     with db.engine.begin() as c:
         c.exec_driver_sql('DROP TABLE IF EXISTS alembic_version')
 PY
-pg_restore -h 127.0.0.1 -U omn -d omn_prod --no-owner "$B"
+#    NUR das Website-Schema public einspielen (die BioComm-Schemas gehören
+#    omn_owner und werden -- falls nötig -- getrennt zurückgespielt, s. u.)
+pg_restore -h 127.0.0.1 -U omn -d omn_prod --no-owner --no-acl -n public "$B"
 
 # 4. App starten + prüfen
 systemctl --user start omn
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5000/
 FLASK_APP=wsgi venv/bin/python -m flask db current
 ```
+
+### BioComm-Schemas (sandbox/live) zurückspielen — nur wenn sie selbst beschädigt sind
+
+Seit der Migration `3f1b2c4d5e6a` gehören `biocomm_common`, `sandbox*`, `live*`
+der Rolle `omn_owner` (Rollen-Variante A, `deploy/biocomm_roles_setup.sql`).
+Dumps laufen deshalb als `omn_owner` (Leserecht `pg_read_all_data`); `omn`
+allein kann die DB nicht mehr vollständig sichern (keine Rechte auf `*_private`).
+Wiederherstellung der BioComm-Teile als `omn_owner` (Passwort in `~/.pgpass`):
+```
+pg_restore -h 127.0.0.1 -U omn_owner -d omn_prod --clean --if-exists --no-owner \
+  -n biocomm_common -n sandbox -n sandbox_private -n live -n live_private "$B"
+```
+Die Schemas selbst und die Erweiterung `btree_gist` legt das Rollen-Skript an
+(`root_biocomm_rollen.sh`); `-n` spielt nur deren Inhalt ein. Die Restore-Checks
+(`restore_check*.sh`) spielen dagegen den ganzen Dump als `omn` in eine
+Wegwerf-DB, mit `--no-owner --no-acl` (Rechte sind dort unnötig).
 
 ## Rollback auf SQLite (falls Postgres grundsätzlich Probleme macht)
 

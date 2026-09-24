@@ -50,19 +50,23 @@ db_aus_env() { grep -E '^DATABASE_URL=' "$1" 2>/dev/null | head -1 | sed -E 's#.
 PROD_DB=$(db_aus_env /home/omn/app/.env)
 STAGING_DB=$(db_aus_env /home/omn/app-staging/.env)
 [ -n "$PROD_DB" ] || fehler "DATABASE_URL in /home/omn/app/.env nicht gefunden"
+# Dump als omn_owner (liest dank pg_read_all_data auch die privaten
+# BioComm-Koordinaten), sobald dessen Passwort in ~/.pgpass steht.
+DUMP_USER=omn
+grep -qE '^[^:]*:[^:]*:[^:]*:omn_owner:' "$PGPASSFILE" 2>/dev/null && DUMP_USER=omn_owner
 
-pg_dump -Fc -Z 0 -h 127.0.0.1 -U omn -d "$PROD_DB" -f "$ARBEIT/prod.dump" \
+pg_dump -Fc -Z 0 -h 127.0.0.1 -U "$DUMP_USER" -d "$PROD_DB" -f "$ARBEIT/prod.dump" \
     || fehler "pg_dump $PROD_DB fehlgeschlagen"
 N_TABS=$(pg_restore --list "$ARBEIT/prod.dump" | grep -c 'TABLE DATA' || true)
 [ "$N_TABS" -ge 15 ] || fehler "prod.dump enthaelt nur $N_TABS Tabellen"
 if [ -n "$STAGING_DB" ]; then
-    pg_dump -Fc -Z 0 -h 127.0.0.1 -U omn -d "$STAGING_DB" -f "$ARBEIT/staging.dump" \
+    pg_dump -Fc -Z 0 -h 127.0.0.1 -U "$DUMP_USER" -d "$STAGING_DB" -f "$ARBEIT/staging.dump" \
         || fehler "pg_dump $STAGING_DB fehlgeschlagen"
 fi
 # Exakte Zeilenzahlen je Tabelle direkt nach dem Dump -- Referenz fuer den
 # Restore-Test (Schreibzugriffe dazwischen sind moeglich, daher dort nur Warnung).
-psql -h 127.0.0.1 -U omn -d "$PROD_DB" -Atq > "$ARBEIT/prod_tabellen.txt" 2>/dev/null <<'SQL' || true
-SELECT format('SELECT %L || ''='' || count(*) FROM %I.%I;', table_name, table_schema, table_name)
+psql -h 127.0.0.1 -U "$DUMP_USER" -d "$PROD_DB" -Atq > "$ARBEIT/prod_tabellen.txt" 2>/dev/null <<'SQL' || true
+SELECT format('SELECT %L || ''='' || count(*) FROM %I.%I;', table_schema || '.' || table_name, table_schema, table_name)
   FROM information_schema.tables
  WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog', 'information_schema')
  ORDER BY table_schema, table_name

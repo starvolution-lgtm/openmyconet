@@ -38,7 +38,7 @@ if [[ "$SRC" == *.dump ]]; then
     createdb -h 127.0.0.1 -U omn "$RC_DB"
     trap 'dropdb -h 127.0.0.1 -U omn "$RC_DB" 2>/dev/null || true' EXIT
 
-    pg_restore -h 127.0.0.1 -U omn -d "$RC_DB" --no-owner "$SRC"
+    pg_restore -h 127.0.0.1 -U omn -d "$RC_DB" --no-owner --no-acl "$SRC"
 
     cd "$APP"
     DATABASE_URL="$RC_URL" SECRET_KEY=restore-check REST_ERWARTET="$ERWARTET" \
