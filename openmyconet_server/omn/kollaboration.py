@@ -13,7 +13,7 @@ import logging
 import os
 import uuid
 
-from flask import current_app
+from flask import current_app, render_template
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 
@@ -249,6 +249,7 @@ def _benachrichtige(kontext, autor, ereignis):
         partner_link = f'{base_url}/dashboard/knotenbetreiber'
         admin_link = f'{base_url}/admin/kollaboration/knoten/{kontext.id}'
 
+    html = None
     if autor == 'partner':
         empfaenger = os.getenv('ADMIN_NOTIFY_EMAIL') or os.getenv('MAIL_USERNAME')
         betreff = f'Kollaboration ({bereich}): {ereignis}'
@@ -260,12 +261,21 @@ def _benachrichtige(kontext, autor, ereignis):
         koerper = (f'Es gibt eine Aktualisierung in eurem Kollaborationsbereich '
                    f'({bereich}):\n\n{ereignis}\n\nOeffnen: {partner_link}\n\n'
                    f'Das OpenMycoNet-Team\nhttps://www.openmyconet.de\n')
+        html = render_template(
+            'transaktions_email.html',
+            titel='Update in eurem Kollaborationsbereich',
+            zeilen=[f'Es gibt eine Aktualisierung in eurem Kollaborationsbereich ({bereich}):', ereignis],
+            cta_text='Kollaborationsbereich öffnen',
+            cta_url=partner_link,
+        )
 
     if not empfaenger:
         return
     try:
         msg = Message(subject=betreff, recipients=[empfaenger])
         msg.body = koerper
+        if html:
+            msg.html = html
         mail.send(msg)
     except Exception as e:
         logger.error('Kollaborations-Benachrichtigung fehlgeschlagen (%s): %s', empfaenger, e)

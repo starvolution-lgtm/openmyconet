@@ -625,6 +625,22 @@ Mit freundlichen Grüßen
 Robert Jank
 OpenMycoNet
 """
+    msg.html = render_template(
+        'transaktions_email.html',
+        titel='Zahlungseingang bestätigt',
+        zeilen=[
+            'Sehr geehrte Damen und Herren,',
+            'vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihre Zahlung ist eingegangen.',
+            (f'Wir prüfen kurz, ob Ihre Förderung thematisch zu OpenMycoNet passt (in der Regel '
+             f'maximal 48 Stunden). Danach wird Ihr Eintrag für "{foerderer.firma}" auf der '
+             f'Fördererseite veröffentlicht: {LIVE_FOERDERER_URL}'),
+            ('Die Partnerschaft läuft ab Veröffentlichung ein Jahr. Ca. 2–3 Monate vor Ablauf '
+             'melden wir uns zur Verlängerung.'),
+        ],
+        cta_text=f'Rechnung {rechnung_nr} herunterladen',
+        cta_url=download_url,
+        unterschrift=['Mit freundlichen Grüßen', 'Robert Jank', 'OpenMycoNet'],
+    )
     try:
         mail.send(msg)
     except Exception as e:

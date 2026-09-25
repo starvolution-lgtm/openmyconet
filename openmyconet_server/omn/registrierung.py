@@ -8,7 +8,7 @@ import logging
 import os
 import secrets
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from flask_mail import Message
 
 from omn.extensions import db, mail
@@ -64,6 +64,17 @@ Dieser Link ist einmalig und nur für dich bestimmt.
 Das OpenMycoNet-Team
 https://www.openmyconet.de
 '''
+    msg.html = render_template(
+        'transaktions_email.html',
+        titel='Bitte bestätige deine Registrierung',
+        zeilen=[
+            f'Hallo {name},',
+            'vielen Dank für deine Registrierung bei OpenMycoNet! Bitte bestätige deine E-Mail-Adresse:',
+        ],
+        cta_text='E-Mail bestätigen',
+        cta_url=confirm_url,
+        hinweis='Dieser Link ist einmalig und nur für dich bestimmt.',
+    )
     try:
         mail.send(msg)
     except Exception as e:

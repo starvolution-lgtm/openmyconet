@@ -101,6 +101,18 @@ Falls du diesen Link nicht angefordert hast, kannst du diese Mail ignorieren.
 Das OpenMycoNet-Team
 https://www.openmyconet.de
 '''
+    msg.html = render_template(
+        'transaktions_email.html',
+        titel='Dein Login-Link',
+        zeilen=[
+            f'Hallo {nutzer.name},',
+            'hier ist dein Login-Link fürs OpenMycoNet-Dashboard:',
+        ],
+        cta_text='Zum Dashboard',
+        cta_url=link,
+        hinweis=(f'Der Link ist {LINK_GUELTIG_MINUTEN} Minuten gültig und nur einmal nutzbar. '
+                 'Falls du diesen Link nicht angefordert hast, kannst du diese Mail ignorieren.'),
+    )
     try:
         mail.send(msg)
     except Exception as e:
