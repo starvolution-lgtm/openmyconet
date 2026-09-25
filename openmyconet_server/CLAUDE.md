@@ -123,8 +123,17 @@ Die Prüfsummenkette rechnet er mit `omn/eingang/format_v0.py` (dieselbe Quelle 
 `docs/dateneingang_prototyp_bericht.md` + `docs/dateneingang_teil2_bericht.md`, Stand
 `docs/dateneingang_status.md`): nimmt Datenpakete eines Messknotens an, unabhängig von
 Flask-Requests, Zielschema als Parameter (`sandbox`/`live`, nur PG).
-`format_v0.py` = Paketformat + Kette (**vorläufig, C4 offen**, Genesis 32 Null-Bytes,
-Beschreibung `docs/dateneingang_format_v0.md`), `einlesen.py` = eine Anlieferung in
+**Paketformat v1 = C4, festgelegt 25.09.2026** (`format_v1.py`, Beschreibung +
+Testvektor `docs/dateneingang_format_v1.md` / `_testvektor.omb`, Test
+`tests/test_format_v1.py`): binär, little-endian, `*.omb`; `payload_hash` wie v0 (nur
+Messwerte), `batch_hash` deckt zusätzlich alle Kopf-/Blockangaben ab (`meta_hash`),
+Genesis = SHA256("OMN-GENESIS-v1" ‖ Gerät ‖ Lauf), Rate als exakter Bruch, Platz für
+eine Signatur (HMAC-SHA256/Ed25519, noch nicht geprüft), Ereignisse vorgesehen (Eingang
+lehnt Pakete mit Ereignissen vorerst ab). **Die Node-Firmware schreibt Claude und muss
+den Testvektor Byte für Byte erzeugen.** `formate.py` = einzige Weiche (Kennung `OMNB` →
+v1, sonst v0); ein Messlauf hat genau ein Format. `format_v0.py` = JSON-Prototyp
+(Genesis 32 Null-Bytes, `docs/dateneingang_format_v0.md`), bleibt lesbar, der
+Sandbox-Generator rechnet weiter wie v0. `einlesen.py` = eine Anlieferung in
 einer Transaktion: Größengrenzen (`MAX_PAKET_BYTES`, `MAX_ENTPACKT_BYTES`), prüfen
 (Lauf gehört zum Gerät, Kanäle RAW und im Lauf, Rate, Zeitraum, Länge, beide Hashes)
 → neu `CANONICAL` + danach `sample_block`, gleicher Kandidat → `DUPLICATE`, anderer

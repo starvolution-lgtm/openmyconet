@@ -1,5 +1,8 @@
 # Datenpaket-Format v0 (BioComm-Dateneingang)
 
+> **Abgelöst durch [Format v1](dateneingang_format_v1.md) (C4, festgelegt 25.09.2026).**
+> v0 bleibt lesbar (Prototyp, Tests, Sandbox-Generator), neue Firmware schreibt v1.
+
 > **VORLÄUFIG – C4 ist offen.** Übertragungsformat, Serialisierung und Genesis-Wert
 > sind nicht entschieden. v0 übernimmt das Verfahren, mit dem der Sandbox-Generator
 > seit dem 24.09.2026 seine Prüfsummenkette schreibt, damit der Eingang getestet

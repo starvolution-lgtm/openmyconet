@@ -88,6 +88,12 @@ class Paket:
     batch_hash: bytes
     bloecke: tuple
 
+    # Formatkennung und Kettenanfang je Format (format_v1.PaketV1 ueberschreibt beides)
+    format = FORMAT_KENNUNG
+
+    def genesis(self):
+        return GENESIS
+
     def payload_hash_ist(self):
         return payload_hash_berechnen(b.payload for b in self.bloecke)
 

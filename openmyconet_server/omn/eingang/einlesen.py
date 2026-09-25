@@ -57,6 +57,7 @@ from pathlib import Path
 import sqlalchemy as sa
 
 from omn.eingang import format_v0 as fmt
+from omn.eingang import formate
 
 SCHEMAS = ('sandbox', 'live')
 TRANSPORTE = ('LORA', 'BLE', 'SD_IMPORT', 'USB')
@@ -145,7 +146,7 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
         unlesbar = f'Paket zu gross: {len(rohdaten)} Byte (hoechstens {MAX_PAKET_BYTES})'
     else:
         try:
-            paket = fmt.paket_lesen(rohdaten)
+            paket = formate.paket_lesen(rohdaten)
         except fmt.PaketUnlesbar as e:
             unlesbar = f'unlesbar: {e}'
 
@@ -193,7 +194,8 @@ def ordner_einlesen(engine, pfad, **kwargs):
     sortiert) ein. Liefert [(Pfad, Ergebnis)]. Die Reihenfolge spielt fuer die
     Kette keine Rolle; fehlende Vorgaenger werden spaeter nachgezogen."""
     pfad = Path(pfad)
-    dateien = [pfad] if pfad.is_file() else sorted(p for p in pfad.rglob('*.json') if p.is_file())
+    dateien = [pfad] if pfad.is_file() else sorted(
+        p for endung in formate.DATEIENDUNGEN for p in pfad.rglob(endung) if p.is_file())
     ergebnisse = []
     for datei in dateien:
         ref = datei.name if pfad.is_file() else os.path.relpath(datei, pfad)
@@ -222,13 +224,26 @@ def _lauf_finden(c, s, paket):
 def _pruefen(c, s, paket, lauf):
     """Liefert [(Block, measurement_channel_id)] oder wirft _Abgelehnt."""
     if paket.sequenz < 1:
-        raise _Abgelehnt('Sequenz muss ab 1 zaehlen (Format v0)')
+        raise _Abgelehnt('Sequenz muss ab 1 zaehlen')
+    if getattr(paket, 'ereignisse', ()):
+        # Format v1 sieht Ereignisse vor (Lauf-Start, Stimulation, Uhrenabgleich ...);
+        # ihre Verarbeitung folgt. Bis dahin lieber ablehnen als stillschweigend verlieren.
+        raise _Abgelehnt('Paket enthaelt Ereignisse, die dieser Eingang noch nicht verarbeitet')
+    formate_im_lauf = {z[0] for z in c.execute(sql(s,
+        "SELECT DISTINCT split_part(payload_format, '/', 1) FROM {s}.origin_batch"
+        ' WHERE acquisition_run_id = :r'), {'r': lauf['id']})}
+    # nur die Eingangsformate gegeneinander abgrenzen (die Generator-Kennung
+    # sbx-gen-* rechnet wie v0 und bleibt aussen vor)
+    formate_im_lauf &= set(formate.KENNUNGEN)
+    if formate_im_lauf - {paket.format}:
+        raise _Abgelehnt(f'Format {paket.format} passt nicht zum Messlauf '
+                         f'({", ".join(sorted(formate_im_lauf))}); ein Messlauf hat genau ein Format')
     if paket.messzeitraum_von >= paket.messzeitraum_bis:
         raise _Abgelehnt('Messzeitraum leer oder verdreht')
     if paket.payload_hash_ist() != paket.payload_hash:
         raise _Abgelehnt('payload_hash stimmt nicht mit den Blockpayloads ueberein')
     if paket.batch_hash_ist() != paket.batch_hash:
-        raise _Abgelehnt('batch_hash stimmt nicht (Vorgaenger-Hash, payload_hash, Sequenz)')
+        raise _Abgelehnt('batch_hash stimmt nicht (Vorgaenger-Hash, Sequenz, Paketangaben, payload_hash)')
 
     for b in paket.bloecke:
         if b.kodierung not in fmt.BYTES_JE_WERT:
@@ -305,10 +320,11 @@ def _roh_kanal(kanaele, block):
 # ---------------------------------------------------------------------------
 # Einordnen
 # ---------------------------------------------------------------------------
-def kettenstatus(c, s, lauf_id, sequenz, vorgaenger_hash):
-    """(chain_state, Grund) fuer einen Kandidaten auf `sequenz`."""
+def kettenstatus(c, s, lauf_id, sequenz, vorgaenger_hash, genesis=fmt.GENESIS):
+    """(chain_state, Grund) fuer einen Kandidaten auf `sequenz`. genesis:
+    Kettenanfang des Paketformats (v0: 32 Null-Bytes, v1: aus Geraet und Lauf)."""
     if sequenz == 1:
-        if vorgaenger_hash == fmt.GENESIS:
+        if vorgaenger_hash == genesis:
             return 'LINKED', None
         return 'PREDECESSOR_MISSING', 'Sequenz 1 verweist nicht auf den Genesis-Wert'
     vorg = c.execute(sql(s,
@@ -345,13 +361,18 @@ def _anlieferung(c, s, anl, status, grund, batch_id=None, **extra):
     return Ergebnis(status, grund, aid, batch_id, **extra)
 
 
+def _inline_kennung(format_kennung):
+    """payload_format eines Quarantaene-Pakets (das ganze Paket inline)."""
+    return format_kennung + ('/paket-json' if format_kennung == fmt.FORMAT_KENNUNG else '/paket-omb')
+
+
 def _batch_anlegen(c, s, paket, lauf_id, status, kette, basis, inline=None):
     if inline is None:
-        ort, fmt_kennung, groesse = 'SAMPLE_BLOCKS', fmt.FORMAT_KENNUNG, sum(len(b.payload) for b in paket.bloecke)
+        ort, fmt_kennung, groesse = 'SAMPLE_BLOCKS', paket.format, sum(len(b.payload) for b in paket.bloecke)
     else:
         # Quarantaene: das ganze Paket inline, damit eine spaetere manuelle
         # Aufloesung die Bloecke noch schreiben kann.
-        ort, fmt_kennung, groesse = 'INLINE', fmt.FORMAT_KENNUNG + '/paket-json', len(inline)
+        ort, fmt_kennung, groesse = 'INLINE', _inline_kennung(paket.format), len(inline)
     return c.execute(sql(s,
         'INSERT INTO {s}.origin_batch (acquisition_run_id, batch_sequence_no, batch_content, measured_period,'
         ' payload_hash, previous_batch_hash, batch_hash, payload_format, payload_location, payload_inline,'
@@ -410,7 +431,7 @@ def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
             return _anlieferung(c, s, anl, 'REJECTED',
                                 f'gleiche Nutzdaten wie Batch {k.id}, aber anderer Vorgaenger-Hash', k.id)
 
-    kette, kettengrund = kettenstatus(c, s, r, paket.sequenz, paket.vorgaenger_hash)
+    kette, kettengrund = kettenstatus(c, s, r, paket.sequenz, paket.vorgaenger_hash, paket.genesis())
     if kandidaten:
         ids = ', '.join(str(k.id) for k in kandidaten)
         return _konflikt(c, s, paket, rohdaten, r, anl, kette,
@@ -438,7 +459,7 @@ def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
     nachgezogen = _nachfolger_neu_bewerten(c, s, r, paket.sequenz)
     aufgeloest = kettenbeweise_pruefen(c, s, r, [paket.sequenz - 1])
     if aufgeloest:
-        kette, kettengrund = kettenstatus(c, s, r, paket.sequenz, paket.vorgaenger_hash)
+        kette, kettengrund = kettenstatus(c, s, r, paket.sequenz, paket.vorgaenger_hash, paket.genesis())
     hinweise = _schon_verdichtet(c, s, bloecke)
     if aufgeloest:
         hinweise.append(f'Kettenbeweis: Batch {", ".join(map(str, aufgeloest))} jetzt CANONICAL')
@@ -480,9 +501,9 @@ def _festlegen(c, s, batch_id, grundlage, bearbeitet_von=None, begruendung=None)
         raise ValueError(f'Batch {batch_id} unbekannt')
     bloecke = None
     if not z.hat_bloecke:
-        if z.payload_format != fmt.FORMAT_KENNUNG + '/paket-json' or z.payload_inline is None:
+        if z.payload_format not in {_inline_kennung(k) for k in formate.KENNUNGEN} or z.payload_inline is None:
             raise ValueError(f'Batch {batch_id}: Payload-Format {z.payload_format!r} nicht lesbar')
-        paket = fmt.paket_lesen(bytes(z.payload_inline))
+        paket = formate.paket_lesen(bytes(z.payload_inline))
         kanaele = _kanaele(c, s, z.acquisition_run_id)
         bloecke = []
         for b in paket.bloecke:

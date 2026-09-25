@@ -128,19 +128,22 @@ def register_cli(app):
     @click.option('--name', required=True, help='Kennung des Test-Messknotens (SBX-NODE-EINGANG-<name>).')
     @click.option('--anzahl', type=int, default=10, show_default=True, help='Zahl der Pakete.')
     @click.option('--paket-sekunden', type=int, default=60, show_default=True)
-    def biocomm_testpakete(ordner, name, anzahl, paket_sekunden):
+    @click.option('--format', 'paketformat', type=click.Choice(['v1', 'v0']), default='v1', show_default=True,
+                  help='v1 = Binaerformat der Firmware (*.omb), v0 = JSON des Prototyps (*.json).')
+    def biocomm_testpakete(ordner, name, anzahl, paket_sekunden, paketformat):
         """Legt einen Test-Messknoten in sandbox an und schreibt seine Pakete als Dateien (wie eine SD-Karte)."""
         from pathlib import Path
 
-        from omn.eingang.format_v0 import paket_schreiben
+        from omn.eingang.formate import paket_schreiben
         from omn.eingang.testknoten import knoten_anlegen
         from omn.extensions import db
 
         ziel = Path(ordner)
         ziel.mkdir(parents=True, exist_ok=True)
-        k = knoten_anlegen(db.engine, name, paket_s=paket_sekunden)
+        k = knoten_anlegen(db.engine, name, paket_s=paket_sekunden, format=paketformat)
+        endung = 'omb' if paketformat == 'v1' else 'json'
         for p in k.pakete(anzahl):
-            (ziel / f'{k.lauf}_{p.sequenz:08d}.json').write_bytes(paket_schreiben(p))
+            (ziel / f'{k.lauf}_{p.sequenz:08d}.{endung}').write_bytes(paket_schreiben(p))
         click.echo(f'{anzahl} Pakete von {k.geraet} (Lauf {k.lauf}, id {k.lauf_id}) nach {ziel}')
 
 

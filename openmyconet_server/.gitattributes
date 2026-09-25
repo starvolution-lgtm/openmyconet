@@ -10,3 +10,4 @@ deploy/deploy-exclude.txt text eol=lf
 # enthielte git archive bei core.autocrlf=true CRLF; psql-Meta-Befehle wie
 # \if / \gset sollen kein \r mitbekommen).
 *.sql text eol=lf
+*.omb binary

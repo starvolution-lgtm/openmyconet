@@ -3,7 +3,7 @@
 Es gibt noch keine echte Hardware. Dieser Knoten legt die Stammdaten eines
 synthetischen Nodes an (Geraet, Konfiguration, Sonde, Hardwarekanaele, Serie,
 Messlauf, RAW- und DERIVED-Kanaele, wie der Sandbox-Generator) und erzeugt
-fortlaufende Datenpakete im Format v0 -- so, wie ein Node sie auf SD-Karte
+fortlaufende Datenpakete im Format v0 oder v1 (format='v1') -- so, wie ein Node sie auf SD-Karte
 schreiben und per LoRa/BLE schicken wuerde. Feste Seeds -> reproduzierbar.
 
 Ausserdem: pakete_aus_datenbank() exportiert die vom Sandbox-Generator
@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 import sqlalchemy as sa
 
 from omn.eingang.einlesen import sql
+from omn.eingang import format_v1
 from omn.eingang.format_v0 import GENESIS, Block, paket_bauen
 
 EINGANG_BIO = 'U8/AIN0 über INA333'
@@ -38,6 +39,7 @@ class TestKnoten:
     rate_hz: int
     paket_s: int
     kanaele: dict = field(default_factory=dict)     # (schluessel, RAW|DERIVED) -> measurement_channel.id
+    format: str = 'v0'                              # Paketformat: 'v0' (JSON) oder 'v1' (binaer, Firmware)
 
     # -- Pakete ------------------------------------------------------------
     def paket(self, sequenz, vorgaenger_hash, variante=0):
@@ -53,18 +55,31 @@ class TestKnoten:
         n_temp = self.paket_s // TEMP_INTERVALL_S
         temp = [12.0 + 0.5 * math.sin(2 * math.pi * ((sequenz - 1) * n_temp + i) / 360) + rng.gauss(0, 0.02)
                 for i in range(n_temp)]
+        bio = zlib.compress(struct.pack(f'<{n_bio}h', *counts), 6)
+        tmp = struct.pack(f'<{n_temp}f', *temp)
+        bis = t0 + timedelta(seconds=self.paket_s)
+        if self.format == 'v1':
+            bloecke = (
+                format_v1.block_bauen(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0,
+                                      (self.rate_hz, 1), 'int16le', 'zlib-6', bio),
+                format_v1.block_bauen(EINGANG_TEMP, 'soil_temperature', (sequenz - 1) * n_temp, n_temp, t0,
+                                      (1, TEMP_INTERVALL_S), 'float32le', 'none', tmp),
+            )
+            return format_v1.paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke)
         bloecke = (
             Block(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0, float(self.rate_hz),
-                  'int16le', 'zlib-6', zlib.compress(struct.pack(f'<{n_bio}h', *counts), 6)),
+                  'int16le', 'zlib-6', bio),
             Block(EINGANG_TEMP, 'soil_temperature', (sequenz - 1) * n_temp, n_temp, t0, 1 / TEMP_INTERVALL_S,
-                  'float32le', 'none', struct.pack(f'<{n_temp}f', *temp)),
+                  'float32le', 'none', tmp),
         )
-        return paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, t0 + timedelta(seconds=self.paket_s),
-                           vorgaenger_hash, bloecke)
+        return paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke)
+
+    def genesis(self):
+        return format_v1.genesis_berechnen(self.geraet, self.lauf) if self.format == 'v1' else GENESIS
 
     def pakete(self, anzahl):
         """Die ersten `anzahl` Pakete der Kette (Sequenz 1..anzahl)."""
-        liste, vorg = [], GENESIS
+        liste, vorg = [], self.genesis()
         for seq in range(1, anzahl + 1):
             p = self.paket(seq, vorg)
             liste.append(p)
@@ -73,7 +88,7 @@ class TestKnoten:
 
 
 def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=timezone.utc), rate_hz=250,
-                   paket_s=60, lauf='boot-1', ended_at=None):
+                   paket_s=60, lauf='boot-1', ended_at=None, format='v0'):
     """Legt Stammdaten eines Test-Nodes in sandbox an und liefert den TestKnoten.
     `name` wird Teil der Seriennummer (SBX-NODE-EINGANG-<name>), muss also je
     Datenbank eindeutig sein. Laeuft mit SELECT/INSERT (Rolle omn genuegt)."""
@@ -104,7 +119,7 @@ def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=time
                 s=serie, d=dev, c=cfg, k=lauf, a=start, e=ended_at, g='PLANNED_END' if ended_at else None)
         c.execute(sa.text('INSERT INTO sandbox.probe_assignment (acquisition_run_id, probe_id, is_external_biocomm)'
                           ' VALUES (:r, :p, true)'), {'r': run, 'p': prb})
-        k = TestKnoten(geraet, lauf, run, start, rate_hz, paket_s)
+        k = TestKnoten(geraet, lauf, run, start, rate_hz, paket_s, format=format)
         for schluessel, hw, rolle, groesse, einheit, rate, takt, gain, kalib, einheit_abg in (
                 ('bio', hw_bio, 'PRIMARY', 'bioelectric_potential', '{count}', rate_hz, 'RTC_SQW', GAIN,
                  '{"adc": "ADS1115", "lsb_uv": %s, "ziel_einheit": "uV"}' % LSB_UV, 'uV'),

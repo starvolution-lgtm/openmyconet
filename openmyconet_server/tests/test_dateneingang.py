@@ -77,7 +77,7 @@ def _eins(sql, **p):
 
 def _ein(paket, **kw):
     from omn.eingang.einlesen import einliefern
-    from omn.eingang.format_v0 import paket_schreiben
+    from omn.eingang.formate import paket_schreiben
     return einliefern(db.engine, paket_schreiben(paket), **kw)
 
 
@@ -719,3 +719,107 @@ def test_generator_batches_sind_format_v0(ein_app):
         ergebnisse = [einliefern(db.engine, paket_schreiben(p)) for p in pakete]
         assert {e.status for e in ergebnisse} == {'DUPLICATE'}
         assert _eins('SELECT count(*) FROM sandbox.sample_block') == n_bloecke
+
+
+# ---------------------------------------------------------------------------
+# Paketformat v1 (C4, Binaerformat der Firmware)
+# ---------------------------------------------------------------------------
+def test_format_v1_normalfall_und_kettenanfang(ein_app):
+    from omn.eingang import format_v1
+    with ein_app.app_context():
+        k = _knoten('V1', format='v1')
+        p = k.pakete(3)
+        assert p[0].vorgaenger_hash == format_v1.genesis_berechnen(k.geraet, k.lauf)
+        ergebnisse = [_ein(x) for x in (p[0], p[2], p[1])]
+        assert [e.status for e in ergebnisse] == ['ACCEPTED'] * 3
+        b = _batches(k)
+        assert {b[n].chain_state for n in (1, 2, 3)} == {'LINKED'}       # Sequenz 1 haengt am v1-Genesis
+        assert _eins('SELECT count(DISTINCT payload_format) FROM sandbox.origin_batch WHERE acquisition_run_id = :r'
+                     " AND payload_format = 'omn-batch-v1'", r=k.lauf_id) == 1
+        assert _bloecke(k) == 6
+        # dieselben Pakete als Datei-Import: erkannt, nichts doppelt
+        assert _ein(p[1], transport='LORA').status == 'DUPLICATE'
+
+
+def test_format_v1_manipulierter_zeitanker_wird_abgelehnt(ein_app):
+    """Die in v0 offene Luecke: Blockangaben sind jetzt durch den batch_hash gedeckt."""
+    import dataclasses
+    from datetime import timedelta
+    with ein_app.app_context():
+        k = _knoten('V1-FALSCH', format='v1')
+        p = k.pakete(1)[0]
+        b = p.bloecke[0]
+        falsch = dataclasses.replace(p, bloecke=(dataclasses.replace(b, zeitanker=b.zeitanker + timedelta(seconds=1)),
+                                                 *p.bloecke[1:]))
+        e = _ein(falsch)
+        assert e.status == 'REJECTED' and 'batch_hash' in e.grund
+
+
+def test_format_v1_v0_genesis_haengt_nicht_an(ein_app):
+    """Ein v1-Paket mit dem v0-Kettenanfang (Nullen) ist nicht verkettet."""
+    from omn.eingang import format_v1
+    from omn.eingang.format_v0 import GENESIS
+    with ein_app.app_context():
+        k = _knoten('V1-NULLEN', format='v1')
+        p = k.pakete(1)[0]
+        mit_nullen = format_v1.paket_bauen(p.geraet, p.lauf, 1, p.inhalt, p.messzeitraum_von, p.messzeitraum_bis,
+                                           GENESIS, p.bloecke)
+        e = _ein(mit_nullen)
+        assert e.status == 'ACCEPTED' and e.kette == 'PREDECESSOR_MISSING'
+
+
+def test_ein_messlauf_hat_genau_ein_format(ein_app):
+    from omn.eingang.format_v0 import GENESIS
+    from omn.eingang.testknoten import TestKnoten
+    with ein_app.app_context():
+        k = _knoten('V1-MIX', format='v1')
+        assert _ein(k.pakete(1)[0]).status == 'ACCEPTED'
+        v0 = TestKnoten(k.geraet, k.lauf, k.lauf_id, k.start, k.rate_hz, k.paket_s, k.kanaele, format='v0')
+        e = _ein(v0.paket(2, GENESIS))
+        assert e.status == 'REJECTED' and 'genau ein Format' in e.grund
+
+
+def test_format_v1_ereignisse_werden_noch_abgelehnt(ein_app):
+    from omn.eingang import format_v1
+    with ein_app.app_context():
+        k = _knoten('V1-EREIGNIS', format='v1')
+        p = k.pakete(1)[0]
+        mit = format_v1.paket_bauen(p.geraet, p.lauf, 1, 'MIXED', p.messzeitraum_von, p.messzeitraum_bis,
+                                    p.vorgaenger_hash, p.bloecke,
+                                    ereignisse=[format_v1.Ereignis('STIMULATION', p.messzeitraum_von)])
+        e = _ein(mit)
+        assert e.status == 'REJECTED' and 'Ereignisse' in e.grund
+        assert _bloecke(k) == 0
+
+
+def test_format_v1_konflikt_und_manuelle_aufloesung(ein_app):
+    """Quarantaene-Paket im Binaerformat: die manuelle Aufloesung liest es
+    wieder und schreibt die Bloecke; der zurueckgestellte Kandidat landet in
+    der Quarantaene."""
+    import hashlib
+    from omn.eingang.einlesen import kandidat_festlegen
+    with ein_app.app_context():
+        k = _knoten('V1-KONFLIKT', format='v1')
+        p1, p2 = k.pakete(2)
+        _ein(p1)
+        erster = _ein(p2).batch_id
+        zweiter = _ein(k.paket(2, p1.batch_hash, variante=1)).batch_id
+        assert _eins('SELECT payload_format FROM sandbox.origin_batch WHERE id = :b', b=zweiter) ==             'omn-batch-v1/paket-omb'
+        kandidat_festlegen(db.engine, zweiter, 'Robby', 'Test Format v1')
+        assert _status(zweiter)[:2] == ('CANONICAL', 'MANUAL_REVIEW') and _status(zweiter).bloecke == 2
+        q = _quarantaene(erster)
+        assert len(q) == 2
+        assert hashlib.sha256(b''.join(bytes(z.payload_inline) for z in q)).digest() == _payload_hash(erster)
+
+
+def test_ordner_import_liest_omb_und_json(ein_app, tmp_path):
+    from omn.eingang.einlesen import ordner_einlesen
+    from omn.eingang.formate import paket_schreiben
+    with ein_app.app_context():
+        k1, k0 = _knoten('ORDNER-V1', format='v1'), _knoten('ORDNER-V0')
+        for p in k1.pakete(2):
+            (tmp_path / f'{p.sequenz:04d}.omb').write_bytes(paket_schreiben(p))
+        for p in k0.pakete(2):
+            (tmp_path / f'{p.sequenz:04d}.json').write_bytes(paket_schreiben(p))
+        ergebnisse = ordner_einlesen(db.engine, tmp_path)
+        assert len(ergebnisse) == 4 and {e.status for _, e in ergebnisse} == {'ACCEPTED'}
