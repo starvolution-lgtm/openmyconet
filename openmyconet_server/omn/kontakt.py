@@ -5,7 +5,7 @@ Einbinden in omn/__init__.py: from omn.kontakt import kontakt_bp; app.register_b
 import logging
 import os
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, render_template, request
 from flask_mail import Message
 
 from omn.extensions import db, mail
@@ -76,6 +76,20 @@ Nachricht:
 
 Verwalten unter /admin/kontakt
 """
+            base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
+            msg.html = render_template(
+                'transaktions_email.html',
+                titel='Neue Kontaktanfrage',
+                zeilen=[
+                    f'Name: {anfrage.name or "(nicht angegeben)"}',
+                    f'E-Mail: {anfrage.email}',
+                    f'Telefon: {anfrage.telefon or "(nicht angegeben)"}',
+                    f'Anliegen: {anfrage.anliegen}',
+                    f'Nachricht: {anfrage.nachricht}',
+                ],
+                cta_text='Kontaktanfrage verwalten',
+                cta_url=f'{base_url}/admin/kontakt',
+            )
             mail.send(msg)
         except Exception as e:
             logger.error("Kontakt-Benachrichtigung konnte nicht gesendet werden: %s", e)

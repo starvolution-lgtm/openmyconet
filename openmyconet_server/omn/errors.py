@@ -69,6 +69,16 @@ def _fehler_mail(eintrag):
             f'{eintrag.methode} {eintrag.pfad}\nIP: {eintrag.ip}\n\n'
             f'{eintrag.nachricht}\n\n{eintrag.traceback}'
         )
+        msg.html = render_template(
+            'transaktions_email.html',
+            titel=f'Fehler: {eintrag.fehlertyp}',
+            zeilen=[
+                f'{eintrag.methode} {eintrag.pfad}',
+                f'IP: {eintrag.ip}',
+                eintrag.nachricht,
+                eintrag.traceback,
+            ],
+        )
         mail.send(msg)
     except Exception:
         logger.exception('Fehler-Benachrichtigungsmail konnte nicht gesendet werden')

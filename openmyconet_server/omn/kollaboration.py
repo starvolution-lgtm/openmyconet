@@ -255,6 +255,13 @@ def _benachrichtige(kontext, autor, ereignis):
         betreff = f'Kollaboration ({bereich}): {ereignis}'
         koerper = (f'Der Partner hat im Kollaborationsbereich etwas hinterlassen:\n\n'
                    f'{bereich}\n{ereignis}\n\nOeffnen: {admin_link}\n')
+        html = render_template(
+            'transaktions_email.html',
+            titel='Neuer Eintrag im Kollaborationsbereich',
+            zeilen=[f'Der Partner hat im Kollaborationsbereich etwas hinterlassen ({bereich}):', ereignis],
+            cta_text='Kollaborationsbereich öffnen',
+            cta_url=admin_link,
+        )
     else:
         empfaenger = partner_mail
         betreff = f'OpenMycoNet — {ereignis}'

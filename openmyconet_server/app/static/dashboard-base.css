@@ -1,10 +1,35 @@
-body { font-family: sans-serif; max-width: 700px; margin: 40px auto; color: #eee; background: #0a0f0a; padding: 0 20px; }
-h1, h2 { color: #4caf50; }
-a { color: #4caf50; }
-nav { margin-bottom: 30px; font-size: 0.9em; }
-.msg { color: #4caf50; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
-.err { color: #f44336; margin: 16px 0; padding: 10px; background: #1a2a1a; border-radius: 4px; }
-.card { background: #1a2a1a; padding: 20px; border-radius: 6px; margin: 16px 0; }
+/* Nutzer-Dashboard (dashboard_base.html + alle dashboard_*.html). Seitenrahmen
+   im selben Stil wie die oeffentliche Website und das BioComm-Datenlabor
+   (site-base.css/datenlabor.css: Waldgruen, Lora/Playfair Display fuer
+   Ueberschriften, JetBrains Mono fuer Nav/Eyebrow/Buttons, Bernstein als
+   Akzent). Datenlabor.css baut auf denselben Werten auf (eigene .dl-sw-
+   Regeln fuer das Software-Fenster obendrauf), damit beide Bereiche aus
+   einem Guss wirken. */
+body {
+    max-width: 900px; margin: 0 auto; padding: 2.5rem clamp(1rem, 4vw, 2rem) 4rem;
+    background: #024530; color: #e8f5e0; font-family: 'Lora', Georgia, serif;
+    font-size: 17px; line-height: 1.65;
+}
+[hidden] { display: none !important; }
+h1, h2 { color: #6ee87e; }
+a { color: #6ee87e; }
+a:hover { text-decoration: underline; }
+nav { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.04em;
+      color: #a0c8a0; border-bottom: 1px solid #0a6040; padding-bottom: 14px; margin-bottom: 32px; }
+nav a { color: #6ee87e; text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #d4a030;
+           letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 8px; }
+h1 { font-family: 'Playfair Display', serif; font-weight: 400; color: #ffffff;
+     font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.2; margin: 0 0 22px; }
+h1 em, h2 em { font-style: italic; color: #6ee87e; }
+h2 { font-family: 'Playfair Display', serif; font-weight: 400; color: #ffffff;
+     font-size: 1.25rem; margin: 0 0 12px; }
+
+.msg { color: #6ee87e; margin: 16px 0; padding: 12px 16px; background: rgba(0, 0, 0, 0.28); border-left: 3px solid #0a7050; }
+.err { color: #ff9a90; margin: 16px 0; padding: 12px 16px; background: rgba(0, 0, 0, 0.28); border-left: 3px solid #c0392b; }
+.card { background: rgba(0, 0, 0, 0.28); border: 1px solid #0a6040; padding: 20px 24px; margin: 18px 0; }
 /* Mykorrhiza-Textur: nur auf dem Login-Bereich, reines Ambiente, extrem
    geringe Deckkraft -- .card selbst bleibt unangetastet fuer alle anderen Views. */
 .texture-card { position: relative; overflow: hidden; }
@@ -15,13 +40,26 @@ nav { margin-bottom: 30px; font-size: 0.9em; }
     opacity: 0.08; pointer-events: none; z-index: 0;
 }
 .texture-card > * { position: relative; z-index: 1; }
-.label { color: #aaa; font-size: 0.85em; }
-input, button { padding: 8px; margin: 6px 0; background: #1a2a1a; color: #eee; border: 1px solid #4caf50; border-radius: 4px; box-sizing: border-box; }
+.label { color: #a0c8a0; font-size: 0.85em; }
+
+input, textarea, select {
+    padding: 9px 10px; margin: 6px 0; background: rgba(0, 0, 0, 0.28); color: #e8f5e0;
+    border: 1px solid #0a6040; border-radius: 2px; box-sizing: border-box; font: inherit;
+}
 input { width: 100%; }
-button { cursor: pointer; font-weight: bold; padding: 10px 24px; }
+textarea { width: 100%; }
+button {
+    cursor: pointer; font-family: 'JetBrains Mono', monospace; font-weight: normal;
+    font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 11px 24px; margin: 6px 0; background: #0a7050; color: #ffffff;
+    border: none; transition: background-color 0.2s;
+}
+button:hover { background: #3a9e5a; }
+
 table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-th { text-align: left; color: #4caf50; padding: 6px 8px; font-size: 0.85em; }
-td { padding: 6px 8px; border-bottom: 1px solid #24342466; font-size: 0.9em; }
+th { text-align: left; color: #6ee87e; padding: 6px 8px; font-size: 0.85em;
+     font-family: 'JetBrains Mono', monospace; font-weight: normal; letter-spacing: 0.03em; }
+td { padding: 8px 8px; border-bottom: 1px solid #0a604066; font-size: 0.9em; }
 
 /* Utility-Klassen (Migration von Inline-Styles, CSP-Haertung) --
    dieselben Klassennamen wie in admin.css, dashboard_*.html laedt
@@ -32,7 +70,16 @@ td { padding: 6px 8px; border-bottom: 1px solid #24342466; font-size: 0.9em; }
 .u-mb-14 { margin-bottom: 14px; }
 .u-pre-wrap { margin: 4px 0; white-space: pre-wrap; }
 .u-strike-faded { text-decoration: line-through; opacity: 0.6; }
-.dk-1 { margin-top:36px; }
-.dk-2 { padding:2px 8px; }
-.dk-3 { width:100%;padding:8px;background:#1a2a1a;color:#eee;border:1px solid #4caf50;border-radius:4px;box-sizing:border-box; }
-.dl-honeypot { position:absolute; left:-9999px; }
+.dk-1 { margin-top: 36px; }
+.dk-2 { padding: 3px 9px; margin: 0; background: transparent; color: #e8f5e0;
+        border: 1px solid #0a6040; font-family: 'JetBrains Mono', monospace;
+        font-size: 0.9rem; text-transform: none; letter-spacing: 0; }
+.dk-2:hover { background: rgba(110, 232, 126, 0.1); border-color: #6ee87e; }
+.dk-3 { width: 100%; padding: 9px 10px; background: rgba(0, 0, 0, 0.28); color: #e8f5e0;
+        border: 1px solid #0a6040; border-radius: 2px; box-sizing: border-box; font: inherit; }
+.dl-honeypot { position: absolute; left: -9999px; }
+
+@media (max-width: 640px) {
+    body { padding: 1.5rem 1rem 3rem; }
+    .card { padding: 16px 16px; }
+}

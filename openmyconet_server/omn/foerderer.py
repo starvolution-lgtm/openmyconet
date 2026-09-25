@@ -432,6 +432,22 @@ Was wird von OpenMycoNet erwartet:
 
 Freigeben unter: {_base_url()}/admin/foerderer
 """
+    msg.html = render_template(
+        'transaktions_email.html',
+        titel='Neue Kooperationsanfrage',
+        zeilen=[
+            'Unbezahlt, wartet auf Freigabe.',
+            f'Firma: {foerderer.firma}',
+            f'Ansprechpartner: {foerderer.ansprechpartner or "(nicht angegeben)"}',
+            f'E-Mail: {foerderer.email}',
+            f'Website: {foerderer.website or "(nicht angegeben)"}',
+            f'Kategorie: {foerderer.kategorie}',
+            f'Was wird angeboten: {foerderer.beschreibung}',
+            f'Was wird von OpenMycoNet erwartet: {foerderer.gegenleistung_erwartet or "(nicht angegeben)"}',
+        ],
+        cta_text='Anfrage freigeben',
+        cta_url=f'{_base_url()}/admin/foerderer',
+    )
     try:
         mail.send(msg)
     except Exception as e:
@@ -667,6 +683,22 @@ Kategorie: {foerderer.kategorie}
 
 Im Admin-Panel prüfen und freischalten: {_base_url()}/admin/foerderer
 """
+    msg.html = render_template(
+        'transaktions_email.html',
+        titel='Förderer-Zahlung wartet auf Freigabe',
+        zeilen=[
+            'Neue Förderer-Zahlung eingegangen, wartet auf Freigabe (max. 48h).',
+            f'Firma: {foerderer.firma}',
+            f'Ansprechpartner: {foerderer.ansprechpartner or "(nicht angegeben)"}',
+            f'E-Mail: {foerderer.email}',
+            f'Website: {foerderer.website or "(nicht angegeben)"}',
+            f'Betrag: {betrag:.2f} EUR',
+            f'Rechnung: {rechnung_nr}',
+            f'Kategorie: {foerderer.kategorie}',
+        ],
+        cta_text='Im Admin-Panel prüfen',
+        cta_url=f'{_base_url()}/admin/foerderer',
+    )
     try:
         mail.send(msg)
     except Exception as e:

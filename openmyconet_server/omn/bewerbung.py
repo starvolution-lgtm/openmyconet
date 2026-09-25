@@ -5,7 +5,7 @@ Einbinden in app.py: from bewerbung import bewerbung_bp; app.register_blueprint(
 
 import os
 import logging
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from flask_mail import Message
 
 from omn.extensions import db, mail
@@ -107,6 +107,23 @@ Bewerbungstext:
 
 Verwalten unter /admin/bewerbungen
 """
+            base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
+            msg.html = render_template(
+                'transaktions_email.html',
+                titel='Neue Knotenbetreiber-Bewerbung',
+                zeilen=[
+                    f'Name: {bewerbung.name or "(nicht angegeben)"}',
+                    f'E-Mail: {bewerbung.email}',
+                    f'Rolle: {bewerbung.rolle or "(nicht angegeben)"}',
+                    f'Beruf/Hintergrund: {bewerbung.profession or "(nicht angegeben)"}',
+                    f'Substrat: {bewerbung.substrat}',
+                    f'Adresse: {bewerbung.adresse or "(nicht angegeben)"}',
+                    f'Koordinaten: {bewerbung.lat}, {bewerbung.lon}',
+                    f'Bewerbungstext: {bewerbung.motivation}',
+                ],
+                cta_text='Bewerbung verwalten',
+                cta_url=f'{base_url}/admin/bewerbungen',
+            )
             mail.send(msg)
         except Exception as e:
             logger.error("Bewerbungs-Benachrichtigung konnte nicht gesendet werden: %s", e)
