@@ -13,7 +13,10 @@ Routen (Blueprint datenlabor_bp):
 Die API antwortet ohne Login mit 401 JSON (kein Redirect auf HTML).
 
 Liest nur `sandbox.*` -- nie `live.*`, nie `*_private` (die Web-Rolle omn hat
-darauf ohnehin keine Rechte). Auf SQLite (lokal/CI) gibt es die Sandbox nicht:
+darauf ohnehin keine Rechte). Rohdaten nur aus kanonischen Batches
+(origin_batch.batch_status = 'CANONICAL'; Konfliktkandidaten erscheinen nie),
+Aggregate nur in der juengsten Version (Sicht derived_aggregate_current,
+Migration biocomm_0002). Auf SQLite (lokal/CI) gibt es die Sandbox nicht:
 dann leerer Zustand statt Fehler.
 """
 import struct
@@ -140,6 +143,7 @@ def api_szenarien(nutzer):
                         WHERE r.series_id = s.id) AS mit_stim,
                ARRAY(SELECT DISTINCT date_trunc('hour', sb.time_anchor)
                        FROM sandbox.sample_block sb
+                       JOIN sandbox.origin_batch ob ON ob.id = sb.origin_batch_id AND ob.batch_status = 'CANONICAL'
                        JOIN sandbox.measurement_channel mc ON mc.id = sb.measurement_channel_id
                        JOIN sandbox.acquisition_run r ON r.id = mc.acquisition_run_id
                       WHERE r.series_id = s.id AND mc.quantity_code = 'bioelectric_potential'
@@ -198,7 +202,7 @@ def api_reihe(nutzer):
     tz = reihe[1] or 'UTC'
     spanne = bis - von
     p = {'s': series_id, 'q': kanal, 'von': von, 'bis': bis, 'tz': tz}
-    basis = """FROM sandbox.derived_aggregate a
+    basis = """FROM sandbox.derived_aggregate_current a
                JOIN sandbox.measurement_channel mc ON mc.id = a.measurement_channel_id
                JOIN sandbox.acquisition_run r ON r.id = mc.acquisition_run_id
               WHERE r.series_id = :s AND mc.quantity_code = :q AND mc.data_kind = 'DERIVED'
@@ -281,6 +285,7 @@ def api_roh(nutzer):
         SELECT sb.time_anchor, sb.sample_rate_hz, sb.sample_count, sb.first_sample_index, sb.value_encoding,
                sb.compression, sb.payload_inline, mc.gain, mc.calibration, mc.gain_source
           FROM sandbox.sample_block sb
+          JOIN sandbox.origin_batch ob ON ob.id = sb.origin_batch_id AND ob.batch_status = 'CANONICAL'
           JOIN sandbox.measurement_channel mc ON mc.id = sb.measurement_channel_id
           JOIN sandbox.acquisition_run r ON r.id = mc.acquisition_run_id
          WHERE r.series_id = :s AND mc.quantity_code = 'bioelectric_potential' AND mc.data_kind = 'RAW'
