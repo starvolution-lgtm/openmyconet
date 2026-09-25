@@ -12,6 +12,10 @@
 -- =============================================================================
 REVOKE INSERT ON sandbox.candidate_resolution_log, live.candidate_resolution_log FROM omn;
 GRANT SELECT ON sandbox.candidate_resolution_log, live.candidate_resolution_log TO omn;
+-- Quarantaene: omn darf lesen, aber nicht selbst einfuegen (nur ueber
+-- kandidat_festlegen); aendern oder loeschen verhindert der Trigger.
+REVOKE INSERT ON sandbox.sample_block_quarantine, live.sample_block_quarantine FROM omn;
+GRANT SELECT ON sandbox.sample_block_quarantine, live.sample_block_quarantine TO omn;
 REVOKE INSERT ON sandbox.derived_aggregate_current, live.derived_aggregate_current FROM omn;
 GRANT SELECT ON sandbox.derived_aggregate_current, live.derived_aggregate_current TO omn;
 REVOKE ALL ON FUNCTION biocomm_common.kandidat_festlegen(text, bigint, text, jsonb, text, text) FROM PUBLIC;

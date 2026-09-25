@@ -71,8 +71,10 @@ def downgrade():
         'SELECT (SELECT count(*) FROM live.derived_aggregate WHERE aggregate_version > 1)'
         ' + (SELECT count(*) FROM sandbox.derived_aggregate WHERE aggregate_version > 1)'
         ' + (SELECT count(*) FROM live.candidate_resolution_log)'
-        ' + (SELECT count(*) FROM sandbox.candidate_resolution_log)')).scalar()
+        ' + (SELECT count(*) FROM sandbox.candidate_resolution_log)'
+        ' + (SELECT count(*) FROM live.sample_block_quarantine)'
+        ' + (SELECT count(*) FROM sandbox.sample_block_quarantine)')).scalar()
     if rest:
-        raise RuntimeError(f'Downgrade abgebrochen: {rest} Aggregat-Versionen > 1 bzw. Protokolleintraege '
+        raise RuntimeError(f'Downgrade abgebrochen: {rest} Aggregat-Versionen > 1, Protokolleintraege bzw. Quarantaene-Bloecke '
                            'wuerden verloren gehen. Bei Bedarf von Hand sichern und entfernen.')
     _v0001()._ausfuehren(conn, (SQL_DIR / 'biocomm_0002_zurueck.sql').read_text(encoding='utf-8'))

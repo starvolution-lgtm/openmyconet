@@ -177,6 +177,22 @@ def _log(batch_id):
             ' WHERE origin_batch_id = :b ORDER BY id'), {'b': batch_id})]
 
 
+def _quarantaene(batch_id):
+    """Bloecke eines zurueckgestellten Kandidaten aus der Quarantaene, in der
+    Reihenfolge des payload_hash (urspruengliche sample_block-ids)."""
+    with db.engine.connect() as c:
+        return c.execute(sa.text(
+            'SELECT measurement_channel_id, first_sample_index, sample_count, value_encoding, compression,'
+            ' payload_inline FROM sandbox.sample_block_quarantine WHERE origin_batch_id = :b'
+            ' ORDER BY sample_block_id'), {'b': batch_id}).all()
+
+
+def _payload_hash(batch_id):
+    with db.engine.connect() as c:
+        return bytes(c.execute(sa.text('SELECT payload_hash FROM sandbox.origin_batch WHERE id = :b'),
+                               {'b': batch_id}).scalar())
+
+
 def _status(batch_id):
     with db.engine.connect() as c:
         return c.execute(sa.text(
@@ -251,7 +267,19 @@ def test_kettenbeweis_zugunsten_des_zweiten_nachfolger_kommt_spaeter(ein_app):
         bio = p2b.bloecke[0]
         assert werte_dekodieren(entpacken(bytes(z.payload_inline), z.compression), z.value_encoding) == \
             werte_dekodieren(entpacken(bio.payload, bio.kompression), bio.kodierung)
-        assert _log(erster)[0]['detail'] == {'bloecke_entfernt': 2, 'gewinner': zweiter}
+        assert _log(erster)[0]['detail'] == {'bloecke_entfernt': 2, 'bloecke_in_quarantaene': 2,
+                                             'gewinner': zweiter}
+        # Nichts geht verloren: die Rohdaten des zurueckgestellten ersten Kandidaten
+        # liegen vollstaendig in der Quarantaene, ihr Hash ergibt wieder seinen payload_hash
+        # und die Werte sind die des urspruenglichen Pakets.
+        import hashlib
+        q = _quarantaene(erster)
+        assert len(q) == 2
+        assert hashlib.sha256(b''.join(bytes(z.payload_inline) for z in q)).digest() == _payload_hash(erster)
+        for z, bl in zip(q, p2.bloecke, strict=True):
+            assert werte_dekodieren(entpacken(bytes(z.payload_inline), z.compression), z.value_encoding) == \
+                werte_dekodieren(entpacken(bl.payload, bl.kompression), bl.kodierung)
+        assert _quarantaene(zweiter) == []
         assert _log(zweiter)[0]['detail'] == {'bloecke_geschrieben': 2, 'bloecke_vorhanden': 0}
         assert _ein(k.paket(4, p3b.batch_hash)).kette == 'LINKED'
 
@@ -277,6 +305,7 @@ def test_manuelle_aufloesung_per_cli(ein_app):
         assert ok.exit_code == 0, ok.output
         assert _status(zweiter)[:2] == ('CANONICAL', 'MANUAL_REVIEW') and _status(zweiter).bloecke == 2
         assert _status(erster).bloecke == 0
+        assert len(_quarantaene(erster)) == 2 and _log(erster)[0]['detail']['bloecke_in_quarantaene'] == 2
         log = _log(zweiter)[0]
         assert (log['action'], log['basis'], log['performed_by'], log['reason']) == \
             ('CHOSEN', 'MANUAL_REVIEW', 'Robby', 'Messwerte der LoRa-Lieferung plausibler')
@@ -642,6 +671,8 @@ def test_rechte_als_rolle_omn(ein_app):
             with omn.connect() as c:
                 assert c.execute(sa.text('SELECT db_user FROM sandbox.candidate_resolution_log'
                                          ' WHERE origin_batch_id = :b'), {'b': zweiter}).scalar() == 'postgres'
+                # die zurueckgestellten Bloecke liegen in der Quarantaene, omn darf sie lesen
+                assert c.execute(sa.text('SELECT count(*) FROM sandbox.sample_block_quarantine')).scalar() > 0
             # Gegenprobe: mehr als die Statusspalten darf omn nicht, loeschen nie
             verboten = [
                 "UPDATE sandbox.origin_batch SET payload_hash = payload_hash",
@@ -652,6 +683,12 @@ def test_rechte_als_rolle_omn(ein_app):
                 "INSERT INTO sandbox.candidate_resolution_log (acquisition_run_id, batch_sequence_no, origin_batch_id,"
                 f" action, basis, performed_by) VALUES ({k2.lauf_id}, 2, {zweiter}, 'CHOSEN', 'MANUAL_REVIEW', 'x')",
                 "SELECT count(*) FROM sandbox_private.site_location_private",
+                "DELETE FROM sandbox.sample_block_quarantine",
+                "UPDATE sandbox.sample_block_quarantine SET payload_inline = NULL",
+                "INSERT INTO sandbox.sample_block_quarantine (sample_block_id, acquisition_run_id,"
+                " measurement_channel_id, origin_batch_id, first_sample_index, sample_count, time_anchor,"
+                " sample_rate_hz, value_encoding, compression, payload_location, payload_hash)"
+                f" VALUES (-1, {k2.lauf_id}, 1, {zweiter}, 0, 1, now(), 1, 'x', 'none', 'INLINE', '\\x00')",
             ]
             for befehl in verboten:
                 with pytest.raises(sa.exc.ProgrammingError), omn.begin() as c:

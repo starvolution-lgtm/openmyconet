@@ -114,6 +114,43 @@ BEGIN
         BEFORE UPDATE OR DELETE ON candidate_resolution_log
         FOR EACH ROW EXECUTE FUNCTION biocomm_common.forbid_modification();
 
+    -- 2b'. Quarantaene fuer Rohdatenbloecke zurueckgestellter Kandidaten
+    --     (Pruefung lokale Sitzung, 25.09.2026): Ein regulaer angenommener
+    --     Batch hat payload_location = 'SAMPLE_BLOCKS', seine Payload existiert
+    --     NUR in sample_block. Bevor kandidat_festlegen() diese Bloecke aus
+    --     sample_block entfernt, kopiert es sie hierher. So bleiben
+    --     Konfliktkandidaten vollstaendig erhalten (Quarantaene statt Loeschen)
+    --     und jede Kandidatenwahl bleibt umkehrbar; auch ein Missbrauch der
+    --     Web-Rolle kann keine Rohdaten mehr endgueltig vernichten.
+    --     Nur einfuegen (nur ueber kandidat_festlegen, omn hat kein INSERT),
+    --     unveraenderlich, kein EXCLUDE (Sample-Indizes duerfen sich hier
+    --     ueberschneiden). sample_block_id = urspruengliche Zeile; die
+    --     Reihenfolge der ids ist die Reihenfolge im payload_hash.
+    CREATE TABLE sample_block_quarantine (
+        id                     bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        sample_block_id        bigint  NOT NULL UNIQUE,
+        acquisition_run_id     bigint  NOT NULL,
+        measurement_channel_id bigint  NOT NULL REFERENCES measurement_channel(id),
+        origin_batch_id        bigint  NOT NULL,
+        first_sample_index     bigint  NOT NULL,
+        sample_count           integer NOT NULL,
+        time_anchor            timestamptz NOT NULL,
+        sample_rate_hz         numeric NOT NULL,
+        value_encoding         text    NOT NULL,
+        compression            text    NOT NULL,
+        payload_location       text    NOT NULL,
+        payload_inline         bytea,
+        payload_ref            text,
+        payload_hash           bytea   NOT NULL,
+        device_quality         bytea,
+        set_aside_at           timestamptz NOT NULL DEFAULT clock_timestamp(),
+        FOREIGN KEY (origin_batch_id, acquisition_run_id) REFERENCES origin_batch(id, acquisition_run_id)
+    );
+    CREATE INDEX sample_block_quarantine_batch ON sample_block_quarantine (origin_batch_id, sample_block_id);
+    CREATE TRIGGER sample_block_quarantine_immutable
+        BEFORE UPDATE OR DELETE ON sample_block_quarantine
+        FOR EACH ROW EXECUTE FUNCTION biocomm_common.forbid_modification();
+
     -- 2c. Loeschschutz sample_block (Abschnitt 1): UPDATE wie bisher verboten,
     --     DELETE nur ueber kandidat_festlegen().
     DROP TRIGGER sample_block_immutable ON sample_block;
@@ -141,7 +178,8 @@ $core$;
 --                   previous_batch_hash auf GENAU diesen Kandidaten verweisen
 --                   (die Funktion prueft das selbst);
 --   MANUAL_REVIEW   mit Name und Begruendung (Pflicht).
--- Entfernt die sample_block-Zeilen der uebrigen Kandidaten, schreibt die des
+-- Verschiebt die sample_block-Zeilen der uebrigen Kandidaten in die
+-- Quarantaene (sample_block_quarantine: erst kopieren, dann entfernen), schreibt die des
 -- Gewinners (falls er noch keine hat; p_bloecke = Bloecke als jsonb, deren
 -- Payloads zusammen den payload_hash des Gewinners ergeben muessen) und
 -- protokolliert jeden Schritt. Das Paketformat (C4) kennt nur Python
@@ -165,6 +203,7 @@ DECLARE
     v_verweise  bigint[];
     v_wer       text;
     v_protokoll integer := 0;
+    v_q         bigint;
 BEGIN
     IF p_schema NOT IN ('sandbox', 'live') THEN
         RAISE EXCEPTION 'kandidat_festlegen: Schema % nicht erlaubt', p_schema;
@@ -230,21 +269,39 @@ BEGIN
         END IF;
     END IF;
 
-    -- Uebrige Kandidaten zurueckstellen: Bloecke entfernen, Status CONFLICT,
-    -- status_changed_at neu (die Verdichtung erkennt daran betroffene Fenster).
+    -- Uebrige Kandidaten zurueckstellen: Bloecke zuerst in die Quarantaene
+    -- kopieren, dann aus sample_block entfernen (nie ohne Kopie), Status
+    -- CONFLICT, status_changed_at neu (die Verdichtung erkennt daran
+    -- betroffene Fenster).
     PERFORM set_config('biocomm.kandidat_festlegen', 'an', true);
     FOR k IN EXECUTE format('SELECT id FROM %I.origin_batch WHERE acquisition_run_id = $1'
                             ' AND batch_sequence_no = $2 AND id <> $3 ORDER BY id', p_schema)
              USING g.lauf, g.seq, g.id LOOP
+        EXECUTE format($q$
+            WITH q AS (
+                INSERT INTO %1$I.sample_block_quarantine (sample_block_id, acquisition_run_id,
+                    measurement_channel_id, origin_batch_id, first_sample_index, sample_count, time_anchor,
+                    sample_rate_hz, value_encoding, compression, payload_location, payload_inline, payload_ref,
+                    payload_hash, device_quality)
+                SELECT id, acquisition_run_id, measurement_channel_id, origin_batch_id, first_sample_index,
+                       sample_count, time_anchor, sample_rate_hz, value_encoding, compression, payload_location,
+                       payload_inline, payload_ref, payload_hash, device_quality
+                  FROM %1$I.sample_block WHERE origin_batch_id = $1 ORDER BY id
+                RETURNING 1)
+            SELECT count(*) FROM q$q$, p_schema) INTO v_q USING k.id;
         EXECUTE format('WITH d AS (DELETE FROM %I.sample_block WHERE origin_batch_id = $1 RETURNING 1)'
                        ' SELECT count(*) FROM d', p_schema) INTO v_n USING k.id;
+        IF v_n <> v_q THEN
+            RAISE EXCEPTION 'kandidat_festlegen: % Bloecke entfernt, aber % in die Quarantaene kopiert (Batch %)',
+                v_n, v_q, k.id;
+        END IF;
         EXECUTE format('UPDATE %I.origin_batch SET batch_status = ''CONFLICT'', status_basis = NULL,'
                        ' status_changed_at = clock_timestamp() WHERE id = $1', p_schema) USING k.id;
         EXECUTE format('INSERT INTO %I.candidate_resolution_log (acquisition_run_id, batch_sequence_no,'
                        ' origin_batch_id, action, basis, performed_by, reason, detail)'
                        ' VALUES ($1, $2, $3, ''SET_ASIDE'', $4, $5, $6, $7)', p_schema)
             USING g.lauf, g.seq, k.id, p_grundlage, v_wer, p_begruendung,
-                  jsonb_build_object('bloecke_entfernt', v_n, 'gewinner', g.id);
+                  jsonb_build_object('bloecke_entfernt', v_n, 'bloecke_in_quarantaene', v_q, 'gewinner', g.id);
         v_protokoll := v_protokoll + 1;
     END LOOP;
     PERFORM set_config('biocomm.kandidat_festlegen', '', true);

@@ -1,7 +1,7 @@
 -- =============================================================================
 -- BioComm Schema v2 -- Rueckbau (downgrade der Migration 8d4e2a6c1b70).
 -- Nur moeglich, solange es keine zweite Aggregat-Version, keinen Grabstein und
--- keinen Protokolleintrag gibt; sonst bricht der Rueckbau ab (die Migration
+-- keinen Protokolleintrag und keine Quarantaene-Zeile gibt; sonst bricht der Rueckbau ab (die Migration
 -- prueft das vorher und meldet es verstaendlich).
 -- =============================================================================
 DO $$
@@ -10,6 +10,7 @@ DECLARE
 BEGIN
     FOREACH s IN ARRAY ARRAY['sandbox', 'live'] LOOP
         EXECUTE format('DROP VIEW %I.derived_aggregate_current', s);
+        EXECUTE format('DROP TABLE %I.sample_block_quarantine', s);
         EXECUTE format('DROP TABLE %I.candidate_resolution_log', s);
         EXECUTE format('DROP INDEX %I.batch_delivery_transport', s);
         EXECUTE format('DROP TRIGGER sample_block_loeschschutz ON %I.sample_block', s);

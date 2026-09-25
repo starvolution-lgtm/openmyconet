@@ -80,6 +80,24 @@ unverändert, die Änderung gilt über `biocomm_common.core_0002` für `sandbox`
   gesetzt hat **und** der Ausführende Eigentümer der Tabelle ist. Beides gibt es nur
   innerhalb der Funktion. Ich habe mich gegen `ALTER TABLE … DISABLE TRIGGER`
   entschieden, weil das `sample_block` exklusiv sperren würde.
+- **Quarantäne (Nachbesserung nach der Prüfung durch die lokale Sitzung, 25.09.2026):**
+  In der ersten Fassung entfernte die Funktion die Blöcke der zurückgestellten Kandidaten
+  ersatzlos. Ein regulär angenommener Batch hat `payload_location = 'SAMPLE_BLOCKS'`,
+  seine Payload lag also nur in diesen Blöcken und wäre bei einer späteren Wahl des
+  Konkurrenten verloren gewesen, bis auf den `payload_hash`. Das widersprach zwei
+  Grundsätzen des Entwurfs: Konfliktkandidaten bleiben erhalten, und Rohdaten sind auch
+  gegen Fehler oder Missbrauch der Web-Rolle geschützt. Jetzt gilt:
+  - Neue Tabelle `sample_block_quarantine` (für `sandbox` und `live`):
+    - nur einfügen, unveränderlich;
+    - `omn` darf nur lesen;
+    - kein `EXCLUDE`.
+  - `kandidat_festlegen()` kopiert die Blöcke zuerst dorthin und entfernt sie erst
+    danach, in derselben Transaktion. Weichen die Zahlen ab, bricht sie ab.
+  - Das Protokoll nennt `bloecke_in_quarantaene`.
+  - Die Tests weisen nach, dass sich die Rohwerte des zurückgestellten Kandidaten
+    vollständig wiederherstellen lassen. Der Hash ergibt wieder seinen `payload_hash`.
+  - Gegenprobe: `omn` kann in der Quarantäne nichts einfügen, ändern oder löschen.
+  - Der Downgrade verweigert sich auch bei Quarantäne-Zeilen.
 - Der Schalter `KONFLIKT_STUFT_BESTEHENDEN_ZURUECK` bleibt auf „beide `CONFLICT`“.
 
 ## C. Pflichtpunkte vor Live-Betrieb
@@ -187,6 +205,18 @@ unverändert, die Änderung gilt über `biocomm_common.core_0002` für `sandbox`
 5. **Statusdatei:** Die im Auftrag genannte Statusdatei „im vorgegebenen Format“ habe ich
    im Repo nicht gefunden. Ich habe `docs/dateneingang_status.md` angelegt. Bitte sagt
    mir, welches Format gemeint ist, dann passe ich sie an.
+
+**Antworten von Robby (25.09.2026, über die lokale Sitzung):**
+- **Frage 1 (Firmware):** Die Node-Firmware schreibt Claude (Claude Code) im Auftrag von
+  Robby. Paketformat (C4) und Firmware-Zusagen wie V1 legen damit Robby und Claude
+  gemeinsam fest, passend zum Dateneingang. Richard liefert die Hardware-Angaben
+  (Abtastraten, Pausen, Stimulation, Speicher).
+- **Frage 2:** Überschneidungskonflikte bleiben vorerst ein seltener Eingriff von Hand.
+- **Frage 3:** Die manuelle Auflösung bleibt vorerst bei `omn`. Durch die Quarantäne
+  kann dabei nichts mehr verloren gehen. Eine eigene Rolle wird vor dem Live-Betrieb
+  geprüft.
+- **Frage 4:** 4 MiB / 32 MiB sind als Startwerte in Ordnung.
+- **Frage 5:** `docs/dateneingang_status.md` bleibt so.
 
 ## Nicht Teil dieses Auftrags (unverändert offen)
 

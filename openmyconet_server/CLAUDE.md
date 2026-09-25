@@ -136,7 +136,12 @@ einen Kandidaten → `CANONICAL`/`SUCCESSOR_LINK`, auch wenn der Nachfolger spä
 kommt, rückwärts mehrstufig), sonst manuell `flask biocomm-konflikt [--gewinner ID
 --von NAME --grund TEXT]` (`MANUAL_REVIEW`). Beides über
 `biocomm_common.kandidat_festlegen` (SECURITY DEFINER, Eigentümer `omn_owner`): tauscht
-die `sample_block`-Zeilen und schreibt `candidate_resolution_log` (nur einfügen).
+die `sample_block`-Zeilen und schreibt `candidate_resolution_log` (nur einfügen). Die
+Blöcke zurückgestellter Kandidaten werden **vorher** nach `sample_block_quarantine`
+kopiert (nur einfügen, unveränderlich, `omn` darf nur lesen) und erst dann aus
+`sample_block` entfernt; ein regulär angenommener Batch hat seine Payload nur in
+`sample_block` (`SAMPLE_BLOCKS`), ohne Quarantäne wären seine Rohdaten sonst weg.
+Reihenfolge `sample_block_id` = Reihenfolge im `payload_hash`.
 `omn` hat weiter **kein** DELETE; `sample_block` lässt DELETE nur in dieser Funktion zu
 (Markierung `biocomm.kandidat_festlegen` + Tabelleneigentümer). `chain_state` lokal
 (Vorgänger n−1 kanonisch mit passendem Hash bzw. Genesis), Nachfolger werden
