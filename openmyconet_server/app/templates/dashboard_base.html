@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{% block html_lang %}de{% endblock %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,9 +10,9 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <nav>
-        🍄 <a href="{{ url_for('dashboard.home') }}">OpenMycoNet Dashboard</a>
-        {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">BioComm-Datenlabor</a>
-        · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">Logout</a>{% endif %}
+        🍄 <a href="{{ url_for('dashboard.home') }}">{{ T.nav_dashboard if T is defined else 'OpenMycoNet Dashboard' }}</a>
+        {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor if T is defined else 'BioComm-Datenlabor' }}</a>
+        · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout if T is defined else 'Logout' }}</a>{% endif %}
     </nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %}

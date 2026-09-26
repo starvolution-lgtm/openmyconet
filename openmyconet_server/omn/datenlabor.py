@@ -18,7 +18,17 @@ darauf ohnehin keine Rechte). Rohdaten nur aus kanonischen Batches
 Aggregate nur in der juengsten Version (Sicht derived_aggregate_current,
 Migration biocomm_0002). Auf SQLite (lokal/CI) gibt es die Sandbox nicht:
 dann leerer Zustand statt Fehler.
+
+Sprachen (seit 26.09.2026): alle Texte in omn/datenlabor_texte.json (de, en,
+nl, fr, es). Sprache der Seite: ?lang= -> Cookie der Website (Flaggen-Wahl) ->
+Nutzer.sprache (Registrierung) -> de. Das Skript schickt die Sprache der Seite
+als ?lang= an die API mit; diese uebersetzt Szenario-Texte, Namen der
+Messgroessen und die festen Texte des Sandbox-Generators. Szenario-Texte nur,
+solange der deutsche Text in der Datenbank dem in omn/sandbox/szenarien.py
+entspricht -- sonst bleibt es beim deutschen Text (keine veraltete Uebersetzung).
 """
+import json
+import os
 import struct
 import zlib
 from datetime import datetime, timedelta, timezone
@@ -28,6 +38,7 @@ from flask import Blueprint, jsonify, redirect, render_template, request, sessio
 from sqlalchemy import text
 
 from omn.extensions import db
+from omn.i18n import COOKIE_NAME, LANGS
 from omn.models import Nutzer
 
 try:
@@ -50,6 +61,63 @@ KANAELE = {    # quantity_code -> (Anzeigename, Einheit fuer die Anzeige)
     'battery_state_of_charge': ('Akku-Ladezustand', '%'),
 }
 QUALITAET = {1: 'OUT_OF_RANGE', 2: 'SATURATED', 4: 'SENSOR_ERROR', 8: 'TIMING_UNCERTAIN', 16: 'INTERPOLATED'}
+
+with open(os.path.join(os.path.dirname(__file__), 'datenlabor_texte.json'), encoding='utf-8') as _f:
+    TEXTE = json.load(_f)
+
+
+# ---------------------------------------------------------------------------
+# Sprache und Texte
+# ---------------------------------------------------------------------------
+def seiten_sprache(nutzer):
+    """?lang= -> Cookie der Website -> Sprache aus der Registrierung -> de."""
+    for kandidat in (request.args.get('lang'), request.cookies.get(COOKIE_NAME), getattr(nutzer, 'sprache', None)):
+        if kandidat in LANGS:
+            return kandidat
+    return 'de'
+
+
+def _api_sprache():
+    lang = request.args.get('lang')
+    return lang if lang in LANGS else 'de'
+
+
+def ui_texte(lang):
+    """Oberflaechentexte einer Sprache, fehlende Schluessel auf Deutsch."""
+    return {**TEXTE['de']['ui'], **TEXTE.get(lang, {}).get('ui', {})}
+
+
+def kanal_name(kanal, lang):
+    return TEXTE.get(lang, {}).get('kanaele', {}).get(kanal) or KANAELE[kanal][0]
+
+
+def generator_text(text_de, lang):
+    """Feste deutsche Texte des Sandbox-Generators (Gruende, Hinweise)."""
+    if not text_de:
+        return text_de
+    return TEXTE.get(lang, {}).get('generator', {}).get(text_de, text_de)
+
+
+def szenario_texte(key, label, kurz, hinweis, stimulationsparameter, lang):
+    """Uebersetzte Szenario-Texte oder die deutschen aus der Datenbank.
+
+    Uebersetzt wird nur, wenn der deutsche Text in der Datenbank genau dem
+    aktuellen in szenarien.py entspricht: aendert sich der deutsche Wortlaut,
+    erscheint wieder Deutsch, bis die Uebersetzung nachgezogen ist."""
+    from omn.sandbox import szenarien as sz
+    orig = {'label': label, 'kurz': kurz, 'hinweis': hinweis, 'stimulationsparameter': stimulationsparameter}
+    t = TEXTE.get(lang, {}).get('szenarien')
+    vorlage = next((x for x in sz.SZENARIEN if x.key == key), None)
+    if lang == 'de' or not t or vorlage is None or key not in t['szenarien']:
+        return orig
+    if (vorlage.label, vorlage.kurz, vorlage.annahme, vorlage.stim_parameterquelle) != (
+            label, kurz, hinweis, stimulationsparameter):
+        return orig
+    e = t['szenarien'][key]
+    zusatz = t['reaktion_demo'] if e['zusatz'] == '$reaktion_demo' else e['zusatz']
+    kopf = t['hinweis_simulation'].format(generator=sz.GENERATOR_VERSION, modell=sz.MODELL_VERSION)
+    return {'label': e['label'], 'kurz': e['kurz'], 'hinweis': kopf + ' ' + zusatz,
+            'stimulationsparameter': t['parameter_demo'] if stimulationsparameter else stimulationsparameter}
 
 
 # ---------------------------------------------------------------------------
@@ -118,7 +186,9 @@ def _hemisphaere(grid_cell_id):
 @datenlabor_bp.route('/dashboard/datenlabor')
 @mycelist_required()
 def seite(nutzer):
-    return render_template('datenlabor.html', nutzer=nutzer, kanaele=KANAELE)
+    lang = seiten_sprache(nutzer)
+    return render_template('datenlabor.html', nutzer=nutzer, kanaele=KANAELE, lang=lang, T=ui_texte(lang),
+                           locale=TEXTE[lang]['locale'], sprachen=LANGS)
 
 
 # ---------------------------------------------------------------------------
@@ -158,12 +228,15 @@ def api_szenarien(nutzer):
           JOIN sandbox.substrate sub ON sub.code = s.substrate_code
          ORDER BY sc.id, ss.series_role DESC, s.id
     """)).all()
+    lang = _api_sprache()
     szenarien = {}
     for z in zeilen:
-        sc = szenarien.setdefault(z[1], {
-            'key': z[1], 'version': z[2], 'label': z[3], 'kurz': z[4], 'hinweis': z[5],
-            'parametergrundlage': z[6], 'stimulationsparameter': z[7], 'reaktionsannahme': z[8],
-            'jahr_von': z[9].isoformat(), 'jahr_bis': z[10].isoformat(), 'reihen': []})
+        if z[1] not in szenarien:
+            szenarien[z[1]] = {
+                'key': z[1], 'version': z[2], **szenario_texte(z[1], z[3], z[4], z[5], z[7], lang),
+                'parametergrundlage': z[6], 'reaktionsannahme': z[8],
+                'jahr_von': z[9].isoformat(), 'jahr_bis': z[10].isoformat(), 'reihen': []}
+        sc = szenarien[z[1]]
         hemi, aequator = _hemisphaere(z[17])
         sc['reihen'].append({
             'id': z[12], 'code': z[13], 'rolle': z[11], 'substrat': z[14], 'substrat_label': z[15],
@@ -171,7 +244,7 @@ def api_szenarien(nutzer):
             'aequatornah': aequator, 'von': z[19].isoformat(), 'bis': z[20].isoformat(),
             'mit_stimulation': z[21], 'roh_stunden': [t.isoformat() for t in z[22]],
             'kanaele': [k for k in KANAELE if k in z[23]]})
-    return _antwort({'szenarien': list(szenarien.values()), 'kanaele': {k: {'name': v[0], 'einheit': v[1]}
+    return _antwort({'szenarien': list(szenarien.values()), 'kanaele': {k: {'name': kanal_name(k, lang), 'einheit': v[1]}
                                                                          for k, v in KANAELE.items()}})
 
 
@@ -241,14 +314,17 @@ def api_reihe(nutzer):
            AND qa.time_range && tstzrange(:von, :bis)
            AND NOT EXISTS (SELECT 1 FROM sandbox.quality_annotation w WHERE w.supersedes_annotation_id = qa.id)"""), p).all()
     ms = lambda t: None if t is None else int(t.timestamp() * 1000)
+    lang = _api_sprache()
     return _antwort({
-        'reihe': series_id, 'kanal': kanal, 'name': KANAELE[kanal][0], 'einheit': KANAELE[kanal][1],
+        'reihe': series_id, 'kanal': kanal, 'name': kanal_name(kanal, lang), 'einheit': KANAELE[kanal][1],
         'aufloesung': aufloesung, 'zeitzone': tz,
         'felder': ['t_ms', 'min', 'max', 'mittel', 'qualitaet_maske', 'samples', 'samples_erwartet'],
         'punkte': punkte,
         'stimulationen': [{'typ': z[0], 'zustand': z[1], 'geplant': ms(z[2]), 'start': ms(z[3]),
-                           'dauer_ms': z[4], 'versuch': ms(z[5]), 'grund': z[6], 'versatz_ms': z[7]} for z in stim],
-        'qualitaet': [{'code': z[0], 'herkunft': z[1], 'von': ms(z[2]), 'bis': ms(z[3]), 'hinweis': z[4]} for z in qual],
+                           'dauer_ms': z[4], 'versuch': ms(z[5]), 'grund': generator_text(z[6], lang),
+                           'versatz_ms': z[7]} for z in stim],
+        'qualitaet': [{'code': z[0], 'herkunft': z[1], 'von': ms(z[2]), 'bis': ms(z[3]),
+                       'hinweis': generator_text(z[4], lang)} for z in qual],
         'qualitaet_bits': QUALITAET,
     })
 

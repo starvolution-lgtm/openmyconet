@@ -1,94 +1,99 @@
 {% extends "dashboard_base.html" %}
-{% block title %}OpenMycoNet — BioComm-Datenlabor (Simulation){% endblock %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ T.titel }}{% endblock %}
 {% block head %}<link rel="stylesheet" href="{{ asset('datenlabor.css') }}">{% endblock %}
 {% block body_class %}dl-breit{% endblock %}
 {% block content %}
-<p class="dl-label">BioComm · Mitglieder-Bereich</p>
-<h1>BioComm-<em>Datenlabor</em></h1>
+<nav class="dl-sprachen" aria-label="{{ T.sprache }}">
+    {% for l, name in [('de', 'Deutsch'), ('en', 'English'), ('nl', 'Nederlands'), ('fr', 'Français'), ('es', 'Español')] %}
+    <a href="?lang={{ l }}" hreflang="{{ l }}" lang="{{ l }}" data-sprache{% if l == lang %} aria-current="true"{% endif %}>{{ name }}</a>
+    {% endfor %}
+</nav>
+<p class="dl-label">{{ T.bereich }}</p>
+<h1>{{ T.h1_html|safe }}</h1>
 
 <p class="dl-sim-banner" role="note">
-    <strong>SIMULATION</strong> – berechnete Messwerte, echte Datenverarbeitung.
-    Alle Werte auf dieser Seite stammen aus einem Rechenmodell, nicht von einem realen Pilznetzwerk.
-    Sie liegen aber in derselben Datenbankstruktur, in der später die echten BioComm-Messungen
-    gespeichert werden, und werden genauso geprüft, verdichtet und dargestellt.
+    <strong>SIMULATION</strong> – {{ T.banner }}
 </p>
 
-<div id="dl-app" data-api="{{ url_for('datenlabor.api_szenarien')|replace('/szenarien', '') }}">
-    <p id="dl-laden" class="label">Lade Szenarien …</p>
+<div id="dl-app" data-api="{{ url_for('datenlabor.api_szenarien')|replace('/szenarien', '') }}"
+     data-lang="{{ lang }}" data-locale="{{ locale }}">
+    <script type="application/json" id="dl-texte">{{ T|tojson }}</script>
+    <p id="dl-laden" class="label">{{ T.laden }}</p>
 
     <div id="dl-leer" class="card" hidden>
-        <h2>Noch keine Szenario-Daten</h2>
-        <p>Auf diesem Server wurden die Simulationsszenarien noch nicht erzeugt. Schau bald wieder vorbei.</p>
+        <h2>{{ T.leer_titel }}</h2>
+        <p>{{ T.leer_text }}</p>
     </div>
 
     <div id="dl-inhalt" hidden>
         <section class="card dl-info" aria-labelledby="dl-info-titel">
-            <h2 id="dl-info-titel" class="dl-h2-klein">Über dieses Szenario</h2>
+            <h2 id="dl-info-titel" class="dl-h2-klein">{{ T.info_titel }}</h2>
             <p id="dl-kurz"></p>
             <p id="dl-standort" class="label"></p>
             <details>
-                <summary>Modellannahmen und Herkunft der Parameter</summary>
+                <summary>{{ T.info_details }}</summary>
                 <p id="dl-hinweis" class="dl-hinweis"></p>
                 <p id="dl-parameter" class="dl-hinweis"></p>
             </details>
         </section>
 
         <div class="dl-sw">
-        <div class="dl-sw-titel" aria-hidden="true"><span class="dl-sw-logo">BioComm</span> — Datenlabor · Simulation</div>
-        <section class="dl-panel dl-steuerung" aria-label="Auswahl">
+        <div class="dl-sw-titel" aria-hidden="true"><span class="dl-sw-logo">BioComm</span> — {{ T.sw_titel }}</div>
+        <section class="dl-panel dl-steuerung" aria-label="{{ T.auswahl }}">
             <div class="dl-feld">
-                <label for="dl-szenario">Szenario</label>
+                <label for="dl-szenario">{{ T.szenario }}</label>
                 <select id="dl-szenario"></select>
             </div>
             <div class="dl-feld">
-                <label for="dl-reihe">Messreihe</label>
+                <label for="dl-reihe">{{ T.messreihe }}</label>
                 <select id="dl-reihe"></select>
             </div>
             <div class="dl-feld">
-                <label for="dl-kanal">Messgröße</label>
+                <label for="dl-kanal">{{ T.messgroesse }}</label>
                 <select id="dl-kanal"></select>
             </div>
             <fieldset class="dl-filter">
-                <legend>Filter</legend>
-                <label for="dl-f-substrat">Substrat</label>
-                <select id="dl-f-substrat"><option value="">alle</option></select>
-                <label for="dl-f-stim">Stimulation</label>
+                <legend>{{ T.filter }}</legend>
+                <label for="dl-f-substrat">{{ T.substrat }}</label>
+                <select id="dl-f-substrat"><option value="">{{ T.alle }}</option></select>
+                <label for="dl-f-stim">{{ T.stimulation }}</label>
                 <select id="dl-f-stim">
-                    <option value="">alle</option>
-                    <option value="mit">mit Stimulation</option>
-                    <option value="ohne">ohne Stimulation</option>
+                    <option value="">{{ T.alle }}</option>
+                    <option value="mit">{{ T.mit_stim }}</option>
+                    <option value="ohne">{{ T.ohne_stim }}</option>
                 </select>
             </fieldset>
         </section>
 
         <section class="dl-panel" aria-labelledby="dl-chart-titel">
             <div class="dl-kopf">
-                <h2 id="dl-chart-titel" class="dl-h2-klein">Verlauf</h2>
-                <div class="dl-ansichten" role="group" aria-label="Zeitraum">
-                    <button type="button" data-ansicht="tag">24 h</button>
-                    <button type="button" data-ansicht="woche">7 Tage</button>
-                    <button type="button" data-ansicht="monat">30 Tage</button>
-                    <button type="button" data-ansicht="saison">Saison</button>
-                    <button type="button" data-ansicht="jahr">Jahr</button>
+                <h2 id="dl-chart-titel" class="dl-h2-klein">{{ T.verlauf }}</h2>
+                <div class="dl-ansichten" role="group" aria-label="{{ T.zeitraum }}">
+                    <button type="button" data-ansicht="tag">{{ T.a_tag }}</button>
+                    <button type="button" data-ansicht="woche">{{ T.a_woche }}</button>
+                    <button type="button" data-ansicht="monat">{{ T.a_monat }}</button>
+                    <button type="button" data-ansicht="saison">{{ T.a_saison }}</button>
+                    <button type="button" data-ansicht="jahr">{{ T.a_jahr }}</button>
                 </div>
             </div>
             <div class="dl-zeile">
-                <button type="button" id="dl-zurueck" aria-label="Früherer Zeitraum">◀</button>
-                <label for="dl-datum" class="dl-sr">Startdatum</label>
+                <button type="button" id="dl-zurueck" aria-label="{{ T.frueher }}">◀</button>
+                <label for="dl-datum" class="dl-sr">{{ T.startdatum }}</label>
                 <input type="date" id="dl-datum">
-                <label for="dl-saison" class="dl-sr">Jahreszeit</label>
+                <label for="dl-saison" class="dl-sr">{{ T.jahreszeit }}</label>
                 <select id="dl-saison">
-                    <option value="winter">Winter</option>
-                    <option value="fruehling">Frühling</option>
-                    <option value="sommer">Sommer</option>
-                    <option value="herbst">Herbst</option>
+                    <option value="winter">{{ T.s_winter }}</option>
+                    <option value="fruehling">{{ T.s_fruehling }}</option>
+                    <option value="sommer">{{ T.s_sommer }}</option>
+                    <option value="herbst">{{ T.s_herbst }}</option>
                 </select>
-                <button type="button" id="dl-vor" aria-label="Späterer Zeitraum">▶</button>
-                <label class="dl-check"><input type="checkbox" id="dl-kontrolle"> Kontrollreihe einblenden</label>
-                <label class="dl-check"><input type="checkbox" id="dl-vollskala"> volle Skala (mit allen Spitzen)</label>
+                <button type="button" id="dl-vor" aria-label="{{ T.spaeter }}">▶</button>
+                <label class="dl-check"><input type="checkbox" id="dl-kontrolle"> {{ T.kontrolle_zeigen }}</label>
+                <label class="dl-check"><input type="checkbox" id="dl-vollskala"> {{ T.vollskala }}</label>
             </div>
             <div class="dl-zeile" id="dl-rohstunden-zeile">
-                <span class="label">Stunden mit Rohdaten (Simulation: 250 Werte/s):</span>
+                <span class="label">{{ T.rohstunden }}</span>
                 <span id="dl-rohstunden"></span>
             </div>
             <p id="dl-saison-hinweis" class="label" hidden></p>
@@ -96,42 +101,39 @@
             <div class="dl-chart" id="dl-chart"></div>
             <p id="dl-ablesen" class="dl-ablesen" aria-live="polite"></p>
             <p id="dl-meta" class="label"></p>
-            <details class="dl-technik"><summary>Technische Details</summary><p id="dl-technik" class="label"></p></details>
-            <ul class="dl-legende" aria-label="Legende">
-                <li data-legende="mittel"><span class="dl-l dl-l-mittel"></span>Mittelwert</li>
-                <li data-legende="band"><span class="dl-l dl-l-band"></span>Minimum bis Maximum</li>
-                <li data-legende="kontrolle" hidden><span class="dl-l dl-l-kontrolle"></span>Kontrollreihe (Mittelwert)</li>
-                <li data-legende="ok" hidden><span class="dl-l dl-l-stim-ok"></span>Stimulation ausgeführt</li>
-                <li data-legende="teil" hidden><span class="dl-l dl-l-stim-teil"></span>Stimulation teilweise ausgeführt</li>
-                <li data-legende="fehl" hidden><span class="dl-l dl-l-stim-fehl"></span>Stimulation fehlgeschlagen / abgebrochen</li>
-                <li data-legende="qual" hidden><span class="dl-l dl-l-qual"></span>Qualitätskennzeichen</li>
-                <li data-legende="luecke" hidden><span class="dl-l dl-l-luecke"></span>Lücke = keine Daten (nie als Null gezeichnet)</li>
+            <details class="dl-technik"><summary>{{ T.technik }}</summary><p id="dl-technik" class="label"></p></details>
+            <ul class="dl-legende" aria-label="{{ T.legende }}">
+                <li data-legende="mittel"><span class="dl-l dl-l-mittel"></span>{{ T.l_mittel }}</li>
+                <li data-legende="band"><span class="dl-l dl-l-band"></span>{{ T.l_band }}</li>
+                <li data-legende="kontrolle" hidden><span class="dl-l dl-l-kontrolle"></span>{{ T.l_kontrolle }}</li>
+                <li data-legende="ok" hidden><span class="dl-l dl-l-stim-ok"></span>{{ T.l_ok }}</li>
+                <li data-legende="teil" hidden><span class="dl-l dl-l-stim-teil"></span>{{ T.l_teil }}</li>
+                <li data-legende="fehl" hidden><span class="dl-l dl-l-stim-fehl"></span>{{ T.l_fehl }}</li>
+                <li data-legende="qual" hidden><span class="dl-l dl-l-qual"></span>{{ T.l_qual }}</li>
+                <li data-legende="luecke" hidden><span class="dl-l dl-l-luecke"></span>{{ T.l_luecke }}</li>
             </ul>
         </section>
 
         <section class="dl-panel" aria-labelledby="dl-ereignisse-titel">
-            <h2 id="dl-ereignisse-titel" class="dl-h2-klein">Ereignisse im Zeitraum</h2>
-            <p id="dl-keine-ereignisse" class="label">Keine Stimulationen oder Qualitätskennzeichen in diesem Zeitraum.</p>
+            <h2 id="dl-ereignisse-titel" class="dl-h2-klein">{{ T.ereignisse_titel }}</h2>
+            <p id="dl-keine-ereignisse" class="label">{{ T.keine_ereignisse }}</p>
             <table id="dl-ereignisse" hidden>
-                <thead><tr><th>Zeit (Ortszeit)</th><th>Ereignis</th><th>Details</th><th></th></tr></thead>
+                <thead><tr><th>{{ T.th_zeit }}</th><th>{{ T.th_ereignis }}</th><th>{{ T.th_details }}</th><th></th></tr></thead>
                 <tbody></tbody>
             </table>
         </section>
 
         <section class="dl-panel" id="dl-roh" aria-labelledby="dl-roh-titel">
-            <h2 id="dl-roh-titel" class="dl-h2-klein">Rohdaten-Ausschnitt</h2>
-            <p class="label">Einzelne Abtastwerte aus den gespeicherten Rohdatenblöcken, beim Abruf mit der
-               Kalibrierung des Messkanals in µV umgerechnet. Die Simulation zeichnet 250 Werte pro Sekunde auf;
-               die Datenarchitektur ist für bis zu 1000 Werte pro Sekunde je Messkanal ausgelegt.
-               Wähle oben eine Rohdatenstunde oder in der Ereignisliste „Rohdaten ansehen“.</p>
+            <h2 id="dl-roh-titel" class="dl-h2-klein">{{ T.roh_titel }}</h2>
+            <p class="label">{{ T.roh_erklaerung }}</p>
             <div class="dl-zeile">
-                <button type="button" id="dl-roh-zurueck" aria-label="10 Sekunden früher">◀ 10 s</button>
+                <button type="button" id="dl-roh-zurueck" aria-label="{{ T.roh_frueher }}">◀ 10 s</button>
                 <span id="dl-roh-zeit" class="dl-roh-zeit"></span>
-                <button type="button" id="dl-roh-vor" aria-label="10 Sekunden später">10 s ▶</button>
+                <button type="button" id="dl-roh-vor" aria-label="{{ T.roh_spaeter }}">10 s ▶</button>
             </div>
             <div class="dl-chart dl-chart-roh" id="dl-roh-chart"></div>
             <p id="dl-roh-meta" class="label"></p>
-            <details class="dl-technik"><summary>Technische Details</summary><p id="dl-roh-technik" class="label"></p></details>
+            <details class="dl-technik"><summary>{{ T.technik }}</summary><p id="dl-roh-technik" class="label"></p></details>
         </section>
         </div>
     </div>

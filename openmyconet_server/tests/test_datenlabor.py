@@ -207,6 +207,23 @@ def test_rohdaten_kalibriert(labor):
     assert pause['samples'] == []
 
 
+@nur_pg
+def test_api_liefert_die_gewaehlte_sprache(labor):
+    antwort = labor.get(API + '/szenarien?lang=en')
+    assert antwort.status_code == 200, antwort.get_data(as_text=True)[:2000]
+    j = antwort.get_json()
+    nach_key = {s['key']: s for s in j['szenarien']}
+    assert nach_key['optisch']['label'] == 'Optical stimulation'
+    assert all(s['hinweis'].startswith('SIMULATION – calculated') for s in j['szenarien'])
+    assert j['kanaele']['soil_temperature']['name'] == 'Soil temperature'
+    r = next(x for x in _codes(labor).values() if x['mit_stimulation'])
+    fr = labor.get(API + f"/reihe?reihe={r['id']}&kanal=soil_temperature&lang=fr"
+                   "&von=2025-01-12T23:00:00Z&bis=2025-01-13T23:00:00Z").get_json()
+    assert fr['name'] == 'Température du sol'
+    unbekannt = labor.get(API + '/szenarien?lang=xx').get_json()
+    assert {s['key']: s for s in unbekannt['szenarien']}['optisch']['label'] == 'Optische Stimulation'
+
+
 # ---------------------------------------------------------------------------
 # Oeffentliche Erklaerseite /biocomm/datenlabor
 # ---------------------------------------------------------------------------
@@ -231,3 +248,80 @@ def test_erklaerseite_verlinkt(app):
     static = Path(app.root_path).parent / 'app' / 'static'
     assert 'biocomm/datenlabor' in (static / 'sitemap.xml').read_text(encoding='utf-8')
     assert (static / 'datenlabor_vorschau.webp').stat().st_size > 10_000
+
+
+# ---------------------------------------------------------------------------
+# Sprachen (omn/datenlabor_texte.json)
+# ---------------------------------------------------------------------------
+def _platzhalter(text):
+    import re
+    return set(re.findall(r'\{(\w+)\}', text))
+
+
+def test_texte_in_allen_sprachen_vollstaendig():
+    from omn.datenlabor import KANAELE, TEXTE
+    from omn.i18n import LANGS
+    from omn.sandbox.szenarien import SZENARIEN
+    de = TEXTE['de']
+    for lang in LANGS:
+        t = TEXTE[lang]
+        assert set(t['ui']) == set(de['ui']), lang
+        for k, v in t['ui'].items():
+            assert _platzhalter(v) == _platzhalter(de['ui'][k]), (lang, k)
+            assert v.strip() or k == 'volle_stunde', (lang, k)
+        assert set(t['kanaele']) == set(KANAELE), lang
+        assert set(t['generator']) == set(de['generator']), lang
+        assert t['locale'].startswith(lang), lang
+        if lang == 'de':
+            continue
+        sz = t['szenarien']
+        assert _platzhalter(sz['hinweis_simulation']) == {'generator', 'modell'}, lang
+        assert set(sz['szenarien']) == {s.key for s in SZENARIEN}, lang
+        for key, e in sz['szenarien'].items():
+            assert e['label'] and e['kurz'] and e['zusatz'], (lang, key)
+
+
+def test_szenario_texte_nur_bei_aktuellem_deutsch():
+    from omn.datenlabor import szenario_texte
+    from omn.sandbox.szenarien import SZENARIEN
+    s = next(x for x in SZENARIEN if x.key == 'elektrisch')
+    en = szenario_texte(s.key, s.label, s.kurz, s.annahme, s.stim_parameterquelle, 'en')
+    assert en['label'] == 'Electrical stimulation'
+    assert en['hinweis'].startswith('SIMULATION – calculated measurements') and 'sbx-gen-1.0' in en['hinweis']
+    assert 'ARBITRARY_DEMO' in en['stimulationsparameter']
+    # deutscher Text in der Datenbank weicht ab (z. B. neue Szenario-Version) -> Deutsch statt veralteter Uebersetzung
+    alt = szenario_texte(s.key, s.label, s.kurz + ' (geaendert)', s.annahme, s.stim_parameterquelle, 'en')
+    assert alt['label'] == s.label and alt['kurz'].endswith('(geaendert)')
+    assert szenario_texte(s.key, s.label, s.kurz, s.annahme, s.stim_parameterquelle, 'de')['label'] == s.label
+    b = next(x for x in SZENARIEN if x.key == 'baseline')
+    assert szenario_texte(b.key, b.label, b.kurz, b.annahme, None, 'fr')['stimulationsparameter'] is None
+
+
+def test_seite_in_der_sprache_des_nutzers(app):
+    c = app.test_client()
+    nid = _nutzer(email='en@example.org')
+    n = db.session.get(Nutzer, nid)
+    n.sprache = 'en'
+    db.session.commit()
+    _einloggen(c, nid)
+    html = c.get('/dashboard/datenlabor').get_data(as_text=True)
+    assert '<html lang="en">' in html and 'BioComm <em>Data Lab</em>' in html
+    assert 'calculated measurements, real data processing' in html and 'Log out' in html
+    assert 'data-locale="en-GB"' in html and 'aria-current="true">English' in html
+    # ?lang= und der Cookie der Website haben Vorrang vor der Registrierungssprache
+    assert 'Labo de données' in c.get('/dashboard/datenlabor?lang=fr').get_data(as_text=True)
+    assert '<html lang="fr">' in c.get('/dashboard/datenlabor').get_data(as_text=True)   # Wahl bleibt (Cookie)
+    c2 = app.test_client()
+    _einloggen(c2, nid)
+    c2.set_cookie('omn_lang', 'nl', domain=app.config.get('SERVER_NAME') or 'localhost')
+    assert '<html lang="nl">' in c2.get('/dashboard/datenlabor').get_data(as_text=True)
+    # die uebrigen Dashboard-Seiten bleiben deutsch
+    assert '<html lang="de">' in c.get('/dashboard/basis').get_data(as_text=True)
+
+
+def test_seite_ohne_angabe_deutsch(app):
+    c = app.test_client()
+    _einloggen(c, _nutzer(email='de@example.org'))
+    html = c.get('/dashboard/datenlabor?lang=xx').get_data(as_text=True)
+    assert '<html lang="de">' in html and 'BioComm-<em>Datenlabor</em>' in html
+    assert 'id="dl-texte"' in html

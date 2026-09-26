@@ -22,6 +22,10 @@ body.dl-breit [hidden] { display: none !important; }
 body.dl-breit nav { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.04em; border-bottom: 1px solid var(--s-linie); padding-bottom: 12px; }
 body.dl-breit a { color: var(--s-akzent); text-decoration: none; }
 body.dl-breit a:hover { text-decoration: underline; }
+/* Sprachumschalter (Links ?lang=xx, aktuelle Sprache mit aria-current) */
+body.dl-breit nav.dl-sprachen { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 14px; border-bottom: none; padding: 8px 0 0; margin-bottom: 10px; }
+.dl-sprachen a { color: var(--s-leise); }
+.dl-sprachen a[aria-current="true"] { color: var(--s-akzent); font-weight: 700; }
 .dl-label { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--s-amber-rand); letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 6px; }
 body.dl-breit h1 { font-family: 'Playfair Display', serif; font-weight: 400; color: #fff; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 18px; }
 body.dl-breit h1 em { font-style: italic; color: var(--s-akzent); }

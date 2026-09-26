@@ -9,6 +9,10 @@
  *  - fehlende Werte sind Luecken, nie Null: zwischen zwei Punkten, die weiter
  *    als 1,5 Raster auseinanderliegen, wird die Linie unterbrochen
  *  - Zeiten in der Ortszeit des (synthetischen) Standorts
+ *
+ * Sprachen: alle Texte stehen in omn/datenlabor_texte.json; die Seite legt die
+ * Texte ihrer Sprache als JSON (#dl-texte) ab, tx() setzt {Platzhalter} ein.
+ * Datum und Zahlen im Format der Sprache (data-locale), die API bekommt ?lang=.
  */
 (function () {
   'use strict';
@@ -16,26 +20,30 @@
   var app = document.getElementById('dl-app');
   if (!app) return;
   var API = app.getAttribute('data-api');
+  var LANG = app.getAttribute('data-lang') || 'de';
+  var LOCALE = app.getAttribute('data-locale') || 'de-DE';
+  var T = JSON.parse(document.getElementById('dl-texte').textContent);
+  function tx(schluessel, werte) {
+    return (T[schluessel] || schluessel).replace(/\{(\w+)\}/g, function (m, k) {
+      return werte && werte[k] !== undefined && werte[k] !== null ? werte[k] : m;
+    });
+  }
+  function code(praefix, wert) { return T[praefix + wert] || wert; }
   var SVGNS = 'http://www.w3.org/2000/svg';
   var TAG = 86400000, STUNDE = 3600000, MINUTE = 60000;
   var RASTER = { '1min': MINUTE, '1h': STUNDE, '1d': TAG };
   var ANSICHT_TAGE = { tag: 1, woche: 7, monat: 30 };
-  var ZUSTAND_TEXT = {
-    EXECUTED: 'ausgeführt', PARTIAL: 'teilweise ausgeführt', FAILED: 'fehlgeschlagen',
-    CANCELLED: 'abgebrochen', PLANNED: 'geplant'
-  };
-  var TYP_TEXT = { ELECTRICAL: 'elektrisch', OPTICAL: 'optisch', VIBRATION: 'Vibration' };
-  var QUAL_TEXT = {
-    OUT_OF_RANGE: 'außerhalb des Messbereichs', SATURATED: 'ADC-Sättigung',
-    SENSOR_ERROR: 'Sensorfehler', TIMING_UNCERTAIN: 'Zeitzuordnung unsicher',
-    INTERPOLATED: 'interpoliert'
-  };
-  var SUBSTRAT_TEXT = { SOIL: 'Erde', WOOD_CHIPS: 'Holzspäne', COMPOST: 'Kompost', STRAW: 'Stroh', AQUATIC: 'Aquatisch' };
+  // Codes -> Text der Seitensprache (Schluessel z_*, t_*, q_*, sub_*, h_* in datenlabor_texte.json)
+  var zustandText = function (c) { return code('z_', c); };
+  var typText = function (c) { return code('t_', c); };
+  var qualText = function (c) { return code('q_', c); };
+  var herkunftText = function (c) { return code('h_', c); };
+  var substratText = function (c, ersatz) { return T['sub_' + c] || ersatz || c; };
   // Meteorologische Jahreszeiten, Monate 1..12; Winter nur Jan+Feb, weil die
   // synthetische Jahresachse genau das Jahr 2025 umfasst.
   var SAISON_NORD = { winter: [1, 3], fruehling: [3, 6], sommer: [6, 9], herbst: [9, 12] };
   var SAISON_SUED = { sommer: [1, 3], herbst: [3, 6], winter: [6, 9], fruehling: [9, 12] };
-  var SAISON_TEXT = { winter: 'Winter', fruehling: 'Frühling', sommer: 'Sommer', herbst: 'Herbst' };
+  var SAISONS = { winter: 1, fruehling: 1, sommer: 1, herbst: 1 };
 
   var $ = function (id) { return document.getElementById(id); };
   var daten = null, kanalInfo = {};
@@ -80,7 +88,7 @@
   function fmt(ms, tz, mitSek) {
     var o = { timeZone: tz, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
     if (mitSek) o.second = '2-digit';
-    return new Intl.DateTimeFormat('de-DE', o).format(new Date(ms));
+    return new Intl.DateTimeFormat(LOCALE, o).format(new Date(ms));
   }
   function fmtKurz(ms, tz, schritt) {
     var o = { timeZone: tz };
@@ -88,19 +96,20 @@
     else if (schritt >= TAG) { o.day = '2-digit'; o.month = '2-digit'; }
     else if (schritt >= MINUTE) { o.hour = '2-digit'; o.minute = '2-digit'; }
     else { o.hour = '2-digit'; o.minute = '2-digit'; o.second = '2-digit'; }
-    return new Intl.DateTimeFormat('de-DE', o).format(new Date(ms));
+    return new Intl.DateTimeFormat(LOCALE, o).format(new Date(ms));
   }
   function isoDatum(ms, tz) {
     var p = teile(ms, tz);
     return p.year + '-' + String(p.month).padStart(2, '0') + '-' + String(p.day).padStart(2, '0');
   }
   function zahl(v, stellen) {
-    return v.toLocaleString('de-DE', { maximumFractionDigits: stellen, minimumFractionDigits: 0 });
+    return v.toLocaleString(LOCALE, { maximumFractionDigits: stellen, minimumFractionDigits: 0 });
   }
 
   // ----------------------------------------------------------- Abfragen ---
   function holen(pfad, param) {
-    var q = Object.keys(param || {}).map(function (k) {
+    param = Object.assign({ lang: LANG }, param || {});
+    var q = Object.keys(param).map(function (k) {
       return encodeURIComponent(k) + '=' + encodeURIComponent(param[k]);
     }).join('&');
     return fetch(API + pfad + (q ? '?' + q : ''), { credentials: 'same-origin', headers: { Accept: 'application/json' } })
@@ -136,8 +145,8 @@
     o.value = wert; o.textContent = text; sel.appendChild(o);
   }
   function reiheText(r) {
-    return (r.rolle === 'CONTROL' ? 'Kontrollreihe' : 'Messreihe') + ' · ' + r.standort + ' · ' +
-      (SUBSTRAT_TEXT[r.substrat] || r.substrat_label) + (r.mit_stimulation ? ' · mit Stimulation' : '');
+    return (r.rolle === 'CONTROL' ? T.kontrollreihe : T.messreihe) + ' · ' + r.standort + ' · ' +
+      substratText(r.substrat, r.substrat_label) + (r.mit_stimulation ? ' · ' + T.mit_stim : '');
   }
 
   function szenarienFuellen() {
@@ -146,7 +155,7 @@
     daten.szenarien.forEach(function (s) {
       if (s.reihen.some(passt)) option(sel, s.key, s.label);
     });
-    if (!sel.options.length) { option(sel, '', '– kein Szenario passt zum Filter –'); st.szenario = null; }
+    if (!sel.options.length) { option(sel, '', T.kein_szenario); st.szenario = null; }
     else {
       sel.value = alt; if (sel.value !== alt) sel.value = sel.options[0].value;
       st.szenario = sel.value;
@@ -184,12 +193,13 @@
   function infoZeigen() {
     var sc = aktSzenario(), r = aktReihe();
     $('dl-kurz').textContent = sc.kurz;
-    var hemi = r.aequatornah ? 'Äquatornähe' : (r.hemisphaere === 'S' ? 'Südhalbkugel' : 'Nordhalbkugel');
-    $('dl-standort').textContent = 'Standort ' + r.standort + ' · Rasterfeld ' + r.rasterzelle + ' (10 km, exakte Lage nicht öffentlich) · ' +
-      hemi + ' · Zeitzone ' + r.zeitzone + ' · Substrat ' + (SUBSTRAT_TEXT[r.substrat] || r.substrat_label) +
-      ' · Szenario-Version ' + sc.version;
+    var hemi = r.aequatornah ? T.aequatornah : (r.hemisphaere === 'S' ? T.suedhalbkugel : T.nordhalbkugel);
+    $('dl-standort').textContent = tx('standort_zeile', {
+      standort: r.standort, zelle: r.rasterzelle, hemi: hemi, tz: r.zeitzone,
+      substrat: substratText(r.substrat, r.substrat_label), version: sc.version
+    });
     $('dl-hinweis').textContent = sc.hinweis;
-    $('dl-parameter').textContent = 'Parametergrundlage: ' + sc.parametergrundlage +
+    $('dl-parameter').textContent = tx('parametergrundlage', { wert: sc.parametergrundlage }) +
       (sc.stimulationsparameter ? ' – ' + sc.stimulationsparameter : '');
     $('dl-kontrolle').disabled = !kontrollReihe();
     if ($('dl-kontrolle').disabled) $('dl-kontrolle').checked = false;
@@ -202,7 +212,7 @@
       var ms = Date.parse(iso);
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'dl-mini';
-      b.textContent = fmt(ms, r.zeitzone).replace(/:00$/, ' Uhr');
+      b.textContent = fmt(ms, r.zeitzone).replace(/:00$/, T.volle_stunde);
       b.addEventListener('click', function () { springeZuRoh(i); });
       box.appendChild(b);
     });
@@ -267,10 +277,8 @@
     h.hidden = !(st.ansicht === 'saison' && r);
     if (!h.hidden) {
       h.textContent = r.aequatornah
-        ? 'Äquatornähe: Die Jahreszeiten sind hier kaum ausgeprägt (Temperatur fast gleichbleibend). Die Auswahl folgt dem Kalender der ' +
-          (r.hemisphaere === 'S' ? 'Süd' : 'Nord') + 'halbkugel.'
-        : (r.hemisphaere === 'S' ? 'Südhalbkugel: Jahreszeiten sind gegenüber Europa um ein halbes Jahr verschoben. Der Sommer' :
-          'Nordhalbkugel. Der Winter') + ' umfasst hier nur Januar und Februar, weil die Simulation genau das Jahr 2025 abdeckt.';
+        ? tx('saison_aequator', { halbkugel: r.hemisphaere === 'S' ? T.suedhalbkugel : T.nordhalbkugel })
+        : (r.hemisphaere === 'S' ? T.saison_sued : T.saison_nord);
     }
   }
 
@@ -301,7 +309,7 @@
   function fehlerIn(box, text) {
     box.textContent = '';
     var p = document.createElement('p');
-    p.className = 'err'; p.textContent = 'Daten konnten nicht geladen werden: ' + text;
+    p.className = 'err'; p.textContent = tx('fehler', { text: text });
     box.appendChild(p);
   }
 
@@ -406,16 +414,18 @@
       box.textContent = '';
       var leer = document.createElement('p');
       leer.className = 'dl-leer-chart';
-      leer.textContent = 'Für diesen Zeitraum liegen keine Werte vor (Lücke in der Aufzeichnung oder außerhalb des simulierten Jahres).';
+      leer.textContent = T.keine_werte;
       box.appendChild(leer);
       return;
     }
     var sk = skala(alle.map(function (p) { return p[1]; }), alle.map(function (p) { return p[2]; }),
       alle.map(function (p) { return p[3]; }));
     var r = aktReihe();
-    var label = 'Simulation: ' + res.name + ' der ' + reiheText(r) + ', ' + fmt(zr[0], tz) + ' bis ' + fmt(zr[1], tz) +
-      ', Werte von ' + zahl(sk.echtMin === undefined ? sk.min : sk.echtMin, 2) + ' bis ' +
-      zahl(sk.echtMax === undefined ? sk.max : sk.echtMax, 2) + ' ' + res.einheit + '.';
+    var label = tx('chart_label', {
+      name: res.name, reihe: reiheText(r), von: fmt(zr[0], tz), bis: fmt(zr[1], tz),
+      min: zahl(sk.echtMin === undefined ? sk.min : sk.echtMin, 2),
+      max: zahl(sk.echtMax === undefined ? sk.max : sk.echtMax, 2), einheit: res.einheit
+    });
     var f = rahmen(box, zr[0], zr[1], sk.min, sk.max, res.einheit, tz, label);
     var tf = function (p) { return p[0]; };
 
@@ -425,7 +435,7 @@
       if (b <= a) return;
       var w = Math.max(2, f.sx(b) - f.sx(a));
       tip(el('rect', { x: f.sx(a), y: f.O, width: w, height: f.U - f.O, class: 'dl-qual dl-q-' + q.code }, f.ebenen.qual),
-        (QUAL_TEXT[q.code] || q.code) + ' (' + q.herkunft + ')' + (q.hinweis ? ': ' + q.hinweis : ''));
+        qualText(q.code) + ' (' + herkunftText(q.herkunft) + ')' + (q.hinweis ? ': ' + q.hinweis : ''));
     });
 
     // Stimulationen: bis 7 Tage als volle Linie mit Dauer, darueber (taeglich
@@ -437,7 +447,7 @@
       if (t === null || t < zr[0] || t > zr[1]) return;
       var kl = s.zustand === 'EXECUTED' ? 'ok' : (s.zustand === 'PARTIAL' ? 'teil' : 'fehl');
       var g = el('g', { class: 'dl-stim dl-stim-' + kl }, f.ebenen.stim);
-      var titel = 'Stimulation ' + (TYP_TEXT[s.typ] || s.typ) + ', ' + (ZUSTAND_TEXT[s.zustand] || s.zustand) + ', ' + fmt(t, tz, true);
+      var titel = tx('stim_titel', { typ: typText(s.typ), zustand: zustandText(s.zustand), zeit: fmt(t, tz, true) });
       if (kompakt) {
         el('line', { x1: f.sx(t), x2: f.sx(t), y1: f.U - 10, y2: f.U, class: 'dl-stim-strich' }, g);
         return tip(g, titel);
@@ -448,7 +458,7 @@
       el('line', { x1: f.sx(t), x2: f.sx(t), y1: f.O, y2: f.U }, g);
       el('path', { d: 'M' + (f.sx(t) - 5) + ' ' + f.O + 'l5 7l5 -7z', class: 'dl-stim-kopf' }, g);
       tip(g, titel +
-        (s.dauer_ms ? ', Dauer ' + zahl(s.dauer_ms / 1000, 1) + ' s' : '') + (s.grund ? ' – ' + s.grund : ''));
+        (s.dauer_ms ? ', ' + tx('dauer', { s: zahl(s.dauer_ms / 1000, 1) }) : '') + (s.grund ? ' – ' + s.grund : ''));
     });
 
     // Min/Max-Band und Mittelwert je zusammenhaengendem Abschnitt
@@ -480,19 +490,16 @@
       qual: res.qualitaet.length > 0,
       luecke: abschnitte(P, raster, tf).length > 1
     });
-    $('dl-technik').textContent = 'Tabelle sandbox.derived_aggregate · Auflösung ' + res.aufloesung +
-      (res.aufloesung === '1d' ? ' (zur Anzeige aus 1h verdichtet)' : '') + ' · Messreihe ' + r.code +
-      ' · Messgröße ' + res.kanal + ' · Ereignisse aus sandbox.stimulation und sandbox.quality_annotation' +
-      (K.length ? ' · Kontrollreihe ' + (kontrollReihe() || {}).code : '');
+    $('dl-technik').textContent = tx('technik_reihe', {
+      aufl: res.aufloesung, zusatz: res.aufloesung === '1d' ? T.technik_1d : '', code: r.code, kanal: res.kanal
+    }) + (K.length ? tx('technik_kontrolle', { code: (kontrollReihe() || {}).code }) : '');
 
     var n = P.reduce(function (a, p) { return a + p[5]; }, 0);
     var nErw = P.reduce(function (a, p) { return a + (p[6] || 0); }, 0);
-    var aufl = { '1min': 'Minutenwerte', '1h': 'Stundenwerte', '1d': 'Tageswerte (aus Stundenwerten)' }[res.aufloesung];
-    $('dl-meta').textContent = aufl + ' · ' + P.length + ' Zeitfenster · ' + zahl(n, 0) + ' Einzelwerte' +
-      (nErw ? ' von ' + zahl(nErw, 0) + ' erwarteten (' + zahl(n / nErw * 100, 1) + ' %)' : '') +
-      ' · Ortszeit ' + tz + ' · Quelle: Sandbox · aggregierte Daten' +
-      (sk.gekappt ? ' · Skala ohne seltene Spitzen (Extremwerte ' + zahl(sk.echtMin, 1) + ' bis ' + zahl(sk.echtMax, 1) + ' ' +
-        res.einheit + ', „volle Skala“ zeigt sie)' : '');
+    $('dl-meta').textContent = tx('meta', { aufl: T['aufl_' + res.aufloesung], fenster: zahl(P.length, 0), werte: zahl(n, 0) }) +
+      (nErw ? tx('meta_erwartet', { erw: zahl(nErw, 0), pct: zahl(n / nErw * 100, 1) }) : '') +
+      tx('meta_quelle', { tz: tz }) +
+      (sk.gekappt ? tx('meta_gekappt', { min: zahl(sk.echtMin, 1), max: zahl(sk.echtMax, 1), einheit: res.einheit }) : '');
   }
 
   // Legende: nur zeigen, was im Diagramm gerade tatsaechlich vorkommt
@@ -512,12 +519,14 @@
       var p = P[idx], x = f.sx(p[0]);
       linie.setAttribute('x1', x); linie.setAttribute('x2', x); linie.setAttribute('visibility', 'visible');
       var k = K.filter(function (q) { return q[0] === p[0]; })[0];
-      var txt = fmt(p[0], tz) + ' · Mittel ' + zahl(p[3], 3) + ' ' + res.einheit + ' (min ' + zahl(p[1], 3) + ', max ' + zahl(p[2], 3) + ')' +
-        ' · ' + p[5] + (p[6] ? ' von ' + p[6] : '') + ' Werte';
-      if (k) txt += ' · Kontrolle ' + zahl(k[3], 3) + ' ' + res.einheit;
+      var txt = tx('ablesen', {
+        zeit: fmt(p[0], tz), mittel: zahl(p[3], 3), einheit: res.einheit, min: zahl(p[1], 3), max: zahl(p[2], 3),
+        werte: p[6] ? tx('ablesen_von', { n: zahl(p[5], 0), erw: zahl(p[6], 0) }) : zahl(p[5], 0)
+      });
+      if (k) txt += tx('ablesen_kontrolle', { wert: zahl(k[3], 3), einheit: res.einheit });
       if (p[4]) {
-        txt += ' · Qualität: ' + Object.keys(res.qualitaet_bits).filter(function (b) { return p[4] & +b; })
-          .map(function (b) { return QUAL_TEXT[res.qualitaet_bits[b]] || res.qualitaet_bits[b]; }).join(', ');
+        txt += tx('ablesen_qual', { liste: Object.keys(res.qualitaet_bits).filter(function (b) { return p[4] & +b; })
+          .map(function (b) { return qualText(res.qualitaet_bits[b]); }).join(', ') });
       }
       $('dl-ablesen').textContent = txt;
     }
@@ -537,7 +546,7 @@
         ev.preventDefault(); zeige(idx < 0 ? 0 : idx + (ev.key === 'ArrowRight' ? 1 : -1));
       }
     });
-    tip(fang, 'Mit der Maus oder den Pfeiltasten Werte ablesen');
+    tip(fang, T.ablesen_tip);
   }
 
   // ------------------------------------------------------- Ereignisliste ---
@@ -546,17 +555,18 @@
     res.stimulationen.forEach(function (s) {
       var t = s.start || s.versuch || s.geplant;
       zeilen.push({
-        t: t, was: 'Stimulation ' + (TYP_TEXT[s.typ] || s.typ) + ' – ' + (ZUSTAND_TEXT[s.zustand] || s.zustand),
-        details: (s.dauer_ms ? 'Dauer ' + zahl(s.dauer_ms / 1000, 1) + ' s' : '') +
-          (s.versatz_ms ? ' · Sequenz-Versatz ' + zahl(s.versatz_ms / 60000, 1) + ' min' : (s.versatz_ms === 0 ? ' · Sequenz, synchron' : '')) +
+        t: t, was: tx('e_stim', { typ: typText(s.typ), zustand: zustandText(s.zustand) }),
+        details: (s.dauer_ms ? tx('dauer', { s: zahl(s.dauer_ms / 1000, 1) }) : '') +
+          (s.versatz_ms ? tx('e_versatz', { min: zahl(s.versatz_ms / 60000, 1) }) : (s.versatz_ms === 0 ? T.e_synchron : '')) +
           (s.grund ? ' · ' + s.grund : ''),
         roh: true
       });
     });
     res.qualitaet.forEach(function (q) {
       zeilen.push({
-        t: q.von, was: 'Qualität: ' + (QUAL_TEXT[q.code] || q.code),
-        details: 'bis ' + (q.bis ? fmt(q.bis, tz) : 'offen') + ' · Herkunft ' + q.herkunft + (q.hinweis ? ' · ' + q.hinweis : ''),
+        t: q.von, was: tx('e_qual', { code: qualText(q.code) }),
+        details: tx('e_bis', { zeit: q.bis ? fmt(q.bis, tz) : T.e_offen }) + tx('e_herkunft', { h: herkunftText(q.herkunft) }) +
+          (q.hinweis ? ' · ' + q.hinweis : ''),
         roh: q.code === 'SATURATED'
       });
     });
@@ -573,7 +583,7 @@
       var inRoh = rohStunden.some(function (h) { return z.t >= h && z.t < h + STUNDE; });
       if (z.roh && inRoh) {
         var b = document.createElement('button');
-        b.type = 'button'; b.className = 'dl-mini'; b.textContent = 'Rohdaten ansehen';
+        b.type = 'button'; b.className = 'dl-mini'; b.textContent = T.roh_ansehen;
         b.addEventListener('click', function () {
           st.rohVon = z.t - 2000; ladeRoh();
           $('dl-roh').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -586,7 +596,7 @@
     if (zeilen.length > MAX_ZEILEN) {
       var mehr = document.createElement('tr'), mtd = document.createElement('td');
       mtd.colSpan = 4; mtd.className = 'label';
-      mtd.textContent = '… und ' + (zeilen.length - MAX_ZEILEN) + ' weitere Ereignisse. Für die vollständige Liste einen kürzeren Zeitraum wählen.';
+      mtd.textContent = tx('e_mehr', { n: zeilen.length - MAX_ZEILEN });
       mehr.appendChild(mtd); tb.appendChild(mehr);
     }
     $('dl-ereignisse').hidden = !zeilen.length;
@@ -615,8 +625,7 @@
       box.textContent = '';
       var leer = document.createElement('p');
       leer.className = 'dl-leer-chart';
-      leer.textContent = 'Keine Rohdaten in diesem Ausschnitt. Rohdaten gibt es nur in den markierten Stunden; ' +
-        'während der stündlichen Leitfähigkeitsmessung (volle Stunde + 35 s) pausiert die Aufzeichnung planmäßig.';
+      leer.textContent = T.keine_roh;
       box.appendChild(leer);
       $('dl-roh-meta').textContent = '';
       $('dl-roh-technik').textContent = '';
@@ -624,7 +633,7 @@
     }
     var werte = S.concat(K).map(function (s) { return s[1]; });
     var f = rahmen(box, von, bis, Math.min.apply(null, werte), Math.max.apply(null, werte), 'µV', tz,
-      'Simulation: Rohdaten ' + reiheText(aktReihe()) + ', 10 Sekunden ab ' + fmt(von, tz, true));
+      tx('roh_label', { reihe: reiheText(aktReihe()), zeit: fmt(von, tz, true) }));
     var tf = function (s) { return s[0]; }, vf = function (s) { return s[1]; };
     var raster = 1000 / res.rate_hz;
     abschnitte(S, raster, tf).forEach(function (t) { el('path', { d: pfad(t, f.sx, f.sy, tf, vf), class: 'dl-roh-linie' }, f.ebenen.daten); });
@@ -633,15 +642,14 @@
       el('circle', { cx: f.sx(s[0]), cy: f.sy(s[1]), r: 2, class: 'dl-saett' }, f.ebenen.oben);
     });
     var saett = S.filter(function (s) { return s[3]; }).length;
-    $('dl-roh-meta').textContent = S.length + ' Abtastwerte (Simulation: ' + res.rate_hz + ' pro Sekunde)' +
-      (saett ? ' · ' + saett + ' Werte in ADC-Sättigung (rot)' : '') + (K.length ? ' · gestrichelt: Kontrollreihe' : '') +
-      ' · Quelle: Sandbox · Rohdaten, in µV umgerechnet';
+    $('dl-roh-meta').textContent = tx('roh_meta', { n: zahl(S.length, 0), rate: zahl(res.rate_hz, 0) }) +
+      (saett ? tx('roh_saett', { n: saett }) : '') + (K.length ? T.roh_kontrolle : '') + T.roh_quelle;
     var q = res.quelle || {};
-    $('dl-roh-technik').textContent = 'Tabelle sandbox.sample_block · Sample-Index ' + S[0][2] + ' bis ' + S[S.length - 1][2] +
-      (q.kodierung ? ' · Kodierung ' + q.kodierung : '') + (q.kompression ? ' · Kompression ' + q.kompression : '') +
-      (q.adc ? ' · ' + q.adc : '') + (q.lsb_uv ? ' · LSB ' + zahl(q.lsb_uv, 4) + ' µV' : '') +
-      (q.gain ? ' · Verstärkung ' + zahl(q.gain, 0) + ' (' + q.gain_quelle + ')' : '') +
-      ' · Umrechnung: Zählwert × LSB ÷ Verstärkung';
+    $('dl-roh-technik').textContent = tx('roh_technik', { a: S[0][2], b: S[S.length - 1][2] }) +
+      (q.kodierung ? tx('roh_kodierung', { k: q.kodierung }) : '') +
+      (q.kompression ? tx('roh_kompression', { k: q.kompression }) : '') +
+      (q.adc ? ' · ' + q.adc : '') + (q.lsb_uv ? tx('roh_lsb', { x: zahl(q.lsb_uv, 4) }) : '') +
+      (q.gain ? tx('roh_gain', { g: zahl(q.gain, 0), q: q.gain_quelle }) : '') + T.roh_umrechnung;
   }
 
   // ------------------------------------------- Ansicht in der Adresse ---
@@ -657,7 +665,7 @@
     if (h.szenario) st.szenario = h.szenario;
     if (h.kanal && kanalInfo[h.kanal]) st.kanal = h.kanal;
     if (ANSICHT_TAGE[h.ansicht] || h.ansicht === 'saison' || h.ansicht === 'jahr') st.ansicht = h.ansicht;
-    if (SAISON_TEXT[h.saison]) $('dl-saison').value = h.saison;
+    if (SAISONS[h.saison]) $('dl-saison').value = h.saison;
     if (h.kontrolle === '1') $('dl-kontrolle').checked = true;
     if (/^\d{4}-\d{2}-\d{2}$/.test(h.datum || '')) start = { datum: h.datum };
     else if (h.ansicht) start = { datum: '2025-01-13' };
@@ -710,13 +718,18 @@
     $('dl-roh-vor').addEventListener('click', function () { if (st.rohVon !== null) { st.rohVon += 10000; ladeRoh(); } });
   }
 
+  // Sprachwechsel: die gerade gezeigte Ansicht (#...) mitnehmen
+  document.querySelectorAll('[data-sprache]').forEach(function (a) {
+    a.addEventListener('click', function () { a.href = a.href.split('#')[0] + window.location.hash; });
+  });
+
   holen('/szenarien').then(function (j) {
     daten = j; kanalInfo = j.kanaele || {};
     $('dl-laden').hidden = true;
     if (!j.szenarien.length) { $('dl-leer').hidden = false; return; }
     var subs = {};
     j.szenarien.forEach(function (s) { s.reihen.forEach(function (r) { subs[r.substrat] = r.substrat_label; }); });
-    Object.keys(subs).forEach(function (k) { option($('dl-f-substrat'), k, SUBSTRAT_TEXT[k] || subs[k]); });
+    Object.keys(subs).forEach(function (k) { option($('dl-f-substrat'), k, substratText(k, subs[k])); });
     $('dl-inhalt').hidden = false;
     verdrahten();
     var reiheCode = adresseLesen();

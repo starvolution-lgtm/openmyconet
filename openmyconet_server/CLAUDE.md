@@ -232,7 +232,15 @@ aus den privaten Koordinaten. Frontend `app/templates/datenlabor.html` +
 `app/static/datenlabor.js` (eigene SVG-Diagramme, keine Fremdbibliothek, keine
 style-Attribute wegen CSP) + `datenlabor.css`; `dashboard_base.html` hat dafür
 die Blöcke `head`, `body_class`, `scripts` und den Datenlabor-Link in der
-Kopfzeile. Auf SQLite leerer Zustand. Tests: `tests/test_datenlabor.py`
+Kopfzeile. **Fünfsprachig seit 26.09.2026:** alle Texte (Oberfläche, Skript, Messgrößen,
+Szenario-Texte, feste Generator-Texte) in `omn/datenlabor_texte.json` (bewusst nicht in
+`translations.json`, die jede öffentliche Seite lädt); Sprache = `?lang=` → Cookie `omn_lang`
+→ `Nutzer.sprache` → de, Sprachumschalter auf der Seite, `dashboard_base.html` hat dafür den
+Block `html_lang` (übrige Dashboard-Seiten bleiben deutsch). Die Seite legt die Texte als JSON
+(`#dl-texte`) ab, `datenlabor.js` setzt sie per `tx()` ein und formatiert mit `data-locale`;
+die API bekommt `?lang=`. Szenario-Texte werden nur übersetzt, solange der deutsche Text in der
+DB exakt dem in `szenarien.py` entspricht (sonst Deutsch) — neue Szenario-Texte also in der
+JSON nachziehen. Auf SQLite leerer Zustand. Tests: `tests/test_datenlabor.py`
 (Zugang auf allen Engines, Daten nur PG). Gestaltung: Seitenrahmen wie die
 Website (Waldgrün, Lora/Playfair), das Dashboard selbst als Fenster im Stil der
 BioComm-Software (Schiefergrau, Cyan); Bernstein nur für SIMULATION. Die Ansicht
