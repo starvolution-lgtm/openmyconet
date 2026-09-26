@@ -250,6 +250,43 @@ def register_cli(app):
         click.echo('Er wird NUR JETZT angezeigt und steht nirgends auf dem Server (nur sein Fingerabdruck).')
         click.echo('In die Bridge eintragen und sicher aufbewahren; bei Verlust widerrufen und neu anlegen.')
 
+    @app.cli.command('biocomm-knotenschluessel')
+    @click.argument('seriennummer')
+    @click.option('--ed25519', 'public_key', default=None,
+                  help='Oeffentlicher Schluessel des Messknotens (64 Hex-Zeichen, gibt die Firmware per USB aus).')
+    @click.option('--bezeichnung', default=None, help='Notiz, z. B. "Platine 3, Okt. 2026".')
+    @click.option('--liste', is_flag=True, help='Schluessel des Messknotens anzeigen.')
+    @click.option('--widerrufen', 'widerrufen_id', type=int, default=None, help='Schluessel mit dieser Nummer sperren.')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_knotenschluessel(seriennummer, public_key, bezeichnung, liste, widerrufen_id, schema):
+        """Signaturschluessel (Ed25519) eines Messknotens registrieren, anzeigen oder widerrufen."""
+        from omn.eingang.signatur import schluessel_liste, schluessel_registrieren, schluessel_widerrufen
+        from omn.extensions import db
+
+        if liste:
+            zeilen = schluessel_liste(db.engine, schema, seriennummer)
+            if not zeilen:
+                click.echo('Keine Signaturschluessel.')
+            for z in zeilen:
+                stand = f'widerrufen {z.revoked_at:%Y-%m-%d %H:%M}' if z.revoked_at else 'aktiv'
+                click.echo(f'Nr. {z.id}: {stand}, angelegt {z.created_at:%Y-%m-%d %H:%M}, {z.pakete} signierte Pakete,'
+                           f' Schluessel {bytes(z.public_key).hex()}' + (f' ({z.label})' if z.label else ''))
+            return
+        if widerrufen_id is not None:
+            if not schluessel_widerrufen(db.engine, schema, seriennummer, widerrufen_id):
+                raise click.ClickException('Schluessel nicht gefunden oder schon widerrufen')
+            click.echo(f'Signaturschluessel Nr. {widerrufen_id} von {seriennummer} ist widerrufen.'
+                       ' Pakete mit diesem Schluessel werden ab jetzt abgelehnt.')
+            return
+        if not public_key:
+            raise click.UsageError('--ed25519 SCHLUESSEL, --liste oder --widerrufen NR angeben')
+        try:
+            nr = schluessel_registrieren(db.engine, schema, seriennummer, public_key, bezeichnung)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+        click.echo(f'Signaturschluessel Nr. {nr} fuer {seriennummer} ({schema}) registriert.'
+                   ' Ab jetzt nimmt der Eingang von diesem Knoten nur noch damit signierte Pakete an.')
+
     @app.cli.command('biocomm-wartende')
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
     def biocomm_wartende(schema):

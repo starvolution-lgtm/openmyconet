@@ -60,9 +60,11 @@ automatisch verarbeitet. Auch das ist endgültig für die Bridge.
 ## Sicherheit und Grenzen
 
 - Der Bridge-Schlüssel belegt nur, dass die **Bridge** echt ist. Dass ein Paket wirklich vom
-  angegebenen **Node** stammt, belegt erst dessen Signatur im Anhang des Pakets (HMAC-SHA256
-  mit dem eFuse-Schlüssel des ESP32-S3). Sie wird gelesen, aber **noch nicht geprüft**. Das
-  gehört zur Geräte-Authentifizierung der Nodes, einem eigenen nächsten Schritt.
+  angegebenen **Node** stammt, belegt erst dessen Signatur im Anhang des Pakets. Seit
+  26.09.2026 (Schema v5) wird sie geprüft: Ed25519, im Schema `live` Pflicht (Regeln und
+  Schlüsselverwaltung in `dateneingang_format_v1.md`, Abschnitt Signatur). Eine fehlende oder
+  falsche Signatur ergibt `200` mit `REJECTED`. Die Bridge schickt das Paket also nicht erneut;
+  sie muss die Signatur auch nicht selbst prüfen.
 - Kein CSRF-Schutz (kein Browser-Formular), dafür der Schlüssel. Die Sperre nach
   Fehlversuchen zählt je Absender-IP.
 - nginx lässt bis 6 MB je Anfrage durch, der Server nimmt höchstens 4 MiB je Paket an.

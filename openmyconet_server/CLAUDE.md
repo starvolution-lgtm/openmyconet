@@ -102,8 +102,11 @@ einmal in `biocomm_common.core_0002` für beide Kerne (versionierte Aggregate, S
 `core_0003`): `device_deployment` (Einsatz Gerät → Messreihe, historisiert, nur `valid_to`
 änderbar) und `delivery_waiting` (zurückgestellte Pakete). **Schema v4** (Migration
 `5c8d0f3a2e46`, `biocomm_0004_*.sql`, `core_0004`): `device_credential` (Zugangsschlüssel
-je Gerät, nur SHA-256-Fingerabdruck, nur `revoked_at`/`last_used_at` änderbar). Nächste
-Änderung = `biocomm_0005_…`.
+je Gerät, nur SHA-256-Fingerabdruck, nur `revoked_at`/`last_used_at` änderbar). **Schema v5**
+(Migration `6d9e1a4b3f57`, `biocomm_0005_*.sql`, `core_0005`): `device_signing_key`
+(öffentliche Ed25519-Schlüssel der Messknoten, nur `revoked_at` änderbar) und
+`origin_batch.signature_algorithm/signature/signing_key_id` (beim Anlegen, danach fest).
+Nächste Änderung = `biocomm_0006_…`.
 
 **Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
 [--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen
@@ -203,8 +206,17 @@ LORA/BLE/USB, optional `X-OMN-Empfangen` (µs seit 1970) und `X-OMN-Referenz`. 2
 endgültig (auch REJECTED/WARTET; erneutes Senden → SCHON_EINGELESEN), 4xx = Fehler der
 Bridge, 429/5xx = später erneut. Sperre je IP nach 20 Fehlversuchen/Stunde
 (`spam_schutz.ip_gesperrt` zählt nicht mit). Schlüssel: `flask biocomm-schluessel SERIAL
-[--liste|--widerrufen NR]` (einmal angezeigt). Node-Signaturen werden gelesen, noch nicht
-geprüft. Tests: `tests/test_empfang.py`, `tests/test_dateneingang.py`
+[--liste|--widerrufen NR]` (einmal angezeigt). **Node-Signaturen (seit 26.09.2026,
+`signatur.py`, Schema v5):** Ed25519 über `"OMN-SIG-v1" ‖ batch_hash`, nicht Teil der
+Hashes; der Server kennt nur öffentliche Schlüssel (HMAC wird abgelehnt). Seed im Knoten =
+HMAC-SHA256(eFuse-Schlüssel, `"OMN-ED25519-SEED-v1"`), der private Schlüssel verlässt ihn
+nie. **live: Signatur Pflicht**; sandbox: Pflicht nur, wenn das Gerät einen Schlüssel hat.
+Geprüft vor LAUF_START/Zurückstellen (in `einliefern`), erneut in `_pruefen` (auch für
+Wartende) und beim Anlegen (`_batch_anlegen` speichert Signatur + Schlüssel). Verwaltung:
+`flask biocomm-knotenschluessel SERIAL --ed25519 HEX [--bezeichnung] [--liste|--widerrufen
+NR] [--schema]`. Dritter Testvektor `_testvektor_signiert.omb` (Test-eFuse öffentlich,
+Werte in `docs/dateneingang_format_v1.md`). Testknoten: `knoten_vorbereiten(...,
+signatur_seed=…)`. Neue Abhängigkeit `cryptography`. Tests: `tests/test_signatur.py`. Tests: `tests/test_empfang.py`, `tests/test_dateneingang.py`
 (nur PG; legt fehlende Rollen `omn_owner`/`omn_geo`/`omn` als NOLOGIN an, stellt die
 Grundrechte des Rollen-Skripts nach und prüft den Weg mit `SET ROLE omn`).
 

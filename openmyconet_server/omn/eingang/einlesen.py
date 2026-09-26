@@ -67,6 +67,7 @@ import sqlalchemy as sa
 from omn.eingang import ereignisse
 from omn.eingang import format_v0 as fmt
 from omn.eingang import formate
+from omn.eingang import signatur
 
 SCHEMAS = ('sandbox', 'live')
 TRANSPORTE = ('LORA', 'BLE', 'SD_IMPORT', 'USB')
@@ -172,8 +173,14 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
         if paket:
             sperren(c, s, f'anmeldung:{paket.geraet}:{paket.lauf}')
         geraet, lauf, lauf_grund = _lauf_finden(c, s, paket) if paket else (None, None, None)
-        warten, angelegt = None, False
-        if paket and geraet is not None and lauf is None:
+        warten, angelegt, sig_fehler = None, False, None
+        if paket and geraet is not None:
+            # Signatur zuerst: ein unsigniertes oder gefaelschtes Paket darf weder
+            # einen Messlauf anlegen (LAUF_START) noch zurueckgestellt werden
+            _, sig_fehler = signatur.pruefen(c, s, geraet.id, paket)
+            if sig_fehler:
+                lauf, lauf_grund = None, sig_fehler
+        if paket and geraet is not None and lauf is None and not sig_fehler:
             lauf, warten, lauf_grund, angelegt = _lauf_aus_start(c, s, geraet, paket, lauf_grund)
         sperren(c, s, f'lauf:{lauf["id"]}' if lauf else f'transport:{thash.hex()}')
 
@@ -296,6 +303,9 @@ def _pruefen(c, s, paket, lauf):
     fehler = _form_fehler(paket)
     if fehler:
         raise _Abgelehnt(fehler)
+    _, sig_fehler = signatur.pruefen(c, s, _geraet_des_laufs(c, s, lauf['id']), paket)
+    if sig_fehler:                  # auch fuer zurueckgestellte Pakete (Schluessel inzwischen widerrufen?)
+        raise _Abgelehnt(sig_fehler)
     auswertung = ereignisse.auswerten(paket)
     formate_im_lauf = {z[0] for z in c.execute(sql(s,
         "SELECT DISTINCT split_part(payload_format, '/', 1) FROM {s}.origin_batch"
@@ -434,7 +444,17 @@ def _inline_kennung(format_kennung):
     return format_kennung + ('/paket-json' if format_kennung == fmt.FORMAT_KENNUNG else '/paket-omb')
 
 
+def _geraet_des_laufs(c, s, lauf_id):
+    return c.execute(sql(s, 'SELECT device_id FROM {s}.acquisition_run WHERE id = :r'), {'r': lauf_id}).scalar()
+
+
 def _batch_anlegen(c, s, paket, lauf_id, status, kette, basis, inline=None):
+    sig_art = sig = sig_schluessel = None
+    if getattr(paket, 'signatur_art', 'KEINE') == 'ED25519':
+        sig_schluessel, fehler = signatur.pruefen(c, s, _geraet_des_laufs(c, s, lauf_id), paket)
+        if fehler:                  # _pruefen hat es in derselben Transaktion schon geprueft
+            raise RuntimeError(f'Signatur beim Anlegen nicht mehr gueltig: {fehler}')
+        sig_art, sig = 'ED25519', bytes(paket.signatur)
     if inline is None:
         ort, fmt_kennung, groesse = 'SAMPLE_BLOCKS', paket.format, sum(len(b.payload) for b in paket.bloecke)
     else:
@@ -444,14 +464,15 @@ def _batch_anlegen(c, s, paket, lauf_id, status, kette, basis, inline=None):
     return c.execute(sql(s,
         'INSERT INTO {s}.origin_batch (acquisition_run_id, batch_sequence_no, batch_content, measured_period,'
         ' payload_hash, previous_batch_hash, batch_hash, payload_format, payload_location, payload_inline,'
-        ' payload_size_bytes, batch_status, chain_state, status_basis, status_changed_at)'
+        ' payload_size_bytes, batch_status, chain_state, status_basis, status_changed_at,'
+        ' signature_algorithm, signature, signing_key_id)'
         " VALUES (:r, :n, :inh, tstzrange(:von, :bis, '[)'), :ph, :vh, :bh, :pf, :ort, :inl, :gr, :st, :k, :sb,"
-        ' clock_timestamp())'
+        ' clock_timestamp(), :sa, :sig, :sk)'
         ' RETURNING id'),
         {'r': lauf_id, 'n': paket.sequenz, 'inh': paket.inhalt, 'von': paket.messzeitraum_von,
          'bis': paket.messzeitraum_bis, 'ph': paket.payload_hash, 'vh': paket.vorgaenger_hash,
          'bh': paket.batch_hash, 'pf': fmt_kennung, 'ort': ort, 'inl': inline, 'gr': groesse,
-         'st': status, 'k': kette, 'sb': basis}).scalar()
+         'st': status, 'k': kette, 'sb': basis, 'sa': sig_art, 'sig': sig, 'sk': sig_schluessel}).scalar()
 
 
 def _ueberschneidung(c, s, bloecke):

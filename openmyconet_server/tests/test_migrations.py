@@ -20,7 +20,7 @@ from omn.extensions import db
 
 BASELINE_REV = '959850bfc924'
 BIOCOMM_REV = '3f1b2c4d5e6a'
-HEAD_REV = '5c8d0f3a2e46'
+HEAD_REV = '6d9e1a4b3f57'
 BIOCOMM_VORHER = 'fa5a744c1177'
 BIOCOMM_SCHEMAS = ('sandbox', 'sandbox_private', 'live', 'live_private', 'biocomm_common')
 REGELN_SQL = os.path.join(os.path.dirname(__file__), 'sql', 'biocomm_regeln.sql')

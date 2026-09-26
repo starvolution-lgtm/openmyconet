@@ -23,8 +23,8 @@ die IP fuer den Rest der Stunde, auch fuer richtige Schluessel.
 
 Der Bridge-Schluessel belegt nur, dass die BRIDGE echt ist. Ob ein Paket
 wirklich vom angegebenen Node stammt, belegt erst dessen Signatur im Anhang
-(Format v1); sie wird gelesen, aber noch nicht geprueft (Geraete-
-Authentifizierung der Nodes offen).
+(Format v1, Ed25519); der Eingang prueft sie (omn/eingang/signatur.py,
+im Schema live Pflicht).
 """
 import hashlib
 from datetime import datetime, timedelta, timezone

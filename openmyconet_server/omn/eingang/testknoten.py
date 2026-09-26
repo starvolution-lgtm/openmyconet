@@ -8,7 +8,9 @@ schreiben und per LoRa/BLE schicken wuerde. Feste Seeds -> reproduzierbar.
 
 Selbstanmeldung (Format v1): knoten_vorbereiten() legt nur Geraet, Messreihe
 und Einsatz an; das erste Paket traegt LAUF_START, der Eingang legt den
-Messlauf daraus an -- wie spaeter beim echten Node.
+Messlauf daraus an -- wie spaeter beim echten Node. Mit `signatur_seed`
+signiert der Knoten jedes Paket (Ed25519) und sein oeffentlicher Schluessel
+wird registriert (omn/eingang/signatur.py).
 
 Ausserdem: pakete_aus_datenbank() exportiert die vom Sandbox-Generator
 geschriebenen Batches eines Laufs als Pakete v0 (Formatgleichheit pruefen,
@@ -24,7 +26,7 @@ from datetime import datetime, timedelta, timezone
 import sqlalchemy as sa
 
 from omn.eingang.einlesen import sql
-from omn.eingang import format_v1
+from omn.eingang import format_v1, signatur
 from omn.eingang.format_v0 import GENESIS, Block, paket_bauen
 
 EINGANG_BIO = 'U8/AIN0 über INA333'
@@ -47,6 +49,7 @@ class TestKnoten:
     anmelden: bool = False                          # Sequenz 1 traegt LAUF_START (nur v1)
     sonde: str = None
     ec_pause: bool = False                          # LAUF_START meldet stuendlich 30 s + 5 s EC-Pause
+    signatur_seed: bytes = None                     # Ed25519-Seed: Pakete signieren (nur v1)
 
     # -- Pakete ------------------------------------------------------------
     def paket(self, sequenz, vorgaenger_hash, variante=0):
@@ -73,8 +76,9 @@ class TestKnoten:
                                       (1, TEMP_INTERVALL_S), 'float32le', 'none', tmp),
             )
             ereignisse = [format_v1.ereignis(self.lauf_start(), t0)] if self.anmelden and sequenz == 1 else []
-            return format_v1.paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke,
-                                         ereignisse=ereignisse)
+            p = format_v1.paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke,
+                                      ereignisse=ereignisse)
+            return signatur.signieren(p, self.signatur_seed) if self.signatur_seed else p
         bloecke = (
             Block(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0, float(self.rate_hz),
                   'int16le', 'zlib-6', bio),
@@ -113,10 +117,11 @@ class TestKnoten:
 
 
 def knoten_vorbereiten(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=timezone.utc), rate_hz=250,
-                       paket_s=60, lauf='boot-1', einsatz=True, ec_pause=False):
+                       paket_s=60, lauf='boot-1', einsatz=True, ec_pause=False, signatur_seed=None):
     """Nur Geraet, Messreihe und (optional) Einsatz in sandbox anlegen; den
     Messlauf legt der Eingang aus dem LAUF_START in Sequenz 1 an (Format v1).
-    Liefert den TestKnoten (lauf_id None)."""
+    Mit `signatur_seed` wird der oeffentliche Schluessel registriert und der
+    Knoten signiert. Liefert den TestKnoten (lauf_id None)."""
     if paket_s % TEMP_INTERVALL_S:
         raise ValueError(f'paket_s muss ein Vielfaches von {TEMP_INTERVALL_S} sein')
     geraet = f'SBX-NODE-EINGANG-{name}'
@@ -134,8 +139,12 @@ def knoten_vorbereiten(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=
         if einsatz:
             q('INSERT INTO sandbox.device_deployment (device_id, series_id, valid_from) VALUES (:d, :s, :a) RETURNING id',
               d=dev, s=serie, a=start - timedelta(days=1))
+        if signatur_seed:
+            q("INSERT INTO sandbox.device_signing_key (device_id, algorithm, public_key, label)"
+              " VALUES (:d, 'ED25519', :k, 'Test-Messknoten') RETURNING id",
+              d=dev, k=signatur.oeffentlicher_schluessel(signatur_seed))
     return TestKnoten(geraet, lauf, None, start, rate_hz, paket_s, format='v1', anmelden=True,
-                      sonde=f'SBX-PRB-EINGANG-{name}', ec_pause=ec_pause)
+                      sonde=f'SBX-PRB-EINGANG-{name}', ec_pause=ec_pause, signatur_seed=signatur_seed)
 
 
 def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=timezone.utc), rate_hz=250,

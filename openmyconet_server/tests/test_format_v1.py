@@ -93,6 +93,32 @@ def test_genesis_gehoert_zu_geraet_und_lauf():
     assert g('A', 'b1') != format_v0.GENESIS
 
 
+TESTVEKTOR_SIGNIERT = TESTVEKTOR.with_name('dateneingang_format_v1_testvektor_signiert.omb')
+# Referenz fuer die Firmware (docs/dateneingang_format_v1.md, Abschnitt Signatur).
+# Der Test-eFuse-Schluessel ist oeffentlich und nur fuer diesen Vektor gedacht.
+EFUSE_TEST_HEX = '8e0e20c289bb54d6f3faf632054a0bbf91f6a8de636970db99e39747344b0a68'
+SEED_TEST_HEX = '5c0c6eabf6f52af1a7062ea191366af38adf03466a8747c51297a48134b0d5de'
+PUB_TEST_HEX = '0a4a40759da4af9be98117edbc2cacaca20f8a9985d38a6eef2335cab3e14bcd'
+SIG_TEST_HEX = ('ebd97cb57ba79a58f04fc28cfeaf1673fc3abcf97475206e765fc8029beddccd'
+                '806ad2d0959626f1bee434b03d6b92b4dca339bc7c69220b274eafdba4922002')
+
+
+def test_testvektor_signiert_ist_stabil():
+    from omn.eingang import signatur
+    assert signatur.TEST_EFUSE_SCHLUESSEL.hex() == EFUSE_TEST_HEX
+    seed = signatur.seed_aus_efuse(signatur.TEST_EFUSE_SCHLUESSEL)
+    assert seed.hex() == SEED_TEST_HEX
+    assert signatur.oeffentlicher_schluessel(seed).hex() == PUB_TEST_HEX
+    p = signatur.signieren(_testpaket(), seed)
+    assert signatur.nachricht(p.batch_hash) == b'OMN-SIG-v1' + bytes.fromhex(BATCH_HEX)
+    assert p.signatur.hex() == SIG_TEST_HEX                         # Ed25519 ist deterministisch
+    roh = format_v1.paket_schreiben(p)
+    assert roh == TESTVEKTOR_SIGNIERT.read_bytes(), 'Testvektor mit Signatur weicht ab'
+    assert len(roh) == 378 and roh[:-67] == TESTVEKTOR.read_bytes()[:-3]     # gleiches Paket, anderer Anhang
+    assert roh[-67:-64] == bytes([2, 64, 0])                                  # Art 2 (Ed25519), Laenge 64
+    assert signatur.gueltig(bytes.fromhex(PUB_TEST_HEX), format_v1.paket_lesen(roh))
+
+
 def test_signatur_im_anhang():
     p = dataclasses.replace(_testpaket(), signatur_art='HMAC_SHA256', signatur=b'\x07' * 32)
     q = format_v1.paket_lesen(format_v1.paket_schreiben(p))

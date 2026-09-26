@@ -12,6 +12,7 @@ Stand: 25.09.2026 · Branch `dateneingang-prototyp` · Bearbeitung: Cody (Cloud-
 | C3. Index `batch_delivery.transport_hash` | erledigt | `test_index_fuer_schon_eingelesen` |
 | C4. Test „Kanal nur als DERIVED“ | erledigt | `test_kanal_nur_als_derived` |
 | E. Verdichtung automatisch (26.09.2026): nur geänderte Läufe/Zeiträume, Funkstille, Cron alle 5 min | erledigt | `test_verdichtung_automatisch_nur_geaenderte_laeufe`, `test_verdichtung_schliesst_nach_funkstille_ab`, `test_verdichtung_per_cli_fuer_den_zeitgeber` |
+| F. Node-Signaturen (26.09.2026): Ed25519, Schema v5, live Pflicht, `flask biocomm-knotenschluessel` | erledigt | `tests/test_signatur.py`, `test_format_v1.py::test_testvektor_signiert_ist_stabil` |
 | D. Pull Request nach `main` | offen, CI grün, Merge durch Robby / lokale Sitzung | https://github.com/starvolution-lgtm/openmyconet/pull/2 |
 | Deploy Staging/Prod | nicht beauftragt | lokale Sitzung mit Robby |
 

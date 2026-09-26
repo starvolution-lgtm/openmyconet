@@ -134,12 +134,62 @@ LAUF_START. Pakete mit diesen Ereignissen lehnt der Eingang ab.
 
 | Feld | Typ | Inhalt |
 |---|---|---|
-| art | u8 | 0 keine, 1 HMAC-SHA256 (eFuse-Schlüssel des ESP32-S3), 2 Ed25519 |
+| art | u8 | 0 keine, 1 HMAC-SHA256 (vom Server **nicht** angenommen), 2 Ed25519 |
 | laenge | u16 | 0 / 32 / 64 passend zur Art |
-| signatur | Bytes | über den `batch_hash` |
+| signatur | Bytes | Ed25519 über `"OMN-SIG-v1" ‖ batch_hash` (42 Byte) |
 
-Die Signatur ist **nicht** Teil der Hashes. Sie wird gelesen, aber erst mit der
-Geräte-Authentifizierung geprüft. Das Format muss sich dafür nicht mehr ändern.
+Die Signatur ist **nicht** Teil der Hashes. Dasselbe Paket bleibt also dasselbe Glied der
+Kette, auch wenn es mit einem neuen Schlüssel signiert wird.
+
+#### Signatur (seit 26.09.2026, Schema v5, `omn/eingang/signatur.py`)
+
+**Ed25519, nicht HMAC.** Bei HMAC müsste der Server das Geheimnis jedes Knotens speichern:
+Wer die Datenbank oder ein Backup liest, könnte Pakete fälschen. Bei Ed25519 kennt der Server
+nur den öffentlichen Schlüssel.
+
+**Schlüssel im Knoten (Firmware):**
+
+```
+eFuse-Block mit Zweck HMAC_UP: 256-Bit-Zufallsschlüssel, einmalig gebrannt, nicht auslesbar
+seed        = HMAC-SHA256(eFuse-Schlüssel, "OMN-ED25519-SEED-v1")    (HMAC-Peripheral)
+Ed25519     = Schlüsselpaar aus seed (RFC 8032), nur im RAM
+signatur    = Ed25519-Sign(privat, "OMN-SIG-v1" ‖ batch_hash)
+```
+
+- Der private Schlüssel steht nirgends im Flash und verlässt den Knoten nie.
+- **Achtung beim Brennen:** eFuses lassen sich nicht zurücksetzen. Der Schlüssel wird genau einmal
+  je Chip gebrannt (Einrichtungsschritt der Firmware).
+- Bei der Einrichtung gibt die Firmware den **öffentlichen Schlüssel** (32 Byte, 64 Hex-Zeichen)
+  über USB aus. Er wird registriert:
+  `flask biocomm-knotenschluessel <Seriennummer> --ed25519 <hex> [--bezeichnung TEXT] [--schema live]`
+  (auch `--liste`, `--widerrufen NR`).
+- Jedes Paket wird signiert, auch das mit LAUF_START, und die Signatur wird mit dem Paket
+  auf der microSD gespeichert. Der SD-Import prüft sie genauso wie der Funkweg.
+
+**Regeln beim Eingang:**
+- **Schema `live`: Signatur Pflicht.** Kein registrierter Schlüssel, keine oder eine falsche
+  Signatur → `REJECTED`.
+- **Schema `sandbox`:** Hat das Gerät einen Schlüssel, gilt dasselbe. Ohne Schlüssel werden
+  unsignierte Pakete angenommen (Testknoten, Prototyp v0).
+- Geprüft wird **vor allem anderen**: Ein unsigniertes Paket legt keinen Messlauf an und wird
+  nicht zurückgestellt. Zurückgestellte Pakete werden bei der Verarbeitung erneut geprüft.
+- Gültig ist jeder nicht widerrufene Schlüssel des Geräts, etwa bei einer ausgetauschten Platine.
+  Widerrufene Schlüssel gelten ab sofort nicht mehr.
+- Signatur, Art und verwendeter Schlüssel stehen im `origin_batch`. Jedes Paket bleibt so
+  später nachprüfbar, auch nach einem Widerruf.
+
+**Testvektor:** `dateneingang_format_v1_testvektor_signiert.omb` (378 Byte) = der erste Testvektor
+mit Ed25519-Anhang. Der Test-eFuse-Schlüssel ist öffentlich und **nur** für diesen Vektor:
+
+| Wert | Hex |
+|---|---|
+| eFuse (Test) | `8e0e20c289bb54d6f3faf632054a0bbf91f6a8de636970db99e39747344b0a68` = SHA256("OMN-TEST-EFUSE-v1") |
+| seed | `5c0c6eabf6f52af1a7062ea191366af38adf03466a8747c51297a48134b0d5de` |
+| öffentlicher Schlüssel | `0a4a40759da4af9be98117edbc2cacaca20f8a9985d38a6eef2335cab3e14bcd` |
+| Nachricht | `4f4d4e2d5349472d7631` ‖ batch_hash `a70865a0…` |
+| Signatur | `ebd97cb57ba79a58f04fc28cfeaf1673fc3abcf97475206e765fc8029beddccd806ad2d0959626f1bee434b03d6b92b4dca339bc7c69220b274eafdba4922002` |
+
+Ed25519 ist deterministisch: Die Firmware muss mit diesem eFuse-Wert exakt diese Bytes erzeugen.
 
 ## Hashes (SHA-256, auf dem ESP32-S3 per Hardware)
 

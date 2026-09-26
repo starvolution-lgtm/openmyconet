@@ -16,9 +16,9 @@ Kurz:
   big-endian) + meta_hash + payload_hash).
 - Genesis = sha256("OMN-GENESIS-v1" + str8(geraet) + str8(lauf)): die Kette
   gehoert zu genau einem Geraet und Messlauf.
-- Anhang: optionale Signatur ueber batch_hash (1 = HMAC-SHA256 mit dem
-  eFuse-Schluessel des ESP32-S3, 2 = Ed25519). Wird gelesen, aber erst mit der
-  Geraete-Authentifizierung geprueft.
+- Anhang: optionale Signatur (1 = HMAC-SHA256, vom Server nicht angenommen;
+  2 = Ed25519 ueber "OMN-SIG-v1" + batch_hash). Geprueft wird sie im Eingang
+  (omn/eingang/signatur.py), hier nur gelesen und geschrieben.
 
 Ereignisse (Lauf-Start mit Kanalliste, Lauf-Ende, Stimulation, Uhrenabgleich,
 Reset-Ursache) sind im Format vorgesehen; der Eingang verarbeitet sie noch
