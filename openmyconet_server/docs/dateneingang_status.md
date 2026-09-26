@@ -11,6 +11,7 @@ Stand: 25.09.2026 · Branch `dateneingang-prototyp` · Bearbeitung: Cody (Cloud-
 | C2. Größengrenzen je Paket | erledigt | `test_groessengrenzen` |
 | C3. Index `batch_delivery.transport_hash` | erledigt | `test_index_fuer_schon_eingelesen` |
 | C4. Test „Kanal nur als DERIVED“ | erledigt | `test_kanal_nur_als_derived` |
+| E. Verdichtung automatisch (26.09.2026): nur geänderte Läufe/Zeiträume, Funkstille, Cron alle 5 min | erledigt | `test_verdichtung_automatisch_nur_geaenderte_laeufe`, `test_verdichtung_schliesst_nach_funkstille_ab`, `test_verdichtung_per_cli_fuer_den_zeitgeber` |
 | D. Pull Request nach `main` | offen, CI grün, Merge durch Robby / lokale Sitzung | https://github.com/starvolution-lgtm/openmyconet/pull/2 |
 | Deploy Staging/Prod | nicht beauftragt | lokale Sitzung mit Robby |
 

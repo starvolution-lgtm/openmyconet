@@ -87,12 +87,22 @@ def register_cli(app):
     @app.cli.command('biocomm-verdichten')
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='sandbox', show_default=True)
     @click.option('--lauf', 'laeufe', type=int, multiple=True, help='Nur diese acquisition_run.id (mehrfach moeglich).')
-    def biocomm_verdichten(schema, laeufe):
-        """Schreibt Minuten-/Stundenwerte fuer abgeschlossene Zeitraeume (nur neue Zeilen)."""
+    @click.option('--voll', is_flag=True, help='Alle Laeufe ueber den ganzen Zeitraum pruefen (Kontrolle, Reparatur).')
+    @click.option('--funkstille-stunden', type=float, default=6, show_default=True,
+                  help='Ohne neues Paket so lange -> letzte angefangene Fenster eines Laufs ohne Ende abschliessen.')
+    @click.option('--still/--laut', default=False,
+                  help='--still (fuer den Zeitgeber): nur ausgeben, wenn etwas berechnet oder uebersprungen wurde.')
+    def biocomm_verdichten(schema, laeufe, voll, funkstille_stunden, still):
+        """Schreibt Minuten-/Stundenwerte fuer abgeschlossene Zeitraeume. Ohne --lauf nur Laeufe mit Aenderungen."""
+        from datetime import timedelta
+
         from omn.eingang.verdichtung import verdichten as verdichten_
         from omn.extensions import db
 
-        _verdichtung_melden(verdichten_(db.engine, schema, list(laeufe) or None))
+        st = verdichten_(db.engine, schema, list(laeufe) or None,
+                         funkstille=timedelta(hours=funkstille_stunden), voll=voll)
+        if not still or any(st['zeilen'].values()) or st['uebersprungen']:
+            _verdichtung_melden(st)
 
     @app.cli.command('biocomm-konflikt')
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='sandbox', show_default=True)

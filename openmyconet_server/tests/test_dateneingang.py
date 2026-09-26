@@ -548,6 +548,93 @@ def test_verdichtung_ueber_luecken_mit_versionen(ein_app):
         assert {z.aggregate_version for z in _aktuell(abg, '1min')} == {1}
 
 
+def test_verdichtung_automatisch_nur_geaenderte_laeufe(ein_app):
+    """Zeitgeber-Betrieb: nur Laeufe mit Aenderungen, je Kanal nur der Zeitraum
+    ab der Aenderung -- und eine volle Nachrechnung findet danach nichts mehr."""
+    from omn.eingang.verdichtung import faellige_laeufe, verdichten
+    with ein_app.app_context():
+        k1 = _knoten('AUTO-1', paket_s=600, rate_hz=10)
+        k2 = _knoten('AUTO-2', paket_s=600, rate_hz=10)
+        p1, p2 = k1.pakete(8), k2.pakete(3)
+        for i in (0, 1, 3, 4, 5, 6):                             # Paket 2 fehlt zunaechst
+            _ein(p1[i])
+        for p in p2:
+            _ein(p)
+        assert {k1.lauf_id, k2.lauf_id} <= set(faellige_laeufe(db.engine, 'sandbox'))
+
+        verdichten(db.engine, 'sandbox')
+        assert not {k1.lauf_id, k2.lauf_id} & set(faellige_laeufe(db.engine, 'sandbox'))
+        st = verdichten(db.engine, 'sandbox')
+        assert st['zeilen'] == {'1min': 0, '1h': 0}
+
+        _ein(p1[7])                                              # neues Paket 09:10-09:20, Stunde 09:00 bleibt offen
+        assert k1.lauf_id in faellige_laeufe(db.engine, 'sandbox')
+        assert k2.lauf_id not in faellige_laeufe(db.engine, 'sandbox')
+        st = verdichten(db.engine, 'sandbox')
+        assert st['zeilen'] == {'1min': 20, '1h': 0}             # 10 neue Minuten, je 2 Kanaele
+
+        _ein(p1[2])                                              # Nachlieferung weit vor dem Ende
+        st = verdichten(db.engine, 'sandbox')
+        assert st['zeilen']['1min'] == 20 and st['neue_versionen'] == 2   # Stunde 08:00 neu, je 2 Kanaele
+
+        # Kontrolle: die volle Rechnung ueber alles findet nichts, was fehlt oder abweicht
+        assert verdichten(db.engine, 'sandbox', [k1.lauf_id, k2.lauf_id], voll=True)['zeilen'] == {'1min': 0, '1h': 0}
+        abg = k1.kanaele[('bio', 'DERIVED')]
+        assert len(_aktuell(abg, '1min')) == 80
+        assert [(v, n) for v, n, _, _ in _versionen(abg, '1h', k1.start)] == [(1, 30000), (2, 36000)]
+
+
+def test_verdichtung_schliesst_nach_funkstille_ab(ein_app):
+    """Lauf ohne LAUF_ENDE: die angefangene letzte Stunde bleibt offen, bis die
+    Funkstille erreicht ist; dann wird sie berechnet (mit fehlenden Samples)."""
+    from omn.eingang.verdichtung import faellige_laeufe, verdichten
+    with ein_app.app_context():
+        k = _knoten('FUNKSTILLE', paket_s=600, rate_hz=10)
+        for p in k.pakete(4):                                    # 08:00-08:40
+            _ein(p)
+        st = verdichten(db.engine, 'sandbox', [k.lauf_id])
+        assert st['zeilen'] == {'1min': 80, '1h': 0}             # Stunde 08:00 noch offen
+
+        zeiten = _zeilen_lauf(k.lauf_id)
+        funkstille = zeiten.berechnet - zeiten.geaendert + timedelta(milliseconds=200)
+        assert k.lauf_id not in faellige_laeufe(db.engine, 'sandbox', funkstille=funkstille)
+        time.sleep(0.5)                                          # jetzt ist die Funkstille erreicht
+        assert k.lauf_id in faellige_laeufe(db.engine, 'sandbox', funkstille=funkstille)
+
+        st = verdichten(db.engine, 'sandbox', [k.lauf_id], funkstille=funkstille)
+        assert st['zeilen']['1h'] == 2 and st['zeilen']['1min'] == 0
+        abg = k.kanaele[('bio', 'DERIVED')]
+        assert [(v, n, e) for v, n, e, _ in _versionen(abg, '1h', k.start)] == [(1, 24000, 36000)]
+        assert k.lauf_id not in faellige_laeufe(db.engine, 'sandbox', funkstille=funkstille)
+
+        # volle Nachrechnung mit Standard-Funkstille: nichts fehlt, nichts weicht ab
+        assert verdichten(db.engine, 'sandbox', [k.lauf_id], voll=True)['zeilen'] == {'1min': 0, '1h': 0}
+
+
+def test_verdichtung_per_cli_fuer_den_zeitgeber(ein_app):
+    """--still schreibt nur etwas, wenn berechnet wurde (Log des Zeitgebers bleibt leer)."""
+    with ein_app.app_context():
+        runner = ein_app.test_cli_runner()
+        runner.invoke(args=['biocomm-verdichten', '--schema', 'sandbox', '--still'])     # Altlasten anderer Tests
+        k = _knoten('CLI-VERDICHTEN', paket_s=600, rate_hz=10)
+        for p in k.pakete(2):
+            _ein(p)
+        erst = runner.invoke(args=['biocomm-verdichten', '--schema', 'sandbox', '--still'])
+        assert erst.exit_code == 0 and "'1min': 40" in erst.output
+        leer = runner.invoke(args=['biocomm-verdichten', '--schema', 'sandbox', '--still'])
+        assert leer.exit_code == 0 and leer.output == ''
+        laut = runner.invoke(args=['biocomm-verdichten', '--schema', 'sandbox', '--lauf', str(k.lauf_id), '--voll'])
+        assert laut.exit_code == 0 and 'in 1 Messlaeufen' in laut.output
+
+
+def _zeilen_lauf(lauf_id):
+    with db.engine.connect() as c:
+        return c.execute(sa.text(
+            'SELECT (SELECT max(status_changed_at) FROM sandbox.origin_batch WHERE acquisition_run_id = :r) AS geaendert,'
+            ' (SELECT max(da.computed_at) FROM sandbox.derived_aggregate da JOIN sandbox.measurement_channel mc'
+            '  ON mc.id = da.measurement_channel_id WHERE mc.acquisition_run_id = :r) AS berechnet'), {'r': lauf_id}).one()
+
+
 def test_verdichtung_erwartete_samples_aus_dem_plan(ein_app):
     """samples_expected beruecksichtigt geplante Pausen des Kanals."""
     from omn.eingang.verdichtung import verdichten

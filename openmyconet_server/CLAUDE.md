@@ -179,10 +179,20 @@ getrennter Schritt, **versionierte Aggregate** (Migration `8d4e2a6c1b70`,
 mehr → Grabstein (`samples_recorded = 0`), `samples_expected` aus Lauf und
 Aufzeichnungsplan. **Leser nur über `derived_aggregate_current`** (jüngste Version,
 ohne Grabsteine) und `sample_block` nur mit `origin_batch.batch_status = 'CANONICAL'`
-(Datenlabor so umgestellt). `testknoten.py` = Test-Messknoten in `sandbox`. CLI:
+(Datenlabor so umgestellt). **Automatisch seit 26.09.2026:** Cron alle 5 min
+(`deploy/biocomm_verdichten.sh live|sandbox` mit `flock`, Prod + Staging, eingetragen von
+`install_backup_cron.sh`, Log `verdichten.log`) ruft `flask biocomm-verdichten --still`. Ohne
+`--lauf` nur Läufe mit Änderungen (`faellige_laeufe`: nie verdichtet, `status_changed_at` >
+jüngstes `computed_at`, oder gerade in die Funkstille gefallen) und je Kanal nur der Zeitraum
+ab der ältesten Änderung bzw. ab Ende des letzten Fensters − 1 h (`_ab`, Begründung im
+Docstring); Aufwand hängt von den neuen Daten ab, nicht von der Länge der Messreihe (24 h bei
+256 Hz: erste Verdichtung 30 s, danach je Paket ~0,06 s). **Funkstille** (Standard 6 h
+ohne Paket, `--funkstille-stunden`): Lauf ohne LAUF_ENDE → letzte angefangene Fenster werden
+abgeschlossen (mit fehlenden Samples), späte Pakete ergeben wie immer eine neue Version; die
+Regel sieht nur 2 Tage zurück. `--voll` = alles durchrechnen (Kontrolle/Reparatur). `testknoten.py` = Test-Messknoten in `sandbox`. CLI:
 `flask biocomm-einlesen <datei|ordner> [--schema sandbox|live] [--transport
 SD_IMPORT|LORA|BLE|USB] [--bridge SERIAL] [--verdichten]`, `flask biocomm-verdichten
-[--lauf ID]`, `flask biocomm-konflikt`, `flask biocomm-testpakete <ordner> --name X`,
+[--schema] [--lauf ID] [--voll] [--funkstille-stunden N] [--still]`, `flask biocomm-konflikt`, `flask biocomm-testpakete <ordner> --name X`,
 `flask biocomm-geraet SERIAL [--rolle NODE|BRIDGE]`, `flask biocomm-einsatz --geraet S
 --serie CODE [--ab ISO]` (beendet offenen Einsatz, verarbeitet danach Wartende),
 `flask biocomm-wartende` (die drei letzten mit `--schema`, Standard `live`).

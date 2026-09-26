@@ -8,6 +8,7 @@
 # - taegliches DB-Backup 02:30 (vor den bestehenden 03:xx-Jobs)
 # - woechentlicher Restore-Check Montag 04:15
 # - Mail-Queue-Drain jede Minute (Prod + Staging)
+# - BioComm-Verdichtung alle 5 Minuten, Schemas live + sandbox (Prod + Staging)
 # Vorhandene Zeilen mit demselben Skriptnamen werden vorher entfernt, also
 # gefahrlos mehrfach ausfuehrbar.
 # ---------------------------------------------------------------------------
@@ -19,6 +20,8 @@ BACKUP_LINE='30 2 * * * cd /home/omn/app && bash deploy/backup_db.sh >> /home/om
 CHECK_LINE='15 4 * * 1 cd /home/omn/app && bash deploy/restore_check.sh >> /home/omn/app/restore_check.log 2>&1'
 DRAIN_PROD='* * * * * bash /home/omn/app/deploy/mailqueue_drain.sh >> /home/omn/app/mailqueue.log 2>&1'
 DRAIN_STAGING='* * * * * bash /home/omn/app-staging/deploy/mailqueue_drain.sh >> /home/omn/app-staging/mailqueue.log 2>&1'
+VERD_PROD='*/5 * * * * bash /home/omn/app/deploy/biocomm_verdichten.sh live >> /home/omn/app/verdichten.log 2>&1; bash /home/omn/app/deploy/biocomm_verdichten.sh sandbox >> /home/omn/app/verdichten.log 2>&1'
+VERD_STAGING='2-59/5 * * * * bash /home/omn/app-staging/deploy/biocomm_verdichten.sh live >> /home/omn/app-staging/verdichten.log 2>&1; bash /home/omn/app-staging/deploy/biocomm_verdichten.sh sandbox >> /home/omn/app-staging/verdichten.log 2>&1'
 
 TMP=$(mktemp)
 trap 'rm -f "$TMP"' EXIT
@@ -27,8 +30,9 @@ crontab -l 2>/dev/null \
     | grep -vF 'deploy/backup_db.sh' \
     | grep -vF 'deploy/restore_check.sh' \
     | grep -vF 'deploy/mailqueue_drain.sh' \
+    | grep -vF 'deploy/biocomm_verdichten.sh' \
     > "$TMP" || true
-printf '%s\n' "$BACKUP_LINE" "$CHECK_LINE" "$DRAIN_PROD" "$DRAIN_STAGING" >> "$TMP"
+printf '%s\n' "$BACKUP_LINE" "$CHECK_LINE" "$DRAIN_PROD" "$DRAIN_STAGING" "$VERD_PROD" "$VERD_STAGING" >> "$TMP"
 crontab "$TMP"
 
 echo "Crontab jetzt:"

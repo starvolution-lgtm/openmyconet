@@ -33,6 +33,19 @@ spaeter Samples, entsteht eine neue Version. V1 bestimmt nur noch, WIE OFT das
 passiert (ohne V1 entstehen mehr Versionen), und ist der Grund, warum ein
 Fenster erst nach dem Horizont verdichtet wird.
 
+Automatischer Betrieb (Zeitgeber, CLI ohne --lauf): Es werden nur Laeufe
+angefasst, in denen sich seit der letzten Verdichtung etwas geaendert hat,
+und je Kanal nur der Zeitraum ab der aeltesten Aenderung bzw. ab dem Ende
+der zuletzt berechneten Fenster (Rechnung in `_ab`). Der Aufwand haengt so
+von den neuen Daten ab, nicht von der Laenge der Messreihe. `voll=True`
+rechnet alles durch (Kontrolle, Reparatur).
+
+Funkstille: Endet ein Lauf ohne LAUF_ENDE (Akku leer, Knoten verschwunden),
+blieben die letzten angefangenen Fenster sonst fuer immer offen. Kommt fuer
+einen Lauf `funkstille` lang (Standard 6 h, gemessen an der Eingangszeit)
+kein Paket mehr, gelten alle Fenster mit Daten als abgeschlossen. Kommt
+spaeter doch noch etwas, entsteht wie immer eine neue Version.
+
 Zeitvergleiche nutzen clock_timestamp() (nicht now()): so ist ein Batch, der
 nach einer Verdichtung eingefuegt wird, immer "neuer" als deren Versionen,
 auch wenn seine Transaktion frueher begann. Die Sperre je Messlauf verhindert
@@ -45,6 +58,9 @@ from omn.eingang import format_v0 as fmt
 from omn.eingang.einlesen import _schema, sperren, sql
 
 AUFLOESUNGEN = (('1min', 60), ('1h', 3600))
+FUNKSTILLE = timedelta(hours=6)
+_STUNDE = 3600 * 1_000_000
+_UNENDLICH = 2**62
 _EPOCHE = datetime(1970, 1, 1, tzinfo=timezone.utc)
 _US = 1_000_000
 
@@ -65,31 +81,62 @@ def _fenster(a_us, e_us, breite_us):
         start += breite_us
 
 
-def verdichten(engine, schema='sandbox', lauf_ids=None):
-    """Verdichtet die angegebenen Laeufe. Standard: alle Laeufe, die ueber den
+def verdichten(engine, schema='sandbox', lauf_ids=None, funkstille=FUNKSTILLE, voll=False):
+    """Verdichtet die angegebenen Laeufe. Standard: die Laeufe, die ueber den
     Eingang beliefert wurden (Anlieferung mit transport_hash; die Batches des
-    Sandbox-Generators haben keinen und behalten ihre Modell-Aggregate).
+    Sandbox-Generators haben keinen und behalten ihre Modell-Aggregate) und in
+    denen seit der letzten Verdichtung etwas zu tun ist (`faellige_laeufe`).
+    `voll=True`: alle solchen Laeufe, jeweils ueber den ganzen Zeitraum.
     Liefert {'laeufe', 'zeilen': {aufl: n}, 'neue_versionen', 'grabsteine', 'uebersprungen'}."""
     s = _schema(schema)
     if lauf_ids is None:
-        with engine.connect() as c:
-            lauf_ids = c.execute(sql(s,
-                'SELECT DISTINCT b.acquisition_run_id FROM {s}.batch_delivery d'
-                ' JOIN {s}.origin_batch b ON b.id = d.origin_batch_id'
-                ' WHERE d.transport_hash IS NOT NULL ORDER BY 1')).scalars().all()
+        lauf_ids = faellige_laeufe(engine, s, funkstille, alle=voll)
     stat = {'laeufe': 0, 'zeilen': {a: 0 for a, _ in AUFLOESUNGEN}, 'neue_versionen': 0, 'grabsteine': 0,
             'uebersprungen': []}
     for lauf_id in lauf_ids:
         with engine.begin() as c:
             sperren(c, s, f'lauf:{lauf_id}')
-            _lauf(c, s, lauf_id, stat)
+            _lauf(c, s, lauf_id, stat, funkstille, voll)
         stat['laeufe'] += 1
     return stat
 
 
-def _lauf(c, s, lauf_id, stat):
-    lauf = c.execute(sql(s, 'SELECT started_at, ended_at FROM {s}.acquisition_run WHERE id = :r'),
-                     {'r': lauf_id}).one()
+def faellige_laeufe(engine, schema, funkstille=FUNKSTILLE, alle=False):
+    """Laeufe aus dem Eingang, fuer die eine Verdichtung etwas bringen kann:
+    noch nie verdichtet, seitdem geaendert (neues Paket, Konflikt, Kandidaten-
+    wahl) oder gerade in die Funkstille gefallen (Lauf ohne Ende, letztes Paket
+    aelter als `funkstille`, seitdem noch nicht verdichtet). Die Funkstille-
+    Regel sieht nur zwei Tage zurueck, damit tote Laeufe nicht ewig geprueft
+    werden (Nachholen: `alle`)."""
+    s = _schema(schema)
+    with engine.connect() as c:
+        zeilen = c.execute(sql(s,
+            'WITH l AS (SELECT DISTINCT b.acquisition_run_id AS id FROM {s}.batch_delivery d'
+            '           JOIN {s}.origin_batch b ON b.id = d.origin_batch_id WHERE d.transport_hash IS NOT NULL)'
+            ' SELECT l.id, r.ended_at, clock_timestamp() AS jetzt,'
+            '  (SELECT max(ob.status_changed_at) FROM {s}.origin_batch ob WHERE ob.acquisition_run_id = l.id) AS geaendert,'
+            '  (SELECT max(da.computed_at) FROM {s}.derived_aggregate da'
+            '     JOIN {s}.measurement_channel mc ON mc.id = da.measurement_channel_id'
+            '    WHERE mc.acquisition_run_id = l.id) AS berechnet'
+            ' FROM l JOIN {s}.acquisition_run r ON r.id = l.id ORDER BY l.id')).all()
+    if alle:
+        return [z.id for z in zeilen]
+    def faellig(z):
+        if z.berechnet is None or z.geaendert > z.berechnet:
+            return True                         # neu oder seitdem geaendert
+        return (z.ended_at is None              # gerade in die Funkstille gefallen
+                and z.jetzt - funkstille - timedelta(days=2) <= z.geaendert <= z.jetzt - funkstille
+                and z.berechnet < z.geaendert + funkstille)
+    return [z.id for z in zeilen if faellig(z)]
+
+
+def _lauf(c, s, lauf_id, stat, funkstille=FUNKSTILLE, voll=False):
+    lauf = c.execute(sql(s,
+        'SELECT r.started_at, r.ended_at, clock_timestamp() AS jetzt,'
+        ' (SELECT max(ob.status_changed_at) FROM {s}.origin_batch ob WHERE ob.acquisition_run_id = r.id) AS geaendert'
+        ' FROM {s}.acquisition_run r WHERE r.id = :r'), {'r': lauf_id}).one()
+    # Funkstille: Lauf ohne Ende, seit `funkstille` kein Paket -> alles abgeschlossen
+    still = lauf.ended_at is None and lauf.geaendert is not None and lauf.geaendert <= lauf.jetzt - funkstille
     plan = c.execute(sql(s,
         'SELECT interval_kind, measurement_channel_id, lower(period) AS von, upper(period) AS bis'
         ' FROM {s}.recording_plan_interval WHERE acquisition_run_id = :r'), {'r': lauf_id}).all()
@@ -113,7 +160,8 @@ def _lauf(c, s, lauf_id, stat):
             continue
         erwartung = _Erwartung(lauf, plan, p.roh_id, None if p.rate is None else float(p.rate))
         try:
-            _kanal(c, s, lauf_id, lauf, p.roh_id, p.abg_id, faktor, erwartung, andere, stat)
+            ab = None if voll else _ab(c, s, lauf_id, p.roh_id, p.abg_id)
+            _kanal(c, s, lauf, p.roh_id, p.abg_id, faktor, erwartung, andere, stat, ab, still)
         except fmt.NichtDekodierbar as e:
             stat['uebersprungen'].append(f'Kanal {p.roh_id}: {e}')
 
@@ -156,18 +204,58 @@ def _gleich(akt, neu):
                for x, y in zip((akt.value_min, akt.value_max, akt.value_mean), neu[1:4], strict=True))
 
 
-def _kanal(c, s, lauf_id, lauf, roh_id, abg_id, faktor, erwartung, andere, stat):
-    # Ausdehnung der kanonischen Bloecke je Batch (ohne Payloads)
+def _ab(c, s, lauf_id, roh_id, abg_id):
+    """Beginn (µs, volle Stunde) des Zeitraums, in dem sich fuer dieses
+    Kanalpaar seit der letzten Verdichtung etwas geaendert haben kann; None =
+    alles (noch nie verdichtet).
+
+    Begruendung: Die letzte Verdichtung lief zum Zeitpunkt `stand` (juengstes
+    computed_at) und hat jedes damals abgeschlossene Fenster berechnet, also
+    jedes, das vor ihrem Horizont endete. Ihr Horizont liegt mindestens beim
+    Ende E des spaetesten berechneten Fensters. Unberechnet sein koennen daher
+    nur Fenster, die nach E - 1 h beginnen, plus Fenster, die ein seit `stand`
+    geaenderter Batch beruehrt (neu, nachgeliefert, Konflikt, getauscht)."""
+    ende = None
+    stand = None
+    for aufl, breite in AUFLOESUNGEN:
+        z = c.execute(sql(s,
+            'SELECT max(bucket_start) AS letzter, max(computed_at) AS stand FROM {s}.derived_aggregate'
+            ' WHERE measurement_channel_id = :m AND resolution = :a'), {'m': abg_id, 'a': aufl}).one()
+        if z.letzter is not None:
+            ende = max(ende or 0, _us(z.letzter) + breite * _US)
+            stand = z.stand if stand is None else max(stand, z.stand)
+    if ende is None:
+        return None
+    geaendert = c.execute(sql(s,
+        'SELECT least('
+        '  (SELECT min(sb.time_anchor) FROM {s}.origin_batch ob JOIN {s}.sample_block sb ON sb.origin_batch_id = ob.id'
+        '    WHERE ob.acquisition_run_id = :r AND ob.status_changed_at > :t AND sb.measurement_channel_id = :mc),'
+        '  (SELECT min(lower(ob.measured_period)) FROM {s}.origin_batch ob'
+        "    WHERE ob.acquisition_run_id = :r AND ob.status_changed_at > :t AND ob.batch_status <> 'CANONICAL'))"),
+        {'r': lauf_id, 't': stand, 'mc': roh_id}).scalar()
+    ab = ende - _STUNDE
+    if geaendert is not None:
+        ab = min(ab, _us(geaendert))
+    return ab - ab % _STUNDE
+
+
+def _kanal(c, s, lauf, roh_id, abg_id, faktor, erwartung, andere, stat, ab=None, still=False):
+    # Ausdehnung der kanonischen Bloecke je Batch (ohne Payloads); mit `ab` nur
+    # Bloecke ab einem Tag davor (ein Block ist hoechstens ein Paket lang)
+    ab_filter = '' if ab is None else " AND sb.time_anchor >= CAST(:ab AS timestamptz) - interval '1 day'"
     ausdehnung = [(_us(z.von), _us(z.bis), z.geaendert) for z in c.execute(sql(s,
         'SELECT min(sb.time_anchor) AS von,'
         ' max(sb.time_anchor + make_interval(secs => (sb.sample_count / sb.sample_rate_hz)::double precision)) AS bis,'
         ' ob.status_changed_at AS geaendert'
         ' FROM {s}.sample_block sb JOIN {s}.origin_batch ob ON ob.id = sb.origin_batch_id'
-        " WHERE sb.measurement_channel_id = :mc AND ob.batch_status = 'CANONICAL'"
-        ' GROUP BY ob.id, ob.status_changed_at'), {'mc': roh_id})]
+        " WHERE sb.measurement_channel_id = :mc AND ob.batch_status = 'CANONICAL'" + ab_filter +
+        ' GROUP BY ob.id, ob.status_changed_at'), {'mc': roh_id, 'ab': None if ab is None else _zeit(ab)})]
     horizont = max((e for _, e, _ in ausdehnung), default=None)
     if lauf.ended_at is not None:
         horizont = max(horizont or 0, _us(lauf.ended_at))
+    if still and horizont is not None:
+        horizont = _UNENDLICH
+    untergrenze = -(2**55) if ab is None else ab     # -(2**55) µs: weit vor 1970, noch als Zeitpunkt darstellbar
 
     offen = {}                      # aufl -> {start_us: aktuelle Version oder None}
     for aufl, breite in AUFLOESUNGEN:
@@ -175,11 +263,12 @@ def _kanal(c, s, lauf_id, lauf, roh_id, abg_id, faktor, erwartung, andere, stat)
         aktuell = {_us(z.bucket_start): z for z in c.execute(sql(s,
             'SELECT DISTINCT ON (bucket_start) bucket_start, aggregate_version, computed_at, samples_recorded,'
             ' samples_expected, value_min, value_max, value_mean FROM {s}.derived_aggregate'
-            ' WHERE measurement_channel_id = :m AND resolution = :a ORDER BY bucket_start, aggregate_version DESC'),
-            {'m': abg_id, 'a': aufl})}
+            ' WHERE measurement_channel_id = :m AND resolution = :a AND bucket_start >= :u'
+            ' ORDER BY bucket_start, aggregate_version DESC'),
+            {'m': abg_id, 'a': aufl, 'u': _zeit(untergrenze)})}
         faellig = {}
         for a, e, geaendert in ausdehnung:
-            for w in _fenster(a, e, b_us):
+            for w in _fenster(max(a, untergrenze), e, b_us):
                 akt = aktuell.get(w)
                 if akt is None:
                     if horizont is not None and w + b_us <= horizont:
@@ -187,7 +276,7 @@ def _kanal(c, s, lauf_id, lauf, roh_id, abg_id, faktor, erwartung, andere, stat)
                 elif geaendert > akt.computed_at:
                     faellig[w] = akt
         for a, e, geaendert in andere:      # Batches, deren Daten nicht (mehr) gelten
-            for w in _fenster(a, e, b_us):
+            for w in _fenster(max(a, untergrenze), e, b_us):
                 akt = aktuell.get(w)
                 if akt is not None and geaendert > akt.computed_at:
                     faellig[w] = akt
