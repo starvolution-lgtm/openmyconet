@@ -368,8 +368,16 @@ nicht im Git liegen** (~92 MB): `app/static/*.mp3` (Player-Tracks),
 Diese Datei **muss LF-Zeilenenden haben** (.gitattributes erzwingt das; release.sh
 strippt zusätzlich `\r` und bricht ab, wenn `/instance/` nicht geschützt ist).
 
+**Bevorzugter Weg seit 26.09.2026: Knöpfe im lokalen MCC** (Robby, erfolgreich durchgespielt;
+Beschreibung in `OpenMycoNet_Kontrollzentrum/CLAUDE.md`, Abschnitt 8). Ablauf je Iteration:
+Claude committet + pusht → Robby im MCC „↻ Prüfen“ (Ampel: GitHub grün?) → „🚀 Staging-Deploy“ →
+„↻ Prüfen“ → „🚀 Prod-Deploy“ (nur aktiv, wenn Git sauber/gepusht, GitHub für HEAD grün,
+Staging hat genau HEAD und Prod noch nicht; zweistufige Bestätigung). Claude prüft nach jeder
+Meldung („staging ist durch“) per ssh nur lesend den Stand (`DEPLOYED_COMMIT`, `deploy/mcc_lage.sh`),
+denn einmal war der Knopf gar nicht ausgelöst. PowerShell bleibt der Ersatzweg:
+
 Lokal (PowerShell), deployt **exakt `HEAD`** (== was CI geprüft hat, also vorher committen).
-Bevorzugt per Wrapper-Skript (`deploy/local_deploy.ps1`, Sept. 2026 ergänzt,
+Per Wrapper-Skript (`deploy/local_deploy.ps1`, Sept. 2026 ergänzt,
 nachdem der `scp`-Schritt beim manuellen Ablauf zweimal vergessen wurde und
 `deploy_staging.sh` trotzdem klaglos ein veraltetes Tarball deployte — das
 Skript baut Tarball + Upload + Server-Deploy in einem Rutsch und zeigt den
