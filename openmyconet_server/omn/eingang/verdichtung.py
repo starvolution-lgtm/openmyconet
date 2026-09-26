@@ -242,13 +242,13 @@ def _ab(c, s, lauf_id, roh_id, abg_id):
 def _kanal(c, s, lauf, roh_id, abg_id, faktor, erwartung, andere, stat, ab=None, still=False):
     # Ausdehnung der kanonischen Bloecke je Batch (ohne Payloads); mit `ab` nur
     # Bloecke ab einem Tag davor (ein Block ist hoechstens ein Paket lang)
-    ab_filter = '' if ab is None else " AND sb.time_anchor >= CAST(:ab AS timestamptz) - interval '1 day'"
     ausdehnung = [(_us(z.von), _us(z.bis), z.geaendert) for z in c.execute(sql(s,
         'SELECT min(sb.time_anchor) AS von,'
         ' max(sb.time_anchor + make_interval(secs => (sb.sample_count / sb.sample_rate_hz)::double precision)) AS bis,'
         ' ob.status_changed_at AS geaendert'
         ' FROM {s}.sample_block sb JOIN {s}.origin_batch ob ON ob.id = sb.origin_batch_id'
-        " WHERE sb.measurement_channel_id = :mc AND ob.batch_status = 'CANONICAL'" + ab_filter +
+        " WHERE sb.measurement_channel_id = :mc AND ob.batch_status = 'CANONICAL'"
+        "  AND (CAST(:ab AS timestamptz) IS NULL OR sb.time_anchor >= CAST(:ab AS timestamptz) - interval '1 day')"
         ' GROUP BY ob.id, ob.status_changed_at'), {'mc': roh_id, 'ab': None if ab is None else _zeit(ab)})]
     horizont = max((e for _, e, _ in ausdehnung), default=None)
     if lauf.ended_at is not None:
