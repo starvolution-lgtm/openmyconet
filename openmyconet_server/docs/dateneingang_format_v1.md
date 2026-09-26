@@ -71,11 +71,64 @@ Kopf | Block 1 … Block n | Ereignis 1 … Ereignis m | Anhang
 | zeit | i64 | µs seit 1970 UTC |
 | laenge + daten | u16 + Bytes | Nutzdaten je Typ (werden mit der Ereignis-Verarbeitung festgelegt) |
 
-`LAUF_START` wird das erste Paket jedes Messlaufs tragen, mit Kanalliste, Raten,
-Verstärkung, Taktquelle und Firmware-Version. Damit kann der Server den Messlauf selbst
-anlegen. `LAUF_ENDE` nennt die letzte Sequenz und den Grund.
-**Stand:** Der Eingang liest Ereignisse, verarbeitet sie aber noch nicht und lehnt Pakete
-mit Ereignissen deshalb mit Grund ab (lieber ablehnen als stillschweigend verlieren).
+#### Nutzdaten der Ereignisse (festgelegt 26.09.2026)
+
+Jede Nutzlast beginnt mit ihrer eigenen **Datenversion (u8 = 1)**. `ostr8` = `str8`, bei dem
+Länge 0 „keine Angabe“ bedeutet. `json16` = u16 Länge + UTF-8-JSON-Objekt.
+
+**LAUF_START (1)**, nur in Sequenz 1, genau einmal. Der Node meldet sich damit selbst an.
+
+| Feld | Typ | Inhalt |
+|---|---|---|
+| datenversion | u8 | 1 |
+| hardware_revision, firmware_version, config_version | str8 ×3 | → `device_configuration` |
+| reset_ursache_vorher | u8 | warum der **vorige** Lauf endete (ESP32 `esp_reset_reason`): 0 UNKNOWN, 1 POWER_ON, 2 BROWNOUT, 3 WATCHDOG_HW, 4 WATCHDOG_SW, 5 SOFTWARE, 6 EXTERNAL_PIN |
+| sonde | ostr8 | Seriennummer der externen Sonde |
+| anzahl_kanaele | u8 | ≥ 1 |
+| je Kanal: eingang, groesse, einheit | str8 ×3 | `input_label`, `quantity_code`, UCUM-Einheit (z. B. `{count}`, `Cel`) |
+| je Kanal: rolle | u8 | 1 PRIMARY, 2 ENVIRONMENTAL, 3 SYSTEM |
+| je Kanal: rate_zaehler, rate_nenner | u32, u32 | Abtastrate als Bruch |
+| je Kanal: taktquelle | u8 | 1 RTC_SQW, 2 SOFTWARE_TIMER, 3 ADC_FREE_RUN |
+| je Kanal: verstaerkung_milli | u32 | Verstärkung × 1000 (0 = keine Angabe) |
+| je Kanal: verstaerkung_quelle | u8 | 0 keine, 1 MANUAL, 2 DEVICE_REPORTED (nur zusammen mit Verstärkung) |
+| je Kanal: an_sonde | u8 | 1 = Eingang gehört zur externen Sonde |
+| je Kanal: kalibrierung | json16 | z. B. `{"adc":"ADS1115","lsb_uv":7.8125,"ziel_einheit":"uV"}` |
+| anzahl_pausen | u8 | |
+| je Pause: eingang, groesse | str8 ×2 | Kanal (muss oben stehen) |
+| je Pause: grund | u8 | 1 SCHEDULED, 2 EC_MEASUREMENT, 3 EC_SETTLING, 4 MAINTENANCE, 5 OTHER |
+| je Pause: periode_s, versatz_ms, dauer_ms | u32 ×3 | Pause ab (Vielfaches von periode_s seit 1970) + versatz für dauer. Pausen eines Kanals: gleiche Periode, keine Überschneidung |
+| einstellungen | json16 | → `device_configuration.settings` |
+
+**LAUF_ENDE (2)**, nur im letzten Paket: datenversion u8, grund u8 (0 UNKNOWN, 1 RESTART,
+2 FIRMWARE_CHANGE, 3 PROBE_CHANGE, 4 CONFIG_CHANGE, 5 RTC_RUN_BREAK, 6 POWER_LOSS, 7 CRASH,
+8 SAFETY_SHUTDOWN, 9 PLANNED_END), letzte_sequenz u64 (= Sequenz dieses Pakets). Die Zeit des
+Ereignisses ist das Laufende.
+
+**UHRENABGLEICH (4):** datenversion u8, referenzquelle u8 (1 BRIDGE, 2 GNSS, 3 NTP,
+4 MANUAL), referenzzeit i64 µs, geraetezeit i64 µs (Geräteuhr im selben Moment), korrektur
+u8 (0 NONE, 1 SLEW, 2 STEP_FORWARD nur bei nachgehender Uhr, 3 RUN_BREAK nur bei vorgehender
+Uhr; nach RUN_BREAK beginnt die Firmware einen neuen Messlauf).
+
+**STIMULATION (3)** und **RESET_URSACHE (5)** sind reserviert. Die Stimulation wartet auf die
+Hardware-Klärung (Amplitudenbereich, ladungsneutrale Ausgabe). Die Reset-Ursache steht im
+LAUF_START. Pakete mit diesen Ereignissen lehnt der Eingang ab.
+
+#### Was der Server damit macht
+
+- **LAUF_START:** Der Server legt Konfiguration, Sonde, Hardwarekanäle, Messlauf, RAW- und
+  DERIVED-Kanäle und den Aufzeichnungsplan an. Die **Messreihe** kommt aus dem **Einsatz**
+  des Geräts (`device_deployment`), der den Startzeitpunkt enthält; die Messreihe legt der
+  Server fest, nicht der Node. Ein noch offener früherer Lauf des Geräts endet mit dem Start
+  des neuen Laufs. Der Grund kommt aus der Reset-Ursache: Stromausfall → POWER_LOSS,
+  Watchdog → CRASH, Software/Taster → RESTART.
+- **Pausenregeln** werden mit dem Eintreffen der Daten zu PAUSE-Intervallen im
+  Aufzeichnungsplan. Die Verdichtung zieht sie von `samples_expected` ab.
+- **Pakete ohne bekannten Messlauf** eines bekannten Geräts werden nicht abgelehnt, sondern
+  **zurückgestellt** (`delivery_waiting`, Anlieferung `RECEIVED`). Sie werden verarbeitet,
+  sobald der Lauf existiert. Das geschieht automatisch beim LAUF_START oder per
+  `flask biocomm-wartende` bzw. `flask biocomm-einsatz`.
+- Ereignisse wirken nur bei **kanonischen** Paketen. Pakete mit Ereignissen liegen
+  vollständig INLINE im `origin_batch`.
 
 ### Anhang (Signatur)
 
@@ -128,6 +181,22 @@ genesis      = SHA256( "OMN-GENESIS-v1" ‖ str8(geraet) ‖ str8(lauf) )
 | batch_hash | `a70865a07c019a664d85caf1203925fd5d196207ba26fa892a66287a09881972` |
 
 Die Firmware muss diese Datei **Byte für Byte** erzeugen und diese Hashes berechnen.
+
+**Zweiter Testvektor mit LAUF_START:** `docs/dateneingang_format_v1_testvektor_laufstart.omb`
+(635 Byte). Es ist dasselbe Paket, zusätzlich mit einem LAUF_START zur Zeit 08:00:00 UTC
+(309 Byte Nutzdaten). Inhalt:
+- Hardware `COMBO_NODE 3.2`, Firmware `fw-1.0.0`, Konfiguration `cfg-1`, Reset POWER_ON,
+  Sonde `OMN-PRB-TEST`.
+- Kanal `U8/AIN0` bioelectric_potential `{count}` PRIMARY 256/1 RTC_SQW, Verstärkung 100
+  MANUAL an der Sonde, Kalibrierung `{"adc":"ADS1115","pga_v":0.256,"lsb_uv":7.8125,"ziel_einheit":"uV"}`.
+- Kanal `DS18B20` soil_temperature `Cel` ENVIRONMENTAL 1/600 SOFTWARE_TIMER.
+- Pausen: EC_MEASUREMENT stündlich 0 ms + 30 000 ms, EC_SETTLING stündlich 30 000 ms + 5 000 ms.
+- Einstellungen `{}`.
+
+| Wert | SHA-256 (hex) |
+|---|---|
+| meta_hash | `e077a73bf49c3d36915e3e75d17c6002d39a9728d13035dafb63f77c48332e2d` |
+| batch_hash | `c98290ab8c7dcbbc32d3b0f11be8f35054364ec648dd94799dfc75b8b94dd8c0` |
 
 ## Messlauf-Kennung (`lauf`)
 

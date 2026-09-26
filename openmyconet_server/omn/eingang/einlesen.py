@@ -35,6 +35,14 @@ Ablauf je Anlieferung, alles in EINER Transaktion:
    biocomm_common.kandidat_festlegen (SECURITY DEFINER, Protokoll in
    candidate_resolution_log); omn selbst loescht nie.
 
+8. Ereignisse (Format v1, omn/eingang/ereignisse.py): LAUF_START in Sequenz 1
+   legt einen noch unbekannten Messlauf an (Messreihe aus dem Einsatz des
+   Geraets). Pakete eines bekannten Geraets, deren Lauf noch fehlt, WARTEN
+   (Anlieferung RECEIVED, Paket in delivery_waiting) und werden verarbeitet,
+   sobald der Lauf existiert (auch ueber wartende_erneut(), CLI
+   biocomm-wartende / biocomm-einsatz). LAUF_ENDE und UHRENABGLEICH wirken
+   bei kanonischen Paketen; Pakete mit Ereignissen liegen ganz INLINE.
+
 Groessengrenzen: Pakete ueber MAX_PAKET_BYTES (roh) oder MAX_ENTPACKT_BYTES
 (Summe der entpackten Blockpayloads) werden REJECTED, bevor etwas entpackt wird.
 
@@ -56,6 +64,7 @@ from pathlib import Path
 
 import sqlalchemy as sa
 
+from omn.eingang import ereignisse
 from omn.eingang import format_v0 as fmt
 from omn.eingang import formate
 
@@ -81,7 +90,8 @@ AUTOMATISCH = 'Eingang (automatisch)'
 @dataclass
 class Ergebnis:
     """Ergebnis einer Anlieferung. status: ACCEPTED, DUPLICATE, CONFLICT,
-    REJECTED oder SCHON_EINGELESEN (nichts geschrieben)."""
+    REJECTED, WARTET (Messlauf fehlt noch, Paket zurueckgestellt) oder
+    SCHON_EINGELESEN (nichts geschrieben)."""
     status: str
     grund: str = None
     anlieferung_id: int = None
@@ -90,6 +100,8 @@ class Ergebnis:
     nachgezogen: int = 0              # Nachfolger, die dadurch LINKED wurden
     hinweise: list = field(default_factory=list)
     lauf_id: int = None               # acquisition_run.id, soweit zugeordnet
+    lauf_angelegt: bool = False       # dieser LAUF_START hat den Messlauf angelegt
+    nachverarbeitet: list = field(default_factory=list)   # Ergebnisse vorher wartender Anlieferungen
     aufgeloest: list = field(default_factory=list)   # per Kettenbeweis CANONICAL gewordene Batches
 
 
@@ -157,17 +169,46 @@ def einliefern(engine, rohdaten, *, schema='sandbox', transport='SD_IMPORT', bri
                 "SELECT id FROM {s}.device WHERE device_serial = :b AND device_role = 'BRIDGE'"), {'b': bridge}).scalar()
             if bridge_id is None:
                 raise ValueError(f'Bridge {bridge!r} unbekannt')
-        lauf, lauf_grund = _lauf_finden(c, s, paket) if paket else (None, None)
+        if paket:
+            sperren(c, s, f'anmeldung:{paket.geraet}:{paket.lauf}')
+        geraet, lauf, lauf_grund = _lauf_finden(c, s, paket) if paket else (None, None, None)
+        warten, angelegt = None, False
+        if paket and geraet is not None and lauf is None:
+            lauf, warten, lauf_grund, angelegt = _lauf_aus_start(c, s, geraet, paket, lauf_grund)
         sperren(c, s, f'lauf:{lauf["id"]}' if lauf else f'transport:{thash.hex()}')
 
         erg = _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, transport, bridge_id,
-                           transport_ref, empfangen_um)
+                           transport_ref, empfangen_um, warten=warten)
         erg.lauf_id = lauf['id'] if lauf else None
+        erg.lauf_angelegt = angelegt
+        if angelegt:
+            erg.nachverarbeitet = wartende_verarbeiten(c, s, paket.geraet, paket.lauf)
         return erg
 
 
+def _lauf_aus_start(c, s, geraet, paket, lauf_grund):
+    """Lauf fehlt: aus LAUF_START anlegen, sonst zurueckstellen.
+    Liefert (lauf, warten, lauf_grund, angelegt)."""
+    try:
+        start = ereignisse.lauf_start_finden(ereignisse.auswerten(paket))
+    except ereignisse.EreignisAbgelehnt:
+        return None, None, lauf_grund, False    # die Pruefung meldet den Grund
+    if start is None:
+        return None, f'{lauf_grund}; wartet auf LAUF_START (Sequenz 1)', lauf_grund, False
+    if _form_fehler(paket):
+        return None, None, _form_fehler(paket), False
+    try:
+        with c.begin_nested():
+            lauf = ereignisse.lauf_anlegen(c, s, geraet.id, paket, *start)
+    except ereignisse.Zurueckstellen as z:
+        return None, str(z), lauf_grund, False
+    except ereignisse.EreignisAbgelehnt as e:
+        return None, None, str(e), False
+    return lauf, None, None, True
+
+
 def _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, transport, bridge_id, transport_ref,
-                 empfangen_um):
+                 empfangen_um, warten=None):
     schon = c.execute(sql(s,
         'SELECT id, delivery_status, origin_batch_id FROM {s}.batch_delivery'
         ' WHERE transport_code = :t AND transport_hash = :h AND bridge_device_id IS NOT DISTINCT FROM :b'
@@ -180,13 +221,23 @@ def _verarbeiten(c, s, paket, unlesbar, rohdaten, thash, lauf, lauf_grund, trans
            'ref': transport_ref, 'h': thash}
     if paket is None:
         return _anlieferung(c, s, anl, 'REJECTED', unlesbar)
+    if lauf is None and warten:
+        fehler = _form_fehler(paket)
+        if fehler:
+            return _anlieferung(c, s, anl, 'REJECTED', fehler)
+        erg = _anlieferung(c, s, anl, 'RECEIVED', warten)
+        c.execute(sql(s, 'INSERT INTO {s}.delivery_waiting (batch_delivery_id, device_serial, node_run_key,'
+                         ' payload, reason) VALUES (:a, :g, :l, :p, :r)'),
+                  {'a': erg.anlieferung_id, 'g': paket.geraet, 'l': paket.lauf, 'p': rohdaten, 'r': warten})
+        erg.status = 'WARTET'
+        return erg
     if lauf is None:
         return _anlieferung(c, s, anl, 'REJECTED', lauf_grund)
     try:
-        bloecke = _pruefen(c, s, paket, lauf)
+        bloecke, auswertung = _pruefen(c, s, paket, lauf)
     except _Abgelehnt as e:
         return _anlieferung(c, s, anl, 'REJECTED', str(e))
-    return _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl)
+    return _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl, auswertung)
 
 
 def ordner_einlesen(engine, pfad, **kwargs):
@@ -207,28 +258,45 @@ def ordner_einlesen(engine, pfad, **kwargs):
 # Pruefen
 # ---------------------------------------------------------------------------
 def _lauf_finden(c, s, paket):
+    """(Geraet, Lauf, Grund). Geraet None = unbekannt/kein Messknoten."""
     geraet = c.execute(sql(s, 'SELECT id, device_role FROM {s}.device WHERE device_serial = :g'),
                        {'g': paket.geraet}).first()
     if geraet is None:
-        return None, f'Geraet {paket.geraet!r} unbekannt'
+        return None, None, f'Geraet {paket.geraet!r} unbekannt'
     if geraet.device_role != 'NODE':
-        return None, f'Geraet {paket.geraet!r} ist kein Messknoten'
+        return None, None, f'Geraet {paket.geraet!r} ist kein Messknoten'
     lauf = c.execute(sql(s,
         'SELECT id, started_at, ended_at FROM {s}.acquisition_run WHERE device_id = :d AND node_run_key = :k'),
         {'d': geraet.id, 'k': paket.lauf}).mappings().first()
     if lauf is None:
-        return None, f'Messlauf {paket.lauf!r} gehoert nicht zu Geraet {paket.geraet!r}'
-    return dict(lauf), None
+        return geraet, None, f'Messlauf {paket.lauf!r} von Geraet {paket.geraet!r} ist unbekannt'
+    return geraet, dict(lauf), None
+
+
+def _form_fehler(paket):
+    """Pruefungen ohne Datenbank (Sequenz, Zeitraum, Hashes, Ereignisse).
+    Fehlertext oder None."""
+    if paket.sequenz < 1:
+        return 'Sequenz muss ab 1 zaehlen'
+    if paket.messzeitraum_von >= paket.messzeitraum_bis:
+        return 'Messzeitraum leer oder verdreht'
+    if paket.payload_hash_ist() != paket.payload_hash:
+        return 'payload_hash stimmt nicht mit den Blockpayloads ueberein'
+    if paket.batch_hash_ist() != paket.batch_hash:
+        return 'batch_hash stimmt nicht (Vorgaenger-Hash, Sequenz, Paketangaben, payload_hash)'
+    try:
+        ereignisse.auswerten(paket)
+    except ereignisse.EreignisAbgelehnt as e:
+        return str(e)
+    return None
 
 
 def _pruefen(c, s, paket, lauf):
-    """Liefert [(Block, measurement_channel_id)] oder wirft _Abgelehnt."""
-    if paket.sequenz < 1:
-        raise _Abgelehnt('Sequenz muss ab 1 zaehlen')
-    if getattr(paket, 'ereignisse', ()):
-        # Format v1 sieht Ereignisse vor (Lauf-Start, Stimulation, Uhrenabgleich ...);
-        # ihre Verarbeitung folgt. Bis dahin lieber ablehnen als stillschweigend verlieren.
-        raise _Abgelehnt('Paket enthaelt Ereignisse, die dieser Eingang noch nicht verarbeitet')
+    """Liefert ([(Block, measurement_channel_id)], Ereignis-Auswertung) oder wirft _Abgelehnt."""
+    fehler = _form_fehler(paket)
+    if fehler:
+        raise _Abgelehnt(fehler)
+    auswertung = ereignisse.auswerten(paket)
     formate_im_lauf = {z[0] for z in c.execute(sql(s,
         "SELECT DISTINCT split_part(payload_format, '/', 1) FROM {s}.origin_batch"
         ' WHERE acquisition_run_id = :r'), {'r': lauf['id']})}
@@ -238,12 +306,6 @@ def _pruefen(c, s, paket, lauf):
     if formate_im_lauf - {paket.format}:
         raise _Abgelehnt(f'Format {paket.format} passt nicht zum Messlauf '
                          f'({", ".join(sorted(formate_im_lauf))}); ein Messlauf hat genau ein Format')
-    if paket.messzeitraum_von >= paket.messzeitraum_bis:
-        raise _Abgelehnt('Messzeitraum leer oder verdreht')
-    if paket.payload_hash_ist() != paket.payload_hash:
-        raise _Abgelehnt('payload_hash stimmt nicht mit den Blockpayloads ueberein')
-    if paket.batch_hash_ist() != paket.batch_hash:
-        raise _Abgelehnt('batch_hash stimmt nicht (Vorgaenger-Hash, Sequenz, Paketangaben, payload_hash)')
 
     for b in paket.bloecke:
         if b.kodierung not in fmt.BYTES_JE_WERT:
@@ -291,7 +353,7 @@ def _pruefen(c, s, paket, lauf):
         if entpackt is not None and len(entpackt) != b.anzahl * breite:
             raise _Abgelehnt(f'{name}: Payload-Laenge passt nicht zu {b.anzahl} Werten {b.kodierung}')
         ergebnis.append((b, kanal.id))
-    return ergebnis
+    return ergebnis, auswertung
 
 
 def _kanaele(c, s, lauf_id):
@@ -353,6 +415,12 @@ def _nachfolger_neu_bewerten(c, s, lauf_id, sequenz):
 
 
 def _anlieferung(c, s, anl, status, grund, batch_id=None, **extra):
+    if anl.get('bestehend'):
+        # vorher wartende Anlieferung: Status fortschreiben (erlaubte Statusspalten)
+        c.execute(sql(s, 'UPDATE {s}.batch_delivery SET origin_batch_id = :ob, delivery_status = :st,'
+                         ' status_reason = :g, status_changed_at = clock_timestamp() WHERE id = :i'),
+                  {'ob': batch_id, 'st': status, 'g': grund, 'i': anl['bestehend']})
+        return Ergebnis(status, grund, anl['bestehend'], batch_id, **extra)
     aid = c.execute(sql(s,
         'INSERT INTO {s}.batch_delivery (origin_batch_id, transport_code, bridge_device_id, bridge_role,'
         ' received_at, transport_ref, transport_hash, delivery_status, status_reason)'
@@ -415,7 +483,7 @@ def _konflikt(c, s, paket, rohdaten, lauf_id, anl, kette, grund, konkurrenten):
     return _anlieferung(c, s, anl, 'CONFLICT', grund, bid, kette=kette, aufgeloest=aufgeloest)
 
 
-def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
+def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl, auswertung=()):
     r = lauf['id']
     kandidaten = c.execute(sql(s,
         'SELECT id, payload_hash, batch_hash, batch_status, chain_state FROM {s}.origin_batch'
@@ -443,15 +511,17 @@ def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
 
     try:
         with c.begin_nested():
-            bid = _batch_anlegen(c, s, paket, r, 'CANONICAL', kette, 'SINGLE_CANDIDATE')
-            c.execute(sql(s,
-                'INSERT INTO {s}.sample_block (acquisition_run_id, measurement_channel_id, origin_batch_id,'
-                ' first_sample_index, sample_count, time_anchor, sample_rate_hz, value_encoding, compression,'
-                ' payload_location, payload_inline, payload_hash, device_quality)'
-                " VALUES (:r, :mc, :ob, :i, :n, :t, :hz, :enc, :komp, 'INLINE', :p, :ph, :q)"),
-                [{'r': r, 'mc': mc, 'ob': bid, 'i': b.erster_index, 'n': b.anzahl, 't': b.zeitanker,
-                  'hz': b.rate_hz, 'enc': b.kodierung, 'komp': b.kompression, 'p': b.payload,
-                  'ph': fmt.sha256(b.payload), 'q': b.geraete_qualitaet} for b, mc in bloecke])
+            bid = _batch_anlegen(c, s, paket, r, 'CANONICAL', kette, 'SINGLE_CANDIDATE',
+                                 inline=rohdaten if auswertung else None)
+            if bloecke:
+                c.execute(sql(s,
+                    'INSERT INTO {s}.sample_block (acquisition_run_id, measurement_channel_id, origin_batch_id,'
+                    ' first_sample_index, sample_count, time_anchor, sample_rate_hz, value_encoding, compression,'
+                    ' payload_location, payload_inline, payload_hash, device_quality)'
+                    " VALUES (:r, :mc, :ob, :i, :n, :t, :hz, :enc, :komp, 'INLINE', :p, :ph, :q)"),
+                    [{'r': r, 'mc': mc, 'ob': bid, 'i': b.erster_index, 'n': b.anzahl, 't': b.zeitanker,
+                      'hz': b.rate_hz, 'enc': b.kodierung, 'komp': b.kompression, 'p': b.payload,
+                      'ph': fmt.sha256(b.payload), 'q': b.geraete_qualitaet} for b, mc in bloecke])
     except sa.exc.IntegrityError as e:
         # Fangnetz (EXCLUDE auf sample_block): Vorpruefung und Sperre sollten das verhindern
         return _konflikt(c, s, paket, rohdaten, r, anl, kette,
@@ -460,7 +530,7 @@ def _einordnen(c, s, paket, rohdaten, lauf, bloecke, anl):
     aufgeloest = kettenbeweise_pruefen(c, s, r, [paket.sequenz - 1])
     if aufgeloest:
         kette, kettengrund = kettenstatus(c, s, r, paket.sequenz, paket.vorgaenger_hash, paket.genesis())
-    hinweise = _schon_verdichtet(c, s, bloecke)
+    hinweise = _schon_verdichtet(c, s, bloecke) + ereignisse.nach_annahme(c, s, lauf, bloecke, auswertung)
     if aufgeloest:
         hinweise.append(f'Kettenbeweis: Batch {", ".join(map(str, aufgeloest))} jetzt CANONICAL')
     grund = '; '.join([g for g in (kettengrund, *hinweise) if g]) or None
@@ -591,3 +661,74 @@ def offene_konflikte(engine, schema='sandbox'):
             "   WHERE k.acquisition_run_id = b.acquisition_run_id AND k.batch_sequence_no = b.batch_sequence_no"
             "   AND k.batch_status = 'CANONICAL')"
             " ORDER BY 1, 2, 3"))]
+
+
+# ---------------------------------------------------------------------------
+# Zurueckgestellte Anlieferungen (Messlauf fehlte noch)
+# ---------------------------------------------------------------------------
+def _wartende(c, s, geraet, lauf_key):
+    return c.execute(sql(s,
+        'SELECT w.batch_delivery_id, w.payload FROM {s}.delivery_waiting w'
+        ' JOIN {s}.batch_delivery d ON d.id = w.batch_delivery_id'
+        " WHERE w.device_serial = :g AND w.node_run_key = :l AND d.delivery_status = 'RECEIVED'"
+        ' ORDER BY w.batch_delivery_id'), {'g': geraet, 'l': lauf_key}).all()
+
+
+def wartende_verarbeiten(c, s, geraet, lauf_key):
+    """Verarbeitet die wartenden Anlieferungen eines (jetzt vorhandenen)
+    Messlaufs in der laufenden Transaktion; die Anlieferungen behalten ihre ID
+    und bekommen ihren endgueltigen Status. Liefert die Ergebnisse."""
+    ergebnisse = []
+    for z in _wartende(c, s, geraet, lauf_key):
+        roh = bytes(z.payload)
+        paket = formate.paket_lesen(roh)
+        _, lauf, _ = _lauf_finden(c, s, paket)
+        if lauf is None:
+            break
+        anl = {'bestehend': z.batch_delivery_id}
+        try:
+            bloecke, auswertung = _pruefen(c, s, paket, lauf)
+        except _Abgelehnt as e:
+            ergebnisse.append(_anlieferung(c, s, anl, 'REJECTED', str(e)))
+            continue
+        erg = _einordnen(c, s, paket, roh, lauf, bloecke, anl, auswertung)
+        erg.lauf_id = lauf['id']
+        ergebnisse.append(erg)
+    return ergebnisse
+
+
+def wartende_erneut(engine, schema='sandbox', geraet=None):
+    """Versucht alle wartenden Anlieferungen erneut (z. B. nachdem ein Einsatz
+    eingetragen wurde): fehlt der Messlauf, wird er aus einem wartenden
+    LAUF_START angelegt. Je Messlauf eine Transaktion. Liefert
+    {(Geraet, Lauf): [Ergebnis, ...] oder Grund, warum weiter gewartet wird}."""
+    s = _schema(schema)
+    with engine.connect() as c:
+        laeufe = c.execute(sql(s,
+            'SELECT DISTINCT w.device_serial, w.node_run_key FROM {s}.delivery_waiting w'
+            " JOIN {s}.batch_delivery d ON d.id = w.batch_delivery_id WHERE d.delivery_status = 'RECEIVED'"
+            ' AND (CAST(:g AS text) IS NULL OR w.device_serial = :g) ORDER BY 1, 2'), {'g': geraet}).all()
+    ergebnis = {}
+    for serial, lauf_key in laeufe:
+        with engine.begin() as c:
+            sperren(c, s, f'anmeldung:{serial}:{lauf_key}')
+            wartende = _wartende(c, s, serial, lauf_key)
+            if not wartende:
+                continue
+            geraet_z, lauf, grund = _lauf_finden(c, s, formate.paket_lesen(bytes(wartende[0].payload)))
+            if lauf is None and geraet_z is not None:
+                for z in wartende:
+                    paket = formate.paket_lesen(bytes(z.payload))
+                    if paket.sequenz != 1:
+                        continue
+                    lauf, warten, grund, _ = _lauf_aus_start(c, s, geraet_z, paket, grund)
+                    if lauf is None and not warten:          # LAUF_START ungueltig
+                        _anlieferung(c, s, {'bestehend': z.batch_delivery_id}, 'REJECTED', grund)
+                    grund = warten or grund
+                    break
+            if lauf is None:
+                ergebnis[(serial, lauf_key)] = grund or 'wartet auf LAUF_START (Sequenz 1)'
+                continue
+            sperren(c, s, f'lauf:{lauf["id"]}')
+            ergebnis[(serial, lauf_key)] = wartende_verarbeiten(c, s, serial, lauf_key)
+    return ergebnis

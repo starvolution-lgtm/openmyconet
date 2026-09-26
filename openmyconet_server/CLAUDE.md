@@ -98,7 +98,9 @@ Migration + neue SQL-Datei, die 0001er bleiben unverändert. **Schema v2** (Migr
 `8d4e2a6c1b70`, `biocomm_0002_schema.sql` + `_rechte.sql` + `_zurueck.sql`): Kern-Änderung
 einmal in `biocomm_common.core_0002` für beide Kerne (versionierte Aggregate, Sicht
 `derived_aggregate_current`, `candidate_resolution_log`, `kandidat_festlegen`, Index auf
-`batch_delivery`), siehe Dateneingang. Nächste Änderung = `biocomm_0003_…`.
+`batch_delivery`), siehe Dateneingang. **Schema v3** (Migration `4b7c9e2d1f35`, `biocomm_0003_*.sql`,
+`core_0003`): `device_deployment` (Einsatz Gerät → Messreihe, historisiert, nur `valid_to`
+änderbar) und `delivery_waiting` (zurückgestellte Pakete). Nächste Änderung = `biocomm_0004_…`.
 
 **Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
 [--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen
@@ -128,9 +130,19 @@ Testvektor `docs/dateneingang_format_v1.md` / `_testvektor.omb`, Test
 `tests/test_format_v1.py`): binär, little-endian, `*.omb`; `payload_hash` wie v0 (nur
 Messwerte), `batch_hash` deckt zusätzlich alle Kopf-/Blockangaben ab (`meta_hash`),
 Genesis = SHA256("OMN-GENESIS-v1" ‖ Gerät ‖ Lauf), Rate als exakter Bruch, Platz für
-eine Signatur (HMAC-SHA256/Ed25519, noch nicht geprüft), Ereignisse vorgesehen (Eingang
-lehnt Pakete mit Ereignissen vorerst ab). **Die Node-Firmware schreibt Claude und muss
-den Testvektor Byte für Byte erzeugen.** `formate.py` = einzige Weiche (Kennung `OMNB` →
+eine Signatur (HMAC-SHA256/Ed25519, noch nicht geprüft). **Die Node-Firmware schreibt
+Claude und muss beide Testvektoren Byte für Byte erzeugen** (`_testvektor.omb`,
+`_testvektor_laufstart.omb`). **Ereignisse (seit 26.09.2026, `ereignisse.py`, Schema v3
+= Migration `4b7c9e2d1f35`, `biocomm_0003_*.sql`):** `LAUF_START` (nur Sequenz 1) meldet
+den Node selbst an: Konfiguration, Sonde, Hardwarekanäle, Lauf, RAW + DERIVED, Plan;
+Messreihe aus dem **Einsatz** `device_deployment` (Server legt fest, nicht der Node);
+offener Vorlauf des Geräts endet mit dem neuen Start (Grund aus Reset-Ursache). Pakete
+eines bekannten Geräts ohne bekannten Lauf → `WARTET` (`delivery_waiting`, Anlieferung
+`RECEIVED`), verarbeitet sobald der Lauf existiert (`wartende_erneut`). `LAUF_ENDE`,
+`UHRENABGLEICH` (→ `clock_sync_event`) wirken bei kanonischen Paketen; Pausenregeln
+(EC-Messung) → `settings['pausen']` → PAUSE-Intervalle im Plan beim Eintreffen der Daten
+(`pausen_erweitern`). `STIMULATION`/`RESET_URSACHE` reserviert (abgelehnt). Pakete mit
+Ereignissen liegen ganz INLINE. `formate.py` = einzige Weiche (Kennung `OMNB` →
 v1, sonst v0); ein Messlauf hat genau ein Format. `format_v0.py` = JSON-Prototyp
 (Genesis 32 Null-Bytes, `docs/dateneingang_format_v0.md`), bleibt lesbar, der
 Sandbox-Generator rechnet weiter wie v0. `einlesen.py` = eine Anlieferung in
@@ -167,7 +179,10 @@ ohne Grabsteine) und `sample_block` nur mit `origin_batch.batch_status = 'CANONI
 (Datenlabor so umgestellt). `testknoten.py` = Test-Messknoten in `sandbox`. CLI:
 `flask biocomm-einlesen <datei|ordner> [--schema sandbox|live] [--transport
 SD_IMPORT|LORA|BLE|USB] [--bridge SERIAL] [--verdichten]`, `flask biocomm-verdichten
-[--lauf ID]`, `flask biocomm-konflikt`, `flask biocomm-testpakete <ordner> --name X`.
+[--lauf ID]`, `flask biocomm-konflikt`, `flask biocomm-testpakete <ordner> --name X`,
+`flask biocomm-geraet SERIAL [--rolle NODE|BRIDGE]`, `flask biocomm-einsatz --geraet S
+--serie CODE [--ab ISO]` (beendet offenen Einsatz, verarbeitet danach Wartende),
+`flask biocomm-wartende` (die drei letzten mit `--schema`, Standard `live`).
 Kein HTTP-Endpunkt (Geräte-Authentifizierung offen). Tests: `tests/test_dateneingang.py`
 (nur PG; legt fehlende Rollen `omn_owner`/`omn_geo`/`omn` als NOLOGIN an, stellt die
 Grundrechte des Rollen-Skripts nach und prüft den Weg mit `SET ROLE omn`).

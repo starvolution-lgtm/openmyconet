@@ -61,7 +61,7 @@ def register_cli(app):
     @click.option('--bridge', default=None, help='Seriennummer der Bridge (nicht bei SD_IMPORT).')
     @click.option('--verdichten', is_flag=True, help='Danach die betroffenen Messlaeufe verdichten.')
     def biocomm_einlesen(pfad, schema, transport, bridge, verdichten):
-        """Liest Datenpakete (Format v0, *.json) aus einer Datei oder einem Ordner ein."""
+        """Liest Datenpakete (Format v1 *.omb, v0 *.json) aus einer Datei oder einem Ordner ein."""
         from omn.eingang.einlesen import ordner_einlesen
         from omn.eingang.verdichtung import verdichten as verdichten_
         from omn.extensions import db
@@ -72,11 +72,15 @@ def register_cli(app):
             raise click.UsageError(str(e))
         zaehler = Counter(e.status for _, e in ergebnisse)
         for datei, e in ergebnisse:
-            if e.status in ('REJECTED', 'CONFLICT') or e.hinweise:
+            if e.status in ('REJECTED', 'CONFLICT', 'WARTET') or e.hinweise:
                 click.echo(f'{e.status:9} {datei}: {e.grund}')
+            if e.lauf_angelegt:
+                click.echo(f'          Messlauf {e.lauf_id} aus LAUF_START angelegt; '
+                           f'{len(e.nachverarbeitet)} wartende Anlieferungen nachverarbeitet')
         click.echo(f'{len(ergebnisse)} Dateien: ' + ', '.join(f'{k} {v}' for k, v in sorted(zaehler.items())))
         if verdichten:
-            laeufe = sorted({e.lauf_id for _, e in ergebnisse if e.lauf_id and e.status == 'ACCEPTED'})
+            alle = [e for _, e in ergebnisse] + [n for _, e in ergebnisse for n in e.nachverarbeitet]
+            laeufe = sorted({e.lauf_id for e in alle if e.lauf_id and e.status == 'ACCEPTED'})
             if laeufe:
                 _verdichtung_melden(verdichten_(db.engine, schema, laeufe))
 
@@ -145,6 +149,79 @@ def register_cli(app):
         for p in k.pakete(anzahl):
             (ziel / f'{k.lauf}_{p.sequenz:08d}.{endung}').write_bytes(paket_schreiben(p))
         click.echo(f'{anzahl} Pakete von {k.geraet} (Lauf {k.lauf}, id {k.lauf_id}) nach {ziel}')
+
+    @app.cli.command('biocomm-geraet')
+    @click.argument('seriennummer')
+    @click.option('--rolle', type=click.Choice(['NODE', 'BRIDGE']), default='NODE', show_default=True)
+    @click.option('--notiz', default=None)
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_geraet(seriennummer, rolle, notiz, schema):
+        """Registriert einen Messknoten oder eine Bridge (Seriennummer wie in der Firmware)."""
+        from omn.eingang.einlesen import sql
+        from omn.extensions import db
+
+        with db.engine.begin() as c:
+            da = c.execute(sql(schema, 'SELECT device_role FROM {s}.device WHERE device_serial = :g'),
+                           {'g': seriennummer}).scalar()
+            if da:
+                raise click.ClickException(f'{seriennummer} ist schon registriert ({da})')
+            c.execute(sql(schema, 'INSERT INTO {s}.device (device_serial, device_role, note) VALUES (:g, :r, :n)'),
+                      {'g': seriennummer, 'r': rolle, 'n': notiz})
+        click.echo(f'{rolle} {seriennummer} in {schema} registriert.')
+
+    @app.cli.command('biocomm-einsatz')
+    @click.option('--geraet', 'seriennummer', required=True, help='Seriennummer des Messknotens.')
+    @click.option('--serie', 'series_code', required=True, help='series_code der Messreihe.')
+    @click.option('--ab', 'ab_text', default=None,
+                  help='Beginn des Einsatzes, ISO 8601 mit Zeitzone (Standard: jetzt). Ein offener frueherer'
+                       ' Einsatz endet dann.')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_einsatz(seriennummer, series_code, ab_text, schema):
+        """Ordnet einen Messknoten ab einem Zeitpunkt einer Messreihe zu; danach werden wartende Pakete verarbeitet."""
+        from datetime import datetime, timezone
+
+        from omn.eingang.einlesen import sql, wartende_erneut
+        from omn.extensions import db
+
+        ab = datetime.fromisoformat(ab_text) if ab_text else datetime.now(timezone.utc)
+        if ab.tzinfo is None:
+            raise click.UsageError('--ab braucht eine Zeitzone, z. B. 2026-10-01T08:00:00+02:00')
+        with db.engine.begin() as c:
+            geraet = c.execute(sql(schema, "SELECT id FROM {s}.device WHERE device_serial = :g AND device_role = 'NODE'"),
+                               {'g': seriennummer}).scalar()
+            serie = c.execute(sql(schema, 'SELECT id FROM {s}.series WHERE series_code = :c'), {'c': series_code}).scalar()
+            if geraet is None or serie is None:
+                raise click.ClickException('Messknoten oder Messreihe unbekannt')
+            c.execute(sql(schema, 'UPDATE {s}.device_deployment SET valid_to = :a'
+                                  ' WHERE device_id = :d AND valid_to IS NULL AND valid_from < :a'), {'a': ab, 'd': geraet})
+            try:
+                with c.begin_nested():
+                    c.execute(sql(schema, 'INSERT INTO {s}.device_deployment (device_id, series_id, valid_from)'
+                                          ' VALUES (:d, :s, :a)'), {'d': geraet, 's': serie, 'a': ab})
+            except Exception as e:
+                raise click.ClickException(f'Einsatz ueberschneidet sich mit einem bestehenden ({type(e).__name__})')
+        click.echo(f'{seriennummer} misst ab {ab.isoformat()} fuer {series_code}.')
+        _wartende_melden(wartende_erneut(db.engine, schema, seriennummer))
+
+    @app.cli.command('biocomm-wartende')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_wartende(schema):
+        """Zurueckgestellte Pakete (Messlauf fehlte) erneut versuchen und den Stand zeigen."""
+        from omn.eingang.einlesen import wartende_erneut
+        from omn.extensions import db
+
+        _wartende_melden(wartende_erneut(db.engine, schema))
+
+
+def _wartende_melden(ergebnis):
+    if not ergebnis:
+        click.echo('Keine wartenden Pakete.')
+    for (geraet, lauf), erg in ergebnis.items():
+        if isinstance(erg, str):
+            click.echo(f'{geraet} / {lauf}: wartet weiter: {erg}')
+        else:
+            zaehler = Counter(e.status for e in erg)
+            click.echo(f'{geraet} / {lauf}: ' + ', '.join(f'{k} {v}' for k, v in sorted(zaehler.items())))
 
 
 def _verdichtung_melden(st):

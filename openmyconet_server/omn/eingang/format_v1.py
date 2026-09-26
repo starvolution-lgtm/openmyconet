@@ -290,8 +290,210 @@ def paket_lesen(rohdaten):
         raise PaketUnlesbar(f'{len(rohdaten) - le.i} Byte nach dem Paketende')
     if not bloecke and not ereignisse:
         raise PaketUnlesbar('Paket ohne Bloecke und ohne Ereignisse')
+    if bloecke and inhalt == INHALT_CODES['EVENT']:
+        raise PaketUnlesbar('Inhalt EVENT, aber Bloecke vorhanden')
     return PaketV1(geraet=geraet, lauf=lauf, sequenz=sequenz, inhalt=_code(INHALT_CODES, inhalt, 'inhalt'),
                    messzeitraum_von=_zeit(von, 'messzeitraum_von'), messzeitraum_bis=_zeit(bis, 'messzeitraum_bis'),
                    vorgaenger_hash=vorg, payload_hash=ph, batch_hash=bh, bloecke=tuple(bloecke),
                    zeitquelle=_code(ZEITQUELLE_CODES, zq, 'zeitquelle'), flags=flags, ereignisse=tuple(ereignisse),
                    signatur_art=sig_art_s, signatur=signatur)
+
+
+# ---------------------------------------------------------------------------
+# Ereignis-Nutzdaten (festgelegt 26.09.2026)
+# ---------------------------------------------------------------------------
+# Jede Nutzlast beginnt mit einer eigenen Datenversion (u8 = 1), damit sich
+# einzelne Ereignisse weiterentwickeln lassen, ohne das Paketformat zu aendern.
+# STIMULATION (3) und RESET_URSACHE (5) sind reserviert: die Stimulation wartet
+# auf die Hardware-Klaerung (Amplitude, Ladungsneutralitaet), die Reset-Ursache
+# steckt im LAUF_START (Grund, warum der vorige Lauf endete).
+DATENVERSION = 1
+RESET_CODES = {'UNKNOWN': 0, 'POWER_ON': 1, 'BROWNOUT': 2, 'WATCHDOG_HW': 3, 'WATCHDOG_SW': 4, 'SOFTWARE': 5,
+               'EXTERNAL_PIN': 6}                                      # = ref_reset_cause
+ENDGRUND_CODES = {'UNKNOWN': 0, 'RESTART': 1, 'FIRMWARE_CHANGE': 2, 'PROBE_CHANGE': 3, 'CONFIG_CHANGE': 4,
+                  'RTC_RUN_BREAK': 5, 'POWER_LOSS': 6, 'CRASH': 7, 'SAFETY_SHUTDOWN': 8,
+                  'PLANNED_END': 9}                                    # = acquisition_run.end_reason
+ROLLE_CODES = {'PRIMARY': 1, 'ENVIRONMENTAL': 2, 'SYSTEM': 3}          # = ref_channel_role
+TAKT_CODES = {'RTC_SQW': 1, 'SOFTWARE_TIMER': 2, 'ADC_FREE_RUN': 3}    # = ref_clock_source
+VERSTAERKUNG_QUELLE_CODES = {None: 0, 'MANUAL': 1, 'DEVICE_REPORTED': 2}
+PAUSE_CODES = {'SCHEDULED': 1, 'EC_MEASUREMENT': 2, 'EC_SETTLING': 3, 'MAINTENANCE': 4, 'OTHER': 5}
+REFERENZ_CODES = {'BRIDGE': 1, 'GNSS': 2, 'NTP': 3, 'MANUAL': 4}       # = ref_time_source
+KORREKTUR_CODES = {'NONE': 0, 'SLEW': 1, 'STEP_FORWARD': 2, 'RUN_BREAK': 3}
+
+
+class EreignisUnlesbar(ValueError):
+    """Die Nutzdaten eines Ereignisses passen nicht zu seinem Typ."""
+
+
+@dataclass(frozen=True)
+class KanalAngabe:
+    """Ein Messkanal des Laufs, wie ihn der Node beim Start meldet."""
+    eingang: str                     # hardware_channel.input_label
+    groesse: str                     # quantity_code
+    einheit: str                     # unit_code (UCUM), z. B. '{count}' fuer ADC-Rohwerte
+    rolle: str                       # PRIMARY, ENVIRONMENTAL, SYSTEM
+    rate_zaehler: int
+    rate_nenner: int
+    taktquelle: str                  # RTC_SQW, SOFTWARE_TIMER, ADC_FREE_RUN
+    verstaerkung_milli: int = 0      # Verstaerkung x 1000, 0 = keine Angabe
+    verstaerkung_quelle: str = None  # MANUAL, DEVICE_REPORTED (None = keine)
+    an_sonde: bool = False           # Eingang gehoert zur externen Sonde
+    kalibrierung: str = '{}'         # JSON-Objekt, z. B. {"adc": "ADS1115", "lsb_uv": 7.8125}
+
+
+@dataclass(frozen=True)
+class PausenRegel:
+    """Wiederkehrende geplante Pause eines Kanals, z. B. stuendlich 30 s
+    EC-Messung: Pause beginnt bei (Vielfaches von periode_s seit 1970) + versatz_ms."""
+    eingang: str
+    groesse: str
+    grund: str                       # EC_MEASUREMENT, EC_SETTLING, SCHEDULED, MAINTENANCE, OTHER
+    periode_s: int
+    versatz_ms: int
+    dauer_ms: int
+
+
+@dataclass(frozen=True)
+class LaufStart:
+    hardware_revision: str
+    firmware_version: str
+    config_version: str
+    reset_ursache_vorher: str        # warum der vorige Lauf endete (ESP32 esp_reset_reason)
+    sonde: str = None                # Seriennummer der externen Sonde
+    kanaele: tuple = ()
+    pausen: tuple = ()
+    einstellungen: str = '{}'        # JSON-Objekt, landet in device_configuration.settings
+
+
+@dataclass(frozen=True)
+class LaufEnde:
+    grund: str                       # end_reason
+    letzte_sequenz: int
+
+
+@dataclass(frozen=True)
+class Uhrenabgleich:
+    referenzquelle: str              # BRIDGE, GNSS, NTP, MANUAL
+    referenzzeit: datetime
+    geraetezeit: datetime            # Geraetezeit im selben Moment
+    korrektur: str                   # NONE, SLEW, STEP_FORWARD, RUN_BREAK
+
+
+def _ostr8(text):
+    return b'\x00' if not text else _str8(text)
+
+
+def _json16(text):
+    b = text.encode('utf-8')
+    if len(b) > 65535:
+        raise ValueError('JSON zu lang (hoechstens 65535 Byte)')
+    return struct.pack('<H', len(b)) + b
+
+
+def lauf_start_kodieren(ls):
+    teile = [bytes([DATENVERSION]), _str8(ls.hardware_revision), _str8(ls.firmware_version),
+             _str8(ls.config_version), bytes([RESET_CODES[ls.reset_ursache_vorher]]), _ostr8(ls.sonde),
+             bytes([len(ls.kanaele)])]
+    for k in ls.kanaele:
+        teile += [_str8(k.eingang), _str8(k.groesse), _str8(k.einheit),
+                  struct.pack('<BIIBIBB', ROLLE_CODES[k.rolle], k.rate_zaehler, k.rate_nenner, TAKT_CODES[k.taktquelle],
+                              k.verstaerkung_milli, VERSTAERKUNG_QUELLE_CODES[k.verstaerkung_quelle], int(k.an_sonde)),
+                  _json16(k.kalibrierung)]
+    teile.append(bytes([len(ls.pausen)]))
+    for p in ls.pausen:
+        teile += [_str8(p.eingang), _str8(p.groesse),
+                  struct.pack('<BIII', PAUSE_CODES[p.grund], p.periode_s, p.versatz_ms, p.dauer_ms)]
+    teile.append(_json16(ls.einstellungen))
+    return b''.join(teile)
+
+
+def lauf_ende_kodieren(le):
+    return struct.pack('<BBQ', DATENVERSION, ENDGRUND_CODES[le.grund], le.letzte_sequenz)
+
+
+def uhrenabgleich_kodieren(u):
+    return struct.pack('<BBqqB', DATENVERSION, REFERENZ_CODES[u.referenzquelle], zeit_us(u.referenzzeit),
+                       zeit_us(u.geraetezeit), KORREKTUR_CODES[u.korrektur])
+
+
+def ereignis(daten, zeit):
+    """Ereignis aus einer Nutzlast-Datenklasse bauen."""
+    if isinstance(daten, LaufStart):
+        return Ereignis('LAUF_START', zeit, lauf_start_kodieren(daten))
+    if isinstance(daten, LaufEnde):
+        return Ereignis('LAUF_ENDE', zeit, lauf_ende_kodieren(daten))
+    if isinstance(daten, Uhrenabgleich):
+        return Ereignis('UHRENABGLEICH', zeit, uhrenabgleich_kodieren(daten))
+    raise ValueError(f'kein Ereignistyp fuer {type(daten).__name__}')
+
+
+class _NLeser(_Leser):
+    def ostr8(self, was):
+        n = self.nimm(1, was)[0]
+        return None if n == 0 else self.nimm(n, was).decode('utf-8')
+
+    def json16(self, was):
+        import json
+        (n,) = self.struktur('<H', was)
+        roh = self.nimm(n, was)
+        try:
+            text = roh.decode('utf-8')
+            if not isinstance(json.loads(text), dict):
+                raise ValueError
+        except (UnicodeDecodeError, ValueError):
+            raise PaketUnlesbar(f'{was}: kein JSON-Objekt')
+        return text
+
+
+def ereignis_auswerten(e):
+    """Ereignis -> LaufStart / LaufEnde / Uhrenabgleich. Wirft EreignisUnlesbar
+    (Formfehler) bzw. NotImplementedError (reservierter Typ)."""
+    if e.typ in ('STIMULATION', 'RESET_URSACHE'):
+        raise NotImplementedError(f'Ereignis {e.typ} ist reserviert und wird noch nicht verarbeitet')
+    le = _NLeser(e.daten)
+    try:
+        if le.nimm(1, 'Datenversion')[0] != DATENVERSION:
+            raise EreignisUnlesbar(f'{e.typ}: Datenversion unbekannt')
+        if e.typ == 'LAUF_START':
+            kopf = (le.str8('hardware_revision'), le.str8('firmware_version'), le.str8('config_version'))
+            reset = _code(RESET_CODES, le.nimm(1, 'reset_ursache')[0], 'reset_ursache')
+            sonde = le.ostr8('sonde')
+            kanaele = []
+            for i in range(le.nimm(1, 'anzahl_kanaele')[0]):
+                w = f'Kanal {i}'
+                eingang, groesse, einheit = le.str8(f'{w}.eingang'), le.str8(f'{w}.groesse'), le.str8(f'{w}.einheit')
+                rolle, rz, rn, takt, vm, vq, sonde_ja = le.struktur('<BIIBIBB', w)
+                if rz == 0 or rn == 0:
+                    raise EreignisUnlesbar(f'{w}: Abtastrate 0')
+                vq_s = _code(VERSTAERKUNG_QUELLE_CODES, vq, f'{w}.verstaerkung_quelle')
+                if (vm == 0) != (vq_s is None):
+                    raise EreignisUnlesbar(f'{w}: Verstaerkung und ihre Quelle gehoeren zusammen')
+                kanaele.append(KanalAngabe(eingang, groesse, einheit, _code(ROLLE_CODES, rolle, f'{w}.rolle'), rz, rn,
+                                           _code(TAKT_CODES, takt, f'{w}.taktquelle'), vm, vq_s, bool(sonde_ja),
+                                           le.json16(f'{w}.kalibrierung')))
+            pausen = []
+            for i in range(le.nimm(1, 'anzahl_pausen')[0]):
+                w = f'Pause {i}'
+                eingang, groesse = le.str8(f'{w}.eingang'), le.str8(f'{w}.groesse')
+                grund, periode, versatz, dauer = le.struktur('<BIII', w)
+                if periode == 0 or dauer == 0 or dauer >= periode * 1000 or versatz >= periode * 1000:
+                    raise EreignisUnlesbar(f'{w}: Periode, Versatz oder Dauer unplausibel')
+                pausen.append(PausenRegel(eingang, groesse, _code(PAUSE_CODES, grund, f'{w}.grund'), periode,
+                                          versatz, dauer))
+            if not kanaele:
+                raise EreignisUnlesbar('LAUF_START ohne Kanaele')
+            daten = LaufStart(*kopf, reset, sonde, tuple(kanaele), tuple(pausen), le.json16('einstellungen'))
+        elif e.typ == 'LAUF_ENDE':
+            grund, letzte = le.struktur('<BQ', 'LAUF_ENDE')
+            daten = LaufEnde(_code(ENDGRUND_CODES, grund, 'grund'), letzte)
+        elif e.typ == 'UHRENABGLEICH':
+            quelle, ref, ger, korr = le.struktur('<BqqB', 'UHRENABGLEICH')
+            daten = Uhrenabgleich(_code(REFERENZ_CODES, quelle, 'referenzquelle'), _zeit(ref, 'referenzzeit'),
+                                  _zeit(ger, 'geraetezeit'), _code(KORREKTUR_CODES, korr, 'korrektur'))
+        else:
+            raise EreignisUnlesbar(f'Ereignistyp {e.typ} unbekannt')
+    except (PaketUnlesbar, UnicodeDecodeError) as fehler:
+        raise EreignisUnlesbar(f'{e.typ}: {fehler}')
+    if le.i != len(e.daten):
+        raise EreignisUnlesbar(f'{e.typ}: {len(e.daten) - le.i} Byte zu viel')
+    return daten

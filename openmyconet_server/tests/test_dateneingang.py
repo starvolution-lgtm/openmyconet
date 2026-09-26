@@ -29,6 +29,7 @@ pytestmark = pytest.mark.skipif(not PG_URL, reason='Dateneingang gibt es nur auf
 SCHEMAS = ('sandbox', 'sandbox_private', 'live', 'live_private', 'biocomm_common')
 ROLLEN = ('omn_owner', 'omn_geo', 'omn')
 RECHTE_0002 = os.path.join(os.path.dirname(__file__), '..', 'migrations', 'sql', 'biocomm_0002_rechte.sql')
+RECHTE_0003 = os.path.join(os.path.dirname(__file__), '..', 'migrations', 'sql', 'biocomm_0003_rechte.sql')
 
 
 def _leeren():
@@ -57,8 +58,9 @@ def ein_app():
             c.execute(sa.text('GRANT USAGE ON SCHEMA biocomm_common, sandbox, live TO omn'))
             c.execute(sa.text('GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA sandbox, live TO omn'))
             # die Abweichungen von den Standardrechten setzt die Migration danach (biocomm_0002_rechte.sql)
-            with open(RECHTE_0002, encoding='utf-8') as f:
-                c.connection.driver_connection.execute(f.read())
+            for datei in (RECHTE_0002, RECHTE_0003):
+                with open(datei, encoding='utf-8') as f:
+                    c.connection.driver_connection.execute(f.read())
     yield app
     with app.app_context():
         _leeren()
@@ -88,10 +90,12 @@ def _knoten(name, **kw):
 
 
 def _batches(k):
+    lauf_id = k.lauf_id or _eins('SELECT r.id FROM sandbox.acquisition_run r JOIN sandbox.device d ON d.id = r.device_id'
+                                 ' WHERE d.device_serial = :g AND r.node_run_key = :l', g=k.geraet, l=k.lauf)
     with db.engine.connect() as c:
         return {z.batch_sequence_no if z.batch_status == 'CANONICAL' else (z.batch_sequence_no, z.id): z for z in c.execute(sa.text(
             'SELECT id, batch_sequence_no, batch_status, chain_state, status_basis, payload_location'
-            ' FROM sandbox.origin_batch WHERE acquisition_run_id = :r ORDER BY id'), {'r': k.lauf_id})}
+            ' FROM sandbox.origin_batch WHERE acquisition_run_id = :r ORDER BY id'), {'r': lauf_id})}
 
 
 def _bloecke(k):
@@ -364,13 +368,16 @@ def test_fremder_kanal_und_unplausibles(ein_app):
             'doppelt im selben Paket': neu(bio, bio),
             'Payload-Laenge': neu(dataclasses.replace(bio, anzahl=bio.anzahl - 1), temp),
             'Payload-Laenge ': neu(dataclasses.replace(bio, payload=zlib.compress(bytes(10**7))), temp),   # Bombe
-            'gehoert nicht zu Geraet': neu(bio, temp, lauf='boot-99'),
             'unbekannt': neu(bio, temp, geraet='SBX-NODE-GIBTESNICHT'),
         }
         for erwartet, paket in faelle.items():
             e = _ein(paket)
             assert e.status == 'REJECTED', erwartet
             assert erwartet.strip() in e.grund, (erwartet, e.grund)
+        # unbekannter Lauf eines bekannten Geraets: nicht abgelehnt, sondern zurueckgestellt
+        # (sein LAUF_START kann noch kommen, z. B. spaeter per SD-Import)
+        w = _ein(neu(bio, temp, lauf='boot-99'))
+        assert w.status == 'WARTET' and 'wartet auf LAUF_START' in w.grund
         assert _eins('SELECT count(*) FROM sandbox.origin_batch WHERE acquisition_run_id = :r', r=k.lauf_id) == 0
         # danach geht das richtige Paket durch
         assert _ein(p).status == 'ACCEPTED'
@@ -779,7 +786,7 @@ def test_ein_messlauf_hat_genau_ein_format(ein_app):
         assert e.status == 'REJECTED' and 'genau ein Format' in e.grund
 
 
-def test_format_v1_ereignisse_werden_noch_abgelehnt(ein_app):
+def test_format_v1_stimulation_ist_noch_reserviert(ein_app):
     from omn.eingang import format_v1
     with ein_app.app_context():
         k = _knoten('V1-EREIGNIS', format='v1')
@@ -788,7 +795,7 @@ def test_format_v1_ereignisse_werden_noch_abgelehnt(ein_app):
                                     p.vorgaenger_hash, p.bloecke,
                                     ereignisse=[format_v1.Ereignis('STIMULATION', p.messzeitraum_von)])
         e = _ein(mit)
-        assert e.status == 'REJECTED' and 'Ereignisse' in e.grund
+        assert e.status == 'REJECTED' and 'reserviert' in e.grund
         assert _bloecke(k) == 0
 
 
@@ -823,3 +830,231 @@ def test_ordner_import_liest_omb_und_json(ein_app, tmp_path):
             (tmp_path / f'{p.sequenz:04d}.json').write_bytes(paket_schreiben(p))
         ergebnisse = ordner_einlesen(db.engine, tmp_path)
         assert len(ergebnisse) == 4 and {e.status for _, e in ergebnisse} == {'ACCEPTED'}
+
+
+# ---------------------------------------------------------------------------
+# Ereignisse: Selbstanmeldung per LAUF_START, Warten, LAUF_ENDE, Uhrenabgleich
+# ---------------------------------------------------------------------------
+def _vorbereiten(name, **kw):
+    from omn.eingang.testknoten import knoten_vorbereiten
+    kw.setdefault('rate_hz', 25)
+    return knoten_vorbereiten(db.engine, name, **kw)
+
+
+def _lauf(k):
+    with db.engine.connect() as c:
+        return c.execute(sa.text(
+            'SELECT r.* FROM sandbox.acquisition_run r JOIN sandbox.device d ON d.id = r.device_id'
+            ' WHERE d.device_serial = :g AND r.node_run_key = :l'), {'g': k.geraet, 'l': k.lauf}).mappings().first()
+
+
+def _anlieferungen_offen(k):
+    return _eins("SELECT count(*) FROM sandbox.delivery_waiting w JOIN sandbox.batch_delivery d"
+                 " ON d.id = w.batch_delivery_id WHERE w.device_serial = :g AND d.delivery_status = 'RECEIVED'",
+                 g=k.geraet)
+
+
+def test_selbstanmeldung_legt_messlauf_an(ein_app):
+    with ein_app.app_context():
+        k = _vorbereiten('ANMELDEN')
+        p = k.pakete(3)
+        e1 = _ein(p[0])
+        assert e1.status == 'ACCEPTED' and e1.lauf_angelegt and e1.kette == 'LINKED'
+        lauf = _lauf(k)
+        assert lauf['started_at'] == k.start and lauf['ended_at'] is None
+        assert _eins('SELECT s.series_code FROM sandbox.series s WHERE s.id = :s', s=lauf['series_id']) == \
+            'SBX-EINGANG-ANMELDEN'                                       # Messreihe aus dem Einsatz
+        kanaele = {(z.quantity_code, z.data_kind): z for z in db.session.execute(sa.text(
+            'SELECT quantity_code, data_kind, unit_code, sample_rate_hz, gain, gain_source, sample_clock_source,'
+            ' calibration FROM sandbox.measurement_channel WHERE acquisition_run_id = :r'), {'r': lauf['id']})}
+        db.session.rollback()
+        bio = kanaele[('bioelectric_potential', 'RAW')]
+        assert (bio.unit_code, float(bio.sample_rate_hz), float(bio.gain), bio.gain_source, bio.sample_clock_source) == \
+            ('{count}', 25.0, 100.0, 'MANUAL', 'RTC_SQW')
+        assert bio.calibration['lsb_uv'] == 7.8125
+        assert kanaele[('bioelectric_potential', 'DERIVED')].unit_code == 'uV'
+        assert abs(float(kanaele[('soil_temperature', 'RAW')].sample_rate_hz) - 0.1) < 1e-12
+        assert _eins('SELECT count(*) FROM sandbox.recording_plan_channel WHERE acquisition_run_id = :r',
+                     r=lauf['id']) == 1                                  # nur der PRIMARY-Kanal
+        assert _eins('SELECT count(*) FROM sandbox.probe_assignment WHERE acquisition_run_id = :r', r=lauf['id']) == 1
+        # das Paket mit dem Ereignis liegt vollstaendig INLINE
+        assert _eins('SELECT payload_format FROM sandbox.origin_batch WHERE id = :b', b=e1.batch_id) == \
+            'omn-batch-v1/paket-omb'
+        assert [_ein(x).status for x in p[1:]] == ['ACCEPTED', 'ACCEPTED']
+        assert _ein(p[0], transport='LORA').status == 'DUPLICATE'        # zweite Lieferung legt nichts neu an
+        assert _eins('SELECT count(*) FROM sandbox.acquisition_run WHERE node_run_key = :l AND device_id ='
+                     ' (SELECT id FROM sandbox.device WHERE device_serial = :g)', l=k.lauf, g=k.geraet) == 1
+
+
+def test_pakete_vor_dem_lauf_start_warten(ein_app):
+    with ein_app.app_context():
+        k = _vorbereiten('WARTEN')
+        p = k.pakete(3)
+        w3, w2 = _ein(p[2]), _ein(p[1], transport='LORA')
+        assert (w3.status, w2.status) == ('WARTET', 'WARTET') and 'LAUF_START' in w3.grund
+        assert _anlieferungen_offen(k) == 2
+        e1 = _ein(p[0])
+        assert e1.lauf_angelegt and [n.status for n in e1.nachverarbeitet] == ['ACCEPTED', 'ACCEPTED']
+        assert _anlieferungen_offen(k) == 0
+        # die Anlieferungen behalten ihre ID und haben jetzt ihren Status
+        assert _eins('SELECT delivery_status FROM sandbox.batch_delivery WHERE id = :a',
+                     a=w3.anlieferung_id) == 'ACCEPTED'
+        assert {z.chain_state for z in _batches(k).values()} == {'LINKED'}
+
+
+def test_ohne_einsatz_wartet_der_lauf_start(ein_app):
+    with ein_app.app_context():
+        k = _vorbereiten('OHNE-EINSATZ', einsatz=False)
+        p = k.pakete(2)
+        e1, e2 = _ein(p[0]), _ein(p[1])
+        assert (e1.status, e2.status) == ('WARTET', 'WARTET') and 'Einsatz' in e1.grund
+        assert _lauf(k) is None
+        runner = ein_app.test_cli_runner()
+        aus = runner.invoke(args=['biocomm-einsatz', '--geraet', k.geraet, '--serie', 'SBX-EINGANG-OHNE-EINSATZ',
+                                  '--ab', '2025-03-01T00:00:00+00:00', '--schema', 'sandbox'])
+        assert aus.exit_code == 0, aus.output
+        assert 'ACCEPTED 2' in aus.output
+        assert _lauf(k) is not None and _anlieferungen_offen(k) == 0
+        leer = runner.invoke(args=['biocomm-wartende', '--schema', 'sandbox'])
+        assert leer.exit_code == 0 and k.geraet not in leer.output
+
+
+def test_unbekanntes_geraet_wartet_nicht(ein_app):
+    from omn.eingang.testknoten import TestKnoten
+    with ein_app.app_context():
+        k = TestKnoten('SBX-NODE-GIBTS-NICHT', 'boot-1', None, _vorbereiten('X-UNBEKANNT').start, 25, 60,
+                       format='v1', anmelden=True, sonde='SBX-PRB-X')
+        e = _ein(k.pakete(1)[0])
+        assert e.status == 'REJECTED' and 'unbekannt' in e.grund
+
+
+def test_lauf_ende_und_neuer_lauf(ein_app):
+    import dataclasses
+    from datetime import timedelta
+    from omn.eingang import format_v1
+    with ein_app.app_context():
+        k = _vorbereiten('ENDE')
+        p1, p2 = k.pakete(2)
+        _ein(p1)
+        _ein(p2)
+        # Lauf boot-1 endet nicht sauber: der Node startet neu (boot-2) -> boot-1 wird mit Start von boot-2 beendet
+        k2 = dataclasses.replace(k, lauf='boot-2', start=k.start + timedelta(hours=1))
+        assert _ein(k2.pakete(1)[0]).lauf_angelegt
+        alt = _lauf(k)
+        assert (alt['ended_at'], alt['end_reason'], alt['reset_cause']) == (k2.start, 'POWER_LOSS', 'POWER_ON')
+        # boot-2 endet geplant mit LAUF_ENDE im letzten Paket
+        q1, q2 = k2.pakete(2)
+        ende_zeit = q2.messzeitraum_bis
+        mit_ende = format_v1.paket_bauen(q2.geraet, q2.lauf, 2, 'MIXED', q2.messzeitraum_von, q2.messzeitraum_bis,
+                                         q1.batch_hash, q2.bloecke,
+                                         ereignisse=[format_v1.ereignis(format_v1.LaufEnde('PLANNED_END', 2), ende_zeit)])
+        e = _ein(mit_ende)
+        assert e.status == 'ACCEPTED' and 'Messlauf beendet' in (e.grund or '')
+        neu = _lauf(k2)
+        assert (neu['ended_at'], neu['end_reason'], neu['reset_cause']) == (ende_zeit, 'PLANNED_END', None)
+
+
+def test_lauf_ende_nur_im_letzten_paket(ein_app):
+    from omn.eingang import format_v1
+    with ein_app.app_context():
+        k = _vorbereiten('ENDE-FALSCH')
+        p = k.pakete(1)[0]
+        _ein(p)
+        q = k.paket(2, p.batch_hash)
+        falsch = format_v1.paket_bauen(q.geraet, q.lauf, 2, 'MIXED', q.messzeitraum_von, q.messzeitraum_bis,
+                                       p.batch_hash, q.bloecke,
+                                       ereignisse=[format_v1.ereignis(format_v1.LaufEnde('PLANNED_END', 5),
+                                                                      q.messzeitraum_bis)])
+        e = _ein(falsch)
+        assert e.status == 'REJECTED' and 'letzte' in e.grund
+
+
+def test_uhrenabgleich(ein_app):
+    from datetime import timedelta
+    from omn.eingang import format_v1
+    with ein_app.app_context():
+        k = _vorbereiten('UHR')
+        p = k.pakete(1)[0]
+        _ein(p)
+        q = k.paket(2, p.batch_hash)
+        t = q.messzeitraum_von + timedelta(seconds=5)
+
+        def mit(abgleich):
+            return format_v1.paket_bauen(q.geraet, q.lauf, 2, 'MIXED', q.messzeitraum_von, q.messzeitraum_bis,
+                                         p.batch_hash, q.bloecke, ereignisse=[format_v1.ereignis(abgleich, t)])
+        # Vorwaertssprung bei vorgehender Uhr ist unmoeglich -> abgelehnt
+        falsch = mit(format_v1.Uhrenabgleich('GNSS', t, t + timedelta(seconds=2), 'STEP_FORWARD'))
+        assert _ein(falsch).status == 'REJECTED'
+        e = _ein(mit(format_v1.Uhrenabgleich('GNSS', t + timedelta(milliseconds=120), t, 'SLEW')))
+        assert e.status == 'ACCEPTED'
+        assert _eins('SELECT offset_ms FROM sandbox.clock_sync_event WHERE acquisition_run_id = :r',
+                     r=_lauf(k)['id']) == 120
+
+
+def test_ec_pausen_landen_im_aufzeichnungsplan(ein_app):
+    from datetime import timedelta
+    from omn.eingang.verdichtung import verdichten
+    with ein_app.app_context():
+        k = _vorbereiten('PAUSEN', ec_pause=True, paket_s=600)
+        for x in k.pakete(8):                                       # 08:00 bis 09:20
+            assert _ein(x).status == 'ACCEPTED'
+        lauf = _lauf(k)
+        intervalle = [tuple(z) for z in db.session.execute(sa.text(
+            'SELECT pause_reason, lower(period), upper(period) FROM sandbox.recording_plan_interval'
+            ' WHERE acquisition_run_id = :r ORDER BY 2'), {'r': lauf['id']})]
+        db.session.rollback()
+        h8, h9 = k.start, k.start + timedelta(hours=1)
+        assert intervalle == [('EC_MEASUREMENT', h8, h8 + timedelta(seconds=30)),
+                              ('EC_SETTLING', h8 + timedelta(seconds=30), h8 + timedelta(seconds=35)),
+                              ('EC_MEASUREMENT', h9, h9 + timedelta(seconds=30)),
+                              ('EC_SETTLING', h9 + timedelta(seconds=30), h9 + timedelta(seconds=35))]
+        verdichten(db.engine, 'sandbox', [lauf['id']])
+        erwartet = _eins("SELECT a.samples_expected FROM sandbox.derived_aggregate_current a"
+                         " JOIN sandbox.measurement_channel mc ON mc.id = a.measurement_channel_id"
+                         " WHERE mc.acquisition_run_id = :r AND mc.quantity_code = 'bioelectric_potential'"
+                         " AND a.resolution = '1min' AND a.bucket_start = :t", r=lauf['id'], t=h9)
+        assert erwartet == 25 * (60 - 35)                           # EC-Messung + Einschwingzeit abgezogen
+
+
+def test_lauf_start_nur_in_sequenz_1(ein_app):
+    from omn.eingang import format_v1
+    with ein_app.app_context():
+        k = _vorbereiten('START-FALSCH')
+        p = k.pakete(1)[0]
+        _ein(p)
+        q = k.paket(2, p.batch_hash)
+        falsch = format_v1.paket_bauen(q.geraet, q.lauf, 2, 'MIXED', q.messzeitraum_von, q.messzeitraum_bis,
+                                       p.batch_hash, q.bloecke,
+                                       ereignisse=[format_v1.ereignis(k.lauf_start(), q.messzeitraum_von)])
+        e = _ein(falsch)
+        assert e.status == 'REJECTED' and 'Sequenz 1' in e.grund
+
+
+def test_selbstanmeldung_als_rolle_omn(ein_app):
+    """Der ganze Anmeldeweg (Warten, LAUF_START, Lauf beenden) mit den Rechten der Web-Rolle."""
+    import dataclasses
+    from datetime import timedelta
+    from omn.eingang.einlesen import einliefern
+    from omn.eingang.formate import paket_schreiben
+    with ein_app.app_context():
+        omn = sa.create_engine(db.engine.url)
+
+        @sa.event.listens_for(omn, 'connect')
+        def _als_omn(dbapi_conn, _rec):
+            with dbapi_conn.cursor() as cur:
+                cur.execute('SET ROLE omn')
+            dbapi_conn.commit()
+
+        try:
+            k = _vorbereiten('ROLLE-ANMELDEN', ec_pause=True, paket_s=600)
+            p = k.pakete(8)
+            ein = lambda paket: einliefern(omn, paket_schreiben(paket))
+            assert ein(p[3]).status == 'WARTET'
+            e1 = ein(p[0])
+            assert e1.lauf_angelegt and [n.status for n in e1.nachverarbeitet] == ['ACCEPTED']
+            assert {ein(x).status for x in p[1:3] + p[4:]} == {'ACCEPTED'}
+            k2 = dataclasses.replace(k, lauf='boot-2', start=k.start + timedelta(hours=3))
+            assert ein(k2.pakete(1)[0]).lauf_angelegt
+            assert _lauf(k)['end_reason'] == 'POWER_LOSS'
+        finally:
+            omn.dispose()

@@ -6,6 +6,10 @@ Messlauf, RAW- und DERIVED-Kanaele, wie der Sandbox-Generator) und erzeugt
 fortlaufende Datenpakete im Format v0 oder v1 (format='v1') -- so, wie ein Node sie auf SD-Karte
 schreiben und per LoRa/BLE schicken wuerde. Feste Seeds -> reproduzierbar.
 
+Selbstanmeldung (Format v1): knoten_vorbereiten() legt nur Geraet, Messreihe
+und Einsatz an; das erste Paket traegt LAUF_START, der Eingang legt den
+Messlauf daraus an -- wie spaeter beim echten Node.
+
 Ausserdem: pakete_aus_datenbank() exportiert die vom Sandbox-Generator
 geschriebenen Batches eines Laufs als Pakete v0 (Formatgleichheit pruefen,
 SD-Import nachstellen).
@@ -40,6 +44,9 @@ class TestKnoten:
     paket_s: int
     kanaele: dict = field(default_factory=dict)     # (schluessel, RAW|DERIVED) -> measurement_channel.id
     format: str = 'v0'                              # Paketformat: 'v0' (JSON) oder 'v1' (binaer, Firmware)
+    anmelden: bool = False                          # Sequenz 1 traegt LAUF_START (nur v1)
+    sonde: str = None
+    ec_pause: bool = False                          # LAUF_START meldet stuendlich 30 s + 5 s EC-Pause
 
     # -- Pakete ------------------------------------------------------------
     def paket(self, sequenz, vorgaenger_hash, variante=0):
@@ -65,7 +72,9 @@ class TestKnoten:
                 format_v1.block_bauen(EINGANG_TEMP, 'soil_temperature', (sequenz - 1) * n_temp, n_temp, t0,
                                       (1, TEMP_INTERVALL_S), 'float32le', 'none', tmp),
             )
-            return format_v1.paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke)
+            ereignisse = [format_v1.ereignis(self.lauf_start(), t0)] if self.anmelden and sequenz == 1 else []
+            return format_v1.paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke,
+                                         ereignisse=ereignisse)
         bloecke = (
             Block(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0, float(self.rate_hz),
                   'int16le', 'zlib-6', bio),
@@ -73,6 +82,22 @@ class TestKnoten:
                   'float32le', 'none', tmp),
         )
         return paket_bauen(self.geraet, self.lauf, sequenz, 'MIXED', t0, bis, vorgaenger_hash, bloecke)
+
+    def lauf_start(self):
+        """LAUF_START dieses Knotens (Kanaele wie knoten_anlegen)."""
+        pausen = ()
+        if self.ec_pause:
+            pausen = (format_v1.PausenRegel(EINGANG_BIO, 'bioelectric_potential', 'EC_MEASUREMENT', 3600, 0, 30_000),
+                      format_v1.PausenRegel(EINGANG_BIO, 'bioelectric_potential', 'EC_SETTLING', 3600, 30_000, 5_000))
+        kal = '{"adc": "ADS1115", "lsb_uv": %s, "ziel_einheit": "uV"}' % LSB_UV
+        return format_v1.LaufStart(
+            'COMBO_NODE 3.2 (Test)', 'test-fw-1', 'test-cfg-1' + ('-ec' if self.ec_pause else ''), 'POWER_ON',
+            self.sonde, (
+                format_v1.KanalAngabe(EINGANG_BIO, 'bioelectric_potential', '{count}', 'PRIMARY', self.rate_hz, 1,
+                                      'RTC_SQW', GAIN * 1000, 'MANUAL', True, kal),
+                format_v1.KanalAngabe(EINGANG_TEMP, 'soil_temperature', 'Cel', 'ENVIRONMENTAL', 1, TEMP_INTERVALL_S,
+                                      'SOFTWARE_TIMER')),
+            pausen)
 
     def genesis(self):
         return format_v1.genesis_berechnen(self.geraet, self.lauf) if self.format == 'v1' else GENESIS
@@ -85,6 +110,32 @@ class TestKnoten:
             liste.append(p)
             vorg = p.batch_hash
         return liste
+
+
+def knoten_vorbereiten(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=timezone.utc), rate_hz=250,
+                       paket_s=60, lauf='boot-1', einsatz=True, ec_pause=False):
+    """Nur Geraet, Messreihe und (optional) Einsatz in sandbox anlegen; den
+    Messlauf legt der Eingang aus dem LAUF_START in Sequenz 1 an (Format v1).
+    Liefert den TestKnoten (lauf_id None)."""
+    if paket_s % TEMP_INTERVALL_S:
+        raise ValueError(f'paket_s muss ein Vielfaches von {TEMP_INTERVALL_S} sein')
+    geraet = f'SBX-NODE-EINGANG-{name}'
+    with engine.begin() as c:
+        q = lambda text, **p: c.execute(sa.text(text), p).scalar()
+        site = q('SELECT id FROM sandbox.site WHERE site_code = :c', c=STANDORT)
+        if site is None:
+            site = q("INSERT INTO sandbox.site (site_code, grid_system, grid_cell_id) VALUES (:c, 'MGRS_10KM', '32UNB00')"
+                     ' RETURNING id', c=STANDORT)
+        dev = q("INSERT INTO sandbox.device (device_serial, device_role, note) VALUES (:d, 'NODE', 'Test-Messknoten')"
+                ' RETURNING id', d=geraet)
+        serie = q("INSERT INTO sandbox.series (series_code, site_id, substrate_code, title, study_period)"
+                  " VALUES (:c, :s, 'SOIL', :t, tstzrange(:a, :e)) RETURNING id", c=f'SBX-EINGANG-{name}', s=site,
+                  t=f'Test-Messknoten {name}', a=start, e=start + timedelta(days=365))
+        if einsatz:
+            q('INSERT INTO sandbox.device_deployment (device_id, series_id, valid_from) VALUES (:d, :s, :a) RETURNING id',
+              d=dev, s=serie, a=start - timedelta(days=1))
+    return TestKnoten(geraet, lauf, None, start, rate_hz, paket_s, format='v1', anmelden=True,
+                      sonde=f'SBX-PRB-EINGANG-{name}', ec_pause=ec_pause)
 
 
 def knoten_anlegen(engine, name, *, start=datetime(2025, 3, 3, 8, 0, tzinfo=timezone.utc), rate_hz=250,
