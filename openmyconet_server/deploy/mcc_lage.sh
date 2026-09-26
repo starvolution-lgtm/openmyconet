@@ -13,7 +13,9 @@ export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
 http() { curl -s -o /dev/null -m 10 -w '%{http_code}' "$1" 2>/dev/null || echo 000; }
-commit() { tr -d '[:space:]' < "$1/DEPLOYED_COMMIT" 2>/dev/null || echo unbekannt; }
+# { ...; } 2>/dev/null: auch die Fehlermeldung der Umleitung selbst schlucken,
+# wenn DEPLOYED_COMMIT noch fehlt (Deploy von vor dem 26.09.2026)
+commit() { { tr -d '[:space:]' < "$1/DEPLOYED_COMMIT"; } 2>/dev/null || echo unbekannt; }
 
 echo "prod_unit=$(systemctl --user is-active omn 2>/dev/null || true)"
 echo "prod_http=$(http http://127.0.0.1:5000/)"
