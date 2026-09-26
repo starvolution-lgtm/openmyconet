@@ -1,0 +1,193 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — BioComm-Verwaltung{% endblock %}
+{% block heading %}🧬 BioComm-Verwaltung{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-biocomm.css') }}">{% endblock %}
+{% block content %}
+
+<nav class="bc-schema" aria-label="Schema">
+  <a href="{{ url_for('admin.biocomm_admin', schema='live') }}"{% if schema == 'live' %} aria-current="true"{% endif %}>live (echte Messungen)</a>
+  <a href="{{ url_for('admin.biocomm_admin', schema='sandbox') }}"{% if schema == 'sandbox' %} aria-current="true"{% endif %}>sandbox (Tests, Simulation)</a>
+</nav>
+{% if schema == 'sandbox' %}<p class="u-hint-sm">Schema <strong>sandbox</strong>: Kennungen beginnen mit <code>SBX-</code>. Hier liegen Testknoten und die Simulation.</p>{% endif %}
+
+{% if not verfuegbar %}
+<p class="err">BioComm gibt es nur auf PostgreSQL (Prod und Staging). Lokal mit SQLite ist diese Seite leer.</p>
+{% else %}
+
+{% if neuer_schluessel %}
+<div class="bc-schluessel" role="alert">
+  <strong>Neuer Zugangsschlüssel – wird nur JETZT angezeigt:</strong>
+  <code>{{ neuer_schluessel }}</code>
+  <p>In die Bridge eintragen und sicher aufbewahren. Auf dem Server steht nur sein Fingerabdruck; bei Verlust widerrufen und neu anlegen.</p>
+</div>
+{% endif %}
+
+<section class="bc-lage" id="lage">
+  <h2>Lage ({{ schema }})</h2>
+  <ul class="bc-kacheln">
+    <li><strong>{{ lage.anlieferungen_24h }}</strong> Anlieferungen in 24 h
+      {% if lage.status_24h %}<span>({% for k, v in lage.status_24h|dictsort %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %})</span>{% endif %}</li>
+    <li><strong>{{ lage.wartend }}</strong> wartend</li>
+    <li><strong>{{ lage.konflikte_offen }}</strong> offene Konflikte</li>
+    <li><strong>{{ lage.knoten }}</strong> Knoten · <strong>{{ lage.bridges }}</strong> Bridges · <strong>{{ lage.laeufe_offen }}</strong> laufende Messläufe</li>
+    <li>letzte Anlieferung: {{ lage.letzte_anlieferung[:16]|replace('T', ' ') if lage.letzte_anlieferung else '–' }} UTC</li>
+    <li>letzte Verdichtung: {{ lage.letzte_verdichtung[:16]|replace('T', ' ') if lage.letzte_verdichtung else '–' }} UTC</li>
+  </ul>
+  <p class="u-hint-sm">Reihenfolge für einen neuen Messknoten: Standort → Messreihe → Gerät → Einsatz → Signaturschlüssel. Für eine Bridge: Gerät (Rolle BRIDGE) → Zugangsschlüssel.</p>
+</section>
+
+<section id="standorte">
+  <h2>1. Standorte</h2>
+  <table>
+    <tr><th>Kennung</th><th>Rasterfeld (10 km)</th><th>Zeitzone</th><th>Höhe</th><th>Messreihen</th></tr>
+    {% for s in u.standorte %}
+    <tr><td>{{ s.site_code }}</td><td>{{ s.grid_cell_id }}</td><td>{{ s.tz or '–' }}</td>
+        <td>{{ s.elevation_m_rounded ~ ' m' if s.elevation_m_rounded is not none else '–' }}</td><td>{{ s.reihen }}</td></tr>
+    {% else %}<tr><td colspan="5">Noch keine Standorte.</td></tr>{% endfor %}
+  </table>
+  <form method="POST" class="bc-form">
+    <input type="hidden" name="aktion" value="standort"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="standorte">
+    <label>Kennung <input name="code" required placeholder="{{ 'SBX-TEST-01' if schema == 'sandbox' else 'DE-HE-01' }}"></label>
+    <label>Breite <input name="breite" required inputmode="decimal" placeholder="50.64"></label>
+    <label>Länge <input name="laenge" required inputmode="decimal" placeholder="9.05"></label>
+    <label>Zeitzone <input name="zeitzone" required value="Europe/Berlin"></label>
+    <label>Höhe (m, optional) <input name="hoehe" inputmode="decimal"></label>
+    <button type="submit">Standort anlegen</button>
+  </form>
+  <p class="u-hint-sm">Aus Breite/Länge wird nur das öffentliche 10-km-Rasterfeld berechnet; die Koordinaten selbst werden <strong>nicht gespeichert</strong>.</p>
+</section>
+
+<section id="reihen">
+  <h2>2. Messreihen</h2>
+  <table>
+    <tr><th>Kennung</th><th>Titel</th><th>Standort</th><th>Substrat</th><th>Zeitraum</th><th>Knoten im Einsatz</th></tr>
+    {% for r in u.reihen %}
+    <tr><td>{{ r.series_code }}</td><td>{{ r.title }}</td><td>{{ r.site_code }}</td><td>{{ r.substrate_code }}</td>
+        <td>{{ r.von.strftime('%d.%m.%Y') if r.von else '' }}{% if r.von or r.bis %} – {% endif %}{{ r.bis.strftime('%d.%m.%Y') if r.bis else '' }}</td>
+        <td>{{ r.knoten }}</td></tr>
+    {% else %}<tr><td colspan="6">Noch keine Messreihen.</td></tr>{% endfor %}
+  </table>
+  <form method="POST" class="bc-form">
+    <input type="hidden" name="aktion" value="reihe"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="reihen">
+    <label>Kennung <input name="code" required placeholder="{{ 'SBX-REIHE-01' if schema == 'sandbox' else 'DE-HE-01-2026' }}"></label>
+    <label>Titel <input name="titel" required></label>
+    <label>Standort <select name="standort" required>{% for s in u.standorte %}<option>{{ s.site_code }}</option>{% endfor %}</select></label>
+    <label>Substrat <select name="substrat">{% for s in u.substrate %}<option value="{{ s.code }}">{{ s.label }}</option>{% endfor %}</select></label>
+    <label>von (optional) <input type="date" name="von"></label>
+    <label>bis (optional) <input type="date" name="bis"></label>
+    <label class="bc-breit">Kontext (optional) <input name="kontext" placeholder="z. B. Versuch Blaulicht, Beet 3"></label>
+    <button type="submit">Messreihe anlegen</button>
+  </form>
+</section>
+
+<section id="geraete">
+  <h2>3. Geräte</h2>
+  <table>
+    <tr><th>Seriennummer</th><th>Rolle</th><th>Einsatz</th><th>Zugangsschl.</th><th>Signaturschl.</th><th>wartend</th><th>Notiz</th></tr>
+    {% for g in u.geraete %}
+    <tr><td>{{ g.device_serial }}</td><td>{{ g.device_role }}</td>
+        <td>{{ (g.einsatz ~ ' seit ' ~ g.seit.strftime('%d.%m.%Y')) if g.einsatz else ('–' if g.device_role == 'NODE' else '') }}</td>
+        <td>{{ g.zugang if g.device_role == 'BRIDGE' else '' }}{% if g.zuletzt %} <span class="u-hint-sm">(zuletzt {{ g.zuletzt.strftime('%d.%m. %H:%M') }})</span>{% endif %}</td>
+        <td>{{ g.signatur if g.device_role == 'NODE' else '' }}</td><td>{{ g.wartend or '' }}</td><td>{{ g.note or '' }}</td></tr>
+    {% else %}<tr><td colspan="7">Noch keine Geräte.</td></tr>{% endfor %}
+  </table>
+  <form method="POST" class="bc-form">
+    <input type="hidden" name="aktion" value="geraet"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="geraete">
+    <label>Seriennummer <input name="seriennummer" required placeholder="{{ 'SBX-NODE-01' if schema == 'sandbox' else 'OMN-NODE-00001' }}"></label>
+    <label>Rolle <select name="rolle"><option value="NODE">NODE (Messknoten)</option><option value="BRIDGE">BRIDGE</option></select></label>
+    <label class="bc-breit">Notiz (optional) <input name="notiz"></label>
+    <button type="submit">Gerät registrieren</button>
+  </form>
+  <p class="u-hint-sm">Die Seriennummer muss genau der in der Firmware entsprechen.</p>
+</section>
+
+<section id="einsatz">
+  <h2>4. Einsatz: Messknoten → Messreihe</h2>
+  <form method="POST" class="bc-form">
+    <input type="hidden" name="aktion" value="einsatz"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="einsatz">
+    <label>Messknoten <select name="geraet" required>{% for g in u.geraete if g.device_role == 'NODE' %}<option>{{ g.device_serial }}</option>{% endfor %}</select></label>
+    <label>Messreihe <select name="reihe" required>{% for r in u.reihen %}<option>{{ r.series_code }}</option>{% endfor %}</select></label>
+    <label>ab (Ortszeit, leer = jetzt) <input type="datetime-local" name="ab"></label>
+    <button type="submit">Einsatz eintragen</button>
+  </form>
+  <p class="u-hint-sm">Ein offener früherer Einsatz des Knotens endet damit. Danach werden wartende Pakete des Knotens automatisch verarbeitet.</p>
+</section>
+
+<section id="zugaenge">
+  <h2>5. Zugangsschlüssel der Bridges</h2>
+  <table>
+    <tr><th>Nr.</th><th>Bridge</th><th>Bezeichnung</th><th>angelegt</th><th>zuletzt genutzt</th><th>Stand</th><th></th></tr>
+    {% for k in zugaenge %}
+    <tr><td>{{ k.id }}</td><td>{{ k.device_serial }}</td><td>{{ k.label or '' }}</td><td>{{ k.created_at.strftime('%d.%m.%Y') }}</td>
+        <td>{{ k.last_used_at.strftime('%d.%m.%Y %H:%M') if k.last_used_at else 'nie' }}</td>
+        <td>{{ 'widerrufen ' ~ k.revoked_at.strftime('%d.%m.%Y') if k.revoked_at else 'aktiv' }}</td>
+        <td>{% if not k.revoked_at %}
+          <form method="POST" class="u-inline js-confirm-submit" data-confirm="Zugangsschlüssel Nr. {{ k.id }} von {{ k.device_serial }} widerrufen? Die Bridge kann dann nichts mehr liefern, bis sie einen neuen Schlüssel hat.">
+            <input type="hidden" name="aktion" value="zugang_widerrufen"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="zugaenge">
+            <input type="hidden" name="geraet" value="{{ k.device_serial }}"><input type="hidden" name="nr" value="{{ k.id }}">
+            <button type="submit" class="bc-klein">widerrufen</button>
+          </form>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="7">Noch keine Zugangsschlüssel.</td></tr>{% endfor %}
+  </table>
+  <form method="POST" class="bc-form">
+    <input type="hidden" name="aktion" value="zugang"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="zugaenge">
+    <label>Bridge <select name="geraet" required>{% for g in u.geraete if g.device_role == 'BRIDGE' %}<option>{{ g.device_serial }}</option>{% endfor %}</select></label>
+    <label class="bc-breit">Bezeichnung (optional) <input name="bezeichnung" placeholder="z. B. Bridge Garten, Okt. 2026"></label>
+    <button type="submit">Neuen Schlüssel erzeugen</button>
+  </form>
+</section>
+
+<section id="signaturen">
+  <h2>6. Signaturschlüssel der Messknoten</h2>
+  <table>
+    <tr><th>Nr.</th><th>Messknoten</th><th>Schlüssel</th><th>Bezeichnung</th><th>signierte Pakete</th><th>Stand</th><th></th></tr>
+    {% for k in signaturen %}
+    <tr><td>{{ k.id }}</td><td>{{ k.device_serial }}</td><td><code title="{{ k.pub }}">{{ k.pub[:16] }}…</code></td><td>{{ k.label or '' }}</td>
+        <td>{{ k.pakete }}</td><td>{{ 'widerrufen ' ~ k.revoked_at.strftime('%d.%m.%Y') if k.revoked_at else 'aktiv' }}</td>
+        <td>{% if not k.revoked_at %}
+          <form method="POST" class="u-inline js-confirm-submit" data-confirm="Signaturschlüssel Nr. {{ k.id }} von {{ k.device_serial }} widerrufen? Pakete mit diesem Schlüssel werden ab sofort abgelehnt.">
+            <input type="hidden" name="aktion" value="signatur_widerrufen"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="signaturen">
+            <input type="hidden" name="geraet" value="{{ k.device_serial }}"><input type="hidden" name="nr" value="{{ k.id }}">
+            <button type="submit" class="bc-klein">widerrufen</button>
+          </form>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="7">Noch keine Signaturschlüssel.</td></tr>{% endfor %}
+  </table>
+  <form method="POST" class="bc-form">
+    <input type="hidden" name="aktion" value="signatur"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="signaturen">
+    <label>Messknoten <select name="geraet" required>{% for g in u.geraete if g.device_role == 'NODE' %}<option>{{ g.device_serial }}</option>{% endfor %}</select></label>
+    <label class="bc-breit">Öffentlicher Schlüssel (Ed25519, 64 Hex-Zeichen) <input name="public_key" required pattern="[0-9a-fA-F]{64}" placeholder="gibt die Firmware bei der Einrichtung per USB aus"></label>
+    <label>Bezeichnung (optional) <input name="bezeichnung" placeholder="z. B. Platine 3"></label>
+    <button type="submit">Schlüssel registrieren</button>
+  </form>
+  {% if schema == 'live' %}<p class="u-hint-sm">Im Schema live nimmt der Server nur signierte Pakete an: ohne registrierten Schlüssel wird jedes Paket des Knotens abgelehnt.</p>{% endif %}
+</section>
+
+<section id="wartende">
+  <h2>7. Wartende Pakete</h2>
+  <p>{{ lage.wartend }} Pakete warten auf ihren Messlauf (meist fehlt noch das Startpaket oder der Einsatz).</p>
+  <form method="POST" class="u-inline">
+    <input type="hidden" name="aktion" value="wartende"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="wartende">
+    <button type="submit">Wartende erneut versuchen</button>
+  </form>
+</section>
+
+<section id="konflikte">
+  <h2>8. Offene Konflikte</h2>
+  {% if u.konflikte %}
+  <table>
+    <tr><th>Messlauf</th><th>Sequenz</th><th>Kandidat (Batch)</th><th>angelegt</th><th>Anlieferungen</th><th>Verweise von Nachfolgern</th></tr>
+    {% for k in u.konflikte %}
+    <tr><td>{{ k.lauf }}</td><td>{{ k.sequenz }}</td><td>{{ k.batch }}</td><td>{{ k.angelegt.strftime('%d.%m.%Y %H:%M') }}</td><td>{{ k.anlieferungen }}</td><td>{{ k.nachfolger_verweise }}</td></tr>
+    {% endfor %}
+  </table>
+  <form method="POST" class="bc-form js-confirm-submit" data-confirm="Diesen Kandidaten als gültig festlegen? Die anderen Kandidaten des Platzes gehen in Quarantäne (werden nicht gelöscht). Die Entscheidung wird protokolliert.">
+    <input type="hidden" name="aktion" value="konflikt"><input type="hidden" name="schema" value="{{ schema }}"><input type="hidden" name="anker" value="konflikte">
+    <label>Gewinner (Batch) <select name="batch" required>{% for k in u.konflikte %}<option value="{{ k.batch }}">Batch {{ k.batch }} (Lauf {{ k.lauf }}, Seq. {{ k.sequenz }})</option>{% endfor %}</select></label>
+    <label class="bc-breit">Begründung <input name="grund" required placeholder="z. B. Kandidat von der SD-Karte, Funkpaket beschädigt"></label>
+    <button type="submit">Als gültig festlegen</button>
+  </form>
+  {% else %}<p>Keine offenen Konflikte.</p>{% endif %}
+</section>
+
+{% endif %}
+{% endblock %}

@@ -167,17 +167,51 @@ def register_cli(app):
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
     def biocomm_geraet(seriennummer, rolle, notiz, schema):
         """Registriert einen Messknoten oder eine Bridge (Seriennummer wie in der Firmware)."""
-        from omn.eingang.einlesen import sql
+        from omn.eingang.verwaltung import geraet_anlegen
         from omn.extensions import db
 
-        with db.engine.begin() as c:
-            da = c.execute(sql(schema, 'SELECT device_role FROM {s}.device WHERE device_serial = :g'),
-                           {'g': seriennummer}).scalar()
-            if da:
-                raise click.ClickException(f'{seriennummer} ist schon registriert ({da})')
-            c.execute(sql(schema, 'INSERT INTO {s}.device (device_serial, device_role, note) VALUES (:g, :r, :n)'),
-                      {'g': seriennummer, 'r': rolle, 'n': notiz})
+        try:
+            geraet_anlegen(db.engine, schema, seriennummer, rolle, notiz)
+        except ValueError as e:
+            raise click.ClickException(str(e))
         click.echo(f'{rolle} {seriennummer} in {schema} registriert.')
+
+    @app.cli.command('biocomm-standort')
+    @click.argument('code')
+    @click.option('--breite', required=True, help='Breitengrad (WGS84), z. B. 50.64 -- wird nur fuer das Rasterfeld genutzt.')
+    @click.option('--laenge', required=True, help='Laengengrad (WGS84), z. B. 9.05.')
+    @click.option('--zeitzone', required=True, help='IANA-Zeitzone, z. B. Europe/Berlin.')
+    @click.option('--hoehe', default=None, help='Hoehe in Metern (wird auf 10 m gerundet).')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_standort(code, breite, laenge, zeitzone, hoehe, schema):
+        """Legt einen Standort an. Gespeichert wird nur das 10-km-Rasterfeld, nicht die Koordinaten."""
+        from omn.eingang.verwaltung import standort_anlegen
+        from omn.extensions import db
+
+        try:
+            zelle = standort_anlegen(db.engine, schema, code, breite, laenge, zeitzone, hoehe)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+        click.echo(f'Standort {code} ({schema}) angelegt: Rasterfeld {zelle}, Zeitzone {zeitzone}.'
+                   ' Die Koordinaten wurden nicht gespeichert.')
+
+    @app.cli.command('biocomm-reihe')
+    @click.argument('code')
+    @click.option('--standort', 'site_code', required=True)
+    @click.option('--substrat', required=True, help='SOIL, WOOD_CHIPS, COMPOST, STRAW, AQUATIC oder OTHER.')
+    @click.option('--titel', required=True)
+    @click.option('--kontext', default=None, help='Versuchskontext (frei).')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_reihe(code, site_code, substrat, titel, kontext, schema):
+        """Legt eine Messreihe an einem Standort an (danach flask biocomm-einsatz)."""
+        from omn.eingang.verwaltung import reihe_anlegen
+        from omn.extensions import db
+
+        try:
+            reihe_anlegen(db.engine, schema, code, site_code, substrat, titel, kontext=kontext)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+        click.echo(f'Messreihe {code} ({schema}) am Standort {site_code} angelegt.')
 
     @app.cli.command('biocomm-einsatz')
     @click.option('--geraet', 'seriennummer', required=True, help='Seriennummer des Messknotens.')
@@ -190,28 +224,18 @@ def register_cli(app):
         """Ordnet einen Messknoten ab einem Zeitpunkt einer Messreihe zu; danach werden wartende Pakete verarbeitet."""
         from datetime import datetime, timezone
 
-        from omn.eingang.einlesen import sql, wartende_erneut
+        from omn.eingang.verwaltung import einsatz_setzen
         from omn.extensions import db
 
         ab = datetime.fromisoformat(ab_text) if ab_text else datetime.now(timezone.utc)
         if ab.tzinfo is None:
             raise click.UsageError('--ab braucht eine Zeitzone, z. B. 2026-10-01T08:00:00+02:00')
-        with db.engine.begin() as c:
-            geraet = c.execute(sql(schema, "SELECT id FROM {s}.device WHERE device_serial = :g AND device_role = 'NODE'"),
-                               {'g': seriennummer}).scalar()
-            serie = c.execute(sql(schema, 'SELECT id FROM {s}.series WHERE series_code = :c'), {'c': series_code}).scalar()
-            if geraet is None or serie is None:
-                raise click.ClickException('Messknoten oder Messreihe unbekannt')
-            c.execute(sql(schema, 'UPDATE {s}.device_deployment SET valid_to = :a'
-                                  ' WHERE device_id = :d AND valid_to IS NULL AND valid_from < :a'), {'a': ab, 'd': geraet})
-            try:
-                with c.begin_nested():
-                    c.execute(sql(schema, 'INSERT INTO {s}.device_deployment (device_id, series_id, valid_from)'
-                                          ' VALUES (:d, :s, :a)'), {'d': geraet, 's': serie, 'a': ab})
-            except Exception as e:
-                raise click.ClickException(f'Einsatz ueberschneidet sich mit einem bestehenden ({type(e).__name__})')
+        try:
+            ergebnis = einsatz_setzen(db.engine, schema, seriennummer, series_code, ab)
+        except ValueError as e:
+            raise click.ClickException(str(e))
         click.echo(f'{seriennummer} misst ab {ab.isoformat()} fuer {series_code}.')
-        _wartende_melden(wartende_erneut(db.engine, schema, seriennummer))
+        _wartende_melden(ergebnis)
 
     @app.cli.command('biocomm-schluessel')
     @click.argument('seriennummer')

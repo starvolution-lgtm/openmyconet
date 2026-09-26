@@ -1,0 +1,16 @@
+/* BioComm-Verwaltung im Admin (admin_biocomm.html). Farben aus admin.css (:root). */
+.bc-schema { display: flex; gap: 0.6rem; margin: 0.4rem 0 0.8rem; flex-wrap: wrap; }
+.bc-schema a { padding: 0.35rem 0.8rem; border: 1px solid var(--line, #ccc); border-radius: 6px; text-decoration: none; }
+.bc-schema a[aria-current="true"] { background: var(--accent, #3d6b4a); color: #fff; border-color: transparent; }
+section[id] { margin: 1.8rem 0; scroll-margin-top: 1rem; }
+.bc-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.6rem 0.9rem; align-items: end; margin-top: 0.9rem; }
+.bc-form label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.88rem; margin: 0; }
+.bc-form .bc-breit { grid-column: span 2; }
+.bc-form button { justify-self: start; }
+.bc-klein { font-size: 0.8rem; padding: 0.2rem 0.55rem; }
+.bc-kacheln { list-style: none; padding: 0; margin: 0.5rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5rem; }
+.bc-kacheln li { background: var(--ground-raised, #fff); border: 1px solid var(--line, #ddd); border-radius: 8px; padding: 0.55rem 0.8rem; font-size: 0.9rem; }
+.bc-kacheln span { color: #777; font-size: 0.82rem; }
+.bc-schluessel { margin: 1rem 0; padding: 0.9rem 1.1rem; border: 2px solid var(--blocked, #a33b2e); border-radius: 8px; background: var(--blocked-bg, #f3ded9); }
+.bc-schluessel code { display: block; margin: 0.5rem 0; font-size: 1.05rem; word-break: break-all; user-select: all; }
+@media (max-width: 640px) { .bc-form .bc-breit { grid-column: auto; } }

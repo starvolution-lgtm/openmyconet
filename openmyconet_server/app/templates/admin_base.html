@@ -25,6 +25,7 @@
       <a href="{{ url_for('admin.news_admin') }}">📰 News</a>
       {% if session.admin_role == 'superadmin' %}
       <a href="{{ url_for('admin.knoten_admin') }}">📡 Knoten</a>
+      <a href="{{ url_for('admin.biocomm_admin') }}">🧬 BioComm</a>
       <a href="{{ url_for('admin.bewerbungen_admin') }}">🗺️ Bewerbungen</a>
       <a href="{{ url_for('admin.kontakt_admin') }}">✉️ Kontakt</a>
       <a href="{{ url_for('kontrollzentrum.kontrollzentrum') }}">🚦 Kontrollzentrum</a>

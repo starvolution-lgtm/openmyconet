@@ -198,6 +198,16 @@ SD_IMPORT|LORA|BLE|USB] [--bridge SERIAL] [--verdichten]`, `flask biocomm-verdic
 [--schema] [--lauf ID] [--voll] [--funkstille-stunden N] [--still]`, `flask biocomm-konflikt`, `flask biocomm-testpakete <ordner> --name X`,
 `flask biocomm-geraet SERIAL [--rolle NODE|BRIDGE]`, `flask biocomm-einsatz --geraet S
 --serie CODE [--ab ISO]` (beendet offenen Einsatz, verarbeitet danach Wartende),
+`flask biocomm-standort CODE --breite --laenge --zeitzone [--hoehe]` (speichert nur das
+10-km-MGRS-Rasterfeld, `omn/eingang/raster.py`, reine Python-Rechnung, gegen die Sandbox-
+Standorte getestet; Koordinaten werden verworfen, `*_private` schreibt nur `omn_geo`),
+`flask biocomm-reihe CODE --standort --substrat --titel [--kontext]`. Logik gemeinsam mit der
+**Admin-Maske `/admin/biocomm`** (seit 26.09.2026, `omn/admin/biocomm.py`, nur Superadmin,
+Schema live/sandbox umschaltbar): Standorte, Messreihen, Geräte, Einsätze (Ortszeit
+Europe/Berlin), Zugangsschlüssel der Bridges (neuer Schlüssel nur einmal in der Antwort, nie in
+Session/Flash), Signaturschlüssel der Knoten, wartende Pakete, offene Konflikte (Auflösung mit
+Begründung, protokolliert mit dem Admin-Namen) plus Lagebericht; in `omn/eingang/verwaltung.py`.
+Tests `tests/test_admin_biocomm.py`.
 `flask biocomm-wartende` (die drei letzten mit `--schema`, Standard `live`).
 **Empfangsweg (seit 26.09.2026, `empfang.py`, Vertrag `docs/dateneingang_empfang.md`):**
 `POST /api/v2/biocomm/paket`, ein Paket je Anfrage, `Authorization: Bearer <Schlüssel der
