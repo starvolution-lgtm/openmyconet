@@ -250,6 +250,23 @@ def register_cli(app):
         click.echo('Er wird NUR JETZT angezeigt und steht nirgends auf dem Server (nur sein Fingerabdruck).')
         click.echo('In die Bridge eintragen und sicher aufbewahren; bei Verlust widerrufen und neu anlegen.')
 
+    @app.cli.command('dashboard-anmeldelink')
+    @click.argument('email')
+    @click.option('--weiter', default=None, help='Seite nach dem Login, z. B. /dashboard/datenlabor.')
+    def dashboard_anmeldelink(email, weiter):
+        """Einmaligen Login-Link fuers Nutzer-Dashboard ausgeben (ohne Mail).
+
+        Fuer den Direktzugang aus dem lokalen MCC: der Aufruf braucht den
+        SSH-Zugang zum Server. Nur bestaetigte Nutzer; gibt NUR den Link aus."""
+        from omn.dashboard import LINK_GUELTIG_MINUTEN, anmeldelink_erzeugen
+        from omn.models import Nutzer
+
+        nutzer = Nutzer.query.filter(Nutzer.email == email.strip().lower(), Nutzer.bestaetigt.is_(True)).first()
+        if nutzer is None:
+            raise click.ClickException('Kein bestaetigter Nutzer mit dieser E-Mail-Adresse.')
+        click.echo(anmeldelink_erzeugen(nutzer, weiter))
+        click.echo(f'(einmal nutzbar, {LINK_GUELTIG_MINUTEN} Minuten gueltig)', err=True)
+
     @app.cli.command('biocomm-knotenschluessel')
     @click.argument('seriennummer')
     @click.option('--ed25519', 'public_key', default=None,

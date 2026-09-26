@@ -78,16 +78,36 @@ def _versand_hinweis():
     return 'Falls diese E-Mail-Adresse registriert und bestätigt ist, wurde gerade ein Login-Link verschickt.'
 
 
+def anmeldelink_erzeugen(nutzer, weiter=None):
+    """Einmaliger Login-Link (LINK_GUELTIG_MINUTEN gueltig). Fuer die Mail
+    und fuer `flask dashboard-anmeldelink` (Direktzugang aus dem lokalen MCC
+    ueber den SSH-Schluessel). `weiter` = Ziel nach dem Login, nur Seiten des
+    Dashboards (siehe _sicheres_ziel)."""
+    nutzer.login_token = secrets.token_urlsafe(32)
+    nutzer.login_token_angefordert_am = utcnow()
+    db.session.commit()
+    base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
+    link = f'{base_url}/dashboard/auth/{nutzer.login_token}'
+    ziel = _sicheres_ziel(weiter)
+    return f'{link}?weiter={ziel}' if ziel else link
+
+
+def _sicheres_ziel(weiter):
+    """Nur Pfade des eigenen Dashboards, keine fremden Adressen (kein offener Redirect)."""
+    if not weiter or not isinstance(weiter, str):
+        return None
+    if not weiter.startswith('/dashboard/') or '//' in weiter or '\\' in weiter or ':' in weiter:
+        return None
+    if not all((c.isascii() and c.isalnum()) or c in '/-_' for c in weiter):
+        return None
+    return weiter
+
+
 def _link_anfordern(email):
     nutzer = Nutzer.query.filter_by(email=email, bestaetigt=True).first()
     if not nutzer:
         return
-    nutzer.login_token = secrets.token_urlsafe(32)
-    nutzer.login_token_angefordert_am = utcnow()
-    db.session.commit()
-
-    base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
-    link = f'{base_url}/dashboard/auth/{nutzer.login_token}'
+    link = anmeldelink_erzeugen(nutzer)
     msg = Message(subject='OpenMycoNet — Dein Login-Link', recipients=[email])
     msg.body = f'''Hallo {nutzer.name},
 
@@ -136,7 +156,7 @@ def auth(token):
 
     session['nutzer_logged_in'] = True
     session['nutzer_id'] = nutzer.id
-    return redirect(url_for('dashboard.home'))
+    return redirect(_sicheres_ziel(request.args.get('weiter')) or url_for('dashboard.home'))
 
 
 @dashboard_bp.route('/dashboard/logout')
