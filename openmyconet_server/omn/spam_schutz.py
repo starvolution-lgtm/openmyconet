@@ -15,16 +15,15 @@ import time
 RATE_DIR = os.path.join(tempfile.gettempdir(), 'omn_rl')
 
 
-def ip_erlaubt(ip, key, limit=5, window=3600):
-    """True, wenn unter dem Limit — zählt die Anfrage dabei gleich mit."""
-    os.makedirs(RATE_DIR, exist_ok=True)
+def _rate_datei(ip, key):
     ip = re.sub(r'[^a-fA-F0-9:.]', '', ip or '0')
     # MD5 nur als kurzer, dateisystemsicherer Name fuer die Rate-Limit-Datei --
     # keine Sicherheitsfunktion (kein Passwort-Hash, keine Integritaetspruefung).
     schluessel = hashlib.md5(f'{ip}_{key}'.encode(), usedforsecurity=False).hexdigest()
-    rate_file = os.path.join(RATE_DIR, schluessel + '.json')
+    return os.path.join(RATE_DIR, schluessel + '.json')
 
-    now = time.time()
+
+def _log_lesen(rate_file, window, now):
     log = []
     if os.path.exists(rate_file):
         try:
@@ -32,7 +31,21 @@ def ip_erlaubt(ip, key, limit=5, window=3600):
                 log = json.load(f)
         except (json.JSONDecodeError, OSError):
             log = []
-    log = [t for t in log if t > now - window]
+    return [t for t in log if t > now - window]
+
+
+def ip_gesperrt(ip, key, limit=5, window=3600):
+    """True, wenn das Limit erreicht ist -- zaehlt NICHT mit (z. B. vor einer
+    Pruefung, bei der nur Fehlversuche zaehlen sollen)."""
+    return len(_log_lesen(_rate_datei(ip, key), window, time.time())) >= limit
+
+
+def ip_erlaubt(ip, key, limit=5, window=3600):
+    """True, wenn unter dem Limit — zählt die Anfrage dabei gleich mit."""
+    os.makedirs(RATE_DIR, exist_ok=True)
+    rate_file = _rate_datei(ip, key)
+    now = time.time()
+    log = _log_lesen(rate_file, window, now)
 
     if len(log) >= limit:
         return False

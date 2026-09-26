@@ -100,7 +100,10 @@ einmal in `biocomm_common.core_0002` für beide Kerne (versionierte Aggregate, S
 `derived_aggregate_current`, `candidate_resolution_log`, `kandidat_festlegen`, Index auf
 `batch_delivery`), siehe Dateneingang. **Schema v3** (Migration `4b7c9e2d1f35`, `biocomm_0003_*.sql`,
 `core_0003`): `device_deployment` (Einsatz Gerät → Messreihe, historisiert, nur `valid_to`
-änderbar) und `delivery_waiting` (zurückgestellte Pakete). Nächste Änderung = `biocomm_0004_…`.
+änderbar) und `delivery_waiting` (zurückgestellte Pakete). **Schema v4** (Migration
+`5c8d0f3a2e46`, `biocomm_0004_*.sql`, `core_0004`): `device_credential` (Zugangsschlüssel
+je Gerät, nur SHA-256-Fingerabdruck, nur `revoked_at`/`last_used_at` änderbar). Nächste
+Änderung = `biocomm_0005_…`.
 
 **Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
 [--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen
@@ -183,7 +186,15 @@ SD_IMPORT|LORA|BLE|USB] [--bridge SERIAL] [--verdichten]`, `flask biocomm-verdic
 `flask biocomm-geraet SERIAL [--rolle NODE|BRIDGE]`, `flask biocomm-einsatz --geraet S
 --serie CODE [--ab ISO]` (beendet offenen Einsatz, verarbeitet danach Wartende),
 `flask biocomm-wartende` (die drei letzten mit `--schema`, Standard `live`).
-Kein HTTP-Endpunkt (Geräte-Authentifizierung offen). Tests: `tests/test_dateneingang.py`
+**Empfangsweg (seit 26.09.2026, `empfang.py`, Vertrag `docs/dateneingang_empfang.md`):**
+`POST /api/v2/biocomm/paket`, ein Paket je Anfrage, `Authorization: Bearer <Schlüssel der
+Bridge>` (Schlüssel bestimmt Gerät und Schema live/sandbox), `X-OMN-Transport`
+LORA/BLE/USB, optional `X-OMN-Empfangen` (µs seit 1970) und `X-OMN-Referenz`. 200 =
+endgültig (auch REJECTED/WARTET; erneutes Senden → SCHON_EINGELESEN), 4xx = Fehler der
+Bridge, 429/5xx = später erneut. Sperre je IP nach 20 Fehlversuchen/Stunde
+(`spam_schutz.ip_gesperrt` zählt nicht mit). Schlüssel: `flask biocomm-schluessel SERIAL
+[--liste|--widerrufen NR]` (einmal angezeigt). Node-Signaturen werden gelesen, noch nicht
+geprüft. Tests: `tests/test_empfang.py`, `tests/test_dateneingang.py`
 (nur PG; legt fehlende Rollen `omn_owner`/`omn_geo`/`omn` als NOLOGIN an, stellt die
 Grundrechte des Rollen-Skripts nach und prüft den Weg mit `SET ROLE omn`).
 
@@ -372,7 +383,10 @@ Session-Token (Feld `_csrf` oder Header `X-CSRFToken`). `admin_base.html` /
 `dashboard_base.html` hängen es per Skript an jedes `<form method=post>` an, neue
 Formulare brauchen also nichts. Bewusst NICHT CSRF-geschützt: `/api/register`,
 `/api/bewerbung`, `/api/chat` (cross-origin fetch von der statischen Website),
-`/foerderer/ipn` (PayPal), `/api/v1/messung`. Tests: `CSRF_ENABLED=False`
+`/foerderer/ipn` (PayPal), `/api/v1/messung`, `/api/v2/biocomm/paket` (Bridges, eigener
+Schlüssel). **ProxyFix mit `x_for=1` (seit 26.09.2026):** `request.remote_addr` ist die
+echte Absender-IP aus nginx' `X-Forwarded-For`; vorher war sie immer 127.0.0.1, alle
+„je IP“-Grenzen galten für alle Besucher gemeinsam. Tests: `CSRF_ENABLED=False`
 in conftest, eigener Nachweis in `test_csrf.py`.
 
 `/api/v1/messung` (Geräte-Dateneingang) authentifiziert per **`Knoten.api_key`**

@@ -29,6 +29,7 @@ from omn.kontakt import kontakt_bp
 from omn.registrierung import registrierung_bp
 from omn.dashboard import dashboard_bp
 from omn.datenlabor import datenlabor_bp
+from omn.eingang.empfang import empfang_bp
 from omn.site_preview import site_preview_bp
 from omn.site_live import site_live_bp
 from omn.foerderer import foerderer_bp
@@ -54,7 +55,13 @@ def create_app(config=None, instance_path=None):
 
     # nginx laeuft als HTTPS-Reverse-Proxy vor gunicorn -- ohne ProxyFix haelt
     # Flask jede Anfrage fuer HTTP (falsche http:// URLs bei _external=True).
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+    # x_for=1 (seit 26.09.2026): request.remote_addr = echte Absender-IP aus dem
+    # X-Forwarded-For, das nginx setzt. Vorher war remote_addr immer 127.0.0.1,
+    # alle "je IP"-Grenzen (spam_schutz: Registrierung, Login-Link, Kontakt,
+    # Chatbot, Empfangsweg) galten damit fuer ALLE Besucher gemeinsam. Genau ein
+    # Proxy davor (nginx), gunicorn lauscht nur auf 127.0.0.1 -- der Header ist
+    # also nicht von aussen faelschbar.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     app.config.from_object(config or Config)
 
@@ -86,6 +93,7 @@ def create_app(config=None, instance_path=None):
     app.register_blueprint(registrierung_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(datenlabor_bp)
+    app.register_blueprint(empfang_bp)
     app.register_blueprint(site_preview_bp)
     app.register_blueprint(site_live_bp)
     app.register_blueprint(foerderer_bp)

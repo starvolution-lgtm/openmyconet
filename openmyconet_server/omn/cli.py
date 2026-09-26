@@ -203,6 +203,43 @@ def register_cli(app):
         click.echo(f'{seriennummer} misst ab {ab.isoformat()} fuer {series_code}.')
         _wartende_melden(wartende_erneut(db.engine, schema, seriennummer))
 
+    @app.cli.command('biocomm-schluessel')
+    @click.argument('seriennummer')
+    @click.option('--bezeichnung', default=None, help='Notiz zum Schluessel, z. B. "Bridge Garten, Okt. 2026".')
+    @click.option('--liste', is_flag=True, help='Schluessel des Geraets anzeigen (ohne den Schluessel selbst).')
+    @click.option('--widerrufen', 'widerrufen_id', type=int, default=None, help='Schluessel mit dieser Nummer sperren.')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    def biocomm_schluessel(seriennummer, bezeichnung, liste, widerrufen_id, schema):
+        """Zugangsschluessel fuer den Empfangsweg einer Bridge anlegen, anzeigen oder widerrufen."""
+        from omn.eingang.empfang import schluessel_anlegen, schluessel_liste, schluessel_widerrufen
+        from omn.extensions import db
+
+        if liste:
+            zeilen = schluessel_liste(db.engine, schema, seriennummer)
+            if not zeilen:
+                click.echo('Keine Schluessel.')
+            for z in zeilen:
+                stand = f'widerrufen {z.revoked_at:%Y-%m-%d %H:%M}' if z.revoked_at else 'aktiv'
+                zuletzt = f'{z.last_used_at:%Y-%m-%d %H:%M}' if z.last_used_at else 'nie'
+                click.echo(f'Nr. {z.id}: {stand}, angelegt {z.created_at:%Y-%m-%d %H:%M}, zuletzt genutzt {zuletzt}'
+                           + (f' ({z.label})' if z.label else ''))
+            return
+        if widerrufen_id is not None:
+            if not schluessel_widerrufen(db.engine, schema, seriennummer, widerrufen_id):
+                raise click.ClickException('Schluessel nicht gefunden oder schon widerrufen')
+            click.echo(f'Schluessel Nr. {widerrufen_id} von {seriennummer} ist widerrufen.')
+            return
+        try:
+            kid, schluessel = schluessel_anlegen(db.engine, schema, seriennummer, bezeichnung)
+        except ValueError as e:
+            raise click.ClickException(str(e))
+        click.echo(f'Neuer Schluessel Nr. {kid} fuer {seriennummer} ({schema}):')
+        click.echo('')
+        click.echo(f'    {schluessel}')
+        click.echo('')
+        click.echo('Er wird NUR JETZT angezeigt und steht nirgends auf dem Server (nur sein Fingerabdruck).')
+        click.echo('In die Bridge eintragen und sicher aufbewahren; bei Verlust widerrufen und neu anlegen.')
+
     @app.cli.command('biocomm-wartende')
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
     def biocomm_wartende(schema):
