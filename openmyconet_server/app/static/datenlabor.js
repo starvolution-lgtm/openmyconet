@@ -203,6 +203,8 @@
       (sc.stimulationsparameter ? ' – ' + sc.stimulationsparameter : '');
     $('dl-kontrolle').disabled = !kontrollReihe();
     if ($('dl-kontrolle').disabled) $('dl-kontrolle').checked = false;
+    // ausgegraut ohne Erklaerung waere raetselhaft: Hinweis am Kaestchen
+    $('dl-kontrolle').parentNode.title = $('dl-kontrolle').disabled ? T.kontrolle_fehlt : '';
   }
 
   function rohstundenZeigen() {
@@ -229,11 +231,31 @@
     }
     var ms = Date.parse(r.roh_stunden[Math.min(i, r.roh_stunden.length - 1)]);
     st.ansicht = 'tag'; st.von = lokalerTagesbeginn(ms, r.zeitzone);
-    // ohne Stimulation: 1 min nach der vollen Stunde (hh:00:00-00:35 ist die
-    // planmaessige Messpause fuer die Leitfaehigkeitsmessung)
-    var mitStim = aktSzenario().reihen.some(function (x) { return x.mit_stimulation; });
-    st.rohVon = ms + (mitStim ? 15 * MINUTE - 2000 : MINUTE);
+    st.rohVon = rohStart(ms);
     ladeReihe(); ladeRoh();
+  }
+
+  // Beginn des Rohfensters in einer Rohdatenstunde: mit Stimulation auf die
+  // erste Stimulation (10:15 Uhr), sonst 1 min nach der vollen Stunde
+  // (hh:00:00-00:35 ist die planmaessige Messpause fuer die Leitfaehigkeitsmessung)
+  function rohStart(stundeMs) {
+    var mitStim = aktSzenario().reihen.some(function (x) { return x.mit_stimulation; });
+    return stundeMs + (mitStim ? 15 * MINUTE - 2000 : MINUTE);
+  }
+
+  // Noch kein Rohfenster gewaehlt: liegt eine Rohdatenstunde im gezeigten
+  // Zeitraum, diese laden (z. B. beim Oeffnen ueber einen Link mit Datum),
+  // sonst im leeren Feld erklaeren, wie man zu Rohdaten kommt.
+  function rohNachholen(zr) {
+    if (st.rohVon !== null) return;
+    var r = aktReihe();
+    var h = r.roh_stunden.map(Date.parse).filter(function (t) { return t >= zr[0] && t < zr[1]; })[0];
+    if (h !== undefined) { st.rohVon = rohStart(h); return ladeRoh(); }
+    var box = $('dl-roh-chart'), p = document.createElement('p');
+    box.textContent = ''; p.className = 'dl-leer-chart';
+    p.textContent = r.roh_stunden.length ? T.roh_leer : T.roh_keine_stunden;
+    box.appendChild(p);
+    $('dl-roh-zeit').textContent = ''; $('dl-roh-meta').textContent = ''; $('dl-roh-technik').textContent = '';
   }
 
   // ------------------------------------------------------------ Zeitraum ---
@@ -300,6 +322,7 @@
       if (nr !== abrufNr) return;
       zeichneReihe(res[0], res[1] || null, zr, r.zeitzone);
       ereignisseZeigen(res[0], r.zeitzone);
+      rohNachholen(zr);
     }).catch(function (e) {
       if (nr !== abrufNr) return;
       fehlerIn($('dl-chart'), e.message);
@@ -685,7 +708,8 @@
   function verdrahten() {
     $('dl-szenario').addEventListener('change', function () { st.szenario = this.value; st.von = null; reihenFuellen(); });
     $('dl-reihe').addEventListener('change', function () {
-      st.reihe = +this.value; kanaeleFuellen(); infoZeigen(); rohstundenZeigen(); ladeReihe(); ladeRoh();
+      st.reihe = +this.value; kanaeleFuellen(); infoZeigen(); rohstundenZeigen(); ladeReihe();
+      if (st.rohVon !== null) ladeRoh();
     });
     $('dl-kanal').addEventListener('change', function () { st.kanal = this.value; infoZeigen(); ladeReihe(); });
     $('dl-f-substrat').addEventListener('change', szenarienFuellen);

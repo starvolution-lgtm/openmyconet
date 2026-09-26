@@ -136,7 +136,10 @@
       "roh_kompression": " · Kompression {k}",
       "roh_lsb": " · LSB {x} µV",
       "roh_gain": " · Verstärkung {g} ({q})",
-      "roh_umrechnung": " · Umrechnung: Zählwert × LSB ÷ Verstärkung"
+      "roh_umrechnung": " · Umrechnung: Zählwert × LSB ÷ Verstärkung",
+      "roh_leer": "Noch kein Ausschnitt gewählt. Die Simulation speichert Rohdaten nur für einzelne Stunden (je Jahreszeit eine, 10–11 Uhr Ortszeit) – wähle oben unter „Stunden mit Rohdaten“ eine aus.",
+      "roh_keine_stunden": "Für diese Messreihe sind keine Rohdaten gespeichert.",
+      "kontrolle_fehlt": "Eine Kontrollreihe gibt es nur in den Szenarien mit Stimulation."
     },
     "kanaele": {
       "bioelectric_potential": "Bioelektrisches Potential",
@@ -292,7 +295,10 @@
       "roh_kompression": " · compression {k}",
       "roh_lsb": " · LSB {x} µV",
       "roh_gain": " · gain {g} ({q})",
-      "roh_umrechnung": " · conversion: count × LSB ÷ gain"
+      "roh_umrechnung": " · conversion: count × LSB ÷ gain",
+      "roh_leer": "No excerpt selected yet. The simulation stores raw data only for individual hours (one per season, 10–11 local time) – choose one above under “Hours with raw data”.",
+      "roh_keine_stunden": "No raw data is stored for this measurement series.",
+      "kontrolle_fehlt": "A control series only exists in the scenarios with stimulation."
     },
     "kanaele": {
       "bioelectric_potential": "Bioelectric potential",
@@ -485,7 +491,10 @@
       "roh_kompression": " · compressie {k}",
       "roh_lsb": " · LSB {x} µV",
       "roh_gain": " · versterking {g} ({q})",
-      "roh_umrechnung": " · omrekening: telwaarde × LSB ÷ versterking"
+      "roh_umrechnung": " · omrekening: telwaarde × LSB ÷ versterking",
+      "roh_leer": "Nog geen fragment gekozen. De simulatie slaat ruwe gegevens alleen voor afzonderlijke uren op (één per seizoen, 10–11 uur lokale tijd) – kies hierboven er een onder „Uren met ruwe gegevens”.",
+      "roh_keine_stunden": "Voor deze meetreeks zijn geen ruwe gegevens opgeslagen.",
+      "kontrolle_fehlt": "Een controlereeks bestaat alleen in de scenario’s met stimulatie."
     },
     "kanaele": {
       "bioelectric_potential": "Bio-elektrisch potentiaal",
@@ -678,7 +687,10 @@
       "roh_kompression": " · compression {k}",
       "roh_lsb": " · LSB {x} µV",
       "roh_gain": " · gain {g} ({q})",
-      "roh_umrechnung": " · conversion : valeur brute × LSB ÷ gain"
+      "roh_umrechnung": " · conversion : valeur brute × LSB ÷ gain",
+      "roh_leer": "Aucun extrait choisi pour l’instant. La simulation n’enregistre des données brutes que pour certaines heures (une par saison, de 10 h à 11 h heure locale) – choisis-en une ci-dessus sous « Heures avec données brutes ».",
+      "roh_keine_stunden": "Aucune donnée brute n’est enregistrée pour cette série de mesures.",
+      "kontrolle_fehlt": "Une série témoin n’existe que dans les scénarios avec stimulation."
     },
     "kanaele": {
       "bioelectric_potential": "Potentiel bioélectrique",
@@ -871,7 +883,10 @@
       "roh_kompression": " · compresión {k}",
       "roh_lsb": " · LSB {x} µV",
       "roh_gain": " · ganancia {g} ({q})",
-      "roh_umrechnung": " · conversión: valor bruto × LSB ÷ ganancia"
+      "roh_umrechnung": " · conversión: valor bruto × LSB ÷ ganancia",
+      "roh_leer": "Todavía no has elegido ningún extracto. La simulación solo guarda datos brutos de horas concretas (una por estación, de 10 a 11 h hora local): elige una arriba en «Horas con datos brutos».",
+      "roh_keine_stunden": "Para esta serie de medición no hay datos brutos guardados.",
+      "kontrolle_fehlt": "Solo hay serie de control en los escenarios con estimulación."
     },
     "kanaele": {
       "bioelectric_potential": "Potencial bioeléctrico",
