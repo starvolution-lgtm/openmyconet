@@ -66,6 +66,12 @@ GROUPS = [
         "q_s2_", "q_s3_", "q_ref3_", "q_ref4_", "q_ref5_", "q_ref6_",
         "q_ref7_", "q_ref08_", "q_ref15_", "q_ref22_",
     ]),
+    # eigener Abschnitt: der Abschnitt oben ist schon laenger als MAX_CHARS,
+    # angehaengte Quellen fielen sonst beim Kuerzen weg (26.09.2026)
+    ("reize-und-reaktionen", "q_s6_title", [
+        "q_s6_", "q_ref24_", "q_ref25_", "q_ref26_", "q_ref27_",
+        "q_ref28_", "q_ref29_", "q_ref30_", "q_ref31_",
+    ]),
     ("biocomm-plattform", "biocomm_teaser_h2", [
         "biocomm_teaser_", "bc_s1_", "bc_s2_", "bc_s3_", "bc_s4_", "bc_quote",
         "bc_intro", "bc_h1", "vision_biocomm_",
