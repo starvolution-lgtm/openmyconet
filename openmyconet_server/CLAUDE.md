@@ -352,6 +352,14 @@ PowerShell→ssh-Quoting-Falle mit `"`/`%{...}` kann so nicht zuschlagen):
 `ssh -i ~/.ssh/omn_deploy omn@77.42.64.162 'bash /home/omn/app/deploy/status.sh'`
 Neue Runtime-Dependency also einfach in `requirements.txt` eintragen, release.sh
 installiert sie beim Deploy.
+**`DEPLOYED_COMMIT` (seit 26.09.2026):** `local_deploy.ps1` und das MCC legen beim
+`git archive` die Datei `DEPLOYED_COMMIT` (voller Hash) per `--add-virtual-file` bei (bei
+`HEAD:<unterordner>` schreibt git den Commit sonst nicht ins Archiv); sie landet in
+`/home/omn/app(-staging)/DEPLOYED_COMMIT`. **`deploy/mcc_lage.sh`** (nur lesend, quote-frei)
+liefert dem lokalen MCC `schluessel=wert`-Zeilen: Units, HTTP intern/extern, deployte Commits,
+letzter Storage-Box- und lokaler Backup-Erfolg, Plattenbelegung und `biocomm_live=<JSON>` aus
+`flask biocomm-lage --json` (`omn/eingang/lage.py`: Anlieferungen 24 h je Status, wartend,
+offene Konflikte, letzte Anlieferung/Verdichtung, Knoten/Bridges/Läufe/Schlüssel).
 
 `deploy/deploy-exclude.txt` schützt vor `--delete`: `instance/`, `.env*`, `venv/`,
 `app/static/uploads/`, `*.log`, sowie **serververwaltete Grossmedien, die bewusst

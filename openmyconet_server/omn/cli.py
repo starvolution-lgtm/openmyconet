@@ -250,6 +250,30 @@ def register_cli(app):
         click.echo('Er wird NUR JETZT angezeigt und steht nirgends auf dem Server (nur sein Fingerabdruck).')
         click.echo('In die Bridge eintragen und sicher aufbewahren; bei Verlust widerrufen und neu anlegen.')
 
+    @app.cli.command('biocomm-lage')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='live', show_default=True)
+    @click.option('--json', 'als_json', is_flag=True, help='Maschinenlesbar (fuer das MCC).')
+    def biocomm_lage(schema, als_json):
+        """Lagebericht des Datenwegs: Anlieferungen 24 h, wartend, Konflikte, letzte Verdichtung (nur lesend)."""
+        import json
+
+        from omn.eingang.lage import lage
+        from omn.extensions import db
+
+        if db.engine.dialect.name != 'postgresql':
+            raise click.ClickException('BioComm gibt es nur auf PostgreSQL')
+        erg = lage(db.engine, schema)
+        if als_json:
+            click.echo(json.dumps(erg, ensure_ascii=False))
+            return
+        st = ', '.join(f'{k} {v}' for k, v in sorted(erg['status_24h'].items())) or 'keine'
+        click.echo(f"Schema {erg['schema']}: {erg['anlieferungen_24h']} Anlieferungen in 24 h ({st})")
+        click.echo(f"  wartend {erg['wartend']} · offene Konflikte {erg['konflikte_offen']}"
+                   f" · letzte Anlieferung {erg['letzte_anlieferung'] or '–'}"
+                   f" · letzte Verdichtung {erg['letzte_verdichtung'] or '–'}")
+        click.echo(f"  Messknoten {erg['knoten']} · Bridges {erg['bridges']} · laufende Messlaeufe"
+                   f" {erg['laeufe_offen']} · Signaturschluessel {erg['signaturschluessel']}")
+
     @app.cli.command('dashboard-anmeldelink')
     @click.argument('email')
     @click.option('--weiter', default=None, help='Seite nach dem Login, z. B. /dashboard/datenlabor.')

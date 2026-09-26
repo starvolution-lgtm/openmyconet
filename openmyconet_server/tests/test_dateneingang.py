@@ -611,6 +611,32 @@ def test_verdichtung_schliesst_nach_funkstille_ab(ein_app):
         assert verdichten(db.engine, 'sandbox', [k.lauf_id], voll=True)['zeilen'] == {'1min': 0, '1h': 0}
 
 
+def test_lagebericht_fuer_das_mcc(ein_app):
+    """flask biocomm-lage: Anlieferungen 24 h, wartend, Konflikte, letzte Verdichtung (nur lesend)."""
+    from omn.eingang.lage import lage
+    from omn.eingang.verdichtung import verdichten
+    with ein_app.app_context():
+        vorher = lage(db.engine, 'sandbox')
+        k = _vorbereiten('LAGE', paket_s=600, rate_hz=10)
+        p = k.pakete(3)
+        _ein(p[2])                                          # wartet auf LAUF_START
+        mitte = lage(db.engine, 'sandbox')
+        assert mitte['wartend'] == vorher['wartend'] + 1
+        for paket in p[:2]:
+            _ein(paket)
+        verdichten(db.engine, 'sandbox', [_lauf(k)['id']])
+        nachher = lage(db.engine, 'sandbox')
+        assert nachher['wartend'] == vorher['wartend']
+        assert nachher['anlieferungen_24h'] == vorher['anlieferungen_24h'] + 3
+        assert nachher['status_24h'].get('ACCEPTED', 0) >= vorher['status_24h'].get('ACCEPTED', 0) + 3
+        assert nachher['letzte_anlieferung'] and nachher['letzte_verdichtung']
+        assert nachher['knoten'] >= 1 and nachher['laeufe_offen'] >= 1
+        r = ein_app.test_cli_runner().invoke(args=['biocomm-lage', '--schema', 'sandbox', '--json'])
+        assert r.exit_code == 0 and json.loads(r.output)['schema'] == 'sandbox'
+        text = ein_app.test_cli_runner().invoke(args=['biocomm-lage', '--schema', 'sandbox'])
+        assert 'Anlieferungen in 24 h' in text.output
+
+
 def test_verdichtung_per_cli_fuer_den_zeitgeber(ein_app):
     """--still schreibt nur etwas, wenn berechnet wurde (Log des Zeitgebers bleibt leer)."""
     with ein_app.app_context():

@@ -39,7 +39,10 @@ if ($dirty) {
 }
 
 Write-Host "==> Baue Tarball aus Commit $commit ($branch) ..." -ForegroundColor Cyan
-git archive --format=tar.gz -o $tarball HEAD:openmyconet_server
+# DEPLOYED_COMMIT: bei HEAD:<unterordner> schreibt git den Commit nicht in den
+# Tarball -> als Datei beilegen; deploy/mcc_lage.sh zeigt ihn dem MCC.
+$vollCommit = git rev-parse HEAD
+git archive --format=tar.gz "--add-virtual-file=DEPLOYED_COMMIT:$vollCommit" -o $tarball HEAD:openmyconet_server
 
 Write-Host "==> Lade Tarball auf die VPS hoch ..." -ForegroundColor Cyan
 scp -i $sshKey $tarball "${server}:/home/omn/incoming/release.tar.gz"
