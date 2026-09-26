@@ -289,9 +289,12 @@ def test_szenario_texte_nur_bei_aktuellem_deutsch():
     assert en['label'] == 'Electrical stimulation'
     assert en['hinweis'].startswith('SIMULATION – calculated measurements') and 'sbx-gen-1.0' in en['hinweis']
     assert 'ARBITRARY_DEMO' in en['stimulationsparameter']
-    # deutscher Text in der Datenbank weicht ab (z. B. neue Szenario-Version) -> Deutsch statt veralteter Uebersetzung
+    # ein deutscher Text in der Datenbank weicht ab -> genau dieser bleibt Deutsch, die anderen werden uebersetzt
     alt = szenario_texte(s.key, s.label, s.kurz + ' (geaendert)', s.annahme, s.stim_parameterquelle, 'en')
-    assert alt['label'] == s.label and alt['kurz'].endswith('(geaendert)')
+    assert alt['kurz'].endswith('(geaendert)') and alt['label'] == 'Electrical stimulation'
+    assert alt['hinweis'] == en['hinweis']
+    alter_hinweis = szenario_texte(s.key, s.label, s.kurz, s.annahme[:-5], s.stim_parameterquelle, 'es')
+    assert alter_hinweis['hinweis'] == s.annahme[:-5] and alter_hinweis['label'] == 'Estimulación eléctrica'
     assert szenario_texte(s.key, s.label, s.kurz, s.annahme, s.stim_parameterquelle, 'de')['label'] == s.label
     b = next(x for x in SZENARIEN if x.key == 'baseline')
     assert szenario_texte(b.key, b.label, b.kurz, b.annahme, None, 'fr')['stimulationsparameter'] is None

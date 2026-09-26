@@ -238,8 +238,8 @@ Szenario-Texte, feste Generator-Texte) in `omn/datenlabor_texte.json` (bewusst n
 → `Nutzer.sprache` → de, Sprachumschalter auf der Seite, `dashboard_base.html` hat dafür den
 Block `html_lang` (übrige Dashboard-Seiten bleiben deutsch). Die Seite legt die Texte als JSON
 (`#dl-texte`) ab, `datenlabor.js` setzt sie per `tx()` ein und formatiert mit `data-locale`;
-die API bekommt `?lang=`. Szenario-Texte werden nur übersetzt, solange der deutsche Text in der
-DB exakt dem in `szenarien.py` entspricht (sonst Deutsch) — neue Szenario-Texte also in der
+die API bekommt `?lang=`. Szenario-Texte werden je Text nur übersetzt, solange der deutsche Text
+in der DB exakt dem in `szenarien.py` entspricht (sonst dieser Text Deutsch) — neue Szenario-Texte also in der
 JSON nachziehen. Auf SQLite leerer Zustand. Tests: `tests/test_datenlabor.py`
 (Zugang auf allen Engines, Daten nur PG). Gestaltung: Seitenrahmen wie die
 Website (Waldgrün, Lora/Playfair), das Dashboard selbst als Fenster im Stil der

@@ -101,23 +101,28 @@ def generator_text(text_de, lang):
 def szenario_texte(key, label, kurz, hinweis, stimulationsparameter, lang):
     """Uebersetzte Szenario-Texte oder die deutschen aus der Datenbank.
 
-    Uebersetzt wird nur, wenn der deutsche Text in der Datenbank genau dem
-    aktuellen in szenarien.py entspricht: aendert sich der deutsche Wortlaut,
-    erscheint wieder Deutsch, bis die Uebersetzung nachgezogen ist."""
+    Je Text einzeln: uebersetzt wird nur, wenn der deutsche Text in der
+    Datenbank genau dem aktuellen in szenarien.py entspricht. Aendert sich ein
+    deutscher Wortlaut, erscheint genau dieser Text wieder auf Deutsch, bis die
+    Uebersetzung nachgezogen ist."""
     from omn.sandbox import szenarien as sz
-    orig = {'label': label, 'kurz': kurz, 'hinweis': hinweis, 'stimulationsparameter': stimulationsparameter}
+    erg = {'label': label, 'kurz': kurz, 'hinweis': hinweis, 'stimulationsparameter': stimulationsparameter}
     t = TEXTE.get(lang, {}).get('szenarien')
     vorlage = next((x for x in sz.SZENARIEN if x.key == key), None)
     if lang == 'de' or not t or vorlage is None or key not in t['szenarien']:
-        return orig
-    if (vorlage.label, vorlage.kurz, vorlage.annahme, vorlage.stim_parameterquelle) != (
-            label, kurz, hinweis, stimulationsparameter):
-        return orig
+        return erg
     e = t['szenarien'][key]
-    zusatz = t['reaktion_demo'] if e['zusatz'] == '$reaktion_demo' else e['zusatz']
-    kopf = t['hinweis_simulation'].format(generator=sz.GENERATOR_VERSION, modell=sz.MODELL_VERSION)
-    return {'label': e['label'], 'kurz': e['kurz'], 'hinweis': kopf + ' ' + zusatz,
-            'stimulationsparameter': t['parameter_demo'] if stimulationsparameter else stimulationsparameter}
+    if label == vorlage.label:
+        erg['label'] = e['label']
+    if kurz == vorlage.kurz:
+        erg['kurz'] = e['kurz']
+    if hinweis == vorlage.annahme:
+        zusatz = t['reaktion_demo'] if e['zusatz'] == '$reaktion_demo' else e['zusatz']
+        erg['hinweis'] = t['hinweis_simulation'].format(generator=sz.GENERATOR_VERSION,
+                                                        modell=sz.MODELL_VERSION) + ' ' + zusatz
+    if stimulationsparameter and stimulationsparameter == vorlage.stim_parameterquelle:
+        erg['stimulationsparameter'] = t['parameter_demo']
+    return erg
 
 
 # ---------------------------------------------------------------------------
