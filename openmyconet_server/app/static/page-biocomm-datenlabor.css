@@ -32,6 +32,7 @@
 .interp-box { border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:1.6rem 1.8rem; }
 .article .interp-title { font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin-bottom:1rem; }
 .article .interp-box p { font-size:0.95rem; }
+.article .einladung { margin-top:2rem; font-size:1.05rem; color:#e0f0e0; }
 
 .faq-eintrag { border-bottom:1px solid #0a6040; padding:0.9rem 0; }
 .faq-eintrag summary { cursor:pointer; color:#e8f5e0; font-size:1.02rem; }
