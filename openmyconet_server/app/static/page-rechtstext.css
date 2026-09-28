@@ -1,0 +1,15 @@
+/* Impressum + Datenschutz (site/rechtstext.html, seit 28.09.2026).
+   Farben wie die uebrigen Textseiten; Bernstein-Rand = Hinweis "Uebersetzung". */
+.article { max-width:820px; margin:0 auto; }
+.rechtstext h2 { font-family:'Playfair Display',serif; font-weight:400; color:#e8f5e0; font-size:1.35rem; margin:2.2rem 0 0.8rem; scroll-margin-top:90px; text-align:left; }
+.rechtstext h2:first-child { margin-top:0; }
+.rechtstext p, .rechtstext li { color:#c8e0c8; font-size:1rem; line-height:1.8; }
+.rechtstext p { margin:0 0 1rem; }
+.rechtstext ul { margin:0 0 1rem; padding-left:1.3rem; }
+.rechtstext li { margin-bottom:0.35rem; }
+.rechtstext a { color:#f0c060; overflow-wrap:anywhere; }
+.rechtstext code { font-family:'JetBrains Mono',monospace; font-size:0.9em; color:#e8f5e0; }
+.rechtstext strong { color:#e8f5e0; }
+.rechtstext-hinweis { margin-top:1rem; border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:0.9rem 1.2rem; color:#e0d0a8; font-size:0.95rem; line-height:1.6; }
+.rechtstext-hinweis a { color:#f0c060; margin-left:0.3rem; }
+.rechtstext-zurueck { margin-top:2.5rem; }

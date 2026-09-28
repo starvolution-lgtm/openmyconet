@@ -86,6 +86,9 @@ def test_impressum_angaben():
     assert imp['mail'] == 'kontakt@openmyconet.de'
     assert 'Gebrauchsmuster' in imp['schutzrechte'] and 'DPMA' in imp['schutzrechte']
     assert 'CC BY 4.0' in imp['lizenz'] and 'Messdaten' in imp['lizenz']
+    en = impressum('en')
+    assert en['anbieter'] == 'Robert Jank, Maintal, Germany'
+    assert 'CC BY 4.0' in en['lizenz'] and 'Measurement data' in en['lizenz']
 
 
 @pytest.mark.parametrize('url', URLS)
@@ -93,9 +96,12 @@ def test_impressum_in_allen_fassungen(client, url):
     from omn.llms import impressum
 
     text = client.get(url).get_data(as_text=True)
-    imp = impressum()
-    for wert in imp.values():
-        assert wert in text
+    # llms.txt: deutscher + englischer Teil; Volltexte je in ihrer Sprache
+    sprachen = {'/llms.txt': ['de', 'en'], '/llms-full.txt': ['de'], '/llms-full-en.txt': ['en']}[url]
+    for lang in sprachen:
+        for wert in impressum(lang).values():
+            assert wert in text, (lang, wert)
+    assert 'German original' not in text
     # Strasse und Telefon bleiben im Impressum, nicht in der KI-Textfassung
     assert 'Backesweg' not in text and '4346300' not in text
 

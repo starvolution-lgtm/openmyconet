@@ -217,17 +217,29 @@
   <!-- Impressum -->
   <url>
     <loc>https://www.openmyconet.de/impressum.html</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/impressum.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/impressum.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/impressum.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/impressum.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/impressum.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/impressum.html"/>
   </url>
 
   <!-- Datenschutz -->
   <url>
     <loc>https://www.openmyconet.de/datenschutz.html</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.openmyconet.de/datenschutz.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.openmyconet.de/datenschutz.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/datenschutz.html?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/datenschutz.html?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.openmyconet.de/datenschutz.html?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/datenschutz.html"/>
   </url>
 
 </urlset>

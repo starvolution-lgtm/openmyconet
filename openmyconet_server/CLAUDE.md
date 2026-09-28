@@ -437,6 +437,22 @@ Server-Einrichtung (DNS-A-Record, `.env`, nginx-Site + certbot + Basic-Auth als
 root): `deploy/nginx_staging_site.conf` + `deploy/env.staging.example`.
 Staging hat **keine** Grossmedien (mp3/pdf, per deploy-exclude ausgeschlossen).
 
+## Impressum + Datenschutz, Sprachwahl (seit 28.09.2026)
+`/impressum.html` und `/datenschutz.html` sind SSR-Seiten (`site/rechtstext.html`, Routen
+in `omn/site_live.py`), Texte in **`omn/rechtstexte.json`** fünfsprachig (bewusst nicht in
+`translations.json`), geladen über `omn/rechtstexte.py`. **Rechtlich maßgeblich ist `de`**
+(von Robby freigegeben 28.09.2026, Entwurf + Begründungen im Kontrollzentrum
+`03_Website_Backend/Rechtstexte_Entwurf_2026-09.md`); en/nl/fr/es tragen oben den
+Hinweis „nur zur Information“. Änderung am deutschen Text → Übersetzungen + `stand`
+nachziehen; die Datenschutzerklärung nennt die Löschfristen (s. u.), Hosting (Hetzner
+Helsinki), Mail (ALL-INKL), Chatbot (Anthropic, SCC; TIA im Kontrollzentrum) — bei
+Änderungen daran den Text mitziehen. `fakten` (Name, Anschrift, Telefon, E-Mail) liest
+auch `omn/llms.py`. Sprachwechsel auf diesen Seiten per Neuladen (`setLang` im Template).
+**Sprachwahl einheitlich:** Flaggen-Klick (`omnSetLang` in `site/base.html`) schreibt
+Cookie `omn_lang` **und** localStorage, `getLang()` liest Cookie vor localStorage; das
+Datenlabor hat dieselben Flaggen (SVGs einmal in `omn/i18n.py` `FLAGGEN`). Footer per
+`t()` (`footer_*`). Tests `tests/test_rechtstexte.py`.
+
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll
 (`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`) gelöscht (Robby, 28.09.2026;

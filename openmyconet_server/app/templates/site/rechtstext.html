@@ -1,0 +1,56 @@
+{% extends "site/base.html" %}
+{# Impressum und Datenschutz (omn/rechtstexte.json, Route in omn/site_live.py). #}
+
+{% block title %}{{ texte.titel }}{% endblock %}
+{% block meta_description %}{{ texte.meta }}{% endblock %}
+
+{% block hreflang %}
+{% set basis = 'https://www.openmyconet.de/' ~ art ~ '.html' %}
+<link rel="alternate" hreflang="de" href="{{ basis }}">
+{% for l in ['en', 'nl', 'fr', 'es'] %}<link rel="alternate" hreflang="{{ l }}" href="{{ basis }}?lang={{ l }}">
+{% endfor %}<link rel="alternate" hreflang="x-default" href="{{ basis }}">
+<link id="canonical" rel="canonical" href="{{ basis }}{% if current_lang() != 'de' %}?lang={{ current_lang() }}{% endif %}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ basis }}">
+<meta property="og:title" content="{{ texte.titel }}">
+<meta property="og:description" content="{{ texte.meta }}">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('page-rechtstext.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label">{{ ui.label }}</p>
+    <h1>{{ texte.h1 }}</h1>
+    {% if ui.uebersetzung %}
+    <p class="rechtstext-hinweis" lang="{{ current_lang() }}">{{ ui.uebersetzung }}
+      <a href="/{{ art }}.html?lang=de" hreflang="de" lang="de">Deutsche Fassung</a></p>
+    {% endif %}
+  </div>
+</div>
+
+<section class="u-bg-a">
+  <div class="inner article rechtstext">
+    {% for a in texte.abschnitte %}
+    <h2 id="{{ a.id }}">{{ a.h }}</h2>
+    {{ a.html | safe }}
+    {% endfor %}
+    <p class="rechtstext-zurueck"><a href="{{ live('') }}">{{ ui.zurueck }}</a></p>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+// Die Rechtstexte liegen nicht in translations.json -> Sprachwechsel per
+// Neuladen (Cookie + localStorage setzt omnSetLang in base.html vorher).
+function setLang(lang) {
+  var url = new URL(window.location.href);
+  url.searchParams.set('lang', lang);
+  window.location.href = url.toString();
+}
+</script>
+{% endblock %}

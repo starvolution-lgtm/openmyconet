@@ -100,6 +100,25 @@ def kontakt():
     return render_template('site/kontakt.html', current_page='kontakt')
 
 
+def _rechtstext(art):
+    from flask import g
+
+    from omn.rechtstexte import seite
+    texte, ui = seite(art, getattr(g, 'lang', 'de'))
+    return render_template('site/rechtstext.html', current_page=art, art=art, texte=texte, ui=ui)
+
+
+# Vorher statische, nur deutsche Dateien unter app/static/ (seit 28.09.2026 fuenfsprachig).
+@site_live_bp.route('/impressum.html')
+def impressum():
+    return _rechtstext('impressum')
+
+
+@site_live_bp.route('/datenschutz.html')
+def datenschutz():
+    return _rechtstext('datenschutz')
+
+
 @site_live_bp.route('/biocomm')
 def biocomm():
     return render_template('site/biocomm.html', current_page='biocomm')
