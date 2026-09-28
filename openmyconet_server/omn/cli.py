@@ -33,6 +33,17 @@ def register_cli(app):
         if gesendet or not still:
             click.echo(f'{gesendet} gesendet')
 
+    @app.cli.command('aufbewahrung-bereinigen')
+    @click.option('--still/--laut', default=True,
+                  help='--still (Default, fuer den Cron): nur ausgeben, wenn etwas geloescht wurde.')
+    def aufbewahrung_bereinigen(still):
+        """Loescht Chat-Verlaeufe und Fehlerprotokoll nach Ablauf der Frist (omn/aufbewahrung.py)."""
+        from omn.aufbewahrung import bereinigen
+
+        ergebnis = bereinigen()
+        if any(ergebnis.values()) or not still:
+            click.echo(', '.join(f'{name}: {n} gelöscht' for name, n in ergebnis.items()))
+
     @app.cli.command('einwilligung-anfragen')
     @click.option('--ausfuehren', is_flag=True,
                   help='Wirklich abmelden und Mails einreihen. Ohne: nur zaehlen (Probelauf).')
