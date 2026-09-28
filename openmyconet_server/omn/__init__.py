@@ -38,7 +38,7 @@ from omn.i18n import init_i18n
 from omn.csrf import init_csrf
 from omn.errors import init_errors
 from omn.cli import register_cli
-from omn import public
+from omn import llms, public
 
 # omn/ liegt im Repo-Root; Templates/Static bleiben unter <root>/app/.
 _ROOT = Path(__file__).resolve().parent.parent
@@ -108,5 +108,6 @@ def create_app(config=None, instance_path=None):
     # Nach init_errors, damit _sicherheits_header (after_request) vor dessen
     # Handler laeuft (Flask ruft after_request in umgekehrter Registrierreihenfolge).
     public.register(app)
+    llms.register(app)
 
     return app

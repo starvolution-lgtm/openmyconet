@@ -325,6 +325,15 @@ berechnen → ~225 Falsch-Positive; den echten Kontrast prüft Lighthouse).
 Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python wsgi.py` starten, dann
 `npx @lhci/cli autorun` bzw. `npx pa11y-ci`.
 
+### Textfassung für KI-Assistenten (`/llms.txt`, seit 28.09.2026)
+`omn/llms.py` erzeugt `/llms.txt` (Kurzbeschreibung, Einordnung „kein
+Wirkungsnachweis“, Seitenliste DE+EN), `/llms-full.txt` (alle Texte Deutsch) und
+`/llms-full-en.txt` — zur Laufzeit aus `translations.json`, Themengruppen aus
+`omn/wissensbasis.py` (gemeinsam mit `build_rag_index.py`, also dieselben wie beim
+Chatbot). Header `X-Robots-Tag: noindex` + canonical auf die Startseite, Links immer
+auf www. Neue öffentliche Seite → in `SEITEN` (und ggf. `GRUPPEN_SEITE`) nachtragen.
+Tests `tests/test_llms.py` (prüfen auch, dass alle Keys und Seiten existieren).
+
 ### Songtexte / Musik-Player (WCAG 1.2.1)
 Der Player (`<audio id="omn-audio">` in `site/base.html`, Track-Manifest
 `OMN_TRACKS`, 5 Suno-Songs) hat eine WebVTT-Songtextspur je Track
