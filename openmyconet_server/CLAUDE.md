@@ -328,7 +328,7 @@ Dev-Server mit `OMN_ASSET_BASE=/ SECRET_KEY=x python wsgi.py` starten, dann
 ### Textfassung für KI-Assistenten (`/llms.txt`, seit 28.09.2026)
 `omn/llms.py` erzeugt `/llms.txt` (Kurzbeschreibung, Einordnung „kein
 Wirkungsnachweis“, Seitenliste DE+EN), `/llms-full.txt` (alle Texte Deutsch) und
-`/llms-full-en.txt` — zur Laufzeit aus `translations.json`, Themengruppen aus
+`/llms-full-en.txt` (beide mit YAML-Frontmatter, `stand` = Dateidatum von `translations.json` = Commit-Zeit des Deploys) — zur Laufzeit aus `translations.json`, Themengruppen aus
 `omn/wissensbasis.py` (gemeinsam mit `build_rag_index.py`, also dieselben wie beim
 Chatbot). Header `X-Robots-Tag: noindex` + canonical auf die Startseite, Links immer
 auf www. Neue öffentliche Seite → in `SEITEN` (und ggf. `GRUPPEN_SEITE`) nachtragen.

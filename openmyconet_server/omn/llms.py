@@ -5,6 +5,8 @@ llms.py -- Textfassung der Website fuer KI-Assistenten (Vorschlag llms.txt).
                      die Einordnung "kein Wirkungsnachweis", die Seiten mit Link
   /llms-full.txt     alle Website-Texte auf Deutsch, nach Themen
   /llms-full-en.txt  dasselbe auf Englisch
+Die beiden Volltexte beginnen mit einem YAML-Frontmatter (titel, sprache,
+stand, quelle, hinweis); /llms.txt bewusst nicht (muss laut Vorschlag mit '# ' beginnen).
 
 Alles wird aus translations.json erzeugt (Themengruppen aus omn/wissensbasis.py,
 dieselben wie beim RAG-Chatbot) -- keine zweite Textkopie, die veralten kann.
@@ -12,9 +14,13 @@ Nicht fuer Suchmaschinen gedacht: `X-Robots-Tag: noindex` + canonical auf die
 Startseite, damit die Textfassung den HTML-Seiten keine Konkurrenz macht.
 Links zeigen immer auf die kanonische Domain (auch auf Staging).
 """
+import json
+import os
+from datetime import datetime, timezone
+
 from flask import Response
 
-from omn.i18n import TRANSLATIONS
+from omn.i18n import _TRANSLATIONS_PATH, TRANSLATIONS
 from omn.wissensbasis import abschnitte, clean
 
 WEBSITE = 'https://www.openmyconet.de'
@@ -137,10 +143,32 @@ def llms_txt():
     return '\n'.join(teile)
 
 
+def stand():
+    """Datum der Website-Texte (UTC). Auf dem Server = Commit-Zeit des Deploys:
+    `git archive` setzt die Datei-Zeit auf den Commit, rsync -a behaelt sie."""
+    return datetime.fromtimestamp(os.path.getmtime(_TRANSLATIONS_PATH), timezone.utc).date().isoformat()
+
+
+def _frontmatter(lang):
+    """YAML-Kopf fuer die Volltexte (nicht fuer /llms.txt: die muss mit '# ' beginnen).
+    Werte als JSON-Strings -- gueltiges YAML, auch mit Doppelpunkt/Anfuehrungszeichen."""
+    tx = TEXTE[lang]
+    felder = {
+        'titel': tx['titel_volltext'],
+        'sprache': lang,
+        'stand': stand(),
+        'quelle': WEBSITE + '/',
+        'hinweis': tx['hinweis_volltext'],
+    }
+    zeilen = [f'{k}: {v if k in ("sprache", "stand") else json.dumps(v, ensure_ascii=False)}'
+              for k, v in felder.items()]
+    return ['---', *zeilen, '---', '']
+
+
 def llms_full(lang):
     tx = TEXTE[lang]
-    teile = [f"# {tx['titel_volltext']}", '', f"> {clean(_t(lang, 'meta_desc_index'))}", '',
-             tx['hinweis_volltext'], '']
+    teile = [*_frontmatter(lang), f"# {tx['titel_volltext']}", '',
+             f"> {clean(_t(lang, 'meta_desc_index'))}", '', tx['hinweis_volltext'], '']
     for slug, titel, absaetze in abschnitte(TRANSLATIONS, lang):
         if slug in NICHT_IM_VOLLTEXT:
             continue

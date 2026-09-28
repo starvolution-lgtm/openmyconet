@@ -65,3 +65,22 @@ def test_gruppen_seite_passt_zu_gruppen():
 def test_verlinkte_seiten_gibt_es(client, pfad):
     r = client.get(pfad)
     assert r.status_code == 200, pfad
+
+
+@pytest.mark.parametrize('lang, url', [('de', '/llms-full.txt'), ('en', '/llms-full-en.txt')])
+def test_volltext_frontmatter(client, lang, url):
+    """YAML-Kopf mit Stand-Datum; /llms.txt bleibt ohne (muss mit '# ' beginnen)."""
+    import json
+
+    from omn.llms import TEXTE, stand
+
+    text = client.get(url).get_data(as_text=True)
+    assert text.startswith('---\n')
+    kopf, rest = text[4:].split('\n---\n', 1)
+    felder = dict(zeile.split(': ', 1) for zeile in kopf.splitlines())
+    assert felder['sprache'] == lang
+    assert felder['stand'] == stand()
+    assert json.loads(felder['titel']) == TEXTE[lang]['titel_volltext']
+    assert json.loads(felder['quelle']) == f'{WEBSITE}/'
+    assert rest.lstrip('\n').startswith('# ')
+    assert not client.get('/llms.txt').get_data(as_text=True).startswith('---')
