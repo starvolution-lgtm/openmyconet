@@ -22,6 +22,10 @@ BASELINE_REV = '959850bfc924'
 BIOCOMM_REV = '3f1b2c4d5e6a'
 HEAD_REV = 'da901ffb142f'
 BIOCOMM_VORHER = 'fa5a744c1177'
+# Letzte BioComm-Migration (Schema v5). Der Idempotenz-Test faehrt nur bis hier
+# erneut hoch -- spaetere public-Migrationen (z. B. da901ffb142f) sind nicht fuer
+# einen zweiten Lauf gebaut. Bei biocomm_0006 hier nachziehen.
+BIOCOMM_LETZTE = '6d9e1a4b3f57'
 BIOCOMM_SCHEMAS = ('sandbox', 'sandbox_private', 'live', 'live_private', 'biocomm_common')
 REGELN_SQL = os.path.join(os.path.dirname(__file__), 'sql', 'biocomm_regeln.sql')
 
@@ -300,7 +304,7 @@ def test_biocomm_idempotent_und_downgrade(leere_db_app):
     with leere_db_app.app_context():
         upgrade()
         stamp(revision=BIOCOMM_VORHER)
-        upgrade()                                   # Schemas schon da -> No-op
+        upgrade(revision=BIOCOMM_LETZTE)            # Schemas schon da -> No-op
         assert set(_schemas_und_tabellen()) == set(BIOCOMM_SCHEMAS) - {'biocomm_common'}
         downgrade(revision=BIOCOMM_VORHER)
         db.session.commit()
