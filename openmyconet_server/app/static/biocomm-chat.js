@@ -39,7 +39,7 @@
       send:        "Senden",
       aria:        "OpenMycoNet Wissensvermittler öffnen",
       tooltip:     "Fragen zum Projekt?",
-      hinweis:     "Bitte keine persönlichen Daten eingeben. Deine Frage wird zur Beantwortung an Anthropic (USA) übermittelt.",
+      hinweis:     "Antworten können Fehler enthalten, wichtige Angaben bitte prüfen. Bitte keine persönlichen Daten eingeben. Deine Frage wird zur Beantwortung an Anthropic (USA) übermittelt.",
       hinweisLink: "Datenschutz",
     },
     en: {
@@ -50,7 +50,7 @@
       send:        "Send",
       aria:        "Open OpenMycoNet Knowledge Guide",
       tooltip:     "Questions about the project?",
-      hinweis:     "Please do not enter personal data. Your question is sent to Anthropic (USA) to generate the answer.",
+      hinweis:     "Answers may contain errors; please check important information. Please do not enter personal data. Your question is sent to Anthropic (USA) to generate the answer.",
       hinweisLink: "Privacy",
     },
     nl: {
@@ -61,7 +61,7 @@
       send:        "Versturen",
       aria:        "OpenMycoNet Kennisassistent openen",
       tooltip:     "Vragen over het project?",
-      hinweis:     "Voer geen persoonlijke gegevens in. Je vraag wordt voor het antwoord naar Anthropic (VS) gestuurd.",
+      hinweis:     "Antwoorden kunnen fouten bevatten; controleer belangrijke informatie. Voer geen persoonlijke gegevens in. Je vraag wordt voor het antwoord naar Anthropic (VS) gestuurd.",
       hinweisLink: "Privacy",
     },
     fr: {
@@ -72,7 +72,7 @@
       send:        "Envoyer",
       aria:        "Ouvrir le guide OpenMycoNet",
       tooltip:     "Des questions sur le projet ?",
-      hinweis:     "Merci de ne pas saisir de données personnelles. Votre question est transmise à Anthropic (États-Unis) pour générer la réponse.",
+      hinweis:     "Les réponses peuvent contenir des erreurs ; vérifiez les informations importantes. Merci de ne pas saisir de données personnelles. Votre question est transmise à Anthropic (États-Unis) pour générer la réponse.",
       hinweisLink: "Confidentialité",
     },
     es: {
@@ -83,7 +83,7 @@
       send:        "Enviar",
       aria:        "Abrir guía OpenMycoNet",
       tooltip:     "¿Preguntas sobre el proyecto?",
-      hinweis:     "No introduzcas datos personales. Tu pregunta se envía a Anthropic (EE. UU.) para generar la respuesta.",
+      hinweis:     "Las respuestas pueden contener errores; comprueba la información importante. No introduzcas datos personales. Tu pregunta se envía a Anthropic (EE. UU.) para generar la respuesta.",
       hinweisLink: "Privacidad",
     },
   };
