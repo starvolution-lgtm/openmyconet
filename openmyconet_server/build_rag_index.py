@@ -84,7 +84,15 @@ GROUPS = [
         "bcs_", "bc_sw_", "bc_status_1",
     ]),
     ("biocomm-datenlabor", "bdl_h1", [
-        "bdl_",
+        "bdl_page_title", "bdl_meta_desc", "bdl_label", "bdl_h1", "bdl_badge",
+        "bdl_intro", "bdl_hero_", "bdl_echt_", "bdl_berechnet_", "bdl_weg_",
+        "bdl_szen_", "bdl_teaser_",
+    ]),
+    # eigener Abschnitt: die Datenlabor-Seite ist laenger als MAX_CHARS,
+    # "Was du tun kannst" + FAQ fielen sonst beim Kuerzen weg (28.09.2026)
+    ("biocomm-datenlabor-nutzung", "bdl_tun_h2", [
+        "bdl_tun_", "bdl_interp_", "bdl_einladung", "bdl_faq_", "bdl_cta_h2",
+        "bdl_cta_p",
     ]),
     ("entwicklungsstand", {
         "de": "Entwicklungsstand von Hardware & Software",
