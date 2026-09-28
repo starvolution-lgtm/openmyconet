@@ -1,4 +1,5 @@
 {% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
 {% block title %}OpenMycoNet — Admin-Accounts{% endblock %}
 {% block heading %}🍄 Admin-Accounts{% endblock %}
 {% block content %}
@@ -37,7 +38,7 @@
         <td>{{ acc.username }}</td>
         <td>{{ acc.role }}</td>
         <td>{{ acc.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</td>
-        <td><a href="{{ url_for('admin.account_delete', user_id=acc.id) }}" class="del js-confirm" data-confirm="Account wirklich löschen?">✕</a></td>
+        <td>{{ post_knopf(url_for('admin.account_delete', user_id=acc.id), '✕', 'del', 'Account wirklich löschen?', 'Löschen') }}</td>
     </tr>
     {% endfor %}
 </table>

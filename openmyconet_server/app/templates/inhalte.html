@@ -1,4 +1,5 @@
 {% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
 {% block title %}OpenMycoNet — Website-Inhalte{% endblock %}
 {% block heading %}📝 Website-Inhalte{% endblock %}
 {% block content %}
@@ -44,7 +45,7 @@
         <td>{{ block.sprache }}</td>
         <td>{{ block.inhalt[:120] }}{% if block.inhalt|length > 120 %}…{% endif %}</td>
         <td>{{ block.aktualisiert_am.strftime('%d.%m.%Y %H:%M') }}</td>
-        <td><a href="{{ url_for('admin.inhalte_delete', block_id=block.id) }}" class="del js-confirm" data-confirm="Wirklich löschen?">✕</a></td>
+        <td>{{ post_knopf(url_for('admin.inhalte_delete', block_id=block.id), '✕', 'del', 'Wirklich löschen?', 'Löschen') }}</td>
     </tr>
     {% endfor %}
 </table>

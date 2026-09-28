@@ -105,7 +105,7 @@ def test_presse_admin_anlegen_und_bearbeiten(client, app, superadmin):
 def test_presse_admin_loeschen(client, app, superadmin):
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     presse_id = _presseeintrag(app)
-    client.get(f'/admin/presse/delete/{presse_id}')
+    client.post(f'/admin/presse/delete/{presse_id}')
     with app.app_context():
         assert Presseeintrag.query.get(presse_id) is None
 
@@ -137,7 +137,7 @@ def test_kandidat_uebernehmen_befuellt_formular_und_markiert_kandidat(client, ap
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     kandidat_id = _kandidat(app, titel='Zu uebernehmen', quelle='Quelle Y')
 
-    resp = client.get(f'/admin/presse-kandidaten/uebernehmen/{kandidat_id}', follow_redirects=True)
+    resp = client.post(f'/admin/presse-kandidaten/uebernehmen/{kandidat_id}', follow_redirects=True)
     html = resp.get_data(as_text=True)
     assert 'Zu uebernehmen' in html
     assert 'Quelle Y' in html
@@ -170,7 +170,7 @@ def test_suchbegriff_anlegen_bearbeiten_loeschen(client, app, superadmin):
         assert sb_aktualisiert.begriff == 'Geaenderter Begriff'
         assert sb_aktualisiert.aktiv is False
 
-    client.get(f'/admin/presse-kandidaten/suchbegriff/loeschen/{sb.id}')
+    client.post(f'/admin/presse-kandidaten/suchbegriff/loeschen/{sb.id}')
     with app.app_context():
         assert Suchbegriff.query.get(sb.id) is None
 

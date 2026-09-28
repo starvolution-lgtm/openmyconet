@@ -480,7 +480,11 @@ Formulare brauchen also nichts. Bewusst NICHT CSRF-geschützt: `/api/register`,
 Schlüssel). **ProxyFix mit `x_for=1` (seit 26.09.2026):** `request.remote_addr` ist die
 echte Absender-IP aus nginx' `X-Forwarded-For`; vorher war sie immer 127.0.0.1, alle
 „je IP“-Grenzen galten für alle Besucher gemeinsam. Tests: `CSRF_ENABLED=False`
-in conftest, eigener Nachweis in `test_csrf.py`.
+in conftest, eigener Nachweis in `test_csrf.py`. **Ändernde Admin-Aktionen nie als
+GET-Link** (seit 28.09.2026; vorher Löschen/Bestätigen/Verschieben per Link = CSRF-Lücke):
+Route `methods=['POST']`, im Template `post_knopf(...)` aus `_admin_makros.html` (Formular,
+sieht aus wie der Link, optional Rückfrage). `test_csrf.py::AENDERNDE_ADMIN_ROUTEN` listet
+sie; neue ändernde Route dort ergänzen.
 
 `/api/v1/messung` (Geräte-Dateneingang) authentifiziert per **`Knoten.api_key`**
 (Header `X-Api-Key` oder `Authorization: Bearer`); der Key bestimmt den Knoten,
@@ -572,7 +576,7 @@ gespeichert wird. Tests: `tests/test_news_vorschau.py`.
 ausschliesslich aus `veroeffentlicht` -- nicht nachtraeglich sortierbar, ohne
 das Datum zu verbiegen. `News.reihenfolge` (Integer, hoeher = weiter oben) ist
 bewusst ein EIGENES Feld, unabhaengig vom angezeigten Datum. `▲`/`▼` in
-`news_admin.html` (Route `GET /admin/news/<id>/verschieben/<hoch|runter>`)
+`news_admin.html` (Route `POST /admin/news/<id>/verschieben/<hoch|runter>`)
 vertauscht den Wert mit dem direkten Nachbarn in der aktuellen Sortierung.
 Neue Artikel (`news_admin()`, `news_uebersetzen()`) bekommen
 `max(reihenfolge)+1` (`naechste_reihenfolge()`), landen also weiterhin oben,

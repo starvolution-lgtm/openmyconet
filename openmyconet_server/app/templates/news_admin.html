@@ -1,4 +1,5 @@
 {% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
 {% block title %}OpenMycoNet — News verwalten{% endblock %}
 {% block heading %}🍄 News verwalten{% endblock %}
 
@@ -78,8 +79,8 @@
     {% for news in news_liste %}
     <tr>
         <td>
-            {% if not loop.first %}<a class="u-mr-8" href="{{ url_for('admin.news_verschieben', news_id=news.id, richtung='hoch') }}" title="Nach oben">▲</a>{% endif %}
-            {% if not loop.last %}<a href="{{ url_for('admin.news_verschieben', news_id=news.id, richtung='runter') }}" title="Nach unten">▼</a>{% endif %}
+            {% if not loop.first %}{{ post_knopf(url_for('admin.news_verschieben', news_id=news.id, richtung='hoch'), '▲', 'pfeil u-mr-8', titel='Nach oben') }}{% endif %}
+            {% if not loop.last %}{{ post_knopf(url_for('admin.news_verschieben', news_id=news.id, richtung='runter'), '▼', 'pfeil', titel='Nach unten') }}{% endif %}
         </td>
         <td>{{ news.veroeffentlicht.strftime('%d.%m.%Y') }}</td>
         <td>{{ news.sprache }}</td>
@@ -88,7 +89,7 @@
         <td>
             {% if news.slug %}<a class="u-mr-8" href="{{ url_for('news_detail', slug=news.slug) }}" target="_blank">Ansehen</a>{% endif %}
             <a class="u-mr-8" href="{{ url_for('admin.news_edit', news_id=news.id) }}">Bearbeiten</a>
-            <a href="{{ url_for('admin.news_delete', news_id=news.id) }}" class="del js-confirm" data-confirm="Wirklich löschen?">✕</a>
+            {{ post_knopf(url_for('admin.news_delete', news_id=news.id), '✕', 'del', 'Wirklich löschen?', 'Löschen') }}
         </td>
     </tr>
     {% endfor %}

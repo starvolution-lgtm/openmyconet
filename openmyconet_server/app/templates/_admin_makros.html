@@ -1,0 +1,8 @@
+{# Aendernde Admin-Aktionen immer als POST-Formular, nie als Link (seit 28.09.2026):
+   ein GET-Link umgeht den CSRF-Schutz (omn/csrf.py prueft nur POST) -- eine fremde
+   Seite koennte ihn bei eingeloggtem Admin ausloesen. admin_base.html haengt das
+   _csrf-Token an jedes POST-Formular, form.js-confirm-submit fragt vorher nach.
+   Aussehen wie der bisherige Link (button.linkknopf in admin.css). #}
+{% macro post_knopf(url, text, klasse='', frage=None, titel=None) -%}
+<form method="post" action="{{ url }}" class="inline-form{% if frage %} js-confirm-submit{% endif %}"{% if frage %} data-confirm="{{ frage }}"{% endif %}><button type="submit" class="linkknopf {{ klasse }}"{% if titel %} title="{{ titel }}" aria-label="{{ titel }}"{% endif %}>{{ text }}</button></form>
+{%- endmacro %}

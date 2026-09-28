@@ -29,13 +29,13 @@ def test_hoch_und_runter_vertauschen_nachbarn(client, app, superadmin):
     id_a = _news_anlegen(client, 'Erst A')
     id_b = _news_anlegen(client, 'Dann B')  # B steht jetzt ueber A
 
-    client.get(f'/admin/news/{id_a}/verschieben/hoch', follow_redirects=True)
+    client.post(f'/admin/news/{id_a}/verschieben/hoch', follow_redirects=True)
 
     with app.app_context():
         liste = News.query.order_by(News.reihenfolge.desc()).all()
         assert [n.id for n in liste] == [id_a, id_b]
 
-    client.get(f'/admin/news/{id_a}/verschieben/runter', follow_redirects=True)
+    client.post(f'/admin/news/{id_a}/verschieben/runter', follow_redirects=True)
     with app.app_context():
         liste = News.query.order_by(News.reihenfolge.desc()).all()
         assert [n.id for n in liste] == [id_b, id_a]
@@ -46,7 +46,7 @@ def test_oberster_kann_nicht_weiter_hoch(client, app, superadmin):
     id_a = _news_anlegen(client, 'Nur A')
     with app.app_context():
         vor = News.query.get(id_a).reihenfolge
-    client.get(f'/admin/news/{id_a}/verschieben/hoch', follow_redirects=True)
+    client.post(f'/admin/news/{id_a}/verschieben/hoch', follow_redirects=True)
     with app.app_context():
         assert News.query.get(id_a).reihenfolge == vor  # kein Nachbar, kein Effekt
 
@@ -60,7 +60,7 @@ def test_legacy_zeile_ohne_reihenfolge_bekommt_beim_verschieben_einen_wert(clien
         db.session.commit()
         legacy_id = legacy.id
 
-    r = client.get(f'/admin/news/{legacy_id}/verschieben/runter', follow_redirects=True)
+    r = client.post(f'/admin/news/{legacy_id}/verschieben/runter', follow_redirects=True)
     assert r.status_code == 200
     with app.app_context():
         assert News.query.get(legacy_id).reihenfolge is not None
@@ -69,7 +69,7 @@ def test_legacy_zeile_ohne_reihenfolge_bekommt_beim_verschieben_einen_wert(clien
 def test_ungueltige_richtung_ist_400(client, app, superadmin):
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     news_id = _news_anlegen(client, 'X')
-    r = client.get(f'/admin/news/{news_id}/verschieben/seitwaerts')
+    r = client.post(f'/admin/news/{news_id}/verschieben/seitwaerts')
     assert r.status_code == 400
 
 
@@ -77,7 +77,7 @@ def test_oeffentliche_news_liste_respektiert_reihenfolge(client, app, superadmin
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     id_a = _news_anlegen(client, 'Oeffentlich A')
     _news_anlegen(client, 'Oeffentlich B')
-    client.get(f'/admin/news/{id_a}/verschieben/hoch', follow_redirects=True)
+    client.post(f'/admin/news/{id_a}/verschieben/hoch', follow_redirects=True)
 
     html = client.get('/news').get_data(as_text=True)
     assert html.index('Oeffentlich A') < html.index('Oeffentlich B')

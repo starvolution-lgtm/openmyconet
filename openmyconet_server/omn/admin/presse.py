@@ -67,7 +67,7 @@ def presse_edit(presse_id):
     return render_template('presse_edit.html', eintrag=eintrag, fehler=fehler)
 
 
-@admin_bp.route('/admin/presse/delete/<int:presse_id>')
+@admin_bp.route('/admin/presse/delete/<int:presse_id>', methods=['POST'])
 @login_required
 def presse_delete(presse_id):
     eintrag = Presseeintrag.query.get_or_404(presse_id)
@@ -93,7 +93,7 @@ def presse_kandidaten():
     return render_template('presse_kandidaten.html', kandidaten=kandidaten, suchbegriffe=suchbegriffe)
 
 
-@admin_bp.route('/admin/presse-kandidaten/uebernehmen/<int:kandidat_id>')
+@admin_bp.route('/admin/presse-kandidaten/uebernehmen/<int:kandidat_id>', methods=['POST'])
 @login_required
 def presse_kandidat_uebernehmen(kandidat_id):
     kandidat = Pressekandidat.query.get_or_404(kandidat_id)
@@ -132,7 +132,7 @@ def suchbegriff_neu():
     return redirect(url_for('admin.presse_kandidaten'))
 
 
-@admin_bp.route('/admin/presse-kandidaten/suchbegriff/loeschen/<int:suchbegriff_id>')
+@admin_bp.route('/admin/presse-kandidaten/suchbegriff/loeschen/<int:suchbegriff_id>', methods=['POST'])
 @login_required
 def suchbegriff_loeschen(suchbegriff_id):
     sb = Suchbegriff.query.get_or_404(suchbegriff_id)

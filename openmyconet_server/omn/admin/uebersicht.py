@@ -42,7 +42,7 @@ def admin():
     )
 
 
-@admin_bp.route('/admin/nutzer/bestaetigen/<int:nutzer_id>')
+@admin_bp.route('/admin/nutzer/bestaetigen/<int:nutzer_id>', methods=['POST'])
 @role_required('superadmin')
 def nutzer_bestaetigen(nutzer_id):
     nutzer = Nutzer.query.get_or_404(nutzer_id)
@@ -76,7 +76,7 @@ def nutzer_rolle_setzen(nutzer_id):
     return redirect(url_for('admin.admin'))
 
 
-@admin_bp.route('/admin/nutzer/loeschen/<int:nutzer_id>')
+@admin_bp.route('/admin/nutzer/loeschen/<int:nutzer_id>', methods=['POST'])
 @role_required('superadmin')
 def nutzer_loeschen(nutzer_id):
     nutzer = Nutzer.query.get_or_404(nutzer_id)
@@ -115,7 +115,7 @@ def accounts():
     return render_template('accounts.html', accounts_liste=accounts_liste, nachricht=nachricht, fehler=fehler)
 
 
-@admin_bp.route('/admin/accounts/delete/<int:user_id>')
+@admin_bp.route('/admin/accounts/delete/<int:user_id>', methods=['POST'])
 @role_required('superadmin')
 def account_delete(user_id):
     user = AdminUser.query.get_or_404(user_id)

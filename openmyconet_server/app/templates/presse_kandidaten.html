@@ -1,4 +1,5 @@
 {% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
 {% block title %}OpenMycoNet — Presse-Kandidaten{% endblock %}
 {% block heading %}🔎 Presse-Kandidaten{% endblock %}
 
@@ -32,7 +33,7 @@
         <td><a href="{{ k.url }}" target="_blank" rel="noopener">{{ k.titel }}</a></td>
         <td>{{ k.quelle }}</td>
         <td class="u-nowrap">
-            <a class="u-mr-8" href="{{ url_for('admin.presse_kandidat_uebernehmen', kandidat_id=k.id) }}">Übernehmen</a>
+            {{ post_knopf(url_for('admin.presse_kandidat_uebernehmen', kandidat_id=k.id), 'Übernehmen', 'u-mr-8') }}
             <form class="u-inline" method="POST">
                 <input type="hidden" name="kandidat_id" value="{{ k.id }}">
                 <input type="hidden" name="action" value="verwerfen">
@@ -65,7 +66,7 @@
         <td><input class="u-w-auto" type="checkbox" name="aktiv" form="sbform{{ sb.id }}" {% if sb.aktiv %}checked{% endif %}></td>
         <td class="u-nowrap">
             <button class="u-mr-8" type="submit" form="sbform{{ sb.id }}">Speichern</button>
-            <a href="{{ url_for('admin.suchbegriff_loeschen', suchbegriff_id=sb.id) }}" class="del js-confirm" data-confirm="RSS-Feed wirklich löschen?">✕</a>
+            {{ post_knopf(url_for('admin.suchbegriff_loeschen', suchbegriff_id=sb.id), '✕', 'del', 'RSS-Feed wirklich löschen?', 'Löschen') }}
         </td>
     </tr>
     {% endfor %}

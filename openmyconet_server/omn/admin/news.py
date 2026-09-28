@@ -510,7 +510,7 @@ def news_uebersetzen(news_id, lang):
                            sprach_namen=SPRACH_NAMEN, entwurf=entwurf, fehler=fehler)
 
 
-@admin_bp.route('/admin/news/delete/<int:news_id>')
+@admin_bp.route('/admin/news/delete/<int:news_id>', methods=['POST'])
 @login_required
 def news_delete(news_id):
     news = News.query.get_or_404(news_id)
@@ -519,7 +519,7 @@ def news_delete(news_id):
     return redirect(url_for('admin.news_admin'))
 
 
-@admin_bp.route('/admin/news/<int:news_id>/verschieben/<richtung>')
+@admin_bp.route('/admin/news/<int:news_id>/verschieben/<richtung>', methods=['POST'])
 @login_required
 def news_verschieben(news_id, richtung):
     """Vertauscht `reihenfolge` mit dem direkten Nachbarn in der aktuellen

@@ -52,7 +52,7 @@ def inhalte_admin():
     return render_template('inhalte.html', bloecke=bloecke, nachricht=nachricht, fehler=fehler)
 
 
-@admin_bp.route('/admin/inhalte/delete/<int:block_id>')
+@admin_bp.route('/admin/inhalte/delete/<int:block_id>', methods=['POST'])
 @login_required
 def inhalte_delete(block_id):
     block = ContentBlock.query.get_or_404(block_id)
