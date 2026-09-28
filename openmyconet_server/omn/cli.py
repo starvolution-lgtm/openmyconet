@@ -2,6 +2,9 @@
 
 - `mail-queue-drain` -- der Cron-Aufhaenger fuer die Rund-Mail-Queue
   (deploy/mailqueue_drain.sh laeuft das jede Minute mit flock).
+- `einwilligung-anfragen` -- einmalig: Bestandsnutzer ohne dokumentierte
+  Einwilligung von Rund-Mails abmelden und per Link fragen (Probelauf ohne
+  --ausfuehren).
 - `sandbox-generieren` -- fuellt das Schema sandbox mit den synthetischen
   BioComm-Szenarien (omn/sandbox/). Nur PostgreSQL; versioniert, reproduzierbar.
 - `biocomm-einlesen` / `biocomm-verdichten` / `biocomm-testpakete` -- Prototyp
@@ -29,6 +32,41 @@ def register_cli(app):
         gesendet = mailqueue_drain(current_app._get_current_object(), limit=limit)
         if gesendet or not still:
             click.echo(f'{gesendet} gesendet')
+
+    @app.cli.command('einwilligung-anfragen')
+    @click.option('--ausfuehren', is_flag=True,
+                  help='Wirklich abmelden und Mails einreihen. Ohne: nur zaehlen (Probelauf).')
+    def einwilligung_anfragen(ausfuehren):
+        """Bestandsnutzer ohne dokumentierte Einwilligung: keine Rund-Mails mehr,
+        bestaetigte bekommen EINMAL den Einwilligungslink (Robby, 28.09.2026).
+        Wiederholbar: danach findet der Befehl niemanden mehr."""
+        from omn.extensions import db
+        from omn.mailer import mailqueue_einreihen
+        from omn.models import Nutzer
+        from omn.registrierung import einwilligung_nachricht
+        from omn.zeit import utcnow
+
+        betroffen = (Nutzer.query
+                     .filter(Nutzer.keine_mails.is_(False), Nutzer.newsletter_einwilligung_am.is_(None))
+                     .order_by(Nutzer.id).all())
+        mit_mail = [n for n in betroffen if n.bestaetigt]
+        click.echo(f'{len(betroffen)} ohne dokumentierte Einwilligung, davon {len(mit_mail)} bestaetigt '
+                   f'(bekommen die Nachfrage), {len(betroffen) - len(mit_mail)} unbestaetigt (nur abmelden).')
+        if not ausfuehren:
+            click.echo('Probelauf -- nichts geaendert. Mit --ausfuehren wirklich ausfuehren.')
+            return
+
+        # Erst abmelden und festschreiben, dann Mails einreihen: scheitert das
+        # Einreihen, bekommt trotzdem niemand mehr ungefragt Rund-Mails.
+        jetzt = utcnow()
+        for n in betroffen:
+            n.keine_mails = True
+        for n in mit_mail:
+            n.einwilligung_angefragt_am = jetzt
+        db.session.commit()
+        mailqueue_einreihen(einwilligung_nachricht(n, bestand=True) for n in mit_mail)
+        click.echo(f'{len(betroffen)} abgemeldet, {len(mit_mail)} Nachfragen eingereiht '
+                   '(versendet der Minuten-Cron mail-queue-drain).')
 
     @app.cli.command('sandbox-generieren')
     @click.option('--nur', multiple=True, help='Nur diese Szenario-Keys (mehrfach moeglich).')

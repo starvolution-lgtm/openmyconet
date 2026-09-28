@@ -203,6 +203,24 @@ def abmelden(token):
     return render_template('abmelden.html', status='fragen', nutzer=nutzer, token=token)
 
 
+def newsletter_einwilligen(token):
+    """Einwilligungslink in Rund-Mails (aus der Mail bei erneuter Registrierung
+    mit Haekchen bzw. der einmaligen Nachfrage an Bestandsnutzer). Wie
+    `abmelden`: GET fragt nur (Prefetch-sicher), erst POST willigt ein und
+    speichert den Zeitpunkt als Nachweis. Der Klick beweist zugleich, dass die
+    Adresse der Person gehoert -> auch `bestaetigt`."""
+    nutzer = Nutzer.query.filter_by(token=token).first()
+    if not nutzer:
+        return render_template('newsletter_einwilligen.html', status='ungueltig'), 404
+    if request.method == 'POST':
+        nutzer.keine_mails = False
+        nutzer.bestaetigt = True
+        nutzer.newsletter_einwilligung_am = zeit.utcnow()
+        db.session.commit()
+        return render_template('newsletter_einwilligen.html', status='fertig', nutzer=nutzer)
+    return render_template('newsletter_einwilligen.html', status='fragen', nutzer=nutzer, token=token)
+
+
 def news_exzerpt(inhalt, laenge=200):
     text = bleach.clean(inhalt, tags=[], strip=True).strip()
     text = ' '.join(text.split())
@@ -382,6 +400,8 @@ def register(app):
     app.add_url_rule('/register', 'register', neuen_nutzer_registrieren, methods=['GET', 'POST'])
     app.add_url_rule('/confirm/<token>', 'confirm', confirm)
     app.add_url_rule('/abmelden/<token>', 'abmelden', abmelden, methods=['GET', 'POST'])
+    app.add_url_rule('/newsletter/einwilligen/<token>', 'newsletter_einwilligen', newsletter_einwilligen,
+                     methods=['GET', 'POST'])
     app.add_url_rule('/news', 'news', news)
     app.add_url_rule('/news/<slug>', 'news_detail', news_detail)
     app.add_url_rule('/news-sitemap.xml', 'news_sitemap', news_sitemap)

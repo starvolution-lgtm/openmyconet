@@ -47,6 +47,12 @@ class Nutzer(db.Model):
     # Rundmail steht (Newsletter + News-Benachrichtigung). Transaktionale Mails
     # (Doppel-Opt-in-Bestaetigung, Magic-Link-Login) ignorieren das Flag.
     keine_mails = db.Column(db.Boolean, nullable=False, default=False)
+    # Nachweis der Einwilligung in Rund-Mails (naiv-UTC): Haekchen bei der
+    # Registrierung oder Klick auf den Einwilligungslink /newsletter/einwilligen/<token>.
+    # NULL = keine dokumentierte Einwilligung.
+    newsletter_einwilligung_am = db.Column(db.DateTime, nullable=True)
+    # Wann zuletzt ein Einwilligungslink verschickt wurde (Sperre gegen Mail-Flut).
+    einwilligung_angefragt_am = db.Column(db.DateTime, nullable=True)
 
 class Knoten(db.Model):
     id = db.Column(db.Integer, primary_key=True)

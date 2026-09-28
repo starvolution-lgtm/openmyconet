@@ -456,7 +456,16 @@ optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.
 Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
 (Checkbox + Sprach-Checkboxen beim Veröffentlichen unter `/admin/news`,
 `_news_nachrichten_bauen` in `omn/admin/news.py`) gehen NUR an
-`Nutzer.bestaetigt == True` **und** `keine_mails == False`. Die News-Mail
+`Nutzer.bestaetigt == True` **und** `keine_mails == False`. **Einwilligung (seit
+28.09.2026):** `keine_mails` ist nur bei ausdrücklicher Zustimmung False — Häkchen
+`newsletter` auf der Startseite (`register_nutzer_core(newsletter=…)`; Bewerbung,
+Förderer, Kooperation haben keins → ohne Einwilligung) oder Klick auf
+`/newsletter/einwilligen/<token>` (GET fragt, POST willigt ein, setzt auch
+`bestaetigt`). Nachweis in `Nutzer.newsletter_einwilligung_am`. Erneute
+Registrierung mit Häkchen ohne Einwilligung → Mail mit diesem Link (Sperre 1 h über
+`einwilligung_angefragt_am`), stellt selbst nichts um. Bestandsnutzer ohne Nachweis:
+`flask einwilligung-anfragen [--ausfuehren]` (ohne Flag Probelauf) meldet ab und reiht
+einmal die Nachfrage ein. Tests `tests/test_registrierung.py`. Die News-Mail
 zusätzlich nur an die im Formular angehakten Spracheinstellungen
 (`request.form.getlist('mail_sprachen')`, gefiltert gegen `LANGS`) — die
 News-Sprache selbst ist dabei egal (eine englische „aktuelle Änderungen"-News

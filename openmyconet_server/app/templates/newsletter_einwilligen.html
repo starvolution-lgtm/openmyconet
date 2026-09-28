@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>OpenMycoNet — Neuigkeiten per E-Mail</title>
+<link rel="stylesheet" href="{{ asset('register.css') }}">
+</head>
+<body>
+    <h1>🍄 OpenMycoNet</h1>
+    <h2>Neuigkeiten per E-Mail</h2>
+
+    {% if status == 'ungueltig' %}
+        <p class="err">Dieser Link ist ungültig. Möglicherweise ist er nicht vollständig.</p>
+        <p><a href="https://www.openmyconet.de">← Zur Website</a></p>
+
+    {% elif status == 'fertig' %}
+        <p class="msg">Danke, {{ nutzer.name }}! An <strong>{{ nutzer.email }}</strong>
+        schicken wir dir ab jetzt Newsletter und News-Benachrichtigungen.</p>
+        <p>Jede dieser Mails enthält einen Link, mit dem du dich jederzeit wieder abmelden kannst.</p>
+        <p><a href="https://www.openmyconet.de">← Zur Website</a></p>
+
+    {% else %}
+        <p>Möchtest du an <strong>{{ nutzer.email }}</strong> Newsletter und
+        News-Benachrichtigungen von OpenMycoNet bekommen?</p>
+        <form method="POST" action="{{ url_for('newsletter_einwilligen', token=token) }}">
+            <button type="submit">Ja, ich möchte Neuigkeiten bekommen</button>
+        </form>
+        <p><a href="https://www.openmyconet.de">Nein danke — zur Website</a></p>
+    {% endif %}
+</body>
+</html>
