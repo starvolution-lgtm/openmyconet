@@ -39,7 +39,10 @@ class Nutzer(db.Model):
     login_token = db.Column(db.String(100), unique=True, nullable=True)
     login_token_angefordert_am = db.Column(db.DateTime, nullable=True)
 
-    # E-Mail-Abmeldung (Opt-out). Gesetzt ueber den tokengesicherten
+    # Keine Rund-Mails. Neue Nutzer bekommen es in register_nutzer_core gesetzt,
+    # wenn sie das Newsletter-Haekchen NICHT gesetzt haben (Einwilligung, 28.09.2026;
+    # der Model-Default False gilt nur fuer direkt angelegte Zeilen, z.B. Tests).
+    # Abmeldung ueber den tokengesicherten
     # /abmelden/<token>-Link (token = Double-Opt-in-Token oben), der in jeder
     # Rundmail steht (Newsletter + News-Benachrichtigung). Transaktionale Mails
     # (Doppel-Opt-in-Bestaetigung, Magic-Link-Login) ignorieren das Flag.

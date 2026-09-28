@@ -20,10 +20,18 @@ logger = logging.getLogger(__name__)
 registrierung_bp = Blueprint("registrierung", __name__)
 
 
-def register_nutzer_core(name, email, sprache, land, gruppe, ip=None, rollback_on_mail_fail=True):
+def register_nutzer_core(name, email, sprache, land, gruppe, ip=None, rollback_on_mail_fail=True,
+                         newsletter=False):
     """
     Legt einen neuen Nutzer an und verschickt die Bestätigungsmail (Double-Opt-in).
     Gibt (nutzer, fehlertext) zurück.
+
+    newsletter: nur True, wenn die Person ausdrücklich eingewilligt hat (Häkchen
+    „Ja, ich möchte per E-Mail … informiert werden“ auf der Startseite). Sonst
+    `keine_mails=True` — Rund-Mails (Newsletter, News-Benachrichtigung) gehen nur
+    an bestätigte Nutzer MIT Einwilligung. Bewerbung, Förderer- und
+    Kooperationsanträge haben kein solches Häkchen und legen daher ohne
+    Einwilligung an. Transaktionale Mails sind davon unberührt.
 
     rollback_on_mail_fail=True (Standard, für die eigenständige Registrierung, wo die
     Bestätigungsmail der ganze Zweck der Anfrage ist): schlägt der Mailversand fehl,
@@ -40,7 +48,8 @@ def register_nutzer_core(name, email, sprache, land, gruppe, ip=None, rollback_o
     token = secrets.token_urlsafe(32)
     nutzer = Nutzer(
         name=name, email=email, sprache=sprache,
-        land=land, gruppe=gruppe, token=token, ip=ip
+        land=land, gruppe=gruppe, token=token, ip=ip,
+        keine_mails=not newsletter,
     )
     db.session.add(nutzer)
     db.session.commit()
@@ -93,7 +102,8 @@ https://www.openmyconet.de
 def api_register():
     """
     Erwartet Formulardaten (multipart/form-data oder x-www-form-urlencoded):
-        name, email, land, gruppe, sowie die Sprache entweder als "lang" (so
+        name, email, land, gruppe, newsletter (Checkbox, nur bei Einwilligung
+        mitgeschickt), sowie die Sprache entweder als "lang" (so
         sendet es index.html, wie auch bei /api/bewerbung) oder als "sprache"
         (so sendet es das eigenständige register.html-Formular).
     Gibt zurück:
@@ -112,11 +122,15 @@ def api_register():
     sprache = (request.form.get("lang") or request.form.get("sprache") or "de").strip()
     land = (request.form.get("land") or "").strip()
     gruppe = (request.form.get("gruppe") or "allgemein").strip()
+    # Browser schicken eine angehakte Checkbox als "on" mit, eine leere gar nicht.
+    newsletter = (request.form.get("newsletter") or "").strip().lower() in ("on", "1", "true", "ja")
 
     if not email:
         return jsonify({"error": "E-Mail-Adresse fehlt."}), 400
 
-    _nutzer, fehler = register_nutzer_core(name, email, sprache, land, gruppe, ip=ip)
+    _nutzer, fehler = register_nutzer_core(
+        name, email, sprache, land, gruppe, ip=ip, newsletter=newsletter,
+    )
     if fehler:
         return jsonify({"error": fehler}), 400
     return jsonify({"ok": True})
