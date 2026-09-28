@@ -29,6 +29,8 @@ def bewerbungen_admin():
             if neuer_status not in BEWERBUNG_STATUS:
                 fehler = 'Ungültiger Status.'
             else:
+                if bewerbung.status != neuer_status:
+                    bewerbung.status_geaendert_am = utcnow()  # Beginn der Loeschfrist bei Absage
                 bewerbung.status = neuer_status
                 db.session.commit()
                 nachricht = f'Status von Bewerbung #{bewerbung.id} auf "{neuer_status}" gesetzt.'

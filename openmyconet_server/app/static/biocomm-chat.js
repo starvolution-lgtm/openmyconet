@@ -39,6 +39,8 @@
       send:        "Senden",
       aria:        "OpenMycoNet Wissensvermittler öffnen",
       tooltip:     "Fragen zum Projekt?",
+      hinweis:     "Bitte keine persönlichen Daten eingeben. Deine Frage wird zur Beantwortung an Anthropic (USA) übermittelt.",
+      hinweisLink: "Datenschutz",
     },
     en: {
       title:       "OpenMycoNet Knowledge Guide",
@@ -48,6 +50,8 @@
       send:        "Send",
       aria:        "Open OpenMycoNet Knowledge Guide",
       tooltip:     "Questions about the project?",
+      hinweis:     "Please do not enter personal data. Your question is sent to Anthropic (USA) to generate the answer.",
+      hinweisLink: "Privacy",
     },
     nl: {
       title:       "OpenMycoNet Kennisassistent",
@@ -57,6 +61,8 @@
       send:        "Versturen",
       aria:        "OpenMycoNet Kennisassistent openen",
       tooltip:     "Vragen over het project?",
+      hinweis:     "Voer geen persoonlijke gegevens in. Je vraag wordt voor het antwoord naar Anthropic (VS) gestuurd.",
+      hinweisLink: "Privacy",
     },
     fr: {
       title:       "Guide de connaissances OpenMycoNet",
@@ -66,6 +72,8 @@
       send:        "Envoyer",
       aria:        "Ouvrir le guide OpenMycoNet",
       tooltip:     "Des questions sur le projet ?",
+      hinweis:     "Merci de ne pas saisir de données personnelles. Votre question est transmise à Anthropic (États-Unis) pour générer la réponse.",
+      hinweisLink: "Confidentialité",
     },
     es: {
       title:       "Guía de conocimiento OpenMycoNet",
@@ -75,6 +83,8 @@
       send:        "Enviar",
       aria:        "Abrir guía OpenMycoNet",
       tooltip:     "¿Preguntas sobre el proyecto?",
+      hinweis:     "No introduzcas datos personales. Tu pregunta se envía a Anthropic (EE. UU.) para generar la respuesta.",
+      hinweisLink: "Privacidad",
     },
   };
   const T = i18n[LANG] || i18n.de;
@@ -229,6 +239,7 @@
         <textarea id="omn-input" rows="1" placeholder="${T.placeholder}"></textarea>
         <button id="omn-send">${T.send}</button>
       </div>
+      <p id="omn-hinweis"><span id="omn-hinweis-text">${T.hinweis}</span> <a id="omn-hinweis-link" href="https://www.openmyconet.de/datenschutz.html" target="_blank" rel="noopener">${T.hinweisLink}</a></p>
     </div>
   `);
 
@@ -361,6 +372,8 @@
     document.querySelector(".omn-hstate").textContent = Tx.state;
     document.getElementById("omn-input").placeholder = Tx.placeholder;
     document.getElementById("omn-send").textContent = Tx.send;
+    document.getElementById("omn-hinweis-text").textContent = Tx.hinweis;
+    document.getElementById("omn-hinweis-link").textContent = Tx.hinweisLink;
     document.getElementById("omn-fab").title = Tx.tooltip;
     document.getElementById("omn-fab").setAttribute("aria-label", Tx.aria);
     document.getElementById("omn-widget").setAttribute("aria-label", Tx.title);

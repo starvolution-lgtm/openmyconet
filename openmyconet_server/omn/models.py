@@ -86,6 +86,9 @@ class Bewerbung(db.Model):
     nutzer = db.relationship('Nutzer')
     ip = db.Column(db.String(45), nullable=True)
     erstellt_am = db.Column(db.DateTime, default=utcnow)
+    # Zeitpunkt der letzten Statusaenderung im Admin (naiv-UTC); ab hier laeuft die
+    # Loeschfrist abgelehnter Bewerbungen (omn/aufbewahrung.py). NULL bei Alt-Zeilen.
+    status_geaendert_am = db.Column(db.DateTime, nullable=True)
 
 
 class Kontaktanfrage(db.Model):

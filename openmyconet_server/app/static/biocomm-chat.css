@@ -118,6 +118,13 @@
   outline: none; transition: border-color 0.2s;
 }
 #omn-input:focus { border-color: #6ee87e; }
+/* Datenschutzhinweis unter dem Eingabefeld (seit 28.09.2026) -- Kontrast >= 4.5:1 */
+#omn-hinweis {
+  margin: 0; padding: 0 12px 8px;
+  background: #013020; color: #a8c8b0;
+  font-size: 11px; line-height: 1.4; font-family: sans-serif;
+}
+#omn-hinweis a { color: #e0b050; }
 #omn-input::placeholder { color: #5a8a6a; }
 #omn-send {
   background: #0a7050; color: #fff; border: none;
