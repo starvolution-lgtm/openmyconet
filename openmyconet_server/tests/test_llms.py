@@ -77,6 +77,29 @@ def test_verlinkte_seiten_gibt_es(client, pfad):
         assert f'id="{anker}"' in r.get_data(as_text=True), anker
 
 
+def test_impressum_angaben():
+    """Aus app/static/impressum.html gelesen; bricht, wenn das Impressum umgebaut wird."""
+    from omn.llms import impressum
+
+    imp = impressum()
+    assert imp['anbieter'] == 'Robert Jank, Maintal, Deutschland'
+    assert imp['mail'] == 'kontakt@openmyconet.de'
+    assert 'Gebrauchsmuster' in imp['schutzrechte'] and 'DPMA' in imp['schutzrechte']
+    assert 'CC BY 4.0' in imp['lizenz'] and 'Messdaten' in imp['lizenz']
+
+
+@pytest.mark.parametrize('url', URLS)
+def test_impressum_in_allen_fassungen(client, url):
+    from omn.llms import impressum
+
+    text = client.get(url).get_data(as_text=True)
+    imp = impressum()
+    for wert in imp.values():
+        assert wert in text
+    # Strasse und Telefon bleiben im Impressum, nicht in der KI-Textfassung
+    assert 'Backesweg' not in text and '4346300' not in text
+
+
 def test_url_mit_anker():
     assert _url('/#anmelden', 'en') == f'{WEBSITE}/?lang=en#anmelden'
     assert _url('/#anmelden', 'de') == f'{WEBSITE}/#anmelden'

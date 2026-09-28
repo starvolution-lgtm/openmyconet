@@ -331,7 +331,11 @@ Wirkungsnachweis“, Seitenliste DE+EN), `/llms-full.txt` (alle Texte Deutsch) u
 `/llms-full-en.txt` (beide mit YAML-Frontmatter, `stand` = Dateidatum von `translations.json` = Commit-Zeit des Deploys) — zur Laufzeit aus `translations.json`, Themengruppen aus
 `omn/wissensbasis.py` (gemeinsam mit `build_rag_index.py`, also dieselben wie beim
 Chatbot). Header `X-Robots-Tag: noindex` + canonical auf die Startseite, Links immer
-auf www. Neue öffentliche Seite → in `SEITEN` (und ggf. `GRUPPEN_SEITE`) nachtragen.
+auf www. Neue öffentliche Seite → in `SEITEN_GRUPPEN` (und ggf. `GRUPPEN_SEITE`) nachtragen.
+`/llms.txt` hat einen Block „Projekt-Eckdaten“ (`ECKDATEN`, nur Text-Keys, nichts frei
+formuliert) plus Angaben aus dem **Impressum** (`app/static/impressum.html`, nur deutsch,
+zur Laufzeit geparst: Anbieter ohne Straße/Telefon, E-Mail, Schutzrechte, Lizenz der
+Messdaten CC BY 4.0). Impressum umgebaut → `test_impressum_angaben` schlägt an.
 Tests `tests/test_llms.py` (prüfen auch, dass alle Keys und Seiten existieren).
 
 ### Songtexte / Musik-Player (WCAG 1.2.1)

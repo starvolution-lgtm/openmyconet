@@ -17,11 +17,76 @@ Links zeigen immer auf die kanonische Domain (auch auf Staging).
 import json
 import os
 from datetime import datetime, timezone
+from html.parser import HTMLParser
 
 from flask import Response
 
 from omn.i18n import _TRANSLATIONS_PATH, TRANSLATIONS
 from omn.wissensbasis import abschnitte, clean
+
+# Das Impressum ist eine statische, nur deutsche Seite (nicht in translations.json).
+IMPRESSUM_PATH = os.path.join(os.path.dirname(_TRANSLATIONS_PATH), 'impressum.html')
+
+
+class _ImpressumLeser(HTMLParser):
+    """{Ueberschrift: [Absatz, ...]}, Absatz = Liste seiner Zeilen (<br> trennt);
+    dazu die mailto-Adressen."""
+
+    def __init__(self):
+        super().__init__()
+        self.abschnitte, self.mails = {}, []
+        self._h2, self._absatz, self._in_h2 = None, None, False
+        self._text = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'h2':
+            self._in_h2, self._text = True, []
+        elif tag == 'p' and self._h2:
+            self._absatz, self._text = [], []
+        elif tag == 'br' and self._absatz is not None:
+            self._zeile_ab()
+        elif tag == 'a':
+            href = dict(attrs).get('href') or ''
+            if href.startswith('mailto:'):
+                self.mails.append(href[len('mailto:'):])
+
+    def handle_data(self, data):
+        if self._in_h2 or self._absatz is not None:
+            self._text.append(data)
+
+    def _zeile_ab(self):
+        zeile = ' '.join(''.join(self._text).split())
+        if zeile:
+            self._absatz.append(zeile)
+        self._text = []
+
+    def handle_endtag(self, tag):
+        if tag == 'h2' and self._in_h2:
+            self._h2 = ' '.join(''.join(self._text).split())
+            self.abschnitte[self._h2] = []
+            self._in_h2 = False
+        elif tag == 'p' and self._absatz is not None:
+            self._zeile_ab()
+            if self._absatz:
+                self.abschnitte[self._h2].append(self._absatz)
+            self._absatz = None
+
+
+def impressum():
+    """Angaben aus dem Impressum fuer llms.txt. Bewusst ohne Strasse und Telefon
+    (stehen im verlinkten Impressum). Fehlt ein erwarteter Abschnitt -> KeyError,
+    das faengt test_llms.py ab, bevor es live geht."""
+    leser = _ImpressumLeser()
+    with open(IMPRESSUM_PATH, encoding='utf-8') as f:
+        leser.feed(f.read())
+    a = leser.abschnitte
+    anbieter = next(v for k, v in a.items() if k.startswith('Angaben gemäß'))[0]
+    return {
+        'anbieter': f'{anbieter[0]}, {anbieter[-2].split(" ", 1)[1]}, {anbieter[-1]}',
+        'mail': leser.mails[0],
+        'schutzrechte': ' '.join(a['Schutzrechte'][0]),
+        'lizenz': ' '.join(next(p for p in a['Urheberrecht'] if 'CC BY' in ' '.join(p))),
+    }
 
 WEBSITE = 'https://www.openmyconet.de'
 
@@ -55,6 +120,7 @@ SEITEN_GRUPPEN = [
     ({'de': 'Weiteres', 'en': 'More'}, [
         ('/#daten', 'label_daten', 'desc_daten'),
         ('/datenschutz.html', {'de': 'Datenschutz', 'en': 'Privacy policy'}, None),
+        ('/impressum.html', {'de': 'Impressum', 'en': 'Legal notice (German)'}, None),
         ('/medien.html', 'h1_medien', 'desc_medien'),
         ('/news', {'de': 'Neuigkeiten', 'en': 'News'}, None),
     ]),
@@ -98,6 +164,11 @@ NICHT_IM_VOLLTEXT = {'entwicklungsstand'}
 TEXTE = {
     'de': {
         'eckdaten': 'Projekt-Eckdaten',
+        'anbieter': 'Anbieter und verantwortlich',
+        'impressum': 'Impressum',
+        'kontakt': 'Kontakt',
+        'schutzrechte': 'Schutzrechte',
+        'lizenz': 'Lizenz der Messdaten',
         'einordnung': 'Einordnung',
         'stand': 'Stand dieser Datei',
         'volltext': 'Vollständige Texte',
@@ -110,6 +181,11 @@ TEXTE = {
     },
     'en': {
         'eckdaten': 'Project facts',
+        'anbieter': 'Provider and responsible person',
+        'impressum': 'legal notice',
+        'kontakt': 'Contact',
+        'schutzrechte': 'Intellectual property',
+        'lizenz': 'Licence of the measurement data',
         'einordnung': 'Context',
         'stand': 'This file as of',
         'titel_volltext': 'OpenMycoNet — all website texts (English)',
@@ -146,9 +222,18 @@ def _seitenliste(lang, ebene):
 
 def _eckdaten(lang, ebene):
     tx = TEXTE[lang]
+    imp = impressum()
+    zusatz = '' if lang == 'de' else ' (Impressum, German original)'
     zeilen = [f"{ebene} {tx['eckdaten']}", '']
     zeilen += [f"- **{name[lang]}:** {clean(_t(lang, key))}" for name, key in ECKDATEN]
-    zeilen += [f"- **{tx['stand']}:** {stand()}", '']
+    zeilen += [
+        f"- **{tx['anbieter']}:** {imp['anbieter']} ([{tx['impressum']}]({WEBSITE}/impressum.html))",
+        f"- **{tx['kontakt']}:** {imp['mail']}",
+        f"- **{tx['schutzrechte']}:** {imp['schutzrechte']}{zusatz}",
+        f"- **{tx['lizenz']}:** {imp['lizenz']}{zusatz}",
+        f"- **{tx['stand']}:** {stand()}",
+        '',
+    ]
     return zeilen
 
 
@@ -215,6 +300,13 @@ def llms_full(lang):
         teile += [f'## {titel}', '', f"{tx['seite']}: {_url(GRUPPEN_SEITE.get(slug, '/'), lang)}", '']
         for absatz in absaetze:
             teile += [absatz, '']
+    imp = impressum()
+    zusatz = '' if lang == 'de' else ' (German original)'
+    teile += [f"## {tx['impressum'][:1].upper()}{tx['impressum'][1:]}", '',
+              f"{tx['seite']}: {WEBSITE}/impressum.html", '',
+              f"{tx['anbieter']}: {imp['anbieter']} · {imp['mail']}", '',
+              f"{tx['schutzrechte']}: {imp['schutzrechte']}{zusatz}", '',
+              f"{tx['lizenz']}: {imp['lizenz']}{zusatz}", '']
     return '\n'.join(teile)
 
 
