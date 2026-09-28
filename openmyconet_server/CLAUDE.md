@@ -439,7 +439,7 @@ Staging hat **keine** Grossmedien (mp3/pdf, per deploy-exclude ausgeschlossen).
 
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll
-(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen** gelöscht (Robby, 28.09.2026;
+(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang gelöscht (Robby, 28.09.2026;
 steht so in der Datenschutzerklärung — bei Änderung dort nachziehen). CLI `flask
 aufbewahrung-bereinigen`, täglich per Cron `deploy/aufbewahrung.sh` (03:40 Prod, 03:45
 Staging, eingetragen von `install_backup_cron.sh`, Log `aufbewahrung.log`). nginx-Logs:

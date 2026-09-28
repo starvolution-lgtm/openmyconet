@@ -37,7 +37,7 @@ def register_cli(app):
     @click.option('--still/--laut', default=True,
                   help='--still (Default, fuer den Cron): nur ausgeben, wenn etwas geloescht wurde.')
     def aufbewahrung_bereinigen(still):
-        """Loescht Chat-Verlaeufe und Fehlerprotokoll nach Ablauf der Frist (omn/aufbewahrung.py)."""
+        """Loescht Chat-Verlaeufe, Fehlerprotokoll und Kontaktanfragen nach Ablauf der Frist (omn/aufbewahrung.py)."""
         from omn.aufbewahrung import bereinigen
 
         ergebnis = bereinigen()

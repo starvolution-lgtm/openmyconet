@@ -9,7 +9,7 @@
 # - woechentlicher Restore-Check Montag 04:15
 # - Mail-Queue-Drain jede Minute (Prod + Staging)
 # - BioComm-Verdichtung alle 5 Minuten, Schemas live + sandbox (Prod + Staging)
-# - Loeschfristen (Chat-Verlaeufe, Fehlerprotokoll: 90 Tage) taeglich 03:40/03:45
+# - Loeschfristen (Chat, Fehlerprotokoll 90 Tage; Kontaktanfragen 6 Monate) taeglich 03:40/03:45
 # Vorhandene Zeilen mit demselben Skriptnamen werden vorher entfernt, also
 # gefahrlos mehrfach ausfuehrbar.
 # ---------------------------------------------------------------------------

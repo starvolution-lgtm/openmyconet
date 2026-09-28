@@ -1,7 +1,7 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# aufbewahrung.sh -- loescht Chat-Verlaeufe und Fehlerprotokoll nach Ablauf
-# der Frist (omn/aufbewahrung.py, 90 Tage). Server.
+# aufbewahrung.sh -- loescht Chat-Verlaeufe, Fehlerprotokoll und Kontaktanfragen
+# nach Ablauf der Frist (omn/aufbewahrung.py). Server.
 #
 #   bash /home/omn/app/deploy/aufbewahrung.sh
 #
