@@ -310,7 +310,10 @@ def test_seite_in_der_sprache_des_nutzers(app):
     html = c.get('/dashboard/datenlabor').get_data(as_text=True)
     assert '<html lang="en">' in html and 'BioComm <em>Data Lab</em>' in html
     assert 'calculated measurements, real data processing' in html and 'Log out' in html
-    assert 'data-locale="en-GB"' in html and 'aria-current="true">English' in html
+    assert 'data-locale="en-GB"' in html
+    # Sprachwahl per Flaggen wie auf der Website; die aktive ist markiert
+    assert 'title="English" aria-label="English" class="dl-flagge" data-sprache aria-current="true"' in html
+    assert html.count('class="dl-flagge"') == 5
     # ?lang= und der Cookie der Website haben Vorrang vor der Registrierungssprache
     assert 'Labo de données' in c.get('/dashboard/datenlabor?lang=fr').get_data(as_text=True)
     assert '<html lang="fr">' in c.get('/dashboard/datenlabor').get_data(as_text=True)   # Wahl bleibt (Cookie)

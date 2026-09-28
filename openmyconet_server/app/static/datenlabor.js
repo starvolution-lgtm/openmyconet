@@ -742,6 +742,9 @@
     $('dl-roh-vor').addEventListener('click', function () { if (st.rohVon !== null) { st.rohVon += 10000; ladeRoh(); } });
   }
 
+  // Sprache auch fuer die Website merken (die liest Cookie, dann localStorage)
+  try { localStorage.setItem('omn_lang', $('dl-app').getAttribute('data-lang')); } catch (e) { /* privat/gesperrt */ }
+
   // Sprachwechsel: die gerade gezeigte Ansicht (#...) mitnehmen
   document.querySelectorAll('[data-sprache]').forEach(function (a) {
     a.addEventListener('click', function () { a.href = a.href.split('#')[0] + window.location.hash; });

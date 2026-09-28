@@ -185,10 +185,10 @@
 <footer>
   <div class="footer-logo">OpenMycoNet</div>
   <div class="footer-info" id="footer-info">
-    © Copyright 2026 · Robert Jank · Maintal, Deutschland ·
-    <a href="{{ live('impressum.html') }}">Impressum</a> ·
-    <a href="{{ live('datenschutz.html') }}">Datenschutz</a> ·
-    <a href="{{ live('index.html') }}">← Startseite</a>
+    © <span data-i18n="footer_copy">{{ t('footer_copy') }}</span> ·
+    <a href="{{ live('impressum.html') }}" data-i18n="footer_impressum">{{ t('footer_impressum') }}</a> ·
+    <a href="{{ live('datenschutz.html') }}" data-i18n="footer_datenschutz">{{ t('footer_datenschutz') }}</a> ·
+    <a href="{{ live('index.html') }}" data-i18n="footer_startseite">{{ t('footer_startseite') }}</a>
   </div>
 </footer>
 
@@ -202,19 +202,31 @@
 // pro Sprache ein Block (/i18n/<lang>.json, ~85 KB). Initial nur die aktuelle
 // Sprache + 'de' (Fallback in allen apply*()-Funktionen); weitere Sprachen
 // werden beim ersten Flaggen-Klick nachgeladen.
-var FLAGS = {
-  de: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>',
-  en: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>',
-  nl: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>',
-  fr: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>',
-  es: '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>'
-};
-var FLAG_TITLES = {de:'Deutsch',en:'English',nl:'Nederlands',fr:'Français',es:'Español'};
+// Flaggen + Namen aus omn/i18n.py (dieselben nutzt das Datenlabor).
+var FLAGS = {{ FLAGGEN|tojson }};
+var FLAG_TITLES = {{ SPRACHNAMEN|tojson }};
 var LANGS = ['de','en','nl','fr','es'];
+
+// Sprachwahl fuer Server UND Browser merken: Cookie omn_lang liest der Server
+// (resolve_lang, z. B. im Datenlabor nach dem Login), localStorage die Seiten.
+// Vorher schrieb der Flaggen-Klick nur localStorage -> das Datenlabor kam
+// trotz englischer Flagge auf Deutsch.
+function omnMerkeLang(lang) {
+  try { localStorage.setItem('omn_lang', lang); } catch (e) {}
+  document.cookie = 'omn_lang=' + lang + '; max-age=31536000; path=/; samesite=lax'
+    + (location.protocol === 'https:' ? '; secure' : '');
+}
+function omnCookieLang() {
+  var m = document.cookie.match(/(?:^|; )omn_lang=([a-z]{2})/);
+  return m ? m[1] : null;
+}
 
 function getLang() {
   var p = new URLSearchParams(window.location.search).get('lang');
   if (p && LANGS.indexOf(p) !== -1) return p;
+  // Cookie vor localStorage: so gilt auch eine im Datenlabor gewaehlte Sprache.
+  var cookie = omnCookieLang();
+  if (cookie && LANGS.indexOf(cookie) !== -1) return cookie;
   var stored = localStorage.getItem('omn_lang');
   if (stored && LANGS.indexOf(stored) !== -1) return stored;
   var bl = (navigator.language || 'de').split('-')[0].toLowerCase();
@@ -245,10 +257,20 @@ var TRANSLATIONS_READY = Promise.all([omnEnsureLang('de'), omnEnsureLang(current
 // eigenes setLang bekommen hier einen Minimal-Fallback.
 function omnSetLang(lang) {
   return omnEnsureLang(lang).then(function() {
+    omnMerkeLang(lang);
+    omnFooter(lang);
     if (typeof setLang === 'function') { setLang(lang); return; }
     currentLang = lang;
-    try { localStorage.setItem('omn_lang', lang); } catch (e) {}
     if (typeof renderSidebar === 'function') renderSidebar();
+  });
+}
+
+// Footer beim Instant-Umschalten mitziehen (serverseitig per t() gerendert).
+function omnFooter(lang) {
+  var T = TRANSLATIONS[lang] || {}, D = TRANSLATIONS.de || {};
+  document.querySelectorAll('#footer-info [data-i18n]').forEach(function(el) {
+    var k = el.getAttribute('data-i18n');
+    if (T[k] || D[k]) el.textContent = T[k] || D[k];
   });
 }
 

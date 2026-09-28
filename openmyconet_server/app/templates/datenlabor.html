@@ -5,8 +5,9 @@
 {% block body_class %}dl-breit{% endblock %}
 {% block content %}
 <nav class="dl-sprachen" aria-label="{{ T.sprache }}">
-    {% for l, name in [('de', 'Deutsch'), ('en', 'English'), ('nl', 'Nederlands'), ('fr', 'Français'), ('es', 'Español')] %}
-    <a href="?lang={{ l }}" hreflang="{{ l }}" lang="{{ l }}" data-sprache{% if l == lang %} aria-current="true"{% endif %}>{{ name }}</a>
+    {# Dieselben Flaggen wie auf der Website (omn/i18n.py FLAGGEN); ?lang= setzt das Cookie omn_lang #}
+    {% for l, name in SPRACHNAMEN.items() %}
+    <a href="?lang={{ l }}" hreflang="{{ l }}" lang="{{ l }}" title="{{ name }}" aria-label="{{ name }}" class="dl-flagge" data-sprache{% if l == lang %} aria-current="true"{% endif %}>{{ FLAGGEN[l]|replace('width="20" height="14"', 'width="24" height="17" aria-hidden="true"')|safe }}</a>
     {% endfor %}
 </nav>
 <p class="dl-label">{{ T.bereich }}</p>

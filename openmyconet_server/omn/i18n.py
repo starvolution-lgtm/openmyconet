@@ -22,6 +22,17 @@ from flask import g, request, jsonify
 LANGS = ['de', 'en', 'nl', 'fr', 'es']
 COOKIE_NAME = 'omn_lang'
 
+# Flaggen als SVG (20 x 14), einzige Quelle fuer die Sprachumschaltung der
+# Website (site/base.html, per JS) und des Datenlabors (serverseitig).
+FLAGGEN = {
+    'de': '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#000"/><rect y="4.67" width="20" height="4.67" fill="#D00"/><rect y="9.33" width="20" height="4.67" fill="#FFCE00"/></svg>',
+    'en': '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.6"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.4"/></svg>',
+    'nl': '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.67" fill="#AE1C28"/><rect y="9.33" width="20" height="4.67" fill="#21468B"/></svg>',
+    'fr': '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><rect width="6.67" height="14" fill="#002395"/><rect x="13.33" width="6.67" height="14" fill="#ED2939"/></svg>',
+    'es': '<svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>',
+}
+SPRACHNAMEN = {'de': 'Deutsch', 'en': 'English', 'nl': 'Nederlands', 'fr': 'Français', 'es': 'Español'}
+
 # omn/i18n.py -> Repo-Root -> app/static/
 _TRANSLATIONS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'app', 'static', 'translations.json')
 with open(_TRANSLATIONS_PATH, encoding='utf-8') as _f:
@@ -89,3 +100,5 @@ def init_i18n(app):
     # reine String-Lookup-Funktion nicht reicht -- direkter Zugriff im Template
     # via translations[current_lang()]['key'].
     app.jinja_env.globals['translations'] = TRANSLATIONS
+    app.jinja_env.globals['FLAGGEN'] = FLAGGEN
+    app.jinja_env.globals['SPRACHNAMEN'] = SPRACHNAMEN
