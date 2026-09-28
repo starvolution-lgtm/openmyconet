@@ -3,7 +3,7 @@ translations.json (omn/llms.py, Gruppen aus omn/wissensbasis.py)."""
 import pytest
 
 from omn.i18n import TRANSLATIONS
-from omn.llms import GRUPPEN_SEITE, NICHT_IM_VOLLTEXT, SEITEN, WEBSITE
+from omn.llms import ECKDATEN, GRUPPEN_SEITE, NICHT_IM_VOLLTEXT, SEITEN, SEITEN_GRUPPEN, WEBSITE, _url
 from omn.wissensbasis import GROUPS, abschnitte, clean
 
 URLS = ['/llms.txt', '/llms-full.txt', '/llms-full-en.txt']
@@ -26,8 +26,14 @@ def test_llms_txt_inhalt(client):
     assert clean(TRANSLATIONS['de']['bdl_interp_p']) in text
     assert clean(TRANSLATIONS['en']['bdl_interp_p']) in text
     for pfad, _, _ in SEITEN:
-        assert f'({WEBSITE}{pfad})' in text
-        assert f'({WEBSITE}{pfad}?lang=en)' in text
+        assert f'({_url(pfad, "de")})' in text
+        assert f'({_url(pfad, "en")})' in text
+    for gruppe, _ in SEITEN_GRUPPEN:
+        assert f"## {gruppe['de']}\n" in text and f"### {gruppe['en']}\n" in text
+    # Eckdaten kommen aus den Website-Texten
+    for _, key in ECKDATEN:
+        assert clean(TRANSLATIONS['de'][key]) in text
+        assert clean(TRANSLATIONS['en'][key]) in text
     assert f'{WEBSITE}/llms-full.txt' in text and f'{WEBSITE}/llms-full-en.txt' in text
     assert '<' not in text.replace('<https', '')  # kein HTML durchgerutscht
 
@@ -49,8 +55,9 @@ def test_volltext_enthaelt_alle_themen(client, lang, url):
 @pytest.mark.parametrize('lang', ['de', 'en'])
 def test_seiten_keys_existieren(lang):
     """Umbenannte/gestrichene Text-Keys fielen sonst still auf Deutsch oder None zurueck."""
-    for _, titel, beschreibung in SEITEN:
-        for key in [k for k in (titel, beschreibung) if isinstance(k, str)]:
+    keys = [k for _, titel, beschreibung in SEITEN for k in (titel, beschreibung)] + [k for _, k in ECKDATEN]
+    for key in keys:
+        if isinstance(key, str):
             assert TRANSLATIONS[lang].get(key), f'{lang}: {key} fehlt'
 
 
@@ -63,8 +70,16 @@ def test_gruppen_seite_passt_zu_gruppen():
 
 @pytest.mark.parametrize('pfad', [p for p, _, _ in SEITEN])
 def test_verlinkte_seiten_gibt_es(client, pfad):
+    pfad, _, anker = pfad.partition('#')
     r = client.get(pfad)
     assert r.status_code == 200, pfad
+    if anker:
+        assert f'id="{anker}"' in r.get_data(as_text=True), anker
+
+
+def test_url_mit_anker():
+    assert _url('/#anmelden', 'en') == f'{WEBSITE}/?lang=en#anmelden'
+    assert _url('/#anmelden', 'de') == f'{WEBSITE}/#anmelden'
 
 
 @pytest.mark.parametrize('lang, url', [('de', '/llms-full.txt'), ('en', '/llms-full-en.txt')])

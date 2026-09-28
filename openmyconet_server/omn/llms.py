@@ -25,24 +25,52 @@ from omn.wissensbasis import abschnitte, clean
 
 WEBSITE = 'https://www.openmyconet.de'
 
-# (Pfad, Titel-Key oder {lang: Titel}, Beschreibungs-Key oder None)
-SEITEN = [
-    ('/', {'de': 'Startseite', 'en': 'Home'}, 'meta_desc_index'),
-    ('/mykorrhiza-netzwerke.html', 'myk_page_title', 'myk_meta_desc'),
-    ('/bioelektrizitaet-biocomm.html', 'myk2_page_title', 'myk2_meta_desc'),
-    ('/citizen-science-openmyconet.html', 'myk3_page_title', 'myk3_meta_desc'),
-    ('/wie-wir-arbeiten', 'wwa_page_title', 'wwa_meta_desc'),
-    ('/biocomm', 'bc_page_title', 'bc_meta_desc'),
-    ('/biocomm/hardware', 'bch_page_title', 'bch_meta_desc'),
-    ('/biocomm/software', 'bcs_page_title', 'bcs_meta_desc'),
-    ('/biocomm/datenlabor', 'bdl_page_title', 'bdl_meta_desc'),
-    ('/quellennachweise.html', {'de': 'Quellennachweise & Erkenntnispfad',
-                                'en': 'References & path of knowledge'}, 'q_subtitle'),
-    ('/foerderer.html', {'de': 'Förderung & Kooperation', 'en': 'Funding & cooperation'}, None),
-    ('/medien.html', 'h1_medien', 'desc_medien'),
-    ('/news', {'de': 'Neuigkeiten', 'en': 'News'}, None),
-    ('/kontakt', 'kontakt_page_title', 'kontakt_meta_desc'),
-    ('/datenschutz.html', {'de': 'Datenschutz', 'en': 'Privacy policy'}, None),
+# Seiten nach Zweck gegliedert: ({lang: Ueberschrift}, [(Pfad, Titel-Key oder
+# {lang: Titel}, Beschreibungs-Key oder None), ...]). Pfade mit #anker zeigen auf
+# Abschnitte der Startseite.
+SEITEN_GRUPPEN = [
+    ({'de': 'Wissenschaft & Methode', 'en': 'Science & method'}, [
+        ('/', {'de': 'Startseite', 'en': 'Home'}, 'meta_desc_index'),
+        ('/mykorrhiza-netzwerke.html', 'myk_page_title', 'myk_meta_desc'),
+        ('/bioelektrizitaet-biocomm.html', 'myk2_page_title', 'myk2_meta_desc'),
+        ('/citizen-science-openmyconet.html', 'myk3_page_title', 'myk3_meta_desc'),
+        ('/wie-wir-arbeiten', 'wwa_page_title', 'wwa_meta_desc'),
+        ('/quellennachweise.html', {'de': 'Quellennachweise & Erkenntnispfad',
+                                    'en': 'References & path of knowledge'}, 'q_subtitle'),
+    ]),
+    ({'de': 'BioComm-Plattform', 'en': 'BioComm platform'}, [
+        ('/biocomm', 'bc_page_title', 'bc_meta_desc'),
+        ('/biocomm/hardware', 'bch_page_title', 'bch_meta_desc'),
+        ('/biocomm/software', 'bcs_page_title', 'bcs_meta_desc'),
+        ('/biocomm/datenlabor', 'bdl_page_title', 'bdl_meta_desc'),
+    ]),
+    ({'de': 'Mitmachen & Unterstützen', 'en': 'Participation & support'}, [
+        ('/#mitmachen', {'de': 'Mitmachen: einen Messknoten betreiben',
+                         'en': 'Take part: operate a measurement node'}, 'desc_mitmachen'),
+        ('/#anmelden', 'a_h2', 'a_intro'),
+        ('/#spenden', 'h2_spenden', 'donate_p'),
+        ('/foerderer.html', {'de': 'Förderung & Kooperation', 'en': 'Funding & cooperation'}, None),
+        ('/kontakt', 'kontakt_page_title', 'kontakt_meta_desc'),
+    ]),
+    ({'de': 'Weiteres', 'en': 'More'}, [
+        ('/#daten', 'label_daten', 'desc_daten'),
+        ('/datenschutz.html', {'de': 'Datenschutz', 'en': 'Privacy policy'}, None),
+        ('/medien.html', 'h1_medien', 'desc_medien'),
+        ('/news', {'de': 'Neuigkeiten', 'en': 'News'}, None),
+    ]),
+]
+SEITEN = [s for _, seiten in SEITEN_GRUPPEN for s in seiten]
+
+# Eckdaten: ({lang: Bezeichnung}, Text-Key). Alles aus den Website-Texten --
+# bewusst KEINE frei formulierten Angaben (z. B. eine Datenlizenz, solange die
+# Website keine nennt).
+ECKDATEN = [
+    ({'de': 'Initiator', 'en': 'Initiator'}, 'about_p1'),
+    ({'de': 'Prinzip', 'en': 'Principle'}, 'about_p2'),
+    ({'de': 'Stand der Hardware', 'en': 'Hardware status'}, 'bch_status_p'),
+    ({'de': 'Stand der Software', 'en': 'Software status'}, 'bcs_page_title'),
+    ({'de': 'Datenlabor', 'en': 'Data Lab'}, 'bdl_page_title'),
+    ({'de': 'Finanzierung', 'en': 'Funding'}, 'donate_p'),
 ]
 
 # Themengruppe -> Seite, auf der die Texte stehen (fuer die Quellenangabe).
@@ -69,8 +97,9 @@ NICHT_IM_VOLLTEXT = {'entwicklungsstand'}
 
 TEXTE = {
     'de': {
+        'eckdaten': 'Projekt-Eckdaten',
         'einordnung': 'Einordnung',
-        'seiten': 'Seiten',
+        'stand': 'Stand dieser Datei',
         'volltext': 'Vollständige Texte',
         'volltext_de': 'Alle Website-Texte auf Deutsch, nach Themen',
         'volltext_en': 'All website texts in English, by topic',
@@ -80,8 +109,9 @@ TEXTE = {
         'seite': 'Seite',
     },
     'en': {
+        'eckdaten': 'Project facts',
         'einordnung': 'Context',
-        'seiten': 'Pages',
+        'stand': 'This file as of',
         'titel_volltext': 'OpenMycoNet — all website texts (English)',
         'hinweis_volltext': ('Generated automatically from the website texts. The linked page is '
                              'authoritative.'),
@@ -95,35 +125,48 @@ def _t(lang, key):
 
 
 def _url(pfad, lang):
-    return WEBSITE + pfad + ('' if lang == 'de' else f'?lang={lang}')
+    pfad, _, anker = pfad.partition('#')
+    return (WEBSITE + pfad + ('' if lang == 'de' else f'?lang={lang}')
+            + (f'#{anker}' if anker else ''))
 
 
-def _seitenliste(lang):
+def _seitenliste(lang, ebene):
     zeilen = []
-    for pfad, titel, beschreibung in SEITEN:
-        name = (titel.get(lang) or titel['de']) if isinstance(titel, dict) else clean(_t(lang, titel))
-        zeile = f'- [{name}]({_url(pfad, lang)})'
-        if beschreibung:
-            zeile += f': {clean(_t(lang, beschreibung))}'
-        zeilen.append(zeile)
+    for gruppe, seiten in SEITEN_GRUPPEN:
+        zeilen += [f"{ebene} {gruppe[lang]}", '']
+        for pfad, titel, beschreibung in seiten:
+            name = (titel.get(lang) or titel['de']) if isinstance(titel, dict) else clean(_t(lang, titel))
+            zeile = f'- [{name}]({_url(pfad, lang)})'
+            if beschreibung:
+                zeile += f': {clean(_t(lang, beschreibung))}'
+            zeilen.append(zeile)
+        zeilen.append('')
     return zeilen
 
 
+def _eckdaten(lang, ebene):
+    tx = TEXTE[lang]
+    zeilen = [f"{ebene} {tx['eckdaten']}", '']
+    zeilen += [f"- **{name[lang]}:** {clean(_t(lang, key))}" for name, key in ECKDATEN]
+    zeilen += [f"- **{tx['stand']}:** {stand()}", '']
+    return zeilen
+
+
+def _einordnung(lang, ebene):
+    return [f"{ebene} {TEXTE[lang]['einordnung']}", '',
+            f"**{clean(_t(lang, 'bdl_interp_title'))}** {clean(_t(lang, 'bdl_interp_p'))}", '']
+
+
 def llms_txt():
-    de, en = TEXTE['de'], TEXTE['en']
+    de = TEXTE['de']
     teile = [
         '# OpenMycoNet',
         '',
         f"> {clean(_t('de', 'meta_desc_index'))}",
         '',
-        f"## {de['einordnung']}",
-        '',
-        f"**{clean(_t('de', 'bdl_interp_title'))}** {clean(_t('de', 'bdl_interp_p'))}",
-        '',
-        f"## {de['seiten']}",
-        '',
-        *_seitenliste('de'),
-        '',
+        *_eckdaten('de', '##'),
+        *_einordnung('de', '##'),
+        *_seitenliste('de', '##'),
         f"## {de['volltext']}",
         '',
         f"- [llms-full.txt]({WEBSITE}/llms-full.txt): {de['volltext_de']}",
@@ -133,12 +176,9 @@ def llms_txt():
         '',
         f"> {clean(_t('en', 'meta_desc_index'))}",
         '',
-        f"**{clean(_t('en', 'bdl_interp_title'))}** {clean(_t('en', 'bdl_interp_p'))}",
-        '',
-        f"### {en['seiten']}",
-        '',
-        *_seitenliste('en'),
-        '',
+        *_eckdaten('en', '###'),
+        *_einordnung('en', '###'),
+        *_seitenliste('en', '###'),
     ]
     return '\n'.join(teile)
 
