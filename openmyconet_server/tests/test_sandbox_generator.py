@@ -144,3 +144,29 @@ def test_idempotent_und_reproduzierbar(gen_app):
         nachher = _eins("SELECT md5(string_agg(encode(payload_hash, 'hex'), '' ORDER BY payload_hash))"
                         " FROM sandbox.sample_block")
     assert nachher == vorher
+
+
+def test_vorschau_export(gen_app, tmp_path):
+    """Tagesdatei fuer die Startseite (omn/sandbox/vorschau.py): Winter-Stichwoche, weil
+    der CI-Lauf nur 20 Tage erzeugt. Minutenwerte fuer Bio, Stundenwerte fuer den Boden."""
+    import json
+    from datetime import date
+
+    from omn.sandbox.szenarien import GENERATOR_VERSION, SZENARIO_VERSION
+    from omn.sandbox.vorschau import vorschau_erzeugen
+
+    with gen_app.app_context():
+        d = vorschau_erzeugen(db.session, tag=date(2025, 1, 14))
+        db.session.rollback()
+    assert d['is_simulated'] is True and d['szenario'] == 'baseline'
+    assert d['szenario_version'] == SZENARIO_VERSION and d['generator_version'] == GENERATOR_VERSION
+    bio = d['kanaele']['bioelectric_potential']
+    assert bio['aufloesung'] == '1min' and len(bio['mittel']) == 1440
+    assert sum(v is not None for v in bio['mittel']) > 1400
+    for k in ('soil_temperature', 'soil_moisture'):
+        assert d['kanaele'][k]['aufloesung'] == '1h' and len(d['kanaele'][k]['mittel']) == 24
+
+    ziel = tmp_path / 'vorschau.json'
+    r = gen_app.test_cli_runner().invoke(args=['sandbox-vorschau', '--tag', '2025-01-14', '--ausgabe', str(ziel)])
+    assert r.exit_code == 0, r.output
+    assert json.loads(ziel.read_text(encoding='utf-8'))['kanaele']['bioelectric_potential']['mittel'] == bio['mittel']

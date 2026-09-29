@@ -24,8 +24,6 @@ section { padding-left:clamp(1.5rem,5vw,5rem); padding-right:clamp(1.5rem,5vw,5r
 .hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; font-weight:400; line-height:1.1; color:#ffffff; max-width:800px; margin:0 auto 1.5rem; }
 .hero h1 em { font-style:italic; color:#6ee87e; }
 .hero-sub { font-size:1.15rem; color:#e8f5e0; max-width:780px; font-weight:400; line-height:1.85; margin-bottom:2rem; }
-.live-badge { display:-webkit-inline-box; display:-webkit-inline-flex; display:inline-flex; -webkit-box-align:center; -webkit-align-items:center; align-items:center; gap:0.6rem; padding:0.5rem 1.2rem; background-color:rgba(45,106,45,0.2); border:1px solid #0a7050; margin-bottom:2rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:#6ee87e; }
-.live-dot { width:8px; height:8px; background-color:#6ee87e; border-radius:50%; -webkit-animation:pulse 1.5s ease-in-out infinite; animation:pulse 1.5s ease-in-out infinite; }
 .hero-buttons { display:-webkit-box; display:-webkit-flex; display:flex; gap:1rem; -webkit-flex-wrap:wrap; flex-wrap:wrap; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; }
 
 /* ── Playlist-Player-CSS jetzt zentral in base.html (Phase 4 Erweiterung 1d) ── */
@@ -109,8 +107,6 @@ footer { padding:2.5rem 0; border-top:1px solid #0a6040; background-color:#02453
 /* .footer-info a NICHT hier ueberschreiben -- site-base.css setzt Farbe +
    Unterstrich (Link im Fliesstext muss ohne Farbe erkennbar bleiben). */
 
-@-webkit-keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
-@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
 .page-wrap { max-width:860px; margin:0 auto; padding:0 clamp(1.5rem,5vw,5rem); }
 .section-inner { max-width:1100px; margin:0 auto; }
@@ -194,8 +190,6 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .ic-3 { padding:0; background-color:#024530; }
 .ic-4 { width:100%; height:100%; object-fit:cover; object-position:center center; display:block; filter:brightness(0.72) saturate(0.9); }
 .ic-5 { position:absolute; bottom:0; left:0; right:0; height:180px; background:linear-gradient(to top, #024530 0%, transparent 100%); }
-.ic-6 { width:100%; max-width:100%; height:160px; position:relative; margin-bottom:1.5rem; overflow:hidden; }
-.ic-7 { width:100%; height:100%; display:block; max-width:100%; }
 .ic-8 { border:1px solid #d4a030; color:#d4a030; background:transparent; cursor:pointer; }
 .ic-9 { cursor:pointer;border:1px solid #6ee87e;color:#6ee87e;background:transparent; }
 .ic-10 { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block; filter:brightness(0.55) saturate(0.9); }
@@ -289,3 +283,35 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .bdl-hinweis-titel { font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase; color:#f0b84a; margin-bottom:0.5rem; }
 .bdl-hinweis p { color:#c8e0c8; font-size:0.95rem; line-height:1.6; margin-bottom:0.6rem; }
 .bdl-hinweis a { color:#6ee87e; }
+
+/* Status-Badge + Mini-Dashboard mit simulierten Daten (seit 29.09.2026, ersetzt
+   "aktiver Knoten" und die Netzwerk-Animation). Ruhig, kein Pulsieren, kein "LIVE".
+   Bernstein = Simulation (wie im Datenlabor). */
+.status-badge { display:inline-flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:0.3rem 0.55rem; padding:0.5rem 1.2rem; background-color:rgba(45,106,45,0.2); border:1px solid #0a7050; margin:0 auto 1.6rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; line-height:1.5; color:#6ee87e; max-width:100%; }
+.status-dot { width:7px; height:7px; border-radius:50%; background-color:#6ee87e; opacity:0.75; flex:none; }
+.status-trenner { color:#4f9a6a; }
+.status-badge a { color:#f0c060; text-decoration:underline; text-underline-offset:3px; }
+.status-badge a:hover, .status-badge a:focus-visible { color:#ffd98a; }
+.vorschau { max-width:640px; margin:0 auto 1.6rem; text-align:left; }
+.vorschau-kopf { display:flex; justify-content:space-between; gap:1rem; font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#b8d8c0; margin-bottom:0.35rem; }
+.vorschau-svg { display:block; width:100%; height:170px; background-color:rgba(0,0,0,0.3); border:1px solid #0a6040; border-radius:8px; }
+.vorschau-feld { fill:rgba(255,255,255,0.03); }
+.vorschau-linie { fill:none; stroke-width:1.6; stroke-linejoin:round; stroke-linecap:round; }
+.vorschau-linie.bio { stroke:#5fd4e8; }
+.vorschau-linie.temp { stroke:#f09a8a; }
+.vorschau-linie.feuchte { stroke:#93b8ff; }
+.vorschau-linie-schatten { opacity:0.2; }
+.vorschau-kanal { fill:#d0e6d0; font-family:'JetBrains Mono',monospace; font-size:10px; }
+.vorschau-einheit { fill:#9dbca6; font-family:'JetBrains Mono',monospace; font-size:10px; }
+.vorschau-kopf-linie { stroke:#e8f5e0; stroke-width:1; opacity:0.55; }
+.vorschau-wasserzeichen { fill:#f0b84a; opacity:0.2; font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:700; letter-spacing:0.3em; pointer-events:none; }
+.vorschau-hinweis { margin-top:0.55rem; font-size:0.8rem; line-height:1.5; color:#c8e0c8; text-align:center; }
+.vorschau-hinweis a { color:#6ee87e; text-decoration:underline; text-underline-offset:2px; }
+.vorschau-fehlt .vorschau-svg, .vorschau-fehlt .vorschau-kopf { display:none; }
+@media (max-width:600px) {
+  .vorschau { margin-left:1rem; margin-right:1rem; }
+  .status-badge { margin-left:1rem; margin-right:1rem; max-width:calc(100% - 2rem); }
+  .vorschau-svg { height:150px; }
+  .vorschau-wasserzeichen { font-size:24px; letter-spacing:0.22em; }
+  .status-badge { font-size:0.74rem; padding:0.5rem 0.8rem; }
+}

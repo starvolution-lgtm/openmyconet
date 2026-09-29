@@ -67,6 +67,11 @@ class Knoten(db.Model):
     # (Header X-Api-Key). Wird beim Anlegen erzeugt, kann im Admin neu generiert
     # werden (bei Leak). nullable fuer Alt-Zeilen; migrate_add_columns.py fuellt sie.
     api_key = db.Column(db.String(64), unique=True, index=True, nullable=True)
+    # Prototyp-/Testknoten des alten Messwegs (/api/v1/messung). Seit 29.09.2026 sind
+    # alle Zeilen dieser Tabelle so gekennzeichnet (Migration 2b6f1c9e7a30): das echte
+    # Messnetz laeuft ueber den BioComm-Dateneingang (Schema live). Prototypen zaehlen
+    # nirgends als "aktiver Knoten" (api_status, Startseite).
+    prototyp = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true())
     messungen = db.relationship('Messung', backref='knoten', lazy=True)
 
 class Bewerbung(db.Model):

@@ -101,6 +101,30 @@ def register_cli(app):
         Generator(db.engine, Zeitraum(tage=tage) if tage else None, log=click.echo).alle(nur=set(nur) or None)
         click.echo(f'Fertig in {time.time() - t0:.0f} s.')
 
+    @app.cli.command('sandbox-vorschau')
+    @click.option('--szenario', default='baseline', show_default=True)
+    @click.option('--standort', default='SBX-DE-01', show_default=True)
+    @click.option('--tag', default='2025-07-15', show_default=True, help='Simulierter Tag (Ortszeit des Standorts).')
+    @click.option('--ausgabe', default=None, help='Zieldatei (Standard: app/static/startseite_vorschau.json).')
+    def sandbox_vorschau(szenario, standort, tag, ausgabe):
+        """Schreibt die Tagesdatei fuer das Mini-Dashboard der Startseite (nur PostgreSQL)."""
+        from datetime import date
+
+        from omn.extensions import db
+        from omn.sandbox.vorschau import AUSGABE, schreiben, vorschau_erzeugen
+
+        if db.engine.dialect.name != 'postgresql':
+            raise click.ClickException('braucht PostgreSQL mit befuellter Sandbox')
+        try:
+            daten = vorschau_erzeugen(db.session, szenario, standort, date.fromisoformat(tag))
+        except ValueError as e:
+            raise click.ClickException(str(e)) from e
+        ziel = ausgabe or AUSGABE
+        schreiben(daten, ziel)
+        bio = daten['kanaele']['bioelectric_potential']
+        click.echo(f"{ziel}: {daten['szenario']} v{daten['szenario_version']} ({daten['generator_version']}), "
+                   f"{daten['reihe']}, {daten['tag']}, Abdeckung Bio {bio['abdeckung']:.1%}")
+
     @app.cli.command('biocomm-einlesen')
     @click.argument('pfad', type=click.Path(exists=True))
     @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='sandbox', show_default=True,

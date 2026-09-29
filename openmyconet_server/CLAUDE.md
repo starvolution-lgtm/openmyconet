@@ -453,6 +453,24 @@ Cookie `omn_lang` **und** localStorage, `getLang()` liest Cookie vor localStorag
 Datenlabor hat dieselben Flaggen (SVGs einmal in `omn/i18n.py` `FLAGGEN`). Footer per
 `t()` (`footer_*`). Tests `tests/test_rechtstexte.py`.
 
+## Startseite: Status-Badge + Mini-Dashboard (seit 29.09.2026)
+Kein „aktiver Knoten“ mehr (die „1“ stand fest im HTML): Badge `status_badge_1..3`
+(„Datenplattform steht · Hardware in Entwicklung · erste Messstandorte gesucht“, der letzte
+Teil öffnet die Knoten-Bewerbung). Statt der Netzwerk-Animation ein **Mini-Dashboard mit
+simulierten Daten**: Zeitraffer eines Tages (60 s) aus dem Sandbox-Szenario `baseline`
+(nie Stimulation/Vergleich), Bio als Minutenmittel, Bodentemperatur/-feuchte stündlich.
+Daten = **`app/static/startseite_vorschau.json`** (vorberechnet, keine DB-Abfrage pro
+Aufruf; `is_simulated: true`, Szenario-/Generator-/Modellversion) aus `flask sandbox-vorschau
+[--tag 2025-07-15 --standort SBX-DE-01]` (`omn/sandbox/vorschau.py`, nur PG mit Sandbox —
+lokal mit der Testdatenbank auf Port 55432, der Generator ist deterministisch = Prod-Werte).
+**Neue Szenario-/Generatorversion → Datei neu erzeugen**, `test_startseite_vorschau.py`
+schlägt sonst an. Zeichnen: `app/static/startseite-vorschau.js` (SVG, keine Bibliothek, keine
+style-Attribute), Wasserzeichen `vorschau_wasserzeichen` steht **im SVG**, Zeit = simulierte
+Uhrzeit, `prefers-reduced-motion` → statischer Tag, läuft nur sichtbar (IntersectionObserver).
+**Prototyp-Knoten:** `Knoten.prototyp` (Migration `2b6f1c9e7a30`, alle Zeilen des alten
+Messwegs = TRUE); `/api/v1/status` zählt nur `prototyp=False`, `/api/v1/messung` ist als
+Prototyp-Schnittstelle markiert; echtes Messnetz = BioComm-Dateneingang.
+
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll
 (`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`) gelöscht (Robby, 28.09.2026;

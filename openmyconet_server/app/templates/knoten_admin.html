@@ -33,10 +33,12 @@
 
 <hr>
 <h2>Registrierte Knoten</h2>
+<p class="u-hint-sm"><strong>Prototyp-Messweg:</strong> Diese Knoten sind Prototyp-/Testknoten und zählen nirgends als aktive Messknoten (Startseite, <code>/api/v1/status</code>). Das echte Messnetz läuft über <a href="/admin/biocomm">BioComm</a>.</p>
 <p class="u-hint-sm">Der API-Key gehört in die Geräte-Konfiguration (Header <code>X-Api-Key</code> bei <code>/api/v1/messung</code>). Bei Verdacht auf Leak neu generieren.</p>
 <table>
     <tr>
         <th>Knoten-ID</th>
+        <th>Art</th>
         <th>Nutzer</th>
         <th>Substrat</th>
         <th>Aktiv</th>
@@ -48,6 +50,7 @@
     {% for knoten in knoten_liste %}
     <tr>
         <td>{{ knoten.knoten_id }}</td>
+        <td>{{ 'Prototyp/Test' if knoten.prototyp else 'Messknoten' }}</td>
         <td>{{ knoten.nutzer.name }}</td>
         <td>{{ knoten.substrat }}</td>
         <td class="aktiv">{{ '✓' if knoten.aktiv else '✗' }}</td>

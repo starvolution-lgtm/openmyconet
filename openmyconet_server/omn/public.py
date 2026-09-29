@@ -308,6 +308,9 @@ def _opt_messwert(data, key, lo, hi):
 
 
 def api_messung():
+    """PROTOTYP-Schnittstelle (seit 29.09.2026 offiziell so markiert): einzelne Messwerte
+    ueber Knoten.api_key in die Tabelle messung. Alle Knoten dieses Wegs sind
+    Knoten.prototyp; das echte Messnetz nutzt POST /api/v2/biocomm/paket (omn/eingang)."""
     api_key = _messung_api_key()
     if not api_key:
         return {'fehler': 'API-Key fehlt (Header X-Api-Key oder Authorization: Bearer)'}, 401
@@ -349,10 +352,14 @@ def api_messung():
 
 
 def api_status():
+    # Seit 29.09.2026 ohne Prototyp-/Testknoten: vorher meldete die Schnittstelle den
+    # Prototyp als "knoten": 1, obwohl es noch kein Messnetz gibt.
+    echte = Knoten.query.filter_by(prototyp=False, aktiv=True)
     return {
         'status': 'online',
-        'knoten': Knoten.query.count(),
-        'messungen': Messung.query.count(),
+        'knoten': echte.count(),
+        'messungen': Messung.query.join(Knoten).filter(Knoten.prototyp.is_(False)).count(),
+        'hinweis': 'Messnetz im Aufbau; Prototyp- und Testknoten werden nicht mitgezaehlt.',
     }
 
 
