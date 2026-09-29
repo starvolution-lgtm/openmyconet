@@ -28,6 +28,7 @@ from flask import Blueprint, request, render_template, redirect, current_app, se
 from flask_mail import Message
 from PIL import Image, UnidentifiedImageError
 
+from omn.bildgroessen import logo_fassung_erzeugen
 from omn.extensions import db, mail
 from omn.models import Foerderer, RechnungsZaehler
 from omn.roles import nutzer_finden_oder_anlegen
@@ -233,6 +234,7 @@ def antrag():
                         os.makedirs(upload_dir, exist_ok=True)
                         logo_datei = f'prev_{uuid.uuid4().hex}.{ext}'
                         logo_file.save(os.path.join(upload_dir, logo_datei))
+                        logo_fassung_erzeugen(os.path.join(upload_dir, logo_datei))   # 320x200-WebP
 
         if not fehler:
             preview = True
@@ -358,6 +360,7 @@ def kooperation():
                         os.makedirs(upload_dir, exist_ok=True)
                         logo_datei = f'prev_{uuid.uuid4().hex}.{ext}'
                         logo_file.save(os.path.join(upload_dir, logo_datei))
+                        logo_fassung_erzeugen(os.path.join(upload_dir, logo_datei))   # 320x200-WebP
 
         if not fehler:
             preview = True

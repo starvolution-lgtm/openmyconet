@@ -10,7 +10,7 @@
 - `biocomm-einlesen` / `biocomm-verdichten` / `biocomm-testpakete` -- Prototyp
   des Dateneingangs fuer Messknoten-Pakete (omn/eingang/, SD-Import-Weg).
 - `biocomm-konflikt` -- offene Konflikte anzeigen bzw. manuell aufloesen.
-- `bilder-verkleinern` -- kleinere Fassungen fuer vorhandene News-Bilder (einmalig/idempotent).
+- `bilder-verkleinern` -- kleinere Fassungen fuer vorhandene News-Bilder + Foerderer-Logos (idempotent).
 """
 import time
 from collections import Counter
@@ -47,15 +47,16 @@ def register_cli(app):
 
     @app.cli.command('bilder-verkleinern')
     def bilder_verkleinern():
-        """Legt fuer vorhandene News-Bilder die kleineren Fassungen an (omn/bildgroessen.py, idempotent)."""
+        """Legt fuer vorhandene News-Bilder und Foerderer-Logos die kleineren Fassungen an (omn/bildgroessen.py, idempotent)."""
         import os
 
-        from omn.bildgroessen import fassungen_erzeugen
+        from omn.bildgroessen import fassungen_erzeugen, ist_fassung, logo_fassung_erzeugen
 
-        ordner = os.path.join(current_app.config['UPLOAD_ROOT'], 'news')
-        dateien = sorted(os.listdir(ordner)) if os.path.isdir(ordner) else []
-        neu = sum(fassungen_erzeugen(os.path.join(ordner, d)) for d in dateien)
-        click.echo(f'{len(dateien)} Dateien geprüft, {neu} Fassungen neu angelegt')
+        for unterordner, erzeugen in (('news', fassungen_erzeugen), ('foerderer', logo_fassung_erzeugen)):
+            ordner = os.path.join(current_app.config['UPLOAD_ROOT'], unterordner)
+            dateien = sorted(d for d in os.listdir(ordner) if not ist_fassung(d)) if os.path.isdir(ordner) else []
+            neu = sum(int(erzeugen(os.path.join(ordner, d))) for d in dateien)
+            click.echo(f'{unterordner}: {len(dateien)} Dateien geprüft, {neu} Fassungen neu angelegt')
 
     @app.cli.command('einwilligung-anfragen')
     @click.option('--ausfuehren', is_flag=True,

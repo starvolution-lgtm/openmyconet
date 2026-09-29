@@ -85,7 +85,54 @@ def test_cli_holt_bestand_nach_und_ist_idempotent(app):
     Image.new('RGB', (1000, 600)).save(os.path.join(_ordner(app), 'c.gif'), 'GIF')
     runner = app.test_cli_runner()
     erg = runner.invoke(args=['bilder-verkleinern'])
-    assert '6 Fassungen neu angelegt' in erg.output          # a + b je 480/720/960, gif nie
+    assert 'news: 3 Dateien geprüft, 6 Fassungen neu angelegt' in erg.output          # a + b je 480/720/960, gif nie
     erg = runner.invoke(args=['bilder-verkleinern'])
-    assert '0 Fassungen neu angelegt' in erg.output
+    assert 'news: 3 Dateien geprüft, 0 Fassungen neu angelegt' in erg.output
     assert not any(d.startswith('c-') for d in os.listdir(_ordner(app)))
+
+
+def _logo_ordner(app):
+    ordner = os.path.join(app.config['UPLOAD_ROOT'], 'foerderer')
+    os.makedirs(ordner, exist_ok=True)
+    return ordner
+
+
+def _foerderer(app, logo):
+    from omn.models import Foerderer
+    with app.app_context():
+        db.session.add(Foerderer(token='t-logo', status='active', firma='Garten GmbH', beschreibung='x',
+                                 email='g@example.org', logo_datei=logo, aktiviert_am=datetime(2026, 9, 1)))
+        db.session.commit()
+
+
+def test_logo_fassung_und_foerderer_seite(client, app):
+    from omn.bildgroessen import logo_fassung_erzeugen
+    ordner = _logo_ordner(app)
+    Image.new('RGBA', (1600, 800), (0, 0, 0, 0)).save(os.path.join(ordner, 'garten.png'), 'PNG')
+    assert logo_fassung_erzeugen(os.path.join(ordner, 'garten.png'))
+    with Image.open(os.path.join(ordner, 'garten-logo.webp')) as b:
+        assert b.size == (320, 160) and b.mode == 'RGBA'          # eingepasst, Transparenz bleibt
+    assert not logo_fassung_erzeugen(os.path.join(ordner, 'garten.png'))   # schon da
+    _foerderer(app, 'garten.png')
+    html = client.get('/foerderer.html').get_data(as_text=True)
+    assert 'uploads/foerderer/garten-logo.webp' in html
+    assert 'uploads/foerderer/garten.png' not in html
+
+
+def test_svg_logo_und_logo_ohne_fassung_unveraendert(client, app):
+    from omn.bildgroessen import logo_fassung_erzeugen
+    ordner = _logo_ordner(app)
+    with open(os.path.join(ordner, 'zeichen.svg'), 'w') as f:
+        f.write('<svg xmlns="http://www.w3.org/2000/svg"/>')
+    assert not logo_fassung_erzeugen(os.path.join(ordner, 'zeichen.svg'))
+    _foerderer(app, 'alt.png')                                     # Datei fehlt ganz
+    html = client.get('/foerderer.html').get_data(as_text=True)
+    assert 'uploads/foerderer/alt.png' in html
+
+
+def test_cli_verkleinert_auch_logos(app):
+    ordner = _logo_ordner(app)
+    Image.new('RGB', (900, 900)).save(os.path.join(ordner, 'a.jpg'), 'JPEG')
+    erg = app.test_cli_runner().invoke(args=['bilder-verkleinern'])
+    assert 'foerderer: 1 Dateien geprüft, 1 Fassungen neu angelegt' in erg.output
+    assert os.path.exists(os.path.join(ordner, 'a-logo.webp'))

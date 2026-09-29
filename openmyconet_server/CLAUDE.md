@@ -616,7 +616,10 @@ das Original, GIF nie). News-Liste und Artikelkopf nutzen `news_bild(dateiname)`
 `src`, `srcset`, `width`/`height` aus dem Dateikopf) — ohne Fassungen bzw. bei fehlender Datei
 einfaches `<img>`. Bestand: `cd /home/omn/app && FLASK_APP=wsgi venv/bin/python -m flask
 bilder-verkleinern` (idempotent; auf Prod + Staging am 29.09.2026 gelaufen). Bilder im
-Artikeltext (Quill) bleiben unverändert. Tests `tests/test_bildgroessen.py`.
+Artikeltext (Quill) bleiben unverändert. **Förderer-Logos** genauso: beim Upload (`omn/foerderer.py`)
+zusätzlich `<name>-logo.webp` (in 320×200 eingepasst, SVG/GIF nie), `/foerderer.html` nimmt per
+`foerderer_logo()` die kleine Fassung, falls vorhanden; `bilder-verkleinern` erledigt beide Ordner.
+Tests `tests/test_bildgroessen.py`.
 
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
