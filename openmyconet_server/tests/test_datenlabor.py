@@ -315,7 +315,7 @@ def test_seite_in_der_sprache_des_nutzers(app):
     assert 'title="English" aria-label="English" class="dl-flagge" data-sprache aria-current="true"' in html
     assert html.count('class="dl-flagge"') == 5
     # ?lang= und der Cookie der Website haben Vorrang vor der Registrierungssprache
-    assert 'Labo de données' in c.get('/dashboard/datenlabor?lang=fr').get_data(as_text=True)
+    assert 'Laboratoire de données' in c.get('/dashboard/datenlabor?lang=fr').get_data(as_text=True)
     assert '<html lang="fr">' in c.get('/dashboard/datenlabor').get_data(as_text=True)   # Wahl bleibt (Cookie)
     c2 = app.test_client()
     _einloggen(c2, nid)
