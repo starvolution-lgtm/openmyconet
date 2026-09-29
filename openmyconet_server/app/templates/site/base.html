@@ -346,11 +346,11 @@ var OMN_ASSET_BASE = '{{ asset("") }}';
 // wiederkehrende Besucher unsichtbar, weil der Cache-Key (die URL) sich nie
 // aenderte -- real aufgetreten (10.-12.09.2026, Timing-Korrekturen kamen nicht an).
 var OMN_TRACKS = [
-  { file:'listen-to-the-forest.mp3',       title:'Listen to the Forest',      cover:'cover-listen-to-the-forest.jpeg',      vtt:'{{ asset("lyrics/listen-to-the-forest.vtt") }}' },
-  { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'cover-listening-to-the-trees.jpeg',    vtt:'{{ asset("lyrics/listening-to-the-trees.vtt") }}' },
-  { file:'the-oldest-living-network.mp3', title:'The Oldest Living Network', cover:'cover-the-oldest-living-network.jpeg', vtt:'{{ asset("lyrics/the-oldest-living-network.vtt") }}' },
-  { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'cover-three-ways-of-knowing.jpeg',     vtt:'{{ asset("lyrics/three-ways-of-knowing.vtt") }}' },
-  { file:'nobody-funds-the-ground.mp3',    title:'Nobody Funds the Ground',   cover:'cover-nobody-funds-the-ground.jpeg',   vtt:'{{ asset("lyrics/nobody-funds-the-ground.vtt") }}' }
+  { file:'listen-to-the-forest.mp3',       title:'Listen to the Forest',      cover:'{{ asset("cover-listen-to-the-forest-mini.webp") }}',      vtt:'{{ asset("lyrics/listen-to-the-forest.vtt") }}' },
+  { file:'listening-to-the-trees.mp3',    title:'Listening to the Trees',    cover:'{{ asset("cover-listening-to-the-trees-mini.webp") }}',    vtt:'{{ asset("lyrics/listening-to-the-trees.vtt") }}' },
+  { file:'the-oldest-living-network.mp3', title:'The Oldest Living Network', cover:'{{ asset("cover-the-oldest-living-network-mini.webp") }}', vtt:'{{ asset("lyrics/the-oldest-living-network.vtt") }}' },
+  { file:'three-ways-of-knowing.mp3',      title:'Three Ways of Knowing',     cover:'{{ asset("cover-three-ways-of-knowing-mini.webp") }}',     vtt:'{{ asset("lyrics/three-ways-of-knowing.vtt") }}' },
+  { file:'nobody-funds-the-ground.mp3',    title:'Nobody Funds the Ground',   cover:'{{ asset("cover-nobody-funds-the-ground-mini.webp") }}',   vtt:'{{ asset("lyrics/nobody-funds-the-ground.vtt") }}' }
 ];
 
 (function(){
@@ -393,7 +393,11 @@ var OMN_TRACKS = [
   function switchCover(idx){
     OMN_TRACKS.forEach(function(_,i){
       var el = document.getElementById('omn-cover-'+i);
-      if(el) el.classList.toggle('active', i===idx);
+      if(!el) return;
+      // Cover erst laden, wenn es gezeigt wird (medien.html: data-src statt src) --
+      // vorher luden alle fuenf uebereinanderliegenden Cover sofort (29.09.2026)
+      if(i===idx && !el.getAttribute('src') && el.getAttribute('data-src')) el.setAttribute('src', el.getAttribute('data-src'));
+      el.classList.toggle('active', i===idx);
     });
   }
 
@@ -401,7 +405,7 @@ var OMN_TRACKS = [
     if(!plEl) return;
     plEl.innerHTML = OMN_TRACKS.map(function(t,i){
       return '<div class="omn-pl-item'+(i===current?' active':'')+'" data-idx="'+i+'">'
-        +'<img class="omn-pl-thumb" src="'+OMN_ASSET_BASE+t.cover+'" alt="">'
+        +'<img class="omn-pl-thumb" src="'+t.cover+'" alt="" width="32" height="32">'
         +'<span class="omn-pl-num">'+(i===current?'▶':(i+1))+'</span>'
         +'<span class="omn-pl-name">'+t.title+'</span>'
         +'<span class="omn-pl-dur" id="omn-dur-'+i+'">–:––</span>'

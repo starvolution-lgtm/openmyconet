@@ -43,8 +43,10 @@
 <!-- Broschüre (aus index.html ausgelagert) -->
 <section class="broschuere-section">
   <picture>
-    <source srcset="{{ asset('Bild_Broschuere.webp') }}" type="image/webp">
-    <img src="{{ asset('Bild_Broschuere.jpg') }}" alt="" class="broschuere-img">
+    {# Groesstes Element der Seite (LCP): Handy-/Desktop-Fassung + Vorrang beim Laden (29.09.2026) #}
+    <source type="image/webp" sizes="100vw"
+            srcset="{{ asset('Bild_Broschuere-800.webp') }} 800w, {{ asset('Bild_Broschuere-1400.webp') }} 1400w">
+    <img src="{{ asset('Bild_Broschuere.jpg') }}" alt="" class="broschuere-img" width="1400" height="788" fetchpriority="high">
   </picture>
   <div class="broschuere-overlay">
     <p class="broschuere-label" id="broschuere-label" data-i18n="br_label">{{ t('br_label') }}</p>
@@ -76,11 +78,11 @@
 
     <div class="omn-player">
       <div class="omn-cover-wrap">
-        <img class="omn-cover-img active" id="omn-cover-0" src="{{ asset('cover-listen-to-the-forest.jpeg') }}" alt="Listen to the Forest" loading="lazy" decoding="async">
-        <img class="omn-cover-img"        id="omn-cover-1" src="{{ asset('cover-listening-to-the-trees.jpeg') }}" alt="Listening to the Trees" loading="lazy" decoding="async">
-        <img class="omn-cover-img"        id="omn-cover-2" src="{{ asset('cover-the-oldest-living-network.jpeg') }}" alt="The Oldest Living Network" loading="lazy" decoding="async">
-        <img class="omn-cover-img"        id="omn-cover-3" src="{{ asset('cover-three-ways-of-knowing.jpeg') }}" alt="Three Ways of Knowing" loading="lazy" decoding="async">
-        <img class="omn-cover-img"        id="omn-cover-4" src="{{ asset('cover-nobody-funds-the-ground.jpeg') }}" alt="Nobody Funds the Ground" loading="lazy" decoding="async">
+        <img class="omn-cover-img active" id="omn-cover-0" src="{{ asset('cover-listen-to-the-forest.webp') }}" width="1040" height="1040" alt="Listen to the Forest" loading="lazy" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-1" data-src="{{ asset('cover-listening-to-the-trees.webp') }}" width="1040" height="1040" alt="Listening to the Trees" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-2" data-src="{{ asset('cover-the-oldest-living-network.webp') }}" width="1040" height="1040" alt="The Oldest Living Network" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-3" data-src="{{ asset('cover-three-ways-of-knowing.webp') }}" width="1040" height="1040" alt="Three Ways of Knowing" decoding="async">
+        <img class="omn-cover-img"        id="omn-cover-4" data-src="{{ asset('cover-nobody-funds-the-ground.webp') }}" width="1040" height="693" alt="Nobody Funds the Ground" loading="lazy" decoding="async">
         <div class="omn-cover-overlay"></div>
       </div>
       <div class="omn-player-main">
@@ -264,8 +266,9 @@ We're running out of time to learn its language and its dance.</div>
 
 <section class="mb-11" id="buch">
   <picture>
-    <source srcset="{{ asset('buch_bg.webp') }}" type="image/webp">
-    <img class="mb-12" src="{{ asset('buch_bg.jpg') }}" alt="" loading="lazy" decoding="async">
+    <source type="image/webp" sizes="100vw"
+            srcset="{{ asset('buch_bg-800.webp') }} 800w, {{ asset('buch_bg-1400.webp') }} 1400w">
+    <img class="mb-12" src="{{ asset('buch_bg.jpg') }}" alt="" width="1400" height="933" loading="lazy" decoding="async">
   </picture>
   <div class="mb-13">
     <p class="section-label" id="buch-label" data-i18n="buch_label">{{ t('buch_label') }}</p>
