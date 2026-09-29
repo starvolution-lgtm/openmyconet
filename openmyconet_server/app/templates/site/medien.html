@@ -78,7 +78,7 @@
 
     <div class="omn-player">
       <div class="omn-cover-wrap">
-        <img class="omn-cover-img active" id="omn-cover-0" src="{{ asset('cover-listen-to-the-forest.webp') }}" width="1040" height="1040" alt="Listen to the Forest" loading="lazy" decoding="async">
+        <img class="omn-cover-img active" id="omn-cover-0" fetchpriority="low" src="{{ asset('cover-listen-to-the-forest.webp') }}" width="1040" height="1040" alt="Listen to the Forest" loading="lazy" decoding="async">
         <img class="omn-cover-img"        id="omn-cover-1" data-src="{{ asset('cover-listening-to-the-trees.webp') }}" width="1040" height="1040" alt="Listening to the Trees" decoding="async">
         <img class="omn-cover-img"        id="omn-cover-2" data-src="{{ asset('cover-the-oldest-living-network.webp') }}" width="1040" height="1040" alt="The Oldest Living Network" decoding="async">
         <img class="omn-cover-img"        id="omn-cover-3" data-src="{{ asset('cover-three-ways-of-knowing.webp') }}" width="1040" height="1040" alt="Three Ways of Knowing" decoding="async">
@@ -268,7 +268,7 @@ We're running out of time to learn its language and its dance.</div>
   <picture>
     <source type="image/webp" sizes="100vw"
             srcset="{{ asset('buch_bg-800.webp') }} 800w, {{ asset('buch_bg-1400.webp') }} 1400w">
-    <img class="mb-12" src="{{ asset('buch_bg.jpg') }}" alt="" width="1400" height="933" loading="lazy" decoding="async">
+    <img class="mb-12" src="{{ asset('buch_bg.jpg') }}" alt="" width="1400" height="933" loading="lazy" decoding="async" fetchpriority="low">
   </picture>
   <div class="mb-13">
     <p class="section-label" id="buch-label" data-i18n="buch_label">{{ t('buch_label') }}</p>

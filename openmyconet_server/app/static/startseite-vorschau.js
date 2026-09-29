@@ -3,8 +3,8 @@
    (flask sandbox-vorschau, is_simulated: true), keine Datenbankabfrage pro Aufruf.
 
    - 24 simulierte Stunden in 60 s, danach kurze Pause, dann von vorn
-   - Wasserzeichen SIMULATION steht IM Diagramm (SVG ueber der Kurvenflaeche), auch
-     jeder Screenshot ist also gekennzeichnet
+   - Wasserzeichen SIMULATION steht IM Diagramm (SVG ueber der Kurvenflaeche), in jedem
+     der drei Felder -- auch jeder Screenshot-Ausschnitt ist also gekennzeichnet
    - Zeitanzeige ist die simulierte Uhrzeit, nie die echte
    - prefers-reduced-motion: statischer Tagesverlauf ohne Animation
    - startet erst, wenn die Seite fertig geladen und das Diagramm sichtbar ist
@@ -108,8 +108,14 @@
 
     var b = ebene(), f = ebene();
     var abstand = 6, y = 2, nutzbar = hoehe - 4 - abstand * (KANAELE.length - 1);
-    KANAELE.forEach(function (k) {
+    KANAELE.forEach(function (k, i) {
       var h = nutzbar * k[4], werte = daten.kanaele[k[0]].mittel;
+      // Wasserzeichen in JEDEM Feld (Pruefung 29.09.2026: nur oben war ein Ausschnitt der
+      // unteren Felder ungekennzeichnet); das aus der Vorlage steht im grossen Feld
+      var wz = i === 0 ? wasserzeichen : knoten('text', { 'class': 'vorschau-wasserzeichen vorschau-wasserzeichen-klein',
+        x: '50%', 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'data-i18n': 'vorschau_wasserzeichen' }, g);
+      wz.setAttribute('y', Math.round(y + 6 + h / 2));
+      if (i) wz.textContent = text('vorschau_wasserzeichen');
       b[1].fillStyle = 'rgba(255,255,255,0.03)';
       b[1].fillRect(0, y, breite, h);
       b[1].strokeStyle = k[3]; b[1].globalAlpha = 0.2;          // ganzer Tag, blass

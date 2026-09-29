@@ -288,7 +288,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
    "aktiver Knoten" und die Netzwerk-Animation). Ruhig, kein Pulsieren, kein "LIVE".
    Bernstein = Simulation (wie im Datenlabor). */
 .status-badge { display:inline-flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:0.3rem 0.55rem; padding:0.5rem 1.2rem; background-color:rgba(45,106,45,0.2); border:1px solid #0a7050; margin:0 auto 1.6rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; line-height:1.5; color:#6ee87e; max-width:100%; }
-.status-dot { width:7px; height:7px; border-radius:50%; background-color:#6ee87e; opacity:0.75; flex:none; }
+/* Punkt gold statt gruen (Pruefung 29.09.2026): gruen las sich als "online/aktiv" */
+.status-dot { width:7px; height:7px; border-radius:50%; background-color:#f0c060; opacity:0.7; flex:none; }
 .status-trenner { color:#4f9a6a; }
 .status-badge a { color:#f0c060; text-decoration:underline; text-underline-offset:3px; }
 .status-badge a:hover, .status-badge a:focus-visible { color:#ffd98a; }
@@ -299,7 +300,8 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .vorschau-svg { pointer-events:none; }
 .vorschau-kanal { fill:#d0e6d0; font-family:'JetBrains Mono',monospace; font-size:10px; }
 .vorschau-einheit { fill:#9dbca6; font-family:'JetBrains Mono',monospace; font-size:10px; }
-.vorschau-wasserzeichen { fill:#f0b84a; opacity:0.2; font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:700; letter-spacing:0.3em; pointer-events:none; }
+.vorschau-wasserzeichen { fill:#f0b84a; opacity:0.32; font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:700; letter-spacing:0.3em; pointer-events:none; }
+.vorschau-wasserzeichen-klein { font-size:17px; letter-spacing:0.25em; }
 .vorschau-hinweis { margin-top:0.55rem; font-size:0.8rem; line-height:1.5; color:#c8e0c8; text-align:center; }
 .vorschau-hinweis a { color:#6ee87e; text-decoration:underline; text-underline-offset:2px; }
 .vorschau-fehlt .vorschau-flaeche, .vorschau-fehlt .vorschau-kopf { display:none; }
@@ -308,5 +310,15 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
   .status-badge { margin-left:1rem; margin-right:1rem; max-width:calc(100% - 2rem); }
   .vorschau-flaeche { height:150px; }
   .vorschau-wasserzeichen { font-size:24px; letter-spacing:0.22em; }
+  .vorschau-wasserzeichen-klein { font-size:14px; letter-spacing:0.2em; }
   .status-badge { font-size:0.74rem; padding:0.5rem 0.8rem; }
+}
+/* Eine Zeile je Aussage statt Umbruch mitten im Band -- sonst hing ein "·" am Zeilenende
+   (Pruefung 29.09.2026): FR/ES passen auch am Desktop nicht in eine Zeile, DE/EN/NL erst
+   ueber 900px. :lang() folgt dem Sprachumschalter (base.html setzt <html lang>). */
+html:lang(fr) .status-badge, html:lang(es) .status-badge { flex-direction:column; gap:0.1rem; }
+html:lang(fr) .status-trenner, html:lang(fr) .status-dot, html:lang(es) .status-trenner, html:lang(es) .status-dot { display:none; }
+@media (max-width:900px) {
+  .status-badge { flex-direction:column; gap:0.1rem; }
+  .status-trenner, .status-dot { display:none; }
 }

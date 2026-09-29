@@ -348,7 +348,7 @@ barrierefreie Volltext-Fassung steht als `<details>`-Liste unter dem Player auf
 `/medien.html` (`#songtexte`, i18n-Keys `musik_texte_label`/`musik_texte_hint`;
 die Texte selbst bleiben englisches Original). `mimetypes.add_type('text/vtt',
 '.vtt')` in `omn/__init__.py` sichert den MIME-Typ (Flask serviert die `.vtt`,
-nicht nginx). Neue/korrigierte Zeilen: `.srt` → `.vtt` (`WEBVTT`-Header, `,`→`.`
+nicht nginx). Die Liedlängen stehen fest in `OMN_TRACKS` (`dauer`, Sekunden, seit 29.09.2026 — vorher wurden dafür beim Aufruf alle MP3s angeladen); neues Lied → `dauer` mitpflegen. Neue/korrigierte Zeilen: `.srt` → `.vtt` (`WEBVTT`-Header, `,`→`.`
 im Zeitstempel) + den `<details>`-Block auf `medien.html` nachziehen.
 
 ## Deployment (Prod, Hetzner VPS)
@@ -465,8 +465,11 @@ Aufruf; `is_simulated: true`, Szenario-/Generator-/Modellversion) aus `flask san
 lokal mit der Testdatenbank auf Port 55432, der Generator ist deterministisch = Prod-Werte).
 **Neue Szenario-/Generatorversion → Datei neu erzeugen**, `test_startseite_vorschau.py`
 schlägt sonst an. Zeichnen: `app/static/startseite-vorschau.js` (SVG, keine Bibliothek, keine
-style-Attribute), Wasserzeichen `vorschau_wasserzeichen` steht **im SVG**, Zeit = simulierte
+style-Attribute), Wasserzeichen `vorschau_wasserzeichen` steht **im SVG, in jedem der drei
+Felder**, Zeit = simulierte
 Uhrzeit, `prefers-reduced-motion` → statischer Tag, läuft nur sichtbar (IntersectionObserver).
+Badge: Punkt gold (grün las sich als „online“); eine Zeile je Aussage bei ≤ 900 px und immer
+für FR/ES (`html:lang(...)`, `<html lang>` folgt dem Sprachumschalter), sonst hing ein „·“ am Zeilenende.
 **Prototyp-Knoten:** `Knoten.prototyp` (Migration `2b6f1c9e7a30`, alle Zeilen des alten
 Messwegs = TRUE); `/api/v1/status` zählt nur `prototyp=False`, `/api/v1/messung` ist als
 Prototyp-Schnittstelle markiert; echtes Messnetz = BioComm-Dateneingang.
