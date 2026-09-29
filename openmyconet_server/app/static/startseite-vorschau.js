@@ -62,10 +62,16 @@
     var rand = (max - min) * 0.12 || 1;
     min -= rand; max += rand;
     var d = '', neu = true, stundenwerte = n <= 48;
-    for (i = 0; i < n; i++) {
-      if (werte[i] == null) { neu = true; continue; }
-      var x = x0 + (stundenwerte ? (i + 0.5) / n : i / (n - 1)) * w;
-      var y = y0 + h - (werte[i] - min) / (max - min) * h;
+    // Minutenwerte zu hoechstens ~1,5 Punkten je Pixel zusammenfassen (Mittel je Gruppe):
+    // optisch gleich, aber deutlich weniger Zeichenarbeit fuer den Browser
+    var gruppe = stundenwerte ? 1 : Math.max(1, Math.ceil(n / (w * 1.5)));
+    for (i = 0; i < n; i += gruppe) {
+      var summe = 0, zahl = 0;
+      for (var j = i; j < Math.min(n, i + gruppe); j++) if (werte[j] != null) { summe += werte[j]; zahl++; }
+      if (!zahl) { neu = true; continue; }
+      var mitte = Math.min(n - 1, i + (gruppe - 1) / 2);
+      var x = x0 + (stundenwerte ? (i + 0.5) / n : mitte / (n - 1)) * w;
+      var y = y0 + h - (summe / zahl - min) / (max - min) * h;
       d += (neu ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
       neu = false;
     }
@@ -114,37 +120,61 @@
     if (letzteLang !== sprache()) { letzteLang = sprache(); abdeckungWert.textContent = abdeckungText(); }
   }
 
+  // ~12 Bilder/s reichen fuer einen Zeitraffer (24 simulierte Minuten je Sekunde) und
+  // sparen gegenueber 60/s den Grossteil der Zeichenarbeit.
+  var BILD_MS = 83, zuletzt = 0, laeuft = false;
   function schritt(jetzt) {
-    if (!sichtbar || document.hidden) { start = 0; return; }
-    if (!start) start = jetzt;
-    var t = (jetzt - start) % (DAUER_MS + PAUSE_MS);
-    aktualisieren(Math.min(1, t / DAUER_MS));
+    if (!sichtbar || document.hidden) { start = 0; laeuft = false; return; }
+    if (!start) start = jetzt - anteilJetzt * DAUER_MS;   // an der letzten Stelle weiter
+    if (jetzt - zuletzt >= BILD_MS) {
+      zuletzt = jetzt;
+      var t = (jetzt - start) % (DAUER_MS + PAUSE_MS);
+      aktualisieren(Math.min(1, t / DAUER_MS));
+    }
     window.requestAnimationFrame(schritt);
   }
   function weiter() {
-    if (!reduziert && daten && sichtbar && !document.hidden) window.requestAnimationFrame(schritt);
+    if (reduziert || !daten || !sichtbar || document.hidden || laeuft) return;
+    laeuft = true;
+    window.requestAnimationFrame(schritt);
   }
 
-  fetch(fig.getAttribute('data-quelle'))
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (j) {
-      if (!j || j.is_simulated !== true) return;   // nie etwas ohne Simulationskennung zeigen
-      daten = j;
-      fig.classList.add('vorschau-bereit');
-      zeichnen();
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (e) {
-          var war = sichtbar; sichtbar = e[0].isIntersecting;
-          if (sichtbar && !war) weiter();
-        }).observe(fig);
-      }
-      document.addEventListener('visibilitychange', weiter);
-      var timer = null;
-      window.addEventListener('resize', function () {
-        clearTimeout(timer);
-        timer = setTimeout(function () { zeichnen(); }, 200);
-      });
-      weiter();
-    })
-    .catch(function () { fig.classList.add('vorschau-fehlt'); });
+  var geladen = false;
+  function laden() {
+    if (geladen) return;
+    geladen = true;
+    fetch(fig.getAttribute('data-quelle'))
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (j) {
+        if (!j || j.is_simulated !== true) return;   // nie etwas ohne Simulationskennung zeigen
+        daten = j;
+        fig.classList.add('vorschau-bereit');
+        zeichnen();
+        document.addEventListener('visibilitychange', weiter);
+        var timer = null;
+        window.addEventListener('resize', function () {
+          clearTimeout(timer);
+          timer = setTimeout(function () { zeichnen(); }, 200);
+        });
+        weiter();
+      })
+      .catch(function () { fig.classList.add('vorschau-fehlt'); });
+  }
+  // Erst laden und zeichnen, wenn die Seite fertig ist und der Browser Luft hat --
+  // die Vorschau soll den Seitenaufbau nicht bremsen (Lighthouse TBT).
+  function spaeter() {
+    var los = function () { (window.requestIdleCallback || function (f) { setTimeout(f, 200); })(laden, { timeout: 2000 }); };
+    if (document.readyState === 'complete') los(); else window.addEventListener('load', los, { once: true });
+  }
+
+  // Erst wenn das Diagramm sichtbar wird (auf dem Handy liegt es unter dem ersten Bildschirm)
+  if ('IntersectionObserver' in window) {
+    sichtbar = false;
+    new IntersectionObserver(function (e) {
+      sichtbar = e[0].isIntersecting;
+      if (sichtbar) { if (!geladen) spaeter(); else weiter(); }
+    }).observe(fig);
+  } else {
+    spaeter();
+  }
 })();
