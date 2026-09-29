@@ -38,6 +38,7 @@ from omn.i18n import init_i18n
 from omn.csrf import init_csrf
 from omn.errors import init_errors
 from omn.cli import register_cli
+from omn import bildgroessen
 from omn import llms, public
 
 # omn/ liegt im Repo-Root; Templates/Static bleiben unter <root>/app/.
@@ -103,6 +104,7 @@ def create_app(config=None, instance_path=None):
     init_csrf(app)
     init_errors(app)
     register_cli(app)
+    bildgroessen.register(app)
 
     # Als LETZTES: bindet die oeffentlichen Routen + Sicherheits-Header-Hooks.
     # Nach init_errors, damit _sicherheits_header (after_request) vor dessen

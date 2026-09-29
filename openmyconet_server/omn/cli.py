@@ -10,6 +10,7 @@
 - `biocomm-einlesen` / `biocomm-verdichten` / `biocomm-testpakete` -- Prototyp
   des Dateneingangs fuer Messknoten-Pakete (omn/eingang/, SD-Import-Weg).
 - `biocomm-konflikt` -- offene Konflikte anzeigen bzw. manuell aufloesen.
+- `bilder-verkleinern` -- kleinere Fassungen fuer vorhandene News-Bilder (einmalig/idempotent).
 """
 import time
 from collections import Counter
@@ -43,6 +44,18 @@ def register_cli(app):
         ergebnis = bereinigen()
         if any(ergebnis.values()) or not still:
             click.echo(', '.join(f'{name}: {n} gelöscht' for name, n in ergebnis.items()))
+
+    @app.cli.command('bilder-verkleinern')
+    def bilder_verkleinern():
+        """Legt fuer vorhandene News-Bilder die kleineren Fassungen an (omn/bildgroessen.py, idempotent)."""
+        import os
+
+        from omn.bildgroessen import fassungen_erzeugen
+
+        ordner = os.path.join(current_app.config['UPLOAD_ROOT'], 'news')
+        dateien = sorted(os.listdir(ordner)) if os.path.isdir(ordner) else []
+        neu = sum(fassungen_erzeugen(os.path.join(ordner, d)) for d in dateien)
+        click.echo(f'{len(dateien)} Dateien geprüft, {neu} Fassungen neu angelegt')
 
     @app.cli.command('einwilligung-anfragen')
     @click.option('--ausfuehren', is_flag=True,

@@ -50,7 +50,8 @@
         {% if news.untertitel %}<p class="untertitel">{{ news.untertitel }}</p>{% endif %}
         <p class="datum">{{ news.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ news.sprache }}</p>
         {% if news.bild_dateiname %}
-        <img src="{{ url_for('static', filename='uploads/news/' + news.bild_dateiname) }}" alt="" loading="lazy" decoding="async">
+        {% set bild = news_bild(news.bild_dateiname) %}
+        <img src="{{ bild.src }}"{% if bild.srcset %} srcset="{{ bild.srcset }}" sizes="(max-width: 900px) calc(100vw - 4rem), 812px"{% endif %}{% if bild.width %} width="{{ bild.width }}" height="{{ bild.height }}"{% endif %} alt="" {% if not loop.first %}loading="lazy" {% endif %}decoding="async">
         {% endif %}
         <p class="exzerpt">{{ news.exzerpt }}</p>
         <a class="weiterlesen" href="{{ url_for('news_detail', slug=news.slug) }}">Weiterlesen →</a>

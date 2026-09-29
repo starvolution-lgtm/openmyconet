@@ -17,6 +17,7 @@ from flask_mail import Message
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from omn.admin.core import admin_bp, login_required
+from omn.bildgroessen import fassungen_erzeugen
 from omn.extensions import db
 from omn.i18n import LANGS
 from omn.mailer import mailqueue_einreihen
@@ -124,6 +125,7 @@ def save_news_image(file_storage):
         if img.mode not in ('RGB', 'RGBA', 'L'):
             img = img.convert('RGBA')
         img.save(os.path.join(upload_dir, filename), 'WEBP', quality=82, method=6)
+        fassungen_erzeugen(os.path.join(upload_dir, filename))   # 480/960 px fuer srcset
     except (UnidentifiedImageError, OSError, ValueError):
         return False
     finally:

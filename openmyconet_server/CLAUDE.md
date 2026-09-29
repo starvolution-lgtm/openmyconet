@@ -610,6 +610,14 @@ Skripte, die News direkt ohne `reihenfolge` anlegen, fallen sonst auf eine
 undefinierte DB-Reihenfolge zurueck) weiterhin in der gewohnten
 Datums-Reihenfolge. Tests: `tests/test_news_reihenfolge.py`.
 
+**Kleinere Bildfassungen (seit 29.09.2026):** `save_news_image` legt neben dem Bild
+(max. 1600 px, WebP) `<name>-480/-720/-960.webp` an (`omn/bildgroessen.py`, nie größer als
+das Original, GIF nie). News-Liste und Artikelkopf nutzen `news_bild(dateiname)` (Jinja-Global:
+`src`, `srcset`, `width`/`height` aus dem Dateikopf) — ohne Fassungen bzw. bei fehlender Datei
+einfaches `<img>`. Bestand: `cd /home/omn/app && FLASK_APP=wsgi venv/bin/python -m flask
+bilder-verkleinern` (idempotent; auf Prod + Staging am 29.09.2026 gelaufen). Bilder im
+Artikeltext (Quill) bleiben unverändert. Tests `tests/test_bildgroessen.py`.
+
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".
 Rollen: `Nutzer.ist_hyphist` / `ist_sporist` (orthogonal). Nach Datei-Änderung an

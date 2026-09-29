@@ -59,7 +59,8 @@
       {% if artikel.untertitel %}<p class="untertitel">{{ artikel.untertitel }}</p>{% endif %}
       <p class="datum">{{ artikel.veroeffentlicht.strftime('%d.%m.%Y') }} · {{ artikel.sprache }}</p>
       {% if artikel.bild_dateiname %}
-      <img src="{{ url_for('static', filename='uploads/news/' + artikel.bild_dateiname) }}" alt="">
+      {% set bild = news_bild(artikel.bild_dateiname) %}
+      <img src="{{ bild.src }}"{% if bild.srcset %} srcset="{{ bild.srcset }}" sizes="(max-width: 900px) calc(100vw - 4rem), 812px"{% endif %}{% if bild.width %} width="{{ bild.width }}" height="{{ bild.height }}"{% endif %} alt="" fetchpriority="high">
       {% endif %}
       <div class="inhalt">{{ artikel.inhalt | safe }}</div>
       {% if artikel.tags %}

@@ -5,7 +5,7 @@
 .untertitel { color:#555; font-size:1.05em; margin:0 0 10px 0; }
 .datum { color:#888; font-size:0.85em; margin-bottom:16px; }
 .exzerpt { line-height:1.7; color:#222; }
-.artikel > img { max-width:100%; border-radius:6px; margin:8px 0; }
+.artikel > img { max-width:100%; height:auto; border-radius:6px; margin:8px 0; }
 .weiterlesen { display:inline-block; margin-top:12px; color:#2e7d32; font-weight:bold; text-decoration:none; }
 .weiterlesen:hover { text-decoration:underline; }
 .leer { color:#a0c8a0; margin-top:40px; }
