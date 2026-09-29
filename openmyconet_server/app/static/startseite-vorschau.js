@@ -3,33 +3,40 @@
    (flask sandbox-vorschau, is_simulated: true), keine Datenbankabfrage pro Aufruf.
 
    - 24 simulierte Stunden in 60 s, danach kurze Pause, dann von vorn
-   - Wasserzeichen SIMULATION steht IM SVG (auch jeder Screenshot ist gekennzeichnet)
+   - Wasserzeichen SIMULATION steht IM Diagramm (SVG ueber der Kurvenflaeche), auch
+     jeder Screenshot ist also gekennzeichnet
    - Zeitanzeige ist die simulierte Uhrzeit, nie die echte
    - prefers-reduced-motion: statischer Tagesverlauf ohne Animation
-   - laeuft nur, solange das Diagramm sichtbar ist (IntersectionObserver)
-   - keine style-Attribute (CSP), nur SVG-Attribute und Klassen */
+   - startet erst, wenn die Seite fertig geladen und das Diagramm sichtbar ist
+   - Kurven auf einer Canvas (vorab gezeichnet, je Bild nur ein Ausschnitt kopiert),
+     Beschriftung/Wasserzeichen als unveraendertes SVG darueber: ein SVG-Clip je Bild
+     zwang den Browser, alles neu zu malen (Lighthouse-Blockierzeit ~0,5 s)
+   - keine style-Attribute (CSP), nur Attribute und Klassen */
 (function () {
   'use strict';
   var fig = document.getElementById('vorschau');
   var svg = document.getElementById('vorschau-svg');
-  if (!fig || !svg || !window.fetch) return;
+  var canvas = document.getElementById('vorschau-canvas');
+  if (!fig || !svg || !canvas || !canvas.getContext || !window.fetch) return;
 
   var NS = 'http://www.w3.org/2000/svg';
-  var DAUER_MS = 60000, PAUSE_MS = 2500;
+  var DAUER_MS = 60000, PAUSE_MS = 2500, BILD_MS = 83;   // ~12 Bilder/s reichen fuer den Zeitraffer
   var reduziert = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var uhr = document.getElementById('vorschau-uhr');
   var abdeckungWert = document.getElementById('vorschau-abdeckung-wert');
   var wasserzeichen = document.getElementById('vorschau-wasserzeichen');
+  var ctx = canvas.getContext('2d');
 
-  // Kanaele: Schluessel in der Datei, Text-Key (translations.json), Einheit, CSS-Klasse, Anteil der Hoehe
+  // Kanaele: Schluessel in der Datei, Text-Key (translations.json), Einheit, Linienfarbe, Anteil der Hoehe
   var KANAELE = [
-    ['bioelectric_potential', 'vorschau_kanal_bio', 'µV', 'bio', 0.52],
-    ['soil_temperature', 'vorschau_kanal_temp', '°C', 'temp', 0.24],
-    ['soil_moisture', 'vorschau_kanal_feuchte', '%', 'feuchte', 0.24]
+    ['bioelectric_potential', 'vorschau_kanal_bio', 'µV', '#5fd4e8', 0.52],
+    ['soil_temperature', 'vorschau_kanal_temp', '°C', '#f09a8a', 0.24],
+    ['soil_moisture', 'vorschau_kanal_feuchte', '%', '#93b8ff', 0.24]
   ];
   var LOCALES = { de: 'de-DE', en: 'en-GB', nl: 'nl-NL', fr: 'fr-FR', es: 'es-ES' };
 
-  var daten = null, clipRect = null, kopf = null, breite = 0, sichtbar = true, start = 0, letzteLang = '', anteilJetzt = 0;
+  var daten = null, basis = null, farbe = null, breite = 0, hoehe = 0, dpr = 1;
+  var sichtbar = true, start = 0, zuletzt = 0, laeuft = false, anteilJetzt = 0, letzteLang = '', letzteMinute = -1;
 
   function sprache() {
     return (typeof currentLang === 'string' && currentLang) || document.documentElement.lang || 'de';
@@ -55,81 +62,96 @@
     catch (e) { return Math.round(a * 1000) / 10 + ' %'; }
   }
 
-  // Linie durch die Werte; x ueber den ganzen Tag, Luecken (null) unterbrechen die Linie
-  function pfad(werte, x0, y0, w, h) {
-    var n = werte.length, min = Infinity, max = -Infinity, i;
+  // Punkte einer Linie; Minutenwerte zu hoechstens ~1,5 Punkten je Pixel gemittelt,
+  // Luecken (null) unterbrechen die Linie
+  function linie(c, werte, x0, y0, w, h) {
+    var n = werte.length, min = Infinity, max = -Infinity, i, j;
     for (i = 0; i < n; i++) if (werte[i] != null) { if (werte[i] < min) min = werte[i]; if (werte[i] > max) max = werte[i]; }
     var rand = (max - min) * 0.12 || 1;
     min -= rand; max += rand;
-    var d = '', neu = true, stundenwerte = n <= 48;
-    // Minutenwerte zu hoechstens ~1,5 Punkten je Pixel zusammenfassen (Mittel je Gruppe):
-    // optisch gleich, aber deutlich weniger Zeichenarbeit fuer den Browser
-    var gruppe = stundenwerte ? 1 : Math.max(1, Math.ceil(n / (w * 1.5)));
+    var stundenwerte = n <= 48, gruppe = stundenwerte ? 1 : Math.max(1, Math.ceil(n / (w * 1.5))), neu = true;
+    c.beginPath();
     for (i = 0; i < n; i += gruppe) {
       var summe = 0, zahl = 0;
-      for (var j = i; j < Math.min(n, i + gruppe); j++) if (werte[j] != null) { summe += werte[j]; zahl++; }
+      for (j = i; j < Math.min(n, i + gruppe); j++) if (werte[j] != null) { summe += werte[j]; zahl++; }
       if (!zahl) { neu = true; continue; }
-      var mitte = Math.min(n - 1, i + (gruppe - 1) / 2);
-      var x = x0 + (stundenwerte ? (i + 0.5) / n : mitte / (n - 1)) * w;
+      var x = x0 + (stundenwerte ? (i + 0.5) / n : Math.min(n - 1, i + (gruppe - 1) / 2) / (n - 1)) * w;
       var y = y0 + h - (summe / zahl - min) / (max - min) * h;
-      d += (neu ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+      if (neu) c.moveTo(x, y); else c.lineTo(x, y);
       neu = false;
     }
-    return d;
+    c.stroke();
+  }
+
+  function ebene() {
+    var c = document.createElement('canvas');
+    c.width = Math.round(breite * dpr); c.height = Math.round(hoehe * dpr);
+    var k = c.getContext('2d');
+    k.scale(dpr, dpr);
+    k.lineWidth = 1.6; k.lineJoin = 'round'; k.lineCap = 'round';
+    return [c, k];
   }
 
   function zeichnen() {
-    var alt = document.getElementById('vorschau-grafik');
-    if (alt) alt.parentNode.removeChild(alt);
-    breite = svg.clientWidth || svg.getBoundingClientRect().width;
-    var hoehe = svg.clientHeight || svg.getBoundingClientRect().height;
+    var r = canvas.getBoundingClientRect();
+    breite = r.width; hoehe = r.height;
     if (!breite || !hoehe) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(breite * dpr); canvas.height = Math.round(hoehe * dpr);
     svg.setAttribute('viewBox', '0 0 ' + breite + ' ' + hoehe);
 
-    // Grafik vor dem Wasserzeichen einfuegen -> Wasserzeichen liegt obenauf
+    // Beschriftung (unveraenderlich bis zur naechsten Groessenaenderung), vor dem Wasserzeichen
+    var alt = document.getElementById('vorschau-grafik');
+    if (alt) alt.parentNode.removeChild(alt);
     var g = knoten('g', { id: 'vorschau-grafik' });
     svg.insertBefore(g, wasserzeichen);
-    var defs = knoten('defs', {}, g);
-    var clip = knoten('clipPath', { id: 'vorschau-clip' }, defs);
-    clipRect = knoten('rect', { x: 0, y: 0, width: reduziert ? breite : 0, height: hoehe }, clip);
 
+    var b = ebene(), f = ebene();
     var abstand = 6, y = 2, nutzbar = hoehe - 4 - abstand * (KANAELE.length - 1);
     KANAELE.forEach(function (k) {
-      var h = nutzbar * k[4];
-      knoten('rect', { 'class': 'vorschau-feld', x: 0, y: y, width: breite, height: h, rx: 3 }, g);
-      var werte = daten.kanaele[k[0]].mittel;
-      var d = pfad(werte, 6, y + 14, breite - 12, h - 18);
-      knoten('path', { 'class': 'vorschau-linie vorschau-linie-schatten ' + k[3], d: d }, g);        // ganzer Tag, blass
-      knoten('path', { 'class': 'vorschau-linie ' + k[3], d: d, 'clip-path': 'url(#vorschau-clip)' }, g);
+      var h = nutzbar * k[4], werte = daten.kanaele[k[0]].mittel;
+      b[1].fillStyle = 'rgba(255,255,255,0.03)';
+      b[1].fillRect(0, y, breite, h);
+      b[1].strokeStyle = k[3]; b[1].globalAlpha = 0.2;          // ganzer Tag, blass
+      linie(b[1], werte, 6, y + 14, breite - 12, h - 18);
+      b[1].globalAlpha = 1;
+      f[1].strokeStyle = k[3];                                  // bis zur simulierten Uhrzeit
+      linie(f[1], werte, 6, y + 14, breite - 12, h - 18);
       var lab = knoten('text', { 'class': 'vorschau-kanal', x: 8, y: y + 11, 'data-i18n': k[1] }, g);
       lab.textContent = text(k[1]);
       var einheit = knoten('text', { 'class': 'vorschau-einheit', x: breite - 8, y: y + 11, 'text-anchor': 'end' }, g);
       einheit.textContent = k[2];
       y += h + abstand;
     });
-    kopf = reduziert ? null : knoten('line', { 'class': 'vorschau-kopf-linie', x1: 0, x2: 0, y1: 0, y2: hoehe }, g);
-    aktualisieren(reduziert ? 1 : anteilJetzt);   // nach Groessenaenderung an derselben Stelle weiter
+    basis = b[0]; farbe = f[0];
+    bild(reduziert ? 1 : anteilJetzt);   // nach Groessenaenderung an derselben Stelle weiter
   }
 
-  function aktualisieren(anteil) {
+  function bild(anteil) {
     anteilJetzt = anteil;
-    var x = anteil * breite;
-    if (clipRect) clipRect.setAttribute('width', x.toFixed(1));
-    if (kopf) { kopf.setAttribute('x1', x.toFixed(1)); kopf.setAttribute('x2', x.toFixed(1)); }
-    uhr.textContent = reduziert ? uhrzeit(0) + '–' + uhrzeit(1440) : uhrzeit(Math.min(1439, Math.floor(anteil * 1440)));
+    var W = canvas.width, H = canvas.height, x = Math.round(anteil * W);
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(basis, 0, 0);
+    if (x > 0) ctx.drawImage(farbe, 0, 0, x, H, 0, 0, x, H);
+    if (!reduziert) {
+      ctx.fillStyle = 'rgba(232,245,224,0.55)';
+      ctx.fillRect(Math.min(x, W - dpr), 0, dpr, H);
+    }
+    var minute = reduziert ? -2 : Math.min(1439, Math.floor(anteil * 1440));
+    if (minute !== letzteMinute || letzteLang !== sprache()) {
+      letzteMinute = minute;
+      uhr.textContent = reduziert ? uhrzeit(0) + '–' + uhrzeit(1440) : uhrzeit(minute);
+    }
     if (letzteLang !== sprache()) { letzteLang = sprache(); abdeckungWert.textContent = abdeckungText(); }
   }
 
-  // ~12 Bilder/s reichen fuer einen Zeitraffer (24 simulierte Minuten je Sekunde) und
-  // sparen gegenueber 60/s den Grossteil der Zeichenarbeit.
-  var BILD_MS = 83, zuletzt = 0, laeuft = false;
   function schritt(jetzt) {
     if (!sichtbar || document.hidden) { start = 0; laeuft = false; return; }
     if (!start) start = jetzt - anteilJetzt * DAUER_MS;   // an der letzten Stelle weiter
     if (jetzt - zuletzt >= BILD_MS) {
       zuletzt = jetzt;
       var t = (jetzt - start) % (DAUER_MS + PAUSE_MS);
-      aktualisieren(Math.min(1, t / DAUER_MS));
+      bild(Math.min(1, t / DAUER_MS));
     }
     window.requestAnimationFrame(schritt);
   }
@@ -154,20 +176,18 @@
         var timer = null;
         window.addEventListener('resize', function () {
           clearTimeout(timer);
-          timer = setTimeout(function () { zeichnen(); }, 200);
+          timer = setTimeout(zeichnen, 200);
         });
         weiter();
       })
       .catch(function () { fig.classList.add('vorschau-fehlt'); });
   }
-  // Erst laden und zeichnen, wenn die Seite fertig ist und der Browser Luft hat --
-  // die Vorschau soll den Seitenaufbau nicht bremsen (Lighthouse TBT).
+  // Erst laden, wenn die Seite fertig ist und der Browser Luft hat (Seitenaufbau nicht bremsen)
   function spaeter() {
-    var los = function () { (window.requestIdleCallback || function (f) { setTimeout(f, 200); })(laden, { timeout: 2000 }); };
+    var los = function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 200); })(laden, { timeout: 2000 }); };
     if (document.readyState === 'complete') los(); else window.addEventListener('load', los, { once: true });
   }
-
-  // Erst wenn das Diagramm sichtbar wird (auf dem Handy liegt es unter dem ersten Bildschirm)
+  // ... und erst, wenn das Diagramm sichtbar wird (auf dem Handy unter dem ersten Bildschirm)
   if ('IntersectionObserver' in window) {
     sichtbar = false;
     new IntersectionObserver(function (e) {

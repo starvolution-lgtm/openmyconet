@@ -86,10 +86,16 @@
       <span class="vorschau-zeit"><span data-i18n="vorschau_zeit">{{ t('vorschau_zeit') }}</span> · <span id="vorschau-uhr">00:00</span></span>
       <span class="vorschau-abdeckung"><span data-i18n="vorschau_abdeckung">{{ t('vorschau_abdeckung') }}</span> <span id="vorschau-abdeckung-wert">–</span></span>
     </div>
-    <svg class="vorschau-svg" id="vorschau-svg" role="img" aria-labelledby="vorschau-titel">
-      <title id="vorschau-titel" data-i18n="vorschau_aria">{{ t('vorschau_aria') }}</title>
-      <text class="vorschau-wasserzeichen" id="vorschau-wasserzeichen" x="50%" y="31%" text-anchor="middle" dominant-baseline="middle" data-i18n="vorschau_wasserzeichen">{{ t('vorschau_wasserzeichen') }}</text>
-    </svg>
+    {# Kurven auf einer Canvas (billig neu zu zeichnen), Beschriftung + Wasserzeichen
+       als unveraenderliches SVG darueber -- so muss der Browser pro Bild nur die
+       Canvas neu malen (Lighthouse: SVG-Clip je Bild kostete ~0,5 s Blockierzeit). #}
+    <div class="vorschau-flaeche">
+      <canvas class="vorschau-canvas" id="vorschau-canvas" aria-hidden="true"></canvas>
+      <svg class="vorschau-svg" id="vorschau-svg" role="img" aria-labelledby="vorschau-titel">
+        <title id="vorschau-titel" data-i18n="vorschau_aria">{{ t('vorschau_aria') }}</title>
+        <text class="vorschau-wasserzeichen" id="vorschau-wasserzeichen" x="50%" y="31%" text-anchor="middle" dominant-baseline="middle" data-i18n="vorschau_wasserzeichen">{{ t('vorschau_wasserzeichen') }}</text>
+      </svg>
+    </div>
     <figcaption class="vorschau-hinweis" data-i18n-html="vorschau_hinweis_html">{{ t('vorschau_hinweis_html') | safe }}</figcaption>
   </figure>
   <div class="hero-buttons">
