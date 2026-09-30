@@ -78,8 +78,12 @@ def test_texte_platzhalter_passen():
             assert set(re.findall(r'\{(\w+)\}', text)) <= erlaubt, (lang, key)
         assert '{rate}' in TRANSLATIONS[lang]['bdl_grundlage_hinweis'], lang
         assert TRANSLATIONS[lang]['bdl_einladung_verweis'].count('{link}') == 1, lang
-        for key in ('bdl_tun_3', 'bdl_echt_6', 'bdl_grundlage_hinweis', 'bdl_grundlage_z2'):
-            assert '250' not in TRANSLATIONS[lang][key], (lang, key)     # Rate nie fest im Text
+        for key in ('bdl_tun_3', 'bdl_grundlage_hinweis', 'bdl_grundlage_z2'):
+            assert '250' not in TRANSLATIONS[lang][key], (lang, key)     # Simulationsrate nie fest im Text
+        # Punkt 6: Simulationsrate als Parameter; die 250 fuer die realen Messungen ist die
+        # Hardware-Vorgabe (ADS1115, Robby 30.09.2026) und steht bewusst fest da
+        assert '{rate}' in TRANSLATIONS[lang]['bdl_echt_6'], lang
+        assert '256' not in TRANSLATIONS[lang]['bdl_echt_6'] and '1024' not in TRANSLATIONS[lang]['bdl_echt_6'], lang
         for key in ('bdl_grundlage_h', 'bdl_grundlage_hinweis', 'bdl_grundlage_h_live', 'bdl_grundlage_hinweis_live'):
             assert TRANSLATIONS[lang][key], (lang, key)
 
