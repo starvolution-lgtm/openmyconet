@@ -73,6 +73,7 @@ def test_texte_platzhalter_passen():
                              ('bdl_grundlage_z2_live', werte_live)):
             text = TRANSLATIONS[lang][key]
             assert set(re.findall(r'\{(\w+)\}', text)) <= erlaubt, (lang, key)
+        assert '{rate}' in TRANSLATIONS[lang]['bdl_grundlage_hinweis'], lang
         for key in ('bdl_grundlage_h', 'bdl_grundlage_hinweis', 'bdl_grundlage_h_live', 'bdl_grundlage_hinweis_live'):
             assert TRANSLATIONS[lang][key], (lang, key)
 
@@ -91,7 +92,8 @@ def test_kasten_aus_gespeicherter_datei(app):
     assert '6 Szenarien · 13 Messreihen · 4 synthetische Standorte · Simulationsjahr 2025' in de
     assert '51,1 Mio. simulierte Rohwerte, davon 46,2 Mio. bioelektrisch (250 Werte pro Sekunde' in de
     assert '1,55 Mio. verdichtete Werte (Minuten- und Stundenwerte)' in de
-    assert 'direkt erzeugt und nicht aus Rohdaten berechnet' in de
+    assert 'Alle Werte der Simulation stammen aus einem Rechenmodell' in de
+    assert 'einzelne Rohwerte (250 pro Sekunde) für je eine Stunde pro Jahreszeit' in de   # Rate aus den Daten
     en = c.get('/biocomm/datenlabor?lang=en').get_data(as_text=True)
     assert 'Data basis of the simulation' in en
     assert '51.1 million simulated raw values, 46.2 million of them bioelectrical (250 values per second' in en
@@ -123,7 +125,8 @@ def test_neue_datei_wird_gelesen(app):
     _datei_schreiben(app, dict(BEISPIEL, raten_hz=[256.0]))
     st = os.stat(ziel)
     os.utime(ziel, (st.st_atime, st.st_mtime + 5))
-    assert '(256 Werte pro Sekunde' in c.get('/biocomm/datenlabor').get_data(as_text=True)
+    html = c.get('/biocomm/datenlabor').get_data(as_text=True)
+    assert '(256 Werte pro Sekunde' in html and 'Rohwerte (256 pro Sekunde)' in html
 
 
 def test_ohne_daten_kein_kasten(app):

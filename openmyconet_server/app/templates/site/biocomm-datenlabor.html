@@ -102,7 +102,7 @@
         <li data-i18n-grundlage="bdl_grundlage_z2{{ sfx }}">{{ t('bdl_grundlage_z2' ~ sfx) | grundlage_fuellen(werte) }}</li>
         <li data-i18n-grundlage="bdl_grundlage_z3">{{ t('bdl_grundlage_z3') | grundlage_fuellen(werte) }}</li>
       </ul>
-      <p class="grundlage-hinweis" data-i18n="bdl_grundlage_hinweis{{ sfx }}">{{ t('bdl_grundlage_hinweis' ~ sfx) }}</p>
+      <p class="grundlage-hinweis" data-i18n-grundlage="bdl_grundlage_hinweis{{ sfx }}">{{ t('bdl_grundlage_hinweis' ~ sfx) | grundlage_fuellen(werte) }}</p>
     </div>
     <script type="application/json" id="bdl-grundlage">{{ grundlage.werte | tojson }}</script>
     {% endif %}
