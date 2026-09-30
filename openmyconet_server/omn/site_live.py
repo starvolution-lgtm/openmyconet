@@ -6,8 +6,10 @@ die URLs, die nach dem DNS-Cutover unter www.openmyconet.de erreichbar sein soll
 
 Einbinden in app.py: from site_live import site_live_bp; app.register_blueprint(site_live_bp)
 """
-from flask import Blueprint, render_template, redirect, url_for, request, abort
+from flask import Blueprint, render_template, redirect, url_for, request, abort, current_app
 
+from omn import datengrundlage
+from omn.extensions import db
 from omn.models import Foerderer, Presseeintrag
 from omn.site_preview import FLOW_SVGS, CARD_SVGS
 from omn.i18n import LANGS
@@ -138,7 +140,23 @@ def biocomm_software():
 def biocomm_datenlabor():
     # Oeffentliche Erklaerseite; das Datenlabor selbst (omn/datenlabor.py)
     # liegt hinter dem Login unter /dashboard/datenlabor.
-    return render_template('site/biocomm-datenlabor.html', current_page='biocomm-datenlabor')
+    # Kasten "Datengrundlage": gespeicherte Zaehlung (instance/datengrundlage_sandbox.json,
+    # keine DB-Abfrage pro Aufruf), Zahlen je Sprache vorformatiert fuer den Umschalter.
+    daten = datengrundlage.lesen(db.engine, current_app.instance_path, 'sandbox')
+    grundlage = None
+    if daten and daten.get('roh'):
+        grundlage = {'modus': daten['schema'],
+                     'werte': {lang: datengrundlage.platzhalter(daten, lang) for lang in LANGS}}
+    return render_template('site/biocomm-datenlabor.html', current_page='biocomm-datenlabor',
+                           grundlage=grundlage)
+
+
+@site_live_bp.app_template_filter('grundlage_fuellen')
+def _grundlage_fuellen(text, werte):
+    """'{roh} simulierte Rohwerte' -> '51,1 Mio. simulierte Rohwerte'."""
+    for name, wert in (werte or {}).items():
+        text = text.replace('{' + name + '}', wert)
+    return text
 
 
 @site_live_bp.route('/presse')

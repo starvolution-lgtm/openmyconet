@@ -139,7 +139,12 @@
       "roh_umrechnung": " · Umrechnung: Zählwert × LSB ÷ Verstärkung",
       "roh_leer": "Noch kein Ausschnitt gewählt. Die Simulation speichert Rohdaten nur für einzelne Stunden (je Jahreszeit eine, 10–11 Uhr Ortszeit) – wähle oben unter „Stunden mit Rohdaten“ eine aus.",
       "roh_keine_stunden": "Für diese Messreihe sind keine Rohdaten gespeichert.",
-      "kontrolle_fehlt": "Eine Kontrollreihe gibt es nur in den Szenarien mit Stimulation."
+      "kontrolle_fehlt": "Eine Kontrollreihe gibt es nur in den Szenarien mit Stimulation.",
+      "ansicht": "Diese Ansicht: {n} {einheit}",
+      "ansicht_1h": "Stundenwerte",
+      "ansicht_1min": "Minutenwerte",
+      "ansicht_roh": "Rohwerte",
+      "ansicht_je_reihe": " (je Reihe)"
     },
     "kanaele": {
       "bioelectric_potential": "Bioelektrisches Potential",
@@ -298,7 +303,12 @@
       "roh_umrechnung": " · conversion: count × LSB ÷ gain",
       "roh_leer": "No excerpt selected yet. The simulation stores raw data only for individual hours (one per season, 10–11 local time) – choose one above under “Hours with raw data”.",
       "roh_keine_stunden": "No raw data is stored for this measurement series.",
-      "kontrolle_fehlt": "A control series only exists in the scenarios with stimulation."
+      "kontrolle_fehlt": "A control series only exists in the scenarios with stimulation.",
+      "ansicht": "This view: {n} {einheit}",
+      "ansicht_1h": "hourly values",
+      "ansicht_1min": "minute values",
+      "ansicht_roh": "raw values",
+      "ansicht_je_reihe": " (per series)"
     },
     "kanaele": {
       "bioelectric_potential": "Bioelectric potential",
@@ -494,7 +504,12 @@
       "roh_umrechnung": " · omrekening: telwaarde × LSB ÷ versterking",
       "roh_leer": "Nog geen fragment gekozen. De simulatie slaat ruwe gegevens alleen voor afzonderlijke uren op (één per seizoen, 10–11 uur lokale tijd) – kies hierboven er een onder „Uren met ruwe gegevens”.",
       "roh_keine_stunden": "Voor deze meetreeks zijn geen ruwe gegevens opgeslagen.",
-      "kontrolle_fehlt": "Een controlereeks bestaat alleen in de scenario’s met stimulatie."
+      "kontrolle_fehlt": "Een controlereeks bestaat alleen in de scenario’s met stimulatie.",
+      "ansicht": "Deze weergave: {n} {einheit}",
+      "ansicht_1h": "uurwaarden",
+      "ansicht_1min": "minuutwaarden",
+      "ansicht_roh": "ruwe waarden",
+      "ansicht_je_reihe": " (per reeks)"
     },
     "kanaele": {
       "bioelectric_potential": "Bio-elektrisch potentiaal",
@@ -690,7 +705,12 @@
       "roh_umrechnung": " · conversion : valeur brute × LSB ÷ gain",
       "roh_leer": "Aucun extrait choisi pour l’instant. La simulation n’enregistre des données brutes que pour certaines heures (une par saison, de 10 h à 11 h heure locale) – choisis-en une ci-dessus sous « Heures avec données brutes ».",
       "roh_keine_stunden": "Aucune donnée brute n’est enregistrée pour cette série de mesures.",
-      "kontrolle_fehlt": "Une série témoin n’existe que dans les scénarios avec stimulation."
+      "kontrolle_fehlt": "Une série témoin n’existe que dans les scénarios avec stimulation.",
+      "ansicht": "Cette vue : {n} {einheit}",
+      "ansicht_1h": "valeurs horaires",
+      "ansicht_1min": "valeurs par minute",
+      "ansicht_roh": "valeurs brutes",
+      "ansicht_je_reihe": " (par série)"
     },
     "kanaele": {
       "bioelectric_potential": "Potentiel bioélectrique",
@@ -886,7 +906,12 @@
       "roh_umrechnung": " · conversión: valor bruto × LSB ÷ ganancia",
       "roh_leer": "Todavía no has elegido ningún extracto. La simulación solo guarda datos brutos de horas concretas (una por estación, de 10 a 11 h hora local): elige una arriba en «Horas con datos brutos».",
       "roh_keine_stunden": "Para esta serie de medición no hay datos brutos guardados.",
-      "kontrolle_fehlt": "Solo hay serie de control en los escenarios con estimulación."
+      "kontrolle_fehlt": "Solo hay serie de control en los escenarios con estimulación.",
+      "ansicht": "Esta vista: {n} {einheit}",
+      "ansicht_1h": "valores horarios",
+      "ansicht_1min": "valores por minuto",
+      "ansicht_roh": "valores brutos",
+      "ansicht_je_reihe": " (por serie)"
     },
     "kanaele": {
       "bioelectric_potential": "Potencial bioeléctrico",

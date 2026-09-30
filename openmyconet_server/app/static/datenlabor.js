@@ -149,6 +149,17 @@
       substratText(r.substrat, r.substrat_label) + (r.mit_stimulation ? ' · ' + T.mit_stim : '');
   }
 
+  // "Diese Ansicht: 168 Stundenwerte" -- nur tatsaechlich gespeicherte Werte (keine
+  // vertretenen Einzelwerte). Mehrere Reihen: je Reihe; weichen sie ab, beide mit Code.
+  function anzahlText(einheit, n, nKontr) {
+    var mehrere = nKontr !== null && nKontr !== undefined;
+    var wert = zahl(n, 0);
+    if (mehrere && nKontr !== n) {
+      wert = zahl(n, 0) + ' (' + (aktReihe() || {}).code + ') / ' + zahl(nKontr, 0) + ' (' + (kontrollReihe() || {}).code + ')';
+    }
+    return tx('ansicht', { n: wert, einheit: T['ansicht_' + einheit] }) + (mehrere ? T.ansicht_je_reihe : '');
+  }
+
   function szenarienFuellen() {
     var sel = $('dl-szenario'), alt = st.szenario;
     sel.textContent = '';
@@ -255,7 +266,7 @@
     box.textContent = ''; p.className = 'dl-leer-chart';
     p.textContent = r.roh_stunden.length ? T.roh_leer : T.roh_keine_stunden;
     box.appendChild(p);
-    $('dl-roh-zeit').textContent = ''; $('dl-roh-meta').textContent = ''; $('dl-roh-technik').textContent = '';
+    $('dl-roh-zeit').textContent = ''; $('dl-roh-meta').textContent = ''; $('dl-roh-anzahl').textContent = ''; $('dl-roh-technik').textContent = '';
   }
 
   // ------------------------------------------------------------ Zeitraum ---
@@ -431,6 +442,7 @@
     var raster = RASTER[res.aufloesung];
     var alle = P.concat(K);
     $('dl-meta').textContent = '';
+    $('dl-anzahl').textContent = '';
     $('dl-technik').textContent = '';
     if (!P.length) {
       legende({});
@@ -517,6 +529,9 @@
       aufl: res.aufloesung, zusatz: res.aufloesung === '1d' ? T.technik_1d : '', code: r.code, kanal: res.kanal
     }) + (K.length ? tx('technik_kontrolle', { code: (kontrollReihe() || {}).code }) : '');
 
+    var g = res.gespeichert || { anzahl: P.length, aufloesung: res.aufloesung };
+    $('dl-anzahl').textContent = anzahlText(g.aufloesung, g.anzahl,
+      kontr ? (kontr.gespeichert || { anzahl: K.length }).anzahl : null);
     var n = P.reduce(function (a, p) { return a + p[5]; }, 0);
     var nErw = P.reduce(function (a, p) { return a + (p[6] || 0); }, 0);
     $('dl-meta').textContent = tx('meta', { aufl: T['aufl_' + res.aufloesung], fenster: zahl(P.length, 0), werte: zahl(n, 0) }) +
@@ -651,6 +666,7 @@
       leer.textContent = T.keine_roh;
       box.appendChild(leer);
       $('dl-roh-meta').textContent = '';
+      $('dl-roh-anzahl').textContent = '';
       $('dl-roh-technik').textContent = '';
       return;
     }
@@ -665,6 +681,7 @@
       el('circle', { cx: f.sx(s[0]), cy: f.sy(s[1]), r: 2, class: 'dl-saett' }, f.ebenen.oben);
     });
     var saett = S.filter(function (s) { return s[3]; }).length;
+    $('dl-roh-anzahl').textContent = anzahlText('roh', S.length, kontr ? K.length : null);
     $('dl-roh-meta').textContent = tx('roh_meta', { n: zahl(S.length, 0), rate: zahl(res.rate_hz, 0) }) +
       (saett ? tx('roh_saett', { n: saett }) : '') + (K.length ? T.roh_kontrolle : '') + T.roh_quelle;
     var q = res.quelle || {};

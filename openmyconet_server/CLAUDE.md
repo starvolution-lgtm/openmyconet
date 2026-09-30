@@ -258,7 +258,21 @@ steht in der Adresse (`#szenario=…&reihe=…&ansicht=…&datum=…&kontrolle=1
 verlinkbar. Öffentliche Erklärseite `/biocomm/datenlabor`
 (`site/biocomm-datenlabor.html`, i18n-Präfix `bdl_`, im BioComm-Menü, Sitemap,
 Lighthouse/pa11y, Hinweise auf `/biocomm` und im Mitmachen-Bereich der
-Startseite). Vorschaubild `app/static/datenlabor_vorschau.webp` = echte Aufnahme
+Startseite). **Datengrundlage (seit 30.09.2026, `omn/datengrundlage.py`):** Verbindliche Regel (Robby):
+nur **tatsächlich gespeicherte** Werte zeigen, nie rechnerisch „vertretene“ (die simulierten
+Minuten-/Stundenwerte sind direkt erzeugt; „100 Milliarden Werte“ o. ä. ist unzulässig — Texte,
+Tooltips, API, Exporte). Kasten „Datengrundlage der Simulation“ auf der Erklärseite: gezählt werden
+Rohwerte (`sample_count` kanonischer Batches, davon bioelektrisch, Abtastrate aus den Kanälen, nie
+fest), verdichtete Werte (`derived_aggregate_current`), Szenarien/Reihen/Standorte/Jahr; sandbox nur
+die öffentlichen Szenarien, `live` alles Kanonische + Zahl der Knoten (Texte `bdl_grundlage_*_live`
+liegen bereit, Route zeigt bisher nur sandbox). Ergebnis in `instance/datengrundlage_<schema>.json`
+(keine DB-Abfrage pro Aufruf; fehlt die Datei, einmal erzeugt), neu mit `flask datenlabor-grundlage
+[--schema]`, automatisch am Ende von `sandbox-generieren`. Zahlen je Sprache vorformatiert
+(`kurzzahl`: „51,1 Mio.“, „51.1 million“, fr/es vor Hauptwort mit „de“), per JSON `#bdl-grundlage`
+für den Sprachumschalter. Dashboard: Zeile „Diese Ansicht: {n} Stundenwerte/Minutenwerte/Rohwerte
+(je Reihe)“ unter jedem Diagramm aus `gespeichert` der API (Tageswerte = Zahl ihrer Stundenwerte).
+Tests `tests/test_datengrundlage.py` + PG-Teil in `test_datenlabor.py`.
+Vorschaubild `app/static/datenlabor_vorschau.webp` = echte Aufnahme
 des Datenlabors (headless Chrome) mit SIMULATION-Band; bei sichtbaren Änderungen
 am Datenlabor neu aufnehmen.
 

@@ -10,6 +10,8 @@
 - `biocomm-einlesen` / `biocomm-verdichten` / `biocomm-testpakete` -- Prototyp
   des Dateneingangs fuer Messknoten-Pakete (omn/eingang/, SD-Import-Weg).
 - `biocomm-konflikt` -- offene Konflikte anzeigen bzw. manuell aufloesen.
+- `datenlabor-grundlage` -- zaehlt die gespeicherten Werte fuer den Kasten
+  "Datengrundlage" auf /biocomm/datenlabor (auch am Ende von sandbox-generieren).
 - `bilder-verkleinern` -- kleinere Fassungen fuer vorhandene News-Bilder + Foerderer-Logos (idempotent).
 """
 import time
@@ -17,6 +19,8 @@ from collections import Counter
 
 import click
 from flask import current_app
+
+from omn.datengrundlage import ermitteln as datengrundlage_ermitteln
 
 
 def register_cli(app):
@@ -114,6 +118,17 @@ def register_cli(app):
         t0 = time.time()
         Generator(db.engine, Zeitraum(tage=tage) if tage else None, log=click.echo).alle(nur=set(nur) or None)
         click.echo(f'Fertig in {time.time() - t0:.0f} s.')
+        _grundlage_melden(datengrundlage_ermitteln(db.engine, current_app.instance_path, 'sandbox'))
+
+    @app.cli.command('datenlabor-grundlage')
+    @click.option('--schema', type=click.Choice(['sandbox', 'live']), default='sandbox', show_default=True)
+    def datenlabor_grundlage(schema):
+        """Zaehlt die gespeicherten Werte (Kasten auf /biocomm/datenlabor) neu, nur PostgreSQL."""
+        from omn.extensions import db
+
+        if db.engine.dialect.name != 'postgresql':
+            raise click.ClickException('braucht PostgreSQL mit BioComm-Schemas')
+        _grundlage_melden(datengrundlage_ermitteln(db.engine, current_app.instance_path, schema))
 
     @app.cli.command('sandbox-vorschau')
     @click.option('--szenario', default='baseline', show_default=True)
@@ -447,6 +462,14 @@ def register_cli(app):
         from omn.extensions import db
 
         _wartende_melden(wartende_erneut(db.engine, schema))
+
+
+def _grundlage_melden(d):
+    je = ', '.join(f'{k} {v:,}' for k, v in sorted(d['verdichtet_je_aufloesung'].items()))
+    rahmen = ((f"{d['szenarien']} Szenarien, " if 'szenarien' in d else '')
+              + f"{d['reihen']} Messreihen, {d['standorte']} Standorte, {d['knoten']} Knoten")
+    click.echo(f"Datengrundlage {d['schema']}: {rahmen}; Rohwerte {d['roh']:,} (bio {d['bio']:,}, "
+               f"Rate {d['raten_hz']} Hz); verdichtet {d['verdichtet']:,} ({je or '-'})")
 
 
 def _wartende_melden(ergebnis):

@@ -208,6 +208,47 @@ def test_rohdaten_kalibriert(labor):
 
 
 @nur_pg
+def test_gespeicherte_werte_je_ansicht(labor):
+    """Dashboard-Zeile "Diese Ansicht: …": nur gespeicherte Werte, Tageswerte zaehlen
+    ihre Stundenwerte (Tageswerte selbst sind nicht gespeichert)."""
+    r = _reihe(labor, next(iter(_codes(labor))))
+    tag = labor.get(API + f"/reihe?reihe={r['id']}&von=2025-01-12T23:00:00Z&bis=2025-01-13T23:00:00Z").get_json()
+    assert tag['gespeichert'] == {'anzahl': len(tag['punkte']), 'aufloesung': '1min'}
+    wo = labor.get(API + f"/reihe?reihe={r['id']}&von=2025-01-01T00:00:00Z&bis=2025-01-08T00:00:00Z").get_json()
+    assert wo['gespeichert'] == {'anzahl': len(wo['punkte']), 'aufloesung': '1h'}
+    jahr = labor.get(API + f"/reihe?reihe={r['id']}&von=2025-01-01T00:00:00Z&bis=2026-01-01T00:00:00Z").get_json()
+    assert jahr['gespeichert']['aufloesung'] == '1h'
+    assert 20 * 23 <= jahr['gespeichert']['anzahl'] <= 20 * 24 + 24      # ~20 Tage Stundenwerte, Luecken fehlen
+
+
+@nur_pg
+def test_datengrundlage_zaehlung(labor):
+    """Zaehlung fuer den Kasten auf der Erklaerseite: nur gespeicherte, kanonische Werte."""
+    from omn import datengrundlage
+    app = labor.application
+    with app.app_context():
+        d = datengrundlage.zaehlen(db.engine, 'sandbox')
+        with db.engine.connect() as c:
+            roh = c.execute(db.text("""SELECT sum(sb.sample_count) FROM sandbox.sample_block sb
+                JOIN sandbox.origin_batch ob ON ob.id = sb.origin_batch_id AND ob.batch_status = 'CANONICAL'""")).scalar()
+            agg = c.execute(db.text('SELECT count(*) FROM sandbox.derived_aggregate_current')).scalar()
+        live = datengrundlage.zaehlen(db.engine, 'live')
+        # ueber die CLI (auch Ende von sandbox-generieren) in die Datei
+        erg = app.test_cli_runner().invoke(args=['datenlabor-grundlage'])
+        assert erg.exit_code == 0, erg.output
+        gespeichert = datengrundlage.lesen(db.engine, app.instance_path, 'sandbox')
+    assert (d['szenarien'], d['reihen'], d['standorte'], d['jahr']) == (6, 13, 4, '2025')
+    assert d['roh'] == roh and 0 < d['bio'] < d['roh']
+    assert d['raten_hz'] == [250.0]
+    assert d['verdichtet'] == agg == sum(d['verdichtet_je_aufloesung'].values())
+    assert set(d['verdichtet_je_aufloesung']) == {'1h', '1min'}
+    assert live['roh'] == live['verdichtet'] == live['knoten'] == 0 and 'szenarien' not in live
+    assert gespeichert['roh'] == d['roh'] and 'Datengrundlage sandbox: 6 Szenarien' in erg.output
+    html = labor.get('/biocomm/datenlabor').get_data(as_text=True)
+    assert 'Datengrundlage der Simulation' in html and '(250 Werte pro Sekunde' in html
+
+
+@nur_pg
 def test_api_liefert_die_gewaehlte_sprache(labor):
     antwort = labor.get(API + '/szenarien?lang=en')
     assert antwort.status_code == 200, antwort.get_data(as_text=True)[:2000]

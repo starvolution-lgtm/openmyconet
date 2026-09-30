@@ -91,6 +91,21 @@
       </div>
       {% endfor %}
     </div>
+    {% if grundlage %}
+    {# Nur tatsaechlich gespeicherte Werte (omn/datengrundlage.py), nie "vertretene" #}
+    {% set sfx = '' if grundlage.modus == 'sandbox' else '_live' %}
+    {% set werte = grundlage.werte[current_lang()] %}
+    <div class="grundlage-box" id="datengrundlage">
+      <h3 class="grundlage-titel" data-i18n="bdl_grundlage_h{{ sfx }}">{{ t('bdl_grundlage_h' ~ sfx) }}</h3>
+      <ul class="grundlage-zeilen">
+        <li data-i18n-grundlage="bdl_grundlage_z1{{ sfx }}">{{ t('bdl_grundlage_z1' ~ sfx) | grundlage_fuellen(werte) }}</li>
+        <li data-i18n-grundlage="bdl_grundlage_z2{{ sfx }}">{{ t('bdl_grundlage_z2' ~ sfx) | grundlage_fuellen(werte) }}</li>
+        <li data-i18n-grundlage="bdl_grundlage_z3">{{ t('bdl_grundlage_z3') | grundlage_fuellen(werte) }}</li>
+      </ul>
+      <p class="grundlage-hinweis" data-i18n="bdl_grundlage_hinweis{{ sfx }}">{{ t('bdl_grundlage_hinweis' ~ sfx) }}</p>
+    </div>
+    <script type="application/json" id="bdl-grundlage">{{ grundlage.werte | tojson }}</script>
+    {% endif %}
   </div>
 </section>
 
@@ -162,6 +177,18 @@ function applyPage(lang) {
     var key = el.getAttribute('data-i18n-alt');
     if (T[key] !== undefined) el.setAttribute('alt', T[key]);
   });
+  // Datengrundlage: Textbausteine mit den vorformatierten Zahlen der Sprache fuellen
+  var gEl = document.getElementById('bdl-grundlage');
+  if (gEl) {
+    var alle = JSON.parse(gEl.textContent);
+    var werte = alle[lang] || alle.de;
+    document.querySelectorAll('[data-i18n-grundlage]').forEach(function(el) {
+      var text = T[el.getAttribute('data-i18n-grundlage')];
+      if (text === undefined) return;
+      Object.keys(werte).forEach(function(k) { text = text.split('{' + k + '}').join(werte[k]); });
+      el.textContent = text;
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {

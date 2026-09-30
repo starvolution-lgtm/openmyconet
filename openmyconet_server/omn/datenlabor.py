@@ -294,15 +294,22 @@ def api_reihe(nutzer):
         aufloesung = '1d'
         sql = f"""SELECT date_trunc('day', a.bucket_start, :tz) AS t, min(a.value_min), max(a.value_max),
                          sum(a.value_mean * a.samples_recorded) / sum(a.samples_recorded),
-                         bit_or(a.quality_mask), sum(a.samples_recorded), sum(a.samples_expected)
+                         bit_or(a.quality_mask), sum(a.samples_recorded), sum(a.samples_expected),
+                         count(*)
                   {basis} AND a.resolution = '1h' GROUP BY 1 ORDER BY 1"""
     else:
         sql = f"""SELECT a.bucket_start, a.value_min, a.value_max, a.value_mean, a.quality_mask,
                          a.samples_recorded, a.samples_expected
                   {basis} AND a.resolution = :res ORDER BY 1"""
         p['res'] = aufloesung
+    zeilen = db.session.execute(text(sql), p).all()
     punkte = [[int(z[0].timestamp() * 1000), round(z[1], 4), round(z[2], 4), round(z[3], 4), z[4], z[5], z[6]]
-              for z in db.session.execute(text(sql), p).all()]
+              for z in zeilen]
+    # Zahl der tatsaechlich GESPEICHERTEN Werte hinter dieser Ansicht (Luecken fehlen
+    # ohnehin als Zeilen). Tageswerte werden erst hier aus Stundenwerten gebildet und
+    # sind nicht gespeichert -> dort zaehlen die zugrunde liegenden Stundenwerte.
+    gespeichert = {'anzahl': sum(z[7] for z in zeilen) if aufloesung == '1d' else len(zeilen),
+                   'aufloesung': '1h' if aufloesung == '1d' else aufloesung}
 
     stim = db.session.execute(text("""
         SELECT x.actuator_type, x.execution_state, x.planned_start, x.actual_start, x.actual_duration_ms,
@@ -324,7 +331,7 @@ def api_reihe(nutzer):
         'reihe': series_id, 'kanal': kanal, 'name': kanal_name(kanal, lang), 'einheit': KANAELE[kanal][1],
         'aufloesung': aufloesung, 'zeitzone': tz,
         'felder': ['t_ms', 'min', 'max', 'mittel', 'qualitaet_maske', 'samples', 'samples_erwartet'],
-        'punkte': punkte,
+        'punkte': punkte, 'gespeichert': gespeichert,
         'stimulationen': [{'typ': z[0], 'zustand': z[1], 'geplant': ms(z[2]), 'start': ms(z[3]),
                            'dauer_ms': z[4], 'versuch': ms(z[5]), 'grund': generator_text(z[6], lang),
                            'versatz_ms': z[7]} for z in stim],

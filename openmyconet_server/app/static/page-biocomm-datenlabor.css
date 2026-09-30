@@ -32,6 +32,12 @@
 .interp-box { border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:1.6rem 1.8rem; }
 .article .interp-title { font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin-bottom:1rem; }
 .article .interp-box p { font-size:0.95rem; }
+.grundlage-box { margin-top:2rem; border:1px solid #0a6040; border-left:3px solid #d4a030; background:rgba(0,0,0,0.22); border-radius:8px; padding:1.4rem 1.8rem; }
+.article .grundlage-titel { font-family:'JetBrains Mono',monospace; font-size:0.82rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin:0 0 0.9rem; }
+.grundlage-zeilen { list-style:none; margin:0; padding:0; }
+.article .grundlage-zeilen li { color:#e0f0e0; font-size:1rem; line-height:1.55; padding:0.25rem 0; font-variant-numeric:tabular-nums; }
+.article .grundlage-hinweis { margin:0.9rem 0 0; font-size:0.85rem; color:#b8d4b8; line-height:1.5; }
+@media (max-width:600px) { .grundlage-box { padding:1.1rem 1.1rem; } .article .grundlage-zeilen li { font-size:0.95rem; } }
 .article .einladung { margin-top:2rem; font-size:1.05rem; color:#e0f0e0; }
 
 .faq-eintrag { border-bottom:1px solid #0a6040; padding:0.9rem 0; }

@@ -132,6 +132,8 @@ body.dl-breit a:focus-visible, .dl-info summary:focus-visible { outline: 2px sol
 .dl-q-INTERPOLATED { fill: #7f8c8d; }
 
 .dl-ablesen { min-height: 1.4em; font-size: 0.9em; color: #f0f3f6; margin: 8px 0 2px; font-variant-numeric: tabular-nums; }
+.dl-anzahl { font-size: 0.88em; color: #d5dde4; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+.dl-anzahl:empty { display: none; }
 .dl-roh-zeit { font-variant-numeric: tabular-nums; min-width: 14em; text-align: center; }
 
 .dl-sw table { width: 100%; border-collapse: collapse; }

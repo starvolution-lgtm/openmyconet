@@ -1011,7 +1011,16 @@
     "q_ref31_title": "Electrical information flows across the sporocarps of two ectomycorrhizal fungi in the field",
     "q_ref31_meta": "Fukasawa, Y., Akai, D., Takehi, T., Takahashi, D. & Osada, Y. (2026) · Scientific Reports 16, 12397 · DOI 10.1038/s41598-026-42673-y",
     "q_ref31_relevanz": "Untersucht elektrische Informationsflüsse zwischen Fruchtkörpern zweier Ektomykorrhizapilze direkt im Freiland – also unter ähnlichen Bedingungen, wie OpenMycoNet misst.",
-    "q_ref31_evbadge": "Peer-reviewte Primärstudie"
+    "q_ref31_evbadge": "Peer-reviewte Primärstudie",
+    "bdl_grundlage_h": "Datengrundlage der Simulation",
+    "bdl_grundlage_z1": "{szenarien} Szenarien · {reihen} Messreihen · {standorte} synthetische Standorte · Simulationsjahr {jahr}",
+    "bdl_grundlage_z2": "{roh} simulierte Rohwerte, davon {bio} bioelektrisch ({rate} Werte pro Sekunde, je Jahreszeit eine Stunde)",
+    "bdl_grundlage_z3": "{verdichtet} verdichtete Werte (Minuten- und Stundenwerte)",
+    "bdl_grundlage_hinweis": "In der Simulation werden die Minuten- und Stundenwerte direkt erzeugt und nicht aus Rohdaten berechnet. Im späteren Messbetrieb entstehen sie ausschließlich aus echten Rohdaten.",
+    "bdl_grundlage_h_live": "Datengrundlage der Messungen",
+    "bdl_grundlage_z1_live": "{reihen} Messreihen · {standorte} Standorte · {knoten} Messknoten",
+    "bdl_grundlage_z2_live": "{roh} gemessene Rohwerte, davon {bio} bioelektrisch ({rate} Werte pro Sekunde)",
+    "bdl_grundlage_hinweis_live": "Die Minuten- und Stundenwerte entstehen ausschließlich aus den gespeicherten echten Rohdaten."
   },
   "en": {
     "nav_warum": "Why",
@@ -2025,7 +2034,16 @@
     "q_ref31_title": "Electrical information flows across the sporocarps of two ectomycorrhizal fungi in the field",
     "q_ref31_meta": "Fukasawa, Y., Akai, D., Takehi, T., Takahashi, D. & Osada, Y. (2026) · Scientific Reports 16, 12397 · DOI 10.1038/s41598-026-42673-y",
     "q_ref31_relevanz": "Investigates electrical information flows between fruiting bodies of two ectomycorrhizal fungi directly in the field – that is, under conditions similar to those in which OpenMycoNet measures.",
-    "q_ref31_evbadge": "Peer-reviewed primary study"
+    "q_ref31_evbadge": "Peer-reviewed primary study",
+    "bdl_grundlage_h": "Data basis of the simulation",
+    "bdl_grundlage_z1": "{szenarien} scenarios · {reihen} measurement series · {standorte} synthetic sites · simulated year {jahr}",
+    "bdl_grundlage_z2": "{roh} simulated raw values, {bio} of them bioelectrical ({rate} values per second, one hour per season)",
+    "bdl_grundlage_z3": "{verdichtet} aggregated values (minute and hourly values)",
+    "bdl_grundlage_hinweis": "In the simulation, minute and hourly values are generated directly, not calculated from raw data. In future field operation they will be derived exclusively from real raw data.",
+    "bdl_grundlage_h_live": "Data basis of the measurements",
+    "bdl_grundlage_z1_live": "{reihen} measurement series · {standorte} sites · {knoten} measurement nodes",
+    "bdl_grundlage_z2_live": "{roh} measured raw values, {bio} of them bioelectrical ({rate} values per second)",
+    "bdl_grundlage_hinweis_live": "The minute and hourly values are derived exclusively from the stored real raw data."
   },
   "nl": {
     "nav_warum": "Waarom",
@@ -3039,7 +3057,16 @@
     "q_ref31_title": "Electrical information flows across the sporocarps of two ectomycorrhizal fungi in the field",
     "q_ref31_meta": "Fukasawa, Y., Akai, D., Takehi, T., Takahashi, D. & Osada, Y. (2026) · Scientific Reports 16, 12397 · DOI 10.1038/s41598-026-42673-y",
     "q_ref31_relevanz": "Onderzoekt elektrische informatiestromen tussen vruchtlichamen van twee ectomycorrhizaschimmels direct in het veld – dus onder vergelijkbare omstandigheden als waarin OpenMycoNet meet.",
-    "q_ref31_evbadge": "Peer-reviewed primaire studie"
+    "q_ref31_evbadge": "Peer-reviewed primaire studie",
+    "bdl_grundlage_h": "Gegevensbasis van de simulatie",
+    "bdl_grundlage_z1": "{szenarien} scenario's · {reihen} meetreeksen · {standorte} synthetische locaties · simulatiejaar {jahr}",
+    "bdl_grundlage_z2": "{roh} gesimuleerde ruwe waarden, waarvan {bio} bio-elektrisch ({rate} waarden per seconde, één uur per seizoen)",
+    "bdl_grundlage_z3": "{verdichtet} samengevatte waarden (minuut- en uurwaarden)",
+    "bdl_grundlage_hinweis": "In de simulatie worden de minuut- en uurwaarden rechtstreeks gegenereerd en niet uit ruwe gegevens berekend. In de latere meetfase ontstaan ze uitsluitend uit echte ruwe gegevens.",
+    "bdl_grundlage_h_live": "Gegevensbasis van de metingen",
+    "bdl_grundlage_z1_live": "{reihen} meetreeksen · {standorte} locaties · {knoten} meetknooppunten",
+    "bdl_grundlage_z2_live": "{roh} gemeten ruwe waarden, waarvan {bio} bio-elektrisch ({rate} waarden per seconde)",
+    "bdl_grundlage_hinweis_live": "De minuut- en uurwaarden ontstaan uitsluitend uit de opgeslagen echte ruwe gegevens."
   },
   "fr": {
     "nav_warum": "Pourquoi",
@@ -4053,7 +4080,16 @@
     "q_ref31_title": "Electrical information flows across the sporocarps of two ectomycorrhizal fungi in the field",
     "q_ref31_meta": "Fukasawa, Y., Akai, D., Takehi, T., Takahashi, D. & Osada, Y. (2026) · Scientific Reports 16, 12397 · DOI 10.1038/s41598-026-42673-y",
     "q_ref31_relevanz": "Étudie les flux d’information électriques entre les fructifications de deux champignons ectomycorhiziens directement sur le terrain – donc dans des conditions proches de celles dans lesquelles OpenMycoNet mesure.",
-    "q_ref31_evbadge": "Étude primaire évaluée par les pairs"
+    "q_ref31_evbadge": "Étude primaire évaluée par les pairs",
+    "bdl_grundlage_h": "Base de données de la simulation",
+    "bdl_grundlage_z1": "{szenarien} scénarios · {reihen} séries de mesures · {standorte} sites synthétiques · année simulée {jahr}",
+    "bdl_grundlage_z2": "{roh} valeurs brutes simulées, dont {bio} bioélectriques ({rate} valeurs par seconde, une heure par saison)",
+    "bdl_grundlage_z3": "{verdichtet} valeurs agrégées (valeurs par minute et par heure)",
+    "bdl_grundlage_hinweis": "Dans la simulation, les valeurs par minute et par heure sont générées directement et non calculées à partir de données brutes. Lors des futures mesures, elles proviendront exclusivement de données brutes réelles.",
+    "bdl_grundlage_h_live": "Base de données des mesures",
+    "bdl_grundlage_z1_live": "{reihen} séries de mesures · {standorte} sites · {knoten} nœuds de mesure",
+    "bdl_grundlage_z2_live": "{roh} valeurs brutes mesurées, dont {bio} bioélectriques ({rate} valeurs par seconde)",
+    "bdl_grundlage_hinweis_live": "Les valeurs par minute et par heure proviennent exclusivement des données brutes réelles enregistrées."
   },
   "es": {
     "nav_warum": "Por qué",
@@ -5067,6 +5103,15 @@
     "q_ref31_title": "Electrical information flows across the sporocarps of two ectomycorrhizal fungi in the field",
     "q_ref31_meta": "Fukasawa, Y., Akai, D., Takehi, T., Takahashi, D. & Osada, Y. (2026) · Scientific Reports 16, 12397 · DOI 10.1038/s41598-026-42673-y",
     "q_ref31_relevanz": "Estudia los flujos de información eléctrica entre cuerpos fructíferos de dos hongos ectomicorrícicos directamente en el campo, es decir, en condiciones similares a aquellas en las que mide OpenMycoNet.",
-    "q_ref31_evbadge": "Estudio primario revisado por pares"
+    "q_ref31_evbadge": "Estudio primario revisado por pares",
+    "bdl_grundlage_h": "Base de datos de la simulación",
+    "bdl_grundlage_z1": "{szenarien} escenarios · {reihen} series de medición · {standorte} ubicaciones sintéticas · año simulado {jahr}",
+    "bdl_grundlage_z2": "{roh} valores brutos simulados, de ellos {bio} bioeléctricos ({rate} valores por segundo, una hora por estación)",
+    "bdl_grundlage_z3": "{verdichtet} valores agregados (valores por minuto y por hora)",
+    "bdl_grundlage_hinweis": "En la simulación, los valores por minuto y por hora se generan directamente y no se calculan a partir de datos brutos. En la futura fase de medición se obtendrán exclusivamente a partir de datos brutos reales.",
+    "bdl_grundlage_h_live": "Base de datos de las mediciones",
+    "bdl_grundlage_z1_live": "{reihen} series de medición · {standorte} ubicaciones · {knoten} nodos de medición",
+    "bdl_grundlage_z2_live": "{roh} valores brutos medidos, de ellos {bio} bioeléctricos ({rate} valores por segundo)",
+    "bdl_grundlage_hinweis_live": "Los valores por minuto y por hora se obtienen exclusivamente a partir de los datos brutos reales almacenados."
   }
 }
