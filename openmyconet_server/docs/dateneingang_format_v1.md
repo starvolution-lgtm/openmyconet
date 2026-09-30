@@ -5,6 +5,12 @@ Dokument und `omn/eingang/format_v1.py` sind die Referenz. Wer das Format änder
 den Testvektor (`docs/dateneingang_format_v1_testvektor.omb`, Test `tests/test_format_v1.py`)
 und damit die Versionsnummer.
 
+> **Hinweis 30.09.2026:** Die Beispiele und Testvektoren unten verwenden noch **256 Hz** und
+> EC-Pausen „stündlich“. Vorgesehen sind inzwischen **250 Werte pro Sekunde** (ADS1115, feste
+> Datenraten, Oszillator ±10 % → tatsächliche Rate je Block mitschicken); der EC-Takt im echten
+> Betrieb ist offen. Das Format bleibt gleich, die Testvektoren werden mit der Firmware neu
+> erzeugt. Details: `docs/dateneingang_status.md`, Abschnitt „Offen: Abtastrate und EC-Takt“.
+
 Vorgänger: [Format v0](dateneingang_format_v0.md) (JSON, Prototyp). v0 bleibt lesbar; ein
 Messlauf verwendet genau **ein** Format (die Firmware wechselt es nur mit neuem Lauf).
 

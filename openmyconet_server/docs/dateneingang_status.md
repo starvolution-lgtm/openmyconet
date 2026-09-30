@@ -24,3 +24,34 @@ grün auf `d49d4ce` (letzter Code-Commit) und `434080d`; danach nur noch diese D
 Node-Aggregate, Geräte-Qualität, Uhrkorrekturen, Objektspeicher für RAW.
 
 **Fragen an Robby:** siehe `docs/dateneingang_teil2_bericht.md`, Abschnitt „Fragen“ (keine blockierend).
+
+## Offen: Abtastrate und EC-Takt (Stand 30.09.2026)
+
+**Entscheidung (Robby, 30.09.2026):** Der ADS1115 kennt nur feste Datenraten
+(8/16/32/64/128/250/475/860 SPS), 256 bzw. 1024 Werte pro Sekunde gehen damit nicht. Für die
+realen Messungen sind **250 Werte pro Sekunde** vorgesehen. Der Oszillator des ADS1115 hat
+±10 % Toleranz, echte Raten liegen also etwa zwischen 225 und 275. Die **tatsächliche Rate je
+Rohdatenblock** muss deshalb mitgeschickt, gespeichert und verwendet werden. **Offen** ist, ob
+die EC-Messung im echten Betrieb stündlich oder ereignisgesteuert läuft (die Website nennt
+keinen Takt mehr; der Stundentakt der Sandbox bleibt, er gehört zur Simulation).
+
+Website-Texte sind angepasst (Commit `0dfff91`). Noch **nicht** angepasst, nur geprüft:
+
+| Stelle | Was dort passiert | Folge bei echter Rate 225–275 |
+|---|---|---|
+| `omn/eingang/einlesen.py:338–339` | Block wird abgelehnt, wenn seine Rate von `measurement_channel.sample_rate_hz` um mehr als 10⁻⁹ abweicht | Knoten mit gemessener Rate (z. B. 247,3) würde **REJECTED** – wichtigste Stelle |
+| `omn/eingang/verdichtung.py:161, 186–193` | `samples_expected` aus der Nennrate des Kanals | Abdeckung z. B. 90 % oder über 100 % |
+| `omn/datenlabor.py:398` | API `roh` meldet `rate_hz` als ganze Zahl des letzten Blocks | 247,8 → 247 |
+| `app/static/datenlabor.js:677` | Lückenerkennung im Rohdaten-Diagramm mit dieser einen Rate | ungenau bei Blöcken mit verschiedenen Raten |
+| `omn/eingang/ereignisse.py:200` | `planned_sample_rate_hz` aus `LAUF_START` | in Ordnung, solange nur Plan |
+
+Schon richtig: `sample_block.sample_rate_hz` je Block (Format v1 als exakter Bruch,
+`format_v1.py:164`), Zeitpunkte in der Verdichtung (`verdichtung.py:305–307`) und in der
+Rohdatenansicht (`datenlabor.py:381, 392–396`) aus der Blockrate. Der Sandbox-Generator rechnet
+bewusst fest mit `RATE_HZ = 250` (`omn/sandbox/szenarien.py:20`), das ist Simulation.
+
+**Paketformat v1:** Die drei Testvektoren (`docs/dateneingang_format_v1*.omb`) und die
+Beispiele in `docs/dateneingang_format_v1.md` verwenden noch **256/1 Hz** und EC-Pausen
+„stündlich“. Das Format selbst ist davon unabhängig (Rate als exakter Bruch, Pausen als
+Regel). Umstellen zusammen mit der Firmware: neue Testvektoren mit 250 Hz bzw. der gemessenen
+Rate, Test `tests/test_format_v1.py` nachziehen.

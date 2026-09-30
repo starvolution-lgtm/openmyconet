@@ -138,7 +138,11 @@ Messwerte), `batch_hash` deckt zusätzlich alle Kopf-/Blockangaben ab (`meta_has
 Genesis = SHA256("OMN-GENESIS-v1" ‖ Gerät ‖ Lauf), Rate als exakter Bruch, Platz für
 eine Signatur (HMAC-SHA256/Ed25519, noch nicht geprüft). **Die Node-Firmware schreibt
 Claude und muss beide Testvektoren Byte für Byte erzeugen** (`_testvektor.omb`,
-`_testvektor_laufstart.omb`). **Ereignisse (seit 26.09.2026, `ereignisse.py`, Schema v3
+`_testvektor_laufstart.omb`). **Abtastrate (Robby, 30.09.2026):** reale Messungen mit
+**250 Werten pro Sekunde** (ADS1115 hat nur feste Raten, 256/1024 gehen nicht; Oszillator
+±10 % → tatsächliche Rate je Block mitschicken und verwenden); EC-Takt im echten Betrieb offen.
+Testvektoren noch mit 256 Hz, `einlesen.py` lehnt Blockraten ≠ Kanalrate ab — offene Stellen
+in `docs/dateneingang_status.md` („Offen: Abtastrate und EC-Takt“). **Ereignisse (seit 26.09.2026, `ereignisse.py`, Schema v3
 = Migration `4b7c9e2d1f35`, `biocomm_0003_*.sql`):** `LAUF_START` (nur Sequenz 1) meldet
 den Node selbst an: Konfiguration, Sonde, Hardwarekanäle, Lauf, RAW + DERIVED, Plan;
 Messreihe aus dem **Einsatz** `device_deployment` (Server legt fest, nicht der Node);
