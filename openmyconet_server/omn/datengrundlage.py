@@ -60,6 +60,16 @@ _RATEN = """
      WHERE mc.data_kind = 'RAW' AND mc.quantity_code = 'bioelectric_potential'
        AND mc.sample_rate_hz IS NOT NULL AND mc.acquisition_run_id IN ({laeufe})
      ORDER BY 1"""
+# Rohdatendauer: verschiedene Stunden mit bioelektrischen Rohdaten je Reihe (Median)
+_ROH_STUNDEN = """
+    SELECT percentile_disc(0.5) WITHIN GROUP (ORDER BY n) FROM (
+      SELECT count(DISTINCT date_trunc('hour', sb.time_anchor)) AS n
+        FROM {s}.sample_block sb
+        JOIN {s}.origin_batch ob ON ob.id = sb.origin_batch_id AND ob.batch_status = 'CANONICAL'
+        JOIN {s}.measurement_channel mc ON mc.id = sb.measurement_channel_id
+        JOIN {s}.acquisition_run r ON r.id = mc.acquisition_run_id
+       WHERE mc.data_kind = 'RAW' AND mc.quantity_code = 'bioelectric_potential' AND r.id IN ({laeufe})
+       GROUP BY r.series_id) je_reihe"""
 _VERDICHTET = """
     SELECT a.resolution, count(*) AS n FROM {s}.derived_aggregate_current a
       JOIN {s}.measurement_channel mc ON mc.id = a.measurement_channel_id
@@ -79,6 +89,7 @@ def zaehlen(engine, schema='sandbox'):
         roh = c.execute(_sql(schema, _ROH)).one()
         raten = [float(z[0]) for z in c.execute(_sql(schema, _RATEN))]
         verdichtet = {z.resolution: z.n for z in c.execute(_sql(schema, _VERDICHTET))}
+        roh_stunden = c.execute(_sql(schema, _ROH_STUNDEN)).scalar() or 0
         if schema == 'sandbox':
             s = c.execute(text("""
                 WITH sc AS (SELECT DISTINCT ON (scenario_key) * FROM sandbox.sandbox_scenario
@@ -99,6 +110,8 @@ def zaehlen(engine, schema='sandbox'):
     return {'schema': schema, **rahmen, 'roh': int(roh.roh), 'bio': int(roh.bio), 'raten_hz': raten,
             'knoten': int(roh.knoten), 'verdichtet': sum(verdichtet.values()),
             'verdichtet_je_aufloesung': verdichtet,
+            # vier Jahreszeiten; 0 = keine Rohdaten
+            'roh_stunden_je_jahreszeit': round(roh_stunden / 4) if roh_stunden else 0,
             'ermittelt': datetime.now(timezone.utc).replace(microsecond=0).isoformat()}
 
 
@@ -192,4 +205,25 @@ def platzhalter(daten, lang='de'):
              'knoten': str(daten.get('knoten', ''))}
     if 'szenarien' in daten:
         werte.update(szenarien=str(daten['szenarien']), jahr=str(daten['jahr']))
+    werte.update(seitenwerte(daten, lang))
     return werte
+
+
+_STUNDEN = {'de': ('eine Stunde', '{n} Stunden'), 'en': ('one hour', '{n} hours'), 'nl': ('één uur', '{n} uur'),
+            'fr': ('une heure', '{n} heures'), 'es': ('una hora', '{n} horas')}
+
+
+def dauer_text(stunden, lang='de'):
+    """1 -> 'eine Stunde' / 'one hour' …, sonst '2 Stunden'."""
+    eins, viele = _STUNDEN.get(lang, _STUNDEN['de'])
+    return eins if stunden == 1 else viele.replace('{n}', str(stunden))
+
+
+def seitenwerte(daten, lang='de'):
+    """Abtastrate und Rohdatendauer fuer die festen Texte der Erklaerseite (Liste,
+    Punkt 6, Einladung) -- aus der Zaehlung, ohne Zaehlung (lokal, CI) aus der
+    Generator-Konfiguration der Sandbox, nie fest im Text."""
+    if daten and daten.get('roh') and daten.get('raten_hz') and daten.get('roh_stunden_je_jahreszeit'):
+        return {'rate': rate_text(daten['raten_hz'], lang), 'roh_dauer': dauer_text(daten['roh_stunden_je_jahreszeit'], lang)}
+    from omn.sandbox.szenarien import RATE_HZ
+    return {'rate': rate_text([RATE_HZ], lang), 'roh_dauer': dauer_text(1, lang)}   # je Stichwoche eine Rohdatenstunde

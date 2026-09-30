@@ -36,7 +36,9 @@
 .article .grundlage-titel { font-family:'JetBrains Mono',monospace; font-size:0.82rem; letter-spacing:0.06em; text-transform:uppercase; color:#d4a030; margin:0 0 0.9rem; }
 .grundlage-zeilen { list-style:none; margin:0; padding:0; }
 .article .grundlage-zeilen li { color:#e0f0e0; font-size:1rem; line-height:1.55; padding:0.25rem 0; font-variant-numeric:tabular-nums; }
-.article .grundlage-hinweis { margin:0.9rem 0 0; font-size:0.85rem; color:#b8d4b8; line-height:1.5; }
+.article .grundlage-hinweis { margin:0.9rem 0 0; font-size:0.85rem; color:#b8d4b8; line-height:1.5; white-space:pre-line; }
+.article .einladung a { color:#6ee87e; text-decoration:underline; }
+.grundlage-box { scroll-margin-top:96px; }
 @media (max-width:600px) { .grundlage-box { padding:1.1rem 1.1rem; } .article .grundlage-zeilen li { font-size:0.95rem; } }
 .article .einladung { margin-top:2rem; font-size:1.05rem; color:#e0f0e0; }
 

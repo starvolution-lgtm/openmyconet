@@ -142,11 +142,13 @@ def biocomm_datenlabor():
     # liegt hinter dem Login unter /dashboard/datenlabor.
     # Kasten "Datengrundlage": gespeicherte Zaehlung (instance/datengrundlage_sandbox.json,
     # keine DB-Abfrage pro Aufruf), Zahlen je Sprache vorformatiert fuer den Umschalter.
+    # Abtastrate + Rohdatendauer der festen Texte ebenfalls von dort (ohne Zaehlung aus
+    # der Generator-Konfiguration), der Kasten selbst nur mit Zaehlung.
     daten = datengrundlage.lesen(db.engine, current_app.instance_path, 'sandbox')
-    grundlage = None
-    if daten and daten.get('roh'):
-        grundlage = {'modus': daten['schema'],
-                     'werte': {lang: datengrundlage.platzhalter(daten, lang) for lang in LANGS}}
+    mit_kasten = bool(daten and daten.get('roh'))
+    werte = {lang: (datengrundlage.platzhalter(daten, lang) if mit_kasten else datengrundlage.seitenwerte(None, lang))
+             for lang in LANGS}
+    grundlage = {'modus': daten['schema'] if mit_kasten else None, 'werte': werte}
     return render_template('site/biocomm-datenlabor.html', current_page='biocomm-datenlabor',
                            grundlage=grundlage)
 

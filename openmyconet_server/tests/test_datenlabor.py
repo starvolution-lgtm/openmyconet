@@ -350,7 +350,7 @@ def test_seite_in_der_sprache_des_nutzers(app):
     _einloggen(c, nid)
     html = c.get('/dashboard/datenlabor').get_data(as_text=True)
     assert '<html lang="en">' in html and 'BioComm <em>Data Lab</em>' in html
-    assert 'calculated measurements, real data processing' in html and 'Log out' in html
+    assert 'calculated values, real data processing' in html and 'Log out' in html
     assert 'data-locale="en-GB"' in html
     # Sprachwahl per Flaggen wie auf der Website; die aktive ist markiert
     assert 'title="English" aria-label="English" class="dl-flagge" data-sprache aria-current="true"' in html

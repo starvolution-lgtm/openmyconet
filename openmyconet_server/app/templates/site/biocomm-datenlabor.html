@@ -34,6 +34,7 @@
 {% block mobile_menu_self_link %}{% endblock %}
 
 {% block content %}
+{% set werte = grundlage.werte[current_lang()] %}
 <div class="page-header">
   <div class="inner">
     <p class="section-label" data-i18n="bdl_label">{{ t('bdl_label') }}</p>
@@ -64,7 +65,7 @@
       <div class="vergleich-spalte spalte-echt">
         <h3 data-i18n="bdl_echt_h">{{ t('bdl_echt_h') }}</h3>
         <ul>
-          {% for i in range(1, 7) %}<li data-i18n="bdl_echt_{{ i }}">{{ t('bdl_echt_' ~ i) }}</li>{% endfor %}
+          {% for i in range(1, 7) %}<li data-i18n-grundlage="bdl_echt_{{ i }}">{{ t('bdl_echt_' ~ i) | grundlage_fuellen(werte) }}</li>{% endfor %}
         </ul>
       </div>
     </div>
@@ -91,10 +92,9 @@
       </div>
       {% endfor %}
     </div>
-    {% if grundlage %}
+    {% if grundlage.modus %}
     {# Nur tatsaechlich gespeicherte Werte (omn/datengrundlage.py), nie "vertretene" #}
     {% set sfx = '' if grundlage.modus == 'sandbox' else '_live' %}
-    {% set werte = grundlage.werte[current_lang()] %}
     <div class="grundlage-box" id="datengrundlage">
       <h3 class="grundlage-titel" data-i18n="bdl_grundlage_h{{ sfx }}">{{ t('bdl_grundlage_h' ~ sfx) }}</h3>
       <ul class="grundlage-zeilen">
@@ -104,8 +104,8 @@
       </ul>
       <p class="grundlage-hinweis" data-i18n-grundlage="bdl_grundlage_hinweis{{ sfx }}">{{ t('bdl_grundlage_hinweis' ~ sfx) | grundlage_fuellen(werte) }}</p>
     </div>
-    <script type="application/json" id="bdl-grundlage">{{ grundlage.werte | tojson }}</script>
     {% endif %}
+    <script type="application/json" id="bdl-grundlage">{{ grundlage.werte | tojson }}</script>
   </div>
 </section>
 
@@ -113,13 +113,16 @@
   <div class="inner article">
     <h2 data-i18n="bdl_tun_h2">{{ t('bdl_tun_h2') }}</h2>
     <ul class="tun-liste">
-      {% for i in range(1, 6) %}<li data-i18n="bdl_tun_{{ i }}">{{ t('bdl_tun_' ~ i) }}</li>{% endfor %}
+      {% for i in range(1, 6) %}<li data-i18n-grundlage="bdl_tun_{{ i }}">{{ t('bdl_tun_' ~ i) | grundlage_fuellen(werte) }}</li>{% endfor %}
     </ul>
     <div class="interp-box">
       <p class="interp-title" data-i18n="bdl_interp_title">{{ t('bdl_interp_title') }}</p>
       <p data-i18n="bdl_interp_p">{{ t('bdl_interp_p') }}</p>
     </div>
-    <p class="einladung" data-i18n="bdl_einladung">{{ t('bdl_einladung') }}</p>
+    <p class="einladung"><span data-i18n="bdl_einladung">{{ t('bdl_einladung') }}</span>
+      {%- if grundlage.modus %} {% set teile = t('bdl_einladung_verweis').split('{link}') -%}
+      <span data-i18n-verweis="bdl_einladung_verweis">{{ teile[0] }}<a href="#datengrundlage" data-i18n="bdl_grundlage_h">{{ t('bdl_grundlage_h') }}</a>{{ teile[1] }}</span>
+      {%- endif %}</p>
     <div class="cta-zeile">
       <a href="{{ live('index.html#anmelden') }}" class="btn btn-green" data-i18n="bdl_cta_register">{{ t('bdl_cta_register') }}</a>
     </div>
@@ -176,6 +179,17 @@ function applyPage(lang) {
   document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
     var key = el.getAttribute('data-i18n-alt');
     if (T[key] !== undefined) el.setAttribute('alt', T[key]);
+  });
+  // Einladung: Verweis auf den Kasten -- Text um den Link herum (Link-Text = Kastentitel)
+  document.querySelectorAll('[data-i18n-verweis]').forEach(function(el) {
+    var teile = (T[el.getAttribute('data-i18n-verweis')] || '').split('{link}');
+    var a = el.querySelector('a');
+    if (teile.length !== 2 || !a) return;
+    el.textContent = '';
+    el.appendChild(document.createTextNode(teile[0]));
+    a.textContent = T.bdl_grundlage_h || a.textContent;
+    el.appendChild(a);
+    el.appendChild(document.createTextNode(teile[1]));
   });
   // Datengrundlage: Textbausteine mit den vorformatierten Zahlen der Sprache fuellen
   var gEl = document.getElementById('bdl-grundlage');

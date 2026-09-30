@@ -62,7 +62,7 @@ GROUPS = [
     ("biocomm-datenlabor", "bdl_h1", [
         "bdl_page_title", "bdl_meta_desc", "bdl_label", "bdl_h1", "bdl_badge",
         "bdl_intro", "bdl_hero_", "bdl_echt_", "bdl_berechnet_", "bdl_weg_",
-        "bdl_szen_", "bdl_teaser_",
+        "bdl_szen_", "bdl_grundlage_", "bdl_teaser_",
     ]),
     # eigener Abschnitt: die Datenlabor-Seite ist laenger als MAX_CHARS,
     # "Was du tun kannst" + FAQ fielen sonst beim Kuerzen weg (28.09.2026)
@@ -184,13 +184,27 @@ def resolve_title(spec, lang, block, de_block):
 # matcht. `leih_*`: die Leihgeräte-Seite wurde am 24.08.2026 zugunsten von
 # /biocomm/hardware eingestellt (301-Redirect), ihre Texte in translations.json
 # sind toter, teils veralteter Stand (u.a. `leih_status`).
-EXCLUDE_PREFIXES = ("leih_", "nav_leihgeraete")
+EXCLUDE_PREFIXES = ("leih_", "nav_leihgeraete",
+                    # Kasten "Datengrundlage": Zahlenzeilen nur mit Zaehlung, Live-Texte noch nicht sichtbar
+                    "bdl_grundlage_z", "bdl_grundlage_h_live", "bdl_grundlage_hinweis_live")
 
 
 def match(key, prefixes):
     if any(key.startswith(p) for p in EXCLUDE_PREFIXES):
         return False
     return any(key == p or key.startswith(p) for p in prefixes)
+
+
+def platzhalter_fuellen(text, lang, block):
+    """Platzhalter der Datenlabor-Texte ({rate}, {roh_dauer}, {link}) wie auf der Seite
+    ersetzen; Werte aus der Generator-Konfiguration (keine DB-Abfrage)."""
+    if "{" not in text:
+        return text
+    from omn.datengrundlage import seitenwerte
+    werte = dict(seitenwerte(None, lang), link=clean(block.get("bdl_grundlage_h", "")))
+    for name, wert in werte.items():
+        text = text.replace("{" + name + "}", wert)
+    return text
 
 
 def abschnitte(tr, lang):
@@ -200,7 +214,8 @@ def abschnitte(tr, lang):
     block = tr.get(lang) or {}
     ergebnis = []
     for slug, title_spec, prefixes in GROUPS:
-        texts = [t for key, value in block.items() if match(key, prefixes) and (t := clean(value))]
+        texts = [platzhalter_fuellen(t, lang, block) for key, value in block.items()
+                 if match(key, prefixes) and (t := clean(value))]
         if texts:
             ergebnis.append((slug, resolve_title(title_spec, lang, block, de_block), texts))
     return ergebnis

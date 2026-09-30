@@ -269,7 +269,12 @@ liegen bereit, Route zeigt bisher nur sandbox). Ergebnis in `instance/datengrund
 (keine DB-Abfrage pro Aufruf; fehlt die Datei, einmal erzeugt), neu mit `flask datenlabor-grundlage
 [--schema]`, automatisch am Ende von `sandbox-generieren`. Zahlen je Sprache vorformatiert
 (`kurzzahl`: „51,1 Mio.“, „51.1 million“, fr/es vor Hauptwort mit „de“), per JSON `#bdl-grundlage`
-für den Sprachumschalter. Dashboard: Zeile „Diese Ansicht: {n} Stundenwerte/Minutenwerte/Rohwerte
+für den Sprachumschalter. Abtastrate `{rate}` und Rohdatendauer `{roh_dauer}` (Rohdatenstunden je
+Reihe ÷ 4 Jahreszeiten) stehen nie fest im Text — auch nicht in Liste (`bdl_tun_3`), Punkt 6
+(`bdl_echt_6`) und Hinweis; ohne Zählung aus der Generator-Konfiguration (`seitenwerte`). Die
+Einladung verweist per `{link}` (`bdl_einladung_verweis`) auf den Kasten. Chatbot/`llms.txt`
+bekommen die Texte mit eingesetzten Werten (`wissensbasis.platzhalter_fuellen`). Simulierte Werte nie
+„Messwerte“ nennen (Robby, 30.09.2026). Dashboard: Zeile „Diese Ansicht: {n} Stundenwerte/Minutenwerte/Rohwerte
 (je Reihe)“ unter jedem Diagramm aus `gespeichert` der API (Tageswerte = Zahl ihrer Stundenwerte).
 Tests `tests/test_datengrundlage.py` + PG-Teil in `test_datenlabor.py`.
 Vorschaubild `app/static/datenlabor_vorschau.webp` = echte Aufnahme

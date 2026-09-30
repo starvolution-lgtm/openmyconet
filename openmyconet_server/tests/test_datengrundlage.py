@@ -17,6 +17,7 @@ from omn import datengrundlage as dg
 BEISPIEL = {'schema': 'sandbox', 'szenarien': 6, 'reihen': 13, 'standorte': 4, 'jahr': '2025',
             'roh': 51112262, 'bio': 46217500, 'raten_hz': [250.0], 'knoten': 13,
             'verdichtet': 1548640, 'verdichtet_je_aufloesung': {'1h': 1024488, '1min': 524152},
+            'roh_stunden_je_jahreszeit': 1,
             'ermittelt': '2026-09-30T08:00:00+00:00'}
 
 
@@ -56,7 +57,9 @@ def test_rate_kommt_aus_den_daten():
 def test_platzhalter():
     w = dg.platzhalter(BEISPIEL, 'de')
     assert w == {'roh': '51,1 Mio.', 'bio': '46,2 Mio.', 'verdichtet': '1,55 Mio.', 'rate': '250',
-                 'reihen': '13', 'standorte': '4', 'knoten': '13', 'szenarien': '6', 'jahr': '2025'}
+                 'reihen': '13', 'standorte': '4', 'knoten': '13', 'szenarien': '6', 'jahr': '2025',
+                 'roh_dauer': 'eine Stunde'}
+    assert dg.platzhalter(dict(BEISPIEL, roh_stunden_je_jahreszeit=2), 'fr')['roh_dauer'] == '2 heures'.replace(' ', ' ')
     live = dict(BEISPIEL, schema='live')
     del live['szenarien'], live['jahr']
     assert 'szenarien' not in dg.platzhalter(live, 'de')
@@ -74,8 +77,15 @@ def test_texte_platzhalter_passen():
             text = TRANSLATIONS[lang][key]
             assert set(re.findall(r'\{(\w+)\}', text)) <= erlaubt, (lang, key)
         assert '{rate}' in TRANSLATIONS[lang]['bdl_grundlage_hinweis'], lang
+        assert TRANSLATIONS[lang]['bdl_einladung_verweis'].count('{link}') == 1, lang
+        for key in ('bdl_tun_3', 'bdl_echt_6', 'bdl_grundlage_hinweis', 'bdl_grundlage_z2'):
+            assert '250' not in TRANSLATIONS[lang][key], (lang, key)     # Rate nie fest im Text
         for key in ('bdl_grundlage_h', 'bdl_grundlage_hinweis', 'bdl_grundlage_h_live', 'bdl_grundlage_hinweis_live'):
             assert TRANSLATIONS[lang][key], (lang, key)
+
+
+def _ohne_skripte(html):
+    return re.sub(r'<script.*?</script>', '', html, flags=re.S)
 
 
 def _datei_schreiben(app, daten):
@@ -92,8 +102,13 @@ def test_kasten_aus_gespeicherter_datei(app):
     assert '6 Szenarien · 13 Messreihen · 4 synthetische Standorte · Simulationsjahr 2025' in de
     assert '51,1 Mio. simulierte Rohwerte, davon 46,2 Mio. bioelektrisch (250 Werte pro Sekunde' in de
     assert '1,55 Mio. verdichtete Werte (Minuten- und Stundenwerte)' in de
-    assert 'Alle Werte der Simulation stammen aus einem Rechenmodell' in de
-    assert 'einzelne Rohwerte (250 pro Sekunde) für je eine Stunde pro Jahreszeit' in de   # Rate aus den Daten
+    assert 'Die Simulation basiert auf einem Rechenmodell' in de
+    assert 'für je eine Stunde pro Jahreszeit einzelne Rohwerte, 250 pro Sekunde' in de   # Rate + Dauer aus den Daten
+    # feste Texte bekommen Rate/Dauer ebenfalls, Einladung verweist auf den Kasten
+    assert '(in der Simulation 250 pro Sekunde, je Jahreszeit eine Stunde)' in de
+    assert 'Die Simulation erzeugt 250 Werte pro Sekunde' in de
+    assert 'exemplarisch vor (siehe „<a href="#datengrundlage" data-i18n="bdl_grundlage_h">Datengrundlage der Simulation</a>“)' in de
+    assert not re.search(r'>[^<]*\{(rate|roh_dauer|link|roh|bio|verdichtet)\}', _ohne_skripte(de))
     en = c.get('/biocomm/datenlabor?lang=en').get_data(as_text=True)
     assert 'Data basis of the simulation' in en
     assert '51.1 million simulated raw values, 46.2 million of them bioelectrical (250 values per second' in en
@@ -126,13 +141,17 @@ def test_neue_datei_wird_gelesen(app):
     st = os.stat(ziel)
     os.utime(ziel, (st.st_atime, st.st_mtime + 5))
     html = c.get('/biocomm/datenlabor').get_data(as_text=True)
-    assert '(256 Werte pro Sekunde' in html and 'Rohwerte (256 pro Sekunde)' in html
+    assert '(256 Werte pro Sekunde' in html and 'einzelne Rohwerte, 256 pro Sekunde' in html
+    assert '(in der Simulation 256 pro Sekunde' in html
 
 
 def test_ohne_daten_kein_kasten(app):
     c = app.test_client()
     html = c.get('/biocomm/datenlabor').get_data(as_text=True)
-    assert 'class="grundlage-box"' not in html and 'id="bdl-grundlage"' not in html
+    assert 'class="grundlage-box"' not in html and '<span data-i18n-verweis' not in html
+    # ohne Zaehlung: Rate/Dauer der festen Texte aus der Generator-Konfiguration, keine Platzhalter
+    assert '(in der Simulation 250 pro Sekunde, je Jahreszeit eine Stunde)' in html
+    assert not re.search(r'>[^<]*\{(rate|roh_dauer|link)\}', _ohne_skripte(html))
     _datei_schreiben(app, dict(BEISPIEL, roh=0, bio=0, verdichtet=0))
     assert 'class="grundlage-box"' not in c.get('/biocomm/datenlabor').get_data(as_text=True)
 
@@ -146,3 +165,24 @@ def test_dashboard_texte_je_sprache():
             assert ui[k], (lang, k)
     assert TEXTE['de']['ui']['ansicht'].format(n=168, einheit=TEXTE['de']['ui']['ansicht_1h']) == \
         'Diese Ansicht: 168 Stundenwerte'
+
+
+def test_keine_messwerte_fuer_simulierte_werte():
+    """Robby, 30.09.2026: nirgends "Messwerte", wenn simulierte Werte gemeint sind."""
+    from omn.datenlabor import TEXTE
+    from omn.i18n import TRANSLATIONS
+    for key in ('bdl_badge', 'bdl_page_title', 'bdl_berechnet_1', 'bdl_grundlage_hinweis', 'bdl_tun_3'):
+        assert 'Messwert' not in TRANSLATIONS['de'][key], key
+    assert 'Messwert' not in TEXTE['de']['ui']['banner'] and 'verdichtet' not in TEXTE['de']['ui']['banner']
+
+
+def test_wissensbasis_ohne_platzhalter():
+    """Chatbot + /llms.txt bekommen die Datenlabor-Texte mit eingesetzten Werten."""
+    from omn.i18n import LANGS, TRANSLATIONS
+    from omn.wissensbasis import abschnitte
+    for lang in LANGS:
+        texte = [t for _, _, absaetze in abschnitte(TRANSLATIONS, lang) for t in absaetze]
+        assert not [t for t in texte if re.search(r'\{(rate|roh_dauer|link|roh|bio|verdichtet|szenarien)\}', t)], lang
+    de = ' '.join(t for _, _, a in abschnitte(TRANSLATIONS, 'de') for t in a)
+    assert 'je Jahreszeit eine Stunde' in de and 'Die Simulation basiert auf einem Rechenmodell' in de
+    assert 'Die Minuten- und Stundenwerte entstehen ausschließlich aus den gespeicherten' not in de   # Live-Text
