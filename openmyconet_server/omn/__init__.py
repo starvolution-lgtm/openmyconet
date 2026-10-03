@@ -16,6 +16,8 @@ mimetypes.add_type('text/vtt', '.vtt')
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from omn.abfrage_pruefung import UngueltigeAbfrageAbweisen
+
 # config zuerst: sein Import ruft load_dotenv(), bevor die Blueprint-Module
 # unten evtl. Umgebungsvariablen beim Import auswerten.
 from omn.config import Config
@@ -63,6 +65,8 @@ def create_app(config=None, instance_path=None):
     # Proxy davor (nginx), gunicorn lauscht nur auf 127.0.0.1 -- der Header ist
     # also nicht von aussen faelschbar.
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+    # Kaputtes UTF-8 im Query-String (Scanner) -> 400 statt 500 + Fehler-Mail.
+    app.wsgi_app = UngueltigeAbfrageAbweisen(app.wsgi_app)
 
     app.config.from_object(config or Config)
 

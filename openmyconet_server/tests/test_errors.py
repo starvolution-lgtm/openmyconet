@@ -64,3 +64,17 @@ def test_end_to_end_ueber_eine_echte_route(client, app):
             assert eintrag.fehlertyp == 'RuntimeError'
     finally:
         app.config['PROPAGATE_EXCEPTIONS'] = None
+
+
+def test_kaputtes_utf8_im_query_string_gibt_400(client):
+    """Scanner-Anfrage wie am 03.10.2026 (`GET /?\xb0...`): vorher 500 +
+    Fehlerprotokoll + Mail, weil request.args strikt UTF-8 dekodiert."""
+    vorher = Fehlerprotokoll.query.count()
+    r = client.get('/', environ_overrides={'QUERY_STRING': '\xb0[.\xb0_]'})
+    assert r.status_code == 400
+    assert Fehlerprotokoll.query.count() == vorher
+
+
+def test_gueltiges_utf8_im_query_string_bleibt(client):
+    r = client.get('/', query_string={'lang': 'en', 'q': 'Pilzgeflecht äöü'})
+    assert r.status_code != 400
