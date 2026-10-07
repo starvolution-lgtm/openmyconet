@@ -5,6 +5,7 @@ ueber "Zum MCC" in der Admin-Kopfzeile. Nur Superadmin (Admin-Login inkl. 2FA).
 
 Schritt 1: Kontakte (Versandlog, Vorstellungs-Mails senden, taegliche Erinnerung).
 Schritt 2: Statusdateien + offene Punkte, vom PC gespiegelt, nur lesen (spiegel.py).
+Schritt 3: Server-Ampel (server.py, Checks weiter in omn/kontrollzentrum.py).
 Plan: Kontrollzentrum 03_Website_Backend/Claude_Code_Auftraege/2026-10-07_Plan_MCC_mobil.md
 """
 from flask import Blueprint
@@ -33,4 +34,4 @@ def _faellig_fuer_navigation():
     return {'faellig': len(faellige())}
 
 
-from omn.mcc import dateien, kontakte  # noqa: F401  (haengen die Routen an mcc_bp)
+from omn.mcc import dateien, kontakte, server  # noqa: F401  (haengen die Routen an mcc_bp)

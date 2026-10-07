@@ -4,8 +4,8 @@ kontrollzentrum.py — technisches Health-Dashboard (2-Farben-Ampel: gruen/rot)
 Getrennt vom lokalen Desktop-Kontrollzentrum (OpenMycoNet_Kontrollzentrum\\_App,
 10 breite Geschaefts-/Hardware-/IP-Bereiche, manuell per Markdown gepflegt).
 Dieses Dashboard prueft ausschliesslich live erreichbare technische Systeme
-und ist ueber /admin/kontrollzentrum erreichbar -- damit auch vom Handy aus,
-wenn kein PC-Zugriff besteht.
+und ist seit 07.10.2026 Teil des Server-MCC: Seite /mcc/server (omn/mcc/server.py),
+/admin/kontrollzentrum leitet dorthin weiter. Hier bleiben nur die Checks + Cache.
 
 Jeder Check: () -> (status: 'ok'|'fehler'|'neutral', detail: str) | None. None =
 Kachel wird weggelassen (z.B. "noch nicht konfiguriert" ist kein Fehler).
@@ -21,13 +21,12 @@ import smtplib
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import feedparser
 import requests
-from flask import Blueprint, current_app, render_template, request
+from flask import Blueprint, current_app, redirect, request, url_for
 
-from omn.admin import role_required
 from omn.extensions import db
 from omn.models import Knoten, MailQueue, Suchbegriff
 from omn.zeit import utcnow
@@ -78,6 +77,8 @@ def check_sw_admin_ausschluss():
     text = resp.get_data(as_text=True)
     if "indexOf('/admin/')" not in text and "'/admin/'" not in text:
         return 'fehler', 'sw.js schliesst /admin/* evtl. nicht mehr vom Caching aus'
+    if "indexOf('/mcc/')" not in text:
+        return 'fehler', 'sw.js schliesst /mcc/* (Server-MCC, personenbezogen) evtl. nicht mehr vom Caching aus'
     return 'ok', ''
 
 
@@ -233,7 +234,7 @@ def _presse_feed_pruefen(feed_url, sprache):
 SCHNELLE_CHECKS = [
     ('startseite', 'Website erreichbar', check_startseite_erreichbar),
     ('csp', 'CSP-Header (Kartenkacheln/Geocoding)', check_csp_domains),
-    ('sw', 'Service-Worker Admin-Ausschluss', check_sw_admin_ausschluss),
+    ('sw', 'Service-Worker: Admin + MCC nie gecacht', check_sw_admin_ausschluss),
     ('db', 'Datenbank', check_datenbank),
     ('anthropic', 'Chatbot-API-Key', check_anthropic_key),
     ('backup', 'Datenbank-Backup', check_backup),
@@ -310,17 +311,8 @@ def _ergebnisse_holen(erzwungen=False):
 # --- Route --------------------------------------------------------------
 
 @kontrollzentrum_bp.route('/admin/kontrollzentrum')
-@role_required('superadmin')
 def kontrollzentrum():
-    erzwungen = request.args.get('refresh') == '1'
-    try:
-        ergebnisse, zeitpunkt = _ergebnisse_holen(erzwungen)
-        laufzeitfehler = None
-    except Exception as e:
-        ergebnisse, zeitpunkt, laufzeitfehler = [], time.time(), str(e)
-    return render_template(
-        'kontrollzentrum_admin.html',
-        ergebnisse=ergebnisse,
-        zuletzt_geprueft=datetime.fromtimestamp(zeitpunkt),
-        laufzeitfehler=laufzeitfehler,
-    )
+    """Seit 07.10.2026 im Server-MCC (/mcc/server, omn/mcc/server.py). Alte Adresse
+    (Lesezeichen, als App aufs Handy gelegt) leitet dauerhaft weiter."""
+    ziel = url_for('mcc.server', refresh=request.args.get('refresh') or None)
+    return redirect(ziel, code=301)

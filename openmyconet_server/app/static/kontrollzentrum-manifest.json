@@ -1,7 +1,8 @@
 {
-  "name": "OpenMycoNet — Kontrollzentrum",
-  "short_name": "Kontrollzentrum",
-  "start_url": "/admin/kontrollzentrum",
+  "name": "OpenMycoNet — Mission Control Center",
+  "short_name": "MCC",
+  "start_url": "/mcc",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#efeee2",
   "theme_color": "#3c6b4c",

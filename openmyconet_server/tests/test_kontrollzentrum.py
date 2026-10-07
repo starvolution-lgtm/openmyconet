@@ -49,7 +49,7 @@ def _netzwerk_checks_mocken(monkeypatch):
 
 
 def test_ohne_login_wird_umgeleitet(client):
-    resp = client.get('/admin/kontrollzentrum', follow_redirects=False)
+    resp = client.get('/mcc/server', follow_redirects=False)
     assert resp.status_code == 302
     assert '/login' in resp.headers['Location']
 
@@ -57,7 +57,7 @@ def test_ohne_login_wird_umgeleitet(client):
 def test_editor_kein_zugriff(client, editor, monkeypatch):
     _netzwerk_checks_mocken(monkeypatch)
     eingeloggt(client, 'editor_test', 'auch-geheim-123')
-    resp = client.get('/admin/kontrollzentrum')
+    resp = client.get('/mcc/server')
     assert resp.status_code == 403
 
 
@@ -67,10 +67,10 @@ def test_superadmin_sieht_dashboard_mit_gruenen_und_roten_kacheln(client, supera
     # explizit entfernen, damit die rote Kachel deterministisch ist.
     monkeypatch.delenv('ANTHROPIC_API_KEY', raising=False)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    resp = client.get('/admin/kontrollzentrum')
+    resp = client.get('/mcc/server')
     assert resp.status_code == 200
     html = resp.get_data(as_text=True)
-    assert '🚦 Kontrollzentrum' in html
+    assert 'Server-Ampel' in html
     # ANTHROPIC_API_KEY ist im Test nicht gesetzt -> diese Kachel muss rot sein.
     assert 'ANTHROPIC_API_KEY nicht gesetzt' in html
 
@@ -82,7 +82,7 @@ def test_csp_kachel_rot_wenn_domain_fehlt(client, superadmin, monkeypatch):
         "default-src 'self'; connect-src 'self' https://api.openmyconet.de;",
     )
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    resp = client.get('/admin/kontrollzentrum')
+    resp = client.get('/mcc/server')
     html = resp.get_data(as_text=True)
     assert 'connect-src fehlt' in html
     assert 'tile.openstreetmap.org' in html
@@ -91,7 +91,7 @@ def test_csp_kachel_rot_wenn_domain_fehlt(client, superadmin, monkeypatch):
 def test_csp_kachel_gruen_mit_echter_konfiguration(client, superadmin, monkeypatch):
     _netzwerk_checks_mocken(monkeypatch)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    resp = client.get('/admin/kontrollzentrum')
+    resp = client.get('/mcc/server')
     html = resp.get_data(as_text=True)
     assert 'connect-src fehlt' not in html
 
@@ -111,11 +111,11 @@ def test_cache_verhindert_doppelten_netzwerkzugriff_innerhalb_ttl(client, supera
     monkeypatch.setenv('MAIL_PASSWORD', 'geheim')
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    client.get('/admin/kontrollzentrum')
+    client.get('/mcc/server')
     erster_stand = aufrufe['n']
     assert erster_stand > 0
 
-    client.get('/admin/kontrollzentrum')
+    client.get('/mcc/server')
     assert aufrufe['n'] == erster_stand
 
 
@@ -135,7 +135,7 @@ def test_presse_feed_grau_wenn_valide_aber_leer(client, app, superadmin, monkeyp
     monkeypatch.setattr('omn.kontrollzentrum.requests.get', lambda *a, **kw: leeres_feed)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    resp = client.get('/admin/kontrollzentrum')
+    resp = client.get('/mcc/server')
     html = resp.get_data(as_text=True)
     assert 'kz-tile neutral' in html
     assert 'aber noch keine Treffer' in html
@@ -148,10 +148,44 @@ def test_presse_feed_rot_bei_kaputtem_xml(client, app, superadmin, monkeypatch):
     monkeypatch.setattr('omn.kontrollzentrum.requests.get', lambda *a, **kw: kaputtes_feed)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    resp = client.get('/admin/kontrollzentrum')
+    resp = client.get('/mcc/server')
     html = resp.get_data(as_text=True)
     assert 'kz-tile fehler' in html
     assert 'liefert kein gueltiges XML' in html
+
+
+# --- Umzug ins Server-MCC (07.10.2026) ---
+
+def test_alte_adresse_leitet_ins_mcc(client):
+    r = client.get('/admin/kontrollzentrum?refresh=1')
+    assert r.status_code == 301 and r.headers['Location'].endswith('/mcc/server?refresh=1')
+    assert client.get('/admin/kontrollzentrum').headers['Location'].endswith('/mcc/server')
+
+
+def test_admin_menue_ohne_eigenen_ampel_punkt(client, superadmin):
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    html = client.get('/admin').get_data(as_text=True)
+    assert '🚦 Kontrollzentrum' not in html and 'Zum MCC' in html
+
+
+def test_service_worker_cacht_mcc_nie(app):
+    with app.app_context():
+        assert kontrollzentrum.check_sw_admin_ausschluss() == ('ok', '')
+    text = app.test_client().get('/sw.js').get_data(as_text=True)
+    assert "reqPath.indexOf('/mcc/') === 0" in text
+
+
+def test_manifest_startet_im_mcc(client):
+    import json
+    m = json.loads(client.get('/kontrollzentrum-manifest.json').get_data(as_text=True))
+    assert m['start_url'] == '/mcc' and m['short_name'] == 'MCC'
+
+
+def test_backup_knoepfe_auf_der_ampelseite(client, superadmin, monkeypatch):
+    _netzwerk_checks_mocken(monkeypatch)
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    html = client.get('/mcc/server').get_data(as_text=True)
+    assert 'action="/admin/backup/jetzt"' in html and 'action="/admin/backup/restore-check"' in html
 
 
 # --- Staging-Instanz-Check (check_staging) ---

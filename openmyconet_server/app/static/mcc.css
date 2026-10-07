@@ -130,3 +130,18 @@ code { background: var(--akzent-leise); padding: 0.05rem 0.3rem; border-radius: 
 .mcc-offen-liste { margin: 0 0 0.6rem; padding-left: 1.2rem; }
 .mcc-offen-liste li { margin: 0.3rem 0; line-height: 1.45; font-size: 0.92rem; }
 .mcc-offen-liste li.frage { list-style: "? "; }
+
+/* Schritt 3: Server-Ampel (vorher admin-kontrollzentrum.css) */
+.mcc-kachel.fehler { border-left-color: var(--schlecht); background: var(--schlecht-bg); }
+.kz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.7rem; margin: 1rem 0 1.4rem; }
+details.kz-tile { border-radius: 8px; padding: 0.85rem 1rem; min-height: 64px; border: 1px solid; }
+details.kz-tile.ok { background: var(--gut-bg); border-color: var(--gut); }
+details.kz-tile.fehler { background: var(--schlecht-bg); border-color: var(--schlecht); }
+/* neutral (grau) nur fuer den Presse-Feed-Check: geladen, aber (noch) keine Treffer */
+details.kz-tile.neutral { background: #e9e9e6; border-color: #8a8a82; }
+details.kz-tile summary { cursor: pointer; font-weight: 600; list-style: none; overflow-wrap: anywhere; hyphens: auto; }
+details.kz-tile summary::-webkit-details-marker { display: none; }
+details.kz-tile .kz-detail { margin: 0.6rem 0 0; font-size: 0.88rem; overflow-wrap: anywhere; }
+details.kz-tile.fehler .kz-detail { color: var(--schlecht); }
+details.kz-tile.neutral .kz-detail { color: #5a5a52; }
+.kz-aktionen form { margin: 0; }

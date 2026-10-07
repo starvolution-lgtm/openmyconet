@@ -12,7 +12,8 @@ Fachmodule `auth/uebersicht/news/wartung/inhalte/knoten/foerderer/presse.py` hä
 ihre Routen an `admin_bp`, `__init__.py` re-exportiert `admin_bp`/`role_required`/
 `sanitize_news_html`), `omn/dashboard.py` (Nutzer-Login
 via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.py`,
-`omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py`,
+`omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py` (Server-Checks, Seite
+`/mcc/server`), `omn/mcc/` (Server-MCC),
 `omn/site_live.py`, `omn/site_preview.py`. Models `omn/models.py`, DB-Erweiterungen
 `omn/extensions.py`, i18n `omn/i18n.py`, CLI-Kommandos `omn/cli.py`
 (`register_cli(app)`, aktuell `flask mail-queue-drain`). Wartungs-Scripts bleiben im Repo-Root
@@ -505,8 +506,8 @@ handytauglich, `app/static/mcc.css` + `mcc.js`, ohne Inline-Skripte/-Styles), **
 den Admin gequetscht (Robby); Einstieg „🧭 Zum MCC“ in der Admin-Kopfzeile. Paket `omn/mcc/`
 (Blueprint `mcc_bp`, Präfix `/mcc`): gleicher kanonischer Host wie der Admin
 (`_kanonischer_host`, www → api, sonst fehlt das Login-Cookie), CSRF, nur `superadmin`,
-`X-Robots-Tag: noindex`, `Cache-Control: no-store`. Plan + Schritt 3 (Server-Ampel
-umziehen): Kontrollzentrum
+`X-Robots-Tag: noindex`, `Cache-Control: no-store`, **vom Service Worker nie gecacht**
+(`sw.js` nimmt `/mcc` aus wie `/admin`; Kontrollzentrum-Check prüft das). Plan: Kontrollzentrum
 `03_Website_Backend/Claude_Code_Auftraege/2026-10-07_Plan_MCC_mobil.md`.
 
 **Schritt 1 Kontakte** (`omn/mcc/kontakte.py`, Tabelle `kontakt_versand`, Migration
@@ -549,6 +550,15 @@ Prioritäten, „seit N Tagen nicht geändert“ aus den mitgeschickten mtimes),
 (Markdown → HTML, `bleach`), `/mcc/offen` (dieselbe Auswertung wie `_App/app.py::offene_punkte`
 — bei Änderungen dort hier nachziehen). Hinweis, wenn der Stand älter als 24 h ist. Abhaken nur
 am PC (nie zwei Fassungen einer Datei). Neue Abhängigkeit `Markdown`. Tests `tests/test_mcc_spiegel.py`.
+
+**Schritt 3 Server-Ampel** (`omn/mcc/server.py`, `/mcc/server`): das technische
+Kontrollzentrum (vorher `/admin/kontrollzentrum`, leitet jetzt 301 dorthin) im MCC-Rahmen.
+Die Checks + 5-Minuten-Cache bleiben in `omn/kontrollzentrum.py`; die Startseite zeigt eine
+Zusammenfassung nur aus dem Cache (`ampel_kurz`, prüft nicht selbst). Knöpfe „Backup jetzt“ /
+„Restore-Check jetzt“ posten an die Admin-Routen in `omn/admin/wartung.py`, die nach
+`/mcc/server` zurückleiten. Admin-Menüpunkt „🚦 Kontrollzentrum“ entfällt („🧭 Zum MCC“).
+Manifest `kontrollzentrum-manifest.json` (Name gleich gelassen, damit aufs Handy gelegte
+Apps weiter funktionieren) startet jetzt in `/mcc`. Tests `tests/test_kontrollzentrum.py`.
 
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll

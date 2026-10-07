@@ -25,9 +25,9 @@
     <strong>Offene Punkte</strong>
     <span>{{ offen_punkte }} Einträge aus den Statusdateien</span>
   </a>
-  <a class="mcc-kachel" href="{{ url_for('kontrollzentrum.kontrollzentrum') }}">
+  <a class="mcc-kachel{% if ampel %}{{ ' fehler' if ampel.fehler else ' ok' }}{% endif %}" href="{{ url_for('mcc.server') }}">
     <strong>Server-Ampel</strong>
-    <span>Website, Backups, Mailserver, Datenbank</span>
+    <span>{% if ampel %}{{ 'alles grün' if not ampel.fehler else ampel.fehler ~ ' von ' ~ ampel.gesamt ~ ' Prüfungen rot' }}{% else %}Website, Backups, Mailserver, Datenbank – zum Prüfen öffnen{% endif %}</span>
   </a>
 </div>
 {% endblock %}

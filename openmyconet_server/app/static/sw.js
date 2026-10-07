@@ -1,5 +1,5 @@
 // OpenMycoNet Service Worker — Offline-Fähigkeit
-const CACHE = 'openmyconet-v31';
+const CACHE = 'openmyconet-v32';
 
 // Nach wie vielen ms ein haengender Netzwerk-Request abgebrochen wird. Ohne
 // dieses Limit blockiert ein "cache first, dann fetch" bei schlechtem Mobilfunk
@@ -63,6 +63,10 @@ self.addEventListener('fetch', function(e) {
   var reqPath = new URL(e.request.url).pathname;
   if (reqPath === '/admin' || reqPath.indexOf('/admin/') === 0) return;
   if (reqPath === '/dashboard' || reqPath.indexOf('/dashboard/') === 0) return;
+  // Server-MCC: Kontakte (Namen, E-Mail-Adressen) und interne Statusdateien -- nie
+  // im Browser-Cache ablegen (v32: mit dem Versionswechsel fliegen auch schon
+  // gecachte /mcc-Seiten raus).
+  if (reqPath === '/mcc' || reqPath.indexOf('/mcc/') === 0) return;
   if (reqPath === '/login' || reqPath === '/logout') return;
   // Foerderer-Formulare (Antrag/Kooperation) sind dynamische, teils mehrsprachig
   // per Query gesteuerte Seiten mit POST-Redirect-GET -- nie aus dem Cache, immer

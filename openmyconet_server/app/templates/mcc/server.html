@@ -1,0 +1,38 @@
+{% extends 'mcc/base.html' %}
+{% block title %}Server-Ampel{% endblock %}
+{% block inhalt %}
+<div class="mcc-zeile">
+  <h1 class="mcc-h1">Server-Ampel</h1>
+  <a class="mcc-btn" href="{{ url_for('mcc.server', refresh=1) }}">↻ Jetzt prüfen</a>
+</div>
+<p class="mcc-meta">Zuletzt geprüft {{ zuletzt_geprueft.strftime('%d.%m.%Y %H:%M:%S') }} (Serverzeit) · Ergebnisse gelten 5 Minuten · rote Kacheln sind aufgeklappt.</p>
+
+{% if laufzeitfehler %}
+<p class="mcc-meldung fehler">Die Prüfung konnte nicht vollständig laufen: {{ laufzeitfehler }}</p>
+{% endif %}
+
+{% set KZ_EMOJI = {'ok': '🟢', 'fehler': '🔴', 'neutral': '⚪'} %}
+<div class="kz-grid">
+  {% for r in ergebnisse %}
+  <details class="kz-tile {{ r.status }}" {{ 'open' if r.status != 'ok' else '' }}>
+    <summary>{{ KZ_EMOJI.get(r.status, '❔') }} {{ r.titel }}</summary>
+    {% if r.status != 'ok' %}<p class="kz-detail">{{ r.detail }}</p>{% endif %}
+  </details>
+  {% endfor %}
+</div>
+
+<section class="mcc-karte kz-aktionen">
+  <h2 class="mcc-h2">Datensicherung</h2>
+  <div class="mcc-knoepfe">
+    <form method="post" action="{{ url_for('admin.backup_jetzt') }}" data-rueckfrage="Jetzt ein Datenbank-Backup anlegen? Dauert bis zu einer Minute.">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button class="mcc-btn">💾 Backup jetzt</button>
+    </form>
+    <form method="post" action="{{ url_for('admin.backup_restore_check') }}" data-rueckfrage="Jetzt prüfen, ob sich das neueste Backup wiederherstellen lässt? Dauert bis zu einer Minute.">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button class="mcc-btn">🔁 Restore-Check jetzt</button>
+    </form>
+  </div>
+  <p class="mcc-meta">Beides läuft auch automatisch per Zeitplan. Die Knöpfe sind für „vor einer größeren Änderung“ gedacht.</p>
+</section>
+{% endblock %}

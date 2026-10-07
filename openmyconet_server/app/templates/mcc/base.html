@@ -6,6 +6,8 @@
 <meta name="robots" content="noindex, nofollow">
 <title>{% if umgebung() != 'prod' %}[{{ umgebung()|upper }}] {% endif %}{% block title %}MCC{% endblock %} — OpenMycoNet</title>
 <link href="{{ asset('mcc.css') }}" rel="stylesheet">
+<link rel="manifest" href="{{ asset('kontrollzentrum-manifest.json') }}">
+<meta name="theme-color" content="#3c6b4c">
 </head>
 <body>
 {% if umgebung() != 'prod' %}<div class="mcc-env">⚠ {{ umgebung()|upper }} — nicht die echte Seite, Mails werden hier nicht verschickt.</div>{% endif %}
@@ -21,6 +23,7 @@
       <a href="{{ url_for('mcc.vorlagen_seite') }}"{% if request.endpoint == 'mcc.vorlagen_seite' %} aria-current="page"{% endif %}>E-Mail-Vorlagen</a>
       <a href="{{ url_for('mcc.status') }}"{% if request.endpoint in ('mcc.status', 'mcc.datei') %} aria-current="page"{% endif %}>Status</a>
       <a href="{{ url_for('mcc.offen') }}"{% if request.endpoint == 'mcc.offen' %} aria-current="page"{% endif %}>Offen</a>
+      <a href="{{ url_for('mcc.server') }}"{% if request.endpoint == 'mcc.server' %} aria-current="page"{% endif %}>Server</a>
       <a class="mcc-nav-admin" href="{{ url_for('admin.admin') }}">← Admin</a>
     </nav>
   </header>

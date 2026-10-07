@@ -8,7 +8,7 @@ from omn.admin.core import admin_bp, role_required
 from omn.models import ChatLog, Fehlerprotokoll
 
 
-# --- Backup manuell anstossen (vom Kontrollzentrum aus) ---
+# --- Backup manuell anstossen (Knoepfe auf /mcc/server, Server-MCC) ---
 
 def _backup_skript_laufen_lassen(skript, label):
     """Fuehrt deploy/<skript> aus und flasht das Ergebnis. Feste Pfade, kein
@@ -41,14 +41,14 @@ def _backup_skript_laufen_lassen(skript, label):
 @role_required('superadmin')
 def backup_jetzt():
     _backup_skript_laufen_lassen('backup_db.sh', 'DB-Backup')
-    return redirect(url_for('kontrollzentrum.kontrollzentrum', refresh=1))
+    return redirect(url_for('mcc.server', refresh=1))
 
 
 @admin_bp.route('/admin/backup/restore-check', methods=['POST'])
 @role_required('superadmin')
 def backup_restore_check():
     _backup_skript_laufen_lassen('restore_check.sh', 'Restore-Check')
-    return redirect(url_for('kontrollzentrum.kontrollzentrum', refresh=1))
+    return redirect(url_for('mcc.server', refresh=1))
 
 
 # --- Chat-Logs ---

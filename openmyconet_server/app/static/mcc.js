@@ -2,6 +2,9 @@
 // das Skript ergaenzt nur Rueckfragen und die automatische Mail-Vorschau.
 // Keine Inline-Handler/style-Attribute (CSP ohne 'unsafe-inline').
 (function () {
+  // Als App aufs Handy legbar (Manifest in mcc/base.html); sw.js cacht /mcc selbst nie.
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+
   // Rueckfrage vor dem Loeschen
   document.querySelectorAll('form[data-rueckfrage]').forEach(function (f) {
     f.addEventListener('submit', function (e) {

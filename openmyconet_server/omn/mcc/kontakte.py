@@ -180,9 +180,10 @@ def _smtp_senden(an, inhalt):
 @role_required('superadmin')
 def start():
     from omn.mcc.dateien import stand_anzeige
+    from omn.mcc.server import ampel_kurz
     from omn.mcc.spiegel import offene_punkte
     stichtag = heute()
-    return render_template('mcc/start.html', faellig=len(faellige(stichtag)), stand=stand_anzeige(),
+    return render_template('mcc/start.html', faellig=len(faellige(stichtag)), stand=stand_anzeige(), ampel=ampel_kurz(),
                            offen_punkte=sum(d['anzahl'] for d in offene_punkte()),
                            offen=KontaktVersand.query.filter(KontaktVersand.status.in_(FAELLIG_STATUS)).count(),
                            gesamt=KontaktVersand.query.count())
