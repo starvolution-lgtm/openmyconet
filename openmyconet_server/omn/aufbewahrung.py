@@ -8,14 +8,15 @@ genannt -- bei Aenderung dort nachziehen.
 
 Laeuft taeglich per Cron (`deploy/aufbewahrung.sh`, eingetragen von
 `install_backup_cron.sh`) ueber `flask aufbewahrung-bereinigen`.
-Alle Zeitstempel sind naiv-UTC -> Vergleich mit zeit.utcnow().
+Alle Zeitstempel sind naiv-UTC -> Vergleich mit zeit.utcnow(); KontaktVersand
+zaehlt nach einem Datum (Tagesgenauigkeit reicht bei 2 Jahren).
 """
 from datetime import timedelta
 
 from sqlalchemy import func
 
 from omn.extensions import db
-from omn.models import Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage
+from omn.models import Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand
 from omn.zeit import utcnow
 
 # (Bezeichnung, Modell, Zeitpunkt, ab dem die Frist laeuft, Frist in Tagen, Zusatzbedingung)
@@ -28,6 +29,9 @@ FRISTEN = [
     ('abgelehnte Bewerbungen', Bewerbung,
      func.coalesce(Bewerbung.status_geaendert_am, Bewerbung.erstellt_am), 182,
      Bewerbung.status == 'abgelehnt'),
+    # Versandlog des Server-MCC: 2 Jahre nach dem letzten Kontakt (Robby, 07.10.2026).
+    # letzte_aktivitaet ist ein Datum (Ortsdatum), kein naiver Zeitstempel.
+    ('Kontakt-Versandlog', KontaktVersand, KontaktVersand.letzte_aktivitaet, 730, None),
 ]
 
 

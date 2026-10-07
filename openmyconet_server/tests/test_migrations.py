@@ -20,7 +20,7 @@ from omn.extensions import db
 
 BASELINE_REV = '959850bfc924'
 BIOCOMM_REV = '3f1b2c4d5e6a'
-HEAD_REV = '2b6f1c9e7a30'
+HEAD_REV = '4c8c3b65f64f'
 BIOCOMM_VORHER = 'fa5a744c1177'
 # Letzte BioComm-Migration (Schema v5). Der Idempotenz-Test faehrt nur bis hier
 # erneut hoch -- spaetere public-Migrationen (z. B. da901ffb142f) sind nicht fuer

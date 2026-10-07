@@ -98,6 +98,7 @@ def _csp_nonce_erzeugen():
     ihn als nonce="{{ csp_nonce }}"; _sicherheits_header setzt denselben Wert in
     die script-src-Direktive ein."""
     g.csp_nonce = secrets.token_urlsafe(16)
+    g.pop('csp_override', None)  # Ausnahme gilt nur fuer die Antwort, die sie setzt
 
 
 def _csp_nonce_bereitstellen():
@@ -106,7 +107,10 @@ def _csp_nonce_bereitstellen():
 
 def _sicherheits_header(response):
     nonce = g.get('csp_nonce') or secrets.token_urlsafe(16)
-    response.headers['Content-Security-Policy'] = _CSP.replace('__CSP_NONCE__', nonce)
+    # Einzelne Antworten duerfen eine eigene, engere Policy setzen (g.csp_override),
+    # z. B. die Mail-Vorschau im Server-MCC: Inline-Styles ja, Skripte gar nicht.
+    response.headers['Content-Security-Policy'] = (g.get('csp_override')
+                                                   or _CSP.replace('__CSP_NONCE__', nonce))
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'

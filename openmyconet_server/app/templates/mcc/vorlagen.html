@@ -1,0 +1,42 @@
+{% extends 'mcc/base.html' %}
+{% block title %}E-Mail-Vorlagen{% endblock %}
+{% block inhalt %}
+<h1 class="mcc-h1">E-Mail-Vorlagen</h1>
+{% if not vorlagen %}
+<p>Keine Vorlagen gefunden (omn/mcc/vorlagen/).</p>
+{% else %}
+<form class="mcc-karte" id="mail-formular" method="post" action="{{ url_for('mcc.senden') }}">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <div class="mcc-formular">
+    <label>Vorlage<select name="vorlage">
+      {% for n, v in vorlagen.items() %}<option value="{{ n }}"{{ ' selected' if n == werte.vorlage }}>{{ v.titel }}</option>{% endfor %}
+    </select></label>
+    <fieldset class="mcc-sprache">
+      <legend>Sprache</legend>
+      {% for s, label in [('de', 'DE'), ('en', 'EN')] %}
+      <label class="mcc-inline"><input type="radio" name="sprache" value="{{ s }}"{{ ' checked' if (werte.sprache or 'de') == s }}> {{ label }}</label>
+      {% endfor %}
+    </fieldset>
+    <label>Empfänger-E-Mail *<input type="email" name="email" value="{{ werte.email or '' }}" autocomplete="off" spellcheck="false" placeholder="name@beispiel.de" required></label>
+    <label>Titel (optional)<input type="text" name="titel" value="{{ werte.titel or '' }}" autocomplete="off" placeholder="z. B. Dr., Prof. Dr."></label>
+    <label>Name *<input type="text" name="name" value="{{ werte.name or '' }}" autocomplete="off" placeholder="vollständiger Name" required></label>
+    <label>Wiedervorlage nach … Tagen<input class="mcc-zahl" type="number" name="wiedervorlage_tage" min="0" max="3650" value="{{ werte.wiedervorlage_tage or 14 }}" required></label>
+    <label class="mcc-voll">Notiz (optional, z. B. Anlass des Kontakts)<textarea name="notiz" rows="2" maxlength="2000">{{ werte.notiz or '' }}</textarea></label>
+  </div>
+
+  {% if fehlend and not unterdrueckt %}
+  <p class="mcc-meldung fehler">Versand noch nicht eingerichtet: in der <code>.env</code> auf dem Server fehlt {{ fehlend|join(', ') }}.</p>
+  {% endif %}
+  <div class="mcc-knoepfe">
+    <button class="mcc-btn primaer" type="submit" id="senden">✉ Senden</button>
+    <button class="mcc-btn" type="submit" id="vorschau-knopf" formaction="{{ url_for('mcc.vorschau') }}" formtarget="mcc-vorschau" formnovalidate>Vorschau aktualisieren</button>
+  </div>
+  <p class="mcc-meta">{% if unterdrueckt %}Staging: Senden legt nur den Eintrag an, verschickt nichts.{% else %}Von {{ absender or '–' }}{% if bcc %} · Kopie an {{ bcc }}{% endif %} · wird nach dem Senden automatisch im Versandlog eingetragen.{% endif %}</p>
+</form>
+
+<section class="mcc-karte">
+  <h2 class="mcc-h2">Vorschau – so kommt die Mail an</h2>
+  <iframe class="mcc-vorschau" name="mcc-vorschau" title="Vorschau der E-Mail" sandbox src="{{ url_for('mcc.vorschau') }}"></iframe>
+</section>
+{% endif %}
+{% endblock %}

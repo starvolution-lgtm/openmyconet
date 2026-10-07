@@ -1,0 +1,90 @@
+{% extends 'mcc/base.html' %}
+{% block title %}Kontakte{% endblock %}
+{% block inhalt %}
+<div class="mcc-zeile">
+  <h1 class="mcc-h1">Kontakte</h1>
+  <div class="mcc-knoepfe">
+    <a class="mcc-btn primaer" href="{{ url_for('mcc.vorlagen_seite') }}">✉ Neue Mail</a>
+    <a class="mcc-btn" href="{{ url_for('mcc.export_csv') }}">⇩ CSV</a>
+  </div>
+</div>
+<p class="mcc-meta">Versendete Vorstellungs-Mails mit Wiedervorlage · offene nach Wiedervorlage, erledigte am Ende · Einträge werden 2 Jahre nach dem letzten Kontakt automatisch gelöscht.</p>
+
+<nav class="mcc-filter" aria-label="Filter nach Status" id="k-liste">
+  <a href="{{ url_for('mcc.kontakte') }}"{% if not filter_status %} aria-current="true"{% endif %}>Alle</a>
+  <a href="{{ url_for('mcc.kontakte', status='faellig') }}"{% if filter_status == 'faellig' %} aria-current="true"{% endif %}>🔔 fällig ({{ faellig }})</a>
+  {% for k, v in status_namen.items() %}
+  <a href="{{ url_for('mcc.kontakte', status=k) }}"{% if filter_status == k %} aria-current="true"{% endif %}><span class="mcc-punkt s-{{ k }}"></span>{{ v }}</a>
+  {% endfor %}
+</nav>
+
+{% for k in eintraege %}
+{% set faellig_jetzt = ist_faellig(k, stichtag) %}
+<article class="mcc-eintrag{{ ' faellig' if faellig_jetzt }}">
+  <div class="mcc-eintrag-kopf">
+    <div>
+      <strong>{{ (k.titel ~ ' ') if k.titel }}{{ k.name }}</strong>
+      <div class="mcc-meta"><a href="mailto:{{ k.email }}">{{ k.email }}</a> · {{ sprachen.get(k.sprache, k.sprache) }} · {{ vorlagen_titel.get(k.vorlage, k.vorlage) }}</div>
+    </div>
+    <span class="mcc-chip s-{{ k.status }}">{{ status_namen.get(k.status, k.status) }}</span>
+  </div>
+  <div class="mcc-meta">
+    versendet {{ k.datum_versand.strftime('%d.%m.%Y') }}{% if k.versandart == 'unterdrueckt' %} (Staging, nicht verschickt){% elif k.versandart == 'import' %} (übernommen){% endif %}
+    · Wiedervorlage {% if k.wiedervorlage %}<span class="{{ 'mcc-rot' if faellig_jetzt }}">{{ k.wiedervorlage.strftime('%d.%m.%Y') }}</span>{% else %}–{% endif %}
+    · {{ k.nachfragen }} Nachfrage{{ 'n' if k.nachfragen != 1 }}
+    {% if k.erledigt_am %}· erledigt {{ k.erledigt_am.strftime('%d.%m.%Y') }}{% endif %}
+  </div>
+  {% if k.notiz %}<div class="mcc-notiz">{{ k.notiz }}</div>{% endif %}
+
+  {% if faellig_jetzt %}
+  <form class="mcc-faellig" method="post" action="{{ url_for('mcc.ergebnis', kid=k.id) }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="zurueck" value="{{ filter_status }}">
+    <label class="mcc-voll">Notiz (optional)<input type="text" name="notiz" maxlength="500" placeholder="z. B. Telefonat vereinbart"></label>
+    <div class="mcc-knoepfe">
+      <button class="mcc-btn gut" name="aktion" value="positiv">👍 Positiv</button>
+      <button class="mcc-btn schlecht" name="aktion" value="negativ">👎 Negativ</button>
+    </div>
+    <div class="mcc-knoepfe">
+      <button class="mcc-btn" name="aktion" value="nachfrage">↻ Nachfragen</button>
+      <label class="mcc-inline">neue Wiedervorlage in <input class="mcc-zahl" type="number" name="tage" min="0" max="3650" value="{{ nachfrage_tage }}"> Tagen</label>
+      <a class="mcc-btn leise" href="mailto:{{ k.email }}">✉ leere Mail</a>
+    </div>
+  </form>
+  {% endif %}
+
+  <details class="mcc-bearbeiten">
+    <summary>✎ Bearbeiten</summary>
+    <form class="mcc-formular" method="post" action="{{ url_for('mcc.bearbeiten', kid=k.id) }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="zurueck" value="{{ filter_status }}">
+      <label>Datum Versand<input type="date" name="datum_versand" value="{{ k.datum_versand.isoformat() }}" required></label>
+      <label>Empfänger-E-Mail<input type="email" name="email" value="{{ k.email }}" required></label>
+      <label>Titel<input type="text" name="titel" value="{{ k.titel }}"></label>
+      <label>Name<input type="text" name="name" value="{{ k.name }}" required></label>
+      <label>Sprache<select name="sprache">
+        {% for s, v in sprachen.items() %}<option value="{{ s }}"{{ ' selected' if s == k.sprache }}>{{ v }}</option>{% endfor %}
+      </select></label>
+      <label>Vorlage<select name="vorlage">
+        {% for n, v in vorlagen_titel.items() %}<option value="{{ n }}"{{ ' selected' if n == k.vorlage }}>{{ v }}</option>{% endfor %}
+        {% if k.vorlage not in vorlagen_titel %}<option value="{{ k.vorlage }}" selected>{{ k.vorlage }}</option>{% endif %}
+      </select></label>
+      <label>Status<select name="status">
+        {% for s, v in status_namen.items() %}<option value="{{ s }}"{{ ' selected' if s == k.status }}>{{ v }}</option>{% endfor %}
+      </select></label>
+      <label>Wiedervorlage<input type="date" name="wiedervorlage" value="{{ k.wiedervorlage.isoformat() if k.wiedervorlage else '' }}"></label>
+      <label>Anzahl Nachfragen<input type="number" name="nachfragen" min="0" max="3650" value="{{ k.nachfragen }}"></label>
+      <label class="mcc-voll">Notiz<textarea name="notiz" rows="3" maxlength="2000">{{ k.notiz }}</textarea></label>
+      <div class="mcc-knoepfe mcc-voll"><button class="mcc-btn primaer">Speichern</button></div>
+    </form>
+    <form method="post" action="{{ url_for('mcc.loeschen', kid=k.id) }}" data-rueckfrage="Eintrag „{{ k.name }}“ endgültig löschen?">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="zurueck" value="{{ filter_status }}">
+      <button class="mcc-btn schlecht">🗑 Eintrag löschen</button>
+    </form>
+  </details>
+</article>
+{% else %}
+<p>{{ 'Keine Einträge mit diesem Filter.' if filter_status else 'Noch keine Einträge – sie entstehen beim Senden einer Vorstellungs-Mail.' }}</p>
+{% endfor %}
+{% endblock %}

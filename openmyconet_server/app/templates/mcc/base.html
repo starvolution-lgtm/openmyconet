@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{% if umgebung() != 'prod' %}[{{ umgebung()|upper }}] {% endif %}{% block title %}MCC{% endblock %} — OpenMycoNet</title>
+<link href="{{ asset('mcc.css') }}" rel="stylesheet">
+</head>
+<body>
+{% if umgebung() != 'prod' %}<div class="mcc-env">⚠ {{ umgebung()|upper }} — nicht die echte Seite, Mails werden hier nicht verschickt.</div>{% endif %}
+<div class="mcc-wrap">
+  <header class="mcc-kopf">
+    <a class="mcc-marke" href="{{ url_for('mcc.start') }}">
+      <span class="mcc-eyebrow">OpenMycoNet</span>
+      <span class="mcc-titel">Mission Control Center</span>
+    </a>
+    <nav class="mcc-nav" aria-label="MCC">
+      <a href="{{ url_for('mcc.start') }}"{% if request.endpoint == 'mcc.start' %} aria-current="page"{% endif %}>Übersicht</a>
+      <a href="{{ url_for('mcc.kontakte') }}"{% if request.endpoint == 'mcc.kontakte' %} aria-current="page"{% endif %}>Kontakte{% if faellig %} <span class="mcc-badge">{{ faellig }}</span>{% endif %}</a>
+      <a href="{{ url_for('mcc.vorlagen_seite') }}"{% if request.endpoint == 'mcc.vorlagen_seite' %} aria-current="page"{% endif %}>E-Mail-Vorlagen</a>
+      <a class="mcc-nav-admin" href="{{ url_for('admin.admin') }}">← Admin</a>
+    </nav>
+  </header>
+
+  {% with meldungen = get_flashed_messages(with_categories=true) %}
+    {% for kategorie, text in meldungen %}
+      <p class="mcc-meldung {{ 'fehler' if kategorie == 'error' else 'ok' }}" role="status">{{ text }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  <main>
+  {% block inhalt %}{% endblock %}
+  </main>
+</div>
+<script src="{{ asset('mcc.js') }}"></script>
+</body>
+</html>

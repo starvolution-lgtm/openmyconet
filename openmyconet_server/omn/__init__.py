@@ -36,6 +36,7 @@ from omn.site_preview import site_preview_bp
 from omn.site_live import site_live_bp
 from omn.foerderer import foerderer_bp
 from omn.kontrollzentrum import kontrollzentrum_bp
+from omn.mcc import mcc_bp
 from omn.i18n import init_i18n
 from omn.csrf import init_csrf
 from omn.errors import init_errors
@@ -103,6 +104,7 @@ def create_app(config=None, instance_path=None):
     app.register_blueprint(site_live_bp)
     app.register_blueprint(foerderer_bp)
     app.register_blueprint(kontrollzentrum_bp)
+    app.register_blueprint(mcc_bp)
 
     init_i18n(app)
     init_csrf(app)

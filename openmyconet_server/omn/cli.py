@@ -12,6 +12,9 @@
 - `biocomm-konflikt` -- offene Konflikte anzeigen bzw. manuell aufloesen.
 - `datenlabor-grundlage` -- zaehlt die gespeicherten Werte fuer den Kasten
   "Datengrundlage" auf /biocomm/datenlabor (auch am Ende von sandbox-generieren).
+- `mcc-erinnerung` / `mcc-faellig` / `mcc-kontakte-import` -- Server-MCC (omn/mcc/):
+  Erinnerungsmail bei faelligen Kontakten (Cron), Zahl fuer die Lage-Abfrage,
+  einmalige Uebernahme des lokalen Versandlogs.
 - `bilder-verkleinern` -- kleinere Fassungen fuer vorhandene News-Bilder + Foerderer-Logos (idempotent).
 """
 import time
@@ -48,6 +51,51 @@ def register_cli(app):
         ergebnis = bereinigen()
         if any(ergebnis.values()) or not still:
             click.echo(', '.join(f'{name}: {n} gelöscht' for name, n in ergebnis.items()))
+
+    @app.cli.command('mcc-erinnerung')
+    def mcc_erinnerung():
+        """Server-MCC: Mail an Robby, wenn Kontakte faellig sind (Cron morgens, deploy/mcc_erinnerung.sh)."""
+        from omn.mcc.kontakte import erinnerung_senden
+
+        n = erinnerung_senden()
+        if n:
+            click.echo(f'{n} Kontakt(e) fällig, Erinnerung verschickt')
+
+    @app.cli.command('mcc-faellig')
+    def mcc_faellig():
+        """Server-MCC: Zahl der faelligen Kontakte (fuer deploy/mcc_lage.sh / das lokale MCC)."""
+        from omn.mcc.kontakte import faellige
+
+        click.echo(len(faellige()))
+
+    @app.cli.command('mcc-kontakte-import')
+    @click.argument('datei', type=click.Path(exists=True, dir_okay=False))
+    def mcc_kontakte_import(datei):
+        """Einmalig: Eintraege aus dem lokalen Versandlog (_App/versandlog.json) uebernehmen."""
+        import json
+        from datetime import date
+
+        from omn.extensions import db
+        from omn.models import KontaktVersand
+
+        with open(datei, encoding='utf-8') as f:
+            daten = json.load(f)
+        neu = 0
+        for e in daten.get('eintraege', []):
+            versand = date.fromisoformat(e['datum_versand'])
+            if KontaktVersand.query.filter_by(email=e['email'], datum_versand=versand).first():
+                continue  # schon uebernommen
+            wv = date.fromisoformat(e['wiedervorlage']) if e.get('wiedervorlage') else None
+            erledigt = date.fromisoformat(e['erledigt_am']) if e.get('erledigt_am') else None
+            db.session.add(KontaktVersand(
+                datum_versand=versand, email=e['email'], titel=e.get('titel') or '', name=e['name'],
+                sprache=e.get('sprache') or 'de', vorlage=e.get('vorlage') or 'neukontakt',
+                status=e.get('status') or 'offen', wiedervorlage=wv, nachfragen=int(e.get('nachfragen') or 0),
+                erledigt_am=erledigt, versandart='import', notiz=e.get('notiz') or '',
+                letzte_aktivitaet=max(versand, erledigt or versand)))
+            neu += 1
+        db.session.commit()
+        click.echo(f'{neu} Einträge übernommen')
 
     @app.cli.command('bilder-verkleinern')
     def bilder_verkleinern():

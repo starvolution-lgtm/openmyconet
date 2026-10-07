@@ -1,0 +1,26 @@
+{% extends 'mcc/base.html' %}
+{% block title %}Übersicht{% endblock %}
+{% block inhalt %}
+<h1 class="mcc-h1">Wo stehen wir.</h1>
+<p class="mcc-meta">Erreichbar auch, wenn der PC zu Hause aus ist. Dateien bearbeiten, Deploy und PDF-Export bleiben im MCC auf dem PC.</p>
+
+{% if faellig %}
+<a class="mcc-banner" href="{{ url_for('mcc.kontakte', status='faellig') }}">🔔 <strong>{{ faellig }} Kontakt{{ 'e' if faellig != 1 }} fällig</strong> — abhaken oder nachfragen →</a>
+{% endif %}
+
+<div class="mcc-kacheln">
+  <a class="mcc-kachel{{ ' warn' if faellig else ' ok' }}" href="{{ url_for('mcc.kontakte', status='faellig' if faellig else None) }}">
+    <strong>Kontakte</strong>
+    <span>{{ faellig }} fällig · {{ offen }} offen · {{ gesamt }} insgesamt</span>
+  </a>
+  <a class="mcc-kachel" href="{{ url_for('mcc.vorlagen_seite') }}">
+    <strong>E-Mail-Vorlagen</strong>
+    <span>Vorstellungs-Mail schreiben und senden</span>
+  </a>
+  <a class="mcc-kachel" href="{{ url_for('kontrollzentrum.kontrollzentrum') }}">
+    <strong>Server-Ampel</strong>
+    <span>Website, Backups, Mailserver, Datenbank</span>
+  </a>
+</div>
+<p class="mcc-meta">Statusdateien und offene Punkte folgen im nächsten Schritt.</p>
+{% endblock %}

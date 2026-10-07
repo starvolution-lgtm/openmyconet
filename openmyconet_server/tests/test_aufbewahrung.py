@@ -8,7 +8,8 @@ from omn.extensions import db
 from omn.models import Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage
 from omn.zeit import utcnow
 
-NICHTS = {'Chat-Verläufe': 0, 'Fehlerprotokoll': 0, 'Kontaktanfragen': 0, 'abgelehnte Bewerbungen': 0}
+NICHTS = {'Chat-Verläufe': 0, 'Fehlerprotokoll': 0, 'Kontaktanfragen': 0, 'abgelehnte Bewerbungen': 0,
+          'Kontakt-Versandlog': 0}
 
 
 def _anlegen(alter_tage):
@@ -38,7 +39,7 @@ def test_loescht_nur_abgelaufene(app):
         _anlegen(89)   # alles noch in der Frist
         ergebnis = bereinigen()
         assert ergebnis == {'Chat-Verläufe': 2, 'Fehlerprotokoll': 2, 'Kontaktanfragen': 1,
-                            'abgelehnte Bewerbungen': 0}
+                            'abgelehnte Bewerbungen': 0, 'Kontakt-Versandlog': 0}
         assert ChatLog.query.count() == 1
         assert Fehlerprotokoll.query.count() == 1
         assert Kontaktanfrage.query.count() == 2

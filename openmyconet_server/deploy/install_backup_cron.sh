@@ -25,6 +25,9 @@ VERD_PROD='*/5 * * * * bash /home/omn/app/deploy/biocomm_verdichten.sh live >> /
 VERD_STAGING='2-59/5 * * * * bash /home/omn/app-staging/deploy/biocomm_verdichten.sh live >> /home/omn/app-staging/verdichten.log 2>&1; bash /home/omn/app-staging/deploy/biocomm_verdichten.sh sandbox >> /home/omn/app-staging/verdichten.log 2>&1'
 AUFB_PROD='40 3 * * * bash /home/omn/app/deploy/aufbewahrung.sh >> /home/omn/app/aufbewahrung.log 2>&1'
 AUFB_STAGING='45 3 * * * bash /home/omn/app-staging/deploy/aufbewahrung.sh >> /home/omn/app-staging/aufbewahrung.log 2>&1'
+# Server-MCC: Erinnerung an faellige Kontakte, nur Prod. Server laeuft auf UTC:
+# 05:30 UTC = 07:30 Sommerzeit / 06:30 Winterzeit (Berlin)
+MCC_PROD='30 5 * * * bash /home/omn/app/deploy/mcc_erinnerung.sh >> /home/omn/app/mcc_erinnerung.log 2>&1'
 
 TMP=$(mktemp)
 trap 'rm -f "$TMP"' EXIT
@@ -35,9 +38,10 @@ crontab -l 2>/dev/null \
     | grep -vF 'deploy/mailqueue_drain.sh' \
     | grep -vF 'deploy/biocomm_verdichten.sh' \
     | grep -vF 'deploy/aufbewahrung.sh' \
+    | grep -vF 'deploy/mcc_erinnerung.sh' \
     > "$TMP" || true
 printf '%s\n' "$BACKUP_LINE" "$CHECK_LINE" "$DRAIN_PROD" "$DRAIN_STAGING" "$VERD_PROD" "$VERD_STAGING" \
-    "$AUFB_PROD" "$AUFB_STAGING" >> "$TMP"
+    "$AUFB_PROD" "$AUFB_STAGING" "$MCC_PROD" >> "$TMP"
 crontab "$TMP"
 
 echo "Crontab jetzt:"

@@ -352,3 +352,33 @@ class MailQueue(db.Model):
     erstellt_am = db.Column(db.DateTime, nullable=False, default=utcnow, index=True)
     claim_am = db.Column(db.DateTime, nullable=True)   # gesetzt beim Claim eines Drains -- Crash-Recovery haengt daran
     gesendet_am = db.Column(db.DateTime, nullable=True)
+
+
+def _jetzt_utc_aware():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc)
+
+
+class KontaktVersand(db.Model):
+    """Versandlog des Server-MCC (/mcc/kontakte, seit 07.10.2026): je verschickter
+    Vorstellungs-Mail ein Eintrag mit Wiedervorlage. Personenbezogen (Name,
+    E-Mail) -> Loeschfrist in omn/aufbewahrung.py (2 Jahre nach letzte_aktivitaet),
+    genannt in der Datenschutzerklaerung (Abschnitt 'kontaktaufnahme').
+    Neue Tabelle -> Zeitpunkte tz-aware (Regel 2026-09-23); fachliche Tage als Date
+    (Ortsdatum Europe/Berlin), damit nichts naiv/aware gemischt wird."""
+    __tablename__ = 'kontakt_versand'
+    id = db.Column(db.Integer, primary_key=True)
+    datum_versand = db.Column(db.Date, nullable=False)
+    email = db.Column(db.String(254), nullable=False, index=True)
+    titel = db.Column(db.String(60), nullable=False, default='')
+    name = db.Column(db.String(200), nullable=False)
+    sprache = db.Column(db.String(2), nullable=False)                 # de | en
+    vorlage = db.Column(db.String(80), nullable=False)
+    status = db.Column(db.String(12), nullable=False, default='offen', index=True)  # offen | positiv | negativ | nachfrage
+    wiedervorlage = db.Column(db.Date, nullable=True, index=True)
+    nachfragen = db.Column(db.Integer, nullable=False, default=0)
+    erledigt_am = db.Column(db.Date, nullable=True)
+    versandart = db.Column(db.String(16), nullable=False, default='server')  # server | unterdrueckt | mailprogramm | import
+    notiz = db.Column(db.Text, nullable=False, default='')
+    letzte_aktivitaet = db.Column(db.Date, nullable=False, index=True)  # Grundlage der Loeschfrist
+    angelegt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)

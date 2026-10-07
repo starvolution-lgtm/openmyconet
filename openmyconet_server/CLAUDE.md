@@ -497,9 +497,49 @@ für FR/ES (`html:lang(...)`, `<html lang>` folgt dem Sprachumschalter), sonst h
 Messwegs = TRUE); `/api/v1/status` zählt nur `prototyp=False`, `/api/v1/messung` ist als
 Prototyp-Schnittstelle markiert; echtes Messnetz = BioComm-Dateneingang.
 
+## Server-MCC `/mcc` (seit 07.10.2026)
+Die Teile des lokalen Mission Control Center (Kontrollzentrum `_App/`), die auch unterwegs
+gebraucht werden, wenn der PC aus ist (Robby: z. B. mehrere Tage Krankenhaus). **Eigener
+Bereich mit eigener Grundvorlage** (`app/templates/mcc/base.html`, Stil des lokalen MCC,
+handytauglich, `app/static/mcc.css` + `mcc.js`, ohne Inline-Skripte/-Styles), **nicht** in
+den Admin gequetscht (Robby); Einstieg „🧭 Zum MCC“ in der Admin-Kopfzeile. Paket `omn/mcc/`
+(Blueprint `mcc_bp`, Präfix `/mcc`): gleicher kanonischer Host wie der Admin
+(`_kanonischer_host`, www → api, sonst fehlt das Login-Cookie), CSRF, nur `superadmin`,
+`X-Robots-Tag: noindex`, `Cache-Control: no-store`. Plan + Schritte 2/3 (Statusdateien
+nur lesend spiegeln, Server-Ampel umziehen): Kontrollzentrum
+`03_Website_Backend/Claude_Code_Auftraege/2026-10-07_Plan_MCC_mobil.md`.
+
+**Schritt 1 Kontakte** (`omn/mcc/kontakte.py`, Tabelle `kontakt_versand`, Migration
+`4c8c3b65f64f`): Versandlog der Vorstellungs-Mails (Status offen/positiv/negativ/nachfrage,
+Wiedervorlage, Nachfragen, Notiz; fachliche Tage als `Date` im Ortsdatum Berlin,
+`angelegt_am` tz-aware). Fällig = offen/nachfrage und Wiedervorlage ≤ heute. Seiten
+`/mcc` (Kacheln), `/mcc/kontakte` (Filter, Positiv/Negativ/Nachfragen, Bearbeiten, Löschen,
+CSV), `/mcc/vorlagen` (drei Felder + Sprache, Senden). **Versand per smtplib über das
+Postfach robert.jank@** (eigener Login `MCC_MAIL_USERNAME`/`MCC_MAIL_PASSWORD`,
+`MCC_MAIL_SENDER`, `MCC_MAIL_BCC`; Server/Port = `MAIL_SERVER`/`MAIL_PORT`), nicht über
+Flask-Mail (hängt an kontakt@). Erst nach erfolgreichem Versand eingetragen;
+`MAIL_SUPPRESS_SEND` (Staging) → nichts verschickt, Eintrag `versandart='unterdrueckt'`.
+Vorlagen `omn/mcc/vorlagen/<name>_<de|en>.md` (Kopf `Vorlage:`/`Betreff:`, `---`, Text;
+`{{TITEL}}` entfällt samt Leerzeichen; Absatz nur aus `**…**` → Zwischenüberschrift, `- ` →
+Liste, URLs klickbar), Mail = `mcc/kontakt_email.html` (schlicht: Logo-Streifen, Text auf
+Weiß, Fußzeile Anschrift/Telefon + Link „Hinweise zum Datenschutz“ →
+`datenschutz.html#kontaktaufnahme`, Art. 14 DSGVO) + Klartext-Teil (`mailbau.py`,
+`KONTAKT_KLARTEXT` — Kontaktdaten an beiden Stellen pflegen). **Vorschau**: `mcc.js` schickt
+die Eingaben per fetch (Header `X-MCC-Vorschau`) in die Session, das iframe lädt per GET (keine
+Namen in URLs); diese eine Antwort hat eine eigene CSP (`g.csp_override` in
+`omn/public.py`: Inline-Styles ja, Skripte nein) — wird je Request zurückgesetzt.
+**Erinnerung**: `flask mcc-erinnerung` per Cron 05:30 UTC (= 07:30 Sommerzeit, nur Prod,
+`deploy/mcc_erinnerung.sh`, eingetragen von `install_backup_cron.sh`), Mail nur wenn etwas
+fällig ist, mit Namen (Robby), über den normalen Website-Zugang an `MCC_ERINNERUNG_AN`
+(Standard `MCC_MAIL_SENDER`). `flask mcc-faellig` liefert die Zahl für `deploy/mcc_lage.sh`
+(`mcc_faellig=`) → Hinweis im lokalen MCC. `flask mcc-kontakte-import <versandlog.json>`
+übernimmt einmalig den lokalen Versandlog. Löschfrist 2 Jahre nach `letzte_aktivitaet`
+(`omn/aufbewahrung.py`), Datenschutzerklärung Abschnitt 8 „Kontaktaufnahme durch
+OpenMycoNet“ (fünfsprachig, freigegeben 07.10.2026). Tests `tests/test_mcc.py`.
+
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll
-(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`) gelöscht (Robby, 28.09.2026;
+(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`), der Versandlog des Server-MCC (`KontaktVersand`) **2 Jahre nach dem letzten Kontakt** (Robby, 07.10.2026) gelöscht (Robby, 28.09.2026;
 steht so in der Datenschutzerklärung — bei Änderung dort nachziehen). CLI `flask
 aufbewahrung-bereinigen`, täglich per Cron `deploy/aufbewahrung.sh` (03:40 Prod, 03:45
 Staging, eingetragen von `install_backup_cron.sh`, Log `aufbewahrung.log`). nginx-Logs:

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="{{ sprache }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>{{ betreff }}</title>
+</head>
+{#- Vorstellungs-Mail des Server-MCC (omn/mcc/mailbau.py). Schlichte Fassung der
+    Website-Mails (transaktions_email.html): gleicher Logo-Streifen und dieselben Gruentoene, Text aber
+    dunkel auf Weiss -- fuer persoenliche Erstkontakte besser lesbar und weniger
+    "Newsletter". Alle Styles inline, weil Mailprogramme Stylesheets ignorieren. #}
+<body style="margin:0; padding:0; background:#f2f4f1;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f4f1; padding:28px 0;">
+<tr>
+<td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background:#ffffff; border:1px solid #d9e2d8; border-radius:6px; overflow:hidden;">
+<tr>
+<td style="background:#02241a; padding:16px 32px;">
+<img src="{{ logo_url }}" alt="OpenMycoNet" height="34" style="display:block; height:34px; width:auto; border:0;">
+</td>
+</tr>
+<tr>
+<td style="padding:30px 32px 6px 32px; color:#1f2a24; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.65;">
+{% for b in bloecke %}
+{% if b.art == 'ueberschrift' %}
+<p style="margin:26px 0 6px 0; font-family:Georgia,'Times New Roman',serif; font-size:17px; font-weight:bold; color:#024530;">{{ b.html }}</p>
+{% elif b.art == 'liste' %}
+<ul style="margin:0 0 14px 0; padding-left:22px;">
+{% for punkt in b.punkte %}<li style="margin:0 0 6px 0;">{{ punkt }}</li>
+{% endfor %}</ul>
+{% else %}
+<p style="margin:0 0 14px 0;">{{ b.html }}</p>
+{% endif %}
+{% endfor %}
+</td>
+</tr>
+<tr>
+<td style="padding:18px 32px; border-top:3px solid #0a7050; background:#f7faf6; color:#5b6b61; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.6;">
+{#- Kontaktdaten: bei Aenderung auch KONTAKT_KLARTEXT in omn/mcc/mailbau.py nachziehen #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td valign="top" style="color:#5b6b61; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.6;">
+<a href="https://www.openmyconet.de" style="color:#0a7050;">www.openmyconet.de</a><br>
+<a href="{{ datenschutz_url }}" style="color:#5b6b61;">{{ datenschutz_text }}</a>
+</td>
+<td valign="top" align="right" style="color:#5b6b61; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.6; text-align:right;">
+OpenMycoNet<br>
+Backesweg 32a<br>
+63477 Maintal<br>
+Tel.: <a href="tel:+4961814346300" style="color:#5b6b61; text-decoration:none;">+49 (0)6181 4346300</a><br>
+Mobil: <a href="tel:+491721314576" style="color:#5b6b61; text-decoration:none;">+49 (0)172 131 4576</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>

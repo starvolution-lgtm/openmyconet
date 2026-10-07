@@ -30,3 +30,5 @@ echo "backup_lokal=$( [ -n "$NEUESTES" ] && date -u -r "$NEUESTES" '+%Y-%m-%dT%H
 echo "platte_belegt=$(df --output=pcent / | tail -n1 | tr -d ' %')"
 echo "zeit=$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 cd /home/omn/app && echo "biocomm_live=$(FLASK_APP=wsgi venv/bin/python -m flask biocomm-lage --schema live --json 2>/dev/null || echo '{}')"
+# Server-MCC: faellige Kontakte (Zahl) -> Hinweis im lokalen MCC
+cd /home/omn/app && echo "mcc_faellig=$(FLASK_APP=wsgi venv/bin/python -m flask mcc-faellig 2>/dev/null || echo '?')"

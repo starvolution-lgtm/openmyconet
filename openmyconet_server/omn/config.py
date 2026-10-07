@@ -81,6 +81,19 @@ class Config:
     # Auch fuer Prod ein Not-Aus ohne Deploy (ENV setzen + reload).
     MAIL_SUPPRESS_SEND = os.getenv('MAIL_SUPPRESS_SEND', '').strip().lower() in ('1', 'true', 'yes', 'on')
 
+    # Server-MCC (/mcc, omn/mcc/): Vorstellungs-Mails gehen ueber das eigene Postfach
+    # robert.jank@ (MAIL_SERVER/MAIL_PORT wie oben, eigener Login). Ohne diese Werte
+    # zeigt /mcc/vorlagen "Versand nicht eingerichtet". Erinnerung an MCC_ERINNERUNG_AN
+    # (Standard: MCC_MAIL_SENDER), verschickt ueber den normalen Website-Zugang.
+    MCC_MAIL_USERNAME = os.getenv('MCC_MAIL_USERNAME')
+    MCC_MAIL_PASSWORD = os.getenv('MCC_MAIL_PASSWORD')
+    MCC_MAIL_SENDER = os.getenv('MCC_MAIL_SENDER')
+    MCC_MAIL_SENDER_NAME = os.getenv('MCC_MAIL_SENDER_NAME', 'Robert Jank – OpenMycoNet')
+    MCC_MAIL_BCC = os.getenv('MCC_MAIL_BCC')
+    MCC_ERINNERUNG_AN = os.getenv('MCC_ERINNERUNG_AN')
+    MCC_WIEDERVORLAGE_TAGE = os.getenv('MCC_WIEDERVORLAGE_TAGE', '14')
+    MCC_NACHFRAGE_TAGE = os.getenv('MCC_NACHFRAGE_TAGE', '7')
+
     # 'prod' | 'staging' (| beliebig). Steuert den Umgebungs-Banner im Admin +
     # den Header X-OMN-Env. Staging setzt OMN_ENV=staging in seiner .env.
     OMN_ENV = os.getenv('OMN_ENV', 'prod').strip() or 'prod'
