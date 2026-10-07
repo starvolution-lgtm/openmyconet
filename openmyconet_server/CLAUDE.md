@@ -505,8 +505,8 @@ handytauglich, `app/static/mcc.css` + `mcc.js`, ohne Inline-Skripte/-Styles), **
 den Admin gequetscht (Robby); Einstieg „🧭 Zum MCC“ in der Admin-Kopfzeile. Paket `omn/mcc/`
 (Blueprint `mcc_bp`, Präfix `/mcc`): gleicher kanonischer Host wie der Admin
 (`_kanonischer_host`, www → api, sonst fehlt das Login-Cookie), CSRF, nur `superadmin`,
-`X-Robots-Tag: noindex`, `Cache-Control: no-store`. Plan + Schritte 2/3 (Statusdateien
-nur lesend spiegeln, Server-Ampel umziehen): Kontrollzentrum
+`X-Robots-Tag: noindex`, `Cache-Control: no-store`. Plan + Schritt 3 (Server-Ampel
+umziehen): Kontrollzentrum
 `03_Website_Backend/Claude_Code_Auftraege/2026-10-07_Plan_MCC_mobil.md`.
 
 **Schritt 1 Kontakte** (`omn/mcc/kontakte.py`, Tabelle `kontakt_versand`, Migration
@@ -536,6 +536,19 @@ fällig ist, mit Namen (Robby), über den normalen Website-Zugang an `MCC_ERINNE
 übernimmt einmalig den lokalen Versandlog. Löschfrist 2 Jahre nach `letzte_aktivitaet`
 (`omn/aufbewahrung.py`), Datenschutzerklärung Abschnitt 8 „Kontaktaufnahme durch
 OpenMycoNet“ (fünfsprachig, freigegeben 07.10.2026). Tests `tests/test_mcc.py`.
+
+**Schritt 2 Statusdateien, nur lesen** (`omn/mcc/spiegel.py` + `dateien.py`): das lokale MCC
+(`_App/spiegel.py`) schickt beim Start und alle 15 min — nur bei Änderungen — `00_UEBERSICHT.md`,
+alle `*Status*.md` und den Versuchsplan (ohne Rechercheprofile/Rohfunde/Aufträge) als tar.gz per
+SSH an `flask mcc-spiegel-empfangen` (stdin). Ablage `instance/mcc_spiegel/` (vom Deploy
+ausgenommen, nicht öffentlich ausgeliefert, nicht im Backup — kommt vom PC neu), jeder Upload
+ersetzt den ganzen Ordner (neu entpacken, dann tauschen; bei Fehlern bleibt der alte). Nur
+`.md`, keine `..`/absoluten/versteckten Pfade, `tarfile`-Filter `data`, Größen begrenzt;
+`.stand.json` = Zeitpunkt. Seiten `/mcc/status` (Kacheln aus der Übersichts-Tabelle,
+Prioritäten, „seit N Tagen nicht geändert“ aus den mitgeschickten mtimes), `/mcc/datei/<pfad>`
+(Markdown → HTML, `bleach`), `/mcc/offen` (dieselbe Auswertung wie `_App/app.py::offene_punkte`
+— bei Änderungen dort hier nachziehen). Hinweis, wenn der Stand älter als 24 h ist. Abhaken nur
+am PC (nie zwei Fassungen einer Datei). Neue Abhängigkeit `Markdown`. Tests `tests/test_mcc_spiegel.py`.
 
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll

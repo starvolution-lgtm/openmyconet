@@ -17,10 +17,17 @@
     <strong>E-Mail-Vorlagen</strong>
     <span>Vorstellungs-Mail schreiben und senden</span>
   </a>
+  <a class="mcc-kachel{{ ' warn' if stand and stand.veraltet }}" href="{{ url_for('mcc.status') }}">
+    <strong>Statusdateien</strong>
+    <span>{% if stand %}Stand {{ stand.text }}{% if stand.veraltet %} – PC länger nicht verbunden{% endif %}{% else %}noch nicht gespiegelt{% endif %}</span>
+  </a>
+  <a class="mcc-kachel" href="{{ url_for('mcc.offen') }}">
+    <strong>Offene Punkte</strong>
+    <span>{{ offen_punkte }} Einträge aus den Statusdateien</span>
+  </a>
   <a class="mcc-kachel" href="{{ url_for('kontrollzentrum.kontrollzentrum') }}">
     <strong>Server-Ampel</strong>
     <span>Website, Backups, Mailserver, Datenbank</span>
   </a>
 </div>
-<p class="mcc-meta">Statusdateien und offene Punkte folgen im nächsten Schritt.</p>
 {% endblock %}

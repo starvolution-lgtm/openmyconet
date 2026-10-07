@@ -1,0 +1,22 @@
+{% extends 'mcc/base.html' %}
+{% block title %}Offene Punkte{% endblock %}
+{% block inhalt %}
+<h1 class="mcc-h1">Offene Punkte und Fragen</h1>
+{% include 'mcc/_stand.html' %}
+<p class="mcc-meta">{{ gesamt }} Einträge aus {{ liste|length }} Dateien · offene Kontrollkästchen und Listen unter Überschriften mit „Frage“.</p>
+
+{% for d in liste %}
+<details class="mcc-karte mcc-offen" open>
+  <summary><strong>{{ d.titel }}</strong> <span class="mcc-meta">· {{ d.anzahl }}</span></summary>
+  <p class="mcc-meta"><a href="{{ url_for('mcc.datei', pfad=d.datei) }}">Datei öffnen →</a></p>
+  {% for abschnitt, punkte in d.gruppen.items() %}
+    {% if abschnitt %}<h2 class="mcc-h2">{{ abschnitt }}</h2>{% endif %}
+    <ul class="mcc-offen-liste">
+      {% for p in punkte %}<li class="{{ 'frage' if p.frage else 'punkt' }}">{{ p.html|safe }}</li>{% endfor %}
+    </ul>
+  {% endfor %}
+</details>
+{% else %}
+<p>Keine offenen Punkte gefunden.</p>
+{% endfor %}
+{% endblock %}

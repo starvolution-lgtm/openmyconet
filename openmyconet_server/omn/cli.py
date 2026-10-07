@@ -12,9 +12,9 @@
 - `biocomm-konflikt` -- offene Konflikte anzeigen bzw. manuell aufloesen.
 - `datenlabor-grundlage` -- zaehlt die gespeicherten Werte fuer den Kasten
   "Datengrundlage" auf /biocomm/datenlabor (auch am Ende von sandbox-generieren).
-- `mcc-erinnerung` / `mcc-faellig` / `mcc-kontakte-import` -- Server-MCC (omn/mcc/):
+- `mcc-erinnerung` / `mcc-faellig` / `mcc-kontakte-import` / `mcc-spiegel-empfangen` -- Server-MCC (omn/mcc/):
   Erinnerungsmail bei faelligen Kontakten (Cron), Zahl fuer die Lage-Abfrage,
-  einmalige Uebernahme des lokalen Versandlogs.
+  einmalige Uebernahme des lokalen Versandlogs, Statusdateien vom PC (stdin, tar.gz).
 - `bilder-verkleinern` -- kleinere Fassungen fuer vorhandene News-Bilder + Foerderer-Logos (idempotent).
 """
 import time
@@ -67,6 +67,23 @@ def register_cli(app):
         from omn.mcc.kontakte import faellige
 
         click.echo(len(faellige()))
+
+    @app.cli.command('mcc-spiegel-empfangen')
+    @click.option('--quelle', default='', help='Kennung des sendenden PCs (nur zur Anzeige).')
+    def mcc_spiegel_empfangen(quelle):
+        """Server-MCC: Statusdateien als tar.gz von stdin (vom lokalen MCC per SSH)."""
+        import sys
+
+        from omn.mcc.spiegel import empfangen
+
+        daten = sys.stdin.buffer.read(25 * 1024 * 1024 + 1)
+        if len(daten) > 25 * 1024 * 1024:
+            raise click.ClickException('Archiv zu groß')
+        try:
+            ergebnis = empfangen(daten, quelle=quelle)
+        except ValueError as e:
+            raise click.ClickException(str(e)) from e
+        click.echo(f'{ergebnis["anzahl"]} Dateien gespiegelt ({ergebnis["bytes"]} Bytes)')
 
     @app.cli.command('mcc-kontakte-import')
     @click.argument('datei', type=click.Path(exists=True, dir_okay=False))

@@ -4,6 +4,7 @@ eigener Bereich mit eigener Grundvorlage (app/templates/mcc/base.html), erreichb
 ueber "Zum MCC" in der Admin-Kopfzeile. Nur Superadmin (Admin-Login inkl. 2FA).
 
 Schritt 1: Kontakte (Versandlog, Vorstellungs-Mails senden, taegliche Erinnerung).
+Schritt 2: Statusdateien + offene Punkte, vom PC gespiegelt, nur lesen (spiegel.py).
 Plan: Kontrollzentrum 03_Website_Backend/Claude_Code_Auftraege/2026-10-07_Plan_MCC_mobil.md
 """
 from flask import Blueprint
@@ -25,4 +26,11 @@ def _nicht_indexieren(response):
     return response
 
 
-from omn.mcc import kontakte  # noqa: F401  (haengt die Routen an mcc_bp)
+@mcc_bp.context_processor
+def _faellig_fuer_navigation():
+    # Zahl fuer das Abzeichen "Kontakte" in jeder MCC-Seite (Seiten koennen sie ueberschreiben)
+    from omn.mcc.kontakte import faellige
+    return {'faellig': len(faellige())}
+
+
+from omn.mcc import dateien, kontakte  # noqa: F401  (haengen die Routen an mcc_bp)

@@ -1,0 +1,8 @@
+{# Hinweis, wie aktuell der Spiegel der Statusdateien ist (Variable `stand` aus dateien.stand_anzeige) #}
+{% if not stand %}
+<p class="mcc-meldung fehler">Noch keine Statusdateien auf dem Server. Sie kommen automatisch, sobald das MCC auf dem PC läuft.</p>
+{% elif stand.veraltet %}
+<p class="mcc-meldung warn">Stand vom {{ stand.text }} – der PC war seitdem nicht mit dem Server verbunden. Inhalte können veraltet sein.</p>
+{% else %}
+<p class="mcc-meta">Nur lesen · Stand vom {{ stand.text }} (vom MCC auf dem PC gespiegelt) · Ändern und Abhaken am PC.</p>
+{% endif %}

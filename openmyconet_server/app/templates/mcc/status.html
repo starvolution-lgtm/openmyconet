@@ -1,0 +1,31 @@
+{% extends 'mcc/base.html' %}
+{% block title %}Statusdateien{% endblock %}
+{% block inhalt %}
+<h1 class="mcc-h1">Statusdateien</h1>
+{% include 'mcc/_stand.html' %}
+
+{% if ue %}
+<p class="mcc-meta">Übersicht zuletzt aktualisiert: {{ ue.letzte }} · <a href="{{ url_for('mcc.datei', pfad='00_UEBERSICHT.md') }}">00_UEBERSICHT öffnen →</a></p>
+
+{% if ue.prioritaeten %}
+<section class="mcc-karte">
+  <h2 class="mcc-h2">Wichtigste offene Punkte</h2>
+  <ol class="mcc-prio">
+    {% for p in ue.prioritaeten %}<li>{{ p }}</li>{% endfor %}
+  </ol>
+</section>
+{% endif %}
+
+<div class="mcc-kacheln">
+  {% for b in ue.bereiche %}
+  {% if b.pfad %}<a class="mcc-kachel s-{{ b.klasse }}" href="{{ url_for('mcc.datei', pfad=b.pfad) }}">{% else %}<div class="mcc-kachel s-{{ b.klasse }}">{% endif %}
+    <strong>{{ b.bereich }}</strong>
+    <span class="mcc-chip s-{{ b.klasse }}">{{ b.label }}</span>
+    <span>{{ b.status_text }}</span>
+    {% if b.stale %}<span class="mcc-rot">seit {{ b.tage_alt }} Tagen nicht geändert</span>{% endif %}
+    {% if not b.pfad %}<span class="mcc-meta">Datei nicht gespiegelt</span>{% endif %}
+  {% if b.pfad %}</a>{% else %}</div>{% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

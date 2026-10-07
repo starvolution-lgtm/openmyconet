@@ -1,0 +1,10 @@
+{% extends 'mcc/base.html' %}
+{% block title %}{{ titel }}{% endblock %}
+{% block inhalt %}
+<a class="mcc-zurueck" href="{{ url_for('mcc.status') }}">← Statusdateien</a>
+{% include 'mcc/_stand.html' %}
+<article class="mcc-karte mcc-doc">
+  <p class="mcc-meta mcc-pfad">{{ pfad }}</p>
+  {{ inhalt|safe }}
+</article>
+{% endblock %}

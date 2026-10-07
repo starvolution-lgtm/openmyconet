@@ -31,6 +31,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 jiter==0.15.0
 Mako==1.4.1
+Markdown==3.11
 MarkupSafe==3.0.3
 packaging==26.2
 pillow==12.3.0

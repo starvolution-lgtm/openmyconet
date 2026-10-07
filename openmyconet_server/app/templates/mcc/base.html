@@ -19,6 +19,8 @@
       <a href="{{ url_for('mcc.start') }}"{% if request.endpoint == 'mcc.start' %} aria-current="page"{% endif %}>Übersicht</a>
       <a href="{{ url_for('mcc.kontakte') }}"{% if request.endpoint == 'mcc.kontakte' %} aria-current="page"{% endif %}>Kontakte{% if faellig %} <span class="mcc-badge">{{ faellig }}</span>{% endif %}</a>
       <a href="{{ url_for('mcc.vorlagen_seite') }}"{% if request.endpoint == 'mcc.vorlagen_seite' %} aria-current="page"{% endif %}>E-Mail-Vorlagen</a>
+      <a href="{{ url_for('mcc.status') }}"{% if request.endpoint in ('mcc.status', 'mcc.datei') %} aria-current="page"{% endif %}>Status</a>
+      <a href="{{ url_for('mcc.offen') }}"{% if request.endpoint == 'mcc.offen' %} aria-current="page"{% endif %}>Offen</a>
       <a class="mcc-nav-admin" href="{{ url_for('admin.admin') }}">← Admin</a>
     </nav>
   </header>

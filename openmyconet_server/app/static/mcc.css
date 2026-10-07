@@ -104,3 +104,29 @@ code { background: var(--akzent-leise); padding: 0.05rem 0.3rem; border-radius: 
   .mcc-nav a { padding: 0.5rem 0.6rem; }
   .mcc-vorschau { height: 70vh; }
 }
+
+/* Schritt 2: Statusdateien (nur lesen) */
+.mcc-meldung.warn { background: var(--warn-bg); border-color: var(--warn); color: var(--tinte); }
+.mcc-kachel.s-gut { border-left-color: var(--gut); }
+.mcc-kachel.s-arbeit { border-left-color: var(--warn); }
+.mcc-kachel.s-offen { border-left-color: var(--schlecht); }
+.mcc-chip.s-gut { background: var(--gut-bg); color: var(--gut); border-color: var(--gut-bg); align-self: flex-start; }
+.mcc-chip.s-arbeit { background: var(--warn-bg); color: var(--warn); border-color: var(--warn-bg); align-self: flex-start; }
+.mcc-chip.s-offen { background: var(--schlecht-bg); color: var(--schlecht); border-color: var(--schlecht-bg); align-self: flex-start; }
+.mcc-prio { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 0.45rem; line-height: 1.5; }
+.mcc-zurueck { font-family: var(--mono); font-size: 0.8rem; display: inline-block; margin-bottom: 0.6rem; }
+.mcc-doc { overflow-wrap: anywhere; line-height: 1.6; }
+.mcc-doc h1 { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; margin: 0.2rem 0 0.6rem; }
+.mcc-doc h2 { font-family: var(--serif); font-weight: 400; font-size: 1.25rem; color: var(--akzent); margin-top: 1.6rem; }
+.mcc-doc h3 { font-family: var(--serif); font-weight: 400; font-size: 1.05rem; margin-top: 1.2rem; }
+.mcc-doc table { border-collapse: collapse; width: 100%; font-size: 0.88rem; display: block; overflow-x: auto; }
+.mcc-doc th, .mcc-doc td { border: 1px solid var(--linie); padding: 0.4rem 0.55rem; text-align: left; vertical-align: top; }
+.mcc-doc th { background: var(--akzent-leise); }
+.mcc-doc pre { background: #1d2620; color: #e3e6d6; padding: 0.8rem; border-radius: 8px; overflow-x: auto; }
+.mcc-doc pre code { background: none; color: inherit; }
+.mcc-doc blockquote { border-left: 3px solid var(--akzent); margin: 1rem 0; padding: 0.2rem 0.9rem; color: var(--tinte-leise); }
+.mcc-pfad { margin: 0 0 0.4rem; }
+.mcc-offen > summary { cursor: pointer; }
+.mcc-offen-liste { margin: 0 0 0.6rem; padding-left: 1.2rem; }
+.mcc-offen-liste li { margin: 0.3rem 0; line-height: 1.45; font-size: 0.92rem; }
+.mcc-offen-liste li.frage { list-style: "? "; }
