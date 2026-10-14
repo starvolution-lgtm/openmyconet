@@ -31,7 +31,10 @@ je Gerät, nur SHA-256-Fingerabdruck, nur `revoked_at`/`last_used_at` änderbar)
 (Migration `6d9e1a4b3f57`, `biocomm_0005_*.sql`, `core_0005`): `device_signing_key`
 (öffentliche Ed25519-Schlüssel der Messknoten, nur `revoked_at` änderbar) und
 `origin_batch.signature_algorithm/signature/signing_key_id` (beim Anlegen, danach fest).
-Nächste Änderung = `biocomm_0006_…`.
+**Schema v6** (Migration `7a1c5e9d2b84`, `biocomm_0006_*.sql`, `core_0006`, hängt hinter den
+public-Migrationen, `down_revision` `4c8c3b65f64f`): `probe.revision` und `probe.sensor_models`
+(Sondenrevision und Sensormodelle aus dem `LAUF_START`, nur NULL → Wert, abweichende Angaben
+derselben Seriennummer werden abgelehnt). Nächste Änderung = `biocomm_0007_…`.
 
 **Sandbox-Generator** (`omn/sandbox/`, CLI `flask sandbox-generieren [--nur KEY]
 [--zuruecksetzen] [--tage N]`): füllt `sandbox.*` mit den sechs öffentlichen

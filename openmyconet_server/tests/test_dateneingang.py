@@ -1162,6 +1162,101 @@ def test_lauf_start_sonde_passt_nicht_zum_schema(ein_app):
         assert _eins("SELECT count(*) FROM sandbox.probe WHERE probe_serial = 'OMN-PRB-ECHT'") == 0
 
 
+def _sonde(serial):
+    with db.engine.connect() as c:
+        return c.execute(sa.text('SELECT revision, sensor_models FROM sandbox.probe WHERE probe_serial = :p'),
+                         {'p': serial}).one()
+
+
+def test_sondenangaben_landen_an_der_sonde(ein_app):
+    """sonde_revision/sensormodelle stehen an der Sonde, nicht in der Konfiguration."""
+    import json
+    from omn.eingang.testknoten import EINGANG_TEMP
+    with ein_app.app_context():
+        k = _vorbereiten('SONDENANGABEN')
+        modelle = {EINGANG_TEMP: 'DS18B20+'}
+        k.einstellungen = json.dumps({'sonde_revision': 'B', 'sensormodelle': modelle})
+        e = _ein(k.pakete(1)[0])
+        assert e.status == 'ACCEPTED' and e.lauf_angelegt
+        z = _sonde(k.sonde)
+        assert z.revision == 'B' and z.sensor_models == modelle
+        settings = _eins('SELECT settings FROM sandbox.device_configuration WHERE id = :i',
+                         i=_lauf(k)['device_configuration_id'])
+        assert 'sonde_revision' not in settings and 'sensormodelle' not in settings
+
+
+def test_sondentausch_braucht_keine_neue_config_version(ein_app):
+    """Der Anlass fuer Schema v6: neue Sonde (andere Seriennummer, andere Revision)
+    bei gleicher config_version wird angenommen, es bleibt bei einer Konfiguration."""
+    import dataclasses
+    import json
+    from datetime import timedelta
+    with ein_app.app_context():
+        k = _vorbereiten('SONDENTAUSCH')
+        k.einstellungen = json.dumps({'sonde_revision': 'A'})
+        assert _ein(k.pakete(1)[0]).status == 'ACCEPTED'
+        k2 = dataclasses.replace(k, lauf='boot-2', start=k.start + timedelta(hours=1), sonde=k.sonde + '-NEU',
+                                 einstellungen=json.dumps({'sonde_revision': 'B'}))
+        e = _ein(k2.pakete(1)[0])
+        assert e.status == 'ACCEPTED' and e.lauf_angelegt
+        assert _sonde(k.sonde).revision == 'A' and _sonde(k2.sonde).revision == 'B'
+        assert _eins('SELECT count(*) FROM sandbox.device_configuration c JOIN sandbox.device d'
+                     ' ON d.id = c.device_id WHERE d.device_serial = :g', g=k.geraet) == 1
+
+
+def test_bekannte_sonde_mit_anderer_revision_wird_abgelehnt(ein_app):
+    import dataclasses
+    import json
+    from datetime import timedelta
+    with ein_app.app_context():
+        k = _vorbereiten('SONDE-REVISION')
+        k.einstellungen = json.dumps({'sonde_revision': 'A'})
+        assert _ein(k.pakete(1)[0]).status == 'ACCEPTED'
+        k2 = dataclasses.replace(k, lauf='boot-2', start=k.start + timedelta(hours=1),
+                                 einstellungen=json.dumps({'sonde_revision': 'B'}))     # gleiche Seriennummer
+        e = _ein(k2.pakete(1)[0])
+        assert e.status == 'REJECTED' and 'neue Seriennummer' in e.grund
+        assert _sonde(k.sonde).revision == 'A'
+        assert _eins("SELECT count(*) FROM sandbox.acquisition_run r JOIN sandbox.device d ON d.id = r.device_id"
+                     " WHERE d.device_serial = :g AND r.node_run_key = 'boot-2'", g=k.geraet) == 0
+
+
+def test_sondenangaben_werden_nachgetragen(ein_app):
+    """Eine Sonde ohne Angaben (NULL) bekommt sie beim naechsten LAUF_START."""
+    import dataclasses
+    import json
+    from datetime import timedelta
+    with ein_app.app_context():
+        k = _vorbereiten('SONDE-NACHTRAG')
+        assert _ein(k.pakete(1)[0]).status == 'ACCEPTED'
+        assert tuple(_sonde(k.sonde)) == (None, None)
+        k2 = dataclasses.replace(k, lauf='boot-2', start=k.start + timedelta(hours=1),
+                                 einstellungen=json.dumps({'sonde_revision': 'B'}))
+        e = _ein(k2.pakete(1)[0])
+        assert e.status == 'ACCEPTED' and e.lauf_angelegt
+        assert _sonde(k.sonde).revision == 'B'
+
+
+def test_sondenangaben_falsche_form_wird_abgelehnt(ein_app):
+    import json
+    with ein_app.app_context():
+        faelle = [
+            ('FORM-TYP', {'sonde_revision': 5}, 'sonde_revision muss ein Text'),
+            ('FORM-EINGANG', {'sensormodelle': {'GIBTS-NICHT': 'x'}}, 'kein Kanal dieses Laufs'),
+        ]
+        for name, einstellungen, teil in faelle:
+            k = _vorbereiten(name)
+            k.einstellungen = json.dumps(einstellungen)
+            e = _ein(k.pakete(1)[0])
+            assert e.status == 'REJECTED' and teil in e.grund, (name, e.status, e.grund)
+        # ohne gemeldete Sonde gehoeren die Angaben nirgends hin
+        k = _vorbereiten('FORM-OHNE-SONDE')
+        k.sonde = None
+        k.einstellungen = json.dumps({'sonde_revision': 'B'})
+        e = _ein(k.pakete(1)[0])
+        assert e.status == 'REJECTED' and 'keine Sonde gemeldet' in e.grund
+
+
 def test_lauf_start_nur_in_sequenz_1(ein_app):
     from omn.eingang import format_v1
     with ein_app.app_context():

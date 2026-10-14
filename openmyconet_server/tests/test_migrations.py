@@ -20,11 +20,14 @@ from omn.extensions import db
 
 BASELINE_REV = '959850bfc924'
 BIOCOMM_REV = '3f1b2c4d5e6a'
-HEAD_REV = '4c8c3b65f64f'
+HEAD_REV = '7a1c5e9d2b84'
 BIOCOMM_VORHER = 'fa5a744c1177'
-# Letzte BioComm-Migration (Schema v5). Der Idempotenz-Test faehrt nur bis hier
-# erneut hoch -- spaetere public-Migrationen (z. B. da901ffb142f) sind nicht fuer
-# einen zweiten Lauf gebaut. Bei biocomm_0006 hier nachziehen.
+# BioComm-Migration 0005 (Schema v5). Der Idempotenz-Test faehrt nur bis hier
+# erneut hoch -- die public-Migrationen dahinter (da901ffb142f ... 4c8c3b65f64f)
+# sind nicht fuer einen zweiten Lauf gebaut, und biocomm_0006 (7a1c5e9d2b84)
+# haengt hinter ihnen. Daher bleibt der Wert auf 0005 stehen; die Idempotenz von
+# 0006 steckt in ihrer Spaltenpruefung (_eingerichtet) und wird beim normalen
+# upgrade() auf einer frischen DB sowie in test_biocomm_sondenspalten geprueft.
 BIOCOMM_LETZTE = '6d9e1a4b3f57'
 BIOCOMM_SCHEMAS = ('sandbox', 'sandbox_private', 'live', 'live_private', 'biocomm_common')
 REGELN_SQL = os.path.join(os.path.dirname(__file__), 'sql', 'biocomm_regeln.sql')
@@ -313,6 +316,30 @@ def test_biocomm_idempotent_und_downgrade(leere_db_app):
             "SELECT count(*) FROM pg_namespace WHERE nspname IN :s"
         ).bindparams(db.bindparam('s', expanding=True)), {'s': list(BIOCOMM_SCHEMAS)}).scalar()
     assert rest == 0
+
+
+@nur_postgres
+def test_biocomm_sondenspalten(leere_db_app):
+    """biocomm_0006: probe traegt in sandbox und live Revision und Sensormodelle
+    (beide NULL erlaubt); sensor_models muss ein JSON-Objekt sein."""
+    from sqlalchemy.exc import IntegrityError
+    with leere_db_app.app_context():
+        upgrade()
+        for schema in ('sandbox', 'live'):
+            spalten = {z[0] for z in db.session.execute(db.text(
+                "SELECT column_name FROM information_schema.columns"
+                " WHERE table_schema = :s AND table_name = 'probe'"), {'s': schema})}
+            assert {'revision', 'sensor_models'} <= spalten
+        db.session.execute(db.text(
+            "INSERT INTO sandbox.probe (probe_serial, probe_kind, revision, sensor_models)"
+            " VALUES ('SBX-OK', 'EXTERNAL_BIOCOMM', 'B', CAST('{\"DS18B20\": \"DS18B20+\"}' AS jsonb))"))
+        db.session.execute(db.text(
+            "INSERT INTO sandbox.probe (probe_serial, probe_kind) VALUES ('SBX-OHNE', 'EXTERNAL_BIOCOMM')"))
+        with pytest.raises(IntegrityError):
+            db.session.execute(db.text(
+                "INSERT INTO sandbox.probe (probe_serial, probe_kind, sensor_models)"
+                " VALUES ('SBX-LISTE', 'EXTERNAL_BIOCOMM', CAST('[1]' AS jsonb))"))
+        db.session.rollback()
 
 
 def test_biocomm_owner_url_ohne_fremdes_passwort():

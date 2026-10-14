@@ -49,6 +49,7 @@ class TestKnoten:
     format: str = 'v0'                              # Paketformat: 'v0' (JSON) oder 'v1' (binaer, Firmware)
     anmelden: bool = False                          # Sequenz 1 traegt LAUF_START (nur v1)
     sonde: str = None
+    einstellungen: str = '{}'                       # JSON-Objekt im LAUF_START, z. B. sonde_revision/sensormodelle
     ec_pause: bool = False                          # LAUF_START meldet stuendlich 30 s + 5 s EC-Pause
     signatur_seed: bytes = None                     # Ed25519-Seed: Pakete signieren (nur v1)
     ist_rate: Fraction = None                       # tatsaechliche Rate (echte Knoten: Oszillator +-10 %),
@@ -107,7 +108,7 @@ class TestKnoten:
                                       'RTC_SQW', GAIN * 1000, 'MANUAL', True, kal),
                 format_v1.KanalAngabe(EINGANG_TEMP, 'soil_temperature', 'Cel', 'ENVIRONMENTAL', 1, TEMP_INTERVALL_S,
                                       'SOFTWARE_TIMER')),
-            pausen)
+            pausen, self.einstellungen)
 
     def genesis(self):
         return format_v1.genesis_berechnen(self.geraet, self.lauf) if self.format == 'v1' else GENESIS

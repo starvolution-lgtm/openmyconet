@@ -82,7 +82,72 @@ def auswerten(paket):
     return liste
 
 
+SONDENTEXT_MAX = 64
+SENSORMODELLE_MAX = 32
+
+
+def _sondentext_ok(wert):
+    return isinstance(wert, str) and 1 <= len(wert) <= SONDENTEXT_MAX and wert == wert.strip()
+
+
+def sondenangaben(ls):
+    """Teilt die Einstellungen eines LAUF_START in (einstellungen, revision, modelle).
+
+    `sonde_revision` und `sensormodelle` sind Eigenschaften der Sonde und gehoeren
+    nicht in device_configuration.settings (sonst braeuchte jeder Sondentausch eine
+    neue config_version). Sie werden hier herausgenommen und vom Aufrufer an die
+    Sonde geschrieben. Ohne Datenbank pruefbar.
+
+    revision: str oder None. modelle: {eingang: modell} oder None, jeder Eingang
+    muss ein Kanal dieses LAUF_START sein. Wirft EreignisAbgelehnt bei falschem
+    Typ, unbekanntem Eingang oder Angaben ohne gemeldete Sonde."""
+    try:
+        einstellungen = json.loads(ls.einstellungen)
+    except ValueError as fehler:
+        raise EreignisAbgelehnt(f'LAUF_START: einstellungen sind kein gueltiges JSON ({fehler})')
+    if not isinstance(einstellungen, dict):
+        raise EreignisAbgelehnt('LAUF_START: einstellungen muessen ein JSON-Objekt sein')
+    revision = einstellungen.pop('sonde_revision', None)
+    modelle = einstellungen.pop('sensormodelle', None)
+    if revision is None and modelle is None:
+        return einstellungen, None, None
+    if not ls.sonde:
+        raise EreignisAbgelehnt('LAUF_START: sonde_revision/sensormodelle gehoeren zu einer Sonde, '
+                                'es wurde aber keine Sonde gemeldet')
+    if revision is not None and not _sondentext_ok(revision):
+        raise EreignisAbgelehnt(f'LAUF_START: sonde_revision muss ein Text von 1 bis {SONDENTEXT_MAX} Zeichen '
+                                'ohne Leerzeichen am Rand sein')
+    if modelle is not None:
+        if not isinstance(modelle, dict) or not 1 <= len(modelle) <= SENSORMODELLE_MAX:
+            raise EreignisAbgelehnt(f'LAUF_START: sensormodelle muss ein Objekt mit 1 bis {SENSORMODELLE_MAX} '
+                                    'Eintraegen sein (Eingang -> Modell)')
+        eingaenge = {k.eingang for k in ls.kanaele}
+        for eingang, modell in modelle.items():
+            if eingang not in eingaenge:
+                raise EreignisAbgelehnt(f'LAUF_START: sensormodelle nennt den Eingang {eingang!r}, '
+                                        'der kein Kanal dieses Laufs ist')
+            if not _sondentext_ok(modell):
+                raise EreignisAbgelehnt(f'LAUF_START: Modell fuer {eingang!r} muss ein Text von 1 bis '
+                                        f'{SONDENTEXT_MAX} Zeichen ohne Leerzeichen am Rand sein')
+    return einstellungen, revision, modelle
+
+
+def _sondenangaben_vergleichen(serial, zeile, revision, modelle):
+    """Eine schon bekannte Sonde behaelt ihre Angaben: abweichende Revision oder
+    abweichende Sensormodelle sind eine andere Sonde und brauchen eine neue
+    Seriennummer. Fehlende Angaben (NULL) duerfen nachgetragen werden."""
+    if revision is not None and zeile.revision is not None and zeile.revision != revision:
+        raise EreignisAbgelehnt(
+            f'LAUF_START: Sonde {serial!r} ist mit Revision {zeile.revision!r} bekannt, gemeldet wurde '
+            f'{revision!r}; eine geaenderte Sonde braucht eine neue Seriennummer')
+    if modelle is not None and zeile.sensor_models is not None and zeile.sensor_models != modelle:
+        raise EreignisAbgelehnt(
+            f'LAUF_START: Sonde {serial!r} ist mit anderen Sensormodellen bekannt; eine geaenderte Sonde '
+            'braucht eine neue Seriennummer')
+
+
 def _lauf_start_pruefen(ls):
+    sondenangaben(ls)
     namen = [(k.eingang, k.groesse) for k in ls.kanaele]
     if len(set(namen)) != len(namen):
         raise EreignisAbgelehnt('LAUF_START: Kanal doppelt (gleicher Eingang und gleiche Groesse)')
@@ -138,7 +203,16 @@ def lauf_anlegen(c, s, geraet_id, paket, ereignis, ls):
         raise EreignisAbgelehnt(f'LAUF_START: Sonde {ls.sonde!r} passt nicht zum Schema {s} '
                                 '(sandbox nur mit SBX-, live ohne)')
 
-    einstellungen = json.loads(ls.einstellungen)
+    # Sondenangaben gehoeren an die Sonde, nicht in die Konfiguration. Konflikte mit einer
+    # schon bekannten Sonde jetzt pruefen (nur lesen), bevor etwas geschrieben wird.
+    einstellungen, revision, modelle = sondenangaben(ls)
+    sonde_zeile = None
+    if ls.sonde:
+        sonde_zeile = q('SELECT id, revision, sensor_models FROM {s}.probe WHERE probe_serial = :p',
+                        p=ls.sonde).first()
+        if sonde_zeile is not None:
+            _sondenangaben_vergleichen(ls.sonde, sonde_zeile, revision, modelle)
+
     einstellungen['pausen'] = [{'eingang': p.eingang, 'groesse': p.groesse, 'grund': p.grund,
                                 'periode_s': p.periode_s, 'versatz_ms': p.versatz_ms, 'dauer_ms': p.dauer_ms}
                                for p in ls.pausen]
@@ -157,10 +231,18 @@ def lauf_anlegen(c, s, geraet_id, paket, ereignis, ls):
         cfg_id = cfg.id
 
     sonde_id = None
-    if ls.sonde:
-        sonde_id = q('SELECT id FROM {s}.probe WHERE probe_serial = :p', p=ls.sonde).scalar() or q(
-            "INSERT INTO {s}.probe (probe_serial, probe_kind, note) VALUES (:p, 'EXTERNAL_BIOCOMM',"
-            " 'aus LAUF_START') RETURNING id", p=ls.sonde).scalar()
+    modelle_json = json.dumps(modelle) if modelle is not None else None
+    if ls.sonde and sonde_zeile is None:
+        sonde_id = q("INSERT INTO {s}.probe (probe_serial, probe_kind, note, revision, sensor_models)"
+                     " VALUES (:p, 'EXTERNAL_BIOCOMM', 'aus LAUF_START', :r, CAST(:m AS jsonb)) RETURNING id",
+                     p=ls.sonde, r=revision, m=modelle_json).scalar()
+    elif ls.sonde:
+        sonde_id = sonde_zeile.id
+        # nur nachtragen, nie ueberschreiben (Abweichungen sind oben schon abgelehnt)
+        if revision is not None and sonde_zeile.revision is None:
+            q('UPDATE {s}.probe SET revision = :r WHERE id = :i', r=revision, i=sonde_id)
+        if modelle is not None and sonde_zeile.sensor_models is None:
+            q('UPDATE {s}.probe SET sensor_models = CAST(:m AS jsonb) WHERE id = :i', m=modelle_json, i=sonde_id)
 
     # frueheren, noch offenen Lauf dieses Geraets beenden: der Node hat neu
     # gestartet. Ende = Start des neuen Laufs (danach kann der alte Lauf keine

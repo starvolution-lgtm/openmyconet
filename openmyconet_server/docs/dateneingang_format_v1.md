@@ -264,6 +264,114 @@ die Kennung auch dann eindeutig, wenn der NVS gelöscht wird. Ein neuer Messlauf
 bei jedem Neustart, bei jeder Änderung von Firmware, Sonde, Konfiguration oder
 PRIMARY-Rate und nach einem Bruch der Uhr (`acquisition_run.end_reason`).
 
+## Wo gehört welche Metadatenart hin?
+
+*Dokumentation, keine Formatänderung: Testvektoren und Versionsnummer bleiben unberührt.
+Ergänzt am 14.10.2026 nach Review. Die Spalte „Stand“ trennt, was heute gilt, von dem, was
+noch Vorschlag ist.*
+
+**Faustregel:** Was der Knoten selbst weiß oder was die Messung unmittelbar verändert, steht
+im **Paket**. Was Menschen wissen oder nachträglich korrigieren dürfen, steht auf dem
+**Server** und wird über Gerät und Zeit verknüpft. So bleibt das Paketformat stabil, und
+die Rohdaten müssen für eine bessere Auswertung nie angefasst werden.
+
+| Metadatenart | Ort | Stand |
+|---|---|---|
+| Node-ID (`device_serial`), Messlauf-Kennung | Paketkopf (`geraet`, `lauf`), in `meta_hash` und Genesis-Wert | gilt |
+| Zeitquelle, Zeitunsicherheit, Uhrenabgleich | Paketkopf (`zeitquelle`, `flags`), Ereignis UHRENABGLEICH | gilt |
+| Hardware-Revision, Firmware-Version, Konfigurationsversion | `LAUF_START` → `device_configuration` | gilt |
+| Grund für das Ende des vorigen Laufs | `LAUF_START` (`reset_ursache_vorher`), `LAUF_ENDE` (`grund`) | gilt |
+| Seriennummer der externen Sonde | `LAUF_START` (`sonde`) | gilt |
+| **Sondenrevision, Sensormodelle** | im `LAUF_START` (Feld `einstellungen`, benannte Schlüssel), vom Server an der Sonde abgelegt (`probe.revision`, `probe.sensor_models`) | gilt seit Schema v6 |
+| ADC-Umrechnung Counts → µV (`lsb_uv`, `pga_v`), Verstärkung und ihre Quelle | `LAUF_START` je Kanal (`kalibrierung`, `verstaerkung_*`) | gilt |
+| Pausenregeln (EC-Messung, Einschwingen) | `LAUF_START` (`pausen`) | gilt |
+| **Sensorspezifische Kalibrierung** (z. B. Bodenfeuchte, EC: Rohwert → Messgröße) | Server, versioniert, mit Gültigkeitszeitraum | Vorschlag, noch nicht umgesetzt |
+| Einbauort, Substrat, Einsatzbeginn, Umsetzen, Zuordnung zur Messreihe | Server, `device_deployment` | gilt |
+| Sonden- oder Sensortausch (Ereignis) | Paket: `LAUF_ENDE` (`PROBE_CHANGE`) und neuer `LAUF_START`. Zeitpunkt und Anlass zusätzlich am Einsatz | gilt |
+| **Foto** des Aufbaus | Server, Anhang am `device_deployment`, nie im Paket | Vorschlag, noch nicht umgesetzt |
+| Bezeichnung, Besitzer, Notizen | Server | gilt |
+
+### Sondenrevision und Sensormodelle (festgelegt 14.10.2026, Schema v6)
+
+Die Revision ist eine Eigenschaft der **Sonde**, nicht der Gerätekonfiguration. Der Node
+meldet sie im `LAUF_START` in zwei **benannten Schlüsseln** des bestehenden JSON-Felds
+`einstellungen`, der Server legt sie an der Sonde ab:
+
+```json
+{"sonde_revision": "B", "sensormodelle": {"DS18B20 Bodentemperatur": "DS18B20+", "U8/AIN0 über INA333": "INA333"}}
+```
+
+| Schlüssel | Typ | Regel |
+|---|---|---|
+| `sonde_revision` | String | 1 bis 64 Zeichen, keine Leerzeichen am Rand |
+| `sensormodelle` | Objekt | 1 bis 32 Einträge. Schlüssel = `eingang` eines Kanals **dieses** `LAUF_START`, Wert = Modellbezeichnung (String, 1 bis 64 Zeichen) |
+
+- **Kein Formatbruch:** `einstellungen` ist ein freies JSON-Objekt und steckt wie bisher im
+  `meta_hash` des Ereignisses. Die Testvektoren bleiben unverändert.
+- **Wohin:** Der Server nimmt beide Schlüssel aus den Einstellungen heraus und schreibt sie
+  nach `probe.revision` und `probe.sensor_models` (Migration `7a1c5e9d2b84`). Sie stehen
+  **nicht** in `device_configuration.settings`. Ein Sondentausch braucht deshalb **keine**
+  neue `config_version`.
+- **Beide Schlüssel sind optional.** Ohne Sonde im `LAUF_START` gehören sie nirgends hin, das
+  Paket wird abgelehnt. Falsche Typen, zu lange Texte und Eingänge, die kein Kanal des Laufs
+  sind, werden ebenfalls abgelehnt (beim Prüfen, ohne Datenbank).
+- **Eine bekannte Sonde behält ihre Angaben.** Fehlen sie noch (NULL), werden sie
+  nachgetragen. Meldet dieselbe Seriennummer später eine **andere** Revision oder andere
+  Sensormodelle, lehnt der Server den `LAUF_START` ab: eine geänderte Sonde braucht eine
+  neue Seriennummer. Das passt zur Schemaregel „neue Sonde = neue Zeile“.
+- **Reserviert:** Der Schlüssel `pausen` in `einstellungen` wird vom Server aus den
+  Pausenregeln gesetzt.
+- **Noch nicht umgesetzt:** eine Warnung oder Pflicht, wenn die Schlüssel fehlen. Das
+  Schreiben in die Datenbank erzwingt der Code. Eine Datenbank-Regel „einmal gesetzt,
+  nicht mehr änderbar“ gibt es nicht.
+- **Zweck:** später filtern können, welche Daten von welcher Sondengeneration stammen.
+
+### Kalibrierung und Laufgrenze
+
+Zwei Arten von Umrechnung sind zu trennen:
+
+1. **Geräteseitige Umrechnung** (ADC: Counts → µV). Sie hängt an Hardware und Firmware und
+   bleibt im `LAUF_START`. Ändert sich die Hardware, beginnt ein neuer Lauf. Der Server
+   rechnet daraus beim Verdichten die DERIVED-Kanäle (`lsb_uv / Verstärkung`).
+2. **Sensorspezifische Kalibrierung** (Bodenfeuchte, teils EC). Das ist eine Umrechnung der
+   Rohwerte, die sich nachträglich ändern darf, ohne dass am Knoten etwas passiert. Sie
+   soll **nicht** im Paket stehen und **keine** Laufgrenze erzwingen.
+
+Für Punkt 2 gilt als Vorschlag:
+
+- Der Knoten liefert **Rohwerte** (Counts bzw. Messspannung), wo die Umrechnung nicht
+  trivial oder änderbar ist. Direkt ausgegebene Größen wie die Bodentemperatur (`Cel`) sind
+  davon nicht betroffen.
+- Die Kalibrierkurve liegt **versioniert** auf dem Server (Kurve, Version, Gültig-von,
+  Gültig-bis, Quelle der Kalibrierung). Eine neue Kalibrierung ist ein neuer Eintrag und
+  ändert keinen alten.
+- Abgeleitete Werte werden mit der zum Messzeitpunkt gültigen Version berechnet. Wird eine
+  neue Version rückwirkend gültig, lassen sich DERIVED-Kanäle neu erzeugen. Die Rohdaten
+  und ihre Hashes bleiben unberührt.
+- Ein **physischer** Sondentausch bleibt eine Laufgrenze (`PROBE_CHANGE`). Die neue
+  Kalibrierung gehört dann zur neuen Sonde, nicht rückwirkend zur alten.
+
+*Heute* gibt es diese Server-Kalibrierkurve nicht. Feuchte und EC haben noch keine
+Kanäle in den Testvektoren. Vor dem ersten echten Feuchtekanal muss sie entworfen werden.
+
+### Foto (Vorschlag)
+
+Ein Foto ist **Kontextdokumentation**, kein Messwert. Es gehört wie die Stammdaten zum
+`device_deployment` und wird nicht ins Paket gepackt.
+
+- **Prüfsumme:** SHA-256 der Originaldatei, am Einsatz gespeichert.
+- **EXIF:** Standort und Geräteangaben werden **vor** der Ablage entfernt (Standort
+  gehört zu den Daten, die nicht veröffentlicht werden).
+- **Freigabe:** Veröffentlichung getrennt je Foto. Ein hochgeladenes Foto ist nicht
+  automatisch öffentlich.
+- **Zeitpunkte:** beim Einsetzen sowie bei jedem Sondentausch oder Umsetzen, also an den
+  Laufgrenzen.
+- **Aufnahme:** fester Abstand, Maßstabskarte, Zeitstempel im Bild, damit Fotos
+  vergleichbar sind.
+- **Aussagekraft:** Aussagen über das Substrat kommen aus dem strukturierten Feld
+  (Signal-Tagebuch, Einsatz). Eine automatische Auswertung des Fotos wäre eine eigene
+  Forschungsfrage und wird nicht als Messwert ausgewiesen.
+
 ## Grenzen (Eingang)
 
 Höchstens 4 MiB je Paket roh und 32 MiB entpackt. Ein Paket mit 60 s Bio-Rohdaten bei
