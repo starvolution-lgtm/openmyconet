@@ -139,7 +139,12 @@ Messwerte), `batch_hash` deckt zusätzlich alle Kopf-/Blockangaben ab (`meta_has
 Genesis = SHA256("OMN-GENESIS-v1" ‖ Gerät ‖ Lauf), Rate als exakter Bruch, Platz für
 eine Signatur (HMAC-SHA256/Ed25519, noch nicht geprüft). **Die Node-Firmware schreibt
 Claude und muss beide Testvektoren Byte für Byte erzeugen** (`_testvektor.omb`,
-`_testvektor_laufstart.omb`). **Abtastrate (Robby, 30.09.2026):** reale Messungen mit
+`_testvektor_laufstart.omb`). **Firmware seit 14.10.2026 im Repo unter `../firmware/`**
+(README dort): plattformunabhängige C-Bibliothek `komponenten/omn_paket` (Paket bauen,
+Hashes, Ed25519 über Monocypher, Ereignisse); CI-Job `firmware` prüft sie gegen alle drei
+Testvektoren und lässt eine von ihr erzeugte, signierte Paketkette von `format_v1.py` /
+`signatur.py` nachrechnen (`firmware/werkzeuge/host_test.py`, lokal mit `pip install ziglang`
+als Compiler). **Formatänderung hier → Firmware mitziehen, sonst wird die CI rot.** **Abtastrate (Robby, 30.09.2026):** reale Messungen mit
 **250 Werten pro Sekunde** (ADS1115 hat nur feste Raten, 256/1024 gehen nicht; Oszillator
 ±10 % → tatsächliche Rate je Block mitschicken und verwenden); EC-Takt im echten Betrieb offen.
 Testvektoren noch mit 256 Hz, `einlesen.py` lehnt Blockraten ≠ Kanalrate ab — offene Stellen

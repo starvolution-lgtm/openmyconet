@@ -237,6 +237,8 @@ genesis      = SHA256( "OMN-GENESIS-v1" ‖ str8(geraet) ‖ str8(lauf) )
 | batch_hash | `a70865a07c019a664d85caf1203925fd5d196207ba26fa892a66287a09881972` |
 
 Die Firmware muss diese Datei **Byte für Byte** erzeugen und diese Hashes berechnen.
+Die Firmware-Bibliothek (`firmware/komponenten/omn_paket`) tut das. Der CI-Job `firmware`
+prüft es bei jedem Push für alle drei Testvektoren (`firmware/README.md`).
 
 **Zweiter Testvektor mit LAUF_START:** `docs/dateneingang_format_v1_testvektor_laufstart.omb`
 (635 Byte). Es ist dasselbe Paket, zusätzlich mit einem LAUF_START zur Zeit 08:00:00 UTC

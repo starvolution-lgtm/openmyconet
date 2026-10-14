@@ -81,6 +81,28 @@ jobs:
       - name: Pytest (Postgres)
         run: python -m pytest -q -p no:warnings
 
+  # Firmware-Bibliothek (firmware/, seit 14.10.2026): C-Tests gegen die Paket-
+  # Testvektoren in openmyconet_server/docs + Kreuztest (eine von der Firmware
+  # erzeugte, signierte Paketkette wird mit dem Python-Code des Servers gelesen
+  # und nachgerechnet). gcc mit AddressSanitizer + UBSan. Server-Abhaengigkeiten
+  # nur fuer den Kreuztest (omn/eingang/format_v1.py, signatur.py).
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: openmyconet_server/requirements.txt
+
+      - name: Server-Abhaengigkeiten (fuer den Kreuztest)
+        run: pip install -r openmyconet_server/requirements.txt
+
+      - name: Firmware-Tests (gcc, Sanitizer)
+        run: python firmware/werkzeuge/host_test.py --sanitize
+
   # Frontend-Audit der SSR-Seiten. Eigener Job, damit der Python-Job unberuehrt
   # bleibt. Lighthouse (lighthouserc.json) ist der harte Gate: accessibility/
   # best-practices/seo mit Ist-Score als minScore -> Ratsche gegen
