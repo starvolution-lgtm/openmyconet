@@ -203,8 +203,11 @@ def _lauf_aus_start(c, s, geraet, paket, lauf_grund):
     Liefert (lauf, warten, lauf_grund, angelegt)."""
     try:
         start = ereignisse.lauf_start_finden(ereignisse.auswerten(paket))
-    except ereignisse.EreignisAbgelehnt:
-        return None, None, lauf_grund, False    # die Pruefung meldet den Grund
+    except ereignisse.EreignisAbgelehnt as e:
+        # Formfehler in den Ereignissen (z. B. falsche Sondenangaben, Pause fuer unbekannten Kanal):
+        # den echten Grund melden. Frueher stand hier lauf_grund, die Firmware las dann nur
+        # "Messlauf ... ist unbekannt" und konnte den Fehler im LAUF_START nicht finden.
+        return None, None, str(e), False
     if start is None:
         return None, f'{lauf_grund}; wartet auf LAUF_START (Sequenz 1)', lauf_grund, False
     if _form_fehler(paket):
