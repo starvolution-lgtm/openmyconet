@@ -9,7 +9,8 @@ Kontrollzentrum `01_Hardware_BioComm/BioComm_Hardware_Status.md`.
 | Teil | Stand |
 |---|---|
 | **Paketbibliothek** `komponenten/omn_paket` | fertig + getestet: Datenpakete Format v1 bauen, Prüfsummen (payload/meta/batch/Genesis), Ed25519-Signatur, Ereignisse LAUF_START / LAUF_ENDE / UHRENABGLEICH, Laufkennung |
-| Plattformschicht (ESP-IDF: ADC-Takt, SD, NVS, LoRa, eFuse) | offen — wartet auf die fertige Platine |
+| **Knoten-Gerüst** `knoten/` (ESP-IDF v6.0.3) | baut für den ESP32-S3 (CI), startet mit Selbsttest gegen die Testvektoren; Abbild ~188 KB |
+| Plattformschicht (ADC-Takt, SD, NVS, LoRa, eFuse) | offen — wartet auf die fertige Platine |
 | Stimulation | offen — wartet auf Richards Klärung (Amplitude, ladungsneutrale Ausgabe) |
 | Bridge-Firmware | offen — Vertrag steht: `openmyconet_server/docs/dateneingang_empfang.md` |
 
@@ -20,7 +21,9 @@ firmware/
   komponenten/omn_paket/   die Bibliothek (C99, kein malloc, keine Dateien, keine Plattform)
     include/omn_paket.h    Paket + Ereignisse bauen
     include/omn_krypto.h   SHA-256, HMAC-SHA256, Ed25519-Hülle
-    src/
+    include/omn_selbsttest.h  Testvektoren nachrechnen (Knoten beim Start + PC-Tests)
+    src/  CMakeLists.txt     (ESP-IDF-Komponente)
+  knoten/                  ESP-IDF-Projekt des Messknotens (main/main.c, sdkconfig.defaults)
   drittanbieter/monocypher/  Ed25519 (Monocypher 4.0.2, unverändert, HERKUNFT.md)
   tests/test_paket.c       Normvektoren + die drei Server-Testvektoren Byte für Byte
   tests/kette.c            erzeugt eine signierte Paketkette für den Kreuztest
@@ -47,6 +50,12 @@ CI-Job `firmware` (`.github/workflows/ci.yml`) bei jedem Push:
 3. **Kreuztest:** `kette.c` schreibt drei signierte Pakete (LAUF_START, Uhrenabgleich,
    LAUF_ENDE, Qualitätsbits), der Python-Code des Servers (`omn/eingang/format_v1.py`,
    `signatur.py`) liest sie und rechnet Hashes, Kette und Signaturen nach.
+4. Der Selbsttest des Knotens (`omn_selbsttest`) auf dem PC.
+
+CI-Job `firmware-esp32`: baut `knoten/` im offiziellen Container `espressif/idf:v6.0.3` für den
+ESP32-S3 (`idf.py set-target esp32s3 build`). Neue ESP-IDF-Version = bewusste Änderung dort.
+Auf der Platine: `idf.py -p COMx flash monitor` → im Protokoll muss
+„Selbsttest Paketformat v1 ok“ stehen.
 
 **Wer das Paketformat auf einer Seite ändert, bricht damit die CI** — das ist gewollt. Format
 ändern heißt: Server-Code, Testvektoren, Bibliothek und Tests gemeinsam, plus Versionsnummer.
@@ -64,8 +73,7 @@ CI-Job `firmware` (`.github/workflows/ci.yml`) bei jedem Push:
 ## Nächste Schritte
 
 Ohne Hardware möglich:
-1. **ESP-IDF-Projektgerüst** (`firmware/knoten/`) mit `omn_paket` als Komponente; CI übersetzt
-   es für `esp32s3` (Docker-Image `espressif/idf`). Beweist, dass alles für den Chip baut.
+1. ~~ESP-IDF-Projektgerüst~~ — erledigt 14.10.2026 (`knoten/`, CI-Job `firmware-esp32`).
 2. **Sammler**: Werte → Blöcke → ein Paket je Minute; Sequenz und letzter `batch_hash` im NVS
    (übersteht Neustarts, sonst bricht die Kette), Ablage `/omn/<lauf>/<sequenz>.omb` auf der SD.
    Mit simuliertem ADC auf dem PC testbar.
