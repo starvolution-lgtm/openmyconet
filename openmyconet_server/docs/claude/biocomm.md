@@ -68,7 +68,13 @@ Claude und muss beide Testvektoren Byte für Byte erzeugen** (`_testvektor.omb`,
 Hashes, Ed25519 über Monocypher, Ereignisse); CI-Job `firmware` prüft sie gegen alle drei
 Testvektoren und lässt eine von ihr erzeugte, signierte Paketkette von `format_v1.py` /
 `signatur.py` nachrechnen (`firmware/werkzeuge/host_test.py`, lokal mit `pip install ziglang`
-als Compiler). **Formatänderung hier → Firmware mitziehen, sonst wird die CI rot.** **Abtastrate (Robby, 30.09.2026):** reale Messungen mit
+als Compiler). **Formatänderung hier → Firmware mitziehen, sonst wird die CI rot.** **Sammler der Firmware Ende-zu-Ende (seit 14.10.2026):**
+`tests/test_firmware_sammler.py` (nur PG + C-Compiler, im Job `backend-postgres` mit gcc) übersetzt
+`firmware/tests/test_sammler.c`, schickt dessen signierte Pakete durch `einliefern` (Gerät
+`SBX-NODE-SAMMLER`, Einsatz + Schlüssel wie die Admin-Maske) und verdichtet. Dabei gefunden:
+LAUF_START mit einer Sonde ohne `SBX-` in `sandbox` (bzw. mit `SBX-` in `live`) endete im
+CHECK-Constraint als Datenbankfehler (Funkweg: 5xx, Bridge wiederholt endlos) — jetzt vorher
+geprüft und REJECTED (`ereignisse.py::lauf_anlegen`, `test_lauf_start_sonde_passt_nicht_zum_schema`). **Abtastrate (Robby, 30.09.2026):** reale Messungen mit
 **250 Werten pro Sekunde** (ADS1115 hat nur feste Raten, 256/1024 gehen nicht; Oszillator
 ±10 % → tatsächliche Rate je Block mitschicken und verwenden); EC-Takt im echten Betrieb offen.
 Testvektoren noch mit 256 Hz. **Seit 14.10.2026:** `einlesen.py` nimmt Blockraten bis

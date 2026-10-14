@@ -4,6 +4,7 @@ idf_component_register(
     SRCS "src/omn_paket.c"
          "src/omn_krypto.c"
          "src/omn_selbsttest.c"
+         "src/omn_sammler.c"
          "../../drittanbieter/monocypher/monocypher.c"
          "../../drittanbieter/monocypher/monocypher-ed25519.c"
     INCLUDE_DIRS "include" "../../drittanbieter/monocypher")

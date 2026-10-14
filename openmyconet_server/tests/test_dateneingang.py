@@ -1151,6 +1151,17 @@ def test_ec_pausen_landen_im_aufzeichnungsplan(ein_app):
         assert erwartet == 25 * (60 - 35)                           # EC-Messung + Einschwingzeit abgezogen
 
 
+def test_lauf_start_sonde_passt_nicht_zum_schema(ein_app):
+    """Sonde ohne SBX- in der Sandbox: abgelehnt mit Grund, nicht als Datenbankfehler
+    (der waere ueber den Funkweg ein 5xx, und die Bridge wiederholte endlos)."""
+    with ein_app.app_context():
+        k = _vorbereiten('SONDE-FALSCH')
+        k.sonde = 'OMN-PRB-ECHT'
+        e = _ein(k.pakete(1)[0])
+        assert e.status == 'REJECTED' and "Sonde 'OMN-PRB-ECHT' passt nicht zum Schema sandbox" in e.grund
+        assert _eins("SELECT count(*) FROM sandbox.probe WHERE probe_serial = 'OMN-PRB-ECHT'") == 0
+
+
 def test_lauf_start_nur_in_sequenz_1(ein_app):
     from omn.eingang import format_v1
     with ein_app.app_context():

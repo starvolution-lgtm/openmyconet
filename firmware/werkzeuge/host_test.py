@@ -68,7 +68,7 @@ def bauen(cc, ordner, sanitize):
         objekte.append(obj)
     programme = {}
     endung = '.exe' if os.name == 'nt' else ''
-    for name in ('test_paket', 'kette'):
+    for name in ('test_paket', 'kette', 'test_sammler'):
         quelle = FIRMWARE / 'tests' / f'{name}.c'
         obj = ordner / f'{name}.o'
         ausfuehren(cc + STRENG + extra + INCLUDES + ['-c', str(quelle), '-o', str(obj)])
@@ -116,6 +116,62 @@ def kreuztest(ordner):
     print(f'Kreuztest: {len(pakete)} Pakete vom Server-Code gelesen, Hashes, Kette und Signaturen stimmen')
 
 
+def sammler_pakete(ordner):
+    """Die Pakete aus test_sammler.c (SD-Ablage <ordner>/<lauf>/<sequenz>.omb)."""
+    [lauf] = [d for d in ordner.iterdir() if d.is_dir() and d.name != 'ueberlauf']
+    return lauf, sorted(lauf.glob('*.omb'))
+
+
+def kreuztest_sammler(ordner):
+    """Pakete aus dem Sammler mit dem Server-Code lesen und die Regeln pruefen, die
+    der Eingang anwendet (omn/eingang/einlesen.py): Kette, Signatur, Bloecke im
+    Messzeitraum, lueckenlose Indizes je Kanal, Rate innerhalb der Toleranz,
+    LAUF_START nur in Sequenz 1, LAUF_ENDE nur im letzten Paket."""
+    sys.path.insert(0, str(SERVER))
+    os.environ.setdefault('SECRET_KEY', 'firmware-kreuztest')
+    from datetime import timedelta
+    from omn.eingang import format_v1, signatur
+    from omn.eingang.einlesen import RATE_TOLERANZ
+
+    erwartung = dict(z.split('=') for z in (ordner / 'erwartung.txt').read_text().split())
+    pub = bytes.fromhex((ordner / 'oeffentlich.hex').read_text())
+    lauf, pakete = sammler_pakete(ordner)
+    assert [p.name for p in pakete] == [f'{i:08d}.omb' for i in range(1, int(erwartung['pakete']) + 1)], pakete
+    vorg, naechster, nenn, bio = None, {}, {}, 0
+    for nr, datei in enumerate(pakete, 1):
+        p = format_v1.paket_lesen(datei.read_bytes())
+        vorg = vorg or format_v1.genesis_berechnen(p.geraet, p.lauf)
+        assert (p.lauf, p.sequenz) == (lauf.name, nr)
+        assert p.vorgaenger_hash == vorg, f'Paket {nr}: Kette gebrochen'
+        assert p.payload_hash == p.payload_hash_ist() and p.batch_hash == p.batch_hash_ist(), f'Paket {nr}: Hash'
+        assert signatur.gueltig(pub, p), f'Paket {nr}: Signatur'
+        daten = [format_v1.ereignis_auswerten(e) for e in p.ereignisse]
+        typen = [type(d).__name__ for d in daten]
+        assert ('LaufStart' in typen) == (nr == 1), f'Paket {nr}: LAUF_START'
+        assert ('LaufEnde' in typen) == (nr == len(pakete)), f'Paket {nr}: LAUF_ENDE'
+        if nr == 1:
+            nenn = {(k.eingang, k.groesse): k.rate_zaehler / k.rate_nenner for k in daten[typen.index('LaufStart')].kanaele}
+        if nr == len(pakete):
+            assert daten[typen.index('LaufEnde')].letzte_sequenz == nr
+        for b in p.bloecke:
+            kanal = (b.eingang, b.groesse)
+            letztes = b.zeitanker + timedelta(seconds=(b.anzahl - 1) / b.rate_hz)
+            assert p.messzeitraum_von <= b.zeitanker and letztes < p.messzeitraum_bis, f'Paket {nr}: {kanal} ausserhalb'
+            assert abs(b.rate_hz - nenn[kanal]) <= RATE_TOLERANZ * nenn[kanal], f'Paket {nr}: Rate {b.rate_hz}'
+            assert b.erster_index == naechster.get(kanal, 0), f'Paket {nr}: Index {kanal} {b.erster_index}'
+            naechster[kanal] = b.erster_index + b.anzahl
+            if b.groesse == 'bioelectric_potential':
+                bio += b.anzahl
+                assert (b.rate_zaehler, b.rate_nenner) == (2473, 10)
+        vorg = p.batch_hash
+    gesendet = int(erwartung['bio_gesendet']) - int(erwartung['bio_nach_ende'])   # nach LAUF_ENDE zaehlt nicht
+    assert bio == gesendet, (bio, gesendet)        # auch ueber den Tiefschlaf kein Wert verloren
+    bloecke_3 = [b for b in format_v1.paket_lesen(pakete[2].read_bytes()).bloecke if b.groesse == 'bioelectric_potential']
+    assert len(bloecke_3) == 2, 'Pause mitten im Fenster muss zwei Bloecke ergeben'
+    print(f'Kreuztest Sammler: {len(pakete)} Pakete, {bio} von {gesendet} Bio-Werten gespeichert, '
+          f'Regeln des Eingangs eingehalten')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--sanitize', action='store_true', help='AddressSanitizer + UBSan (Linux/macOS)')
@@ -133,6 +189,10 @@ def main():
             kette.mkdir()
             ausfuehren([str(programme['kette']), str(kette)])
             kreuztest(kette)
+            sammler = tmp / 'sammler_pakete'
+            sammler.mkdir()
+            ausfuehren([str(programme['test_sammler']), str(sammler)])
+            kreuztest_sammler(sammler)
     print('Firmware-Tests grün')
 
 

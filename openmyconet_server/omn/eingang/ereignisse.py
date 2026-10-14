@@ -132,6 +132,11 @@ def lauf_anlegen(c, s, geraet_id, paket, ereignis, ls):
             raise EreignisAbgelehnt(f'LAUF_START: Messgroesse {k.groesse!r} unbekannt')
         if k.einheit not in einheiten:
             raise EreignisAbgelehnt(f'LAUF_START: Einheit {k.einheit!r} unbekannt')
+    # Wie die CHECK-Regeln der Schemas (sandbox nur SBX-, live nie): vorher pruefen, sonst
+    # endete der Eingang mit einem Datenbankfehler (5xx -> die Bridge wiederholt endlos).
+    if ls.sonde and ls.sonde.startswith('SBX-') != (s == 'sandbox'):
+        raise EreignisAbgelehnt(f'LAUF_START: Sonde {ls.sonde!r} passt nicht zum Schema {s} '
+                                '(sandbox nur mit SBX-, live ohne)')
 
     einstellungen = json.loads(ls.einstellungen)
     einstellungen['pausen'] = [{'eingang': p.eingang, 'groesse': p.groesse, 'grund': p.grund,
