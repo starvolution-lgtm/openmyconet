@@ -334,8 +334,13 @@ intern UTC) und arbeiten mit tz-aware Werten (`datetime.now(timezone.utc)` bzw.
 DB-`now()`). Bestehende Tabellen bleiben unverändert naiv-UTC mit `zeit.utcnow()`;
 naive und tz-aware Werte nie miteinander vergleichen.
 Suite ist grün, kein `xfail` mehr. Tests nutzen temp-DBs.
-CI: `.github/workflows/ci.yml` — Job `backend` (ruff + pytest + bandit + pip-audit)
-und Job `frontend-audit` bei jedem Push.
+CI: `.github/workflows/ci.yml` — Job `backend` (ruff + pytest + bandit + pip-audit),
+`backend-postgres`, `firmware` und `frontend-audit` bei jedem Push. **Gearbeitet wird seit
+14.10.2026 direkt auf `main`** (vorher Branch `claude/brave-tesla-qdghvl`, per Fast-forward
+übernommen); `main` ist gegen Force-Push und Löschen geschützt (auch für Admins).
+**Externe Überwachung** `.github/workflows/erreichbarkeit.yml` (seit 14.10.2026, nur auf
+`main`): alle 15 min www/API-Status/Apex-Weiterleitung (3 Versuche) + Restlaufzeit der vier
+HTTPS-Zertifikate ≥ 14 Tage; Fehlschlag → Mail von GitHub. Neue öffentliche Domain → dort ergänzen.
 
 ### Frontend-Audit (`frontend-audit`-Job)
 Startet die App per gunicorn gegen eine leere SQLite (`db.create_all()`, kein
