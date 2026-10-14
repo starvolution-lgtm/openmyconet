@@ -24,7 +24,7 @@ def _sqlite_pragmas(dbapi_connection, connection_record):
 
     ACHTUNG Backup: Im WAL-Modus stecken die juengsten Transaktionen ggf. noch in
     der -wal-Datei neben openmyconet.db. Vor `cp`-Backups einen Checkpoint fahren
-    (siehe CLAUDE.md, Deployment) oder openmyconet.db + -wal + -shm zusammen sichern.
+    (siehe docs/claude/betrieb.md) oder openmyconet.db + -wal + -shm zusammen sichern.
     """
     if 'sqlite3' not in type(dbapi_connection).__module__:
         return

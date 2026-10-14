@@ -1,7 +1,7 @@
 """News/Blog-Verwaltung, Newsletter-Versand und die zugehoerigen Mail-Helfer.
 
 Rund-Mail-Regeln (bestaetigte Nutzer ohne E-Mail-Abmeldung, Sprach-Auswahl,
-List-Unsubscribe) sind bewusst hier gebuendelt -- siehe CLAUDE.md
+List-Unsubscribe) sind bewusst hier gebuendelt -- siehe docs/claude/mails-und-news.md
 "Rund-Mails an Nutzer".
 """
 import os

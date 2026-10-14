@@ -24,7 +24,7 @@ bash /home/omn/app/deploy/install_backup_cron.sh
 
 Trägt idempotent ein: DB-Backup 02:30, Restore-Check Mo 04:15, **Mail-Queue-Drain
 jede Minute** (`deploy/mailqueue_drain.sh`, Prod + Staging, `flock` gegen
-Überlappung — siehe CLAUDE.md „Rund-Mails an Nutzer").
+Überlappung — siehe docs/claude/mails-und-news.md, „Rund-Mails an Nutzer").
 
 ## Vom Kontrollzentrum aus (`/admin/kontrollzentrum`)
 
