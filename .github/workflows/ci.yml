@@ -103,6 +103,23 @@ jobs:
       - name: Firmware-Tests (gcc, Sanitizer)
         run: python firmware/werkzeuge/host_test.py --sanitize
 
+  # Knoten-Firmware (firmware/knoten, ESP-IDF) fuer den ESP32-S3 bauen -- beweist,
+  # dass Bibliothek + Geruest fuer den Chip uebersetzen. Version fest gepinnt;
+  # Wechsel bewusst (neue Version im offiziellen Image, Selbsttest auf der Platine).
+  firmware-esp32:
+    runs-on: ubuntu-latest
+    container: espressif/idf:v6.0.3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bauen fuer ESP32-S3
+        shell: bash
+        run: |
+          . "$IDF_PATH/export.sh" > /dev/null
+          cd firmware/knoten
+          idf.py set-target esp32s3 build
+          idf.py size
+
   # Frontend-Audit der SSR-Seiten. Eigener Job, damit der Python-Job unberuehrt
   # bleibt. Lighthouse (lighthouserc.json) ist der harte Gate: accessibility/
   # best-practices/seo mit Ist-Score als minScore -> Ratsche gegen

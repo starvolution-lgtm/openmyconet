@@ -9,6 +9,7 @@
 
 #include "monocypher-ed25519.h"
 #include "omn_paket.h"
+#include "omn_selbsttest.h"
 
 static int pruefungen, fehler;
 
@@ -399,6 +400,8 @@ int main(int argc, char **argv)
     printf("Fehlerfaelle\n");       test_fehlerfaelle();
     printf("LAUF_START-Regeln\n");  test_lauf_start_regeln();
     printf("Laufkennung\n");        test_lauf_kennung();
+    printf("Selbsttest (wie auf dem Knoten)\n");
+    PRUEFE(omn_selbsttest() == 0);
     printf("%d Pruefungen, %d Fehler\n", pruefungen, fehler);
     return fehler ? 1 : 0;
 }

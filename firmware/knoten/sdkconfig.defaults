@@ -1,0 +1,5 @@
+# Voreinstellungen fuer den Kombi-Node (ESP32-S3). sdkconfig selbst wird beim Bauen
+# erzeugt und nicht eingecheckt.
+CONFIG_IDF_TARGET="esp32s3"
+# Ed25519 + SHA-256 brauchen etwas Stapel; Puffer liegen ohnehin statisch.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
