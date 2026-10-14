@@ -1,0 +1,62 @@
+name: Erreichbarkeit
+
+# Externe Ueberwachung (seit 14.10.2026): laeuft auf GitHubs Rechnern, merkt also auch
+# einen Komplettausfall des Servers -- die Fehler-Mails des Servers selbst kommen dann
+# nicht mehr. Schlaegt ein Lauf fehl, schickt GitHub eine Mail an das Konto, das diese
+# Datei zuletzt geaendert hat (GitHub-Einstellungen > Notifications > Actions).
+# Zeitgesteuerte Ablaeufe laufen nur auf dem Standard-Branch (main), GitHub startet
+# sie nach Moeglichkeit puenktlich (Verzoegerungen bis ~30 min sind normal).
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: erreichbarkeit
+  cancel-in-progress: false
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Website und API antworten
+        run: |
+          # Drei Versuche im Abstand von 30 s, damit ein kurzer Reload (Deploy) keinen Alarm ausloest.
+          fehler=0
+          pruefe() {
+            url=$1; erwartet=$2; text=$3
+            for versuch in 1 2 3; do
+              antwort=$(curl -s --max-time 20 -w '\n%{http_code}' "$url") || antwort=$'\n000'
+              code=${antwort##*$'\n'}
+              if [ "$code" = "$erwartet" ] && { [ -z "$text" ] || grep -q "$text" <<<"$antwort"; }; then
+                echo "ok      $url ($code)"; return 0
+              fi
+              sleep 30
+            done
+            echo "::error::$url antwortet nicht wie erwartet (HTTP $code, erwartet $erwartet${text:+ mit \"$text\"})"
+            fehler=1
+          }
+          pruefe https://www.openmyconet.de/ 200 OpenMycoNet
+          pruefe https://api.openmyconet.de/api/v1/status 200 '"status":"online"'
+          pruefe https://openmyconet.de/ 301 ''
+          exit $fehler
+
+      - name: HTTPS-Zertifikate noch mindestens 14 Tage gueltig
+        run: |
+          # certbot erneuert 30 Tage vorher; unter 14 Tagen ist die Erneuerung also haengen geblieben.
+          fehler=0
+          for host in www.openmyconet.de api.openmyconet.de openmyconet.de staging.openmyconet.de; do
+            zert=$(echo | timeout 20 openssl s_client -servername "$host" -connect "$host:443" 2>/dev/null)
+            ende=$(openssl x509 -noout -enddate <<<"$zert" 2>/dev/null | cut -d= -f2)
+            if [ -n "$ende" ] && openssl x509 -noout -checkend $((14 * 86400)) <<<"$zert" >/dev/null; then
+              echo "ok      $host bis $ende"
+            else
+              echo "::error::Zertifikat von $host laeuft bald ab oder ist nicht abrufbar (${ende:-unbekannt})"
+              fehler=1
+            fi
+          done
+          exit $fehler
