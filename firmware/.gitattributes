@@ -1,0 +1,7 @@
+# Fremdcode Byte fuer Byte wie geliefert (Pruefsummen in HERKUNFT.md), auch unter
+# Windows mit core.autocrlf=true.
+drittanbieter/** -text
+# Eigener Code: immer LF (laeuft auf Linux-CI und spaeter im ESP-IDF-Build).
+*.c text eol=lf
+*.h text eol=lf
+*.py text eol=lf

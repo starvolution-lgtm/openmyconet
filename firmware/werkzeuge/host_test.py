@@ -129,7 +129,7 @@ def main():
         programme = bauen(cc, tmp, args.sanitize)
         ausfuehren([str(programme['test_paket']), str(DOCS)])
         if not args.ohne_kreuztest:
-            kette = tmp / 'kette'
+            kette = tmp / 'kette_pakete'
             kette.mkdir()
             ausfuehren([str(programme['kette']), str(kette)])
             kreuztest(kette)
