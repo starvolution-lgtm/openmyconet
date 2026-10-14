@@ -40,11 +40,6 @@ extern "C" {
 #define OMN_SAMMLER_EREIGNIS_BYTES 64    /* Nutzdaten je wartendem Ereignis */
 #define OMN_SAMMLER_LAUF_START_BYTES 512 /* kodierter LAUF_START */
 
-enum {
-    OMN_E_ABLAGE = -10,      /* ablegen() fehlgeschlagen, Daten bleiben im Puffer */
-    OMN_E_ZUSTAND = -11,     /* falsche Reihenfolge (z. B. Werte nach dem Ende) */
-};
-
 /* Was über einen Neustart hinweg (Tiefschlaf) erhalten bleiben muss, um denselben
  * Messlauf fortzusetzen. Die Plattform legt es z. B. in RTC-Speicher oder NVS ab. */
 typedef struct {

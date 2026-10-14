@@ -29,6 +29,8 @@ typedef enum {
     OMN_E_PARAMETER = -1,   /* Angabe fehlt oder außerhalb des erlaubten Bereichs */
     OMN_E_TEXT = -2,        /* Text leer oder länger als 255 Byte UTF-8 */
     OMN_E_PUFFER = -3,      /* Ausgabepuffer zu klein (benötigte Größe steht in *laenge) */
+    OMN_E_ABLAGE = -10,     /* Sammler: ablegen() fehlgeschlagen, Daten bleiben im Puffer */
+    OMN_E_ZUSTAND = -11,    /* Sammler: falsche Reihenfolge (z. B. Werte nach dem Ende) */
 } omn_status_t;
 
 /* Codes (wie format_v1.py) */
