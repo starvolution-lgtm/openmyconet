@@ -25,25 +25,26 @@ Node-Aggregate, Geräte-Qualität, Uhrkorrekturen, Objektspeicher für RAW.
 
 **Fragen an Robby:** siehe `docs/dateneingang_teil2_bericht.md`, Abschnitt „Fragen“ (keine blockierend).
 
-## Offen: Abtastrate und EC-Takt (Stand 30.09.2026)
+## Abtastrate (erledigt 14.10.2026) und EC-Takt (offen)
 
 **Entscheidung (Robby, 30.09.2026):** Der ADS1115 kennt nur feste Datenraten
 (8/16/32/64/128/250/475/860 SPS), 256 bzw. 1024 Werte pro Sekunde gehen damit nicht. Für die
 realen Messungen sind **250 Werte pro Sekunde** vorgesehen. Der Oszillator des ADS1115 hat
 ±10 % Toleranz, echte Raten liegen also etwa zwischen 225 und 275. Die **tatsächliche Rate je
-Rohdatenblock** muss deshalb mitgeschickt, gespeichert und verwendet werden. **Offen** ist, ob
+Rohdatenblock** wird mitgeschickt, gespeichert und verwendet. **Offen** ist nur noch, ob
 die EC-Messung im echten Betrieb stündlich oder ereignisgesteuert läuft (die Website nennt
 keinen Takt mehr; der Stundentakt der Sandbox bleibt, er gehört zur Simulation).
 
-Website-Texte sind angepasst (Commit `0dfff91`). Noch **nicht** angepasst, nur geprüft:
+**Umgesetzt 14.10.2026** (Test `test_dateneingang.py::test_gemessene_abtastrate`):
 
-| Stelle | Was dort passiert | Folge bei echter Rate 225–275 |
-|---|---|---|
-| `omn/eingang/einlesen.py:338–339` | Block wird abgelehnt, wenn seine Rate von `measurement_channel.sample_rate_hz` um mehr als 10⁻⁹ abweicht | Knoten mit gemessener Rate (z. B. 247,3) würde **REJECTED** – wichtigste Stelle |
-| `omn/eingang/verdichtung.py:161, 186–193` | `samples_expected` aus der Nennrate des Kanals | Abdeckung z. B. 90 % oder über 100 % |
-| `omn/datenlabor.py:398` | API `roh` meldet `rate_hz` als ganze Zahl des letzten Blocks | 247,8 → 247 |
-| `app/static/datenlabor.js:677` | Lückenerkennung im Rohdaten-Diagramm mit dieser einen Rate | ungenau bei Blöcken mit verschiedenen Raten |
-| `omn/eingang/ereignisse.py:200` | `planned_sample_rate_hz` aus `LAUF_START` | in Ordnung, solange nur Plan |
+| Stelle | Jetzt |
+|---|---|
+| `omn/eingang/einlesen.py` | Blockrate darf um `RATE_TOLERANZ` = 12 % (Datenblatt + Spielraum) von der Nennrate des Kanals abweichen, weiter daneben → **REJECTED** (falsch konfigurierter Knoten) |
+| `omn/eingang/verdichtung.py` | `samples_expected` je Fenster mit dem Mittel der Blockraten seiner Werte; Fenster ohne Werte mit dem Mittel der geladenen Blöcke, ohne Blöcke mit der Nennrate |
+| `omn/datenlabor.py` | API `roh`: `rate_hz` = Mittel über die gezeigten Werte (2 Nachkommastellen), neu `rate_min_hz` |
+| `app/static/datenlabor.js` | Lückenerkennung mit der kleinsten Blockrate, Anzeige mit einer Nachkommastelle |
+| `omn/eingang/ereignisse.py` | `planned_sample_rate_hz` aus `LAUF_START` = Nennrate, unverändert (Plan) |
+| `omn/eingang/testknoten.py` | `TestKnoten.ist_rate`: tatsächliche Rate neben der Nennrate |
 
 Schon richtig: `sample_block.sample_rate_hz` je Block (Format v1 als exakter Bruch,
 `format_v1.py:164`), Zeitpunkte in der Verdichtung (`verdichtung.py:305–307`) und in der

@@ -78,10 +78,10 @@ Mit Hardware:
 
 ## Offene Punkte, die die Firmware betreffen
 
-- **Abtastrate:** 250 Werte/s mit ±10 % Oszillator-Toleranz, die gemessene Rate geht je Block
-  mit (Robby, 30.09.2026). **Der Server lehnt bisher Blöcke ab, deren Rate von der Nennrate
-  abweicht** (`omn/eingang/einlesen.py`, Details `docs/dateneingang_status.md`, „Offen:
-  Abtastrate und EC-Takt“) — muss vor dem ersten echten Knoten gelöst sein. Die Testvektoren
-  verwenden noch 256 Hz (Format unverändert).
+- **Abtastrate:** 250 Werte/s mit ±10 % Oszillator-Toleranz (Robby, 30.09.2026). Die Firmware
+  misst die tatsächliche Rate (Werte gegen die DS3231-Uhr gezählt) und schickt sie je Block als
+  Bruch (`rate_zaehler`/`rate_nenner`). Der Server nimmt seit 14.10.2026 bis 12 % Abweichung von
+  der Nennrate an (`RATE_TOLERANZ` in `omn/eingang/einlesen.py`) und rechnet die Abdeckung mit
+  der gemessenen Rate. Die Testvektoren verwenden noch 256 Hz (Format unverändert).
 - EC-Takt im echten Betrieb (stündlich oder ereignisgesteuert).
 - Duty-Cycle-Strategie (bestimmt Akkugröße und wie oft gefunkt wird).

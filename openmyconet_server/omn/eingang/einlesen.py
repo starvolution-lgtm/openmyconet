@@ -85,6 +85,11 @@ KONFLIKT_STUFT_BESTEHENDEN_ZURUECK = True
 # mit 60 s Bio-Rohdaten bei 250 Hz hat rund 25 KB.
 MAX_PAKET_BYTES = 4 * 1024 * 1024
 MAX_ENTPACKT_BYTES = 32 * 1024 * 1024
+# Erlaubte Abweichung der Blockrate von der Nennrate des Kanals (Robby, 30.09.2026):
+# Der ADS1115 taktet mit seinem internen Oszillator (Datenblatt +-10 %), der Knoten
+# schickt je Block die tatsaechlich gemessene Rate. 12 % = Datenblatt + Spielraum;
+# weiter daneben ist ein falsch konfigurierter Knoten und wird abgelehnt.
+RATE_TOLERANZ = 0.12
 AUTOMATISCH = 'Eingang (automatisch)'
 
 
@@ -335,8 +340,10 @@ def _pruefen(c, s, paket, lauf):
             raise _Abgelehnt(f'{name}: Sample-Index-Bereich unplausibel')
         if not b.rate_hz > 0:
             raise _Abgelehnt(f'{name}: Abtastrate muss > 0 sein')
-        if kanal.sample_rate_hz is not None and abs(float(kanal.sample_rate_hz) - b.rate_hz) > 1e-9 * b.rate_hz:
-            raise _Abgelehnt(f'{name}: Abtastrate {b.rate_hz} passt nicht zum Kanal ({kanal.sample_rate_hz})')
+        nenn = None if kanal.sample_rate_hz is None else float(kanal.sample_rate_hz)
+        if nenn is not None and abs(nenn - b.rate_hz) > RATE_TOLERANZ * nenn:
+            raise _Abgelehnt(f'{name}: Abtastrate {b.rate_hz:g} passt nicht zum Kanal ({nenn:g} Hz, '
+                             f'erlaubt +-{RATE_TOLERANZ:.0%})')
         erstes = b.zeitanker
         try:
             letztes = erstes + timedelta(seconds=(b.anzahl - 1) / b.rate_hz)

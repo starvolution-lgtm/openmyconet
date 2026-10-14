@@ -182,15 +182,17 @@ class _Erwartung:
     def _laenge(a, e, stuecke):
         return sum(max(0, min(e, y if y is not None else e) - max(a, x)) for x, y in stuecke)
 
-    def samples(self, a, e):
-        if self.rate is None:
+    def samples(self, a, e, rate=None):
+        """rate: gemessene Rate fuer dieses Fenster (None = Nennrate des Kanals)."""
+        rate = rate or self.rate
+        if rate is None:
             return None
         a, e = max(a, self.lauf[0]), e if self.lauf[1] is None else min(e, self.lauf[1])
         if e <= a:
             return 0
         dauer = self._laenge(a, e, self.aufnahme) if self.aufnahme else e - a
         dauer -= self._laenge(a, e, self.pausen)
-        return max(0, round(dauer / _US * self.rate))
+        return max(0, round(dauer / _US * rate))
 
 
 def _gleich(akt, neu):
@@ -292,7 +294,11 @@ def _kanal(c, s, lauf, roh_id, abg_id, faktor, erwartung, andere, stat, ab=None,
             bereiche[-1][1] = h + 3600 * _US
         else:
             bereiche.append([h, h + 3600 * _US])
-    werte = {aufl: {} for aufl, _ in AUFLOESUNGEN}   # aufl -> start -> [n, min, max, summe]
+    werte = {aufl: {} for aufl, _ in AUFLOESUNGEN}   # aufl -> start -> [n, min, max, summe, summe der Raten]
+    # Gemessene Rate: Die Knoten melden je Block die tatsaechliche Rate (ADS1115-Oszillator
+    # +-10 %), erwartet wird je Fenster mit dem Mittel der Blockraten seiner Werte. Fenster
+    # ohne Werte nehmen das Mittel aller geladenen Bloecke, ohne Bloecke die Nennrate.
+    gemessen_n, gemessen_summe = 0, 0.0
     for von, bis in bereiche:
         for b in c.execute(sql(s,
                 'SELECT sb.time_anchor, sb.sample_rate_hz, sb.value_encoding, sb.compression, sb.payload_inline'
@@ -308,24 +314,28 @@ def _kanal(c, s, lauf, roh_id, abg_id, faktor, erwartung, andere, stat, ab=None,
                 if not von <= t < bis:
                     continue
                 w *= faktor
+                gemessen_n += 1
+                gemessen_summe += rate
                 for aufl, breite in AUFLOESUNGEN:
                     start = t - t % (breite * _US)
                     if start not in offen[aufl]:
                         continue
                     f = werte[aufl].get(start)
                     if f is None:
-                        werte[aufl][start] = [1, w, w, w]
+                        werte[aufl][start] = [1, w, w, w, rate]
                     else:
                         f[0] += 1
                         f[1] = min(f[1], w)
                         f[2] = max(f[2], w)
                         f[3] += w
+                        f[4] += rate
+    gemessen = gemessen_summe / gemessen_n if gemessen_n else None
 
     for aufl, breite in AUFLOESUNGEN:
         zeilen = []
         for start, akt in sorted(offen[aufl].items()):
             f = werte[aufl].get(start)
-            erwartet = erwartung.samples(start, start + breite * _US)
+            erwartet = erwartung.samples(start, start + breite * _US, f[4] / f[0] if f else gemessen)
             neu = (f[0], f[1], f[2], f[3] / f[0], erwartet) if f else (0, None, None, None, erwartet)
             if neu[0] == 0 and (akt is None or akt.samples_recorded == 0):
                 continue                     # nie Daten gehabt bzw. schon Grabstein

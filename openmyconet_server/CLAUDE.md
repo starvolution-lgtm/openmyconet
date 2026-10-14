@@ -147,8 +147,10 @@ Testvektoren und lässt eine von ihr erzeugte, signierte Paketkette von `format_
 als Compiler). **Formatänderung hier → Firmware mitziehen, sonst wird die CI rot.** **Abtastrate (Robby, 30.09.2026):** reale Messungen mit
 **250 Werten pro Sekunde** (ADS1115 hat nur feste Raten, 256/1024 gehen nicht; Oszillator
 ±10 % → tatsächliche Rate je Block mitschicken und verwenden); EC-Takt im echten Betrieb offen.
-Testvektoren noch mit 256 Hz, `einlesen.py` lehnt Blockraten ≠ Kanalrate ab — offene Stellen
-in `docs/dateneingang_status.md` („Offen: Abtastrate und EC-Takt“). **Ereignisse (seit 26.09.2026, `ereignisse.py`, Schema v3
+Testvektoren noch mit 256 Hz. **Seit 14.10.2026:** `einlesen.py` nimmt Blockraten bis
+`RATE_TOLERANZ` (12 %) neben der Kanalrate an, die Verdichtung erwartet je Fenster mit der
+gemessenen Blockrate, das Datenlabor zeigt das Mittel (Details `docs/dateneingang_status.md`,
+Test `test_gemessene_abtastrate`, `TestKnoten.ist_rate`). **Ereignisse (seit 26.09.2026, `ereignisse.py`, Schema v3
 = Migration `4b7c9e2d1f35`, `biocomm_0003_*.sql`):** `LAUF_START` (nur Sequenz 1) meldet
 den Node selbst an: Konfiguration, Sonde, Hardwarekanäle, Lauf, RAW + DERIVED, Plan;
 Messreihe aus dem **Einsatz** `device_deployment` (Server legt fest, nicht der Node);

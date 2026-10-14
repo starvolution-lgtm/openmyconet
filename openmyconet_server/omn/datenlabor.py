@@ -380,7 +380,7 @@ def api_roh(nutzer):
            AND sb.time_anchor < :bis
            AND sb.time_anchor + make_interval(secs => (sb.sample_count / sb.sample_rate_hz)::float8) > :von
          ORDER BY sb.time_anchor"""), {'s': series_id, 'von': von, 'bis': bis}).all()
-    samples, quelle = [], {}
+    samples, quelle, raten = [], {}, []
     for anker, rate, n, erster, enc, komp, payload, gain, kalib, gain_quelle in bloecke:
         if enc != 'int16le' or not kalib or 'lsb_uv' not in kalib or not gain:
             continue
@@ -391,10 +391,16 @@ def api_roh(nutzer):
         rate = float(rate)
         a = max(0, int((von - anker).total_seconds() * rate))
         b = min(n, int((bis - anker).total_seconds() * rate) + 1)
+        if b > a:
+            raten.append((rate, b - a))
         t0 = anker.timestamp() * 1000
         for i in range(a, b):
             samples.append([round(t0 + i * 1000 / rate, 1), round(werte[i] * faktor, 3), erster + i,
                             1 if abs(werte[i]) >= 32767 else 0])
-    return _antwort({'reihe': series_id, 'einheit': 'µV', 'rate_hz': int(rate) if bloecke else None,
+    # Je Block die tatsaechliche Rate (echte Knoten: gemessen, +-10 %): angezeigt wird das
+    # Mittel ueber die gezeigten Werte, die Lueckenerkennung im Diagramm nimmt die kleinste.
+    mittel = round(sum(r * k for r, k in raten) / sum(k for _, k in raten), 2) if raten else None
+    return _antwort({'reihe': series_id, 'einheit': 'µV', 'rate_hz': mittel,
+                     'rate_min_hz': round(min(r for r, _ in raten), 2) if raten else None,
                      'quelle': quelle,
                      'felder': ['t_ms', 'wert', 'sample_index', 'saettigung'], 'samples': samples})

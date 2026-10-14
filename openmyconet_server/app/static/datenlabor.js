@@ -674,7 +674,8 @@
     var f = rahmen(box, von, bis, Math.min.apply(null, werte), Math.max.apply(null, werte), 'µV', tz,
       tx('roh_label', { reihe: reiheText(aktReihe()), zeit: fmt(von, tz, true) }));
     var tf = function (s) { return s[0]; }, vf = function (s) { return s[1]; };
-    var raster = 1000 / res.rate_hz;
+    // Kleinste Blockrate = groesster regulaerer Abstand, sonst gaelten leicht langsamere Bloecke als Luecke
+    var raster = 1000 / (res.rate_min_hz || res.rate_hz);
     abschnitte(S, raster, tf).forEach(function (t) { el('path', { d: pfad(t, f.sx, f.sy, tf, vf), class: 'dl-roh-linie' }, f.ebenen.daten); });
     abschnitte(K, raster, tf).forEach(function (t) { el('path', { d: pfad(t, f.sx, f.sy, tf, vf), class: 'dl-kontrolle' }, f.ebenen.daten); });
     S.filter(function (s) { return s[3]; }).forEach(function (s) {
@@ -682,7 +683,7 @@
     });
     var saett = S.filter(function (s) { return s[3]; }).length;
     $('dl-roh-anzahl').textContent = anzahlText('roh', S.length, kontr ? K.length : null);
-    $('dl-roh-meta').textContent = tx('roh_meta', { n: zahl(S.length, 0), rate: zahl(res.rate_hz, 0) }) +
+    $('dl-roh-meta').textContent = tx('roh_meta', { n: zahl(S.length, 0), rate: zahl(res.rate_hz, 1) }) +
       (saett ? tx('roh_saett', { n: saett }) : '') + (K.length ? T.roh_kontrolle : '') + T.roh_quelle;
     var q = res.quelle || {};
     $('dl-roh-technik').textContent = tx('roh_technik', { a: S[0][2], b: S[S.length - 1][2] }) +

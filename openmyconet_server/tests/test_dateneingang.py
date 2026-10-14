@@ -683,6 +683,28 @@ def test_verdichtung_erwartete_samples_aus_dem_plan(ein_app):
         assert erwartet_temp == 6                 # Pause gilt nur fuer den Bio-Kanal
 
 
+def test_gemessene_abtastrate(ein_app):
+    """Echte Knoten melden je Block die gemessene Rate (ADS1115-Oszillator +-10 %, Robby
+    30.09.2026): innerhalb der Toleranz angenommen, und die Verdichtung erwartet mit dieser
+    Rate -- sonst stuende bei einem schnellen Knoten 110 % Abdeckung da, bei einem langsamen 90 %."""
+    from fractions import Fraction
+    from omn.eingang.verdichtung import verdichten
+    with ein_app.app_context():
+        for name, ist in (('RATE-SCHNELL', Fraction(55, 2)), ('RATE-LANGSAM', Fraction(45, 2))):   # 25 Hz +-10 %
+            k = _knoten(name, paket_s=60, rate_hz=25)
+            k.ist_rate = ist
+            for p in k.pakete(2):
+                assert _ein(p).status == 'ACCEPTED', name
+            verdichten(db.engine, 'sandbox', [k.lauf_id])
+            [(_, n, erwartet, _)] = _versionen(k.kanaele[('bio', 'DERIVED')], '1min', k.start)
+            assert n == erwartet == 60 * ist, name
+
+        k = _knoten('RATE-FALSCH', paket_s=60, rate_hz=25)
+        k.ist_rate = 30                                       # 20 % daneben: falsch konfigurierter Knoten
+        e = _ein(k.pakete(1)[0])
+        assert e.status == 'REJECTED' and 'Abtastrate 30 passt nicht zum Kanal (25 Hz' in e.grund
+
+
 def test_leser_zeigen_keine_konfliktkandidaten(ein_app):
     """Datenlabor: Rohdaten und Aggregate eines strittigen Platzes verschwinden
     (Grabstein), der Rest bleibt sichtbar."""

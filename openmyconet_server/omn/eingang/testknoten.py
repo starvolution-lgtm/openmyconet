@@ -22,6 +22,7 @@ import struct
 import zlib
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+from fractions import Fraction
 
 import sqlalchemy as sa
 
@@ -50,6 +51,8 @@ class TestKnoten:
     sonde: str = None
     ec_pause: bool = False                          # LAUF_START meldet stuendlich 30 s + 5 s EC-Pause
     signatur_seed: bytes = None                     # Ed25519-Seed: Pakete signieren (nur v1)
+    ist_rate: Fraction = None                       # tatsaechliche Rate (echte Knoten: Oszillator +-10 %),
+                                                    # None = Nennrate rate_hz; paket_s * ist_rate ganzzahlig
 
     # -- Pakete ------------------------------------------------------------
     def paket(self, sequenz, vorgaenger_hash, variante=0):
@@ -57,10 +60,13 @@ class TestKnoten:
         Sequenzplatz (fuer Konflikt-Tests)."""
         rng = random.Random(f'{self.geraet}/{self.lauf}/{sequenz}/{variante}')
         t0 = self.start + timedelta(seconds=(sequenz - 1) * self.paket_s)
-        n_bio = self.paket_s * self.rate_hz
+        ist = Fraction(self.rate_hz if self.ist_rate is None else self.ist_rate)
+        if (self.paket_s * ist).denominator != 1:
+            raise ValueError('paket_s * ist_rate muss ganzzahlig sein')
+        n_bio = int(self.paket_s * ist)
         counts = []
         for i in range(n_bio):
-            t = (sequenz - 1) * self.paket_s + i / self.rate_hz
+            t = (sequenz - 1) * self.paket_s + i / float(ist)
             counts.append(max(-32768, min(32767, round(900 * math.sin(2 * math.pi * t / 300) + rng.gauss(0, 25)))))
         n_temp = self.paket_s // TEMP_INTERVALL_S
         temp = [12.0 + 0.5 * math.sin(2 * math.pi * ((sequenz - 1) * n_temp + i) / 360) + rng.gauss(0, 0.02)
@@ -71,7 +77,7 @@ class TestKnoten:
         if self.format == 'v1':
             bloecke = (
                 format_v1.block_bauen(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0,
-                                      (self.rate_hz, 1), 'int16le', 'zlib-6', bio),
+                                      (ist.numerator, ist.denominator), 'int16le', 'zlib-6', bio),
                 format_v1.block_bauen(EINGANG_TEMP, 'soil_temperature', (sequenz - 1) * n_temp, n_temp, t0,
                                       (1, TEMP_INTERVALL_S), 'float32le', 'none', tmp),
             )
@@ -80,7 +86,7 @@ class TestKnoten:
                                       ereignisse=ereignisse)
             return signatur.signieren(p, self.signatur_seed) if self.signatur_seed else p
         bloecke = (
-            Block(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0, float(self.rate_hz),
+            Block(EINGANG_BIO, 'bioelectric_potential', (sequenz - 1) * n_bio, n_bio, t0, float(ist),
                   'int16le', 'zlib-6', bio),
             Block(EINGANG_TEMP, 'soil_temperature', (sequenz - 1) * n_temp, n_temp, t0, 1 / TEMP_INTERVALL_S,
                   'float32le', 'none', tmp),
