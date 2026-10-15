@@ -1,6 +1,6 @@
 """Songtext-Spuren fuer den Musik-Player (WCAG 1.2.1 / axe `audio-caption`).
 
-- 5 WebVTT-Dateien unter app/static/lyrics/ (eine je Track aus OMN_TRACKS)
+- 6 WebVTT-Dateien unter app/static/lyrics/ (eine je Track aus OMN_TRACKS)
 - <track kind="captions"> im Player -> axe `audio-caption` erfuellt
 - lesbare Volltext-Fassung + i18n-Label auf /medien.html
 """
@@ -19,6 +19,7 @@ TRACKS = [
     "the-oldest-living-network",
     "three-ways-of-knowing",
     "nobody-funds-the-ground",
+    "when-the-data-flows",
 ]
 
 
