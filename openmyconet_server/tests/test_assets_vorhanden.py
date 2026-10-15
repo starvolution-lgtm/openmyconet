@@ -21,7 +21,7 @@ def test_keine_fehlenden_assets(client, pfad):
 
 def test_medien_laedt_cover_erst_bei_bedarf(client):
     html = client.get('/medien.html').get_data(as_text=True)
-    assert html.count('class="omn-cover-img') == 5
-    assert html.count('data-src=') == 4            # nur das erste Cover sofort
+    assert html.count('class="omn-cover-img') == 6
+    assert html.count('data-src=') == 5            # nur das erste Cover sofort
     assert '.jpeg' not in html                     # alte JPEG-Cover sind ersetzt
     assert 'fetchpriority="high"' in html          # Broschuerenbild = groesstes Element
