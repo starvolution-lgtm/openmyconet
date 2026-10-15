@@ -37,8 +37,8 @@ Tests `tests/test_llms.py` (prüfen auch, dass alle Keys und Seiten existieren).
 
 ### Songtexte / Musik-Player (WCAG 1.2.1)
 Der Player (`<audio id="omn-audio">` in `site/base.html`, Track-Manifest
-`OMN_TRACKS`, 6 Suno-Songs; seit 15.10.2026 „When the Data Flows“, Cover aus den
-MP3-Metadaten, nur 360 px) hat eine WebVTT-Songtextspur je Track
+`OMN_TRACKS`, 6 Suno-Songs; seit 15.10.2026 „When the Data Flows“; Cover 1024 px WebP
++ 64-px-`-mini`) hat eine WebVTT-Songtextspur je Track
 (`app/static/lyrics/*.vtt`, git-getrackt, klein). `<track kind="captions">` wird
 von `loadTrack()` pro Track umgeschaltet und speist die Follow-along-Zeile
 (`#omn-now-line`, `cuechange`, nur im grossen Player, `aria-hidden`). Die
