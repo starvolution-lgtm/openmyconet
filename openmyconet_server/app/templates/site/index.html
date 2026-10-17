@@ -48,7 +48,7 @@
 {% endblock %}
 
 {% block nav_logo %}
-<a href="{{ live('index.html') }}" class="nav-logo-link ic-1"><img class="ic-2" src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet"></a>
+<a href="{{ live('index.html') }}" class="nav-logo-link ic-1"><img class="ic-2" src="{{ asset('logo-openmyconet.png') }}" srcset="{{ asset('logo-openmyconet-340.webp') }} 340w, {{ asset('logo-openmyconet.png') }} 673w" sizes="(max-width: 480px) 141px, 167px" width="673" height="210" alt="OpenMycoNet"></a>
 {% endblock %}
 
 {% block mobile_menu_self_link %}{% endblock %}
@@ -113,7 +113,8 @@
 <!-- Vision -->
 <section class="mg-section-band" id="vision">
   <div class="mg-imgband">
-    <img class="ic-10" src="{{ asset('vision_bg.webp') }}" alt="" loading="lazy" decoding="async">
+    {# object-fit:cover bei fester Hoehe 280px: Bedarf richtet sich nach der Hoehe, daher feste sizes #}
+    <img class="ic-10" src="{{ asset('vision_bg.webp') }}" srcset="{{ asset('vision_bg-900.webp') }} 900w, {{ asset('vision_bg.webp') }} 1720w" sizes="860px" alt="" loading="lazy" decoding="async">
     <div class="mg-overlay">
       <p class="section-label" data-i18n="label_vision">{{ t('label_vision') }}</p>
       <h2 class="u-mb-0" data-i18n-html="h2_vision">{{ t('h2_vision') | safe }}</h2>

@@ -3,6 +3,7 @@ entstehen -480/-720/-960.webp, die Seiten bieten sie per srcset an; alte Dateien
 und fehlende Dateien bleiben einfache <img>; `flask bilder-verkleinern` holt den Bestand nach."""
 import io
 import os
+import re
 from datetime import datetime
 
 from PIL import Image
@@ -67,8 +68,9 @@ def test_altes_bild_ohne_fassung_und_fehlende_datei(client, app):
     Image.new('RGB', (1200, 800)).save(os.path.join(_ordner(app), 'alt.jpg'), 'JPEG')
     _artikel(app, 'alt.jpg')
     html = client.get('/news').get_data(as_text=True)
-    assert 'uploads/news/alt.jpg' in html and 'srcset' not in html
-    assert 'width="1200" height="800"' in html
+    tag = re.search(r'<img[^>]*uploads/news/alt\.jpg[^>]*>', html).group(0)
+    assert 'srcset' not in tag
+    assert 'width="1200" height="800"' in tag
 
     with app.app_context():
         News.query.filter_by(slug='mit-bild').one().bild_dateiname = 'gibt-es-nicht.webp'

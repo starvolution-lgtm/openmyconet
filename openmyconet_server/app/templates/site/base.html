@@ -54,7 +54,7 @@
 
 <nav>
   {% block nav_logo %}
-  <a href="{{ live('index.html') }}" class="nav-logo-link"><img class="nav-logo-img" src="{{ asset('logo-openmyconet.png') }}" alt="OpenMycoNet"></a>
+  <a href="{{ live('index.html') }}" class="nav-logo-link"><img class="nav-logo-img" src="{{ asset('logo-openmyconet.png') }}" srcset="{{ asset('logo-openmyconet-340.webp') }} 340w, {{ asset('logo-openmyconet.png') }} 673w" sizes="(max-width: 480px) 141px, 218px" width="673" height="210" alt="OpenMycoNet"></a>
   {% endblock %}
   <ul>
     <li class="nav-dropdown-wrap">
@@ -389,12 +389,12 @@ var OMN_TRACKS = [
   // Aktualisiert JEDEN Play/Pause-Button auf der Seite (grosser Player UND FAB) einheitlich.
   function setPlayingUI(isPlaying){
     document.querySelectorAll('.omn-play-btn').forEach(function(b){ b.classList.toggle('playing', isPlaying); });
-    // FAB: Start/Stop pulsiert im Ruhezustand (zieht Aufmerksamkeit an), Lautstaerke-
-    // Button pulsiert waehrend Musik laeuft (zeigt, wo man sie regeln kann).
+    // FAB: oranger Ring am Start/Stop im Ruhezustand, am Lautstaerke-Button waehrend
+    // Musik laeuft. Statisch statt pulsierend (Lighthouse: nicht zusammengesetzte Animation).
     var fabPlay = document.getElementById('omn-audio-btn');
-    if(fabPlay) fabPlay.classList.toggle('omn-fab-pulse', !isPlaying);
+    if(fabPlay) fabPlay.classList.toggle('omn-fab-hinweis', !isPlaying);
     var fabVol = document.getElementById('omn-vol-toggle-btn');
-    if(fabVol) fabVol.classList.toggle('omn-fab-pulse', isPlaying);
+    if(fabVol) fabVol.classList.toggle('omn-fab-hinweis', isPlaying);
   }
 
   function switchCover(idx){

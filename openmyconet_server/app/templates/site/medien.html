@@ -32,6 +32,7 @@
   'fr': 'OpenMycoNet_Brochure_Le_reseau_invisible_FR.pdf',
   'es': 'OpenMycoNet_Folleto_La_red_invisible_ES.pdf'
 } %}
+{% set broschuere_other_lang = {'de': 'Andere Sprache:', 'en': 'Other language:', 'nl': 'Andere taal:', 'fr': 'Autre langue :', 'es': 'Otro idioma:'} %}
 
 {% block content %}
 <div class="page-header medien-page-header">
@@ -58,8 +59,11 @@
     <p class="broschuere-tagline" id="broschuere-tagline">{{ t('br_tagline').replace('verständlich', '<em>verständlich</em>').replace('explained', '<em>explained</em>').replace('begrijpelijk', '<em>begrijpelijk</em>').replace('compréhensible', '<em>compréhensible</em>').replace('explicado', '<em>explicado</em>') | safe }}</p>
     <a href="{{ asset(pdf_files[current_lang()]) }}" download class="broschuere-btn" id="broschuere-btn">{{ t('br_btn') }}</a>
     <p class="broschuere-note" id="broschuere-note" data-i18n="br_note">{{ t('br_note') }}</p>
-    <div class="mb-1" id="broschuere-flags">
-      <!-- von JS befuellt: Direktlinks zu allen 5 Sprachvarianten der Broschuere -->
+    {# Serverseitig gerendert, damit der zentrierte Overlay-Block beim Nachladen nicht springt (CLS); renderBroschuere() erzeugt dasselbe Markup beim Sprachwechsel. #}
+    <div class="mb-1" id="broschuere-flags"><span class="mg-broschuere-lang-label">{{ broschuere_other_lang[current_lang()] }}</span>
+      {%- for l in ['de', 'en', 'nl', 'fr', 'es'] -%}
+      <a href="{{ pdf_files[l] }}" download title="{{ SPRACHNAMEN[l] }}" class="mg-broschuere-lang-link{{ ' mg-broschuere-lang-link--active' if l == current_lang() }}">{{ FLAGGEN[l] | safe }}<span class="mg-broschuere-lang-val">{{ l | upper }}</span></a>
+      {%- endfor -%}
     </div>
   </div>
 </section>
@@ -362,7 +366,7 @@ Listen to the Forest.</div>
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
 var PDF_FILES = {{ pdf_files | tojson }};
-var BROSCHUERE_OTHER_LANG = { de: 'Andere Sprache:', en: 'Other language:', nl: 'Andere taal:', fr: 'Autre langue :', es: 'Otro idioma:' };
+var BROSCHUERE_OTHER_LANG = {{ broschuere_other_lang | tojson }};
 
 function setLang(lang) {
   currentLang = lang;
