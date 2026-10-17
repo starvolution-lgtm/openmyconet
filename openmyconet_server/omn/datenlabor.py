@@ -34,7 +34,7 @@ import zlib
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
-from flask import Blueprint, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy import text
 
 from omn.datengrundlage import SCHEMAS as _DB_SCHEMAS
