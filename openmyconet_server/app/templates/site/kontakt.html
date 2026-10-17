@@ -172,6 +172,7 @@ function applyPage(lang) {
 
 function handleKontakt(e) {
   e.preventDefault();
+  if (omnMitTexten(handleKontakt, this, arguments)) return;
   var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
   var btn = document.getElementById('k-submit-btn');
   var privacyCb = document.getElementById('k-inp-privacy');
@@ -204,7 +205,7 @@ function handleKontakt(e) {
 
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
-    applyPage(currentLang);
+    if (OMN_UMSCHREIBEN) applyPage(currentLang);
     renderSidebar();
   });
   var kf = document.getElementById('kontakt-form');

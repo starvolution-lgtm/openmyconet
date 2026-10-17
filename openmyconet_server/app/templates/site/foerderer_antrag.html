@@ -284,7 +284,7 @@ function setLang(lang) {
 
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
-    applyAntragContent(currentLang);
+    if (OMN_UMSCHREIBEN) applyAntragContent(currentLang);
     renderSidebar();
   });
 });

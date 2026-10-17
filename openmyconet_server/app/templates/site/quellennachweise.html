@@ -598,7 +598,7 @@ function scrollToStation(id) {
 
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
-    applyTranslations(currentLang);
+    if (OMN_UMSCHREIBEN) applyTranslations(currentLang);
     renderSidebar();
   });
 

@@ -300,7 +300,7 @@
     </div>
 
     <div class="donate-buttons">
-      <a id="paypal-btn" href="https://www.paypal.com/donate/?hosted_button_id=openmyconet&amount=15" class="btn btn-amber ic-45" target="_blank" rel="noopener">
+      <a id="paypal-btn" href="https://www.paypal.com/paypalme/openmyconet/15.00EUR" class="btn btn-amber ic-45" target="_blank" rel="noopener">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f0b84a" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
         PayPal — <span id="paypal-amount-label">15,00 €</span>
       </a>
@@ -783,6 +783,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleReg(e) {
   e.preventDefault();
+  if (omnMitTexten(handleReg, this, arguments)) return;
   var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
   var btn = document.getElementById('reg-btn');
   var privacyCb = document.getElementById('inp-privacy');
@@ -880,6 +881,7 @@ function performNodeGeocode(address) {
 }
 
 function geocodeNodeAddress() {
+  if (omnMitTexten(geocodeNodeAddress, this, arguments)) return;
   var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
   var address = document.getElementById('node-inp-address').value.trim();
   var errEl = document.getElementById('node-geocode-error');
@@ -917,6 +919,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function submitNodeApplication() {
+  if (omnMitTexten(submitNodeApplication, this, arguments)) return;
   var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
   var btn = document.getElementById('node-submit-btn');
   var form = document.getElementById('node-form');
@@ -949,6 +952,7 @@ function submitNodeApplication() {
 
 function handleNodeApply(e) {
   e.preventDefault();
+  if (omnMitTexten(handleNodeApply, this, arguments)) return;
   var address = document.getElementById('node-inp-address').value.trim();
   var latVal = document.getElementById('node-inp-lat').value;
 
@@ -1012,10 +1016,10 @@ function shareSocial(network) {
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
     updateFlags(currentLang);
-    applyTranslations(currentLang);
-    updateMeta(currentLang);
-    renderDynamicSections(currentLang);
-    renderRegForm(currentLang);
+    if (OMN_UMSCHREIBEN) applyTranslations(currentLang);
+    if (OMN_UMSCHREIBEN) updateMeta(currentLang);
+    if (OMN_UMSCHREIBEN) renderDynamicSections(currentLang);
+    if (OMN_UMSCHREIBEN) renderRegForm(currentLang);
   });
 });
 

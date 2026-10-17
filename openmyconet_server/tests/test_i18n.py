@@ -22,6 +22,12 @@ def test_unbekannte_sprache_gibt_404(client):
     assert r.get_json() == {}
 
 
+def test_seite_meldet_server_sprache_an_den_client(client):
+    # base.html laedt Uebersetzungen nur, wenn die Browsersprache von SERVER_LANG abweicht.
+    assert 'var SERVER_LANG = "de";' in client.get('/biocomm').get_data(as_text=True)
+    assert 'var SERVER_LANG = "es";' in client.get('/biocomm?lang=es').get_data(as_text=True)
+
+
 def test_block_ist_kleiner_als_die_gesamtdatei(client):
     ein_block = client.get('/i18n/de.json').get_data()
     alles = client.get('/translations.json').get_data()

@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Sprache steht bereits serverseitig im HTML, dieser Re-Render greift erst,
   // sobald der Fetch durch ist (i.d.R. wenige ms, kein sichtbarer Flackereffekt).
   TRANSLATIONS_READY.then(function() {
-    applyPage(currentLang);
+    if (OMN_UMSCHREIBEN) applyPage(currentLang);
     renderSidebar();
   });
 });

@@ -420,6 +420,6 @@ function renderBroschuere(lang) {
   }
 }
 
-TRANSLATIONS_READY.then(function() { renderBroschuere(currentLang); });
+if (OMN_UMSCHREIBEN) TRANSLATIONS_READY.then(function() { renderBroschuere(currentLang); });
 </script>
 {% endblock %}

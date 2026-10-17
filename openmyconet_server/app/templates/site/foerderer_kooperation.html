@@ -251,7 +251,7 @@ function setLang(lang) {
 
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
-    applyKoopContent(currentLang);
+    if (OMN_UMSCHREIBEN) applyKoopContent(currentLang);
     renderSidebar();
   });
 });

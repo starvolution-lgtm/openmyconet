@@ -251,14 +251,30 @@ function omnEnsureLang(lang) {
   _langLaden[lang] = p;
   return p;
 }
-// Seiten warten auf TRANSLATIONS_READY, bevor sie apply*(currentLang) aufrufen.
-var TRANSLATIONS_READY = Promise.all([omnEnsureLang('de'), omnEnsureLang(currentLang)]);
+// Zielsprache plus 'de' (Rueckfall fuer fehlende Schluessel in den apply*-Funktionen).
+function omnSpracheLaden(lang) {
+  return Promise.all([omnEnsureLang('de'), omnEnsureLang(lang)]);
+}
+// Der Server hat die Seite schon in SERVER_LANG gerendert. Nur wenn der Browser eine andere
+// Sprache will (localStorage/Browsersprache), Uebersetzungen laden und die Texte umschreiben;
+// sonst entfallen ~100 KB JSON und das Neuschreiben aller Texte nach dem Laden.
+var SERVER_LANG = {{ current_lang()|tojson }};
+var OMN_UMSCHREIBEN = currentLang !== SERVER_LANG;
+// Seiten warten auf TRANSLATIONS_READY und rufen apply*(currentLang) nur bei OMN_UMSCHREIBEN auf.
+var TRANSLATIONS_READY = OMN_UMSCHREIBEN ? omnSpracheLaden(currentLang) : Promise.resolve();
+// Fuer Handler, die Texte brauchen (Formular-Statusmeldungen): fehlen sie noch, nachladen und
+// den Handler danach erneut aufrufen. Aufruf: if (omnMitTexten(fn, this, arguments)) return;
+function omnMitTexten(fn, self, args) {
+  if (TRANSLATIONS[currentLang] && TRANSLATIONS.de) return false;
+  omnSpracheLaden(currentLang).then(function() { fn.apply(self, args); });
+  return true;
+}
 
 // Flaggen-Klick: erst die Zielsprache laden, dann das seiteneigene setLang()
 // (das currentLang setzt, localStorage schreibt und neu rendert). Seiten ohne
 // eigenes setLang bekommen hier einen Minimal-Fallback.
 function omnSetLang(lang) {
-  return omnEnsureLang(lang).then(function() {
+  return omnSpracheLaden(lang).then(function() {
     omnMerkeLang(lang);
     omnFooter(lang);
     document.documentElement.lang = lang;

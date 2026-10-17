@@ -179,7 +179,7 @@ function applyPage(lang) {
 
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
-    applyPage(currentLang);
+    if (OMN_UMSCHREIBEN) applyPage(currentLang);
     renderSidebar();
   });
 });

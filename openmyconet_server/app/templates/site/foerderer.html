@@ -156,7 +156,7 @@ function applyFoerdererContent(lang) {
 // dieser Seite, aus dem Original 1:1 uebernommen fuer Paritaet) ──────────────
 document.addEventListener('DOMContentLoaded', function() {
   TRANSLATIONS_READY.then(function() {
-    applyFoerdererContent(currentLang);
+    if (OMN_UMSCHREIBEN) applyFoerdererContent(currentLang);
     renderSidebar();
   });
 

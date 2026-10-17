@@ -171,9 +171,15 @@
   function laden() {
     if (geladen) return;
     geladen = true;
-    fetch(fig.getAttribute('data-quelle'))
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (j) {
+    // Beschriftungen kommen aus den Uebersetzungen; die laedt base.html nur bei Sprachwechsel,
+    // deshalb hier mit anfordern (omnSpracheLaden haelt bereits Geladenes vor).
+    Promise.all([
+      fetch(fig.getAttribute('data-quelle'))
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }),
+      window.omnSpracheLaden ? window.omnSpracheLaden(sprache()) : null
+    ])
+      .then(function (e) {
+        var j = e[0];
         if (!j || j.is_simulated !== true) return;   // nie etwas ohne Simulationskennung zeigen
         daten = j;
         fig.classList.add('vorschau-bereit');
