@@ -223,3 +223,25 @@ def test_admin_kollaboration_nur_fuer_kooperation(client, app, superadmin):
         fid = f.id
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     assert client.get(f'/admin/kollaboration/foerderer/{fid}').status_code == 404
+
+
+def test_verfall_trifft_nur_offene_anfragen_nicht_aktive_kooperationen(app):
+    """Regression 17.10.2026: KleingartenLAN (aktive Kooperation ohne Aktivitaet
+    im Kollaborationsbereich) verschwand nach 60 Tagen von der Foerdererseite."""
+    from foerderer_verfall_pruefen import verfall_pruefen
+
+    nid = _nutzer(app)
+    aktiv = _koop(app, status='active', nutzer_id=nid, firma='Aktiv GmbH')
+    offen = _koop(app, status='pending', firma='Offen GmbH')
+    frisch = _koop(app, status='pending', firma='Frisch GmbH')
+    with app.app_context():
+        alt = utcnow() - timedelta(days=90)
+        Foerderer.query.get(aktiv).status_geaendert_am = alt
+        Foerderer.query.get(offen).status_geaendert_am = alt
+        db.session.commit()
+
+        assert verfall_pruefen() == 1
+        assert Foerderer.query.get(aktiv).status == 'active'
+        assert Foerderer.query.get(offen).status == 'verfallen'
+        assert Foerderer.query.get(frisch).status == 'pending'
+        assert db.session.get(Nutzer, nid).ist_hyphist is True
