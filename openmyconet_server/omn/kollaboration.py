@@ -60,8 +60,9 @@ def kommentare_fuer(kontext, aufgabe_id=None):
 def _kooperation_aktivitaet_markieren(kontext):
     """Aktivitaet im Bereich zaehlt als Lebenszeichen der Kooperation: setzt
     status_geaendert_am zurueck, damit die 60-Tage-Verfallspruefung
-    (foerderer_verfall_pruefen.py) eine aktiv bearbeitete Partnerschaft nicht
-    faelschlich auf 'verfallen' stuft. Nur fuer Kooperations-Foerderer relevant."""
+    (foerderer_verfall_pruefen.py) eine bearbeitete, noch offene Anfrage nicht
+    auf 'verfallen' stuft (freigegebene Kooperationen verfallen ohnehin nicht).
+    Nur fuer Kooperations-Foerderer relevant."""
     from omn.models import Foerderer
     if isinstance(kontext, Foerderer) and kontext.typ == 'kooperation':
         kontext.status_geaendert_am = utcnow()

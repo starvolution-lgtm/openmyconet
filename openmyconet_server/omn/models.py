@@ -27,8 +27,8 @@ class Nutzer(db.Model):
     # registrierten Nutzers (kein eigenes Feld noetig), Hyphist (Kooperations-
     # partner) und Sporist (Foerderer) sind unabhaengig voneinander -- man kann
     # beides gleichzeitig sein. Gesetzt/entfernt ueber roles.py, siehe dort.
-    # Hyphist faellt bei Inaktivitaet der zugehoerigen Kooperationsanfrage
-    # automatisch zurueck (foerderer_verfall_pruefen.py), Sporist nicht (echte
+    # Hyphist faellt bei Inaktivitaet einer noch nicht freigegebenen Kooperations-
+    # anfrage automatisch zurueck (foerderer_verfall_pruefen.py), Sporist nicht (echte
     # Zahlung).
     ist_hyphist = db.Column(db.Boolean, nullable=False, default=False)
     ist_sporist = db.Column(db.Boolean, nullable=False, default=False)
@@ -198,7 +198,8 @@ class Foerderer(db.Model):
     status = db.Column(db.String(20), default='pending', index=True)
     # Zeitpunkt des letzten Statuswechsels (nicht erstellt_am!) -- Basis fuer die
     # automatische Verfalls-Pruefung bei Kooperationsanfragen (2 Monate ohne
-    # Aktivitaet -> status='verfallen', siehe foerderer_verfall_pruefen.py).
+    # Aktivitaet -> status='verfallen', siehe foerderer_verfall_pruefen.py;
+    # freigegebene ('active') Kooperationen verfallen nicht).
     # 'verfallen' ist nur fuer typ='kooperation' relevant; bezahlte foerderer-
     # Eintraege verfallen nicht automatisch ueber dieses Feld.
     status_geaendert_am = db.Column(db.DateTime, default=utcnow)
