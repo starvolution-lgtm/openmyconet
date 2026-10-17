@@ -93,7 +93,7 @@ button, .btn {
   transition: background 0.15s, opacity 0.15s;
 }
 button:hover, .btn:hover { background: #2f5a3f; }
-button.aktiv { background: var(--good); border-color: var(--good); }
+button.aktiv { background: var(--good); border-color: var(--good); color: #fff; }  /* sonst gewinnt .aktiv (gruene Schrift) */
 button.ablehnen { background: var(--progress); border-color: var(--progress); }
 button.loeschen, .del { background: var(--blocked); border-color: var(--blocked); }
 button.sekundaer { background: transparent; color: var(--accent); }
