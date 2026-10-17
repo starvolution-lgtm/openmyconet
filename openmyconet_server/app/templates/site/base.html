@@ -584,8 +584,8 @@ var OMN_TRACKS = [
 
 {% block scripts %}{% endblock %}
 
-<script src="{{ asset('biocomm-chat.js') }}"></script>
-<script src="{{ asset('biocomm-faq.js') }}"></script>
+<script src="{{ asset('biocomm-chat.js') }}" defer></script>
+<script src="{{ asset('biocomm-faq.js') }}" defer></script>
 
 <script nonce="{{ csp_nonce }}">
 // Die Position von #lang-sidebar (auf index.html knapp ueber der Social-Bar,
