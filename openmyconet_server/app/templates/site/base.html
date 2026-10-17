@@ -46,8 +46,12 @@
      war im Report ohnehin "Nicht bewertet" (kein Score-Einfluss) -- der reale
      LCP-Verlust wiegt schwerer als der (kaum messbare) CLS-Gewinn von 0,017
      auf 0. Nicht wieder einbauen ohne Vorher/Nachher-Vergleich. -->
+<link rel="preload" href="/fonts.css" as="style" id="omn-fonts-css">
+<link rel="preload" href="{{ asset('site-base.css') }}" as="style" id="omn-base-css">
+<noscript>
 <link href="/fonts.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('site-base.css') }}">
+</noscript>
 {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -193,6 +197,11 @@
 </footer>
 
 <script nonce="{{ csp_nonce }}">
+// Preload-Stylesheets aktivieren (render-blocking vermeiden).
+['omn-fonts-css','omn-base-css'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el){el.onload=function(){this.rel='stylesheet';this.onload=null;};el.rel='preload';}
+});
 // Einheitlicher i18n-Mechanismus: translations.json ist die einzige Datenquelle,
 // server- und clientseitig. Die initiale Sprache steht bereits serverseitig
 // gerendert im HTML (t()-Jinja-Funktion) -- der Client laedt per fetch nur die

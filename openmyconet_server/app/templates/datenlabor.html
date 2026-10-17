@@ -13,9 +13,11 @@
 <p class="dl-label">{{ T.bereich }}</p>
 <h1>{{ T.h1_html|safe }}</h1>
 
+{% if is_simulated %}
 <p class="dl-sim-banner" role="note">
     <strong>SIMULATION</strong> – {{ T.banner }}
 </p>
+{% endif %}
 
 <div id="dl-app" data-api="{{ url_for('datenlabor.api_szenarien')|replace('/szenarien', '') }}"
      data-lang="{{ lang }}" data-locale="{{ locale }}">

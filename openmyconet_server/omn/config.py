@@ -98,6 +98,10 @@ class Config:
     # den Header X-OMN-Env. Staging setzt OMN_ENV=staging in seiner .env.
     OMN_ENV = os.getenv('OMN_ENV', 'prod').strip() or 'prod'
 
+    # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).
+    # Nach dem Cutover auf DATENLABOR_SCHEMA=live setzen; Sandbox bleibt parallel verfügbar.
+    DATENLABOR_SCHEMA = os.getenv('DATENLABOR_SCHEMA', 'sandbox')
+
 
 class TestConfig(Config):
     TESTING = True
