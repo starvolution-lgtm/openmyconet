@@ -160,6 +160,11 @@ def _schema():
     return s
 
 
+def _mit_schema(satz, schema):
+    # schema stammt aus _schema() (Whitelist); Muster wie datengrundlage._sql.
+    return satz.replace('{sc}', schema)
+
+
 def _daten_da():
     if db.engine.dialect.name != 'postgresql':
         return False
@@ -279,10 +284,10 @@ def _reihe_pruefen(series_id):
               JOIN sandbox.sandbox_scenario sc ON sc.id = ss.scenario_id AND sc.is_public
              WHERE s.id = :sid"""), {'sid': series_id}).first()
     # Live-Modus: jede Reihe im Schema ist zugänglich (keine Szenario-Bindung).
-    return db.session.execute(text(  # nosec B608
-        f"""SELECT s.id, (SELECT iana_tz FROM {schema}.site_timezone WHERE site_id = s.site_id ORDER BY valid_from DESC LIMIT 1)
-              FROM {schema}.series s
-             WHERE s.id = :sid"""), {'sid': series_id}).first()
+    return db.session.execute(text(_mit_schema("""
+        SELECT s.id, (SELECT iana_tz FROM {sc}.site_timezone WHERE site_id = s.site_id ORDER BY valid_from DESC LIMIT 1)
+          FROM {sc}.series s
+         WHERE s.id = :sid""", schema)), {'sid': series_id}).first()
 
 
 @datenlabor_bp.route('/dashboard/datenlabor/api/reihe')
@@ -337,20 +342,20 @@ def api_reihe(nutzer):
     gespeichert = {'anzahl': sum(z[7] for z in zeilen) if aufloesung == '1d' else len(zeilen),
                    'aufloesung': '1h' if aufloesung == '1d' else aufloesung}
 
-    stim = db.session.execute(text(  # nosec B608
-        f"""SELECT x.actuator_type, x.execution_state, x.planned_start, x.actual_start, x.actual_duration_ms,
+    stim = db.session.execute(text(_mit_schema("""
+        SELECT x.actuator_type, x.execution_state, x.planned_start, x.actual_start, x.actual_duration_ms,
                x.attempted_at, x.state_reason, m.planned_offset_ms
-          FROM {schema}.stimulation x JOIN {schema}.acquisition_run r ON r.id = x.acquisition_run_id
-          LEFT JOIN {schema}.stimulation_sequence_member m ON m.stimulation_id = x.id
+          FROM {sc}.stimulation x JOIN {sc}.acquisition_run r ON r.id = x.acquisition_run_id
+          LEFT JOIN {sc}.stimulation_sequence_member m ON m.stimulation_id = x.id
          WHERE r.series_id = :s AND x.planned_start >= :von - interval '1 hour' AND x.planned_start < :bis
-         ORDER BY x.planned_start"""), p).all() if kanal == 'bioelectric_potential' else []
-    qual = db.session.execute(text(  # nosec B608
-        f"""SELECT qa.quality_code, qa.origin, lower(qa.time_range), upper(qa.time_range), qa.note
-          FROM {schema}.quality_annotation qa JOIN {schema}.measurement_channel mc ON mc.id = qa.measurement_channel_id
-          JOIN {schema}.acquisition_run r ON r.id = mc.acquisition_run_id
+         ORDER BY x.planned_start""", schema)), p).all() if kanal == 'bioelectric_potential' else []
+    qual = db.session.execute(text(_mit_schema("""
+        SELECT qa.quality_code, qa.origin, lower(qa.time_range), upper(qa.time_range), qa.note
+          FROM {sc}.quality_annotation qa JOIN {sc}.measurement_channel mc ON mc.id = qa.measurement_channel_id
+          JOIN {sc}.acquisition_run r ON r.id = mc.acquisition_run_id
          WHERE r.series_id = :s AND mc.quantity_code = :q AND qa.action = 'ASSERT'
            AND qa.time_range && tstzrange(:von, :bis)
-           AND NOT EXISTS (SELECT 1 FROM {schema}.quality_annotation w WHERE w.supersedes_annotation_id = qa.id)"""), p).all()
+           AND NOT EXISTS (SELECT 1 FROM {sc}.quality_annotation w WHERE w.supersedes_annotation_id = qa.id)""", schema)), p).all()
     ms = lambda t: None if t is None else int(t.timestamp() * 1000)
     lang = _api_sprache()
     return _antwort({
@@ -396,17 +401,17 @@ def api_roh(nutzer):
         return _antwort({'fehler': 'unbekannte Reihe'}, 404)
     schema = _schema()
     bis = von + timedelta(seconds=dauer)
-    bloecke = db.session.execute(text(  # nosec B608
-        f"""SELECT sb.time_anchor, sb.sample_rate_hz, sb.sample_count, sb.first_sample_index, sb.value_encoding,
+    bloecke = db.session.execute(text(_mit_schema("""
+        SELECT sb.time_anchor, sb.sample_rate_hz, sb.sample_count, sb.first_sample_index, sb.value_encoding,
                sb.compression, sb.payload_inline, mc.gain, mc.calibration, mc.gain_source
-          FROM {schema}.sample_block sb
-          JOIN {schema}.origin_batch ob ON ob.id = sb.origin_batch_id AND ob.batch_status = 'CANONICAL'
-          JOIN {schema}.measurement_channel mc ON mc.id = sb.measurement_channel_id
-          JOIN {schema}.acquisition_run r ON r.id = mc.acquisition_run_id
+          FROM {sc}.sample_block sb
+          JOIN {sc}.origin_batch ob ON ob.id = sb.origin_batch_id AND ob.batch_status = 'CANONICAL'
+          JOIN {sc}.measurement_channel mc ON mc.id = sb.measurement_channel_id
+          JOIN {sc}.acquisition_run r ON r.id = mc.acquisition_run_id
          WHERE r.series_id = :s AND mc.quantity_code = 'bioelectric_potential' AND mc.data_kind = 'RAW'
            AND sb.time_anchor < :bis
            AND sb.time_anchor + make_interval(secs => (sb.sample_count / sb.sample_rate_hz)::float8) > :von
-         ORDER BY sb.time_anchor"""), {'s': series_id, 'von': von, 'bis': bis}).all()
+         ORDER BY sb.time_anchor""", schema)), {'s': series_id, 'von': von, 'bis': bis}).all()
     samples, quelle, raten = [], {}, []
     for anker, rate, n, erster, enc, komp, payload, gain, kalib, gain_quelle in bloecke:
         if enc != 'int16le' or not kalib or 'lsb_uv' not in kalib or not gain:
