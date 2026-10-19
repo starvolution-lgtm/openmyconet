@@ -185,7 +185,7 @@ def test_backup_knoepfe_auf_der_ampelseite(client, superadmin, monkeypatch):
     _netzwerk_checks_mocken(monkeypatch)
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     html = client.get('/mcc/server').get_data(as_text=True)
-    assert 'action="/admin/backup/jetzt"' in html and 'action="/admin/backup/restore-check"' in html
+    assert 'action="/mcc/backup/jetzt"' in html and 'action="/mcc/backup/restore-check"' in html
 
 
 # --- Staging-Instanz-Check (check_staging) ---

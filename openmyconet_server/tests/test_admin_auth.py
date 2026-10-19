@@ -102,3 +102,32 @@ def test_editor_darf_foerderer_und_kollaboration_nicht(client, editor):
     eingeloggt(client, 'editor_test', 'auch-geheim-123')
     assert client.get('/admin/foerderer').status_code == 403
     assert client.get('/admin/kollaboration/knoten/1').status_code == 403
+
+
+def test_login_fuehrt_zurueck_ins_mcc(client, superadmin):
+    """Vom Handy ist /admin gesperrt (Client-Zertifikat) -- nach dem Login zurueck zum Ziel."""
+    resp = client.get('/mcc/kontakte', follow_redirects=False)
+    assert resp.status_code == 302 and 'weiter=/mcc/kontakte' in resp.headers['Location']
+    resp = client.post('/login?weiter=/mcc/kontakte',
+                       data={'username': 'superadmin_test', 'password': 'sehr-geheim-123'})
+    assert resp.status_code == 302
+    assert resp.headers['Location'].endswith('/mcc/kontakte')
+
+
+def test_login_weiter_nur_eigene_pfade(client, superadmin):
+    for boese in ('https://evil.example', '//evil.example', '/news', '/mcc/../x', '/mcc' + chr(92) + 'x'):
+        client.get('/logout')
+        resp = client.post('/login', query_string={'weiter': boese},
+                           data={'username': 'superadmin_test', 'password': 'sehr-geheim-123'})
+        assert resp.headers['Location'].endswith('/admin'), boese
+
+
+def test_login_mit_2fa_behaelt_das_ziel(client, superadmin):
+    import pyotp
+    superadmin.totp_secret = pyotp.random_base32()
+    superadmin.totp_aktiviert = True
+    db.session.commit()
+    client.post('/login?weiter=/mcc', data={'username': 'superadmin_test', 'password': 'sehr-geheim-123'})
+    resp = client.post('/login/2fa', data={'code': pyotp.TOTP(superadmin.totp_secret).now()})
+    assert resp.status_code == 302
+    assert resp.headers['Location'].endswith('/mcc')

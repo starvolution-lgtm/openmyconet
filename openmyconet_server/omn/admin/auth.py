@@ -34,6 +34,23 @@ def _admin_session_setzen(user):
     session['admin_2fa_aktiv'] = bool(user.totp_aktiviert)
 
 
+def _sicheres_ziel(weiter):
+    """Ziel nach dem Login: nur eigene /mcc- und /admin-Pfade (kein offener Redirect).
+    Wichtig fuers Handy: /admin ist dort per Client-Zertifikat gesperrt, also muss
+    der Login zurueck ins MCC fuehren statt immer auf /admin."""
+    if not weiter or not isinstance(weiter, str) or len(weiter) > 200:
+        return None
+    if not (weiter == '/mcc' or weiter.startswith(('/mcc/', '/admin'))):
+        return None
+    if '//' in weiter or not all((c.isascii() and c.isalnum()) or c in '/-_' for c in weiter):
+        return None
+    return weiter
+
+
+def _standardziel(user):
+    return url_for('admin.admin' if user.role == 'superadmin' else 'admin.news_admin')
+
+
 def _code_normalisieren(roh):
     return re.sub(r'[\s-]', '', roh or '')
 
@@ -100,19 +117,22 @@ def login():
             return render_template('login.html', fehler='Zu viele Fehlversuche — bitte 15 Minuten warten.')
         user = AdminUser.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
+            # Das Formular postet an die eigene URL, ?weiter= bleibt also erhalten.
+            weiter = _sicheres_ziel(request.args.get('weiter'))
             if user.totp_aktiviert and user.totp_secret:
                 # Passwort ok -- aber noch kein Zugriff: erst der zweite Faktor.
                 session.clear()
                 session['2fa_pending_user_id'] = user.id
                 session['2fa_pending_seit'] = utcnow().isoformat()
+                if weiter:
+                    session['login_weiter'] = weiter
                 # CSRF-Token sofort neu in die (gerade geleerte) Session, damit
                 # es schon im Redirect-Cookie steckt und die 2FA-Seite es nicht
                 # erst per weiterem Set-Cookie nachreichen muss.
                 csrf_token()
                 return redirect(url_for('admin.login_2fa'))
             _admin_session_setzen(user)
-            ziel = 'admin.admin' if user.role == 'superadmin' else 'admin.news_admin'
-            return redirect(url_for(ziel))
+            return redirect(weiter or _standardziel(user))
         else:
             # Nur Fehlversuche zaehlen gegen das Rate-Limit. 8 Fehlversuche pro
             # 15 Minuten und IP bremsen Brute-Force, ohne legitime Vertipper zu
@@ -151,11 +171,11 @@ def login_2fa():
             fehler = 'Zu viele Fehlversuche — bitte 15 Minuten warten.'
         elif _zweiter_faktor_ok(user, code):
             db.session.commit()   # evtl. verbrauchten Recovery-Code speichern
+            weiter = _sicheres_ziel(session.get('login_weiter'))
             session.clear()
             csrf_token()           # frisches Token fuer die Folgeseiten
             _admin_session_setzen(user)
-            ziel = 'admin.admin' if user.role == 'superadmin' else 'admin.news_admin'
-            return redirect(url_for(ziel))
+            return redirect(weiter or _standardziel(user))
         else:
             fehler = 'Code stimmt nicht.'
     return render_template('login_2fa.html', fehler=fehler)

@@ -43,6 +43,11 @@ schuetze_blueprint(admin_bp)  # CSRF-Pruefung fuer alle POST-Routen des Admin-Pa
 _OHNE_2FA_ERLAUBT = {'admin.zwei_faktor', 'admin.logout'}
 
 
+def _zurueck_nach():
+    """Nur GET-Seiten als Ziel merken -- ein POST-Pfad als Ziel ergaebe nach dem Login 405."""
+    return request.path if request.method == 'GET' else None
+
+
 def _admin_pruefen():
     """None = Zugriff ok, sonst eine Antwort (Umleitung/Fehler).
 
@@ -51,12 +56,13 @@ def _admin_pruefen():
     Deshalb bei jeder Anfrage gegen die DB abgleichen und die Rolle von dort
     nehmen (nicht aus dem Cookie).
     """
+    # weiter= : nach dem Login zurueck hierher (vom Handy aus also ins MCC, nicht nach /admin)
     if not session.get('admin_logged_in'):
-        return redirect(url_for('admin.login'))
+        return redirect(url_for('admin.login', weiter=_zurueck_nach()))
     user = db.session.get(AdminUser, session.get('admin_user_id'))
     if user is None:
         session.clear()
-        return redirect(url_for('admin.login'))
+        return redirect(url_for('admin.login', weiter=_zurueck_nach()))
     session['admin_role'] = user.role
     session['admin_2fa_aktiv'] = bool(user.totp_aktiviert)
     if (current_app.config.get('ADMIN_2FA_ERZWINGEN', True) and user.role == 'superadmin'

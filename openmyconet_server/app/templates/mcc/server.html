@@ -24,11 +24,11 @@
 <section class="mcc-karte kz-aktionen">
   <h2 class="mcc-h2">Datensicherung</h2>
   <div class="mcc-knoepfe">
-    <form method="post" action="{{ url_for('admin.backup_jetzt') }}" data-rueckfrage="Jetzt ein Datenbank-Backup anlegen? Dauert bis zu einer Minute.">
+    <form method="post" action="{{ url_for('mcc.backup_jetzt') }}" data-rueckfrage="Jetzt ein Datenbank-Backup anlegen? Dauert bis zu einer Minute.">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <button class="mcc-btn">💾 Backup jetzt</button>
     </form>
-    <form method="post" action="{{ url_for('admin.backup_restore_check') }}" data-rueckfrage="Jetzt prüfen, ob sich das neueste Backup wiederherstellen lässt? Dauert bis zu einer Minute.">
+    <form method="post" action="{{ url_for('mcc.backup_restore_check') }}" data-rueckfrage="Jetzt prüfen, ob sich das neueste Backup wiederherstellen lässt? Dauert bis zu einer Minute.">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <button class="mcc-btn">🔁 Restore-Check jetzt</button>
     </form>

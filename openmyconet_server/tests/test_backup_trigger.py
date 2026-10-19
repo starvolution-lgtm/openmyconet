@@ -52,10 +52,10 @@ def test_check_backup_leer_ist_fehler(monkeypatch, tmp_path):
 # --- Trigger-Routen ---
 
 def test_backup_jetzt_nur_superadmin(client, editor):
-    r = client.post('/admin/backup/jetzt', follow_redirects=False)
+    r = client.post('/mcc/backup/jetzt', follow_redirects=False)
     assert r.status_code == 302  # nicht eingeloggt -> login
     eingeloggt(client, 'editor_test', 'auch-geheim-123')
-    r = client.post('/admin/backup/jetzt', follow_redirects=False)
+    r = client.post('/mcc/backup/jetzt', follow_redirects=False)
     assert r.status_code == 403
 
 
@@ -70,7 +70,7 @@ def test_backup_jetzt_ruft_skript_und_flasht(client, superadmin, monkeypatch):
     monkeypatch.setattr('os.path.isfile', lambda p: True)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    r = client.post('/admin/backup/jetzt', follow_redirects=True)
+    r = client.post('/mcc/backup/jetzt', follow_redirects=True)
     assert r.status_code == 200
     assert aufrufe and aufrufe[0][0] == '/bin/bash'
     assert 'backup_db.sh' in aufrufe[0][1]
@@ -85,5 +85,5 @@ def test_restore_check_route_meldet_fehlercode(client, superadmin, monkeypatch):
     monkeypatch.setattr('os.path.isfile', lambda p: True)
 
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    r = client.post('/admin/backup/restore-check', follow_redirects=True)
+    r = client.post('/mcc/backup/restore-check', follow_redirects=True)
     assert 'Restore-Check FEHLGESCHLAGEN' in r.get_data(as_text=True)

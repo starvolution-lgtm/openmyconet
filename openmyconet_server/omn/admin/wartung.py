@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import current_app, flash, render_template, request
 
 from omn.admin.core import admin_bp, role_required
 from omn.models import ChatLog, Fehlerprotokoll
@@ -37,18 +37,8 @@ def _backup_skript_laufen_lassen(skript, label):
         flash(f'{label}: {e}', 'error')
 
 
-@admin_bp.route('/admin/backup/jetzt', methods=['POST'])
-@role_required('superadmin')
-def backup_jetzt():
-    _backup_skript_laufen_lassen('backup_db.sh', 'DB-Backup')
-    return redirect(url_for('mcc.server', refresh=1))
-
-
-@admin_bp.route('/admin/backup/restore-check', methods=['POST'])
-@role_required('superadmin')
-def backup_restore_check():
-    _backup_skript_laufen_lassen('restore_check.sh', 'Restore-Check')
-    return redirect(url_for('mcc.server', refresh=1))
+# Die Knoepfe dazu liegen seit 19.10.2026 im Server-MCC (/mcc/backup/..., omn/mcc/server.py):
+# /admin ist per Client-Zertifikat auf den PC zu Hause beschraenkt, das MCC auch vom Handy erreichbar.
 
 
 # --- Chat-Logs ---
