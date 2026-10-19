@@ -12,11 +12,12 @@ from datetime import timedelta
 
 import bleach
 from flask import Response, current_app, g, render_template, request, url_for
+from markupsafe import escape
 
 from omn import zeit
 from omn.extensions import db
 from omn.models import ContentBlock, Knoten, Messung, News, Nutzer, Spende
-from omn.registrierung import register_nutzer_core
+from omn.registrierung import FEHLER_BEREITS_REGISTRIERT, register_nutzer_core
 
 NEWS_PRO_SEITE = 12
 
@@ -68,8 +69,8 @@ _CSP = (
     # __CSP_NONCE__ wird in _sicherheits_header pro Response durch g.csp_nonce
     # ersetzt. Kein 'unsafe-inline' -- Inline-<script> nur mit Nonce.
     f"script-src 'self' 'nonce-__CSP_NONCE__' {_EIGENE_DOMAINS}; "
-    f"style-src 'self' {_EIGENE_DOMAINS} https://fonts.googleapis.com; "
-    f"font-src 'self' {_EIGENE_DOMAINS} https://fonts.gstatic.com; "
+    f"style-src 'self' {_EIGENE_DOMAINS}; "
+    f"font-src 'self' {_EIGENE_DOMAINS}; "
     f"img-src 'self' data: {_EIGENE_DOMAINS} https://*.tile.openstreetmap.org; "
     f"media-src 'self' {_EIGENE_DOMAINS}; "
     # tile.openstreetmap.org auch hier: der Service Worker leitet Ressourcen per
@@ -175,7 +176,11 @@ def neuen_nutzer_registrieren():
         gruppe = request.form.get('gruppe', 'allgemein')
 
         nutzer, fehler = register_nutzer_core(name, email, sprache, land, gruppe, ip=request.remote_addr)
-        if nutzer:
+        if fehler == FEHLER_BEREITS_REGISTRIERT:
+            # Keine Auskunft, ob die Adresse schon existiert (siehe api_register).
+            fehler = None
+            nachricht = 'Danke! Falls diese Adresse neu ist, haben wir eine Bestätigungsmail geschickt.'
+        elif nutzer:
             nachricht = f'Danke {name}! Wir haben dir eine Bestätigungsmail geschickt.'
 
     return render_template('register.html', nachricht=nachricht, fehler=fehler)
@@ -189,7 +194,9 @@ def confirm(token):
         return 'Diese E-Mail-Adresse wurde bereits bestätigt.'
     nutzer.bestaetigt = True
     db.session.commit()
-    return f'Hallo {nutzer.name}, deine Registrierung ist jetzt bestätigt. Willkommen bei OpenMycoNet!'
+    # Der Name stammt aus dem oeffentlichen Formular -> escapen (sonst HTML-Injection
+    # in eine Seite auf api.openmyconet.de).
+    return f'Hallo {escape(nutzer.name)}, deine Registrierung ist jetzt bestätigt. Willkommen bei OpenMycoNet!'
 
 
 def abmelden(token):

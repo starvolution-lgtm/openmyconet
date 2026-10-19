@@ -15,7 +15,7 @@ from omn.admin.core import admin_bp, login_required
 from omn.csrf import csrf_token
 from omn.extensions import db
 from omn.models import AdminUser
-from omn.spam_schutz import ip_erlaubt
+from omn.spam_schutz import ip_erlaubt, ip_gesperrt
 from omn.zeit import utcnow
 
 TOTP_ISSUER = 'OpenMycoNet Admin'
@@ -26,6 +26,7 @@ LOGIN_2FA_FRIST = timedelta(minutes=10)
 
 def _admin_session_setzen(user):
     """Volle Admin-Session aufbauen (nach Passwort + ggf. 2FA)."""
+    session.permanent = True   # Laufzeit = PERMANENT_SESSION_LIFETIME (Config)
     session['admin_logged_in'] = True
     session['admin_user_id'] = user.id
     session['admin_username'] = user.username
@@ -93,6 +94,10 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
+        # Sperre VOR der Passwortpruefung: sonst bremst das Limit nur die
+        # Fehlermeldung, ein erratenes Passwort kaeme trotzdem durch.
+        if ip_gesperrt(request.remote_addr, 'admin_login', limit=8, window=900):
+            return render_template('login.html', fehler='Zu viele Fehlversuche — bitte 15 Minuten warten.')
         user = AdminUser.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
             if user.totp_aktiviert and user.totp_secret:
@@ -109,9 +114,9 @@ def login():
             ziel = 'admin.admin' if user.role == 'superadmin' else 'admin.news_admin'
             return redirect(url_for(ziel))
         else:
-            # Nur Fehlversuche zaehlen gegen das Rate-Limit -- ein erfolgreicher
-            # Login wird nie blockiert. 8 Fehlversuche pro 15 Minuten und IP
-            # bremsen Brute-Force, ohne legitime Vertipper zu bestrafen.
+            # Nur Fehlversuche zaehlen gegen das Rate-Limit. 8 Fehlversuche pro
+            # 15 Minuten und IP bremsen Brute-Force, ohne legitime Vertipper zu
+            # bestrafen; die Sperre selbst greift oben vor der Pruefung.
             if not ip_erlaubt(request.remote_addr, 'admin_login', limit=8, window=900):
                 fehler = 'Zu viele Fehlversuche — bitte 15 Minuten warten.'
             else:

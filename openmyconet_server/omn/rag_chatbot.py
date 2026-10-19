@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # Anthropic-API-Call aus und ist bewusst ohne Login erreichbar -- ohne Limit kann
 # ein Skript beliebig viele Anfragen absetzen (API-Rechnung). 20 Anfragen pro
 # Stunde und IP reichen fuer eine echte Unterhaltung locker aus.
+MAX_NACHRICHT_ZEICHEN = 2000
 CHAT_LIMIT = 20
 CHAT_WINDOW = 3600
 
@@ -293,12 +294,21 @@ def chat():
         data = request.get_json(force=True)
     except Exception:
         return jsonify({"error": "Ungültiges JSON"}), 400
+    if not isinstance(data, dict):
+        return jsonify({"error": "Ungültiges JSON"}), 400
 
-    message = (data.get("message") or "").strip()
-    history = data.get("history") or []
+    message = data.get("message")
+    message = message.strip() if isinstance(message, str) else ""
+    history = data.get("history")
+    if not isinstance(history, list):
+        history = []
 
     if not message:
         return jsonify({"error": "Kein Text übermittelt"}), 400
+    # Jeder Aufruf kostet API-Geld: ohne Grenzen koennte ein Request mit mehreren
+    # MB Text (bis MAX_CONTENT_LENGTH) ein Vielfaches eines normalen Aufrufs kosten.
+    if len(message) > MAX_NACHRICHT_ZEICHEN:
+        return jsonify({"error": f"Nachricht zu lang (höchstens {MAX_NACHRICHT_ZEICHEN} Zeichen)."}), 400
 
     if not ip_erlaubt(request.remote_addr, "chat", limit=CHAT_LIMIT, window=CHAT_WINDOW):
         return jsonify({"error": "Zu viele Anfragen — bitte in einer Stunde erneut versuchen."}), 429
@@ -316,9 +326,10 @@ def chat():
 
     # Gesprächsverlauf bereinigen (max. 10 Turns, nur user/assistant)
     clean_history = [
-        {"role": m["role"], "content": m["content"]}
+        {"role": m["role"], "content": m["content"][:MAX_NACHRICHT_ZEICHEN]}
         for m in history[-10:]
-        if m.get("role") in ("user", "assistant") and m.get("content")
+        if isinstance(m, dict) and m.get("role") in ("user", "assistant")
+        and isinstance(m.get("content"), str) and m["content"]
     ]
     clean_history.append({"role": "user", "content": message})
 
@@ -336,8 +347,9 @@ def chat():
         logger.error("ANTHROPIC_API_KEY nicht gesetzt")
         return jsonify({"error": "API-Key fehlt (ANTHROPIC_API_KEY nicht konfiguriert)"}), 500
     except anthropic.APIError as e:
+        # Details nur ins Log, nicht an den Besucher (koennen Konto-/Modelldaten enthalten).
         logger.error("Anthropic API-Fehler: %s", e)
-        return jsonify({"error": f"API-Fehler: {e}"}), 502
+        return jsonify({"error": "Der Assistent ist gerade nicht erreichbar — bitte später erneut versuchen."}), 502
 
     try:
         db.session.add(ChatLog(

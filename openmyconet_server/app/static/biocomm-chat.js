@@ -284,7 +284,8 @@
     bub.className = "omn-bubble";
     // URLs in klickbare Links umwandeln (nur für Bot-Nachrichten)
     if (role === "bot") {
-      const escaped = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      const escaped = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
       // URLs als klickbare Links
       let linked = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener" class="omn-link">$1</a>');
       // E-Mail-Adressen als mailto-Links

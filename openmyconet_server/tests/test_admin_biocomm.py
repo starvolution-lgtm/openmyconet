@@ -46,15 +46,15 @@ def test_rasterfeld_ausserhalb(breite, laenge):
 def test_nur_superadmin(app, client, editor):
     assert client.get(URL).status_code == 302                      # nicht angemeldet -> Login
     with client.session_transaction() as s:
-        s['admin_logged_in'], s['admin_role'] = True, 'editor'
+        s['admin_logged_in'], s['admin_user_id'], s['admin_role'] = True, editor.id, 'editor'
     assert client.get(URL).status_code == 403
 
 
-def test_ohne_postgresql_hinweis(app, client):
+def test_ohne_postgresql_hinweis(app, client, superadmin):
     if app.extensions['sqlalchemy'].engines[None].dialect.name == 'postgresql':
         pytest.skip('nur ohne PostgreSQL')
     with client.session_transaction() as s:
-        s['admin_logged_in'], s['admin_role'] = True, 'superadmin'
+        s['admin_logged_in'], s['admin_user_id'], s['admin_role'] = True, superadmin.id, 'superadmin'
     r = client.get(URL)
     assert r.status_code == 200 and 'nur auf PostgreSQL' in r.get_data(as_text=True)
 
@@ -63,9 +63,21 @@ def test_ohne_postgresql_hinweis(app, client):
 # Masken (PostgreSQL)
 # ---------------------------------------------------------------------------
 def _admin(app):
+    # Die Admin-Pruefung gleicht die Session gegen die DB ab -> es braucht ein echtes Konto.
+    from werkzeug.security import generate_password_hash
+
+    from omn.models import AdminUser
+    with app.app_context():
+        user = AdminUser.query.filter_by(username='robby').first()
+        if user is None:
+            user = AdminUser(username='robby', password_hash=generate_password_hash('x'), role='superadmin')
+            db.session.add(user)
+            db.session.commit()
+        user_id = user.id
     c = app.test_client()
     with c.session_transaction() as s:
-        s['admin_logged_in'], s['admin_role'], s['admin_username'] = True, 'superadmin', 'robby'
+        s['admin_logged_in'], s['admin_user_id'] = True, user_id
+        s['admin_role'], s['admin_username'] = 'superadmin', 'robby'
     return c
 
 

@@ -6,7 +6,7 @@
 
 target-version = "py311"
 line-length = 120
-extend-exclude = ["venv", "instance", "dist", "app/static", ".pytest_cache", "scratchpad"]
+extend-exclude = ["venv", "instance", "dist", "app/static", "tools", ".pytest_cache", "scratchpad"]
 
 [lint]
 # F  = pyflakes (echte Bugs: ungenutzte Importe/Variablen, doppelte Dict-Keys ...)

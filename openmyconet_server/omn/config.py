@@ -11,6 +11,7 @@ schon der Import dieser Datei -- sonst kann pytest die Config-Klasse nicht mal
 importieren, wenn SECRET_KEY fehlt).
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -60,6 +61,13 @@ class Config:
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
+    # __Host-: der Browser nimmt das Cookie nur mit Secure, Pfad / und ohne
+    # Domain-Attribut an -- ein Cookie von einer Subdomain kann es nicht ueberschreiben.
+    SESSION_COOKIE_NAME = '__Host-session'
+    # Admin-Login: Cookie wird bei jeder Anfrage erneuert -> 8 Stunden Leerlauf.
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
+    # Superadmin ohne aktive 2FA wird auf die Einrichtungsseite umgeleitet.
+    ADMIN_2FA_ERZWINGEN = True
 
     # 12 MB Gesamt-Request. Handy-Fotos (News-Bild) sind oft 4-8 MB; die werden
     # serverseitig auf 1600 px verkleinert + nach WebP konvertiert
@@ -108,6 +116,9 @@ class TestConfig(Config):
     # CSRF-Schutz (csrf.py) fuer die meisten Tests aus -- die POST-Requests der
     # Test-Clients schicken kein Token mit. test_csrf.py schaltet ihn gezielt an.
     CSRF_ENABLED = False
+    # Die meisten Tests melden einen Superadmin ohne 2FA an; test_admin_auth.py
+    # schaltet die Pflicht gezielt an.
+    ADMIN_2FA_ERZWINGEN = False
     # Flask-Mail 0.10 friert MAIL_SUPPRESS_SEND / MAIL_DEFAULT_SENDER bei
     # init_app ein. Weil create_app(TestConfig) init_app NACH from_object ruft,
     # genuegen jetzt diese beiden Werte -- die alten extensions['mail']-Hacks im

@@ -120,7 +120,7 @@ def test_ipn_setzt_zahlung_eingegangen_statt_sofort_aktiv(client, app, monkeypat
     with mail.record_messages() as ausgehend:
         resp = client.post('/foerderer/ipn', data={
             'payment_status': 'Completed', 'receiver_email': 'verkaeufer@example.com',
-            'custom': 'test-token-123', 'txn_id': 'TXN123', 'mc_gross': '100.00',
+            'custom': 'test-token-123', 'txn_id': 'TXN123', 'mc_gross': '100.00', 'mc_currency': 'EUR',
         })
     assert resp.status_code == 200
 
@@ -148,7 +148,7 @@ def test_ipn_receiver_email_mismatch_bleibt_pending(client, app, monkeypatch):
 
     resp = client.post('/foerderer/ipn', data={
         'payment_status': 'Completed', 'receiver_email': 'falsche-adresse@example.com',
-        'custom': 'test-token-456', 'txn_id': 'TXN999', 'mc_gross': '100.00',
+        'custom': 'test-token-456', 'txn_id': 'TXN999', 'mc_gross': '100.00', 'mc_currency': 'EUR',
     })
     assert resp.status_code == 200
 
@@ -160,3 +160,40 @@ def test_rechnung_download_falscher_token_403(client, app):
     _pending_foerderer(app, token='test-token-789', status='active', rechnung_nr='OMN-2026-0001')
     resp = client.get('/foerderer/rechnung', query_string={'nr': 'OMN-2026-0001', 'token': 'falscher-token'})
     assert resp.status_code == 403
+
+
+def _ipn_senden(client, monkeypatch, token, **felder):
+    monkeypatch.setenv('PAYPAL_EMAIL', 'verkaeufer@example.com')
+    monkeypatch.setattr('omn.foerderer.requests.post', lambda *a, **kw: _GefaelschteVerifyResponse('VERIFIED'))
+    daten = {'payment_status': 'Completed', 'receiver_email': 'verkaeufer@example.com',
+             'custom': token, 'txn_id': 'TXN-X', 'mc_gross': '100.00', 'mc_currency': 'EUR'}
+    daten.update(felder)
+    return client.post('/foerderer/ipn', data=daten)
+
+
+def test_ipn_zu_geringer_betrag_bleibt_pending(client, app, monkeypatch):
+    """Der Betrag steht in der PayPal-Weiterleitung und ist im Browser aenderbar."""
+    foerderer_id = _pending_foerderer(app, token='tok-betrag', betrag=100.0)
+    assert _ipn_senden(client, monkeypatch, 'tok-betrag', mc_gross='1.00').status_code == 200
+    with app.app_context():
+        f = Foerderer.query.get(foerderer_id)
+        assert f.status == 'pending'
+        assert not f.rechnung_nr
+
+
+def test_ipn_falsche_waehrung_bleibt_pending(client, app, monkeypatch):
+    foerderer_id = _pending_foerderer(app, token='tok-waehrung', betrag=100.0)
+    assert _ipn_senden(client, monkeypatch, 'tok-waehrung', mc_currency='JPY').status_code == 200
+    with app.app_context():
+        assert Foerderer.query.get(foerderer_id).status == 'pending'
+
+
+def test_checkout_ohne_vorschau_wird_geprueft(client, app):
+    """Der Checkout-POST laesst sich direkt abschicken -- Betrag/Felder muessen auch dort stimmen."""
+    for abweichung in ({'betrag': '1'}, {'betrag': 'nan'}, {'betrag': 'inf'}, {'firma': 'x'},
+                       {'email': 'keine-mail'}, {'logo_datei': '../../etc/passwd'}):
+        daten = {**GUELTIGE_ANTRAG_DATEN, 'action': 'checkout', 'logo_datei': '', **abweichung}
+        resp = client.post('/foerderer/antrag', data=daten, follow_redirects=False)
+        assert resp.status_code == 200, abweichung
+    with app.app_context():
+        assert Foerderer.query.count() == 0

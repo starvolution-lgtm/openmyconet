@@ -6,9 +6,11 @@ und haengen ihre Routen daran; `omn/admin/__init__.py` laedt sie alle.
 """
 from functools import wraps
 
-from flask import Blueprint, redirect, request, session, url_for
+from flask import Blueprint, current_app, flash, redirect, request, session, url_for
 
 from omn.csrf import schuetze_blueprint
+from omn.extensions import db
+from omn.models import AdminUser
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -36,11 +38,40 @@ schuetze_blueprint(admin_bp)  # CSRF-Pruefung fuer alle POST-Routen des Admin-Pa
 
 # --- geteilte Decorators ---
 
+# Seiten, die auch ein Superadmin OHNE aktive 2FA erreichen muss (Einrichtung
+# der 2FA selbst, Abmelden) -- sonst sperrt die Pflicht ihn aus.
+_OHNE_2FA_ERLAUBT = {'admin.zwei_faktor', 'admin.logout'}
+
+
+def _admin_pruefen():
+    """None = Zugriff ok, sonst eine Antwort (Umleitung/Fehler).
+
+    Die Session ist ein signiertes Cookie -- ohne diese Pruefung bliebe ein
+    geloeschtes oder herabgestuftes Konto bis zum Ablauf des Cookies gueltig.
+    Deshalb bei jeder Anfrage gegen die DB abgleichen und die Rolle von dort
+    nehmen (nicht aus dem Cookie).
+    """
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin.login'))
+    user = db.session.get(AdminUser, session.get('admin_user_id'))
+    if user is None:
+        session.clear()
+        return redirect(url_for('admin.login'))
+    session['admin_role'] = user.role
+    session['admin_2fa_aktiv'] = bool(user.totp_aktiviert)
+    if (current_app.config.get('ADMIN_2FA_ERZWINGEN', True) and user.role == 'superadmin'
+            and not user.totp_aktiviert and request.endpoint not in _OHNE_2FA_ERLAUBT):
+        flash('Für den Superadmin ist die Zwei-Faktor-Anmeldung Pflicht — bitte jetzt einrichten.', 'error')
+        return redirect(url_for('admin.zwei_faktor'))
+    return None
+
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get('admin_logged_in'):
-            return redirect(url_for('admin.login'))
+        abbruch = _admin_pruefen()
+        if abbruch is not None:
+            return abbruch
         return f(*args, **kwargs)
     return decorated
 
@@ -49,8 +80,9 @@ def role_required(*roles):
     def decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
-            if not session.get('admin_logged_in'):
-                return redirect(url_for('admin.login'))
+            abbruch = _admin_pruefen()
+            if abbruch is not None:
+                return abbruch
             if session.get('admin_role') not in roles:
                 return 'Kein Zugriff — diese Seite ist dem Superadmin vorbehalten.', 403
             return f(*args, **kwargs)

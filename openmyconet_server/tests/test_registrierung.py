@@ -22,11 +22,17 @@ def test_registrierung_erfolgreich(client, app):
     assert nutzer.token in ausgehend[0].body
 
 
-def test_registrierung_doppelte_email_abgelehnt(client):
+def test_registrierung_doppelte_email_ohne_auskunft(client, app):
+    """Keine Auskunft, ob eine Adresse schon registriert ist (sonst Abfrage fremder Adressen)."""
     client.post('/api/register', data={'name': 'A', 'email': 'doppelt@example.com'})
-    resp = client.post('/api/register', data={'name': 'B', 'email': 'doppelt@example.com'})
-    assert resp.status_code == 400
-    assert 'bereits registriert' in resp.get_json()['error']
+    with mail.record_messages() as ausgehend:
+        resp = client.post('/api/register', data={'name': 'B', 'email': 'doppelt@example.com'})
+    assert resp.status_code == 200
+    assert resp.get_json() == {'ok': True}
+    assert ausgehend == []
+    with app.app_context():
+        assert Nutzer.query.filter_by(email='doppelt@example.com').count() == 1
+        assert Nutzer.query.filter_by(email='doppelt@example.com').first().name == 'A'
 
 
 def test_registrierung_ohne_email_400(client):
@@ -112,15 +118,15 @@ def test_erneute_registrierung_ohne_haekchen_bleibt_abgelehnt(client, app):
     client.post('/api/register', data={'name': 'A', 'email': 'nochmal@example.com'})
     with mail.record_messages() as ausgehend:
         resp = client.post('/api/register', data={'name': 'A', 'email': 'nochmal@example.com'})
-    assert resp.status_code == 400
+    assert resp.status_code == 200
     assert ausgehend == []
 
 
 def test_erneute_registrierung_schon_angemeldet_bleibt_abgelehnt(client):
     client.post('/api/register', data={'name': 'A', 'email': 'dabei@example.com', 'newsletter': 'on'})
     resp = client.post('/api/register', data={'name': 'A', 'email': 'dabei@example.com', 'newsletter': 'on'})
-    assert resp.status_code == 400
-    assert 'bereits registriert' in resp.get_json()['error']
+    assert resp.status_code == 200
+    assert resp.get_json() == {'ok': True}
 
 
 def test_einwilligen_get_fragt_nur_post_willigt_ein(client, app):
@@ -216,3 +222,22 @@ def test_einwilligung_anfragen_bestand(app):
         r = runner.invoke(args=['einwilligung-anfragen', '--ausfuehren'])
     assert '0 ohne dokumentierte Einwilligung' in r.output
     assert ausgehend == []
+
+
+def test_confirm_escaped_den_namen(client, app):
+    """Der Name stammt aus dem oeffentlichen Formular -- kein HTML in der Bestaetigungsseite."""
+    client.post('/api/register', data={'name': '<meta http-equiv="refresh" content="0;url=https://evil.example">',
+                                       'email': 'xss@example.com'})
+    with app.app_context():
+        token = Nutzer.query.filter_by(email='xss@example.com').first().token
+    html = client.get(f'/confirm/{token}').get_data(as_text=True)
+    assert '<meta' not in html
+    assert '&lt;meta' in html
+
+
+def test_name_wird_begrenzt_und_ohne_zeilenumbrueche_gespeichert(client, app):
+    client.post('/api/register', data={'name': 'Anna\r\nBcc: x@evil.example ' + 'y' * 300, 'email': 'lang@example.com'})
+    with app.app_context():
+        name = Nutzer.query.filter_by(email='lang@example.com').first().name
+    assert len(name) <= 100
+    assert '\n' not in name and '\r' not in name

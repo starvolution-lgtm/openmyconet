@@ -6,6 +6,7 @@ app.register_blueprint(registrierung_bp)
 
 import logging
 import os
+import re
 import secrets
 from datetime import timedelta
 
@@ -20,6 +21,9 @@ from omn.zeit import utcnow
 logger = logging.getLogger(__name__)
 
 registrierung_bp = Blueprint("registrierung", __name__)
+
+NAME_MAX_LAENGE = 100   # wie Nutzer.name
+FEHLER_BEREITS_REGISTRIERT = 'Diese E-Mail ist bereits registriert.'
 
 
 def register_nutzer_core(name, email, sprache, land, gruppe, ip=None, rollback_on_mail_fail=True,
@@ -44,8 +48,10 @@ def register_nutzer_core(name, email, sprache, land, gruppe, ip=None, rollback_o
     bleibt bestehen (unbestätigt) auch wenn die Mail fehlschlägt, der Fehler wird nur
     geloggt, (nutzer, fehlertext) wird zurückgegeben.
     """
+    # Name landet in Mails mit unserem Absender: Zeilenumbrueche raus, Laenge begrenzen.
+    name = re.sub(r'\s+', ' ', name or '').strip()[:NAME_MAX_LAENGE]
     if Nutzer.query.filter_by(email=email).first():
-        return None, 'Diese E-Mail ist bereits registriert.'
+        return None, FEHLER_BEREITS_REGISTRIERT
 
     token = secrets.token_urlsafe(32)
     nutzer = Nutzer(
@@ -201,6 +207,11 @@ def api_register():
         if fehler:
             return jsonify({"error": fehler}), 400
         return jsonify({"ok": True, "einwilligung_angefragt": True})
+
+    if vorhanden:
+        # Keine Auskunft, ob die Adresse schon registriert ist (sonst laesst sich
+        # das Formular als Abfrage fuer fremde Adressen missbrauchen).
+        return jsonify({"ok": True})
 
     _nutzer, fehler = register_nutzer_core(
         name, email, sprache, land, gruppe, ip=ip, newsletter=newsletter,

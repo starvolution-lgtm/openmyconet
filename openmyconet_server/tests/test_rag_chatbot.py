@@ -52,3 +52,37 @@ def test_mycorrhiza_lateinische_schreibweise_matcht_mykorrhiza_chunk():
 def test_co2_abkuerzung_wird_zu_kohlenstoff_normalisiert():
     ergebnis = find_chunks('wo finde ich Studien zu Mycorrhiza und CO2', 'de', top_k=5)
     assert any(c['slug'] == 'mykorrhiza-grundlagen' for c in ergebnis)
+
+
+class _FakeAntwort:
+    content = [type('T', (), {'text': 'Antwort'})()]
+
+
+class _FakeClient:
+    def __init__(self, **kw):
+        self.messages = self
+
+    def create(self, **kw):
+        _FakeClient.letzter_aufruf = kw
+        return _FakeAntwort()
+
+
+def test_chat_zu_lange_nachricht_wird_abgewiesen(client):
+    resp = client.post('/api/chat', json={'message': 'x' * 5000})
+    assert resp.status_code == 400
+
+
+def test_chat_ungueltiger_verlauf_fuehrt_nicht_zu_500(client, monkeypatch):
+    monkeypatch.setenv('ANTHROPIC_API_KEY', 'test')
+    monkeypatch.setattr('omn.rag_chatbot.anthropic.Anthropic', _FakeClient)
+    verlauf = ['kein objekt', 5, None, {'role': 'user', 'content': 7}, {'role': 'system', 'content': 'x'},
+               {'role': 'user', 'content': 'a' * 5000}]
+    resp = client.post('/api/chat', json={'message': 'Was ist OpenMycoNet?', 'history': verlauf})
+    assert resp.status_code == 200
+    gesendet = _FakeClient.letzter_aufruf['messages']
+    assert all(len(m['content']) <= 2000 for m in gesendet)
+    assert [m['role'] for m in gesendet] == ['user', 'user']   # nur der gueltige Verlaufseintrag + die Frage
+
+
+def test_chat_json_kein_objekt_400(client):
+    assert client.post('/api/chat', json=['x']).status_code == 400

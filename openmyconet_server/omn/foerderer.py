@@ -61,11 +61,32 @@ MAX_LOGO_DIMENSION = 4000  # px, nur fuer Raster-Formate -- verhindert ueberdime
 LIVE_FOERDERER_URL = 'https://www.openmyconet.de/foerderer.html'
 
 
+MIN_BETRAG = 50
+MAX_BETRAG = 10000
+# Dateiname einer Vorschau-Datei (siehe antrag(), action 'preview')
+_LOGO_VORSCHAU = re.compile(r'prev_[0-9a-f]{32}\.(?:jpg|jpeg|png|webp|svg|gif)')
+
+
 def _parse_float(value, default):
     try:
         return float(value)
     except (TypeError, ValueError):
         return default
+
+
+def _antrag_pruefen(data):
+    """Fehlertexte fuer die Felder eines Foerderer-Antrags (Vorschau UND Checkout).
+    `not (a <= x <= b)` statt `x < a`: so faellt auch NaN durch."""
+    fehler = []
+    if len(data['firma']) < 2:
+        fehler.append('Firmenname ist zu kurz.')
+    if len(data['beschreibung']) < 20:
+        fehler.append('Beschreibung zu kurz (min. 20 Zeichen).')
+    if not _email_gueltig(data['email']):
+        fehler.append('E-Mail-Adresse ungültig.')
+    if not (MIN_BETRAG <= data['betrag'] <= MAX_BETRAG):
+        fehler.append(f'Der Betrag muss zwischen {MIN_BETRAG} € und {MAX_BETRAG} € liegen.')
+    return fehler
 
 
 def _email_gueltig(email):
@@ -204,14 +225,7 @@ def antrag():
             'email': (request.form.get('email') or '').strip(),
             'betrag': _parse_float(request.form.get('betrag'), 50),
         }
-        if len(data['firma']) < 2:
-            fehler.append('Firmenname ist zu kurz.')
-        if len(data['beschreibung']) < 20:
-            fehler.append('Beschreibung zu kurz (min. 20 Zeichen).')
-        if not _email_gueltig(data['email']):
-            fehler.append('E-Mail-Adresse ungültig.')
-        if data['betrag'] < 50:
-            fehler.append('Mindestbetrag ist 50 €.')
+        fehler.extend(_antrag_pruefen(data))
 
         logo_datei = ''
         logo_file = request.files.get('logo')
@@ -251,6 +265,16 @@ def antrag():
             'betrag': _parse_float(request.form.get('betrag'), 50),
             'logo': (request.form.get('logo_datei') or '').strip(),
         }
+        # Der Checkout-POST laesst sich ohne die Vorschau direkt abschicken --
+        # deshalb hier dieselben Pruefungen wie dort, nicht dem Formular vertrauen.
+        fehler.extend(_antrag_pruefen(data))
+        if data['logo'] and not _LOGO_VORSCHAU.fullmatch(data['logo']):
+            fehler.append('Logo: ungültige Angabe — bitte die Vorschau neu erzeugen.')
+        if fehler:
+            return render_template(
+                'site/foerderer_antrag.html', fehler=fehler, preview=False, data=data,
+                betrag_optionen=BETRAG_OPTIONEN, kategorien=KATEGORIEN, current_page='foerderer',
+            )
 
         token = secrets.token_hex(32)
         laeuft_ab = (utcnow() + timedelta(days=365)).date()
@@ -498,6 +522,16 @@ def ipn():
     foerderer = Foerderer.query.filter_by(token=token, status='pending').first()
     if not foerderer:
         return '', 200  # bereits verarbeitet oder ungültig
+
+    # Der Betrag steht in der PayPal-Weiterleitung und ist im Browser aenderbar:
+    # nur eine Zahlung in der angeforderten Hoehe und Waehrung zaehlt. Sonst
+    # bliebe der Eintrag 'pending'; die Zahlung ist dann nur bei PayPal sichtbar
+    # und muss von Hand geprueft werden (daher ERROR im Log).
+    waehrung = request.form.get('mc_currency', '')
+    if waehrung != 'EUR' or betrag < (foerderer.betrag or MIN_BETRAG) - 0.005:
+        logger.error("PayPal-IPN: Zahlung passt nicht zum Antrag (Foerderer %s, erwartet %s EUR, erhalten %s %s, txn %s)",
+                     foerderer.id, foerderer.betrag, betrag, waehrung, txn_id)
+        return '', 200
 
     rechnung_nr = _naechste_rechnung_nr()
     # Zahlung ist eingegangen, aber der Eintrag geht NICHT automatisch live --

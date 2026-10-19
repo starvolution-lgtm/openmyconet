@@ -1,7 +1,7 @@
 """Verwaltung der Bewerbungen und der Foerderer-/Kooperations-Eintraege."""
 from flask import render_template, request
 
-from omn.admin.core import admin_bp, login_required, role_required
+from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 from omn.models import Bewerbung, Foerderer, Knoten
 from omn.roles import hyphist_setzen, nutzer_finden_oder_anlegen, sporist_setzen
@@ -49,7 +49,7 @@ def bewerbungen_admin():
 # --- Förderer/Kooperationen ---
 
 @admin_bp.route('/admin/foerderer', methods=['GET', 'POST'])
-@login_required
+@role_required('superadmin')
 def foerderer_admin():
     nachricht = None
     fehler = None

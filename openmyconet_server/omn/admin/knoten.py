@@ -8,7 +8,7 @@ import secrets
 from flask import abort, render_template, request, send_file
 
 from omn import kollaboration
-from omn.admin.core import admin_bp, login_required, role_required
+from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 from omn.models import Foerderer, KollaborationAnhang, Knoten, Nutzer
 
@@ -66,7 +66,7 @@ def knoten_admin():
 # (modus 'technisch'). POST-Logik gemeinsam in kollaboration.post_verarbeiten().
 
 @admin_bp.route('/admin/kollaboration/foerderer/<int:foerderer_id>', methods=['GET', 'POST'])
-@login_required
+@role_required('superadmin')
 def kollaboration_foerderer(foerderer_id):
     koop = Foerderer.query.get_or_404(foerderer_id)
     if koop.typ != 'kooperation':
@@ -83,7 +83,7 @@ def kollaboration_foerderer(foerderer_id):
 
 
 @admin_bp.route('/admin/kollaboration/knoten/<int:knoten_id>', methods=['GET', 'POST'])
-@login_required
+@role_required('superadmin')
 def kollaboration_knoten(knoten_id):
     knoten = Knoten.query.get_or_404(knoten_id)
     nachricht = fehler = None
@@ -98,7 +98,7 @@ def kollaboration_knoten(knoten_id):
 
 
 @admin_bp.route('/admin/kollaboration/datei/<int:anhang_id>')
-@login_required
+@role_required('superadmin')
 def kollaboration_datei(anhang_id):
     anhang = KollaborationAnhang.query.get_or_404(anhang_id)
     return send_file(kollaboration.anhang_pfad(anhang), as_attachment=True,
