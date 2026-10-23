@@ -95,3 +95,13 @@ Rechnung, sondern eine Erstattung in PayPal (Admin-Meldung erinnert daran). Kein
 URLs: Danke-Seite über die Session, Rechnungslink `?t=` wird sofort in die Session übernommen
 und weggeleitet; Rechnungsnummer kommt aus der DB. Texte: `pay_note` in
 `site/foerderer_antrag.html`, `f_form_note` in `translations.json`.
+
+## Statusseite + OSM-Einwilligung (seit 23.10.2026)
+`/status` (`omn/status_oeffentlich.py`, `site/status.html`): Website, Datenbank, Mailversand,
+Datensicherung als ok/gestört/unbekannt, eigene billige Prüfungen mit 60-s-Cache — bewusst
+**nicht** die Server-Ampel (die fragt PayPal/Mailserver ab und zeigt Interna). „unbekannt“
+zählt nicht als Störung. Footer-Link in `site/base.html`, in `llms.txt` + Audit-Listen.
+Bewerbungsformular (`site/index.html`): Karte + Nominatim-Adresssuche erst nach Klick auf
+„Karte und Adresssuche aktivieren (OpenStreetMap)“ (`nodeOsmErlaubt`, gilt nur für den
+Seitenaufruf); ohne Klick geht keine Anfrage an OSM, auch nicht beim Absenden.
+Datenschutzerklärung Abschnitt `karte`: Einwilligung, Art. 6 Abs. 1 lit. a.

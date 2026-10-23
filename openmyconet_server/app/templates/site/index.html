@@ -437,6 +437,10 @@
           <button class="ic-67" type="button" id="node-geocode-btn" title="{{ t('a_node_geocode_btn') }}">📍</button>
         </div>
         <p class="ic-68" id="node-geocode-hint">{{ t('a_node_geocode_hint') }}</p>
+        <div class="ic-osm" id="node-osm-consent">
+          <p class="ic-osm-text" id="node-osm-consent-text">{{ t('a_node_osm_consent_text') }}</p>
+          <button class="ic-osm-btn" type="button" id="node-osm-consent-btn">{{ t('a_node_osm_consent_btn') }}</button>
+        </div>
         <p class="ic-69" id="node-geocode-error" hidden></p>
         <div class="ic-70" id="node-geo-map" hidden></div>
         <input type="hidden" id="node-inp-lat" name="lat">
@@ -724,6 +728,8 @@ function renderRegForm(lang) {
   document.getElementById('node-inp-address').placeholder = A.node_ph_address;
   document.getElementById('node-geocode-btn').title = A.node_geocode_btn;
   document.getElementById('node-geocode-hint').textContent = A.node_geocode_hint;
+  document.getElementById('node-osm-consent-text').textContent = A.node_osm_consent_text;
+  document.getElementById('node-osm-consent-btn').textContent = A.node_osm_consent_btn;
   document.getElementById('node-lbl-motivation').textContent = A.node_lbl_motivation;
   document.getElementById('node-inp-motivation').placeholder = A.node_ph_motivation;
   document.getElementById('node-lbl-loan').textContent = A.node_lbl_loan;
@@ -870,7 +876,20 @@ function nodeGeoShowMarker(lat, lon) {
   });
 }
 
+// Zwei-Klick-Einwilligung (seit 23.10.2026): Kartenkacheln (tile.openstreetmap.org)
+// und Adresssuche (nominatim.openstreetmap.org) erst, nachdem der Besucher den
+// Knopf "Karte und Adresssuche aktivieren" geklickt hat -- vorher geht keine Anfrage
+// an OSM. Gilt fuer diese Seite (kein Speichern, beim naechsten Besuch neu fragen).
+var nodeOsmErlaubt = false;
+
+function nodeOsmAktivieren() {
+  nodeOsmErlaubt = true;
+  document.getElementById('node-osm-consent').hidden = true;
+  if (document.getElementById('node-inp-address').value.trim()) geocodeNodeAddress();
+}
+
 function performNodeGeocode(address) {
+  if (!nodeOsmErlaubt) return Promise.resolve(null);
   return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address))
     .then(function(r) { return r.json(); })
     .then(function(results) {
@@ -887,6 +906,13 @@ function geocodeNodeAddress() {
   var errEl = document.getElementById('node-geocode-error');
   errEl.hidden = true;
   if (!address) return;
+  if (!nodeOsmErlaubt) {
+    // Erst einwilligen lassen: Hinweis sichtbar machen und hinscrollen
+    var box = document.getElementById('node-osm-consent');
+    box.classList.add('ic-osm-hervor');
+    box.scrollIntoView({ block: 'nearest' });
+    return;
+  }
 
   var btn = document.getElementById('node-geocode-btn');
   btn.disabled = true;
@@ -905,6 +931,8 @@ function geocodeNodeAddress() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  var osmBtn = document.getElementById('node-osm-consent-btn');
+  if (osmBtn) osmBtn.addEventListener('click', nodeOsmAktivieren);
   var addrEl = document.getElementById('node-inp-address');
   if (addrEl) {
     addrEl.addEventListener('input', function() {
@@ -956,7 +984,7 @@ function handleNodeApply(e) {
   var address = document.getElementById('node-inp-address').value.trim();
   var latVal = document.getElementById('node-inp-lat').value;
 
-  if (address && !latVal) {
+  if (address && !latVal && nodeOsmErlaubt) {
     var btn = document.getElementById('node-submit-btn');
     var T = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
     btn.textContent = T.a_node_sending;

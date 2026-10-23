@@ -9,7 +9,8 @@ from omn.models import Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage
 from omn.zeit import utcnow
 
 NICHTS = {'Chat-Verläufe': 0, 'Fehlerprotokoll': 0, 'Kontaktanfragen': 0, 'abgelehnte Bewerbungen': 0,
-          'Kontakt-Versandlog': 0, 'Audit-Log Anmeldungen': 0, 'Audit-Log Aktionen': 0}
+          'Kontakt-Versandlog': 0, 'Audit-Log Anmeldungen': 0, 'Audit-Log Aktionen': 0,
+          'Registrierungs-IP': 0}
 
 
 def _anlegen(alter_tage):
@@ -106,3 +107,19 @@ def test_audit_log_fristen(app):
         assert ergebnis['Audit-Log Anmeldungen'] == 2
         assert ergebnis['Audit-Log Aktionen'] == 1
         assert sorted(a.aktion for a in AdminAudit.query.all()) == ['login', 'nutzer_geloescht']
+
+
+def test_registrierungs_ip_nach_6_monaten_geleert(app):
+    from omn.models import Nutzer
+    with app.app_context():
+        jetzt = utcnow()
+        db.session.add_all([
+            Nutzer(name='Alt', email='alt@example.com', ip='203.0.113.1', registriert_am=jetzt - timedelta(days=200)),
+            Nutzer(name='Neu', email='neu@example.com', ip='203.0.113.2', registriert_am=jetzt - timedelta(days=100)),
+        ])
+        db.session.commit()
+        assert bereinigen()['Registrierungs-IP'] == 1
+        alt = Nutzer.query.filter_by(email='alt@example.com').one()
+        assert alt.ip is None and alt.registriert_am is not None   # Nutzer + Zeitpunkt bleiben
+        assert Nutzer.query.filter_by(email='neu@example.com').one().ip == '203.0.113.2'
+        assert bereinigen()['Registrierungs-IP'] == 0

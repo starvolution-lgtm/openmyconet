@@ -247,6 +247,11 @@ input[type="checkbox"], input[type="radio"] { -webkit-appearance:auto; appearanc
 .ic-68 { font-size:0.75rem; color:#a0c8a0; margin-top:0.4rem; }
 .ic-69 { font-size:0.75rem; color:#e88; margin-top:0.4rem; }
 .ic-70 { height:220px; margin-top:0.6rem; border:1px solid #0a6040; }
+/* OSM-Einwilligung im Bewerbungsformular (seit 23.10.2026) */
+.ic-osm { margin-top:0.6rem; padding:0.7rem 0.9rem; border:1px dashed #3d7a5c; background-color:rgba(0,0,0,0.18); }
+.ic-osm-hervor { border-color:#f0b84a; border-style:solid; }
+.ic-osm-text { font-size:0.75rem; color:#a0c8a0; margin:0 0 0.5rem; }
+.ic-osm-btn { padding:0.4rem 0.9rem; background:transparent; color:#f0b84a; border:1px solid #d4a030; cursor:pointer; font-size:0.8rem; }
 .ic-71 { height:130px; }
 .ic-72 { margin:1rem 0 1.5rem; padding:0.8rem 1rem; background-color:#024530; border-left:2px solid #0a7050; }
 .ic-73 { width:100%; }

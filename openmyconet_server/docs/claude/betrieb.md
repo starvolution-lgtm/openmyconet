@@ -117,7 +117,7 @@ Staging hat **keine** Grossmedien (mp3/pdf, per deploy-exclude ausgeschlossen).
 
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll
-(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`), der Versandlog des Server-MCC (`KontaktVersand`) **2 Jahre nach dem letzten Kontakt** (Robby, 07.10.2026), das Audit-Log (`AdminAudit`, seit 23.10.2026) mit Anmelde-Einträgen nach **90 Tagen** und Admin-Aktionen nach **1 Jahr** gelöscht (Robby, 28.09.2026;
+(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`), der Versandlog des Server-MCC (`KontaktVersand`) **2 Jahre nach dem letzten Kontakt** (Robby, 07.10.2026), das Audit-Log (`AdminAudit`, seit 23.10.2026) mit Anmelde-Einträgen nach **90 Tagen** und Admin-Aktionen nach **1 Jahr** gelöscht; die Registrierungs-IP (`Nutzer.ip`, `LEEREN` in `aufbewahrung.py`) wird nach **6 Monaten** geleert, Nutzer und Zeitpunkt bleiben (Robby, 28.09.2026;
 steht so in der Datenschutzerklärung — bei Änderung dort nachziehen). CLI `flask
 aufbewahrung-bereinigen`, täglich per Cron `deploy/aufbewahrung.sh` (03:40 Prod, 03:45
 Staging, eingetragen von `install_backup_cron.sh`, Log `aufbewahrung.log`). nginx-Logs:

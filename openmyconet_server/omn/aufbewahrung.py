@@ -17,7 +17,7 @@ from datetime import timedelta, timezone
 from sqlalchemy import func
 
 from omn.extensions import db
-from omn.models import AdminAudit, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand
+from omn.models import AdminAudit, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand, Nutzer
 from omn.zeit import utcnow
 
 # (Bezeichnung, Modell, Zeitpunkt, ab dem die Frist laeuft, Frist in Tagen, Zusatzbedingung)
@@ -39,6 +39,14 @@ FRISTEN = [
     ('Audit-Log Aktionen', AdminAudit, AdminAudit.zeitpunkt, 365, ~AdminAudit.aktion.like('login%')),
 ]
 
+# Felder, die nach Ablauf geleert (NULL) statt mit der ganzen Zeile geloescht werden:
+# (Bezeichnung, Modell, Zeitpunkt, Frist in Tagen, Spalte)
+# Registrierungs-IP: 6 Monate nach der Anmeldung (Robby, 23.10.2026); der Zeitpunkt
+# bleibt als Nachweis der Anmeldung/Einwilligung.
+LEEREN = [
+    ('Registrierungs-IP', Nutzer, Nutzer.registriert_am, 182, Nutzer.ip),
+]
+
 
 def bereinigen(jetzt=None):
     """Loescht alles, was aelter als die jeweilige Frist ist. Gibt
@@ -52,5 +60,9 @@ def bereinigen(jetzt=None):
         if bedingung is not None:
             abfrage = abfrage.filter(bedingung)
         ergebnis[name] = abfrage.delete(synchronize_session=False)
+    for name, modell, zeitpunkt, tage, spalte in LEEREN:
+        ergebnis[name] = (modell.query
+                          .filter(zeitpunkt < jetzt - timedelta(days=tage), spalte.isnot(None))
+                          .update({spalte: None}, synchronize_session=False))
     db.session.commit()
     return ergebnis
