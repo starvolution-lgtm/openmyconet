@@ -138,7 +138,7 @@ Session-Token (Feld `_csrf` oder Header `X-CSRFToken`). `admin_base.html` /
 `dashboard_base.html` hängen es per Skript an jedes `<form method=post>` an, neue
 Formulare brauchen also nichts. Bewusst NICHT CSRF-geschützt: `/api/register`,
 `/api/bewerbung`, `/api/chat` (cross-origin fetch von der statischen Website),
-`/foerderer/ipn` (PayPal), `/api/v1/messung`, `/api/v2/biocomm/paket` (Bridges, eigener
+`/foerderer/ipn` (PayPal), `/api/v2/biocomm/paket` (Bridges, eigener
 Schlüssel). **ProxyFix mit `x_for=1` (seit 26.09.2026):** `request.remote_addr` ist die
 echte Absender-IP aus nginx' `X-Forwarded-For`; vorher war sie immer 127.0.0.1, alle
 „je IP“-Grenzen galten für alle Besucher gemeinsam. Tests: `CSRF_ENABLED=False`
@@ -148,12 +148,20 @@ Route `methods=['POST']`, im Template `post_knopf(...)` aus `_admin_makros.html`
 sieht aus wie der Link, optional Rückfrage). `test_csrf.py::AENDERNDE_ADMIN_ROUTEN` listet
 sie; neue ändernde Route dort ergänzen.
 
-`/api/v1/messung` (Geräte-Dateneingang) authentifiziert per **`Knoten.api_key`**
-(Header `X-Api-Key` oder `Authorization: Bearer`); der Key bestimmt den Knoten,
-`knoten_id` im Body ist obsolet. Key wird beim Anlegen erzeugt, im Admin unter
-`/admin/knoten` einsehbar + neu generierbar (`action=key_neu`). Eingaben werden
-typisiert geprüft (kein 500 mehr) + auf Plausibilität begrenzt; ungültige
-optionale Umweltwerte werden verworfen, die Messung bleibt. Siehe `test_messung.py`.
+**Audit-Log + Login-Alarm (seit 23.10.2026):** `omn/admin/audit.py`, Tabelle `admin_audit`
+(neue Tabelle → timestamptz), Ansicht `/admin/audit`. Jede neue ändernde Admin-/MCC-Route
+ruft nach dem Commit `protokollieren('aktion', 'ziel')` auf (Freigabe, Löschen, Rollen,
+Versand, Backups). Login schreibt `login`/`login_fehlgeschlagen`/`login_passwort_ok`/
+`login_2fa_fehlgeschlagen`/`login_ip_gesperrt`; Alarm-Mail bei Login von neuer IP, bei
+IP-Sperre und bei richtigem Passwort + falschem 2FA-Code von neuer IP. Unbekannte
+Benutzernamen werden nicht protokolliert (könnte ein Passwort sein). Admin-Passwörter
+mindestens 12 Zeichen (`PASSWORT_MIN`). Vor nginx: `limit_req` auf `/login` + `/api/`
+(BioComm-Upload ausgenommen) und fail2ban (`deploy/root_nginx_limits_fail2ban.sh`).
+
+`/api/v1/messung` (alte Prototyp-Schnittstelle, Auth per `Knoten.api_key`) ist **seit
+23.10.2026 abgeschaltet** (Antwort 410, Hinweis auf `/api/v2/biocomm/paket`); neue Knoten
+bekommen keinen Key mehr, die alten Keys sind per Migration geleert. Bestehende
+`messung`-Zeilen bleiben. Siehe `test_messung.py`.
 
 ## Konventionen
 Deutschsprachiger Code (Kommentare, Bezeichner). Community-Seiten „du", Förderer-Seite „Sie".

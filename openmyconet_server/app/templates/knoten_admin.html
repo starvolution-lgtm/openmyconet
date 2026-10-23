@@ -2,7 +2,6 @@
 {% block title %}OpenMycoNet — Knoten verwalten{% endblock %}
 {% block heading %}🍄 Knoten verwalten{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{{ asset('admin-knoten.css') }}">
 {% endblock %}
 {% block content %}
 
@@ -34,7 +33,7 @@
 <hr>
 <h2>Registrierte Knoten</h2>
 <p class="u-hint-sm"><strong>Prototyp-Messweg:</strong> Diese Knoten sind Prototyp-/Testknoten und zählen nirgends als aktive Messknoten (Startseite, <code>/api/v1/status</code>). Das echte Messnetz läuft über <a href="/admin/biocomm">BioComm</a>.</p>
-<p class="u-hint-sm">Der API-Key gehört in die Geräte-Konfiguration (Header <code>X-Api-Key</code> bei <code>/api/v1/messung</code>). Bei Verdacht auf Leak neu generieren.</p>
+<p class="u-hint-sm">Die alte Mess-Schnittstelle <code>/api/v1/messung</code> ist seit 23.10.2026 abgeschaltet (Antwort 410); bisherige Messungen bleiben erhalten.</p>
 <table>
     <tr>
         <th>Knoten-ID</th>
@@ -44,7 +43,6 @@
         <th>Aktiv</th>
         <th>Angelegt</th>
         <th>Messungen</th>
-        <th>API-Key</th>
         <th></th>
     </tr>
     {% for knoten in knoten_liste %}
@@ -56,14 +54,6 @@
         <td class="aktiv">{{ '✓' if knoten.aktiv else '✗' }}</td>
         <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
         <td>{{ knoten.messungen|length }}</td>
-        <td>
-            <code class="kn-1">{{ knoten.api_key or '—' }}</code>
-            <form class="u-inline js-confirm-submit" method="POST" data-confirm="Neuen API-Key für {{ knoten.knoten_id }}? Der alte wird sofort ungültig.">
-                <input type="hidden" name="action" value="key_neu">
-                <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
-                <button type="submit" class="kn-2">neu</button>
-            </form>
-        </td>
         <td><a class="btn" href="{{ url_for('admin.kollaboration_knoten', knoten_id=knoten.id) }}">💬 Kollaboration</a></td>
     </tr>
     {% endfor %}

@@ -83,5 +83,5 @@ Uhrzeit, `prefers-reduced-motion` → statischer Tag, läuft nur sichtbar (Inter
 Badge: Punkt gold (grün las sich als „online“); eine Zeile je Aussage bei ≤ 900 px und immer
 für FR/ES (`html:lang(...)`, `<html lang>` folgt dem Sprachumschalter), sonst hing ein „·“ am Zeilenende.
 **Prototyp-Knoten:** `Knoten.prototyp` (Migration `2b6f1c9e7a30`, alle Zeilen des alten
-Messwegs = TRUE); `/api/v1/status` zählt nur `prototyp=False`, `/api/v1/messung` ist als
-Prototyp-Schnittstelle markiert; echtes Messnetz = BioComm-Dateneingang.
+Messwegs = TRUE); `/api/v1/status` zählt nur `prototyp=False`, `/api/v1/messung` (alte
+Prototyp-Schnittstelle) ist seit 23.10.2026 abgeschaltet (410, keine API-Keys mehr); echtes Messnetz = BioComm-Dateneingang.

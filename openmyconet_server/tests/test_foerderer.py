@@ -197,3 +197,60 @@ def test_checkout_ohne_vorschau_wird_geprueft(client, app):
         assert resp.status_code == 200, abweichung
     with app.app_context():
         assert Foerderer.query.count() == 0
+
+
+# --- Seit 23.10.2026: keine Schluessel in URLs, Rechnungsnummer aus der DB ---
+
+def test_paypal_ruecksprung_ohne_token(client, app, monkeypatch):
+    monkeypatch.setenv('PAYPAL_EMAIL', 'verkaeufer@example.com')
+    daten = dict(GUELTIGE_ANTRAG_DATEN, action='checkout', logo_datei='')
+    location = client.post('/foerderer/antrag', data=daten).headers['Location']
+    assert 'return=https%3A%2F%2Fapi.openmyconet.de%2Ffoerderer%2Fdanke&' in location
+    # Danke-Seite findet den Antrag ueber die Session
+    assert 'Zahlung wird' in client.get('/foerderer/danke').get_data(as_text=True)
+
+
+def test_danke_alter_link_mit_token_wird_bereinigt(client, app):
+    _pending_foerderer(app, token='tok-alt-danke')
+    r = client.get('/foerderer/danke?token=tok-alt-danke')
+    assert r.status_code == 302 and r.headers['Location'].endswith('/foerderer/danke')
+    assert 'Zahlung wird' in client.get('/foerderer/danke').get_data(as_text=True)
+
+
+def test_rechnungsmail_link_und_download(client, app, monkeypatch):
+    _pending_foerderer(app, token='tok-rechnung')
+    with mail.record_messages() as ausgehend:
+        _ipn_senden(client, monkeypatch, 'tok-rechnung')
+    with app.app_context():
+        f = Foerderer.query.filter_by(token='tok-rechnung').one()
+        rt, nr = f.rechnung_token, f.rechnung_nr
+    assert rt and rt != 'tok-rechnung'
+    mail_text = next(m for m in ausgehend if 'Zahlungseingang' in m.subject).body
+    assert f'/foerderer/rechnung?t={rt}' in mail_text
+    assert 'tok-rechnung' not in mail_text
+
+    neuer_client = app.test_client()
+    r = neuer_client.get(f'/foerderer/rechnung?t={rt}')
+    assert r.status_code == 302 and r.headers['Location'].endswith('/foerderer/rechnung')
+    pdf = neuer_client.get('/foerderer/rechnung')
+    assert pdf.status_code == 200
+    assert pdf.mimetype == 'application/pdf'
+    assert nr in pdf.headers['Content-Disposition']
+    assert pdf.headers['Cache-Control'] == 'no-store'
+
+
+def test_rechnung_ohne_schluessel_oder_mit_falschem_403(client, app):
+    _pending_foerderer(app, token='tok-x', status='active', rechnung_nr='OMN-2026-0009', rechnung_token='rt-echt')
+    assert client.get('/foerderer/rechnung').status_code == 403
+    client.get('/foerderer/rechnung?t=rt-falsch')
+    assert client.get('/foerderer/rechnung').status_code == 403
+    # Rechnungsnummer allein in der URL hilft nicht weiter
+    assert client.get('/foerderer/rechnung?nr=OMN-2026-0009').status_code == 403
+
+
+def test_alter_mail_link_mit_nr_und_token_geht_weiter(client, app):
+    _pending_foerderer(app, token='tok-altmail', status='active', rechnung_nr='OMN-2026-0010',
+                       rechnung_token='rt-altmail', paypal_txn_id='TXN-ALT')
+    r = client.get('/foerderer/rechnung', query_string={'nr': 'OMN-2026-0010', 'token': 'tok-altmail'})
+    assert r.status_code == 302 and r.headers['Location'].endswith('/foerderer/rechnung')
+    assert client.get('/foerderer/rechnung').status_code == 200

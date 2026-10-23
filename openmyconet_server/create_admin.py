@@ -21,6 +21,8 @@ password = os.getenv('ADMIN_PASSWORD', 'changeme')
 
 
 def main():
+    if len(password) < 12 or password == 'changeme':
+        raise SystemExit('ADMIN_PASSWORD fehlt oder ist kuerzer als 12 Zeichen -- abgebrochen.')
     app = create_app()
     with app.app_context():
         db.create_all()

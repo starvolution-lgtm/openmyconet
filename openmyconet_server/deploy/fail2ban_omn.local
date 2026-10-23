@@ -1,0 +1,36 @@
+# OpenMycoNet -- fail2ban-Jails (seit 23.10.2026)
+# ---------------------------------------------------------------------------
+# Landet als /etc/fail2ban/jail.d/omn.local (deploy/root_nginx_limits_fail2ban.sh).
+# Der sshd-Jail kommt aus dem Debian/Ubuntu-Paket (defaults-debian.conf) und
+# bleibt so; sperrt nur Port 22. Die Jails hier sperren nur 80/443 -- ein
+# Bann trifft also nie den SSH-Zugang (Notfall-Rueckweg bleibt offen).
+#
+# Entsperren:  fail2ban-client set <jail> unbanip <IP>
+# Ueberblick:  fail2ban-client status omn-admin-login
+
+[DEFAULT]
+# eigene Adressen nie sperren
+ignoreip = 127.0.0.1/8 ::1
+
+# 429 von nginx (limit_req in omn_limits*.conf) -- wer dauerhaft gegen die
+# Grenze laeuft, ist kein Mensch mit Browser.
+[nginx-limit-req]
+enabled  = true
+port     = http,https
+logpath  = /var/log/nginx/error.log
+findtime = 10m
+maxretry = 20
+bantime  = 1h
+
+# Fehlgeschlagene Admin-Logins: das Formular antwortet bei Fehlern mit 200,
+# bei Erfolg mit 302 -> "POST /login ... 200" im access.log = Fehlversuch.
+# Die App sperrt selbst schon nach 8 Fehlversuchen/15 min; fail2ban haelt
+# hartnaeckige IPs danach eine Stunde ganz draussen.
+[omn-admin-login]
+enabled  = true
+port     = http,https
+filter   = omn-admin-login
+logpath  = /var/log/nginx/access.log
+findtime = 15m
+maxretry = 10
+bantime  = 1h

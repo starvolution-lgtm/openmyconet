@@ -1,6 +1,7 @@
 """Redaktionelle Seiteninhalte: Content-Bloecke und der Spenden-Fortschrittsbalken."""
 from flask import redirect, render_template, request, url_for
 
+from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, login_required
 from omn.extensions import db
 from omn.models import ContentBlock, Spende
@@ -58,4 +59,5 @@ def inhalte_delete(block_id):
     block = ContentBlock.query.get_or_404(block_id)
     db.session.delete(block)
     db.session.commit()
+    protokollieren('inhalt_geloescht', f'Block #{block_id}')
     return redirect(url_for('admin.inhalte_admin'))

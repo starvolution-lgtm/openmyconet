@@ -12,6 +12,7 @@ from flask import redirect, render_template, request, url_for
 
 from omn import kontrollzentrum
 from omn.admin import role_required
+from omn.admin.audit import protokollieren
 from omn.admin.wartung import _backup_skript_laufen_lassen
 from omn.mcc import mcc_bp
 
@@ -34,6 +35,7 @@ def server():
 @role_required('superadmin')
 def backup_jetzt():
     _backup_skript_laufen_lassen('backup_db.sh', 'DB-Backup')
+    protokollieren('backup_jetzt')
     return redirect(url_for('mcc.server', refresh=1))
 
 
@@ -41,6 +43,7 @@ def backup_jetzt():
 @role_required('superadmin')
 def backup_restore_check():
     _backup_skript_laufen_lassen('restore_check.sh', 'Restore-Check')
+    protokollieren('backup_restore_check')
     return redirect(url_for('mcc.server', refresh=1))
 
 

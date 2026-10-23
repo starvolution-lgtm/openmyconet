@@ -2,6 +2,8 @@
 from flask import flash, redirect, render_template, request, session, url_for
 from werkzeug.security import generate_password_hash
 
+from omn.admin.auth import PASSWORT_MIN
+from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 from omn.models import AdminUser, Nutzer
@@ -48,6 +50,7 @@ def nutzer_bestaetigen(nutzer_id):
     nutzer = Nutzer.query.get_or_404(nutzer_id)
     nutzer.bestaetigt = True
     db.session.commit()
+    protokollieren('nutzer_bestaetigt', f'Nutzer #{nutzer.id}')
     flash(f'{nutzer.name} manuell bestätigt.')
     return redirect(url_for('admin.admin'))
 
@@ -59,6 +62,7 @@ def nutzer_fachrolle_setzen(nutzer_id):
     wert = request.form.get('fachrolle', '').strip()
     nutzer.fachrolle = wert if wert in FACHROLLEN else None
     db.session.commit()
+    protokollieren('nutzer_fachrolle', f'Nutzer #{nutzer.id}: {nutzer.fachrolle or "keine"}')
     flash(f'Fachrolle von {nutzer.name} aktualisiert.')
     return redirect(url_for('admin.admin'))
 
@@ -72,6 +76,7 @@ def nutzer_rolle_setzen(nutzer_id):
     nutzer.ist_hyphist = bool(request.form.get('ist_hyphist'))
     nutzer.ist_sporist = bool(request.form.get('ist_sporist'))
     db.session.commit()
+    protokollieren('nutzer_rolle', f'Nutzer #{nutzer.id}: hyphist={nutzer.ist_hyphist}, sporist={nutzer.ist_sporist}')
     flash(f'Rolle von {nutzer.name} aktualisiert.')
     return redirect(url_for('admin.admin'))
 
@@ -85,6 +90,7 @@ def nutzer_loeschen(nutzer_id):
         return redirect(url_for('admin.admin'))
     db.session.delete(nutzer)
     db.session.commit()
+    protokollieren('nutzer_geloescht', f'Nutzer #{nutzer_id}')
     flash(f'{nutzer.name} gelöscht.')
     return redirect(url_for('admin.admin'))
 
@@ -104,12 +110,15 @@ def accounts():
             role = 'editor'
         if not username or not password:
             fehler = 'Benutzername und Passwort erforderlich.'
+        elif len(password) < PASSWORT_MIN:
+            fehler = f'Das Passwort muss mindestens {PASSWORT_MIN} Zeichen haben.'
         elif AdminUser.query.filter_by(username=username).first():
             fehler = f'Benutzername {username} bereits vergeben.'
         else:
             user = AdminUser(username=username, password_hash=generate_password_hash(password), role=role)
             db.session.add(user)
             db.session.commit()
+            protokollieren('account_angelegt', f'{username} ({role})')
             nachricht = f'Account {username} ({role}) angelegt!'
     accounts_liste = AdminUser.query.order_by(AdminUser.erstellt_am.desc()).all()
     return render_template('accounts.html', accounts_liste=accounts_liste, nachricht=nachricht, fehler=fehler)
@@ -127,5 +136,6 @@ def account_delete(user_id):
         return redirect(url_for('admin.accounts'))
     db.session.delete(user)
     db.session.commit()
+    protokollieren('account_geloescht', f'{user.username} ({user.role})')
     flash(f'Account {user.username} gelöscht.')
     return redirect(url_for('admin.accounts'))

@@ -26,6 +26,7 @@ from flask_mail import Message
 from markupsafe import escape
 
 from omn.admin import role_required
+from omn.admin.audit import protokollieren
 from omn.extensions import db, mail
 from omn.mcc import mcc_bp
 from omn.mcc.mailbau import SPRACHEN, mail_bauen, vorlagen
@@ -286,6 +287,7 @@ def loeschen(kid):
     name = k.name
     db.session.delete(k)
     db.session.commit()
+    protokollieren('mcc_kontakt_geloescht', f'Kontakt #{kid}')
     flash(f'{name}: Eintrag gelöscht.', 'success')
     return _zurueck_zur_liste()
 
@@ -378,6 +380,7 @@ def senden():
                        notiz=str(f.get('notiz') or '').replace('\r\n', '\n').strip()[:2000])
     db.session.add(k)
     db.session.commit()
+    protokollieren('mcc_mail_gesendet', f'Kontakt #{k.id}, Vorlage {vorlage}, {versandart}')
     if versandart == 'unterdrueckt':
         flash(f'Mailversand ist hier abgeschaltet (Staging) – nichts verschickt, Eintrag für {name} trotzdem '
               f'angelegt, Wiedervorlage {k.wiedervorlage:%d.%m.%Y}.', 'success')

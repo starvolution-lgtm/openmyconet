@@ -117,7 +117,7 @@ Staging hat **keine** Grossmedien (mp3/pdf, per deploy-exclude ausgeschlossen).
 
 ## Löschfristen (seit 28.09.2026)
 `omn/aufbewahrung.py` (`FRISTEN`): Chat-Verläufe (`ChatLog`) und Fehlerprotokoll
-(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`), der Versandlog des Server-MCC (`KontaktVersand`) **2 Jahre nach dem letzten Kontakt** (Robby, 07.10.2026) gelöscht (Robby, 28.09.2026;
+(`Fehlerprotokoll`, enthält IPs) werden nach **90 Tagen**, Kontaktanfragen nach **6 Monaten** ab Eingang, abgelehnte Bewerbungen **6 Monate nach der Absage** (`Bewerbung.status_geaendert_am`, gesetzt im Admin; Alt-Zeilen ab `erstellt_am`, Migration `8f545721d47e`), der Versandlog des Server-MCC (`KontaktVersand`) **2 Jahre nach dem letzten Kontakt** (Robby, 07.10.2026), das Audit-Log (`AdminAudit`, seit 23.10.2026) mit Anmelde-Einträgen nach **90 Tagen** und Admin-Aktionen nach **1 Jahr** gelöscht (Robby, 28.09.2026;
 steht so in der Datenschutzerklärung — bei Änderung dort nachziehen). CLI `flask
 aufbewahrung-bereinigen`, täglich per Cron `deploy/aufbewahrung.sh` (03:40 Prod, 03:45
 Staging, eingetragen von `install_backup_cron.sh`, Log `aufbewahrung.log`). nginx-Logs:
@@ -131,3 +131,22 @@ Fehlerort). Kein Sentry/GlitchTip (weitere Infra, DSGVO-Frage bei externem
 Hosting). HTTPExceptions (404/403/400 …) bleiben unangetastet. Der
 `Fehlerprotokoll`-Weg entstand, als gunicorn noch ohne Journal lief; seit der
 systemd-Unit landet stdout/stderr zusätzlich in `journalctl --user -u omn`.
+
+## Server-Härtung (Sicherheitsdurchsicht Paket 2, 23.10.2026)
+- **Server-Prüfung (lesend, 23.10.):** ufw aktiv, Postgres nur `127.0.0.1`/`::1`, offen nur
+  22/80/443, unattended-upgrades aktiv. Damals offen: fail2ban fehlte, kein nginx-`limit_req`,
+  `reboot-required` stand an.
+- **nginx-Grenzen + fail2ban:** `deploy/root_nginx_limits_fail2ban.sh` (als root, Dateien per
+  scp daneben; `zurueck` baut es ab). Zonen `/etc/nginx/conf.d/omn_limits.conf`
+  (`nginx_limits_zonen.conf`): `/login` + `/login/2fa` 10/min (burst 10), `/api/` 60/min
+  (burst 30), `/api/v2/biocomm/` **ohne** Grenze (Bridges laden nach Funkpausen am Stück).
+  Snippets `omn_limits.conf` (api + www) / `omn_limits_staging.conf`. fail2ban-Jails
+  `nginx-limit-req` (429 im error.log) und `omn-admin-login` (`POST /login` → 200 = Fehlversuch),
+  beide nur 80/443, 1 h; sshd-Jail aus dem Paket. Entsperren:
+  `fail2ban-client set <jail> unbanip <IP>`.
+- **systemd-Units** (`omn.service`, `omn-staging.service`): `NoNewPrivileges`, `RestrictSUIDSGID`,
+  `RestrictNamespaces`, `RestrictAddressFamilies` usw. **Nicht** `ProtectSystem`/`PrivateTmp`:
+  brauchen in User-Units einen User-Namespace, den Ubuntu 26.04 per AppArmor sperrt
+  (`kernel.apparmor_restrict_unprivileged_userns=1`) → Unit startet nicht (226/NAMESPACE).
+  Dafür müsste `omn` eine System-Unit mit `User=omn` werden. Nach Änderung:
+  `bash deploy/install_systemd(_staging).sh`.

@@ -1,6 +1,7 @@
 """Verwaltung der Bewerbungen und der Foerderer-/Kooperations-Eintraege."""
 from flask import render_template, request
 
+from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 from omn.models import Bewerbung, Foerderer, Knoten
@@ -24,6 +25,7 @@ def bewerbungen_admin():
             nachricht = f'Bewerbung #{bewerbung.id} ({bewerbung.name or bewerbung.email}) gelöscht.'
             db.session.delete(bewerbung)
             db.session.commit()
+            protokollieren('bewerbung_geloescht', f'Bewerbung #{bewerbung_id}')
         else:
             neuer_status = request.form.get('status', '').strip()
             if neuer_status not in BEWERBUNG_STATUS:
@@ -33,6 +35,7 @@ def bewerbungen_admin():
                     bewerbung.status_geaendert_am = utcnow()  # Beginn der Loeschfrist bei Absage
                 bewerbung.status = neuer_status
                 db.session.commit()
+                protokollieren('bewerbung_status', f'Bewerbung #{bewerbung.id}: {neuer_status}')
                 nachricht = f'Status von Bewerbung #{bewerbung.id} auf "{neuer_status}" gesetzt.'
 
     bewerbungen_liste = Bewerbung.query.order_by(Bewerbung.erstellt_am.desc()).all()
@@ -62,6 +65,7 @@ def foerderer_admin():
             nachricht = f'Eintrag "{eintrag.firma}" gelöscht.'
             db.session.delete(eintrag)
             db.session.commit()
+            protokollieren('foerderer_geloescht', f'#{foerderer_id} {eintrag.firma}')
         elif request.form.get('action') == 'activate':
             eintrag.status = 'active'
             eintrag.aktiviert_am = utcnow()
@@ -77,11 +81,13 @@ def foerderer_admin():
             if nutzer and eintrag.nutzer_id is None:
                 eintrag.nutzer_id = nutzer.id
             db.session.commit()
+            protokollieren('foerderer_freigegeben', f'#{eintrag.id} {eintrag.firma}')
             nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
         elif request.form.get('action') == 'reject':
             eintrag.status = 'rejected'
             eintrag.status_geaendert_am = utcnow()
             db.session.commit()
+            protokollieren('foerderer_abgelehnt', f'#{eintrag.id} {eintrag.firma}')
             nachricht = f'"{eintrag.firma}" wurde abgelehnt.'
         else:
             fehler = 'Ungültige Aktion.'

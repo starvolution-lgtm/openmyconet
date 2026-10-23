@@ -1,0 +1,42 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Audit-Log{% endblock %}
+{% block heading %}🧾 Audit-Log{% endblock %}
+{% block content %}
+
+<p class="u-hint-sm">Anmeldungen und ändernde Aktionen im Admin-Bereich und im MCC (Zeit in UTC).
+Anmelde-Einträge werden nach 90 Tagen gelöscht, alle anderen nach einem Jahr.
+Bei Anmeldung von einer neuen IP und bei gesperrten Fehlversuch-Serien geht zusätzlich eine Mail raus.</p>
+
+{% if pagination.items %}
+<table>
+    <tr>
+        <th>Zeit (UTC)</th>
+        <th>Konto</th>
+        <th>Aktion</th>
+        <th>Ziel</th>
+        <th>IP</th>
+    </tr>
+    {% for e in pagination.items %}
+    <tr>
+        <td>{{ e.zeitpunkt.strftime('%d.%m.%Y %H:%M:%S') }}</td>
+        <td>{{ e.benutzername or '—' }}</td>
+        <td><code>{{ e.aktion }}</code></td>
+        <td>{{ e.ziel }}</td>
+        <td>{{ e.ip }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="pager">
+    {% if pagination.has_prev %}
+        <a href="?page={{ pagination.prev_num }}">← Neuer</a>
+    {% endif %}
+    Seite {{ pagination.page }} von {{ pagination.pages }}
+    {% if pagination.has_next %}
+        <a href="?page={{ pagination.next_num }}">Älter →</a>
+    {% endif %}
+</div>
+{% else %}
+    <p class="leer">Noch keine Einträge.</p>
+{% endif %}
+{% endblock %}

@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from omn.zeit import utcnow
 from omn.extensions import db
 
@@ -215,6 +217,10 @@ class Foerderer(db.Model):
     logo_datei = db.Column(db.String(255), default='')
     paypal_txn_id = db.Column(db.String(128), default='')
     rechnung_nr = db.Column(db.String(32), default='')
+    # Eigener Schluessel nur fuer den Rechnungs-Download (seit 23.10.2026). Getrennt
+    # von `token`, das als PayPal-`custom` auch bei PayPal liegt; wird zusammen mit
+    # der Rechnungsnummer vergeben (IPN), Alt-Zeilen per Migration nachgezogen.
+    rechnung_token = db.Column(db.String(64), unique=True, nullable=True)
     erstellt_am = db.Column(db.DateTime, default=utcnow)
     aktiviert_am = db.Column(db.DateTime, nullable=True)
     laeuft_ab_am = db.Column(db.Date, nullable=True)
@@ -383,3 +389,26 @@ class KontaktVersand(db.Model):
     notiz = db.Column(db.Text, nullable=False, default='')
     letzte_aktivitaet = db.Column(db.Date, nullable=False, index=True)  # Grundlage der Loeschfrist
     angelegt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+
+
+def _jetzt_utc_aware():
+    return datetime.now(timezone.utc)
+
+
+class AdminAudit(db.Model):
+    """Protokoll der Anmeldungen und aendernden Aktionen im Admin-Bereich und im
+    Server-MCC (seit 23.10.2026, Sicherheitsdurchsicht Paket 2). Ansicht unter
+    /admin/audit, geschrieben ueber omn/admin/audit.py::protokollieren().
+
+    Neue Tabelle -> Zeitpunkt als timestamptz und tz-aware (Regel vom 23.09.2026);
+    nie mit den naiven zeit.utcnow()-Werten anderer Tabellen vergleichen.
+    Kein FK auf admin_user: der Eintrag soll das Loeschen eines Kontos ueberleben
+    (benutzername ist deshalb mitgeschrieben). Loeschfristen: omn/aufbewahrung.py."""
+    __tablename__ = 'admin_audit'
+    id = db.Column(db.Integer, primary_key=True)
+    zeitpunkt = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware, index=True)
+    admin_user_id = db.Column(db.Integer, nullable=True, index=True)
+    benutzername = db.Column(db.String(80), nullable=False, default='')
+    aktion = db.Column(db.String(40), nullable=False, index=True)
+    ziel = db.Column(db.String(200), nullable=False, default='')
+    ip = db.Column(db.String(45), nullable=False, default='')

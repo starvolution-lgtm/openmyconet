@@ -6,6 +6,7 @@ from datetime import datetime
 
 from flask import redirect, render_template, request, url_for
 
+from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, login_required
 from omn.extensions import db
 from omn.models import Pressekandidat, Presseeintrag, Suchbegriff
@@ -73,6 +74,7 @@ def presse_delete(presse_id):
     eintrag = Presseeintrag.query.get_or_404(presse_id)
     db.session.delete(eintrag)
     db.session.commit()
+    protokollieren('presse_geloescht', f'Presse #{presse_id}')
     return redirect(url_for('admin.presse_admin'))
 
 
@@ -138,4 +140,5 @@ def suchbegriff_loeschen(suchbegriff_id):
     sb = Suchbegriff.query.get_or_404(suchbegriff_id)
     db.session.delete(sb)
     db.session.commit()
+    protokollieren('presse_suchbegriff_geloescht', f'Suchbegriff #{suchbegriff_id}')
     return redirect(url_for('admin.presse_kandidaten'))

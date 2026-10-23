@@ -16,6 +16,7 @@ from flask import abort, current_app, flash, redirect, render_template, request,
 from flask_mail import Message
 from PIL import Image, ImageOps, UnidentifiedImageError
 
+from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, login_required
 from omn.bildgroessen import fassungen_erzeugen
 from omn.extensions import db
@@ -318,6 +319,7 @@ def newsletter():
                     f'\n\n---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
                 nachrichten.append(msg)
             mailqueue_einreihen(nachrichten)
+            protokollieren('newsletter_versand', f'{len(nachrichten)} Empfänger: {betreff}')
             nachricht = (f'{len(nachrichten)} Empfänger in die Mail-Queue gestellt. '
                          f'Versand läuft im Hintergrund (jede Minute), Ergebnis im '
                          f'Journal (journalctl --user -u omn).')
@@ -411,6 +413,7 @@ def news_admin():
                 if mail_sprachen:
                     nachrichten = _news_nachrichten_bauen(news, mail_sprachen)
                     mailqueue_einreihen(nachrichten)
+                    protokollieren('news_mail_versand', f'News #{news.id}, {len(nachrichten)} Empfänger')
                     nachricht += (f' E-Mail an {len(nachrichten)} Nutzer '
                                   f'({", ".join(mail_sprachen)}) in die Mail-Queue gestellt.')
                 else:
@@ -445,6 +448,7 @@ def news_edit(news_id):
                 if mail_sprachen:
                     nachrichten = _news_nachrichten_bauen(news, mail_sprachen)
                     mailqueue_einreihen(nachrichten)
+                    protokollieren('news_mail_versand', f'News #{news.id}, {len(nachrichten)} Empfänger')
                     flash(f'E-Mail an {len(nachrichten)} Nutzer ({", ".join(mail_sprachen)}) '
                           'in die Mail-Queue gestellt.')
                 else:
@@ -518,6 +522,7 @@ def news_delete(news_id):
     news = News.query.get_or_404(news_id)
     db.session.delete(news)
     db.session.commit()
+    protokollieren('news_geloescht', f'News #{news_id}')
     return redirect(url_for('admin.news_admin'))
 
 

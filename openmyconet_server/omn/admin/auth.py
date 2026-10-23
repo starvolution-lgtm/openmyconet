@@ -11,6 +11,7 @@ import qrcode.image.svg
 from flask import redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from omn.admin.audit import alarm_mail, ip_neu_fuer, protokollieren
 from omn.admin.core import admin_bp, login_required
 from omn.csrf import csrf_token
 from omn.extensions import db
@@ -22,6 +23,9 @@ TOTP_ISSUER = 'OpenMycoNet Admin'
 RECOVERY_ANZAHL = 10
 # Zeitfenster zwischen bestandener Passwortpruefung und Code-Eingabe.
 LOGIN_2FA_FRIST = timedelta(minutes=10)
+# Mindestlaenge fuer Admin-Passwoerter (seit 23.10.2026 12 statt 8; gilt beim
+# Aendern und beim Anlegen -- bestehende kuerzere Passwoerter bleiben gueltig).
+PASSWORT_MIN = 12
 
 
 def _admin_session_setzen(user):
@@ -45,6 +49,33 @@ def _sicheres_ziel(weiter):
     if '//' in weiter or not all((c.isascii() and c.isalnum()) or c in '/-_' for c in weiter):
         return None
     return weiter
+
+
+def _login_abschliessen(user):
+    """Volle Session + Audit-Eintrag; Alarm-Mail, wenn das Konto sich zum ersten
+    Mal von dieser IP anmeldet."""
+    ip = request.remote_addr
+    neu = ip_neu_fuer(user, ip)
+    _admin_session_setzen(user)
+    protokollieren('login', user=user)
+    if neu:
+        alarm_mail(f'Anmeldung von neuer IP: {user.username}', [
+            f'Das Konto „{user.username}“ ({user.role}) hat sich gerade von einer IP angemeldet, '
+            'die für dieses Konto bisher nicht im Audit-Log steht.',
+            f'IP: {ip}',
+            f'Browser: {(request.user_agent.string or "")[:200]}',
+            'Warst du das nicht: sofort Passwort ändern, 2FA-Recovery-Codes neu erzeugen '
+            'und das Audit-Log prüfen.',
+        ])
+
+
+def _fehlversuch_serie(ip, art):
+    """Mail, sobald eine IP wegen Fehlversuchen gesperrt ist."""
+    protokollieren('login_ip_gesperrt', ziel=art, anonym=True)
+    alarm_mail(f'Login-Sperre nach Fehlversuchen ({art})', [
+        f'Die IP {ip} hat zu viele Fehlversuche beim {art} und ist für 15 Minuten gesperrt.',
+        'Einzelne Vertipper lösen das nicht aus. Bitte im Audit-Log nachsehen, welches Konto betroffen war.',
+    ])
 
 
 def _standardziel(user):
@@ -121,6 +152,7 @@ def login():
             weiter = _sicheres_ziel(request.args.get('weiter'))
             if user.totp_aktiviert and user.totp_secret:
                 # Passwort ok -- aber noch kein Zugriff: erst der zweite Faktor.
+                protokollieren('login_passwort_ok', ziel='2FA ausstehend', user=user)
                 session.clear()
                 session['2fa_pending_user_id'] = user.id
                 session['2fa_pending_seit'] = utcnow().isoformat()
@@ -131,9 +163,15 @@ def login():
                 # erst per weiterem Set-Cookie nachreichen muss.
                 csrf_token()
                 return redirect(url_for('admin.login_2fa'))
-            _admin_session_setzen(user)
+            _login_abschliessen(user)
             return redirect(weiter or _standardziel(user))
         else:
+            # Benutzernamen nur protokollieren, wenn es das Konto gibt -- sonst
+            # landet z. B. ein ins falsche Feld getipptes Passwort im Log.
+            if user:
+                protokollieren('login_fehlgeschlagen', ziel='falsches Passwort', user=user)
+            else:
+                protokollieren('login_fehlgeschlagen', ziel='unbekannter Benutzername', anonym=True)
             # Nur Fehlversuche zaehlen gegen das Rate-Limit. 8 Fehlversuche pro
             # 15 Minuten und IP bremsen Brute-Force, ohne legitime Vertipper zu
             # bestrafen; die Sperre selbst greift oben vor der Pruefung.
@@ -141,6 +179,8 @@ def login():
                 fehler = 'Zu viele Fehlversuche — bitte 15 Minuten warten.'
             else:
                 fehler = 'Falscher Benutzername oder Passwort.'
+                if ip_gesperrt(request.remote_addr, 'admin_login', limit=8, window=900):
+                    _fehlversuch_serie(request.remote_addr, 'Passwort')
     return render_template('login.html', fehler=fehler)
 
 
@@ -174,10 +214,25 @@ def login_2fa():
             weiter = _sicheres_ziel(session.get('login_weiter'))
             session.clear()
             csrf_token()           # frisches Token fuer die Folgeseiten
-            _admin_session_setzen(user)
+            _login_abschliessen(user)
             return redirect(weiter or _standardziel(user))
         else:
             fehler = 'Code stimmt nicht.'
+            # Passwort war richtig, nur der Code nicht -- von einer fremden IP ist
+            # das ein starkes Zeichen, dass das Passwort bekannt ist.
+            ip = request.remote_addr
+            neu = ip_neu_fuer(user, ip)
+            protokollieren('login_2fa_fehlgeschlagen', user=user)
+            if ip_gesperrt(ip, 'admin_2fa', limit=10, window=900):
+                _fehlversuch_serie(ip, '2FA-Code')
+            elif neu and ip_erlaubt(ip, 'alarm_2fa_neue_ip', limit=1, window=3600):
+                alarm_mail(f'Richtiges Passwort, falscher 2FA-Code: {user.username}', [
+                    f'Für das Konto „{user.username}“ wurde das richtige Passwort eingegeben, '
+                    'der 2FA-Code war aber falsch — von einer IP, von der sich dieses Konto '
+                    'noch nie angemeldet hat.',
+                    f'IP: {ip}',
+                    'Warst du das nicht: Passwort sofort ändern.',
+                ])
     return render_template('login_2fa.html', fehler=fehler)
 
 
@@ -199,13 +254,14 @@ def change_password():
         user = AdminUser.query.get(session['admin_user_id'])
         if not check_password_hash(user.password_hash, aktuelles):
             fehler = 'Aktuelles Passwort ist falsch.'
-        elif len(neu) < 8:
-            fehler = 'Neues Passwort muss mindestens 8 Zeichen haben.'
+        elif len(neu) < PASSWORT_MIN:
+            fehler = f'Neues Passwort muss mindestens {PASSWORT_MIN} Zeichen haben.'
         elif neu != neu_wiederholt:
             fehler = 'Die neuen Passwörter stimmen nicht überein.'
         else:
             user.password_hash = generate_password_hash(neu)
             db.session.commit()
+            protokollieren('passwort_geaendert')
             nachricht = 'Passwort erfolgreich geändert.'
     return render_template('password.html', nachricht=nachricht, fehler=fehler)
 
@@ -239,6 +295,7 @@ def zwei_faktor():
                 db.session.commit()
                 session.pop('2fa_setup_secret', None)
                 session['admin_2fa_aktiv'] = True
+                protokollieren('2fa_aktiviert')
                 nachricht = 'Zwei-Faktor-Authentifizierung ist jetzt aktiv.'
 
         elif aktion == 'deaktivieren' and user.totp_aktiviert:
@@ -250,6 +307,7 @@ def zwei_faktor():
                 user.totp_recovery = None
                 db.session.commit()
                 session['admin_2fa_aktiv'] = False
+                protokollieren('2fa_deaktiviert')
                 nachricht = 'Zwei-Faktor-Authentifizierung wurde deaktiviert.'
 
         elif aktion == 'recovery-neu' and user.totp_aktiviert:
@@ -259,6 +317,7 @@ def zwei_faktor():
                 recovery_codes = _recovery_codes_erzeugen()
                 _recovery_speichern(user, recovery_codes)
                 db.session.commit()
+                protokollieren('2fa_recovery_neu')
                 nachricht = 'Neue Recovery-Codes erzeugt — die bisherigen sind ungültig.'
 
     qr_svg = manueller_schluessel = None

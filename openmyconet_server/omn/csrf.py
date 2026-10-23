@@ -20,7 +20,7 @@ nichts weiter. Fuer AJAX: Header `X-CSRFToken` mit dem Wert aus `csrf_token()`.
 Nicht geschuetzt (bewusst): die oeffentlichen JSON-APIs (/api/register,
 /api/bewerbung, /api/chat -- werden per fetch cross-origin von der statischen
 Website aufgerufen, haben eigenen Honeypot/Rate-Limit), der PayPal-IPN-Webhook
-und /api/v1/messung (externe Geraete).
+und /api/v2/biocomm/paket (Bridges, eigener Schluessel).
 """
 import hmac
 import secrets

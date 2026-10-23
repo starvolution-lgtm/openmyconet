@@ -23,6 +23,21 @@ Restart=on-failure
 RestartSec=3
 KillMode=mixed
 TimeoutStopSec=10
+# --- Haertung (seit 23.10.2026, Sicherheitsdurchsicht Paket 2) ---
+# Nur Optionen, die in einer USER-Unit ohne User-Namespaces greifen (seccomp/
+# prctl). ProtectSystem=, PrivateTmp=, ProtectHome= usw. brauchen in User-Units
+# einen User-Namespace -- den sperrt Ubuntu 26.04 per AppArmor
+# (kernel.apparmor_restrict_unprivileged_userns=1), die Unit startete dann nicht
+# (Status 226/NAMESPACE). Dafuer muesste omn eine System-Unit mit User=omn werden.
+# Gilt auch fuer die Backup-Skripte, die der MCC-Knopf startet (bash, pg_dump,
+# gzip, curl: keine setuid-Programme, nur Unix-/IP-Sockets).
+NoNewPrivileges=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 
 [Install]
 WantedBy=default.target

@@ -9,7 +9,7 @@ from omn.models import Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage
 from omn.zeit import utcnow
 
 NICHTS = {'Chat-Verläufe': 0, 'Fehlerprotokoll': 0, 'Kontaktanfragen': 0, 'abgelehnte Bewerbungen': 0,
-          'Kontakt-Versandlog': 0}
+          'Kontakt-Versandlog': 0, 'Audit-Log Anmeldungen': 0, 'Audit-Log Aktionen': 0}
 
 
 def _anlegen(alter_tage):
@@ -38,8 +38,7 @@ def test_loescht_nur_abgelaufene(app):
         _anlegen(100)  # Chat + Fehler abgelaufen (90 Tage), Kontakt noch drin (6 Monate)
         _anlegen(89)   # alles noch in der Frist
         ergebnis = bereinigen()
-        assert ergebnis == {'Chat-Verläufe': 2, 'Fehlerprotokoll': 2, 'Kontaktanfragen': 1,
-                            'abgelehnte Bewerbungen': 0, 'Kontakt-Versandlog': 0}
+        assert ergebnis == {**NICHTS, 'Chat-Verläufe': 2, 'Fehlerprotokoll': 2, 'Kontaktanfragen': 1}
         assert ChatLog.query.count() == 1
         assert Fehlerprotokoll.query.count() == 1
         assert Kontaktanfrage.query.count() == 2
@@ -90,3 +89,20 @@ def test_cli(app):
     with app.app_context():
         assert ChatLog.query.count() == 0 and Fehlerprotokoll.query.count() == 0
         assert Kontaktanfrage.query.count() == 0
+
+
+def test_audit_log_fristen(app):
+    """Anmelde-Eintraege 90 Tage, Aktionen 1 Jahr (timestamptz, tz-aware Vergleich)."""
+    from datetime import datetime, timezone
+
+    from omn.models import AdminAudit
+    jetzt = datetime.now(timezone.utc)
+    with app.app_context():
+        for tage, aktion in [(100, 'login'), (100, 'login_fehlgeschlagen'), (80, 'login'),
+                             (100, 'nutzer_geloescht'), (400, 'nutzer_geloescht')]:
+            db.session.add(AdminAudit(zeitpunkt=jetzt - timedelta(days=tage), aktion=aktion))
+        db.session.commit()
+        ergebnis = bereinigen()
+        assert ergebnis['Audit-Log Anmeldungen'] == 2
+        assert ergebnis['Audit-Log Aktionen'] == 1
+        assert sorted(a.aktion for a in AdminAudit.query.all()) == ['login', 'nutzer_geloescht']

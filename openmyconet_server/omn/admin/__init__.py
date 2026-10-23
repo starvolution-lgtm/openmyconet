@@ -10,6 +10,7 @@ nur `role_required`; die Tests greifen `sanitize_news_html` ab.
 """
 from omn.admin.core import admin_bp, role_required
 from omn.admin import (  # noqa: F401  -- Import registriert die Routen
+    audit,
     auth,
     biocomm,
     foerderer,

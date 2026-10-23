@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 
 from flask import flash, redirect, render_template, request, session, url_for
 
+from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 
@@ -139,6 +140,7 @@ def biocomm_admin():
         except ValueError as e:
             flash(str(e), 'error')
             return redirect(url_for('admin.biocomm_admin', schema=schema) + '#' + (request.form.get('anker') or ''))
+        protokollieren(f"biocomm_{request.form.get('aktion') or '?'}", schema)
         if neuer_schluessel is None:
             flash(meldung, 'success')
             return redirect(url_for('admin.biocomm_admin', schema=schema) + '#' + (request.form.get('anker') or ''))

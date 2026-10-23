@@ -24,7 +24,7 @@ from datetime import timedelta
 from urllib.parse import urlencode, quote
 
 import requests
-from flask import Blueprint, request, render_template, redirect, current_app, send_file, abort
+from flask import Blueprint, request, render_template, redirect, current_app, send_file, abort, session, url_for
 from flask_mail import Message
 from PIL import Image, UnidentifiedImageError
 
@@ -293,6 +293,7 @@ def antrag():
         )
         db.session.add(foerderer)
         db.session.commit()
+        session['foerderer_token'] = token
 
         paypal_base = (
             'https://www.sandbox.paypal.com/cgi-bin/webscr' if _paypal_sandbox()
@@ -307,7 +308,11 @@ def antrag():
             'currency_code': 'EUR',
             'no_shipping': '1',
             'notify_url': f'{_base_url()}/foerderer/ipn',
-            'return': f'{_base_url()}/foerderer/danke?token={token}',
+            # Token NICHT in die Ruecksprung-URL (Browserverlauf, Logs, Referer): die
+            # Danke-Seite findet den Antrag ueber die Session. Antrag und Danke-Seite
+            # liegen beide auf BASE_URL, das Cookie (SameSite=Lax) kommt beim
+            # Ruecksprung von PayPal (Top-Level-GET) mit.
+            'return': f'{_base_url()}/foerderer/danke',
             'cancel_return': LIVE_FOERDERER_URL,
             'custom': token,
             'charset': 'UTF-8',
@@ -543,6 +548,7 @@ def ipn():
     foerderer.status_geaendert_am = utcnow()
     foerderer.paypal_txn_id = txn_id
     foerderer.rechnung_nr = rechnung_nr
+    foerderer.rechnung_token = secrets.token_urlsafe(32)
     foerderer.betrag = betrag
     db.session.commit()
 
@@ -654,7 +660,7 @@ def _rechnung_pdf_erzeugen(foerderer, nr, betrag, txn_id):
 
 
 def _mail_foerderer(foerderer, rechnung_nr):
-    download_url = f'{_base_url()}/foerderer/rechnung?nr={quote(rechnung_nr)}&token={quote(foerderer.token)}'
+    download_url = f'{_base_url()}/foerderer/rechnung?t={quote(foerderer.rechnung_token)}'
     msg = Message(
         subject=f'Zahlungseingang bestätigt – Ihr OpenMycoNet Förderer-Eintrag, Rechnung {rechnung_nr}',
         recipients=[foerderer.email],
@@ -746,26 +752,61 @@ Im Admin-Panel prüfen und freischalten: {_base_url()}/admin/foerderer
 
 @foerderer_bp.route('/foerderer/danke')
 def danke():
-    token = (request.args.get('token') or '').strip()
+    # Seit 23.10.2026 ohne ?token= in der URL (Session, gesetzt beim Checkout).
+    # Alte Ruecksprung-Links mit ?token= (Zahlungen, die vor dem Deploy begonnen
+    # haben): Token in die Session uebernehmen und auf die saubere URL umleiten.
+    alt = (request.args.get('token') or '').strip()
+    if alt:
+        session['foerderer_token'] = alt
+        return redirect(url_for('foerderer.danke'))
+    token = session.get('foerderer_token')
     foerderer = Foerderer.query.filter_by(token=token).first() if token else None
     return render_template('foerderer_danke.html', foerderer=foerderer)
 
 
+def _rechnung_foerderer():
+    """Wem gehoert die Rechnung? Nur ueber Schluessel aus der Session -- die
+    Rechnungsnummer kommt danach aus der DB, nie aus der URL."""
+    rt = session.get('rechnung_token')
+    if rt:
+        f = Foerderer.query.filter_by(rechnung_token=rt).first()
+        if f:
+            return f
+    ft = session.get('foerderer_token')   # direkt von der Danke-Seite
+    if ft:
+        return Foerderer.query.filter_by(token=ft).first()
+    return None
+
+
 @foerderer_bp.route('/foerderer/rechnung')
 def rechnung():
-    nr = (request.args.get('nr') or '').strip()
-    token = (request.args.get('token') or '').strip()
-    if not nr or not token:
+    # Link aus der Mail: ?t=<rechnung_token>. Schluessel in die Session, dann sofort
+    # auf die URL ohne Schluessel umleiten (Verlauf, Logs, Referer bleiben sauber).
+    t = (request.args.get('t') or '').strip()
+    nr_alt = (request.args.get('nr') or '').strip()
+    token_alt = (request.args.get('token') or '').strip()
+    if t:
+        session['rechnung_token'] = t
+        return redirect(url_for('foerderer.rechnung'))
+    if nr_alt and token_alt:
+        # Mails von vor dem 23.10.2026: ?nr=&token= (PayPal-Token) -- weiter gueltig.
+        f = Foerderer.query.filter_by(rechnung_nr=nr_alt, token=token_alt).first()
+        if not f or not f.rechnung_token:
+            abort(403)
+        session['rechnung_token'] = f.rechnung_token
+        return redirect(url_for('foerderer.rechnung'))
+
+    foerderer = _rechnung_foerderer()
+    if not foerderer or not foerderer.rechnung_nr:
         abort(403)
 
-    foerderer = Foerderer.query.filter_by(rechnung_nr=nr, token=token).first()
-    if not foerderer:
-        abort(403)
-
+    nr = foerderer.rechnung_nr
     pfad = _rechnung_pdf_pfad(nr)
     if not os.path.exists(pfad):
         _rechnung_pdf_erzeugen(foerderer, nr, foerderer.betrag, foerderer.paypal_txn_id)
     if not os.path.exists(pfad):
         abort(500)
 
-    return send_file(pfad, mimetype='application/pdf', as_attachment=True, download_name=f'Rechnung_{nr}.pdf')
+    antwort = send_file(pfad, mimetype='application/pdf', as_attachment=True, download_name=f'Rechnung_{nr}.pdf')
+    antwort.headers['Cache-Control'] = 'no-store'
+    return antwort
