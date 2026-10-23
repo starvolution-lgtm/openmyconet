@@ -19,7 +19,7 @@ import tempfile
 from pathlib import Path
 
 HIER = Path(__file__).resolve().parent.parent
-DEV_WERKZEUGE = ['pytest==8.3.4', 'ruff==0.16.5', 'bandit==1.9.4', 'pip-audit==2.9.0']
+DEV_WERKZEUGE = ['pytest==8.3.4', 'ruff==0.17.1', 'bandit==1.9.4', 'pip-audit==2.10.1']
 UV = [sys.executable, '-m', 'uv', 'pip', 'compile', '--generate-hashes', '--universal',
       '--python-version', '3.14', '--quiet', '--no-header']
 KOPF = ('# Erzeugt von tools/requirements_erzeugen.py (uv pip compile --generate-hashes).\n'
