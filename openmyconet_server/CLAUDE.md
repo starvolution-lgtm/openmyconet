@@ -12,7 +12,8 @@ Fachmodule `auth/uebersicht/news/wartung/inhalte/knoten/foerderer/presse.py` hä
 ihre Routen an `admin_bp`, `__init__.py` re-exportiert `admin_bp`/`role_required`/
 `sanitize_news_html`), `omn/dashboard.py` (Nutzer-Login
 via Magic-Link), `omn/foerderer.py`, `omn/kollaboration.py`, `omn/registrierung.py`,
-`omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/kontrollzentrum.py` (Server-Checks, Seite
+`omn/bewerbung.py`, `omn/rag_chatbot.py`, `omn/ki.py` (Claude-Modell + Antwort-Auswertung für
+Chatbot und News-Übersetzung, SDK `anthropic` 1.x), `omn/kontrollzentrum.py` (Server-Checks, Seite
 `/mcc/server`), `omn/mcc/` (Server-MCC),
 `omn/site_live.py`, `omn/site_preview.py`. Models `omn/models.py`, DB-Erweiterungen
 `omn/extensions.py`, i18n `omn/i18n.py`, CLI-Kommandos `omn/cli.py`

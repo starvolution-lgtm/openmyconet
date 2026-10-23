@@ -12,6 +12,7 @@ from pathlib import Path
 from flask import Blueprint, request, jsonify
 import anthropic
 
+from omn import ki
 from omn.extensions import db
 from omn.models import ChatLog
 from omn.spam_schutz import ip_erlaubt
@@ -337,16 +338,17 @@ def chat():
     try:
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
         response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=1000,
+            model=ki.MODELL,
+            max_tokens=1300,   # Sonnet-5-Tokenizer zaehlt ~30 % mehr Tokens als 4.6 (vorher 1000)
+            thinking=ki.DENKEN_AUS,
             system=system,
             messages=clean_history,
         )
-        answer = response.content[0].text
+        answer = ki.antwort_text(response)
     except KeyError:
         logger.error("ANTHROPIC_API_KEY nicht gesetzt")
         return jsonify({"error": "API-Key fehlt (ANTHROPIC_API_KEY nicht konfiguriert)"}), 500
-    except anthropic.APIError as e:
+    except (anthropic.APIError, ki.KeineAntwort) as e:
         # Details nur ins Log, nicht an den Besucher (koennen Konto-/Modelldaten enthalten).
         logger.error("Anthropic API-Fehler: %s", e)
         return jsonify({"error": "Der Assistent ist gerade nicht erreichbar — bitte später erneut versuchen."}), 502
