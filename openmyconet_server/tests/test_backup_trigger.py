@@ -87,3 +87,11 @@ def test_restore_check_route_meldet_fehlercode(client, superadmin, monkeypatch):
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     r = client.post('/mcc/backup/restore-check', follow_redirects=True)
     assert 'Restore-Check FEHLGESCHLAGEN' in r.get_data(as_text=True)
+
+
+def test_backup_skripte_werden_am_echten_ort_gefunden(app):
+    """Ohne isfile-Attrappe: der Knopf muss die Skripte im Repo unter deploy/ finden."""
+    import os
+    with app.app_context():
+        for skript in ('backup_db.sh', 'restore_check.sh'):
+            assert os.path.isfile(os.path.join(wartung._repo_wurzel(), 'deploy', skript)), skript

@@ -10,10 +10,17 @@ from omn.models import ChatLog, Fehlerprotokoll
 
 # --- Backup manuell anstossen (Knoepfe auf /mcc/server, Server-MCC) ---
 
+def _repo_wurzel():
+    """Repo-Root (/home/omn/app). current_app.root_path ist seit dem omn-Paket
+    .../omn -- dort gibt es kein deploy/ (bis 23.10.2026 meldete der Knopf
+    deshalb immer "backup_db.sh nicht gefunden")."""
+    return os.path.dirname(current_app.root_path)
+
+
 def _backup_skript_laufen_lassen(skript, label):
     """Fuehrt deploy/<skript> aus und flasht das Ergebnis. Feste Pfade, kein
-    Nutzer-Input -- die Skripte liegen im Repo neben app.py."""
-    pfad = os.path.join(current_app.root_path, 'deploy', skript)
+    Nutzer-Input -- die Skripte liegen im Repo unter deploy/."""
+    pfad = os.path.join(_repo_wurzel(), 'deploy', skript)
     if not os.path.isfile(pfad):
         flash(f'{label}: {skript} nicht gefunden.', 'error')
         return
@@ -22,7 +29,7 @@ def _backup_skript_laufen_lassen(skript, label):
     umgebung = {**os.environ, 'PATH': '/usr/local/bin:/usr/bin:/bin'}
     try:
         r = subprocess.run(  # nosec B603 -- feste Skriptpfade aus dem Repo, keine Shell, kein Input
-            ['/bin/bash', pfad], cwd=current_app.root_path, env=umgebung,
+            ['/bin/bash', pfad], cwd=_repo_wurzel(), env=umgebung,
             capture_output=True, text=True, timeout=180, check=False,
         )
         ausgabe = (r.stdout + r.stderr).strip()
