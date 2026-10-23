@@ -1,7 +1,7 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
 # install_systemd_staging.sh -- installiert/aktualisiert die Unit 'omn-staging'.
-# Als User omn:   bash /home/omn/app/deploy/install_systemd_staging.sh
+# Als User omn:   bash /home/omn/app-staging/deploy/install_systemd_staging.sh
 #
 # linger (loginctl enable-linger omn) deckt beide Units ab -- gleicher User.
 # Analog install_systemd.sh, nur Port 5001 / Unit omn-staging.
@@ -11,7 +11,9 @@ export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
-APP=/home/omn/app
+# Unit-Datei aus dem STAGING-Stand (seit 23.10.2026; vorher /home/omn/app = Prod-Stand,
+# eine geaenderte Unit liess sich so nicht vor dem Prod-Deploy auf Staging testen).
+APP=/home/omn/app-staging
 UNIT_DIR="$HOME/.config/systemd/user"
 
 test -d /home/omn/app-staging || { echo "FEHLER: /home/omn/app-staging fehlt -- erst deploy_staging.sh"; exit 1; }
