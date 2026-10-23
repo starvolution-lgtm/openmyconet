@@ -2,6 +2,11 @@
 kurze, generische Woerter durften nicht mehr per Zufalls-Textfragment einen
 thematisch unverwandten Synonym-Key triggern (z.B. "daten" in "datenschutz")."""
 
+import json
+
+import anthropic
+import httpx2
+
 from omn.rag_chatbot import expand_keywords, find_chunks
 
 
@@ -55,7 +60,8 @@ def test_co2_abkuerzung_wird_zu_kohlenstoff_normalisiert():
 
 
 class _FakeAntwort:
-    content = [type('T', (), {'text': 'Antwort'})()]
+    stop_reason = 'end_turn'
+    content = [type('T', (), {'type': 'text', 'text': 'Antwort'})()]
 
 
 class _FakeClient:
@@ -86,3 +92,47 @@ def test_chat_ungueltiger_verlauf_fuehrt_nicht_zu_500(client, monkeypatch):
 
 def test_chat_json_kein_objekt_400(client):
     assert client.post('/api/chat', json=['x']).status_code == 400
+
+
+# --- Echtes SDK (anthropic 1.x) gegen eine Attrappe statt der API ---
+# Prueft Anfrage + Antwort-Auswertung mit dem echten Client, ohne Netz und Key.
+
+_ECHTER_CLIENT = anthropic.Anthropic
+
+def _sdk_mit_antwort(monkeypatch, antwort_json):
+    gesendet = {}
+
+    def handler(anfrage):
+        gesendet.update(json.loads(anfrage.content))
+        return httpx2.Response(200, json=antwort_json)
+
+    def fabrik(**kw):
+        return _ECHTER_CLIENT(**kw, http_client=httpx2.Client(transport=httpx2.MockTransport(handler)))
+
+    monkeypatch.setenv('ANTHROPIC_API_KEY', 'test')
+    monkeypatch.setattr('omn.rag_chatbot.anthropic.Anthropic', fabrik)
+    return gesendet
+
+
+def _antwort(content, stop_reason='end_turn'):
+    return {'id': 'msg_test', 'type': 'message', 'role': 'assistant', 'model': 'claude-sonnet-5-5',
+            'content': content, 'stop_reason': stop_reason, 'stop_sequence': None,
+            'usage': {'input_tokens': 10, 'output_tokens': 5}}
+
+
+def test_chat_echtes_sdk_liest_text_nach_thinking_block(client, monkeypatch):
+    gesendet = _sdk_mit_antwort(monkeypatch, _antwort([
+        {'type': 'thinking', 'thinking': '', 'signature': 'sig'},
+        {'type': 'text', 'text': 'Hallo aus dem Test'},
+    ]))
+    resp = client.post('/api/chat', json={'message': 'Was ist OpenMycoNet?'})
+    assert resp.status_code == 200
+    assert resp.get_json()['answer'] == 'Hallo aus dem Test'
+    assert gesendet['model'] == 'claude-sonnet-5-5'
+    assert gesendet['thinking'] == {'type': 'between_tools'}
+
+
+def test_chat_echtes_sdk_ablehnung_gibt_502(client, monkeypatch):
+    _sdk_mit_antwort(monkeypatch, _antwort([], stop_reason='refusal'))
+    resp = client.post('/api/chat', json={'message': 'Was ist OpenMycoNet?'})
+    assert resp.status_code == 502

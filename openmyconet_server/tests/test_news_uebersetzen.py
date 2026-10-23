@@ -3,7 +3,15 @@
 Loest das wiederkehrende "Text uebersetzen, Bild neu einfuegen, Tags neu
 eintippen"-Problem beim Anlegen einer Story in allen 5 Sprachen. Kein Test
 hier ruft die echte Anthropic-API -- _uebersetzung_anfordern() wird
-monkeypatcht, genau wie andere aeussere Abhaengigkeiten in dieser Suite."""
+monkeypatcht, genau wie andere aeussere Abhaengigkeiten in dieser Suite
+(bzw. am Ende: echtes SDK gegen eine Attrappe statt der API)."""
+import json
+from types import SimpleNamespace
+
+import anthropic
+import httpx2
+import pytest
+
 from conftest import eingeloggt
 from omn.admin import news as news_mod
 from omn.extensions import db
@@ -112,3 +120,41 @@ def test_uebersetzung_gleiche_sprache_wie_quelle_ist_ungueltig(client, app, supe
     news_id = _quelle_anlegen(client)
     r = client.get(f'/admin/news/{news_id}/uebersetzen/de')
     assert r.status_code == 400
+
+
+# --- Echtes SDK (anthropic 1.x) gegen eine Attrappe statt der API ---
+
+_ECHTER_CLIENT = anthropic.Anthropic
+_NEWS = SimpleNamespace(titel='Titel', untertitel='', inhalt='<p>Text</p>')
+
+
+def _sdk_mit_antwort(monkeypatch, content, stop_reason='end_turn'):
+    gesendet = {}
+
+    def handler(anfrage):
+        gesendet.update(json.loads(anfrage.content))
+        return httpx2.Response(200, json={
+            'id': 'msg_test', 'type': 'message', 'role': 'assistant', 'model': 'claude-sonnet-5-5',
+            'content': content, 'stop_reason': stop_reason, 'stop_sequence': None,
+            'usage': {'input_tokens': 10, 'output_tokens': 5}})
+
+    monkeypatch.setenv('ANTHROPIC_API_KEY', 'test')
+    monkeypatch.setattr('omn.admin.news.anthropic.Anthropic', lambda **kw: _ECHTER_CLIENT(
+        **kw, http_client=httpx2.Client(transport=httpx2.MockTransport(handler))))
+    return gesendet
+
+
+def test_uebersetzung_echtes_sdk_liest_text(monkeypatch):
+    gesendet = _sdk_mit_antwort(monkeypatch, [
+        {'type': 'thinking', 'thinking': '', 'signature': 'sig'},
+        {'type': 'text', 'text': 'TITEL: Title\nUNTERTITEL: LEER\nINHALT:\n<p>Text</p>'},
+    ])
+    assert news_mod._uebersetzung_anfordern(_NEWS, 'en').startswith('TITEL: Title')
+    assert gesendet['model'] == 'claude-sonnet-5-5'
+    assert gesendet['thinking'] == {'type': 'between_tools'}
+
+
+def test_uebersetzung_echtes_sdk_ablehnung_wird_fehler(monkeypatch):
+    _sdk_mit_antwort(monkeypatch, [], stop_reason='refusal')
+    with pytest.raises(news_mod.NewsUebersetzungFehler):
+        news_mod._uebersetzung_anfordern(_NEWS, 'en')

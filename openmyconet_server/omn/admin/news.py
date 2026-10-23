@@ -16,6 +16,7 @@ from flask import abort, current_app, flash, redirect, render_template, request,
 from flask_mail import Message
 from PIL import Image, ImageOps, UnidentifiedImageError
 
+from omn import ki
 from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, login_required
 from omn.bildgroessen import fassungen_erzeugen
@@ -242,13 +243,16 @@ def _uebersetzung_anfordern(news, ziel_sprache):
     try:
         client = anthropic.Anthropic(api_key=api_key)
         response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=4000,
+            model=ki.MODELL,
+            max_tokens=8000,   # Sonnet-5-Tokenizer zaehlt ~30 % mehr Tokens als 4.6 (vorher 4000)
+            thinking=ki.DENKEN_AUS,
             messages=[{"role": "user", "content": prompt}],
         )
-        return response.content[0].text
+        return ki.antwort_text(response)
     except anthropic.APIError as e:
         raise NewsUebersetzungFehler(f'Anthropic-API-Fehler: {e}') from e
+    except ki.KeineAntwort as e:
+        raise NewsUebersetzungFehler(str(e)) from e
 
 
 def _uebersetzung_parsen(text, news):
