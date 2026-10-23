@@ -1,2 +1,2 @@
-# Git-Hooks laufen in bash -> immer LF (sonst ": command not found")
+# Git-Hooks laufen in bash -> immer LF (mit CRLF bricht bash ab)
 .githooks/* text eol=lf
