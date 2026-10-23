@@ -51,8 +51,6 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
   // Nur GET-Anfragen cachen
   if (e.request.method !== 'GET') return;
-  // contact.php nicht cachen
-  if (e.request.url.includes('contact.php')) return;
   // Admin- und Nutzer-Dashboard-Bereiche NIE cachen -- beides ist authenti-
   // fizierter, dynamischer Inhalt (kein Teil der "Offline-Fähigkeit fürs
   // Marketing-Frontend", fuer die dieser Service Worker gedacht ist). Ohne
