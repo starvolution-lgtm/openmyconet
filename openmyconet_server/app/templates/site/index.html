@@ -393,7 +393,7 @@
   <button class="ic-56" id="node-panel-close">✕</button>
 
   <div class="ic-57">
-    <p class="ic-58" id="node-panel-label">Bewerbung</p>
+    <p class="ic-58" id="node-panel-label">{{ t('a_node_panel_label') }}</p>
     <h2 class="mg-mb-2" id="node-panel-title">{{ t('a_node_panel_title') }}</h2>
 
     <div class="ic-59">
@@ -459,7 +459,7 @@
       <div class="form-group">
         <label class="mg-cb-label">
           <input class="mg-cb-accent" type="checkbox" name="node_privacy" id="node-inp-privacy" required>
-          <span id="node-privacy-label">Ich habe die <a class="u-green" href="{{ live('datenschutz.html') }}">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Bewerberdaten zu. *</span>
+          {% set npl = t('a_node_privacy_label') %}<span id="node-privacy-label" data-href="{{ live('datenschutz.html') }}">{{ npl.split('[')[0] }}<a class="u-green" href="{{ live('datenschutz.html') }}">{{ npl.split('[')[1].split(']')[0] }}</a>{{ npl.split(']')[1] }} *</span>
         </label>
       </div>
 
@@ -734,6 +734,15 @@ function renderRegForm(lang) {
   document.getElementById('node-inp-motivation').placeholder = A.node_ph_motivation;
   document.getElementById('node-lbl-loan').textContent = A.node_lbl_loan;
   document.getElementById('node-privacy-notice').textContent = A.privacy_notice;
+  document.getElementById('node-panel-label').textContent = A.node_panel_label;
+  var npl = document.getElementById('node-privacy-label'), nplTeile = A.node_privacy_label.match(/^(.*)\[(.*)\](.*)$/);
+  npl.textContent = '';
+  npl.append(nplTeile[1]);
+  var nplLink = document.createElement('a');
+  nplLink.className = 'u-green';
+  nplLink.href = npl.dataset.href;
+  nplLink.textContent = nplTeile[2];
+  npl.append(nplLink, nplTeile[3] + ' *');
   document.getElementById('node-submit-btn').textContent = A.node_submit;
 
   var reqList = document.getElementById('node-req-list');
