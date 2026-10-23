@@ -1,0 +1,2 @@
+# Git-Hooks laufen in bash -> immer LF (sonst ": command not found")
+.githooks/* text eol=lf

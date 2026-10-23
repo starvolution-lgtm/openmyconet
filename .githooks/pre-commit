@@ -1,0 +1,31 @@
+#!/bin/sh
+# gitleaks vor jedem Commit (seit 23.10.2026, Sicherheitsdurchsicht Desktop-Punkt):
+# prueft die vorgemerkten Aenderungen auf Schluessel/Passwoerter, BEVOR sie im Verlauf
+# landen (die CI prueft erst nach dem Push -- dann ist es schon auf GitHub).
+# Eingebunden per:  git config core.hooksPath .githooks
+# Fehlalarm in Testdaten: Ausnahme in .gitleaks.toml (Repo-Root) ergaenzen.
+# Notfall (bewusst!):  git commit --no-verify
+
+GL=$(command -v gitleaks 2>/dev/null)
+if [ -z "$GL" ] && [ -x "$LOCALAPPDATA/Microsoft/WinGet/Links/gitleaks.exe" ]; then
+    GL="$LOCALAPPDATA/Microsoft/WinGet/Links/gitleaks.exe"
+fi
+if [ -z "$GL" ]; then
+    echo "WARNUNG: gitleaks nicht installiert -- Commit ohne Geheimnis-Pruefung." >&2
+    echo "         Installieren: winget install --id Gitleaks.Gitleaks -e" >&2
+    exit 0
+fi
+
+# gitleaks >= 8.19: "git --pre-commit --staged"; aeltere Versionen: "protect --staged"
+if "$GL" git --help >/dev/null 2>&1; then
+    "$GL" git --pre-commit --staged --redact --no-banner
+else
+    "$GL" protect --staged --redact --no-banner
+fi
+rc=$?
+if [ $rc -ne 0 ]; then
+    echo "" >&2
+    echo "gitleaks hat moegliche Geheimnisse gefunden (siehe oben) -- Commit abgebrochen." >&2
+    echo "Echtes Geheimnis: aus der Datei entfernen. Fehlalarm: Ausnahme in .gitleaks.toml." >&2
+fi
+exit $rc
