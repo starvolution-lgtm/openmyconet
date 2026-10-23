@@ -9,8 +9,8 @@
 #
 # Ablauf:
 #   1. Tarball -> Staging-Verzeichnis
-#   2. pip install -r requirements.txt (voll gepinnt == was CI geprueft hat;
-#      no-op wenn nichts neu ist)
+#   2. pip install --require-hashes -r requirements.txt (voll gepinnt + Pruef-
+#      summen seit 23.10.2026 == was CI geprueft hat; no-op wenn nichts neu ist)
 #   3. Import-Check (laedt `import wsgi` -> create_app() sauber?)
 #   4. Backup des aktuellen Codes -> /home/omn/app.bak-<ts>
 #   5. rsync Staging -> /home/omn/app  (--delete; deploy/deploy-exclude.txt
@@ -76,7 +76,8 @@ tr -d '\r' < "$STAGING/deploy/deploy-exclude.txt" > "$EXCL"   # CRLF -> LF, sons
 grep -qx '/instance/' "$EXCL" || { echo "deploy-exclude.txt schuetzt /instance/ nicht — Abbruch"; exit 1; }
 
 echo "[2/8] Abhaengigkeiten (requirements.txt)"
-"$PY" -m pip install -q -r "$STAGING/requirements.txt"
+# --require-hashes: ein auf PyPI nachtraeglich ausgetauschtes Paket wird abgelehnt
+"$PY" -m pip install -q --require-hashes -r "$STAGING/requirements.txt"
 
 echo "[3/8] Import-Check"
 ( cd "$STAGING" && SECRET_KEY=deploy-check "$PY" -c "import wsgi; print('   import wsgi (create_app) OK')" )

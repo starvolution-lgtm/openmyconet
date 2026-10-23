@@ -46,7 +46,7 @@ PY="$APP/venv/bin/python"
 
 echo "[3/6] Abhaengigkeiten"
 "$PY" -m pip install -q --upgrade pip
-"$PY" -m pip install -q -r "$STAGING/requirements.txt"
+"$PY" -m pip install -q --require-hashes -r "$STAGING/requirements.txt"
 
 echo "[4/6] Import-Check"
 ( cd "$STAGING" && SECRET_KEY=deploy-check "$PY" -c "import wsgi; print('   import wsgi OK')" )

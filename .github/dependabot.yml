@@ -1,0 +1,28 @@
+# Dependabot (seit 23.10.2026, Sicherheitsdurchsicht Paket 3): woechentliche
+# Pull Requests fuer veraltete/verwundbare Abhaengigkeiten. Sicherheits-Updates
+# kommen zusaetzlich sofort (Repo-Einstellung "Dependabot security updates").
+# Die PRs laufen durch die CI; gemergt wird nach Durchsicht (Claude/Robby), dann
+# normal deployen. requirements*.txt sind mit Pruefsummen (uv pip compile
+# --generate-hashes) -- Dependabot zieht die Hashes mit.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /openmyconet_server
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    groups:
+      # Kleine Updates gesammelt in einem PR, grosse Versionsspruenge einzeln
+      kleine-updates:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]

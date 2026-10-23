@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: openmyconet_server/requirements-dev.txt
 
       - name: Abhaengigkeiten installieren
-        run: pip install -r requirements-dev.txt
+        run: pip install --require-hashes -r requirements-dev.txt
 
       - name: Ruff (Lint)
         run: python -m ruff check .
@@ -40,6 +40,19 @@ jobs:
 
       - name: pip-audit (Abhaengigkeits-CVEs)
         run: python -m pip_audit -r requirements.txt
+
+  # Geheimnis-Scan (seit 23.10.2026): gitleaks prueft die Commits dieses Pushs
+  # (bzw. des PRs) auf eingecheckte Schluessel/Passwoerter. Regeln + Ausnahmen
+  # fuer Testdaten: .gitleaks.toml im Repo-Root.
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Dieselbe Testsuite gegen echtes Postgres (Postgres-Block-Plan Schritt 2).
   # Beweist die PG-Tauglichkeit; die App laeuft auf Prod/Staging weiter auf
@@ -76,7 +89,7 @@ jobs:
           cache-dependency-path: openmyconet_server/requirements-dev.txt
 
       - name: Abhaengigkeiten installieren
-        run: pip install -r requirements-dev.txt
+        run: pip install --require-hashes -r requirements-dev.txt
 
       - name: Pytest (Postgres)
         run: python -m pytest -q -p no:warnings
@@ -98,7 +111,7 @@ jobs:
           cache-dependency-path: openmyconet_server/requirements.txt
 
       - name: Server-Abhaengigkeiten (fuer den Kreuztest)
-        run: pip install -r openmyconet_server/requirements.txt
+        run: pip install --require-hashes -r openmyconet_server/requirements.txt
 
       - name: Firmware-Tests (gcc, Sanitizer)
         run: python firmware/werkzeuge/host_test.py --sanitize
@@ -150,7 +163,7 @@ jobs:
           node-version: "20"
 
       - name: Python-Abhaengigkeiten installieren
-        run: pip install -r requirements.txt
+        run: pip install --require-hashes -r requirements.txt
 
       - name: DB-Schema anlegen (leer, nur Tabellen)
         run: python -c "from omn import create_app; from omn.extensions import db; app = create_app(); app.app_context().push(); db.create_all()"

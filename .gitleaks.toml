@@ -1,0 +1,15 @@
+# gitleaks (CI-Job "gitleaks", seit 23.10.2026): sucht in neuen Commits nach
+# versehentlich eingecheckten Geheimnissen (API-Keys, Passwoerter, private Schluessel).
+# Standardregeln + Ausnahmen fuer bewusst oeffentliche Testdaten.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Testdaten und Pruefsummen, keine echten Geheimnisse"
+paths = [
+  '''openmyconet_server/tests/''',
+  '''firmware/tests/''',
+  '''openmyconet_server/docs/.*[Tt]estvektor''',
+  '''openmyconet_server/requirements.*\.txt''',
+  '''openmyconet_server/deploy/env\.staging\.example''',
+]
