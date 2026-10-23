@@ -538,25 +538,39 @@ def ipn():
                      foerderer.id, foerderer.betrag, betrag, waehrung, txn_id)
         return '', 200
 
-    rechnung_nr = _naechste_rechnung_nr()
     # Zahlung ist eingegangen, aber der Eintrag geht NICHT automatisch live --
     # OpenMycoNet prueft erst, ob die Foerderung thematisch passt (siehe f_steps
     # in translations.json, "Kurze Pruefung", max. 48h). Freischaltung + Sporist-
-    # Rollen-Upgrade erfolgen erst durch die Admin-Aktion 'activate' (admin.py),
+    # Rollen-Upgrade erfolgen erst durch die Admin-Aktion 'activate' (admin/foerderer.py),
     # exakt wie beim manuellen Freigabe-Weg fuer Kooperationsanfragen.
+    # Seit 23.10.2026 auch die Rechnung (Nummer, PDF, Mail) erst dort -- eine
+    # abgelehnte Foerderung bekommt keine Rechnung (Robby), sondern eine Erstattung.
     foerderer.status = 'zahlung_eingegangen'
     foerderer.status_geaendert_am = utcnow()
+    foerderer.bezahlt_am = utcnow()
     foerderer.paypal_txn_id = txn_id
-    foerderer.rechnung_nr = rechnung_nr
-    foerderer.rechnung_token = secrets.token_urlsafe(32)
     foerderer.betrag = betrag
     db.session.commit()
 
-    _rechnung_pdf_erzeugen(foerderer, rechnung_nr, betrag, txn_id)
-    _mail_foerderer(foerderer, rechnung_nr)
-    _mail_admin(foerderer, rechnung_nr, betrag)
+    _mail_zahlung_eingegangen(foerderer)
+    _mail_admin(foerderer, betrag)
 
     return '', 200
+
+
+def rechnung_ausstellen(foerderer):
+    """Bei der Admin-Freigabe: Rechnungsnummer + Download-Schluessel vergeben,
+    PDF erzeugen, Mail mit Rechnungslink. Nur fuer per PayPal bezahlte
+    Foerderer-Eintraege ohne Rechnung; sonst None. Liefert die Rechnungsnummer."""
+    if foerderer.typ != 'foerderer' or not foerderer.paypal_txn_id or foerderer.rechnung_nr:
+        return None
+    rechnung_nr = _naechste_rechnung_nr()
+    foerderer.rechnung_nr = rechnung_nr
+    foerderer.rechnung_token = secrets.token_urlsafe(32)
+    db.session.commit()
+    _rechnung_pdf_erzeugen(foerderer, rechnung_nr, foerderer.betrag, foerderer.paypal_txn_id)
+    _mail_foerderer(foerderer, rechnung_nr)
+    return rechnung_nr
 
 
 def _naechste_rechnung_nr():
@@ -645,7 +659,8 @@ def _rechnung_pdf_erzeugen(foerderer, nr, betrag, txn_id):
     pdf.multi_cell(
         0, 5,
         'Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).\n'
-        f'Bezahlt via PayPal am {utcnow().strftime("%d.%m.%Y")}.',
+        + (f'Bezahlt via PayPal am {foerderer.bezahlt_am.strftime("%d.%m.%Y")}.' if foerderer.bezahlt_am
+           else 'Bezahlt via PayPal.'),
     )
     pdf.ln(4)
     pdf.set_font('Helvetica', '', 9)
@@ -662,16 +677,13 @@ def _rechnung_pdf_erzeugen(foerderer, nr, betrag, txn_id):
 def _mail_foerderer(foerderer, rechnung_nr):
     download_url = f'{_base_url()}/foerderer/rechnung?t={quote(foerderer.rechnung_token)}'
     msg = Message(
-        subject=f'Zahlungseingang bestätigt – Ihr OpenMycoNet Förderer-Eintrag, Rechnung {rechnung_nr}',
+        subject=f'Ihr OpenMycoNet Förderer-Eintrag ist online – Rechnung {rechnung_nr}',
         recipients=[foerderer.email],
     )
     msg.body = f"""Sehr geehrte Damen und Herren,
 
-vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihre Zahlung ist eingegangen.
-
-Wir prüfen kurz, ob Ihre Förderung thematisch zu OpenMycoNet passt (in der Regel
-maximal 48 Stunden). Danach wird Ihr Eintrag für "{foerderer.firma}" auf der
-Fördererseite veröffentlicht:
+vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihr Eintrag für "{foerderer.firma}"
+ist geprüft und jetzt auf der Fördererseite zu sehen:
 {LIVE_FOERDERER_URL}
 
 Ihre Rechnung ({rechnung_nr}) können Sie hier herunterladen:
@@ -686,13 +698,11 @@ OpenMycoNet
 """
     msg.html = render_template(
         'transaktions_email.html',
-        titel='Zahlungseingang bestätigt',
+        titel='Ihr Förderer-Eintrag ist online',
         zeilen=[
             'Sehr geehrte Damen und Herren,',
-            'vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihre Zahlung ist eingegangen.',
-            (f'Wir prüfen kurz, ob Ihre Förderung thematisch zu OpenMycoNet passt (in der Regel '
-             f'maximal 48 Stunden). Danach wird Ihr Eintrag für "{foerderer.firma}" auf der '
-             f'Fördererseite veröffentlicht: {LIVE_FOERDERER_URL}'),
+            (f'vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihr Eintrag für "{foerderer.firma}" '
+             f'ist geprüft und jetzt auf der Fördererseite zu sehen: {LIVE_FOERDERER_URL}'),
             ('Die Partnerschaft läuft ab Veröffentlichung ein Jahr. Ca. 2–3 Monate vor Ablauf '
              'melden wir uns zur Verlängerung.'),
         ],
@@ -706,12 +716,48 @@ OpenMycoNet
         logger.error("Förderer-Bestätigungsmail konnte nicht gesendet werden (%s): %s", foerderer.email, e)
 
 
-def _mail_admin(foerderer, rechnung_nr, betrag):
+def _mail_zahlung_eingegangen(foerderer):
+    """Direkt nach der Zahlung (IPN): Eingang bestaetigen, Rechnung folgt mit der Freigabe."""
+    msg = Message(
+        subject='Zahlungseingang bestätigt – Ihr OpenMycoNet Förderer-Eintrag',
+        recipients=[foerderer.email],
+    )
+    msg.body = f"""Sehr geehrte Damen und Herren,
+
+vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihre Zahlung ist eingegangen.
+
+Wir prüfen kurz, ob Ihre Förderung thematisch zu OpenMycoNet passt (in der Regel
+maximal 48 Stunden). Sobald Ihr Eintrag für "{foerderer.firma}" auf der
+Fördererseite veröffentlicht ist, erhalten Sie Ihre Rechnung per E-Mail.
+
+Mit freundlichen Grüßen
+Robert Jank
+OpenMycoNet
+"""
+    msg.html = render_template(
+        'transaktions_email.html',
+        titel='Zahlungseingang bestätigt',
+        zeilen=[
+            'Sehr geehrte Damen und Herren,',
+            'vielen Dank für Ihre Unterstützung von OpenMycoNet! Ihre Zahlung ist eingegangen.',
+            (f'Wir prüfen kurz, ob Ihre Förderung thematisch zu OpenMycoNet passt (in der Regel '
+             f'maximal 48 Stunden). Sobald Ihr Eintrag für "{foerderer.firma}" auf der '
+             f'Fördererseite veröffentlicht ist, erhalten Sie Ihre Rechnung per E-Mail.'),
+        ],
+        unterschrift=['Mit freundlichen Grüßen', 'Robert Jank', 'OpenMycoNet'],
+    )
+    try:
+        mail.send(msg)
+    except Exception as e:
+        logger.error("Zahlungseingangs-Mail konnte nicht gesendet werden (%s): %s", foerderer.email, e)
+
+
+def _mail_admin(foerderer, betrag):
     admin_email = os.getenv('ADMIN_NOTIFY_EMAIL') or os.getenv('MAIL_USERNAME')
     if not admin_email:
         return
     msg = Message(
-        subject=f'Prüfung ausstehend: Förderer-Zahlung von {foerderer.firma} ({rechnung_nr})',
+        subject=f'Prüfung ausstehend: Förderer-Zahlung von {foerderer.firma}',
         recipients=[admin_email],
     )
     msg.body = f"""Neue Förderer-Zahlung eingegangen, wartet auf Freigabe (max. 48h):
@@ -721,10 +767,12 @@ Ansprechpartner: {foerderer.ansprechpartner or '(nicht angegeben)'}
 E-Mail:   {foerderer.email}
 Website:  {foerderer.website or '(nicht angegeben)'}
 Betrag:   {betrag:.2f} EUR
-Rechnung: {rechnung_nr}
+PayPal:   {foerderer.paypal_txn_id}
 Kategorie: {foerderer.kategorie}
 
 Im Admin-Panel prüfen und freischalten: {_base_url()}/admin/foerderer
+Die Rechnung wird erst bei der Freischaltung erstellt und verschickt. Bei
+Ablehnung: Zahlung in PayPal erstatten.
 """
     msg.html = render_template(
         'transaktions_email.html',
@@ -736,7 +784,7 @@ Im Admin-Panel prüfen und freischalten: {_base_url()}/admin/foerderer
             f'E-Mail: {foerderer.email}',
             f'Website: {foerderer.website or "(nicht angegeben)"}',
             f'Betrag: {betrag:.2f} EUR',
-            f'Rechnung: {rechnung_nr}',
+            f'PayPal-Transaktion: {foerderer.paypal_txn_id}',
             f'Kategorie: {foerderer.kategorie}',
         ],
         cta_text='Im Admin-Panel prüfen',

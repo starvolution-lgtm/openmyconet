@@ -128,13 +128,17 @@ def test_ipn_setzt_zahlung_eingegangen_statt_sofort_aktiv(client, app, monkeypat
         foerderer = Foerderer.query.get(foerderer_id)
         assert foerderer.status == 'zahlung_eingegangen'
         assert foerderer.paypal_txn_id == 'TXN123'
-        assert foerderer.rechnung_nr
+        assert foerderer.bezahlt_am is not None
         assert foerderer.aktiviert_am is None  # noch nicht freigeschaltet
+        # Seit 23.10.2026: Rechnung erst bei der Freigabe
+        assert not foerderer.rechnung_nr and not foerderer.rechnung_token
+        assert not os.path.isdir(os.path.join(app.instance_path, 'rechnungen')) or \
+            not os.listdir(os.path.join(app.instance_path, 'rechnungen'))
 
-        rechnung_pfad = os.path.join(app.instance_path, 'rechnungen', f'{foerderer.rechnung_nr}.pdf')
-        assert os.path.exists(rechnung_pfad)
-
-    assert len(ausgehend) == 2  # Rechnungsmail an Foerderer + Pruef-Benachrichtigung an Admin
+    # Eingangsbestaetigung an den Foerderer (ohne Rechnung) + Pruef-Benachrichtigung an Admin
+    assert len(ausgehend) == 2
+    bestaetigung = next(m for m in ausgehend if m.recipients == ['ipn@example.com'])
+    assert 'Rechnung per E-Mail' in bestaetigung.body and '/foerderer/rechnung' not in bestaetigung.body
 
     # Oeffentliche Liste zeigt den Eintrag noch NICHT, solange kein Admin freigeschaltet hat.
     resp_liste = client.get('/foerderer.html')
@@ -217,15 +221,63 @@ def test_danke_alter_link_mit_token_wird_bereinigt(client, app):
     assert 'Zahlung wird' in client.get('/foerderer/danke').get_data(as_text=True)
 
 
-def test_rechnungsmail_link_und_download(client, app, monkeypatch):
-    _pending_foerderer(app, token='tok-rechnung')
-    with mail.record_messages() as ausgehend:
-        _ipn_senden(client, monkeypatch, 'tok-rechnung')
+def _bezahlt_und_freigegeben(client, app, monkeypatch, token):
+    """PayPal-Zahlung + Admin-Freigabe -> (rechnung_token, rechnung_nr, Mails der Freigabe)."""
+    from conftest import eingeloggt
+    from werkzeug.security import generate_password_hash
+
+    from omn.models import AdminUser
+    fid = _pending_foerderer(app, token=token)
+    _ipn_senden(client, monkeypatch, token)
     with app.app_context():
-        f = Foerderer.query.filter_by(token='tok-rechnung').one()
-        rt, nr = f.rechnung_token, f.rechnung_nr
+        db.session.add(AdminUser(username='sa', password_hash=generate_password_hash('sehr-geheim-123'),
+                                 role='superadmin'))
+        db.session.commit()
+    eingeloggt(client, 'sa', 'sehr-geheim-123')
+    with mail.record_messages() as ausgehend:
+        r = client.post('/admin/foerderer', data={'foerderer_id': fid, 'action': 'activate'})
+    assert 'Rechnung OMN-' in r.get_data(as_text=True)
+    with app.app_context():
+        f = db.session.get(Foerderer, fid)
+        return f.rechnung_token, f.rechnung_nr, ausgehend
+
+
+def test_rechnung_erst_bei_freigabe(client, app, monkeypatch):
+    rt, nr, ausgehend = _bezahlt_und_freigegeben(client, app, monkeypatch, 'tok-freigabe')
+    assert rt and nr
+    rechnungsmails = [m for m in ausgehend if 'Rechnung' in m.subject]
+    assert len(rechnungsmails) == 1 and nr in rechnungsmails[0].subject
+    # erneute Freigabe stellt keine zweite Rechnung aus
+    with app.app_context():
+        fid = Foerderer.query.filter_by(token='tok-freigabe').one().id
+    client.post('/admin/foerderer', data={'foerderer_id': fid, 'action': 'activate'})
+    with app.app_context():
+        from omn.models import RechnungsZaehler
+        assert RechnungsZaehler.query.one().zaehler == 1
+
+
+def test_ablehnung_nach_zahlung_ohne_rechnung_mit_erstattungshinweis(client, app, monkeypatch):
+    from conftest import eingeloggt
+    from werkzeug.security import generate_password_hash
+
+    from omn.models import AdminUser
+    fid = _pending_foerderer(app, token='tok-ablehnen')
+    _ipn_senden(client, monkeypatch, 'tok-ablehnen')
+    with app.app_context():
+        db.session.add(AdminUser(username='sa', password_hash=generate_password_hash('sehr-geheim-123'),
+                                 role='superadmin'))
+        db.session.commit()
+    eingeloggt(client, 'sa', 'sehr-geheim-123')
+    r = client.post('/admin/foerderer', data={'foerderer_id': fid, 'action': 'reject'})
+    assert 'bitte in PayPal erstatten' in r.get_data(as_text=True)
+    with app.app_context():
+        assert not db.session.get(Foerderer, fid).rechnung_nr
+
+
+def test_rechnungsmail_link_und_download(client, app, monkeypatch):
+    rt, nr, ausgehend = _bezahlt_und_freigegeben(client, app, monkeypatch, 'tok-rechnung')
     assert rt and rt != 'tok-rechnung'
-    mail_text = next(m for m in ausgehend if 'Zahlungseingang' in m.subject).body
+    mail_text = next(m for m in ausgehend if 'Rechnung' in m.subject).body
     assert f'/foerderer/rechnung?t={rt}' in mail_text
     assert 'tok-rechnung' not in mail_text
 

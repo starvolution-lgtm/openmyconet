@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
 
-<p class="info">Bezahlte Förderer-Einträge landen nach der PayPal-Zahlung als "zahlung_eingegangen" hier und müssen inhaltlich geprüft und freigeschaltet werden (Zielvorgabe: max. 48h). Kooperationsanfragen (ohne Zahlung) landen als "pending" und müssen ebenfalls manuell freigegeben werden.</p>
+<p class="info">Bezahlte Förderer-Einträge landen nach der PayPal-Zahlung als "zahlung_eingegangen" hier und müssen inhaltlich geprüft und freigeschaltet werden (Zielvorgabe: max. 48h). Die Rechnung wird erst beim Freischalten erstellt und per Mail verschickt; wer nach der Zahlung abgelehnt wird, bekommt keine Rechnung — die Zahlung dann in PayPal erstatten. Kooperationsanfragen (ohne Zahlung) landen als "pending" und müssen ebenfalls manuell freigegeben werden.</p>
 
 {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
 {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}

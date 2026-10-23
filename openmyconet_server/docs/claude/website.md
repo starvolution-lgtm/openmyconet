@@ -85,3 +85,13 @@ für FR/ES (`html:lang(...)`, `<html lang>` folgt dem Sprachumschalter), sonst h
 **Prototyp-Knoten:** `Knoten.prototyp` (Migration `2b6f1c9e7a30`, alle Zeilen des alten
 Messwegs = TRUE); `/api/v1/status` zählt nur `prototyp=False`, `/api/v1/messung` (alte
 Prototyp-Schnittstelle) ist seit 23.10.2026 abgeschaltet (410, keine API-Keys mehr); echtes Messnetz = BioComm-Dateneingang.
+
+## Förderer: Zahlung, Freigabe, Rechnung (seit 23.10.2026)
+PayPal-IPN setzt nur `zahlung_eingegangen` + `bezahlt_am` und schickt eine Eingangsbestätigung
+**ohne** Rechnung. Rechnungsnummer, `rechnung_token`, PDF und Rechnungsmail entstehen erst bei
+der Admin-Freigabe (`omn/foerderer.py::rechnung_ausstellen`, aufgerufen von `activate` in
+`omn/admin/foerderer.py`) — Robby, 23.10.2026: abgelehnte Förderungen bekommen keine
+Rechnung, sondern eine Erstattung in PayPal (Admin-Meldung erinnert daran). Kein Token in
+URLs: Danke-Seite über die Session, Rechnungslink `?t=` wird sofort in die Session übernommen
+und weggeleitet; Rechnungsnummer kommt aus der DB. Texte: `pay_note` in
+`site/foerderer_antrag.html`, `f_form_note` in `translations.json`.

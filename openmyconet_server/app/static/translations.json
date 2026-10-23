@@ -512,7 +512,7 @@
       "Sonstiges"
     ],
     "f_submit": "Eintrag gestalten & Förderer werden",
-    "f_form_note": "Sie zahlen erst nach der Vorschau. Die Rechnung erhalten Sie automatisch per E-Mail.",
+    "f_form_note": "Sie zahlen erst nach der Vorschau. Die Rechnung erhalten Sie nach der kurzen Prüfung per E-Mail.",
     "f_back": "← Zurück zur Startseite",
     "f_success": "✓ Anfrage eingegangen — wir melden uns!",
     "f_error": "Fehler — bitte E-Mail an kontakt@openmyconet.de",
@@ -1536,7 +1536,7 @@
       "Other"
     ],
     "f_submit": "Design listing & become a supporter",
-    "f_form_note": "You pay only after the preview. You receive the invoice automatically by email.",
+    "f_form_note": "You pay only after the preview. You receive the invoice by email after a short review.",
     "f_back": "← Back to homepage",
     "f_success": "✓ Anfrage eingegangen — wir melden uns!",
     "f_error": "Error — please email kontakt@openmyconet.de",
@@ -2560,7 +2560,7 @@
       "Overig"
     ],
     "f_submit": "Vermelding ontwerpen & partner worden",
-    "f_form_note": "U betaalt pas na het voorbeeld. De factuur ontvangt u automatisch per e-mail.",
+    "f_form_note": "U betaalt pas na het voorbeeld. De factuur ontvangt u na een korte controle per e-mail.",
     "f_back": "← Terug naar startpagina",
     "f_success": "✓ Anfrage eingegangen — wir melden uns!",
     "f_error": "Error — please email kontakt@openmyconet.de",
@@ -3584,7 +3584,7 @@
       "Autre"
     ],
     "f_submit": "Créer l'annonce & devenir partenaire",
-    "f_form_note": "Vous ne payez qu'après avoir vu l'aperçu. Vous recevez la facture automatiquement par e-mail.",
+    "f_form_note": "Vous ne payez qu'après avoir vu l'aperçu. Vous recevez la facture par e-mail après une brève vérification.",
     "f_back": "← Retour à la page d'accueil",
     "f_success": "✓ Anfrage eingegangen — wir melden uns!",
     "f_error": "Error — please email kontakt@openmyconet.de",
@@ -4608,7 +4608,7 @@
       "Otro"
     ],
     "f_submit": "Diseñar entrada & convertirse en patrocinador",
-    "f_form_note": "Usted paga solo después de ver la vista previa. Recibirá la factura automáticamente por correo electrónico.",
+    "f_form_note": "Usted paga solo después de ver la vista previa. Recibirá la factura por correo electrónico tras una breve revisión.",
     "f_back": "← Volver a la página de inicio",
     "f_success": "✓ Anfrage eingegangen — wir melden uns!",
     "f_error": "Error — please email kontakt@openmyconet.de",

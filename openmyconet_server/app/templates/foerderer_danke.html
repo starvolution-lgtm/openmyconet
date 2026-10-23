@@ -26,13 +26,19 @@
   <div class="icon">⏳</div>
   <h1>Zahlung wird <em>bestätigt</em></h1>
   <p>Ihre Zahlung wird gerade von PayPal bestätigt. Das dauert meist wenige Minuten.</p>
-  <p>Ihr Eintrag wird automatisch freigeschaltet sobald die Zahlung eingegangen ist.
-  Sie erhalten dann eine E-Mail mit der Rechnung.</p>
+  <p>Sobald die Zahlung eingegangen ist, prüfen wir Ihren Eintrag kurz (in der Regel
+  höchstens 48 Stunden). Mit der Freischaltung erhalten Sie Ihre Rechnung per E-Mail.</p>
   <div class="pending-note">Diese Seite automatisch neu laden: <strong id="countdown">30</strong> Sekunden</div>
   <script nonce="{{ csp_nonce }}">
   var s = 30;
   setInterval(function(){ s--; document.getElementById('countdown').textContent = s; if(s<=0) location.reload(); }, 1000);
   </script>
+{% elif foerderer and foerderer.status == 'zahlung_eingegangen' %}
+  <div class="icon">✅</div>
+  <h1>Zahlung <em>eingegangen</em></h1>
+  <p>Vielen Dank! Wir prüfen Ihren Eintrag für <strong>{{ foerderer.firma }}</strong> kurz
+  (in der Regel höchstens 48 Stunden). Mit der Freischaltung erhalten Sie Ihre Rechnung per E-Mail.</p>
+  <a href="https://www.openmyconet.de/foerderer.html" class="btn btn-green">Zur Fördererseite →</a>
 {% else %}
   <div class="icon">✅</div>
   <h1>Vielen <em>Dank</em></h1>

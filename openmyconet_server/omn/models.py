@@ -221,6 +221,10 @@ class Foerderer(db.Model):
     # von `token`, das als PayPal-`custom` auch bei PayPal liegt; wird zusammen mit
     # der Rechnungsnummer vergeben (IPN), Alt-Zeilen per Migration nachgezogen.
     rechnung_token = db.Column(db.String(64), unique=True, nullable=True)
+    # Zeitpunkt der bestaetigten PayPal-Zahlung (IPN), naiv-UTC wie der Rest der
+    # Tabelle. Seit 23.10.2026 entsteht die Rechnung erst bei der Freigabe -- das
+    # Zahlungsdatum auf der Rechnung kommt deshalb von hier, nicht von "heute".
+    bezahlt_am = db.Column(db.DateTime, nullable=True)
     erstellt_am = db.Column(db.DateTime, default=utcnow)
     aktiviert_am = db.Column(db.DateTime, nullable=True)
     laeuft_ab_am = db.Column(db.Date, nullable=True)

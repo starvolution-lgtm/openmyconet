@@ -4,6 +4,7 @@ from flask import render_template, request
 from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
+from omn.foerderer import rechnung_ausstellen
 from omn.models import Bewerbung, Foerderer, Knoten
 from omn.roles import hyphist_setzen, nutzer_finden_oder_anlegen, sporist_setzen
 from omn.zeit import utcnow
@@ -83,12 +84,20 @@ def foerderer_admin():
             db.session.commit()
             protokollieren('foerderer_freigegeben', f'#{eintrag.id} {eintrag.firma}')
             nachricht = f'"{eintrag.firma}" ist jetzt live auf der Fördererseite.'
+            # Rechnung erst jetzt (seit 23.10.2026), nur bei PayPal-Zahlung ohne Rechnung
+            rechnung_nr = rechnung_ausstellen(eintrag)
+            if rechnung_nr:
+                protokollieren('foerderer_rechnung', f'#{eintrag.id} {rechnung_nr}')
+                nachricht += f' Rechnung {rechnung_nr} erstellt und an {eintrag.email} geschickt.'
         elif request.form.get('action') == 'reject':
             eintrag.status = 'rejected'
             eintrag.status_geaendert_am = utcnow()
             db.session.commit()
             protokollieren('foerderer_abgelehnt', f'#{eintrag.id} {eintrag.firma}')
             nachricht = f'"{eintrag.firma}" wurde abgelehnt.'
+            if eintrag.paypal_txn_id and not eintrag.rechnung_nr:
+                nachricht += (f' Achtung: Die Zahlung ({eintrag.betrag:.2f} €, PayPal-Transaktion '
+                              f'{eintrag.paypal_txn_id}) ist schon eingegangen — bitte in PayPal erstatten.')
         else:
             fehler = 'Ungültige Aktion.'
 
