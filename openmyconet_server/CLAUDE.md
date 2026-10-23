@@ -94,6 +94,13 @@ intern UTC) und arbeiten mit tz-aware Werten (`datetime.now(timezone.utc)` bzw.
 DB-`now()`). Bestehende Tabellen bleiben unverändert naiv-UTC mit `zeit.utcnow()`;
 naive und tz-aware Werte nie miteinander vergleichen.
 Suite ist grün, kein `xfail` mehr. Tests nutzen temp-DBs.
+**Abhängigkeiten (seit 23.10.2026):** `requirements.txt` (Server) und `requirements-dev.txt`
+(nur Test-Werkzeuge) sind voll gepinnt **mit Prüfsummen**; installiert wird überall mit
+`--require-hashes` (CI: beide Dateien zusammen, Server: nur `requirements.txt`). Neues
+Paket/Versionswechsel: Pin in `requirements.txt` bzw. `DEV_WERKZEUGE` ändern, dann
+`venv/Scripts/python.exe tools/requirements_erzeugen.py` (braucht `uv` im venv).
+`tests/test_requirements.py` prüft Hashes + keine Überschneidung. Dependabot schickt
+wöchentlich PRs (`.github/dependabot.yml`); gitleaks-Job in der CI.
 CI: `.github/workflows/ci.yml` — Job `backend` (ruff + pytest + bandit + pip-audit),
 `backend-postgres`, `firmware` (PC-Tests), `firmware-esp32` (Build ESP32-S3) und
 `frontend-audit` bei jedem Push. **Gearbeitet wird seit
