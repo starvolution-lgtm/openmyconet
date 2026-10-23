@@ -29,7 +29,10 @@ PY="$APP/venv/bin/python3"
 DEST=/home/omn/backups
 # Lokal nur noch als schnelle Rueckfallebene (Deploy-Rollback, Tippfehler);
 # die Historie liegt verschluesselt auf der Storage Box (backup_storagebox.sh).
-KEEP=3
+# 14 statt 3 (seit 23.10.2026): jeder Deploy (release.sh) und jeder MCC-Knopf legt
+# einen Dump an -- mit 3 war an Deploy-Tagen der Nacht-Dump nach Stunden weg. Ein
+# Dump hat ~0,6 MB.
+KEEP=14
 TS=$(date +%Y-%m-%d-%H%M%S)
 ENV_FILE="$APP/.env"
 mkdir -p "$DEST"
