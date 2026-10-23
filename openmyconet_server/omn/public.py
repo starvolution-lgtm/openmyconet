@@ -6,6 +6,7 @@ Routen/Hooks/Jinja-Globals an die uebergebene App. Bewusst KEIN Blueprint --
 so bleibt `url_for('news')` / `url_for('news_detail')` in den Templates bar
 (kein `public.`-Praefix noetig).
 """
+import logging
 import os
 import secrets
 from datetime import timedelta
@@ -18,6 +19,7 @@ from omn import zeit
 from omn.extensions import db
 from omn.models import ContentBlock, Knoten, Messung, News, Nutzer, Spende
 from omn.registrierung import FEHLER_BEREITS_REGISTRIERT, register_nutzer_core
+from omn.spam_schutz import ip_erlaubt
 
 NEWS_PRO_SEITE = 12
 
@@ -54,6 +56,8 @@ def _asset_url(path):
     return f'{base}{path}?v={_asset_version(path)}'
 
 
+_log = logging.getLogger(__name__)
+
 # --- Sicherheits-Header ----------------------------------------------------
 # style-src + script-src kommen seit 2026-09-06 OHNE 'unsafe-inline' aus
 # (Nonce-basiert fuer Inline-<script>, alle .style.-Zuweisungen + on*-Attribute
@@ -80,8 +84,14 @@ _CSP = (
     "frame-ancestors 'self'; "
     "object-src 'none'; "
     "base-uri 'self'; "
-    "form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com;"
+    "form-action 'self' https://www.paypal.com https://www.sandbox.paypal.com; "
+    # Verstoesse melden (seit 23.10.2026): report-uri fuer aeltere Browser, report-to
+    # (Reporting-Endpoints-Header) fuer neuere. Empfang: _csp_bericht().
+    "report-uri /api/csp-bericht; "
+    "report-to csp"
 )
+_REPORTING_ENDPOINTS = 'csp="/api/csp-bericht"'   # relativ: Staging meldet an Staging
+_CSP_BERICHT_MAX = 8 * 1024   # Berichte sind wenige hundert Byte; alles darueber verwerfen
 
 # Permissions-Policy: schaltet Browser-Features ab, die die Seite nirgends nutzt
 # (geprueft: kein geolocation/mediaDevices/PaymentRequest/usb/... im Frontend).
@@ -112,6 +122,7 @@ def _sicherheits_header(response):
     # z. B. die Mail-Vorschau im Server-MCC: Inline-Styles ja, Skripte gar nicht.
     response.headers['Content-Security-Policy'] = (g.get('csp_override')
                                                    or _CSP.replace('__CSP_NONCE__', nonce))
+    response.headers['Reporting-Endpoints'] = _REPORTING_ENDPOINTS
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
@@ -121,6 +132,10 @@ def _sicherheits_header(response):
     response.headers['Permissions-Policy'] = _PERMISSIONS_POLICY
     # Isoliert cross-origin geoeffnete Fenster (Spectre-artige Side-Channels).
     response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    # Fremde Seiten duerfen unsere (von Flask erzeugten) Antworten nicht per <img>/
+    # <script> einbetten und so auslesen; www/api/Apex sind same-site (seit 23.10.2026).
+    # Statische Dateien liefert nginx direkt aus -- die betrifft das nicht.
+    response.headers['Cross-Origin-Resource-Policy'] = 'same-site'
     umgebung = current_app.config.get('OMN_ENV', 'prod')
     if umgebung != 'prod':
         response.headers['X-OMN-Env'] = umgebung
@@ -136,8 +151,32 @@ _SECURITY_TXT = (
     "Contact: mailto:kontakt@openmyconet.de\n"
     f"Expires: {_SECURITY_EXPIRES}\n"
     "Preferred-Languages: de, en\n"
+    "Policy: https://github.com/starvolution-lgtm/openmyconet/blob/main/SECURITY.md\n"
     "Canonical: https://www.openmyconet.de/.well-known/security.txt\n"
 )
+
+
+def _csp_bericht():
+    """Empfang fuer CSP-Verstossberichte der Browser (report-uri/report-to).
+    Nur ins Log (Journal), nicht in die DB: knapp, ohne IP, je IP begrenzt.
+    Antwortet immer 204 -- ein Browser wertet die Antwort nicht aus."""
+    if (request.content_length or 0) > _CSP_BERICHT_MAX:
+        return '', 204
+    if not ip_erlaubt(request.remote_addr, 'csp_bericht', limit=30, window=3600):
+        return '', 204
+    daten = request.get_json(force=True, silent=True)
+    berichte = []
+    if isinstance(daten, dict) and isinstance(daten.get('csp-report'), dict):   # report-uri
+        berichte = [daten['csp-report']]
+    elif isinstance(daten, list):                                               # report-to
+        berichte = [b.get('body') for b in daten if isinstance(b, dict) and isinstance(b.get('body'), dict)]
+    for b in berichte[:10]:
+        direktive = b.get('violated-directive') or b.get('effectiveDirective') or '?'
+        blockiert = b.get('blocked-uri') or b.get('blockedURL') or '?'
+        seite = b.get('document-uri') or b.get('documentURL') or '?'
+        _log.warning('CSP-Verstoss: %s blockiert %s auf %s',
+                     str(direktive)[:80], str(blockiert)[:200], str(seite)[:200])
+    return '', 204
 
 
 def _security_txt():
@@ -355,6 +394,7 @@ def register(app):
     app.after_request(_sicherheits_header)
     app.register_error_handler(413, _zu_gross)
 
+    app.add_url_rule('/api/csp-bericht', 'csp_bericht', _csp_bericht, methods=['POST'])
     app.add_url_rule('/.well-known/security.txt', 'security_txt_wellknown', _security_txt)
     app.add_url_rule('/security.txt', 'security_txt', _security_txt)
     app.add_url_rule('/register', 'register', neuen_nutzer_registrieren, methods=['GET', 'POST'])

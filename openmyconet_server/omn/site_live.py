@@ -111,6 +111,21 @@ def _rechtstext(art):
 
 
 # Vorher statische, nur deutsche Dateien unter app/static/ (seit 28.09.2026 fuenfsprachig).
+@site_live_bp.route('/status')
+def status():
+    """Oeffentliche Statusseite (seit 23.10.2026), billige lokale Pruefungen mit
+    eigenem 60-s-Cache -- siehe omn/status_oeffentlich.py."""
+    from datetime import datetime, timezone
+
+    from omn.status_oeffentlich import status_lesen
+    ergebnisse, zeitpunkt = status_lesen()
+    antwort = current_app.make_response(render_template(
+        'site/status.html', current_page='status', ergebnisse=ergebnisse,
+        zeitpunkt=datetime.fromtimestamp(zeitpunkt, timezone.utc)))
+    antwort.headers['Cache-Control'] = 'no-cache'
+    return antwort
+
+
 @site_live_bp.route('/impressum.html')
 def impressum():
     return _rechtstext('impressum')

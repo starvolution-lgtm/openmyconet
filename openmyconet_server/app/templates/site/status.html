@@ -1,0 +1,52 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ t('status_page_title') }}{% endblock %}
+{% block meta_description %}{{ t('status_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/status">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/status?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/status?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/status?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/status?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/status">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/status">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('page-status.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner">
+    <p class="section-label" data-i18n="status_page_tag">{{ t('status_page_tag') }}</p>
+    <h1 data-i18n-html="status_h1">{{ t('status_h1') | safe }}</h1>
+    <p data-i18n="status_intro">{{ t('status_intro') }}</p>
+  </div>
+</div>
+
+<section class="u-bg-a">
+  <div class="inner">
+    {% set alles_ok = ergebnisse | selectattr('zustand', 'equalto', 'stoerung') | list | length == 0 %}
+    <p class="status-gesamt {{ 'status-gesamt-ok' if alles_ok else 'status-gesamt-warn' }}"
+       data-i18n="{{ 'status_alles_ok' if alles_ok else 'status_nicht_alles_ok' }}">
+      {{ t('status_alles_ok' if alles_ok else 'status_nicht_alles_ok') }}
+    </p>
+    <ul class="status-liste">
+      {% for e in ergebnisse %}
+      <li class="status-zeile">
+        <span class="status-name" data-i18n="status_{{ e.schluessel }}">{{ t('status_' ~ e.schluessel) }}</span>
+        <span class="status-wert status-{{ e.zustand }}">
+          <span class="status-punkt" aria-hidden="true"></span>
+          <span data-i18n="status_{{ e.zustand }}">{{ t('status_' ~ e.zustand) }}</span>
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="status-zeit"><span data-i18n="status_geprueft">{{ t('status_geprueft') }}</span>
+      <time datetime="{{ zeitpunkt.strftime('%Y-%m-%dT%H:%M:%SZ') }}">{{ zeitpunkt.strftime('%d.%m.%Y %H:%M') }}</time></p>
+    <p class="status-hinweis" data-i18n="status_hinweis">{{ t('status_hinweis') }}</p>
+  </div>
+</section>
+{% endblock %}

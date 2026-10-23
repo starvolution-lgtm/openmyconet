@@ -1,0 +1,14 @@
+/* Oeffentliche Statusseite /status (site/status.html) */
+.status-gesamt { font-family:'Lora',Georgia,serif; font-size:1.15rem; padding:1rem 1.2rem; margin:0 0 1.5rem; border-left:3px solid; background-color:rgba(0,0,0,0.22); }
+.status-gesamt-ok { border-color:#0a7050; color:#d8f0d8; }
+.status-gesamt-warn { border-color:#d9a43a; color:#f5e6c4; }
+.status-liste { list-style:none; margin:0; padding:0; max-width:640px; }
+.status-zeile { display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; padding:0.85rem 0; border-bottom:1px solid rgba(160,200,160,0.18); }
+.status-name { font-size:1rem; color:#e6f2e6; }
+.status-wert { display:inline-flex; align-items:center; gap:0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; }
+.status-punkt { width:0.7rem; height:0.7rem; border-radius:50%; background-color:currentColor; }
+.status-ok { color:#6ee87e; }
+.status-stoerung { color:#f0b44c; }
+.status-unbekannt { color:#a0b8a8; }
+.status-zeit { margin-top:1.2rem; font-size:0.85rem; color:#a0c8a0; }
+.status-hinweis { margin-top:1rem; font-size:0.85rem; color:#a0c8a0; font-style:italic; max-width:640px; }

@@ -16,3 +16,32 @@ def test_security_txt_erreichbar(client):
     text = resp.get_data(as_text=True)
     assert 'Contact:' in text
     assert 'Expires:' in text
+
+
+def test_corp_und_csp_meldeweg(client):
+    resp = client.get('/login')
+    assert resp.headers['Cross-Origin-Resource-Policy'] == 'same-site'
+    csp = resp.headers['Content-Security-Policy']
+    assert 'report-uri /api/csp-bericht' in csp and 'report-to csp' in csp
+    assert resp.headers['Reporting-Endpoints'] == 'csp="/api/csp-bericht"'
+
+
+def test_csp_bericht_alt_und_neu_wird_geloggt(client, caplog):
+    alt = {'csp-report': {'document-uri': 'https://www.openmyconet.de/', 'violated-directive': 'script-src',
+                          'blocked-uri': 'https://boese.example/x.js'}}
+    neu = [{'type': 'csp-violation', 'body': {'documentURL': 'https://api.openmyconet.de/login',
+                                               'effectiveDirective': 'img-src', 'blockedURL': 'https://tracker.example/p.gif'}}]
+    with caplog.at_level('WARNING', logger='omn.public'):
+        assert client.post('/api/csp-bericht', json=alt).status_code == 204
+        r = client.post('/api/csp-bericht', data=__import__('json').dumps(neu),
+                        content_type='application/reports+json')
+        assert r.status_code == 204
+    text = caplog.text
+    assert 'boese.example' in text and 'tracker.example' in text
+
+
+def test_csp_bericht_muell_und_zu_gross(client, caplog):
+    with caplog.at_level('WARNING', logger='omn.public'):
+        assert client.post('/api/csp-bericht', data='kein json', content_type='application/csp-report').status_code == 204
+        assert client.post('/api/csp-bericht', data='x' * 20000, content_type='application/csp-report').status_code == 204
+    assert 'CSP-Verstoss' not in caplog.text
