@@ -10,6 +10,14 @@ Design: ganzes Nutzer-Dashboard hell im Admin-/MCC-Stil (Datenlabor bleibt dunke
 Themenräume. Abweichung vom Datenmodell unten: `beitrag`, `diskussion` und `themengebiet` haben zusätzlich
 `von_team` (Team vs. ehemaliges Mitglied unterscheidbar), `beitrag.entfernt_am` für entfernte Beiträge.
 
+**Entscheidungen für Schritt 5 (Robby, 25.10.2026):** *Wissen bleibt* – Beiträge stehen unter **CC BY 4.0**;
+bei Kontolöschung bleiben sie ohne Namen als „ehemaliges Mitglied“ stehen (ersetzt den Vorschlag in 9.3:
+kein „Standard entfernen“, keine Wahl je Person). Eigene Beiträge kann man vorher jederzeit selbst entfernen;
+Löschwünsche nach DSGVO prüft Robby im Einzelfall. Muss vor dem ersten Beitrag klar in den Nutzungsregeln
+stehen (neue Regelfassung). Ausgeblendete Beiträge werden nach **6 Monaten** endgültig gelöscht. Anrede in
+den Themenräumen bleibt **neutral** (ohne direkte Anrede). Schalter `THEMEN_FREIGEGEBEN` hält die Themenräume
+auf Prod bis zur rechtlichen Freigabe verborgen.
+
 **Überarbeitet am 25.10. nach Robbys Durchsicht:**
 - Die 6 vorgegebenen Themengebiete gibt es schon in **2a** in allen 5 Sprachen, von Hand übersetzt, ohne API
   (Abschnitte 2, 3.5, 12).
