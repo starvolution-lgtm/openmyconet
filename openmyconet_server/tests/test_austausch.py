@@ -915,7 +915,7 @@ def test_datenschutzerklaerung_abschnitt_austausch(client):
     assert '2 Jahre nach unserem letzten Kontakt' in de and 'nach einem Monat' in de
     seite = client.get('/datenschutz.html').get_data(as_text=True)
     assert 'id="austausch"' in seite and '9. Fachlicher Austausch auf Einladung' in seite
-    assert '(siehe Abschnitt 12)' in seite  # Verweis auf "Messdaten" mitgezogen
+    assert '(siehe Abschnitt 13)' in seite  # Verweis auf "Messdaten" mitgezogen (seit Themenraeume: 13)
 
 
 def test_bestand_kooperationsmail_unveraendert(app):

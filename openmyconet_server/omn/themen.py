@@ -36,7 +36,7 @@ from omn.spam_schutz import ip_erlaubt
 ARTEN = ('hypothese', 'literatur', 'beobachtung', 'messdaten')
 KREISE = ('fachkontakte', 'alle')
 # Fassung der Nutzungsregeln; bei Aenderung erhoehen -> alle stimmen beim naechsten Besuch neu zu
-REGELN_FASSUNG = '2026-10'
+REGELN_FASSUNG = '2026-10-25'
 UPLOAD_ORDNER = 'themen'
 TITEL_MAX = 200
 BESCHREIBUNG_MAX = 500

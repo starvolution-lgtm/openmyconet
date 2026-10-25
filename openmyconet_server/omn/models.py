@@ -553,6 +553,8 @@ class Beitrag(db.Model):
     bearbeitet_am = db.Column(db.DateTime(timezone=True), nullable=True)
     entfernt_am = db.Column(db.DateTime(timezone=True), nullable=True)
     sichtbar = db.Column(db.Boolean, nullable=False, default=True)        # Moderation (Admin)
+    # Zeitpunkt des Ausblendens -> nach 6 Monaten endgueltig geloescht (omn/aufbewahrung.py)
+    ausgeblendet_am = db.Column(db.DateTime(timezone=True), nullable=True, index=True)
 
     anhaenge = db.relationship('BeitragAnhang', backref='beitrag', lazy=True,
                                cascade='all, delete-orphan')
@@ -581,7 +583,9 @@ class ThemenTeilnahme(db.Model):
     anzeigename = db.Column(db.String(100), nullable=False)
     regeln_akzeptiert_am = db.Column(db.DateTime(timezone=True), nullable=True)
     regeln_fassung = db.Column(db.String(20), nullable=False, default='')
-    beitraege_nach_loeschung = db.Column(db.String(10), nullable=False, default='entfernen')  # entfernen | behalten
+    # Nicht genutzt: Robby hat am 25.10.2026 "Wissen bleibt" entschieden (CC BY 4.0,
+    # Beitraege bleiben bei Kontoloeschung ohne Namen) -- keine Wahl je Person.
+    beitraege_nach_loeschung = db.Column(db.String(10), nullable=False, default='entfernen')
     original_zuerst = db.Column(db.Boolean, nullable=False, default=False)
     zuletzt_gesehen = db.Column(db.DateTime(timezone=True), nullable=True)
 

@@ -67,3 +67,22 @@ Datenschutzerklärung Abschnitt `austausch` (9.) nennt genau diese Fristen.
 - Rechtlich geprüft und freigegeben von Robby am 25.10.2026 (`docs/austausch_rechtspruefung.md`,
   Interessenabwägung + VVT-Eintrag im Kontrollzentrum `03_Website_Backend`). Änderungen an
   Datenarten, Fristen oder Texten → Datenschutzerklärung Abschnitt 9 + Interessenabwägung nachziehen.
+
+## Phase 2a: Wissenschaftliche Themenräume (seit 25.10.2026)
+Gemeinsamer Bereich `/themen` (Blueprint `omn/themen.py`), Moderation `/admin/themen`
+(`omn/admin/themen.py`). Themengebiet → Diskussion → Beitrag (eine Ebene Antworten, optionale
+Evidenz-Art, Anhänge unter `instance/uploads/themen/`), `themen_teilnahme` (frei wählbarer
+Anzeigename, Zustimmung zur Regelfassung `REGELN_FASSUNG`, „Originale zuerst“), `uebersetzung`
+(an den Hash des Originals gebunden; 2a nur Handübersetzungen der 6 Startgebiete, Migration
+`8be9ab181351`). Ähnliche Themen beim Anlegen: Wortvergleich ohne KI (`themen.aehnliche`).
+- **Schalter `THEMEN_FREIGEGEBEN`** (Config): auf Prod (`OMN_ENV=prod`) aus → alle `/themen`-Routen
+  404, kein Link; Staging an. Erst nach Robbys Rechtsprüfung umstellen (`docs/themen_rechtspruefung.md`).
+- **Kreis `THEMEN_KREIS`**: `fachkontakte` (aktiver Austausch) | `alle` (bestätigte Nutzer). Nur über
+  `themen.darf_themenraeume_nutzen` prüfen – nie Rolle/Förderung.
+- **Wissen bleibt** (Robby 25.10.): Beiträge CC BY 4.0; Kontolöschung → Beiträge bleiben ohne Namen
+  („ehemaliges Mitglied“, `autor_nutzer_id` NULL, `von_team` False); eigene Beiträge entfernen = Text
+  leer + `entfernt_am`, Platzhalter bleibt. Ausgeblendete Beiträge (`ausgeblendet_am`) nach 6 Monaten
+  gelöscht (`aufbewahrung.py`). Datenschutzerklärung Abschnitt `themenraeume` (10.).
+- Texte ohne direkte Anrede (`themen_*` in `translations.json`, 5 Sprachen).
+- **Getrennt vom Austausch:** keine FKs zu aufgabe/kommentar/austausch (Test), eigene Download-Route.
+- Ändert sich die Regelfassung, `REGELN_FASSUNG` erhöhen (alle stimmen neu zu).

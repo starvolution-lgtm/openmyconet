@@ -12,7 +12,8 @@ NICHTS = {'Chat-Verläufe': 0, 'Fehlerprotokoll': 0, 'Kontaktanfragen': 0, 'abge
           'Kontakt-Versandlog': 0, 'Audit-Log Anmeldungen': 0, 'Audit-Log Aktionen': 0,
           'Registrierungs-IP': 0,
           'Austausch Profil-Link': 0, 'Austausch Gesprächsbeginn': 0, 'Austausch Vorgeschichte': 0,
-          'Austausch nicht angenommen': 0, 'Austausch nur vorbereitet': 0, 'Austausch beendet/gesperrt': 0}
+          'Austausch nicht angenommen': 0, 'Austausch nur vorbereitet': 0, 'Austausch beendet/gesperrt': 0,
+          'Themenräume ausgeblendete Beiträge': 0}
 
 
 def _anlegen(alter_tage):

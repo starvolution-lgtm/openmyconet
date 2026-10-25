@@ -567,6 +567,91 @@ def test_admin_beitrag_moderieren_und_team_beitrag(client, app, superadmin):
     assert 'OpenMycoNet-Team' in teilnehmer.get(f'/themen/diskussion/{d.id}').get_data(as_text=True)
 
 
+# --- Schritt 5: Regeln, Kontoloeschung, Fristen, Datenschutzerklaerung --------------
+
+def test_nutzungsregeln_mit_cc_by_in_allen_sprachen(client, app):
+    from omn.i18n import LANGS, TRANSLATIONS
+    for lang in LANGS:
+        text = TRANSLATIONS[lang]['themen_regeln_text']
+        assert 'CC BY 4.0' in text and '6' in text and 'kontakt@openmyconet.de' in text, lang
+    _teilnehmer(client, anzeigename=None)
+    seite = client.get('/themen/teilnahme').get_data(as_text=True)
+    assert 'CC BY 4.0' in seite and 'creativecommons.org/licenses/by/4.0/deed.de' in seite
+    d = _diskussion()
+    client.post('/themen/teilnahme', data={'anzeigename': 'X', 'regeln': '1'})
+    assert 'CC BY 4.0' in client.get(f'/themen/diskussion/{d.id}').get_data(as_text=True)
+
+
+def test_kontoloeschung_im_admin_behaelt_beitraege_ohne_namen(client, app, superadmin):
+    n = _nutzer('weg@example.com')
+    db.session.add(ThemenTeilnahme(nutzer_id=n.id, anzeigename='ANZEIGENAME-MARKER', regeln_fassung=REGELN_FASSUNG))
+    d = _diskussion(erstellt_von=n.id)
+    b = Beitrag(diskussion_id=d.id, autor_nutzer_id=n.id, text='Wissen, das bleibt')
+    db.session.add(b)
+    db.session.commit()
+    db.session.add(BeitragAnhang(beitrag_id=b.id, dateiname='bleibt.csv', originalname='bleibt.csv', groesse=1))
+    db.session.commit()
+    _admin(client)
+    seite = client.post(f'/admin/nutzer/loeschen/{n.id}', follow_redirects=True).get_data(as_text=True)
+    assert 'bleiben ohne Namen' in seite
+    b = db.session.get(Beitrag, b.id)
+    assert b.text == 'Wissen, das bleibt' and b.autor_nutzer_id is None and not b.von_team
+    assert BeitragAnhang.query.count() == 1 and ThemenTeilnahme.query.count() == 0
+    teilnehmer = app.test_client()
+    _teilnehmer(teilnehmer)
+    seite = teilnehmer.get(f'/themen/diskussion/{d.id}').get_data(as_text=True)
+    assert 'Wissen, das bleibt' in seite and 'ehemaliges Mitglied' in seite and 'ANZEIGENAME-MARKER' not in seite
+
+
+def test_ausgeblendete_beitraege_nach_6_monaten_geloescht(client, app, superadmin):
+    from omn.aufbewahrung import bereinigen
+    d = _diskussion()
+    alt = Beitrag(diskussion_id=d.id, text='alt', von_team=True, sichtbar=False,
+                  ausgeblendet_am=datetime.now(timezone.utc) - timedelta(days=190))
+    frisch = Beitrag(diskussion_id=d.id, text='frisch', von_team=True, sichtbar=False,
+                     ausgeblendet_am=datetime.now(timezone.utc) - timedelta(days=100))
+    sichtbar = Beitrag(diskussion_id=d.id, text='sichtbar', von_team=True)
+    db.session.add_all([alt, frisch, sichtbar])
+    db.session.commit()
+    antwort = Beitrag(diskussion_id=d.id, text='Antwort', von_team=True, antwort_auf=alt.id)
+    db.session.add(antwort)
+    db.session.add(BeitragAnhang(beitrag_id=alt.id, dateiname='alt.csv', originalname='alt.csv', groesse=1))
+    db.session.commit()
+    pfad = kollaboration.anhang_pfad_in('alt.csv', 'themen')
+    with open(pfad, 'wb') as f:
+        f.write(b'x')
+    assert bereinigen()['Themenräume ausgeblendete Beiträge'] == 1
+    assert {x.text for x in Beitrag.query.all()} == {'frisch', 'sichtbar', 'Antwort'}
+    assert db.session.get(Beitrag, antwort.id).antwort_auf is None
+    assert not os.path.exists(pfad)
+
+
+def test_ausblenden_setzt_zeitpunkt_einblenden_loescht_ihn(client, app, superadmin):
+    d = _diskussion()
+    b = Beitrag(diskussion_id=d.id, text='x', von_team=True)
+    db.session.add(b)
+    db.session.commit()
+    _admin(client)
+    client.post(f'/admin/themen/beitrag/{b.id}/ausblenden')
+    assert db.session.get(Beitrag, b.id).ausgeblendet_am is not None
+    client.post(f'/admin/themen/beitrag/{b.id}/einblenden')
+    assert db.session.get(Beitrag, b.id).ausgeblendet_am is None
+
+
+def test_datenschutzerklaerung_abschnitt_themenraeume(client):
+    from omn.i18n import LANGS
+    from omn.rechtstexte import RECHTSTEXTE
+    for lang in LANGS:
+        ab = RECHTSTEXTE[lang]['datenschutz']['abschnitte']
+        ids = [x['id'] for x in ab]
+        assert ids.index('themenraeume') == ids.index('austausch') + 1, lang
+        text = next(x['html'] for x in ab if x['id'] == 'themenraeume')
+        assert 'CC BY 4.0' in text and '6' in text and 'kontakt@openmyconet.de' in text, lang
+        assert [int(x['h'].split('.')[0]) for x in ab] == list(range(1, len(ab) + 1)), lang
+    seite = client.get('/datenschutz.html').get_data(as_text=True)
+    assert 'id="themenraeume"' in seite and '10. Wissenschaftliche Themenräume' in seite
+
+
 def test_verlinken_escaped_html():
     html = str(verlinken('<script>alert(1)</script> https://a.example/x?y=1&z=2, ende'))
     assert '<script>' not in html and '&lt;script&gt;' in html

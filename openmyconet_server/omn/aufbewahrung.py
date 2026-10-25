@@ -23,6 +23,9 @@ dem Statuswechsel loeschen. Eine aktive Loeschsperre (berechtigter
 Aufbewahrungsgrund, Admin) setzt F1-F4 aus. F2 (Inaktivitaet) loescht nichts, das
 ist nur eine Markierung im Admin. Ganze Austausche gehen NICHT ueber FRISTEN: ein
 Massen-DELETE wuerde die Anhang-Dateien auf der Platte liegen lassen.
+
+Themenraeume (Phase 2a): vom Admin ausgeblendete Beitraege 6 Monate nach dem Ausblenden
+(Beitrag.ausgeblendet_am) endgueltig loeschen, mit Anhaengen, Dateien, Uebersetzungen.
 """
 from datetime import timedelta, timezone
 
@@ -31,7 +34,7 @@ from sqlalchemy import func, or_
 from omn import kollaboration
 from omn.extensions import db
 from omn.models import (
-    AdminAudit, Austausch, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand, Nutzer,
+    AdminAudit, Austausch, Beitrag, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand, Nutzer,
 )
 from omn.zeit import utcnow
 
@@ -116,6 +119,19 @@ def bereinigen(jetzt=None):
             anhang_pfade += kollaboration.kontext_anhang_pfade(austausch)
             db.session.delete(austausch)
         ergebnis[name] = len(faellig)
+    # Themenraeume: vom Admin ausgeblendete Beitraege 6 Monate nach dem Ausblenden
+    # (Robby, 25.10.2026) -- mit Anhaengen, Dateien und Uebersetzungen.
+    from omn import themen
+    faellig = Beitrag.query.filter(
+        Beitrag.sichtbar.is_(False), Beitrag.ausgeblendet_am.isnot(None),
+        Beitrag.ausgeblendet_am < _bezug(jetzt, Beitrag.ausgeblendet_am) - timedelta(days=182),
+    ).all()
+    for b in faellig:
+        for antwort in Beitrag.query.filter_by(antwort_auf=b.id):
+            antwort.antwort_auf = None
+        anhang_pfade += themen._pfade_und_uebersetzungen([b])
+        db.session.delete(b)
+    ergebnis['Themenräume ausgeblendete Beiträge'] = len(faellig)
     db.session.commit()
     kollaboration.dateien_entfernen(anhang_pfade)
     return ergebnis

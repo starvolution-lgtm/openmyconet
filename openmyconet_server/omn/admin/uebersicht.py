@@ -95,6 +95,10 @@ def nutzer_loeschen(nutzer_id):
     # Fachlicher Austausch: die Verknuepfung loest sich (SET NULL), der Bereich wird
     # gesperrt und faellt unter Frist F4 (6 Monate). Bei einem Loeschwunsch den
     # Austausch stattdessen dort sofort loeschen ("Endgueltig loeschen").
+    # Themenraeume ("Wissen bleibt", CC BY 4.0, Robby 25.10.2026): Beitraege bleiben ohne
+    # Namen als "ehemaliges Mitglied" stehen; der Verweis aufs Konto loest sich (SET NULL),
+    # Anzeigename + Teilnahme verschwinden mit dem Konto.
+    themen_beitraege = len(nutzer.themen_beitraege)
     gesperrt = []
     for a in list(nutzer.austausche):
         if a.status not in ('beendet', 'gesperrt'):
@@ -107,6 +111,9 @@ def nutzer_loeschen(nutzer_id):
     if gesperrt:
         text += (f' Zugehöriger fachlicher Austausch ({", ".join(f"#{i}" for i in gesperrt)}) ist gesperrt '
                  'und wird nach 6 Monaten gelöscht; bei einem Löschwunsch dort sofort löschen.')
+    if themen_beitraege:
+        text += (f' {themen_beitraege} Beitrag/Beiträge in den Themenräumen bleiben ohne Namen als '
+                 '„ehemaliges Mitglied“ stehen (CC BY 4.0); einzelne lassen sich unter Themenräume löschen.')
     flash(text)
     return redirect(url_for('admin.admin'))
 

@@ -82,5 +82,6 @@
         <button type="submit">{{ tx('themen_senden') }}</button>
     </form>
     {% endif %}
-    <p class="label">{{ tx('themen_massgeblich') }}</p>
+    <p class="label">{{ tx('themen_massgeblich') }}
+       <a href="{{ tx('themen_lizenz_url') }}" target="_blank" rel="noopener noreferrer license">{{ tx('themen_lizenz_hinweis') }}</a></p>
 {% endblock %}

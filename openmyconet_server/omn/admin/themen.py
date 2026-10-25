@@ -292,9 +292,10 @@ def themen_diskussion_loeschen(diskussion_id):
 def themen_beitrag_ausblenden(beitrag_id):
     b = _beitrag(beitrag_id)
     b.sichtbar = False
+    b.ausgeblendet_am = th.jetzt()     # Frist: nach 6 Monaten endgueltig geloescht
     db.session.commit()
     protokollieren('themen_beitrag_ausgeblendet', f'#{b.id}')
-    return _zurueck_diskussion(b.diskussion, 'Beitrag ausgeblendet.')
+    return _zurueck_diskussion(b.diskussion, 'Beitrag ausgeblendet. Ohne Einblenden wird er nach 6 Monaten endgültig gelöscht.')
 
 
 @admin_bp.route('/admin/themen/beitrag/<int:beitrag_id>/einblenden', methods=['POST'])
@@ -302,6 +303,7 @@ def themen_beitrag_ausblenden(beitrag_id):
 def themen_beitrag_einblenden(beitrag_id):
     b = _beitrag(beitrag_id)
     b.sichtbar = True
+    b.ausgeblendet_am = None
     db.session.commit()
     protokollieren('themen_beitrag_eingeblendet', f'#{b.id}')
     return _zurueck_diskussion(b.diskussion, 'Beitrag wieder sichtbar.')
