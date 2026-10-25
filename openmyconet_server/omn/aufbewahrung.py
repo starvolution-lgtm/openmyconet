@@ -10,15 +10,31 @@ Laeuft taeglich per Cron (`deploy/aufbewahrung.sh`, eingetragen von
 `install_backup_cron.sh`) ueber `flask aufbewahrung-bereinigen`.
 Alle Zeitstempel sind naiv-UTC -> Vergleich mit zeit.utcnow(); KontaktVersand
 zaehlt nach einem Datum (Tagesgenauigkeit reicht bei 2 Jahren). Ausnahme
-AdminAudit (neue Tabelle, timestamptz): Vergleich mit tz-aware "jetzt".
+AdminAudit und Austausch (neue Tabellen, timestamptz): Vergleich mit tz-aware "jetzt".
+
+Fachlicher Austausch (seit 25.10.2026, docs/austausch_phase1_plan.md Abschnitt 5,
+Fristen F1-F4 von Robby festgelegt; rechtliche Pruefung vor dem Prod-Deploy):
+F1 nicht angenommen und F1a nur vorbereitet -> nach 6 Monaten loeschen, F3 interne
+Notizen -> 24 Monate nach der letzten Aktivitaet leeren, F4 beendet/gesperrt ->
+6 Monate nach dem Statuswechsel loeschen. Eine aktive Loeschsperre (berechtigter
+Aufbewahrungsgrund, Admin) setzt F1-F4 aus. F2 (Inaktivitaet) loescht nichts, das
+ist nur eine Markierung im Admin. Ganze Austausche gehen NICHT ueber FRISTEN: ein
+Massen-DELETE wuerde die Anhang-Dateien auf der Platte liegen lassen.
 """
 from datetime import timedelta, timezone
 
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
+from omn import kollaboration
 from omn.extensions import db
-from omn.models import AdminAudit, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand, Nutzer
+from omn.models import (
+    AdminAudit, Austausch, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand, Nutzer,
+)
 from omn.zeit import utcnow
+
+
+def _ohne_loeschsperre(heute):
+    return or_(Austausch.loeschsperre_bis.is_(None), Austausch.loeschsperre_bis < heute)
 
 # (Bezeichnung, Modell, Zeitpunkt, ab dem die Frist laeuft, Frist in Tagen, Zusatzbedingung)
 FRISTEN = [
@@ -40,29 +56,63 @@ FRISTEN = [
 ]
 
 # Felder, die nach Ablauf geleert (NULL) statt mit der ganzen Zeile geloescht werden:
-# (Bezeichnung, Modell, Zeitpunkt, Frist in Tagen, Spalte)
+# (Bezeichnung, Modell, Zeitpunkt, Frist in Tagen, Spalte, Zusatzbedingung)
+# Zusatzbedingung: None oder Funktion(heute) -> SQL-Ausdruck (fuer die Loeschsperre).
 # Registrierungs-IP: 6 Monate nach der Anmeldung (Robby, 23.10.2026); der Zeitpunkt
 # bleibt als Nachweis der Anmeldung/Einwilligung.
 LEEREN = [
-    ('Registrierungs-IP', Nutzer, Nutzer.registriert_am, 182, Nutzer.ip),
+    ('Registrierungs-IP', Nutzer, Nutzer.registriert_am, 182, Nutzer.ip, None),
+    # F3: interne Kontaktnotizen des Austauschs 24 Monate nach der letzten Aktivitaet
+    ('Austausch Profil-Link', Austausch, Austausch.letzte_aktivitaet, 730, Austausch.linkedin_url, _ohne_loeschsperre),
+    ('Austausch Gesprächsbeginn', Austausch, Austausch.letzte_aktivitaet, 730, Austausch.gespraech_begonnen_am,
+     _ohne_loeschsperre),
+    ('Austausch Vorgeschichte', Austausch, Austausch.letzte_aktivitaet, 730, Austausch.vorgeschichte_notiz,
+     _ohne_loeschsperre),
 ]
+
+# Ganze Austausche samt Aufgaben, Kommentaren, Anhaengen UND Dateien:
+# (Bezeichnung, Zeitpunkt, Frist in Tagen, Bedingung) -- immer ohne aktive Loeschsperre.
+AUSTAUSCH_LOESCHEN = [
+    ('Austausch nicht angenommen', Austausch.eingeladen_am, 182, Austausch.status == 'eingeladen'),         # F1
+    ('Austausch nur vorbereitet', Austausch.erstellt_am, 182, Austausch.status == 'vorbereitet'),           # F1a
+    ('Austausch beendet/gesperrt', Austausch.status_geaendert_am, 182,
+     Austausch.status.in_(('beendet', 'gesperrt'))),                                                          # F4
+]
+
+
+def _bezug(jetzt, spalte):
+    """timestamptz-Spalten (neue Tabellen) brauchen ein tz-aware Gegenueber."""
+    if getattr(getattr(spalte, 'type', None), 'timezone', False):
+        return jetzt.replace(tzinfo=timezone.utc)
+    return jetzt
 
 
 def bereinigen(jetzt=None):
     """Loescht alles, was aelter als die jeweilige Frist ist. Gibt
-    {Bezeichnung: Anzahl geloescht} zurueck. Eine Transaktion fuer alle."""
+    {Bezeichnung: Anzahl geloescht} zurueck. Eine Transaktion fuer alle; die
+    Anhang-Dateien geloeschter Austausche werden erst nach dem Commit entfernt."""
     jetzt = jetzt or utcnow()
+    heute = jetzt.date()
     ergebnis = {}
     for name, modell, zeitpunkt, tage, bedingung in FRISTEN:
-        # timestamptz-Spalten (neue Tabellen) brauchen ein tz-aware Gegenueber
-        bezug = jetzt.replace(tzinfo=timezone.utc) if getattr(getattr(zeitpunkt, 'type', None), 'timezone', False) else jetzt
-        abfrage = modell.query.filter(zeitpunkt < bezug - timedelta(days=tage))
+        abfrage = modell.query.filter(zeitpunkt < _bezug(jetzt, zeitpunkt) - timedelta(days=tage))
         if bedingung is not None:
             abfrage = abfrage.filter(bedingung)
         ergebnis[name] = abfrage.delete(synchronize_session=False)
-    for name, modell, zeitpunkt, tage, spalte in LEEREN:
-        ergebnis[name] = (modell.query
-                          .filter(zeitpunkt < jetzt - timedelta(days=tage), spalte.isnot(None))
-                          .update({spalte: None}, synchronize_session=False))
+    for name, modell, zeitpunkt, tage, spalte, bedingung in LEEREN:
+        abfrage = modell.query.filter(zeitpunkt < _bezug(jetzt, zeitpunkt) - timedelta(days=tage), spalte.isnot(None))
+        if bedingung is not None:
+            abfrage = abfrage.filter(bedingung(heute))
+        ergebnis[name] = abfrage.update({spalte: None}, synchronize_session=False)
+    anhang_pfade = []
+    for name, zeitpunkt, tage, bedingung in AUSTAUSCH_LOESCHEN:
+        faellig = Austausch.query.filter(
+            zeitpunkt < _bezug(jetzt, zeitpunkt) - timedelta(days=tage), bedingung, _ohne_loeschsperre(heute),
+        ).all()
+        for austausch in faellig:
+            anhang_pfade += kollaboration.kontext_anhang_pfade(austausch)
+            db.session.delete(austausch)
+        ergebnis[name] = len(faellig)
     db.session.commit()
+    kollaboration.dateien_entfernen(anhang_pfade)
     return ergebnis

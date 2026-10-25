@@ -19,6 +19,11 @@
     </div>
 </div>
 
+{% if austausch_pruefen %}
+{% set anzahl_text = '1 fachlicher Austausch' if austausch_pruefen == 1 else austausch_pruefen ~ ' fachliche Austausche' %}
+<p class="info">🔬 <a href="{{ url_for('admin.austausch_liste', filter='pruefen') }}">{{ anzahl_text }} seit 12 Monaten ohne Aktivität – zur Prüfung</a></p>
+{% endif %}
+
 <form method="GET">
     <label>Gruppe: </label>
     <select name="gruppe" class="js-autosubmit">

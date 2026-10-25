@@ -4,7 +4,7 @@ Schritt 2: Kollaborationskern (Kontext, Benachrichtigungen, Zugriff, Dateien).""
 import io
 import os
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from werkzeug.datastructures import FileStorage
 
@@ -745,6 +745,133 @@ def test_dashboard_leitet_fachkontakt_zum_austausch(client, app):
     a.status = 'gesperrt'
     db.session.commit()
     assert client.get('/austausch').get_data(as_text=True).count('Elektrophysiologie an Myzel') == 0
+
+
+# --- Schritt 5: Fristen, Kontoloeschung, Datenschutzerklaerung -----------------
+
+def _alt(tage):
+    return datetime.now(timezone.utc) - timedelta(days=tage)
+
+
+def _bereinigen():
+    from omn.aufbewahrung import bereinigen
+    return bereinigen()
+
+
+def test_f1_nicht_angenommen_nach_6_monaten_geloescht_inkl_dateien(app):
+    alt = _austausch(status='eingeladen', eingeladen_am=_alt(190), titel='Alt')
+    pfad = kollaboration.anhang_pfad(_anhang_kommentar(alt, wer='team'))
+    frisch = _austausch(status='eingeladen', eingeladen_am=_alt(100), titel='Frisch')
+    ergebnis = _bereinigen()
+    assert ergebnis['Austausch nicht angenommen'] == 1
+    assert db.session.get(Austausch, alt.id) is None and not os.path.exists(pfad)
+    assert db.session.get(Austausch, frisch.id) is not None
+    assert Kommentar.query.count() == 0
+
+
+def test_f1_erneuerte_einladung_beginnt_neu(app):
+    """Erneuern setzt eingeladen_am neu -> Frist laeuft ab dem neuen Versand."""
+    from omn import austausch as aus
+    a = _austausch(erstellt_am=_alt(400))
+    with mail.record_messages():
+        aus.einladung_verschicken(a)
+    assert _bereinigen()['Austausch nicht angenommen'] == 0
+    assert db.session.get(Austausch, a.id) is not None
+
+
+def test_f1a_nur_vorbereitet(app):
+    alt = _austausch(erstellt_am=_alt(190), titel='Alt')
+    frisch = _austausch(erstellt_am=_alt(30), titel='Frisch')
+    assert _bereinigen()['Austausch nur vorbereitet'] == 1
+    assert db.session.get(Austausch, alt.id) is None
+    assert db.session.get(Austausch, frisch.id) is not None
+
+
+def test_f3_notizen_nach_24_monaten_geleert_austausch_bleibt(app):
+    _, a = _fachkontakt()
+    a.linkedin_url = 'https://www.linkedin.com/in/x'
+    a.gespraech_begonnen_am = date(2024, 1, 1)
+    a.vorgeschichte_notiz = 'Notiz'
+    a.letzte_aktivitaet = _alt(740)
+    _, b = _fachkontakt(email='b@example.com')
+    b.vorgeschichte_notiz = 'Bleibt'
+    b.letzte_aktivitaet = _alt(700)
+    db.session.commit()
+    ergebnis = _bereinigen()
+    assert ergebnis['Austausch Profil-Link'] == 1 and ergebnis['Austausch Vorgeschichte'] == 1
+    a = db.session.get(Austausch, a.id)
+    assert a.linkedin_url is None and a.gespraech_begonnen_am is None and a.vorgeschichte_notiz is None
+    assert a.status == 'aktiv'  # nur geleert, nichts gesperrt oder geloescht (F2 ist nur Markierung)
+    assert db.session.get(Austausch, b.id).vorgeschichte_notiz == 'Bleibt'
+
+
+def test_f4_beendet_und_gesperrt_nach_6_monaten(app):
+    _, alt = _fachkontakt()
+    alt.status = 'gesperrt'
+    alt.status_geaendert_am = _alt(190)
+    _, beendet = _fachkontakt(email='b@example.com')
+    beendet.status = 'beendet'
+    beendet.status_geaendert_am = _alt(190)
+    _, frisch = _fachkontakt(email='c@example.com')
+    frisch.status = 'gesperrt'
+    frisch.status_geaendert_am = _alt(10)
+    _, aktiv = _fachkontakt(email='d@example.com')
+    aktiv.status_geaendert_am = _alt(900)
+    aktiv.letzte_aktivitaet = _alt(900)
+    db.session.commit()
+    assert _bereinigen()['Austausch beendet/gesperrt'] == 2
+    assert {a.id for a in Austausch.query.all()} == {frisch.id, aktiv.id}
+
+
+def test_loeschsperre_setzt_fristen_aus_bis_sie_ablaeuft(app):
+    a = _austausch(status='gesperrt', status_geaendert_am=_alt(400), vorgeschichte_notiz='Nachweis',
+                   letzte_aktivitaet=_alt(800), loeschsperre_bis=date.today() + timedelta(days=30),
+                   loeschsperre_grund='Nachweispflicht')
+    ergebnis = _bereinigen()
+    assert ergebnis['Austausch beendet/gesperrt'] == 0 and ergebnis['Austausch Vorgeschichte'] == 0
+    a = db.session.get(Austausch, a.id)
+    assert a.vorgeschichte_notiz == 'Nachweis'
+    a.loeschsperre_bis = date.today() - timedelta(days=1)
+    db.session.commit()
+    assert _bereinigen()['Austausch beendet/gesperrt'] == 1
+    assert Austausch.query.count() == 0
+
+
+def test_kontoloeschung_im_admin_sperrt_austausch(client, app, superadmin):
+    n, a = _fachkontakt()
+    _admin(client)
+    resp = client.post(f'/admin/nutzer/loeschen/{n.id}', follow_redirects=True)
+    assert 'wird nach 6 Monaten gelöscht' in resp.get_data(as_text=True)
+    assert db.session.get(Nutzer, n.id) is None
+    a = db.session.get(Austausch, a.id)
+    assert a.status == 'gesperrt' and a.nutzer_id is None
+
+
+def test_admin_uebersicht_zeigt_pruefhinweis(client, app, superadmin):
+    _, a = _fachkontakt()
+    _admin(client)
+    assert 'zur Prüfung' not in client.get('/admin').get_data(as_text=True)
+    a.letzte_aktivitaet = _alt(400)
+    db.session.commit()
+    seite = client.get('/admin').get_data(as_text=True)
+    assert '1 fachlicher Austausch seit 12 Monaten ohne Aktivität' in seite
+
+
+def test_datenschutzerklaerung_abschnitt_austausch(client):
+    from omn.i18n import LANGS
+    from omn.rechtstexte import RECHTSTEXTE
+    for lang in LANGS:
+        abschnitte = RECHTSTEXTE[lang]['datenschutz']['abschnitte']
+        ids = [x['id'] for x in abschnitte]
+        assert ids.index('austausch') == ids.index('kontaktaufnahme') + 1
+        text = next(x['html'] for x in abschnitte if x['id'] == 'austausch')
+        for frist in ('6', '24'):
+            assert frist in text, (lang, frist)
+        assert 'kontakt@openmyconet.de' in text
+        assert [int(x['h'].split('.')[0]) for x in abschnitte] == list(range(1, len(abschnitte) + 1))
+    seite = client.get('/datenschutz.html').get_data(as_text=True)
+    assert 'id="austausch"' in seite and '9. Fachlicher Austausch auf Einladung' in seite
+    assert '(siehe Abschnitt 12)' in seite  # Verweis auf "Messdaten" mitgezogen
 
 
 def test_bestand_kooperationsmail_unveraendert(app):

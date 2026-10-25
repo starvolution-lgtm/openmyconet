@@ -2,11 +2,12 @@
 from flask import flash, redirect, render_template, request, session, url_for
 from werkzeug.security import generate_password_hash
 
+from omn import austausch
 from omn.admin.auth import PASSWORT_MIN
 from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
-from omn.models import AdminUser, Nutzer
+from omn.models import AdminUser, Austausch, Nutzer
 
 FACHROLLEN = ['wissenschaftler', 'wiss_mitarbeiter', 'student']
 
@@ -35,9 +36,12 @@ def admin():
     gesamt = Nutzer.query.count()
     bestaetigt = Nutzer.query.filter_by(bestaetigt=True).count()
     unbestaetigt = gesamt - bestaetigt
+    bezug = austausch.jetzt()
+    austausch_pruefen = sum(1 for a in Austausch.query.filter_by(status='aktiv')
+                            if austausch.inaktiv_zu_pruefen(a, bezug))
     return render_template('admin.html',
         nutzer_liste=nutzer_liste, gesamt=gesamt,
-        bestaetigt=bestaetigt, unbestaetigt=unbestaetigt,
+        bestaetigt=bestaetigt, unbestaetigt=unbestaetigt, austausch_pruefen=austausch_pruefen,
         filter_gruppe=filter_gruppe, filter_sprache=filter_sprache,
         filter_fachrolle=filter_fachrolle, fachrollen=FACHROLLEN,
         filter_rolle=filter_rolle
@@ -88,10 +92,22 @@ def nutzer_loeschen(nutzer_id):
     if nutzer.knoten:
         flash(f'{nutzer.name} hat noch {len(nutzer.knoten)} Knoten — erst Knoten entfernen.', 'error')
         return redirect(url_for('admin.admin'))
+    # Fachlicher Austausch: die Verknuepfung loest sich (SET NULL), der Bereich wird
+    # gesperrt und faellt unter Frist F4 (6 Monate). Bei einem Loeschwunsch den
+    # Austausch stattdessen dort sofort loeschen ("Endgueltig loeschen").
+    gesperrt = []
+    for a in list(nutzer.austausche):
+        if a.status not in ('beendet', 'gesperrt'):
+            austausch.status_setzen(a, 'gesperrt')
+        gesperrt.append(a.id)
     db.session.delete(nutzer)
     db.session.commit()
     protokollieren('nutzer_geloescht', f'Nutzer #{nutzer_id}')
-    flash(f'{nutzer.name} gelöscht.')
+    text = f'{nutzer.name} gelöscht.'
+    if gesperrt:
+        text += (f' Zugehöriger fachlicher Austausch ({", ".join(f"#{i}" for i in gesperrt)}) ist gesperrt '
+                 'und wird nach 6 Monaten gelöscht; bei einem Löschwunsch dort sofort löschen.')
+    flash(text)
     return redirect(url_for('admin.admin'))
 
 
