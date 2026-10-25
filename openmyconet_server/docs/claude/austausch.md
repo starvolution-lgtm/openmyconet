@@ -64,5 +64,6 @@ Datenschutzerklärung Abschnitt `austausch` (9.) nennt genau diese Fristen.
   Arbeitsbereich-Template **gar nicht** übergeben.
 - Ein Austausch vergibt nie eine Rolle (`roles.py` wird nicht aufgerufen).
 - Neue Texte: alle 5 Sprachen und, wenn Anrede vorkommt, beide Fassungen.
-- **Prod-Freigabe** erst nach Robbys rechtlicher Prüfung (Abschnitt `austausch` der
-  Datenschutzerklärung ist als Entwurf markiert, `_hinweis` in `rechtstexte.json`).
+- Rechtlich geprüft und freigegeben von Robby am 25.10.2026 (`docs/austausch_rechtspruefung.md`,
+  Interessenabwägung + VVT-Eintrag im Kontrollzentrum `03_Website_Backend`). Änderungen an
+  Datenarten, Fristen oder Texten → Datenschutzerklärung Abschnitt 9 + Interessenabwägung nachziehen.

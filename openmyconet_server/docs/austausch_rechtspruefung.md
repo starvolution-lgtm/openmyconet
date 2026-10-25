@@ -123,4 +123,4 @@ Adresse senden.“ · „Wenn Sie nicht teilnehmen möchten, müssen Sie nichts 
 | 4.9 | **eine** Frist für Kontaktaufnahme und Einladung: 2 Jahre | F1 = 2 Jahre nach der letzten Einladung; Abschnitt 9 und Mail entsprechend |
 | 4.10 | Übersetzungen nachziehen | erledigt (en/nl/fr/es) |
 
-Offen: Freigabe der geänderten deutschen Texte durch Robby → dann ENTWURF-Vermerk entfernen und Prod-Deploy.
+**Freigegeben von Robby am 25.10.2026** (geänderte Texte). ENTWURF-Vermerk entfernt; nächster Schritt: Staging → Prod-Deploy.

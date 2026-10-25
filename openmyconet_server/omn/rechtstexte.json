@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Impressum + Datenschutzerklaerung (freigegeben von Robby am 28.09.2026; Abschnitt kontaktaufnahme (Versandlog Server-MCC) am 07.10.2026; Anmeldeprotokoll Verwaltungsbereich in fehler-sicherung sowie OSM-Einwilligung (karte) und IP-Frist (registrierung) am 23.10.2026; Abschnitt austausch (fachlicher Austausch auf Einladung) am 25.10.2026 als ENTWURF, rechtliche Pruefung durch Robby vor dem Prod-Deploy; Entwurf: Kontrollzentrum 03_Website_Backend/Rechtstexte_Entwurf_2026-09.md). Rechtlich massgeblich ist 'de'; en/nl/fr/es sind Uebersetzungen zur Information. Aenderung am deutschen Text -> Uebersetzungen nachziehen und 'stand' anpassen. Gerendert von site/rechtstext.html (omn/site_live.py), gelesen auch von omn/llms.py. html-Felder sind vertrauenswuerdiger Repo-Inhalt (|safe).",
+  "_hinweis": "Impressum + Datenschutzerklaerung (freigegeben von Robby am 28.09.2026; Abschnitt kontaktaufnahme (Versandlog Server-MCC) am 07.10.2026; Anmeldeprotokoll Verwaltungsbereich in fehler-sicherung sowie OSM-Einwilligung (karte) und IP-Frist (registrierung) am 23.10.2026; Abschnitt austausch (fachlicher Austausch auf Einladung) nach rechtlicher Pruefung freigegeben von Robby am 25.10.2026, Unterlage: docs/austausch_rechtspruefung.md; Entwurf: Kontrollzentrum 03_Website_Backend/Rechtstexte_Entwurf_2026-09.md). Rechtlich massgeblich ist 'de'; en/nl/fr/es sind Uebersetzungen zur Information. Aenderung am deutschen Text -> Uebersetzungen nachziehen und 'stand' anpassen. Gerendert von site/rechtstext.html (omn/site_live.py), gelesen auch von omn/llms.py. html-Felder sind vertrauenswuerdiger Repo-Inhalt (|safe).",
   "stand": "2026-10-25",
   "fakten": {
     "name": "Robert Jank",
@@ -13,7 +13,7 @@
     "ui": {
       "label": "Rechtliches",
       "uebersetzung": "",
-      "stand": "Stand: 7. Oktober 2026",
+      "stand": "Stand: 25. Oktober 2026",
       "land": "Deutschland",
       "zurueck": "← Zurück zur Startseite"
     },
@@ -63,7 +63,7 @@
     "ui": {
       "label": "Legal",
       "uebersetzung": "This translation is provided for information only. The German version is legally binding.",
-      "stand": "As of 7 October 2026",
+      "stand": "As of 25 October 2026",
       "land": "Germany",
       "zurueck": "← Back to the home page"
     },
@@ -113,7 +113,7 @@
     "ui": {
       "label": "Juridisch",
       "uebersetzung": "Deze vertaling dient alleen ter informatie. Juridisch bindend is de Duitse versie.",
-      "stand": "Stand: 7 oktober 2026",
+      "stand": "Stand: 25 oktober 2026",
       "land": "Duitsland",
       "zurueck": "← Terug naar de startpagina"
     },
@@ -163,7 +163,7 @@
     "ui": {
       "label": "Mentions juridiques",
       "uebersetzung": "Cette traduction est fournie à titre d’information. Seule la version allemande fait foi.",
-      "stand": "État au 7 octobre 2026",
+      "stand": "État au 25 octobre 2026",
       "land": "Allemagne",
       "zurueck": "← Retour à l’accueil"
     },
@@ -213,7 +213,7 @@
     "ui": {
       "label": "Información legal",
       "uebersetzung": "Esta traducción tiene carácter meramente informativo. La versión alemana es la jurídicamente vinculante.",
-      "stand": "Versión del 7 de octubre de 2026",
+      "stand": "Versión del 25 de octubre de 2026",
       "land": "Alemania",
       "zurueck": "← Volver a la página de inicio"
     },
