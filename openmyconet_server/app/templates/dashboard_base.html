@@ -5,16 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}OpenMycoNet — Dashboard{% endblock %}</title>
 <link href="/fonts.css" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('dashboard-base.css') }}">
+{# Seit 25.10.2026 heller Rahmen im Stil von Admin/MCC (Papierton, Waldgruen).
+   Das Datenlabor behaelt seinen dunklen Rahmen: es ueberschreibt basis_css und kopf. #}
+{% block basis_css %}<link rel="stylesheet" href="{{ asset('dashboard-base.css') }}">{% endblock %}
 {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-    <nav>
-        🍄 <a href="{{ url_for('dashboard.home') }}">{{ T.nav_dashboard if T is defined else 'OpenMycoNet Dashboard' }}</a>
-        {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor if T is defined else 'BioComm-Datenlabor' }}</a>
-        {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}· <a href="{{ url_for('austausch.bereich') }}">{{ t('austausch_bereich_titel', lang if lang is defined else None) }}</a>{% endif %}
-        · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout if T is defined else 'Logout' }}</a>{% endif %}
-    </nav>
+    {% block kopf %}
+    {% set ep = request.endpoint or '' %}
+    <header class="db-kopf">
+        <a class="db-marke" href="{{ url_for('dashboard.home') }}">
+            <span class="db-eyebrow">OpenMycoNet</span>
+            <span class="db-titel">{{ T.nav_dashboard if T is defined else 'OpenMycoNet Dashboard' }}</span>
+        </a>
+        {% if nutzer %}
+        <nav class="db-nav">
+            <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor if T is defined else 'BioComm-Datenlabor' }}</a>
+            {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}
+            <a href="{{ url_for('austausch.bereich') }}"{% if ep == 'austausch.bereich' %} aria-current="page"{% endif %}>{{ t('austausch_bereich_titel', lang if lang is defined else None) }}</a>
+            {% endif %}
+            <span class="db-nutzer">{{ nutzer.name }}</span>
+            <a class="db-leise" href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout if T is defined else 'Logout' }}</a>
+        </nav>
+        {% endif %}
+    </header>
+    {% endblock %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, msg in messages %}

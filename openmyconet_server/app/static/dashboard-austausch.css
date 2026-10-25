@@ -2,5 +2,6 @@
 .aus-unabhaengig { margin-top: 1rem; font-style: italic; }
 .aus-code-form { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
 .aus-code { font-size: 1.4rem; letter-spacing: 0.3em; width: 9rem; text-align: center; }
-.aus-zweitrangig { background: transparent; border: 1px solid currentColor; }
+.aus-zweitrangig { background: transparent; color: var(--akzent); border: 1px solid var(--akzent); }
+.aus-zweitrangig:hover { background: var(--akzent-leise); }
 .aus-datenschutz { font-size: 0.9rem; }

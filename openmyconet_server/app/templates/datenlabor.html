@@ -1,6 +1,16 @@
 {% extends "dashboard_base.html" %}
 {% block html_lang %}{{ lang }}{% endblock %}
 {% block title %}OpenMycoNet — {{ T.titel }}{% endblock %}
+{# Datenlabor behaelt den dunklen Website-Rahmen (eigenes Design, Robby 25.10.2026) #}
+{% block basis_css %}<link rel="stylesheet" href="{{ asset('dashboard-dunkel.css') }}">{% endblock %}
+{% block kopf %}
+    <nav>
+        🍄 <a href="{{ url_for('dashboard.home') }}">{{ T.nav_dashboard }}</a>
+        {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor }}</a>
+        {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}· <a href="{{ url_for('austausch.bereich') }}">{{ t('austausch_bereich_titel', lang) }}</a>{% endif %}
+        · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout }}</a>{% endif %}
+    </nav>
+{% endblock %}
 {% block head %}<link rel="stylesheet" href="{{ asset('datenlabor.css') }}">{% endblock %}
 {% block body_class %}dl-breit{% endblock %}
 {% block content %}
