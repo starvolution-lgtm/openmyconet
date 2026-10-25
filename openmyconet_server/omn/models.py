@@ -271,10 +271,13 @@ class Aufgabe(db.Model):
     wird beim Anlegen im Code erzwungen (kollaboration.py), nicht per DB-Constraint
     (SQLite ALTER TABLE kann keine CHECKs nachtraeglich anlegen).
     Kein Admin-Freigabeschritt -- rein interner Austausch, beide Seiten duerfen
-    Aufgaben anlegen und abschliessen."""
+    Aufgaben anlegen und abschliessen.
+    Dritter Kontext seit 25.10.2026: austausch_id fuer den fachlichen Austausch mit
+    eingeladenen Fachkontakten (Modell Austausch, docs/austausch_phase1_plan.md)."""
     id = db.Column(db.Integer, primary_key=True)
     foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True, index=True)
     knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True, index=True)
+    austausch_id = db.Column(db.Integer, db.ForeignKey('austausch.id', ondelete='CASCADE'), nullable=True, index=True)
     titel = db.Column(db.String(200), nullable=False)
     beschreibung = db.Column(db.Text, default='')
     status = db.Column(db.String(20), default='offen')  # offen | erledigt
@@ -284,6 +287,7 @@ class Aufgabe(db.Model):
 
     foerderer = db.relationship('Foerderer', backref=db.backref('aufgaben', lazy=True, cascade='all, delete-orphan'))
     knoten = db.relationship('Knoten', backref=db.backref('aufgaben', lazy=True, cascade='all, delete-orphan'))
+    austausch = db.relationship('Austausch', backref=db.backref('aufgaben', lazy=True, cascade='all, delete-orphan'))
 
 
 class Kommentar(db.Model):
@@ -294,6 +298,7 @@ class Kommentar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     foerderer_id = db.Column(db.Integer, db.ForeignKey('foerderer.id', ondelete='CASCADE'), nullable=True, index=True)
     knoten_id = db.Column(db.Integer, db.ForeignKey('knoten.id', ondelete='CASCADE'), nullable=True, index=True)
+    austausch_id = db.Column(db.Integer, db.ForeignKey('austausch.id', ondelete='CASCADE'), nullable=True, index=True)
     aufgabe_id = db.Column(db.Integer, db.ForeignKey('aufgabe.id', ondelete='CASCADE'), nullable=True, index=True)
     text = db.Column(db.Text, nullable=False)
     autor = db.Column(db.String(10), default='team')  # team | partner
@@ -301,6 +306,7 @@ class Kommentar(db.Model):
 
     foerderer = db.relationship('Foerderer', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
     knoten = db.relationship('Knoten', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
+    austausch = db.relationship('Austausch', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
     aufgabe = db.relationship('Aufgabe', backref=db.backref('kommentare', lazy=True, cascade='all, delete-orphan'))
 
 
@@ -416,3 +422,58 @@ class AdminAudit(db.Model):
     aktion = db.Column(db.String(40), nullable=False, index=True)
     ziel = db.Column(db.String(200), nullable=False, default='')
     ip = db.Column(db.String(45), nullable=False, default='')
+
+
+class Austausch(db.Model):
+    """Fachlicher Austausch mit einem eingeladenen Fachkontakt (seit 25.10.2026,
+    Plan: docs/austausch_phase1_plan.md). Dritter Kontext des Kollaborationsbereichs
+    (Aufgabe/Kommentar.austausch_id) neben Kooperation und Knoten.
+
+    Bewusst NICHT die Tabelle foerderer: aktive foerderer-Zeilen erscheinen oeffentlich
+    auf der Website (site_live._aktive_foerderer) und ihre Freigabe setzt Hyphist.
+    Ein Austausch vergibt keine Rolle und keine Mitgliedsstufe; "Fachkontakt" ist nur
+    die interne Lesart "hat einen Austausch". Status deshalb auch nie 'active'.
+
+    Zuordnung zum Konto nur ueber nutzer_id (gesetzt beim Einloesen), kein
+    E-Mail-Fallback. Einladungstoken und Bestaetigungscode nur als SHA-256-Hash.
+    linkedin_url / gespraech_begonnen_am / vorgeschichte_notiz sind admin-only und
+    werden nach Frist F3 geleert (deshalb nullable). Fristen F1-F5 + Loeschsperre:
+    omn/aufbewahrung.py. Neue Tabelle -> Zeitpunkte als timestamptz, tz-aware."""
+    __tablename__ = 'austausch'
+    id = db.Column(db.Integer, primary_key=True)
+    # fuer beide Seiten sichtbar
+    titel = db.Column(db.String(200), nullable=False)
+    themenueberblick = db.Column(db.Text, nullable=False, default='')
+    # Kontakt (admin-only)
+    name = db.Column(db.String(100), nullable=False)
+    institution = db.Column(db.String(200), nullable=False, default='')  # leer = privat
+    email = db.Column(db.String(150), nullable=False, index=True)
+    sprache = db.Column(db.String(10), nullable=False, default='de')     # nur Einladung; danach Nutzer.sprache
+    anrede = db.Column(db.String(10), nullable=False, default='formell')  # formell | informell
+    persoenliche_einleitung = db.Column(db.Text, nullable=False, default='')
+    # vorbereitet | eingeladen | aktiv | beendet | gesperrt
+    status = db.Column(db.String(20), nullable=False, default='vorbereitet', index=True)
+    status_geaendert_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='SET NULL'), nullable=True, index=True)
+    # interne Vorgeschichte (admin-only, Frist F3)
+    linkedin_url = db.Column(db.String(255), nullable=True)
+    gespraech_begonnen_am = db.Column(db.Date, nullable=True)
+    vorgeschichte_notiz = db.Column(db.Text, nullable=True)
+    # Einladung + Bestaetigungscode
+    einladung_token_hash = db.Column(db.String(64), unique=True, nullable=True)
+    einladung_gueltig_bis = db.Column(db.DateTime(timezone=True), nullable=True)
+    eingeladen_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    eingeloest_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    code_hash = db.Column(db.String(64), nullable=True)
+    code_gueltig_bis = db.Column(db.DateTime(timezone=True), nullable=True)
+    code_fehlversuche = db.Column(db.Integer, nullable=False, default=0)
+    codes_angefordert = db.Column(db.Integer, nullable=False, default=0)          # im laufenden Stundenfenster
+    codes_fenster_beginn = db.Column(db.DateTime(timezone=True), nullable=True)
+    # Pflege + Fristen
+    geprueft_am = db.Column(db.DateTime(timezone=True), nullable=True)            # Inaktivitaetspruefung F2
+    loeschsperre_bis = db.Column(db.Date, nullable=True)
+    loeschsperre_grund = db.Column(db.String(300), nullable=False, default='')
+    erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+    letzte_aktivitaet = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware, index=True)
+
+    nutzer = db.relationship('Nutzer', backref=db.backref('austausche', lazy=True))
