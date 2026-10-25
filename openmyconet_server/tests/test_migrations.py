@@ -20,7 +20,7 @@ from omn.extensions import db
 
 BASELINE_REV = '959850bfc924'
 BIOCOMM_REV = '3f1b2c4d5e6a'
-HEAD_REV = 'a0d6f3552d84'
+HEAD_REV = '8be9ab181351'
 BIOCOMM_VORHER = 'fa5a744c1177'
 # BioComm-Migration 0005 (Schema v5). Der Idempotenz-Test faehrt nur bis hier
 # erneut hoch -- die public-Migrationen dahinter (da901ffb142f ... 4c8c3b65f64f)
@@ -363,3 +363,23 @@ def test_biocomm_owner_url_ohne_fremdes_passwort():
     assert (owner.host, owner.port, owner.database) == ('127.0.0.1', 5432, 'omn_staging')
     assert owner.drivername == 'postgresql+psycopg'
     assert dict(owner.query) == {'sslmode': 'disable'}
+
+
+def test_themenraeume_startgebiete_in_fuenf_sprachen(leere_db_app):
+    """Phase 2a: die Migration legt die 6 vorgegebenen Themengebiete auf Deutsch an,
+    ihre Fassungen in en/nl/fr/es als Handuebersetzung, gebunden an den Hash des
+    Originals (omn/themen.py::quelltext_hash)."""
+    from omn.models import Themengebiet, Uebersetzung
+    from omn.themen import anzeige
+    with leere_db_app.app_context():
+        upgrade()
+        gebiete = Themengebiet.query.order_by(Themengebiet.reihenfolge).all()
+        assert [g.titel for g in gebiete][:2] == ['Bioelektrische Signale & Elektrophysiologie', 'Mykologie & Mykorrhiza']
+        assert len(gebiete) == 6 and all(g.vorgegeben and g.von_team and g.sichtbar for g in gebiete)
+        assert Uebersetzung.query.filter_by(anbieter='manuell').count() == 6 * 2 * 4
+        assert anzeige(gebiete[1], 'titel', 'fr')['text'] == 'Mycologie & mycorhize'
+        assert anzeige(gebiete[1], 'titel', 'fr')['uebersetzt'] is True
+        assert anzeige(gebiete[1], 'titel', 'de')['uebersetzt'] is False
+        # zweites upgrade (schon auf head) legt nichts doppelt an
+        upgrade()
+        assert Themengebiet.query.count() == 6

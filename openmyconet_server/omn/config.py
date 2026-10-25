@@ -106,6 +106,11 @@ class Config:
     # den Header X-OMN-Env. Staging setzt OMN_ENV=staging in seiner .env.
     OMN_ENV = os.getenv('OMN_ENV', 'prod').strip() or 'prod'
 
+    # Wissenschaftliche Themenraeume (Phase 2a): wer teilnehmen darf.
+    # 'fachkontakte' (Start) = aktiver fachlicher Austausch; 'alle' = jeder bestaetigte
+    # Nutzer (erklaertes Ziel, Robby 25.10.2026). Nie an Rolle/Foerderung gebunden.
+    THEMEN_KREIS = os.getenv('THEMEN_KREIS', 'fachkontakte').strip() or 'fachkontakte'
+
     # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).
     # Nach dem Cutover auf DATENLABOR_SCHEMA=live setzen; Sandbox bleibt parallel verfügbar.
     DATENLABOR_SCHEMA = os.getenv('DATENLABOR_SCHEMA', 'sandbox')

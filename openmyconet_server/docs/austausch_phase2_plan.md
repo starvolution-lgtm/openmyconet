@@ -1,8 +1,14 @@
 # Phase 2 – Wissenschaftliche Themenräume – Umsetzungsplan
 
 Stand: 25.10.2026 · Grundlage: Robbys Anmerkungen vom 25.10. + Codeanalyse
-Status: **Architekturplan, festgehalten, nicht zur Umsetzung freigegeben** (Robby, 25.10.2026). Umsetzung erst
-nach Abschluss von Phase 1 (siehe `docs/austausch_phase1_plan.md`).
+Status: **Phase 2a zur Umsetzung freigegeben** (Robby, 25.10.2026, nach Abschluss von Phase 1). Phase 2b
+(Übersetzung) erst nach 2a.
+
+**Entscheidungen zum Start von 2a (25.10.2026):** Anzeigename frei wählbar (vorbelegt mit dem Kontonamen);
+in 2a keine Mails, nur „neu seit deinem letzten Besuch“; Evidenz-Kennzeichnung optional schon in 2a;
+Design: ganzes Nutzer-Dashboard hell im Admin-/MCC-Stil (Datenlabor bleibt dunkel), gilt auch für die
+Themenräume. Abweichung vom Datenmodell unten: `beitrag`, `diskussion` und `themengebiet` haben zusätzlich
+`von_team` (Team vs. ehemaliges Mitglied unterscheidbar), `beitrag.entfernt_am` für entfernte Beiträge.
 
 **Überarbeitet am 25.10. nach Robbys Durchsicht:**
 - Die 6 vorgegebenen Themengebiete gibt es schon in **2a** in allen 5 Sprachen, von Hand übersetzt, ohne API

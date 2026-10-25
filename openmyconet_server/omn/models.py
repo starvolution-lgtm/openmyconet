@@ -479,3 +479,134 @@ class Austausch(db.Model):
     letzte_aktivitaet = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware, index=True)
 
     nutzer = db.relationship('Nutzer', backref=db.backref('austausche', lazy=True))
+
+
+# --- Wissenschaftliche Themenraeume (Phase 2a, seit 25.10.2026) ---------------
+# Plan: docs/austausch_phase2_plan.md. GEMEINSAMER Bereich fuer alle Berechtigten,
+# strikt getrennt vom vertraulichen Austausch (keine FKs zu aufgabe/kommentar/
+# austausch, eigene Routen, eigenes Upload-Verzeichnis). Texte werden immer im
+# Original gespeichert (+ sprache_original); Darstellungen in anderen Sprachen liegen
+# in Uebersetzung. Neue Tabellen -> Zeitpunkte timestamptz, tz-aware.
+
+class Themengebiet(db.Model):
+    """Oberste Ebene: 6 vorgegebene Gebiete (Migration) + von Teilnehmenden angelegte."""
+    __tablename__ = 'themengebiet'
+    id = db.Column(db.Integer, primary_key=True)
+    titel = db.Column(db.String(200), nullable=False)
+    beschreibung = db.Column(db.Text, nullable=False, default='')
+    sprache_original = db.Column(db.String(10), nullable=False, default='de')
+    vorgegeben = db.Column(db.Boolean, nullable=False, default=False)
+    reihenfolge = db.Column(db.Integer, nullable=False, default=100)
+    von_team = db.Column(db.Boolean, nullable=False, default=False)
+    erstellt_von = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='SET NULL'), nullable=True, index=True)
+    # Nach dem Zusammenfuehren durch den Admin: Verweis aufs Zielgebiet (alte Adresse leitet weiter)
+    zusammengefuehrt_in = db.Column(db.Integer, db.ForeignKey('themengebiet.id', ondelete='SET NULL'), nullable=True)
+    sichtbar = db.Column(db.Boolean, nullable=False, default=True)
+    erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+
+    diskussionen = db.relationship('Diskussion', backref='themengebiet', lazy=True,
+                                   cascade='all, delete-orphan')
+    # Beziehung zum Konto: beim Loeschen des Kontos setzt die App erstellt_von auf NULL
+    # (auch auf SQLite, das ON DELETE SET NULL ohne foreign_keys-Pragma nicht ausfuehrt)
+    ersteller = db.relationship('Nutzer', foreign_keys=[erstellt_von],
+                                backref=db.backref('themen_gebiete', lazy=True))
+
+
+class Diskussion(db.Model):
+    """Von Teilnehmenden (oder dem Team) angelegtes Thema innerhalb eines Gebiets."""
+    __tablename__ = 'diskussion'
+    id = db.Column(db.Integer, primary_key=True)
+    themengebiet_id = db.Column(db.Integer, db.ForeignKey('themengebiet.id', ondelete='CASCADE'),
+                                nullable=False, index=True)
+    titel = db.Column(db.String(200), nullable=False)
+    beschreibung = db.Column(db.Text, nullable=False, default='')
+    sprache_original = db.Column(db.String(10), nullable=False, default='de')
+    von_team = db.Column(db.Boolean, nullable=False, default=False)
+    erstellt_von = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='SET NULL'), nullable=True, index=True)
+    erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+    letzte_aktivitaet = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware, index=True)
+    sichtbar = db.Column(db.Boolean, nullable=False, default=True)
+    geschlossen = db.Column(db.Boolean, nullable=False, default=False)   # lesbar, keine neuen Beitraege
+
+    beitraege = db.relationship('Beitrag', backref='diskussion', lazy=True,
+                                cascade='all, delete-orphan')
+    ersteller = db.relationship('Nutzer', foreign_keys=[erstellt_von],
+                                backref=db.backref('themen_diskussionen', lazy=True))
+
+
+class Beitrag(db.Model):
+    """Beitrag oder Antwort (eine Ebene: antwort_auf zeigt auf einen Beitrag ohne
+    eigenes antwort_auf). Klartext, kein HTML. Entfernt (Verfasser, Kontoloeschung)
+    = Text geleert + entfernt_am gesetzt, die Zeile bleibt fuer die Antworten anderer."""
+    __tablename__ = 'beitrag'
+    id = db.Column(db.Integer, primary_key=True)
+    diskussion_id = db.Column(db.Integer, db.ForeignKey('diskussion.id', ondelete='CASCADE'), nullable=False, index=True)
+    antwort_auf = db.Column(db.Integer, db.ForeignKey('beitrag.id', ondelete='SET NULL'), nullable=True, index=True)
+    von_team = db.Column(db.Boolean, nullable=False, default=False)
+    # NULL + von_team False = ehemaliges Mitglied (Konto geloescht, Beitrag behalten)
+    autor_nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='SET NULL'), nullable=True, index=True)
+    text = db.Column(db.Text, nullable=False, default='')
+    # Evidenz-Kennzeichnung (optional): hypothese | literatur | beobachtung | messdaten
+    art = db.Column(db.String(20), nullable=True)
+    sprache_original = db.Column(db.String(10), nullable=False, default='de')
+    erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+    bearbeitet_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    entfernt_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    sichtbar = db.Column(db.Boolean, nullable=False, default=True)        # Moderation (Admin)
+
+    anhaenge = db.relationship('BeitragAnhang', backref='beitrag', lazy=True,
+                               cascade='all, delete-orphan')
+    autor = db.relationship('Nutzer', foreign_keys=[autor_nutzer_id],
+                            backref=db.backref('themen_beitraege', lazy=True))
+
+
+class BeitragAnhang(db.Model):
+    """Datei an einem Beitrag. Liegt unter instance/uploads/themen/ (getrennt von den
+    vertraulichen Kollaborations-Anhaengen) und wird nur nach Berechtigungspruefung
+    ausgeliefert."""
+    __tablename__ = 'beitrag_anhang'
+    id = db.Column(db.Integer, primary_key=True)
+    beitrag_id = db.Column(db.Integer, db.ForeignKey('beitrag.id', ondelete='CASCADE'), nullable=False, index=True)
+    dateiname = db.Column(db.String(255), nullable=False)
+    originalname = db.Column(db.String(255), nullable=False, default='')
+    groesse = db.Column(db.Integer, nullable=False, default=0)
+    hochgeladen_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+
+
+class ThemenTeilnahme(db.Model):
+    """Alles, was nur die Themenraeume betrifft, je Person -- die Tabelle nutzer
+    bleibt unveraendert. Entsteht beim ersten Betreten (Zustimmung zu den Regeln)."""
+    __tablename__ = 'themen_teilnahme'
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='CASCADE'), primary_key=True)
+    anzeigename = db.Column(db.String(100), nullable=False)
+    regeln_akzeptiert_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    regeln_fassung = db.Column(db.String(20), nullable=False, default='')
+    beitraege_nach_loeschung = db.Column(db.String(10), nullable=False, default='entfernen')  # entfernen | behalten
+    original_zuerst = db.Column(db.Boolean, nullable=False, default=False)
+    zuletzt_gesehen = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    nutzer = db.relationship('Nutzer', backref=db.backref('themen_teilnahme', uselist=False, lazy=True,
+                                                           cascade='all, delete-orphan'))
+
+
+class Uebersetzung(db.Model):
+    """Darstellung eines Nutzertexts in einer anderen Sprache. Gilt nur fuer genau
+    die Originalfassung mit diesem quelltext_hash (Aenderung des Originals -> alte
+    Uebersetzung wird nicht mehr genommen). anbieter 'manuell' = von Hand (z. B. die
+    6 vorgegebenen Gebiete); automatische Eintraege erst ab Phase 2b. Kein echter FK
+    (mehrere Inhaltstypen) -> beim Loeschen eines Inhalts per Code mitloeschen."""
+    __tablename__ = 'uebersetzung'
+    __table_args__ = (
+        db.UniqueConstraint('inhalt_typ', 'inhalt_id', 'feld', 'ziel_sprache', 'quelltext_hash',
+                            name='uq_uebersetzung_fassung'),
+        db.Index('ix_uebersetzung_inhalt', 'inhalt_typ', 'inhalt_id'),
+    )
+    id = db.Column(db.Integer, primary_key=True)
+    inhalt_typ = db.Column(db.String(20), nullable=False)      # themengebiet | diskussion | beitrag
+    inhalt_id = db.Column(db.Integer, nullable=False)
+    feld = db.Column(db.String(20), nullable=False)            # titel | beschreibung | text
+    ziel_sprache = db.Column(db.String(10), nullable=False)
+    quelltext_hash = db.Column(db.String(64), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    anbieter = db.Column(db.String(20), nullable=False, default='manuell')
+    erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
