@@ -1,6 +1,7 @@
 """Verwaltung der Bewerbungen und der Foerderer-/Kooperations-Eintraege."""
 from flask import render_template, request
 
+from omn import kollaboration
 from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
@@ -64,8 +65,12 @@ def foerderer_admin():
             fehler = 'Eintrag nicht gefunden.'
         elif request.form.get('action') == 'delete':
             nachricht = f'Eintrag "{eintrag.firma}" gelöscht.'
+            # CASCADE loescht nur die Anhang-Zeilen des Kollaborationsbereichs,
+            # die Dateien selbst entfernen wir nach dem Commit (seit 25.10.2026).
+            anhang_pfade = kollaboration.kontext_anhang_pfade(eintrag)
             db.session.delete(eintrag)
             db.session.commit()
+            kollaboration.dateien_entfernen(anhang_pfade)
             protokollieren('foerderer_geloescht', f'#{foerderer_id} {eintrag.firma}')
         elif request.form.get('action') == 'activate':
             eintrag.status = 'active'

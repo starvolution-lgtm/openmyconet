@@ -1,8 +1,22 @@
 """Tests fuer den fachlichen Austausch mit eingeladenen Fachkontakten
-(docs/austausch_phase1_plan.md). Schritt 1: Modell + Kontext-Spalten."""
-from omn.extensions import db
-from omn.models import Austausch, Aufgabe, Kommentar, Foerderer, Nutzer
+(docs/austausch_phase1_plan.md). Schritt 1: Modell + Kontext-Spalten.
+Schritt 2: Kollaborationskern (Kontext, Benachrichtigungen, Zugriff, Dateien)."""
+import io
+import os
+import re
+from datetime import datetime, timedelta, timezone
+
+from werkzeug.datastructures import FileStorage
+
+from conftest import eingeloggt
+from omn import kollaboration
+from omn.extensions import db, mail
+from omn.models import Austausch, Aufgabe, Kommentar, Foerderer, KollaborationAnhang, Nutzer
 from omn.site_live import _aktive_foerderer
+
+# Begriffe, die in nichts auftauchen duerfen, was ein Fachkontakt zu sehen bekommt
+# (Abnahmekriterium 2 + "Fachkontakt" nur intern).
+VERBOTEN = re.compile(r'f(ö|oe)rder|paypal|sporist|spende|zahlung|hyphist|kooperation|fachkontakt', re.I)
 
 
 def _austausch(**felder):
@@ -68,3 +82,201 @@ def test_austausch_erscheint_nicht_bei_foerderern(app):
     _austausch(status='aktiv')
     assert _aktive_foerderer() == []
     assert Foerderer.query.count() == 0
+
+
+# --- Schritt 2: Kollaborationskern -------------------------------------------
+
+def _fachkontakt(email='fach@example.com', sprache='de', anrede='formell', status='aktiv', nutzer_sprache=None):
+    n = Nutzer(name='Fach', email=email, bestaetigt=True, sprache=nutzer_sprache or sprache)
+    db.session.add(n)
+    db.session.commit()
+    a = _austausch(email=email, sprache=sprache, anrede=anrede, status=status, nutzer_id=n.id)
+    return n, a
+
+
+def _mailtext(msg):
+    return f'{msg.subject}\n{msg.body}\n{msg.html}'
+
+
+def test_team_aufgabe_benachrichtigt_fachkontakt_formell_deutsch(app):
+    _, a = _fachkontakt()
+    with mail.record_messages() as ausgehend:
+        kollaboration.aufgabe_anlegen(a, 'Messprotokoll abstimmen', '', 'team')
+    assert len(ausgehend) == 1
+    m = ausgehend[0]
+    assert m.recipients == ['fach@example.com']
+    assert m.subject == 'OpenMycoNet — Neue Aufgabe: Messprotokoll abstimmen'
+    assert 'in Ihrem Austausch „Elektrophysiologie an Myzel“' in m.body
+    assert 'Sie erhalten diese Nachricht' in m.body
+    assert '/austausch' in m.body
+    assert not VERBOTEN.search(_mailtext(m))
+
+
+def test_anrede_informell_und_sprache_des_kontos(app):
+    # Einladung auf Deutsch, Konto inzwischen auf Spanisch -> Konto gewinnt
+    _, a = _fachkontakt(anrede='informell', sprache='de', nutzer_sprache='es')
+    with mail.record_messages() as ausgehend:
+        kollaboration.kommentar_anlegen(a, 'Gibt es Rohdaten zur Messung?', 'team')
+    m = ausgehend[0]
+    assert m.subject == 'OpenMycoNet — Nuevo comentario: Gibt es Rohdaten zur Messung?'
+    assert 'en tu intercambio' in m.body
+    assert 'Recibes este mensaje' in m.body
+    assert '<html lang="es">' in m.html
+    assert 'El equipo de OpenMycoNet' in m.html
+    assert not VERBOTEN.search(_mailtext(m))
+
+
+def test_alle_sprachen_formell_ohne_verbotene_begriffe(app):
+    faelle = [('de', 'Ihrem'), ('en', 'your exchange'), ('nl', 'uw uitwisseling'),
+              ('fr', 'votre échange'), ('es', 'su intercambio')]
+    for i, (lang, erwartet) in enumerate(faelle):
+        _, a = _fachkontakt(email=f'f{i}@example.com', sprache=lang)
+        with mail.record_messages() as ausgehend:
+            kollaboration.aufgabe_anlegen(a, 'Titel', '', 'team')
+        assert erwartet in ausgehend[0].body, lang
+        assert not VERBOTEN.search(_mailtext(ausgehend[0])), lang
+
+
+def test_keine_mail_an_fachkontakt_vor_dem_einloesen(app):
+    a = _austausch(status='eingeladen')
+    with mail.record_messages() as ausgehend:
+        kollaboration.aufgabe_anlegen(a, 'Vorbereitung', '', 'team')
+    assert ausgehend == []
+
+
+def test_beitrag_des_fachkontakts_benachrichtigt_team(app):
+    _, a = _fachkontakt()
+    with mail.record_messages() as ausgehend:
+        kollaboration.kommentar_anlegen(a, 'Hier meine Daten', 'partner')
+    m = ausgehend[0]
+    assert m.recipients == ['admin@openmyconet.test']
+    assert f'/admin/austausch/{a.id}' in m.body
+    assert 'Neuer Kommentar: Hier meine Daten' in m.body
+
+
+def test_aktivitaet_setzt_letzte_aktivitaet(app):
+    _, a = _fachkontakt()
+    a.letzte_aktivitaet = datetime.now(timezone.utc) - timedelta(days=400)
+    db.session.commit()
+    kollaboration.aufgabe_anlegen(a, 'Neu', '', 'partner')
+    neu = db.session.get(Austausch, a.id).letzte_aktivitaet
+    if neu.tzinfo is None:  # SQLite liefert naiv zurueck
+        neu = neu.replace(tzinfo=timezone.utc)
+    assert datetime.now(timezone.utc) - neu < timedelta(minutes=1)
+
+
+def test_status_wechsel_findet_austausch_kontext(app):
+    _, a = _fachkontakt()
+    aufgabe = kollaboration.aufgabe_anlegen(a, 'Abschliessen', '', 'team')
+    with mail.record_messages() as ausgehend:
+        kollaboration.aufgabe_status_wechseln(aufgabe, 'team')
+    assert aufgabe.status == 'erledigt'
+    assert ausgehend[0].subject == 'OpenMycoNet — Aufgabe erledigt: Abschliessen'
+
+
+def test_zugriff_nur_ueber_nutzer_id_und_status_aktiv(app):
+    n, a = _fachkontakt()
+    assert kollaboration.austausch_bereiche_von(n) == [a]
+    assert kollaboration.darf_austausch_sehen(n, a)
+
+    # gleiche E-Mail, aber nicht verknuepft -> kein Zugriff (kein E-Mail-Fallback)
+    fremd = _austausch(email='fach@example.com', status='aktiv', titel='Fremd')
+    assert fremd not in kollaboration.austausch_bereiche_von(n)
+    assert not kollaboration.darf_austausch_sehen(n, fremd)
+
+    for status in ('vorbereitet', 'eingeladen', 'beendet', 'gesperrt'):
+        a.status = status
+        db.session.commit()
+        assert kollaboration.austausch_bereiche_von(n) == []
+        assert not kollaboration.darf_austausch_sehen(n, a)
+
+
+def _anhang_kommentar(kontext, wer='partner'):
+    datei = FileStorage(stream=io.BytesIO(b'messwerte 1 2 3'), filename='messung.csv')
+    k, fehler = kollaboration.kommentar_anlegen(kontext, 'Mit Anhang', wer, dateien=[datei])
+    assert fehler == []
+    return k.anhaenge[0]
+
+
+def test_anhang_sichtbarkeit_im_austausch(app):
+    n, a = _fachkontakt()
+    anhang = _anhang_kommentar(a)
+    assert kollaboration.anhang_sichtbar_fuer_nutzer(anhang, n)
+
+    andere = Nutzer(name='Andere', email='andere@example.com', bestaetigt=True)
+    db.session.add(andere)
+    db.session.commit()
+    assert not kollaboration.anhang_sichtbar_fuer_nutzer(anhang, andere)
+
+    a.status = 'gesperrt'
+    db.session.commit()
+    assert not kollaboration.anhang_sichtbar_fuer_nutzer(anhang, n)
+
+
+def test_download_route_fuer_austausch_anhang(client, app):
+    n, a = _fachkontakt()
+    anhang = _anhang_kommentar(a)
+    with client.session_transaction() as sess:
+        sess['nutzer_logged_in'] = True
+        sess['nutzer_id'] = n.id
+    resp = client.get(f'/dashboard/kollaboration/datei/{anhang.id}')
+    assert resp.status_code == 200
+    assert resp.data == b'messwerte 1 2 3'
+
+
+def test_dateien_eines_austauschs_werden_beim_loeschen_entfernt(app):
+    _, a = _fachkontakt()
+    anhang = _anhang_kommentar(a)
+    pfad = kollaboration.anhang_pfad(anhang)
+    assert os.path.exists(pfad)
+
+    pfade = kollaboration.kontext_anhang_pfade(a)
+    assert pfade == [pfad]
+    db.session.delete(a)
+    db.session.commit()
+    assert kollaboration.dateien_entfernen(pfade) == 1
+    assert not os.path.exists(pfad)
+    assert KollaborationAnhang.query.count() == 0
+    # zweiter Aufruf: fehlende Datei ist kein Fehler
+    assert kollaboration.dateien_entfernen(pfade) == 0
+
+
+def test_bestand_foerderer_loeschen_entfernt_auch_dateien(client, app, superadmin):
+    f = Foerderer(token='tok-koop', status='active', typ='kooperation', firma='Koop GmbH',
+                  beschreibung='Beschreibung der Kooperation.', email='koop@example.com', betrag=0)
+    db.session.add(f)
+    db.session.commit()
+    pfad = kollaboration.anhang_pfad(_anhang_kommentar(f))
+    assert os.path.exists(pfad)
+
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    resp = client.post('/admin/foerderer', data={'foerderer_id': f.id, 'action': 'delete'})
+    assert resp.status_code == 200
+    assert Foerderer.query.count() == 0
+    assert not os.path.exists(pfad)
+
+
+def test_bestand_kooperationsmail_unveraendert(app):
+    """Regression: die Mails der Kooperationen behalten Wortlaut und Betreff."""
+    n = Nutzer(name='Partner', email='partner@example.com', bestaetigt=True, ist_hyphist=True)
+    db.session.add(n)
+    db.session.commit()
+    f = Foerderer(token='tok-k2', status='active', typ='kooperation', firma='Koop GmbH',
+                  beschreibung='Beschreibung der Kooperation.', email='partner@example.com',
+                  betrag=0, nutzer_id=n.id)
+    db.session.add(f)
+    db.session.commit()
+    with mail.record_messages() as ausgehend:
+        aufgabe = kollaboration.aufgabe_anlegen(f, 'Vertrag prüfen', '', 'team')
+        kollaboration.aufgabe_status_wechseln(aufgabe, 'team')
+        kollaboration.aufgabe_status_wechseln(aufgabe, 'team')
+        kollaboration.kommentar_anlegen(f, 'Kurzer Hinweis', 'team')
+    assert [m.subject for m in ausgehend] == [
+        'OpenMycoNet — Neue Aufgabe: Vertrag prüfen',
+        'OpenMycoNet — Aufgabe erledigt: Vertrag prüfen',
+        'OpenMycoNet — Aufgabe wieder geoeffnet: Vertrag prüfen',
+        'OpenMycoNet — Neuer Kommentar: Kurzer Hinweis',
+    ]
+    assert 'Kooperation "Koop GmbH"' in ausgehend[0].body
+    assert '<html lang="de">' in ausgehend[0].html
+    assert 'Das OpenMycoNet-Team' in ausgehend[0].html

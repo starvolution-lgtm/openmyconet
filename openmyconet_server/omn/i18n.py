@@ -60,8 +60,12 @@ def resolve_lang():
     return 'de'
 
 
-def t(key):
-    lang = getattr(g, 'lang', 'de')
+def t(key, lang=None):
+    """lang=None: Sprache der laufenden Anfrage (Website-Sprachwahl). Mit lang
+    ausdruecklich, z. B. fuer Mails, die keine Anfrage-Sprache kennen (Austausch:
+    Nutzer.sprache bzw. Sprache der Einladung)."""
+    if lang is None:
+        lang = getattr(g, 'lang', 'de')
     block = TRANSLATIONS.get(lang) or TRANSLATIONS['de']
     return block.get(key, TRANSLATIONS['de'].get(key, ''))
 

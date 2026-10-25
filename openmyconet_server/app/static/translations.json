@@ -1042,7 +1042,18 @@
     "bdl_grundlage_z1_live": "{reihen} Messreihen · {standorte} Standorte · {knoten} Messknoten",
     "bdl_grundlage_z2_live": "{roh} gemessene Rohwerte, davon {bio} bioelektrisch ({rate} Werte pro Sekunde)",
     "bdl_grundlage_hinweis_live": "Die Minuten- und Stundenwerte entstehen ausschließlich aus den gespeicherten echten Rohdaten.",
-    "bdl_einladung_verweis": "Rohdaten liegen in der Simulation exemplarisch vor (siehe „{link}“)."
+    "bdl_einladung_verweis": "Rohdaten liegen in der Simulation exemplarisch vor (siehe „{link}“).",
+    "austausch_ereignis_aufgabe_neu": "Neue Aufgabe",
+    "austausch_ereignis_aufgabe_erledigt": "Aufgabe erledigt",
+    "austausch_ereignis_aufgabe_geoeffnet": "Aufgabe wieder geöffnet",
+    "austausch_ereignis_kommentar": "Neuer Kommentar",
+    "austausch_mail_titel": "Neues im fachlichen Austausch",
+    "austausch_mail_zeile_formell": "Es gibt Neues in Ihrem Austausch „{titel}“ mit dem OpenMycoNet-Team:",
+    "austausch_mail_zeile_informell": "Es gibt Neues in deinem Austausch „{titel}“ mit dem OpenMycoNet-Team:",
+    "austausch_mail_knopf": "Austausch öffnen",
+    "austausch_mail_hinweis_formell": "Sie erhalten diese Nachricht, weil Sie am fachlichen Austausch mit OpenMycoNet teilnehmen.",
+    "austausch_mail_hinweis_informell": "Du erhältst diese Nachricht, weil du am fachlichen Austausch mit OpenMycoNet teilnimmst.",
+    "austausch_mail_team": "Das OpenMycoNet-Team"
   },
   "en": {
     "nav_warum": "Why",
@@ -2087,7 +2098,18 @@
     "bdl_grundlage_z1_live": "{reihen} measurement series · {standorte} sites · {knoten} measurement nodes",
     "bdl_grundlage_z2_live": "{roh} measured raw values, {bio} of them bioelectrical ({rate} values per second)",
     "bdl_grundlage_hinweis_live": "The minute and hourly values are derived exclusively from the stored real raw data.",
-    "bdl_einladung_verweis": "In the simulation, raw data are available by way of example (see “{link}”)."
+    "bdl_einladung_verweis": "In the simulation, raw data are available by way of example (see “{link}”).",
+    "austausch_ereignis_aufgabe_neu": "New task",
+    "austausch_ereignis_aufgabe_erledigt": "Task completed",
+    "austausch_ereignis_aufgabe_geoeffnet": "Task reopened",
+    "austausch_ereignis_kommentar": "New comment",
+    "austausch_mail_titel": "Update in the scientific exchange",
+    "austausch_mail_zeile_formell": "There is an update in your exchange “{titel}” with the OpenMycoNet team:",
+    "austausch_mail_zeile_informell": "There is an update in your exchange “{titel}” with the OpenMycoNet team:",
+    "austausch_mail_knopf": "Open exchange",
+    "austausch_mail_hinweis_formell": "You are receiving this message because you are taking part in a scientific exchange with OpenMycoNet.",
+    "austausch_mail_hinweis_informell": "You are receiving this message because you are taking part in a scientific exchange with OpenMycoNet.",
+    "austausch_mail_team": "The OpenMycoNet team"
   },
   "nl": {
     "nav_warum": "Waarom",
@@ -3132,7 +3154,18 @@
     "bdl_grundlage_z1_live": "{reihen} meetreeksen · {standorte} locaties · {knoten} meetknooppunten",
     "bdl_grundlage_z2_live": "{roh} gemeten ruwe waarden, waarvan {bio} bio-elektrisch ({rate} waarden per seconde)",
     "bdl_grundlage_hinweis_live": "De minuut- en uurwaarden ontstaan uitsluitend uit de opgeslagen echte ruwe gegevens.",
-    "bdl_einladung_verweis": "Ruwe gegevens zijn in de simulatie bij wijze van voorbeeld beschikbaar (zie ‘{link}’)."
+    "bdl_einladung_verweis": "Ruwe gegevens zijn in de simulatie bij wijze van voorbeeld beschikbaar (zie ‘{link}’).",
+    "austausch_ereignis_aufgabe_neu": "Nieuwe taak",
+    "austausch_ereignis_aufgabe_erledigt": "Taak afgerond",
+    "austausch_ereignis_aufgabe_geoeffnet": "Taak heropend",
+    "austausch_ereignis_kommentar": "Nieuwe reactie",
+    "austausch_mail_titel": "Nieuws in de vakinhoudelijke uitwisseling",
+    "austausch_mail_zeile_formell": "Er is nieuws in uw uitwisseling „{titel}” met het OpenMycoNet-team:",
+    "austausch_mail_zeile_informell": "Er is nieuws in je uitwisseling „{titel}” met het OpenMycoNet-team:",
+    "austausch_mail_knopf": "Uitwisseling openen",
+    "austausch_mail_hinweis_formell": "U ontvangt dit bericht omdat u deelneemt aan een vakinhoudelijke uitwisseling met OpenMycoNet.",
+    "austausch_mail_hinweis_informell": "Je ontvangt dit bericht omdat je deelneemt aan een vakinhoudelijke uitwisseling met OpenMycoNet.",
+    "austausch_mail_team": "Het OpenMycoNet-team"
   },
   "fr": {
     "nav_warum": "Pourquoi",
@@ -4177,7 +4210,18 @@
     "bdl_grundlage_z1_live": "{reihen} séries de mesures · {standorte} sites · {knoten} nœuds de mesure",
     "bdl_grundlage_z2_live": "{roh} valeurs brutes mesurées, dont {bio} bioélectriques ({rate} valeurs par seconde)",
     "bdl_grundlage_hinweis_live": "Les valeurs par minute et par heure proviennent exclusivement des données brutes réelles enregistrées.",
-    "bdl_einladung_verweis": "Dans la simulation, les données brutes sont disponibles à titre d’exemple (voir « {link} »)."
+    "bdl_einladung_verweis": "Dans la simulation, les données brutes sont disponibles à titre d’exemple (voir « {link} »).",
+    "austausch_ereignis_aufgabe_neu": "Nouvelle tâche",
+    "austausch_ereignis_aufgabe_erledigt": "Tâche terminée",
+    "austausch_ereignis_aufgabe_geoeffnet": "Tâche rouverte",
+    "austausch_ereignis_kommentar": "Nouveau commentaire",
+    "austausch_mail_titel": "Du nouveau dans l'échange scientifique",
+    "austausch_mail_zeile_formell": "Il y a du nouveau dans votre échange « {titel} » avec l'équipe OpenMycoNet :",
+    "austausch_mail_zeile_informell": "Il y a du nouveau dans ton échange « {titel} » avec l'équipe OpenMycoNet :",
+    "austausch_mail_knopf": "Ouvrir l'échange",
+    "austausch_mail_hinweis_formell": "Vous recevez ce message parce que vous participez à un échange scientifique avec OpenMycoNet.",
+    "austausch_mail_hinweis_informell": "Tu reçois ce message parce que tu participes à un échange scientifique avec OpenMycoNet.",
+    "austausch_mail_team": "L'équipe OpenMycoNet"
   },
   "es": {
     "nav_warum": "Por qué",
@@ -5222,6 +5266,17 @@
     "bdl_grundlage_z1_live": "{reihen} series de medición · {standorte} ubicaciones · {knoten} nodos de medición",
     "bdl_grundlage_z2_live": "{roh} valores brutos medidos, de ellos {bio} bioeléctricos ({rate} valores por segundo)",
     "bdl_grundlage_hinweis_live": "Los valores por minuto y por hora se obtienen exclusivamente a partir de los datos brutos reales almacenados.",
-    "bdl_einladung_verweis": "En la simulación, los datos brutos están disponibles a modo de ejemplo (véase «{link}»)."
+    "bdl_einladung_verweis": "En la simulación, los datos brutos están disponibles a modo de ejemplo (véase «{link}»).",
+    "austausch_ereignis_aufgabe_neu": "Nueva tarea",
+    "austausch_ereignis_aufgabe_erledigt": "Tarea completada",
+    "austausch_ereignis_aufgabe_geoeffnet": "Tarea reabierta",
+    "austausch_ereignis_kommentar": "Nuevo comentario",
+    "austausch_mail_titel": "Novedades en el intercambio científico",
+    "austausch_mail_zeile_formell": "Hay novedades en su intercambio «{titel}» con el equipo de OpenMycoNet:",
+    "austausch_mail_zeile_informell": "Hay novedades en tu intercambio «{titel}» con el equipo de OpenMycoNet:",
+    "austausch_mail_knopf": "Abrir el intercambio",
+    "austausch_mail_hinweis_formell": "Recibe este mensaje porque participa en un intercambio científico con OpenMycoNet.",
+    "austausch_mail_hinweis_informell": "Recibes este mensaje porque participas en un intercambio científico con OpenMycoNet.",
+    "austausch_mail_team": "El equipo de OpenMycoNet"
   }
 }

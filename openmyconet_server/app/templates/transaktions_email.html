@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ mail_lang or 'de' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,7 +53,7 @@
 </tr>
 <tr>
 <td style="padding:20px 32px; background:#02241a; border-top:1px solid #0a6040; color:#7ba38a; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.7;">
-Das OpenMycoNet-Team &middot; <a href="https://www.openmyconet.de" style="color:#6ee87e;">www.openmyconet.de</a>
+{{ fusszeile or 'Das OpenMycoNet-Team' }} &middot; <a href="https://www.openmyconet.de" style="color:#6ee87e;">www.openmyconet.de</a>
 </td>
 </tr>
 </table>
