@@ -256,6 +256,183 @@ def test_bestand_foerderer_loeschen_entfernt_auch_dateien(client, app, superadmi
     assert not os.path.exists(pfad)
 
 
+# --- Schritt 3: Admin --------------------------------------------------------
+
+FORMULAR = {
+    'titel': 'Elektrische Signaturen', 'name': 'Dr. Muster', 'email': 'Muster@Example.com',
+    'institution': '', 'sprache': 'fr', 'anrede': 'formell',
+    'themenueberblick': 'Wir sprechen über Messreihen.', 'persoenliche_einleitung': '',
+    'linkedin_url': 'https://www.linkedin.com/in/muster', 'gespraech_begonnen_am': '2026-10-01',
+    'vorgeschichte_notiz': 'INTERN-NOTIZ-MARKER',
+}
+
+
+def _admin(client):
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+
+
+def test_admin_legt_austausch_an_ohne_mail(client, app, superadmin):
+    _admin(client)
+    with mail.record_messages() as ausgehend:
+        resp = client.post('/admin/austausch/neu', data=FORMULAR)
+    assert resp.status_code == 302
+    a = Austausch.query.one()
+    assert a.status == 'vorbereitet'
+    assert a.email == 'muster@example.com'
+    assert a.institution == ''
+    assert a.sprache == 'fr' and a.anrede == 'formell'
+    assert a.gespraech_begonnen_am.isoformat() == '2026-10-01'
+    assert a.nutzer_id is None
+    assert ausgehend == []  # Vorbereiten verschickt nichts
+
+    seite = client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+    assert 'INTERN-NOTIZ-MARKER' in seite
+    assert 'https://www.linkedin.com/in/muster' in seite
+    liste = client.get('/admin/austausch').get_data(as_text=True)
+    assert 'Elektrische Signaturen' in liste
+
+
+def test_admin_formular_prueft_eingaben(client, app, superadmin):
+    _admin(client)
+    falsch = dict(FORMULAR, titel='', email='keine-mail', linkedin_url='javascript:alert(1)',
+                  gespraech_begonnen_am='31.12.')
+    seite = client.post('/admin/austausch/neu', data=falsch).get_data(as_text=True)
+    assert 'Bitte einen Titel' in seite
+    assert 'E-Mail-Adresse ist ungültig' in seite
+    assert 'https://' in seite
+    assert 'Gesprächsbeginns ist ungültig' in seite
+    assert Austausch.query.count() == 0
+
+
+def test_admin_bearbeiten(client, app, superadmin):
+    a = _austausch()
+    _admin(client)
+    resp = client.post(f'/admin/austausch/{a.id}/bearbeiten', data=dict(FORMULAR, anrede='informell',
+                                                                     linkedin_url='', vorgeschichte_notiz=''))
+    assert resp.status_code == 302
+    a = db.session.get(Austausch, a.id)
+    assert a.anrede == 'informell'
+    assert a.linkedin_url is None and a.vorgeschichte_notiz is None  # leer -> NULL wie nach Frist F3
+
+
+def test_admin_arbeitsbereich_aufgabe_und_kommentar(client, app, superadmin):
+    _, a = _fachkontakt()
+    _admin(client)
+    with mail.record_messages() as ausgehend:
+        resp = client.post(f'/admin/austausch/{a.id}', data={'action': 'aufgabe_neu', 'titel': 'Daten teilen'})
+        client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Hallo'})
+    assert resp.status_code == 200
+    assert Aufgabe.query.filter_by(austausch_id=a.id).count() == 1
+    assert Kommentar.query.filter_by(austausch_id=a.id).count() == 1
+    assert len(ausgehend) == 2  # Fachkontakt wird benachrichtigt
+    seite = client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+    assert 'zurück zur Übersicht „Fachlicher Austausch“' in seite
+    assert 'Förderer-/Kooperationsverwaltung' not in seite
+
+
+def test_admin_status_sperren_beenden_entsperren(client, app, superadmin):
+    n, a = _fachkontakt()
+    _admin(client)
+    client.post(f'/admin/austausch/{a.id}/sperren')
+    assert db.session.get(Austausch, a.id).status == 'gesperrt'
+    assert kollaboration.austausch_bereiche_von(n) == []
+    client.post(f'/admin/austausch/{a.id}/entsperren')
+    assert db.session.get(Austausch, a.id).status == 'aktiv'
+    client.post(f'/admin/austausch/{a.id}/beenden')
+    assert db.session.get(Austausch, a.id).status == 'beendet'
+
+    ohne_konto = _austausch(status='gesperrt', titel='Ohne Konto', einladung_token_hash='x' * 64)
+    client.post(f'/admin/austausch/{ohne_konto.id}/entsperren')
+    ohne_konto = db.session.get(Austausch, ohne_konto.id)
+    assert ohne_konto.status == 'vorbereitet'
+    assert ohne_konto.einladung_token_hash is None  # alte Einladung gilt nicht weiter
+
+
+def test_admin_aktionen_im_audit_log(client, app, superadmin):
+    from omn.models import AdminAudit
+    _, a = _fachkontakt()
+    _admin(client)
+    client.post(f'/admin/austausch/{a.id}/sperren')
+    client.post(f'/admin/austausch/{a.id}/entsperren')
+    aktionen = [x.aktion for x in AdminAudit.query.all()]
+    assert 'austausch_gesperrt' in aktionen and 'austausch_entsperrt' in aktionen
+
+
+def test_inaktivitaet_nur_markieren(client, app, superadmin):
+    """Frist F2: nach 12 Monaten ohne Aktivitaet nur Hinweis, keine Sperre."""
+    from omn import austausch as aus
+    _, a = _fachkontakt()
+    a.letzte_aktivitaet = datetime.now(timezone.utc) - timedelta(days=400)
+    db.session.commit()
+    assert aus.inaktiv_zu_pruefen(a)
+    _admin(client)
+    liste = client.get('/admin/austausch?filter=pruefen').get_data(as_text=True)
+    assert 'Prüfen – 12 Monate ohne Aktivität' in liste
+    assert db.session.get(Austausch, a.id).status == 'aktiv'  # nichts gesperrt
+
+    client.post(f'/admin/austausch/{a.id}/geprueft')
+    assert not aus.inaktiv_zu_pruefen(db.session.get(Austausch, a.id))
+    liste = client.get('/admin/austausch?filter=pruefen').get_data(as_text=True)
+    assert 'Nichts zur Prüfung' in liste
+
+
+def test_loeschsperre_nur_mit_grund_und_zukunftsdatum(client, app, superadmin):
+    a = _austausch()
+    _admin(client)
+    client.post(f'/admin/austausch/{a.id}/loeschsperre', data={'bis': '2099-01-01', 'grund': ''})
+    assert db.session.get(Austausch, a.id).loeschsperre_bis is None
+    client.post(f'/admin/austausch/{a.id}/loeschsperre', data={'bis': '2000-01-01', 'grund': 'Nachweis'})
+    assert db.session.get(Austausch, a.id).loeschsperre_bis is None
+    client.post(f'/admin/austausch/{a.id}/loeschsperre', data={'bis': '2099-01-01', 'grund': 'Nachweis'})
+    a = db.session.get(Austausch, a.id)
+    assert a.loeschsperre_bis.isoformat() == '2099-01-01' and a.loeschsperre_grund == 'Nachweis'
+    client.post(f'/admin/austausch/{a.id}/loeschsperre', data={'aufheben': '1'})
+    a = db.session.get(Austausch, a.id)
+    assert a.loeschsperre_bis is None and a.loeschsperre_grund == ''
+
+
+def test_admin_loescht_sofort_mit_dateien_und_konto(client, app, superadmin):
+    n, a = _fachkontakt()
+    pfad = kollaboration.anhang_pfad(_anhang_kommentar(a))
+    _admin(client)
+    resp = client.post(f'/admin/austausch/{a.id}/loeschen', data={'konto_mitloeschen': '1'})
+    assert resp.status_code == 302
+    assert Austausch.query.count() == 0
+    assert Kommentar.query.count() == 0
+    assert not os.path.exists(pfad)
+    assert db.session.get(Nutzer, n.id) is None
+
+
+def test_konto_mit_anderen_bezuegen_bleibt(client, app, superadmin):
+    n, a = _fachkontakt()
+    n.ist_sporist = True
+    db.session.commit()
+    _admin(client)
+    client.post(f'/admin/austausch/{a.id}/loeschen', data={'konto_mitloeschen': '1'})
+    assert Austausch.query.count() == 0
+    assert db.session.get(Nutzer, n.id) is not None
+
+
+def test_admin_austausch_nur_fuer_superadmin(client, app, editor):
+    a = _austausch()
+    eingeloggt(client, 'editor_test', 'auch-geheim-123')
+    assert client.get('/admin/austausch').status_code == 403
+    assert client.get(f'/admin/austausch/{a.id}').status_code == 403
+    assert client.post(f'/admin/austausch/{a.id}/loeschen').status_code == 403
+    assert Austausch.query.count() == 1
+
+
+def test_bestand_kooperation_admin_seite_unveraendert(client, app, superadmin):
+    f = Foerderer(token='tok-k3', status='active', typ='kooperation', firma='Koop GmbH',
+                  beschreibung='Beschreibung der Kooperation.', email='k@example.com', betrag=0)
+    db.session.add(f)
+    db.session.commit()
+    _admin(client)
+    seite = client.get(f'/admin/kollaboration/foerderer/{f.id}').get_data(as_text=True)
+    assert 'Förderer-/Kooperationsverwaltung' in seite
+    assert 'Fachkontakt' not in seite
+
+
 def test_bestand_kooperationsmail_unveraendert(app):
     """Regression: die Mails der Kooperationen behalten Wortlaut und Betreff."""
     n = Nutzer(name='Partner', email='partner@example.com', bestaetigt=True, ist_hyphist=True)

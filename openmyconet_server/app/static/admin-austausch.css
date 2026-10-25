@@ -1,0 +1,16 @@
+/* Admin: fachlicher Austausch (omn/admin/austausch.py) */
+.aus-leiste { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin: 1rem 0; }
+.aus-titel { font-weight: bold; font-size: 1.05rem; }
+.aus-formular label { display: block; margin-top: 0.7rem; }
+.aus-formular input[type=text], .aus-formular input[type=email], .aus-formular input[type=url],
+.aus-formular textarea { width: 100%; box-sizing: border-box; }
+.aus-zeile { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
+.aus-zeile .aus-breit { flex: 1 1 18rem; }
+.aus-zeile .aus-breit input { width: 100%; box-sizing: border-box; }
+.aus-intern { border-left: 3px solid var(--progress); padding-left: 0.8rem; margin-top: 0.8rem; }
+.aus-check { display: block; margin: 0.5rem 0; }
+.aus-gefahr { border-color: var(--blocked); }
+.karte .aktionen { align-items: center; }
+.badge.aus-aktiv { background: var(--good-bg); color: var(--good); border-color: var(--good); }
+.badge.aus-gesperrt { background: var(--blocked-bg); color: var(--blocked); border-color: var(--blocked); }
+.badge.aus-eingeladen, .badge.aus-vorbereitet, .badge.aus-beendet { background: var(--ground); color: var(--ink-soft); border-color: var(--line); }

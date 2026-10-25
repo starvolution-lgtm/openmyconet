@@ -1,0 +1,80 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — {{ 'Austausch bearbeiten' if austausch else 'Austausch vorbereiten' }}{% endblock %}
+{% block heading %}🔬 {{ 'Austausch bearbeiten' if austausch else 'Neuen Austausch vorbereiten' }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">
+{% endblock %}
+{% block content %}
+
+{% if austausch %}
+<p><a href="{{ url_for('admin.austausch_detail', austausch_id=austausch.id) }}">← zurück zum Austausch</a></p>
+{% else %}
+<p><a href="{{ url_for('admin.austausch_liste') }}">← zurück zur Übersicht</a></p>
+<p class="info">Hier wird nur vorbereitet, es geht noch keine Mail hinaus. Die Einladung verschickst du
+danach aus dem Austausch heraus.</p>
+{% endif %}
+
+{% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
+
+<form method="post" class="aus-formular">
+    <div class="karte">
+        <h2>Für beide Seiten sichtbar</h2>
+        <label>Titel des Austauschs *
+            <input type="text" name="titel" maxlength="200" required value="{{ werte.titel or '' }}"
+                   placeholder="z. B. Elektrische Signaturen bei der Erneuerung von Myzelnetzen">
+        </label>
+        <label>Themenüberblick (sieht die eingeladene Person)
+            <textarea name="themenueberblick" rows="5">{{ werte.themenueberblick or '' }}</textarea>
+        </label>
+    </div>
+
+    <div class="karte">
+        <h2>Kontakt und Einladung</h2>
+        <label>Name *
+            <input type="text" name="name" maxlength="100" required value="{{ werte.name or '' }}">
+        </label>
+        <label>Institution oder privat (leer = privat)
+            <input type="text" name="institution" maxlength="200" value="{{ werte.institution or '' }}">
+        </label>
+        <label>E-Mail-Adresse *
+            <input type="email" name="email" maxlength="150" required value="{{ werte.email or '' }}">
+        </label>
+        <div class="aus-zeile">
+            <label>Sprache
+                <select name="sprache">
+                    {% for code, name in sprachen.items() %}
+                    <option value="{{ code }}"{% if werte.sprache == code %} selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Anrede
+                <select name="anrede">
+                    <option value="formell"{% if werte.anrede != 'informell' %} selected{% endif %}>förmlich (Sie / u / vous / usted)</option>
+                    <option value="informell"{% if werte.anrede == 'informell' %} selected{% endif %}>persönlich (du / je / tu / tú)</option>
+                </select>
+            </label>
+        </div>
+        <label>Persönlicher Einleitungssatz für die Einladung (optional)
+            <textarea name="persoenliche_einleitung" rows="3">{{ werte.persoenliche_einleitung or '' }}</textarea>
+        </label>
+    </div>
+
+    <div class="karte aus-intern">
+        <h2>🔒 Nur für das Team (nie für die eingeladene Person sichtbar)</h2>
+        <label>LinkedIn-Profil (https://…)
+            <input type="url" name="linkedin_url" maxlength="255" value="{{ werte.linkedin_url or '' }}">
+        </label>
+        <label>Gespräch begonnen am
+            <input type="date" name="gespraech_begonnen_am"
+                   value="{{ werte.gespraech_begonnen_am.isoformat() if werte.gespraech_begonnen_am else '' }}">
+        </label>
+        <label>Vorgeschichte (eigene Zusammenfassung, keine kopierten LinkedIn-Texte)
+            <textarea name="vorgeschichte_notiz" rows="5">{{ werte.vorgeschichte_notiz or '' }}</textarea>
+        </label>
+        <p class="u-muted-note">Diese drei Felder werden nach 24 Monaten ohne Aktivität automatisch geleert.</p>
+    </div>
+
+    <button type="submit">{{ 'Speichern' if austausch else 'Austausch vorbereiten' }}</button>
+</form>
+
+{% endblock %}

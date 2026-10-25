@@ -1,0 +1,97 @@
+{% extends "kollaboration_admin.html" %}
+{% from "_admin_makros.html" import post_knopf %}
+{% block title %}OpenMycoNet — Fachlicher Austausch: {{ titel_kontext }}{% endblock %}
+{% block heading %}🔬 Fachlicher Austausch — {{ titel_kontext }}{% endblock %}
+{% block extra_css %}
+{{ super() }}
+<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">
+{% endblock %}
+{% block kontext_info %}
+
+<div class="karte{% if zu_pruefen %} pending{% endif %}">
+    <div class="kopf">
+        <span class="firma">{{ austausch.name }}</span>
+        <span class="badge aus-{{ austausch.status }}">{{ austausch.status }}</span>
+        {% if zu_pruefen %}<span class="badge pending">Prüfen – 12 Monate ohne Aktivität</span>{% endif %}
+        {% if loeschsperre_aktiv %}<span class="badge typ">Löschsperre bis {{ austausch.loeschsperre_bis.strftime('%d.%m.%Y') }}</span>{% endif %}
+    </div>
+
+    <div class="feld"><label>Institution</label><p>{{ austausch.institution or 'privat' }}</p></div>
+    <div class="feld"><label>E-Mail</label><p>{{ austausch.email }}</p></div>
+    <div class="feld"><label>Sprache · Anrede</label>
+        <p>{{ sprachen.get(austausch.sprache, austausch.sprache) }} · {{ 'förmlich' if austausch.anrede == 'formell' else 'persönlich' }}</p></div>
+    <div class="feld"><label>Konto</label>
+        <p>{% if austausch.nutzer %}verknüpft (#{{ austausch.nutzer.id }}, {{ austausch.nutzer.email }}){% else %}noch keins – Einladung nicht eingelöst{% endif %}</p></div>
+    {% if austausch.themenueberblick %}
+    <div class="feld"><label>Themenüberblick (sichtbar für die eingeladene Person)</label><p>{{ austausch.themenueberblick }}</p></div>
+    {% endif %}
+    {% if austausch.persoenliche_einleitung %}
+    <div class="feld"><label>Persönlicher Einleitungssatz (Einladungsmail)</label><p>{{ austausch.persoenliche_einleitung }}</p></div>
+    {% endif %}
+
+    <div class="aus-intern">
+        <div class="feld"><label>🔒 LinkedIn-Profil</label>
+            <p>{% if austausch.linkedin_url %}<a href="{{ austausch.linkedin_url }}" target="_blank" rel="noopener noreferrer">{{ austausch.linkedin_url }}</a>{% else %}—{% endif %}</p></div>
+        <div class="feld"><label>🔒 Gespräch begonnen am</label>
+            <p>{{ austausch.gespraech_begonnen_am.strftime('%d.%m.%Y') if austausch.gespraech_begonnen_am else '—' }}</p></div>
+        <div class="feld"><label>🔒 Vorgeschichte</label><p>{{ austausch.vorgeschichte_notiz or '—' }}</p></div>
+    </div>
+
+    <div class="meta">
+        Angelegt {{ austausch.erstellt_am.strftime('%d.%m.%Y') }}
+        {% if austausch.eingeladen_am %} · eingeladen {{ austausch.eingeladen_am.strftime('%d.%m.%Y') }}{% endif %}
+        {% if austausch.eingeloest_am %} · angenommen {{ austausch.eingeloest_am.strftime('%d.%m.%Y %H:%M') }}{% endif %}
+        · Status seit {{ austausch.status_geaendert_am.strftime('%d.%m.%Y') }}
+        · letzte Aktivität {{ austausch.letzte_aktivitaet.strftime('%d.%m.%Y') }}
+        {% if austausch.geprueft_am %} · geprüft {{ austausch.geprueft_am.strftime('%d.%m.%Y') }}{% endif %}
+    </div>
+
+    <div class="aktionen">
+        <a class="btn" href="{{ url_for('admin.austausch_bearbeiten', austausch_id=austausch.id) }}">✎ Bearbeiten</a>
+        {% if zu_pruefen %}
+        {{ post_knopf(url_for('admin.austausch_geprueft', austausch_id=austausch.id), '✓ Geprüft, weiterlaufen lassen') }}
+        {% endif %}
+        {% if austausch.status in ('gesperrt', 'beendet') %}
+        {{ post_knopf(url_for('admin.austausch_entsperren', austausch_id=austausch.id), '↺ Wieder öffnen',
+                      frage='Austausch wieder öffnen?') }}
+        {% else %}
+        {{ post_knopf(url_for('admin.austausch_beenden', austausch_id=austausch.id), '■ Beenden',
+                      frage='Austausch beenden? Die Person verliert den Zugang; ohne Löschsperre wird der Bereich nach 6 Monaten gelöscht.') }}
+        {{ post_knopf(url_for('admin.austausch_sperren', austausch_id=austausch.id), '⛔ Sperren',
+                      frage='Zugang sofort sperren? Ohne Löschsperre wird der Bereich nach 6 Monaten gelöscht.') }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="karte">
+    <h2>Löschsperre (berechtigter Aufbewahrungsgrund)</h2>
+    {% if austausch.loeschsperre_bis %}
+    <p>Gesetzt bis {{ austausch.loeschsperre_bis.strftime('%d.%m.%Y') }}{% if not loeschsperre_aktiv %} (abgelaufen){% endif %}:
+       {{ austausch.loeschsperre_grund }}</p>
+    <form method="post" action="{{ url_for('admin.austausch_loeschsperre', austausch_id=austausch.id) }}">
+        <input type="hidden" name="aufheben" value="1">
+        <button type="submit">Löschsperre aufheben</button>
+    </form>
+    {% else %}
+    <p class="u-muted-note">Setzt die automatischen Fristen bis zum Datum aus. Nur mit Grund, wird im Audit-Log festgehalten.
+       Ein Löschwunsch der Person geht trotzdem vor.</p>
+    <form method="post" action="{{ url_for('admin.austausch_loeschsperre', austausch_id=austausch.id) }}" class="aus-zeile">
+        <label>Bis <input type="date" name="bis" required></label>
+        <label class="aus-breit">Grund <input type="text" name="grund" maxlength="300" required></label>
+        <button type="submit">Löschsperre setzen</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="karte aus-gefahr">
+    <h2>Sofort löschen (z. B. auf Wunsch der Person)</h2>
+    <form method="post" action="{{ url_for('admin.austausch_loeschen', austausch_id=austausch.id) }}"
+          class="js-confirm-submit" data-confirm="Austausch mit allen Aufgaben, Kommentaren und Dateien endgültig löschen?">
+        {% if austausch.nutzer %}
+        <label class="aus-check"><input type="checkbox" name="konto_mitloeschen" value="1">
+            Konto ebenfalls löschen (nur wenn es keine anderen Bezüge hat)</label>
+        {% endif %}
+        <button type="submit">Endgültig löschen</button>
+    </form>
+</div>
+{% endblock %}

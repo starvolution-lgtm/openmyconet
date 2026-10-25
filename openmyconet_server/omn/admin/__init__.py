@@ -12,6 +12,7 @@ from omn.admin.core import admin_bp, role_required
 from omn.admin import (  # noqa: F401  -- Import registriert die Routen
     audit,
     auth,
+    austausch,
     biocomm,
     foerderer,
     inhalte,

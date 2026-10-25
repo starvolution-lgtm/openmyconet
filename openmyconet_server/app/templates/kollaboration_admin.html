@@ -1,5 +1,7 @@
 {% extends "admin_base.html" %}
 {% set techn = modus == 'technisch' %}
+{% set fach = modus == 'austausch' %}
+{% set partner_label = 'Fachkontakt' if fach else 'Partner' %}
 {% block title %}OpenMycoNet — Kollaboration: {{ titel_kontext }}{% endblock %}
 {% block heading %}💬 Kollaboration — {{ titel_kontext }}{% endblock %}
 {% block extra_css %}
@@ -11,6 +13,9 @@
     {% if techn %}
     Technischer Austausch mit dem Knotenbetreiber: Inbetriebnahme, Wartung,
     Fehlermeldungen, Firmware-Updates. Nur zwischen Betreiber und Team sichtbar.
+    {% elif fach %}
+    Fachlicher Austausch mit einem eingeladenen Fachkontakt. Aufgaben und Kommentare
+    sieht nur die eingeladene Person (sobald sie die Einladung angenommen hat) und das Team.
     {% else %}
     Projekt- und partnerschaftsbezogener Austausch mit dem Kooperationspartner.
     Nur zwischen Partner und Team sichtbar.
@@ -18,10 +23,16 @@
     Kein Freigabeschritt — Kommentare und Aufgaben sind sofort für die andere Seite sichtbar.
 </p>
 
+{% if fach %}
+<p><a href="{{ url_for('admin.austausch_liste') }}">← zurück zur Übersicht „Fachlicher Austausch“</a></p>
+{% else %}
 <p><a href="{{ url_for('admin.foerderer_admin') }}">← zurück zur Förderer-/Kooperationsverwaltung</a></p>
+{% endif %}
 
 {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
 {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
+
+{% block kontext_info %}{% endblock %}
 
 <div class="karte">
     <h2>Aufgaben</h2>
@@ -40,7 +51,7 @@
                 <strong{% if a.status == 'erledigt' %} class="u-strike-faded"{% endif %}>{{ a.titel }}</strong>
                 {% if a.beschreibung %}<br><small>{{ a.beschreibung }}</small>{% endif %}
             </td>
-            <td class="u-center">{{ 'Team' if a.erstellt_von == 'team' else 'Partner' }}</td>
+            <td class="u-center">{{ 'Team' if a.erstellt_von == 'team' else partner_label }}</td>
             <td class="u-center">{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
         </tr>
         {% else %}
@@ -60,7 +71,7 @@
     <h2>Kommentare</h2>
     {% for k in kommentare %}
     <div class="ka-4">
-        <small><strong>{{ 'Team' if k.autor == 'team' else 'Partner' }}</strong> · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</small>
+        <small><strong>{{ 'Team' if k.autor == 'team' else partner_label }}</strong> · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</small>
         <p class="ka-5">{{ k.text }}</p>
         {% for anhang in k.anhaenge %}
         <div><small>📎 <a href="{{ url_for('admin.kollaboration_datei', anhang_id=anhang.id) }}">{{ anhang.originalname or anhang.dateiname }}</a> ({{ (anhang.groesse / 1024) | round | int }} KB)</small></div>

@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Fachlicher Austausch{% endblock %}
+{% block heading %}🔬 Fachlicher Austausch{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">
+{% endblock %}
+{% block content %}
+
+<p class="info">Eingeladene Fachkontakte (z. B. aus LinkedIn- oder Mail-Gesprächen) mit je einem
+vertraulichen Arbeitsbereich. Kein Bezug zu Förderung, keine Mitgliedsstufe: „Fachkontakt“ ist nur
+eine interne Kennzeichnung. Fristen: nicht angenommen bzw. nur vorbereitet 6 Monate, Notizen 24 Monate
+ohne Aktivität, gesperrt/beendet 6 Monate, Inaktivität nach 12 Monaten nur zur Prüfung markiert.</p>
+
+<p class="aus-leiste">
+    <a class="btn" href="{{ url_for('admin.austausch_neu') }}">＋ Neuen Austausch vorbereiten</a>
+    {% if nur_pruefen %}
+    <a href="{{ url_for('admin.austausch_liste') }}">Alle anzeigen</a>
+    {% else %}
+    <a href="{{ url_for('admin.austausch_liste', filter='pruefen') }}">Nur „zur Prüfung“ ({{ pruefen|length }})</a>
+    {% endif %}
+</p>
+
+{% if not liste %}
+<p class="info">{{ 'Nichts zur Prüfung.' if nur_pruefen else 'Noch kein Austausch angelegt.' }}</p>
+{% endif %}
+
+{% for a in liste %}
+<div class="karte{% if a.id in pruefen %} pending{% endif %}">
+    <div class="kopf">
+        <a class="aus-titel" href="{{ url_for('admin.austausch_detail', austausch_id=a.id) }}">{{ a.titel }}</a>
+        <span class="badge aus-{{ a.status }}">{{ a.status }}</span>
+        {% if a.id in pruefen %}<span class="badge pending">Prüfen – 12 Monate ohne Aktivität</span>{% endif %}
+        {% if a.loeschsperre_bis %}<span class="badge typ">Löschsperre bis {{ a.loeschsperre_bis.strftime('%d.%m.%Y') }}</span>{% endif %}
+    </div>
+    <div class="meta">
+        {{ a.name }}{% if a.institution %} · {{ a.institution }}{% endif %} · {{ a.email }}
+        · {{ sprachen.get(a.sprache, a.sprache) }}, {{ 'Sie' if a.anrede == 'formell' else 'du' }}
+        · letzte Aktivität {{ a.letzte_aktivitaet.strftime('%d.%m.%Y') }}
+        · angelegt {{ a.erstellt_am.strftime('%d.%m.%Y') }}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
