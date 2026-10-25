@@ -12,6 +12,7 @@
     <nav>
         🍄 <a href="{{ url_for('dashboard.home') }}">{{ T.nav_dashboard if T is defined else 'OpenMycoNet Dashboard' }}</a>
         {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor if T is defined else 'BioComm-Datenlabor' }}</a>
+        {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}· <a href="{{ url_for('austausch.bereich') }}">{{ t('austausch_bereich_titel', lang if lang is defined else None) }}</a>{% endif %}
         · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout if T is defined else 'Logout' }}</a>{% endif %}
     </nav>
 

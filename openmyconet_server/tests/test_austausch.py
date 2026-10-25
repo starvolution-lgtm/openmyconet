@@ -433,6 +433,320 @@ def test_bestand_kooperation_admin_seite_unveraendert(client, app, superadmin):
     assert 'Fachkontakt' not in seite
 
 
+# --- Schritt 4: Einladung, Bestaetigungscode, Arbeitsbereich -------------------
+
+def _einladen(**felder):
+    """Austausch anlegen + Einladung verschicken; gibt (austausch, token, mail) zurueck."""
+    from omn import austausch as aus
+    werte = dict(linkedin_url='https://www.linkedin.com/in/geheim-marker',
+                 vorgeschichte_notiz='INTERN-NOTIZ-MARKER', themenueberblick='Messreihen an Myzel.')
+    werte.update(felder)
+    a = _austausch(**werte)
+    with mail.record_messages() as ausgehend:
+        aus.einladung_verschicken(a)
+    m = ausgehend[0]
+    token = re.search(r'/austausch/einladung/([A-Za-z0-9_-]+)', m.body).group(1)
+    return a, token, m
+
+
+def _code_aus(msg):
+    return re.search(r'\n(\d{6})\n', msg.body).group(1)
+
+
+def _annehmen(client, token):
+    with mail.record_messages() as ausgehend:
+        resp = client.post(f'/austausch/einladung/{token}', data={'action': 'annehmen'})
+    return resp, ausgehend
+
+
+def test_einladungsmail_formell_deutsch_und_neutral(app):
+    from omn import austausch as aus
+    a, token, m = _einladen()
+    assert m.recipients == ['fach@example.com']
+    assert m.subject == 'Einladung zum fachlichen Austausch: Elektrophysiologie an Myzel'
+    assert 'Guten Tag Dr. Test,' in m.body
+    assert 'wir laden Sie herzlich' in m.body
+    assert 'unabhängig von jeder finanziellen Unterstützung' in m.body
+    assert 'keine Erwartung und keine Gegenleistung' in m.body
+    assert 'Art. 6 Abs. 1 lit. f DSGVO' in m.body and 'datenschutz.html' in m.body
+    assert '14 Tage gültig' in m.body
+    assert 'Messreihen an Myzel.' in m.body
+    assert 'INTERN-NOTIZ-MARKER' not in _mailtext(m) and 'geheim-marker' not in _mailtext(m)
+    assert not VERBOTEN.search(_mailtext(m))
+    # nur der Hash liegt in der DB, kein Klartext-Token, keine Person in der URL
+    a = db.session.get(Austausch, a.id)
+    assert a.einladung_token_hash == aus.token_hash(token) != token
+    assert 'fach' not in token and 'example' not in token
+    assert a.status == 'eingeladen'
+    bis = aus.aware(a.einladung_gueltig_bis)
+    assert timedelta(days=13, hours=23) < bis - datetime.now(timezone.utc) <= timedelta(days=14)
+
+
+def test_einladungsmail_informell_spanisch_mit_einleitung(app):
+    _, _, m = _einladen(sprache='es', anrede='informell', persoenliche_einleitung='Gracias por la charla en LinkedIn.')
+    assert 'Hola, Dr. Test:' in m.body
+    assert 'invitarte' in m.body
+    assert 'Gracias por la charla en LinkedIn.' in m.body
+    assert 'Si no aceptas la invitación' in m.body
+    assert '<html lang="es">' in m.html
+    assert not VERBOTEN.search(_mailtext(m))
+
+
+def test_link_oeffnen_aendert_nichts(client, app):
+    """Mail-Scanner: beliebig viele GETs loesen weder Code noch Einloesung aus."""
+    a, token, _ = _einladen()
+    with mail.record_messages() as ausgehend:
+        for _ in range(3):
+            resp = client.get(f'/austausch/einladung/{token}')
+    assert resp.status_code == 200
+    assert ausgehend == []
+    a = db.session.get(Austausch, a.id)
+    assert a.status == 'eingeladen' and a.code_hash is None and a.codes_angefordert == 0
+    assert a.eingeloest_am is None and a.nutzer_id is None
+    seite = resp.get_data(as_text=True)
+    assert 'Elektrophysiologie an Myzel' in seite
+    assert 'Einladung annehmen' in seite
+    assert 'f***@example.com' in seite  # Adresse nur maskiert
+    assert 'INTERN-NOTIZ-MARKER' not in seite and 'geheim-marker' not in seite
+    assert not VERBOTEN.search(seite)
+    assert resp.headers['X-Robots-Tag'] == 'noindex, nofollow'
+
+
+def test_annehmen_schickt_code_an_gespeicherte_adresse_und_loest_noch_nicht_ein(client, app):
+    a, token, _ = _einladen()
+    resp, ausgehend = _annehmen(client, token)
+    assert resp.status_code == 200
+    assert 'Bestätigungscode eingeben' in resp.get_data(as_text=True)
+    assert len(ausgehend) == 1 and ausgehend[0].recipients == ['fach@example.com']
+    assert ausgehend[0].subject == 'Ihr Bestätigungscode für OpenMycoNet'
+    code = _code_aus(ausgehend[0])
+    a = db.session.get(Austausch, a.id)
+    assert a.status == 'eingeladen' and a.nutzer_id is None and a.eingeloest_am is None
+    assert a.code_hash and code not in a.code_hash
+    assert not VERBOTEN.search(_mailtext(ausgehend[0]))
+
+
+def test_richtiger_code_legt_konto_an_und_loggt_ein(client, app):
+    a, token, _ = _einladen(sprache='fr')
+    _, ausgehend = _annehmen(client, token)
+    with mail.record_messages() as admin_mails:
+        resp = client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': _code_aus(ausgehend[0])})
+    assert resp.status_code == 302 and '/austausch' in resp.headers['Location']
+    a = db.session.get(Austausch, a.id)
+    assert a.status == 'aktiv' and a.eingeloest_am is not None
+    assert a.einladung_token_hash is None and a.code_hash is None
+    n = a.nutzer
+    assert n.email == 'fach@example.com' and n.bestaetigt
+    assert n.keine_mails and n.newsletter_einwilligung_am is None
+    assert not n.ist_hyphist and not n.ist_sporist
+    assert n.sprache == 'fr'
+    assert any('Einladung angenommen' in x.subject for x in admin_mails)
+
+    seite = client.get('/austausch').get_data(as_text=True)
+    assert 'Elektrophysiologie an Myzel' in seite
+    assert 'Échange scientifique' in seite
+    # zweites Einloesen: Link ist verbraucht
+    resp = client.get(f'/austausch/einladung/{token}')
+    assert resp.status_code == 404
+    assert 'ungültig, abgelaufen oder wurde bereits angenommen' in resp.get_data(as_text=True) or \
+        "n'est pas valable" in resp.get_data(as_text=True)
+
+
+def test_bestehendes_konto_behaelt_rollen_und_einstellungen(client, app):
+    n = Nutzer(name='Alt', email='Fach@Example.com', bestaetigt=False, ist_sporist=True,
+               gruppe='forschung', keine_mails=False, sprache='nl', token='tok-alt')
+    db.session.add(n)
+    db.session.commit()
+    a, token, _ = _einladen()
+    _, ausgehend = _annehmen(client, token)
+    client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': _code_aus(ausgehend[0])})
+    n = db.session.get(Nutzer, n.id)
+    assert db.session.get(Austausch, a.id).nutzer_id == n.id
+    assert Nutzer.query.count() == 1
+    assert n.bestaetigt  # Adresse ist durch den Code belegt
+    assert n.ist_sporist and not n.ist_hyphist
+    assert n.gruppe == 'forschung' and n.keine_mails is False and n.sprache == 'nl' and n.name == 'Alt'
+    with client.session_transaction() as sess:
+        assert sess['nutzer_id'] == n.id
+
+
+def test_anderer_eingeloggter_nutzer_wird_ersetzt(client, app):
+    fremd = Nutzer(name='Fremd', email='fremd@example.com', bestaetigt=True)
+    db.session.add(fremd)
+    db.session.commit()
+    with client.session_transaction() as sess:
+        sess['nutzer_logged_in'] = True
+        sess['nutzer_id'] = fremd.id
+    a, token, _ = _einladen()
+    _, ausgehend = _annehmen(client, token)
+    client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': _code_aus(ausgehend[0])})
+    a = db.session.get(Austausch, a.id)
+    assert a.nutzer_id != fremd.id
+    with client.session_transaction() as sess:
+        assert sess['nutzer_id'] == a.nutzer_id
+
+
+def test_code_aus_anderem_browser_wird_abgelehnt(client, app):
+    a, token, _ = _einladen()
+    _, ausgehend = _annehmen(client, token)
+    anderer = app.test_client()
+    resp = anderer.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': _code_aus(ausgehend[0])})
+    assert 'im selben Browser' in resp.get_data(as_text=True)
+    assert db.session.get(Austausch, a.id).status == 'eingeladen'
+
+
+def test_fuenf_fehlversuche_sperren_den_code(client, app):
+    a, token, _ = _einladen()
+    _, ausgehend = _annehmen(client, token)
+    code = _code_aus(ausgehend[0])
+    falsch = '000000' if code != '000000' else '111111'
+    for _i in range(5):
+        seite = client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': falsch}).get_data(as_text=True)
+    assert 'Zu viele Fehlversuche' in seite
+    seite = client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': code}).get_data(as_text=True)
+    assert 'Zu viele Fehlversuche' in seite
+    assert db.session.get(Austausch, a.id).status == 'eingeladen'
+    # neuer Code funktioniert wieder
+    with mail.record_messages() as neu:
+        client.post(f'/austausch/einladung/{token}', data={'action': 'code_neu'})
+    resp = client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': _code_aus(neu[0])})
+    assert resp.status_code == 302
+    assert db.session.get(Austausch, a.id).status == 'aktiv'
+
+
+def test_hoechstens_drei_codes_je_stunde(client, app):
+    _a, token, _ = _einladen()
+    mails = []
+    for _ in range(4):
+        resp, ausgehend = _annehmen(client, token)
+        mails += ausgehend
+    assert len(mails) == 3
+    assert 'schon drei Codes angefordert' in resp.get_data(as_text=True)
+
+
+def test_abgelaufener_code(client, app):
+    a, token, _ = _einladen()
+    _, ausgehend = _annehmen(client, token)
+    a = db.session.get(Austausch, a.id)
+    a.code_gueltig_bis = datetime.now(timezone.utc) - timedelta(minutes=1)
+    db.session.commit()
+    seite = client.post(f'/austausch/einladung/{token}', data={'action': 'code', 'code': _code_aus(ausgehend[0])}).get_data(as_text=True)
+    assert 'Der Code ist abgelaufen' in seite
+    assert db.session.get(Austausch, a.id).status == 'eingeladen'
+
+
+def test_abgelaufene_und_unbekannte_einladung_gleiche_meldung(client, app):
+    a, token, _ = _einladen()
+    a.einladung_gueltig_bis = datetime.now(timezone.utc) - timedelta(seconds=1)
+    db.session.commit()
+    abgelaufen = client.get(f'/austausch/einladung/{token}')
+    unbekannt = client.get('/austausch/einladung/gibt-es-nicht')
+    assert abgelaufen.status_code == unbekannt.status_code == 404
+    assert 'ungültig, abgelaufen oder wurde bereits angenommen' in abgelaufen.get_data(as_text=True)
+    assert 'ungültig, abgelaufen oder wurde bereits angenommen' in unbekannt.get_data(as_text=True)
+    assert client.post(f'/austausch/einladung/{token}', data={'action': 'annehmen'}).status_code == 404
+
+
+def test_admin_verschickt_und_erneuert_einladung(client, app, superadmin):
+    from omn.models import AdminAudit
+    a = _austausch()
+    _admin(client)
+    with mail.record_messages() as erste:
+        client.post(f'/admin/austausch/{a.id}/einladen')
+    alt = re.search(r'/austausch/einladung/([A-Za-z0-9_-]+)', erste[0].body).group(1)
+    assert db.session.get(Austausch, a.id).status == 'eingeladen'
+    with mail.record_messages() as zweite:
+        client.post(f'/admin/austausch/{a.id}/einladen')
+    neu = re.search(r'/austausch/einladung/([A-Za-z0-9_-]+)', zweite[0].body).group(1)
+    assert alt != neu
+    assert client.get(f'/austausch/einladung/{alt}').status_code == 404
+    assert client.get(f'/austausch/einladung/{neu}').status_code == 200
+    aktionen = [x.aktion for x in AdminAudit.query.all()]
+    assert 'austausch_eingeladen' in aktionen and 'austausch_erneut_eingeladen' in aktionen
+
+
+def test_admin_einladung_bei_mailfehler_unveraendert(client, app, superadmin, monkeypatch):
+    a = _austausch()
+    _admin(client)
+
+    def kaputt(msg):
+        raise ConnectionError('SMTP weg')
+    monkeypatch.setattr('omn.austausch.mail.send', kaputt)
+    resp = client.post(f'/admin/austausch/{a.id}/einladen', follow_redirects=True)
+    assert 'nicht verschickt werden' in resp.get_data(as_text=True)
+    a = db.session.get(Austausch, a.id)
+    assert a.status == 'vorbereitet' and a.einladung_token_hash is None
+
+
+def test_nach_annahme_keine_einladung_mehr(client, app, superadmin):
+    _, a = _fachkontakt()
+    _admin(client)
+    with mail.record_messages() as ausgehend:
+        client.post(f'/admin/austausch/{a.id}/einladen')
+    assert ausgehend == []
+    assert db.session.get(Austausch, a.id).status == 'aktiv'
+
+
+def _als(client, nutzer_id):
+    with client.session_transaction() as sess:
+        sess['nutzer_logged_in'] = True
+        sess['nutzer_id'] = nutzer_id
+
+
+def test_arbeitsbereich_neutral_ohne_interne_felder(client, app):
+    n, a = _fachkontakt()
+    a.linkedin_url = 'https://www.linkedin.com/in/geheim-marker'
+    a.vorgeschichte_notiz = 'INTERN-NOTIZ-MARKER'
+    a.institution = 'INSTITUT-MARKER'
+    db.session.commit()
+    _als(client, n.id)
+    resp = client.get('/austausch')
+    seite = resp.get_data(as_text=True)
+    assert resp.status_code == 200
+    assert 'Nur zwischen Ihnen und dem OpenMycoNet-Team sichtbar.' in seite
+    for marker in ('INTERN-NOTIZ-MARKER', 'geheim-marker', 'INSTITUT-MARKER', 'fach@example.com'):
+        assert marker not in seite
+    assert not VERBOTEN.search(seite)
+
+
+def test_arbeitsbereich_schreiben_mit_uebersetzten_meldungen(client, app):
+    n, a = _fachkontakt(sprache='es', anrede='informell')
+    _als(client, n.id)
+    with mail.record_messages() as ausgehend:
+        seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'kommentar_neu',
+                                                'text': 'Hola equipo'}).get_data(as_text=True)
+    assert 'Comentario guardado.' in seite
+    assert Kommentar.query.filter_by(austausch_id=a.id, autor='partner').count() == 1
+    assert ausgehend[0].recipients == ['admin@openmyconet.test']
+    seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': ''}).get_data(as_text=True)
+    assert 'La tarea necesita un título.' in seite
+    assert 'Solo visible para ti' in seite
+
+
+def test_arbeitsbereich_fremder_austausch_403_und_ohne_login(client, app):
+    n, _a = _fachkontakt()
+    _, fremd = _fachkontakt(email='zweite@example.com')
+    assert client.get('/austausch').status_code == 302  # nicht eingeloggt -> Login
+    _als(client, n.id)
+    resp = client.post('/austausch', data={'austausch_id': fremd.id, 'action': 'kommentar_neu', 'text': 'x'})
+    assert resp.status_code == 403
+    assert Kommentar.query.count() == 0
+
+
+def test_dashboard_leitet_fachkontakt_zum_austausch(client, app):
+    n, a = _fachkontakt()
+    _als(client, n.id)
+    resp = client.get('/dashboard')
+    assert resp.status_code == 302 and resp.headers['Location'].endswith('/austausch')
+    # kein Hyphist-Bereich, keine Kooperation
+    seite = client.get('/dashboard/hyphist').get_data(as_text=True)
+    assert 'Elektrophysiologie an Myzel' not in seite
+    assert not db.session.get(Nutzer, n.id).ist_hyphist
+    a.status = 'gesperrt'
+    db.session.commit()
+    assert client.get('/austausch').get_data(as_text=True).count('Elektrophysiologie an Myzel') == 0
+
+
 def test_bestand_kooperationsmail_unveraendert(app):
     """Regression: die Mails der Kooperationen behalten Wortlaut und Betreff."""
     n = Nutzer(name='Partner', email='partner@example.com', bestaetigt=True, ist_hyphist=True)

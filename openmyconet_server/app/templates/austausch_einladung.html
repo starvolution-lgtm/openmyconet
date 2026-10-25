@@ -1,0 +1,64 @@
+{% extends "dashboard_base.html" %}
+{# Einladung zum fachlichen Austausch (omn/austausch.py). Zustaende:
+   start (Bestaetigungsseite, GET aendert nichts), code (Code eingeben), ungueltig.
+   Bewusst ohne jeden Bezug zu Foerderung/Zahlung; Texte in Sprache + Anrede des Kontakts. #}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ tx('austausch_seite_titel') }}{% endblock %}
+{% block head %}
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="{{ asset('dashboard-austausch.css') }}">
+{% endblock %}
+{% block content %}
+    <p class="eyebrow">OpenMycoNet</p>
+    <h1>{{ tx('austausch_seite_titel') }}</h1>
+
+    {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
+
+    {% if zustand == 'ungueltig' %}
+    <div class="card"><p>{{ tx('austausch_seite_ungueltig') }}</p></div>
+
+    {% else %}
+    <div class="card">
+        <p>{{ txa('austausch_seite_intro') }}</p>
+        <h2>{{ a.titel }}</h2>
+        {% if a.themenueberblick %}
+        <p class="label">{{ tx('austausch_themenueberblick') }}</p>
+        <p class="u-pre-wrap">{{ a.themenueberblick }}</p>
+        {% endif %}
+        <p class="aus-unabhaengig">{{ tx('austausch_einl_unabhaengig') }}</p>
+    </div>
+
+    {% if zustand == 'start' %}
+    <div class="card">
+        <form method="post">
+            <input type="hidden" name="action" value="annehmen">
+            <button type="submit">{{ tx('austausch_seite_annehmen') }}</button>
+        </form>
+        <p class="label">{{ txa('austausch_seite_annehmen_hinweis', email=email) }}</p>
+    </div>
+    {% elif zustand == 'code' %}
+    <div class="card">
+        <h2>{{ tx('austausch_code_titel') }}</h2>
+        <p>{{ txa('austausch_code_text', email=email, minuten=minuten) }}</p>
+        <form method="post" class="aus-code-form">
+            <input type="hidden" name="action" value="code">
+            <label>{{ tx('austausch_code_feld') }}
+                <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
+                       pattern="[0-9 ]{6,7}" maxlength="7" required class="aus-code">
+            </label>
+            <button type="submit">{{ tx('austausch_code_knopf') }}</button>
+        </form>
+        <form method="post" class="u-mt-16">
+            <input type="hidden" name="action" value="code_neu">
+            <button type="submit" class="aus-zweitrangig">{{ tx('austausch_code_neu') }}</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="card aus-datenschutz">
+        <p class="label">{{ txa('austausch_seite_datenschutz') }}
+            <a href="{{ datenschutz_url }}" target="_blank" rel="noopener noreferrer">{{ tx('austausch_seite_datenschutz_link') }}</a></p>
+    </div>
+    {% endif %}
+{% endblock %}

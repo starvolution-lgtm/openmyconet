@@ -1,0 +1,6 @@
+/* Einladung + Arbeitsbereich des fachlichen Austauschs (omn/austausch.py) */
+.aus-unabhaengig { margin-top: 1rem; font-style: italic; }
+.aus-code-form { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+.aus-code { font-size: 1.4rem; letter-spacing: 0.3em; width: 9rem; text-align: center; }
+.aus-zweitrangig { background: transparent; border: 1px solid currentColor; }
+.aus-datenschutz { font-size: 0.9rem; }

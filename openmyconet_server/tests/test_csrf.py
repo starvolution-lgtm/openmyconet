@@ -80,6 +80,7 @@ AENDERNDE_ADMIN_ROUTEN = [
     '/admin/presse/delete/1',
     '/admin/presse-kandidaten/uebernehmen/1',
     '/admin/presse-kandidaten/suchbegriff/loeschen/1',
+    '/admin/austausch/1/einladen',
     '/admin/austausch/1/sperren',
     '/admin/austausch/1/beenden',
     '/admin/austausch/1/entsperren',

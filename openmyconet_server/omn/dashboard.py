@@ -182,6 +182,8 @@ def home():
         return redirect(url_for('dashboard.knotenbetreiber'))
     if nutzer.ist_hyphist and kollaboration.kooperationen_von(nutzer):
         return redirect(url_for('dashboard.hyphist'))
+    if kollaboration.austausch_bereiche_von(nutzer):
+        return redirect(url_for('austausch.bereich'))
     if Bewerbung.query.filter_by(nutzer_id=nutzer.id).first():
         return redirect(url_for('dashboard.bewerber'))
     return redirect(url_for('dashboard.basis'))

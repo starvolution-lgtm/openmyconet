@@ -110,10 +110,12 @@ def aufgabe_status_wechseln(aufgabe, wer):
     return aufgabe
 
 
-def kommentar_anlegen(kontext, text, wer, aufgabe_id=None, dateien=None):
+def kommentar_anlegen(kontext, text, wer, aufgabe_id=None, dateien=None,
+                      anhang_fehler='"{datei}" abgelehnt (Format oder Groesse).'):
     """dateien: iterable von werkzeug FileStorage (optional). Gibt
     (kommentar, fehler_liste) zurueck -- der Kommentar wird auch dann gespeichert,
-    wenn einzelne Anhaenge abgelehnt wurden (fehler_liste nicht leer)."""
+    wenn einzelne Anhaenge abgelehnt wurden (fehler_liste nicht leer).
+    anhang_fehler: Meldung je abgelehnter Datei, Platzhalter {datei}."""
     kommentar = Kommentar(
         text=text.strip(), autor=wer, aufgabe_id=aufgabe_id,
         **kontext_filter(kontext),
@@ -127,7 +129,7 @@ def kommentar_anlegen(kontext, text, wer, aufgabe_id=None, dateien=None):
             continue
         f = _anhang_speichern(kommentar, datei)
         if f is None:
-            fehler.append(f'"{datei.filename}" abgelehnt (Format oder Groesse).')
+            fehler.append(anhang_fehler.replace('{datei}', datei.filename))
 
     _kooperation_aktivitaet_markieren(kontext)
     db.session.commit()
@@ -135,15 +137,30 @@ def kommentar_anlegen(kontext, text, wer, aufgabe_id=None, dateien=None):
     return kommentar, fehler
 
 
-def post_verarbeiten(kontext, wer, form, files):
+# Rueckmeldungen von post_verarbeiten(); der Austausch-Arbeitsbereich uebergibt
+# eigene, uebersetzte Fassungen (omn/austausch.py).
+MELDUNGEN_DE = {
+    'aufgabe_ok': 'Aufgabe hinzugefügt.',
+    'status_ok': 'Aufgabenstatus geändert.',
+    'kommentar_ok': 'Kommentar gespeichert.',
+    'titel_fehlt': 'Bitte einen Titel für die Aufgabe angeben.',
+    'kommentar_leer': 'Der Kommentar ist leer.',
+    'anhang_abgelehnt': '"{datei}" abgelehnt (Format oder Groesse).',
+    'unbekannt': 'Unbekannte Aktion.',
+}
+
+
+def post_verarbeiten(kontext, wer, form, files, meldungen=None):
     """Verarbeitet eine Aufgaben-/Kommentar-POST-Aktion fuer einen bereits
-    aufgeloesten UND autorisierten Kontext (Foerderer oder Knoten). Gibt
+    aufgeloesten UND autorisierten Kontext (Foerderer, Knoten oder Austausch). Gibt
     (nachricht, fehler) zurueck. Bricht mit 403 ab, wenn eine referenzierte
     Aufgabe nicht zu diesem Kontext gehoert.
 
-    wer: 'team' | 'partner'. Von dashboard.py (partner) und admin.py (team)
-    gemeinsam genutzt -- die Routen kuemmern sich nur um Auth + Kontext-Aufloesung."""
+    wer: 'team' | 'partner'. Von dashboard.py/austausch.py (partner) und admin
+    (team) gemeinsam genutzt -- die Routen kuemmern sich nur um Auth + Kontext-
+    Aufloesung. meldungen: optionale Uebersetzungen der MELDUNGEN_DE-Schluessel."""
     from flask import abort
+    m = {**MELDUNGEN_DE, **(meldungen or {})}
     filt = kontext_filter(kontext)
     aktion = form.get('action')
 
@@ -156,27 +173,28 @@ def post_verarbeiten(kontext, wer, form, files):
     if aktion == 'aufgabe_neu':
         titel = (form.get('titel') or '').strip()
         if not titel:
-            return None, 'Bitte einen Titel für die Aufgabe angeben.'
+            return None, m['titel_fehlt']
         aufgabe_anlegen(kontext, titel, form.get('beschreibung'), wer)
-        return 'Aufgabe hinzugefügt.', None
+        return m['aufgabe_ok'], None
 
     if aktion == 'aufgabe_toggle':
         aufgabe_status_wechseln(_aufgabe_dieses_kontexts(form.get('aufgabe_id', type=int)), wer)
-        return 'Aufgabenstatus geändert.', None
+        return m['status_ok'], None
 
     if aktion == 'kommentar_neu':
         text = (form.get('text') or '').strip()
         if not text:
-            return None, 'Der Kommentar ist leer.'
+            return None, m['kommentar_leer']
         aufgabe_id = form.get('aufgabe_id', type=int) or None
         if aufgabe_id:
             _aufgabe_dieses_kontexts(aufgabe_id)
         _, anhang_fehler = kommentar_anlegen(
             kontext, text, wer, aufgabe_id=aufgabe_id, dateien=files.getlist('dateien'),
+            anhang_fehler=m['anhang_abgelehnt'],
         )
-        return 'Kommentar gespeichert.', (' '.join(anhang_fehler) or None)
+        return m['kommentar_ok'], (' '.join(anhang_fehler) or None)
 
-    return None, 'Unbekannte Aktion.'
+    return None, m['unbekannt']
 
 
 # --- Zugriffs-Helfer (Nutzer-Seite) ---------------------------------------

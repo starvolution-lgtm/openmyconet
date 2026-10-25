@@ -46,7 +46,19 @@
         {% if austausch.geprueft_am %} · geprüft {{ austausch.geprueft_am.strftime('%d.%m.%Y') }}{% endif %}
     </div>
 
+    {% if austausch.status == 'eingeladen' and austausch.einladung_gueltig_bis %}
+    <p class="info">Einladung verschickt, Link gültig bis {{ austausch.einladung_gueltig_bis.strftime('%d.%m.%Y %H:%M') }} (UTC).
+       Noch nicht angenommen.</p>
+    {% endif %}
+
     <div class="aktionen">
+        {% if austausch.status in ('vorbereitet', 'eingeladen') %}
+        {% set erneut = austausch.status == 'eingeladen' %}
+        {{ post_knopf(url_for('admin.austausch_einladen', austausch_id=austausch.id),
+                      '✉ Einladung erneut verschicken' if erneut else '✉ Einladung verschicken',
+                      frage=('Neuen Link verschicken? Der bisherige Link wird ungültig.' if erneut
+                             else 'Einladung jetzt an ' ~ austausch.email ~ ' verschicken?')) }}
+        {% endif %}
         <a class="btn" href="{{ url_for('admin.austausch_bearbeiten', austausch_id=austausch.id) }}">✎ Bearbeiten</a>
         {% if zu_pruefen %}
         {{ post_knopf(url_for('admin.austausch_geprueft', austausch_id=austausch.id), '✓ Geprüft, weiterlaufen lassen') }}

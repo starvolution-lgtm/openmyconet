@@ -5,11 +5,11 @@ Liste, Anlegen/Bearbeiten (inkl. der admin-only Vorgeschichte), Arbeitsbereich
 (Aufgaben + Kommentare ueber kollaboration.post_verarbeiten, wie bei Kooperation
 und Knoten), Status (sperren/beenden/entsperren), Inaktivitaetspruefung (F2),
 Loeschsperre und Loeschen auf Wunsch (F5, inkl. Dateien). Jede aendernde Aktion
-ist ein POST mit Audit-Eintrag. Das Verschicken der Einladung folgt in Schritt 4.
+ist ein POST mit Audit-Eintrag. Verschicken der Einladung: omn/austausch.py.
 """
 from datetime import date
 
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 
 from omn import austausch as aus
 from omn import kollaboration
@@ -129,9 +129,29 @@ def austausch_detail(austausch_id):
     )
 
 
-def _zurueck(a, text):
-    flash(text)
+def _zurueck(a, text, kategorie='message'):
+    flash(text, kategorie)
     return redirect(url_for('admin.austausch_detail', austausch_id=a.id))
+
+
+@admin_bp.route('/admin/austausch/<int:austausch_id>/einladen', methods=['POST'])
+@role_required('superadmin')
+def austausch_einladen(austausch_id):
+    """Einladung (erneut) verschicken: neuer Link, 14 Tage gueltig, alter Link
+    ungueltig, Frist F1 beginnt neu. Nur vor dem Einloesen."""
+    a = _austausch_oder_404(austausch_id)
+    if a.status not in ('vorbereitet', 'eingeladen'):
+        return _zurueck(a, 'Eine Einladung lässt sich nur vor der Annahme verschicken.', 'error')
+    erneut = a.status == 'eingeladen'
+    try:
+        aus.einladung_verschicken(a)
+    except Exception as e:  # Mailserver nicht erreichbar o. ae. -- nichts gespeichert
+        current_app.logger.error('Austausch-Einladung #%s nicht verschickt: %s', austausch_id, e)
+        return _zurueck(a, 'Die Einladung konnte nicht verschickt werden (Mailversand fehlgeschlagen). '
+                           'Es wurde nichts geändert.', 'error')
+    protokollieren('austausch_erneut_eingeladen' if erneut else 'austausch_eingeladen', f'#{a.id}')
+    return _zurueck(a, f'Einladung an {a.email} verschickt, gültig bis '
+                       f'{aus.aware(a.einladung_gueltig_bis).strftime("%d.%m.%Y")}.')
 
 
 @admin_bp.route('/admin/austausch/<int:austausch_id>/sperren', methods=['POST'])
@@ -159,7 +179,7 @@ def austausch_beenden(austausch_id):
 def austausch_entsperren(austausch_id):
     a = _austausch_oder_404(austausch_id)
     if a.status not in ('gesperrt', 'beendet'):
-        return _zurueck(a, 'Der Austausch ist nicht gesperrt oder beendet.')
+        return _zurueck(a, 'Der Austausch ist nicht gesperrt oder beendet.', 'error')
     # Mit Konto wieder aktiv; ohne Konto zurueck auf "vorbereitet" -- dann muss
     # eine neue Einladung verschickt werden (ein alter Link gilt nicht weiter).
     a.einladung_token_hash = None
@@ -198,7 +218,7 @@ def austausch_loeschsperre(austausch_id):
     except ValueError:
         bis = None
     if not grund or bis is None or bis <= aus.jetzt().date():
-        return _zurueck(a, 'Löschsperre nicht gesetzt: Grund und ein Datum in der Zukunft sind Pflicht.')
+        return _zurueck(a, 'Löschsperre nicht gesetzt: Grund und ein Datum in der Zukunft sind Pflicht.', 'error')
     a.loeschsperre_bis = bis
     a.loeschsperre_grund = grund
     db.session.commit()
