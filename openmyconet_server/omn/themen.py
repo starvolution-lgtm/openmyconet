@@ -565,6 +565,64 @@ def beitrag_entfernen(b):
     kollaboration.dateien_entfernen(pfade)
 
 
+def _pfade_und_uebersetzungen(beitraege):
+    pfade = []
+    for b in beitraege:
+        pfade += [kollaboration.anhang_pfad_in(a.dateiname, UPLOAD_ORDNER) for a in b.anhaenge]
+        uebersetzungen_loeschen(b)
+    return pfade
+
+
+def beitrag_loeschen(b):
+    """Admin: Beitrag endgueltig loeschen (Zeile, Anhaenge, Dateien, Uebersetzungen).
+    Antworten darauf bleiben (antwort_auf -> NULL) und stehen dann am Ende des Fadens."""
+    for antwort in Beitrag.query.filter_by(antwort_auf=b.id):
+        antwort.antwort_auf = None
+    pfade = _pfade_und_uebersetzungen([b])
+    db.session.delete(b)
+    db.session.commit()
+    return kollaboration.dateien_entfernen(pfade)
+
+
+def diskussion_loeschen(d):
+    """Admin: Diskussion samt aller Beitraege, Anhaenge, Dateien und Uebersetzungen."""
+    pfade = _pfade_und_uebersetzungen(d.beitraege)
+    uebersetzungen_loeschen(d)
+    db.session.delete(d)
+    db.session.commit()
+    return kollaboration.dateien_entfernen(pfade)
+
+
+def gebiet_loeschen(g):
+    """Admin: Themengebiet samt aller Diskussionen (siehe diskussion_loeschen).
+    Verweise anderer Gebiete, die hierher zusammengefuehrt wurden, werden geloest."""
+    pfade = []
+    for d in g.diskussionen:
+        pfade += _pfade_und_uebersetzungen(d.beitraege)
+        uebersetzungen_loeschen(d)
+    for alt in Themengebiet.query.filter_by(zusammengefuehrt_in=g.id):
+        alt.zusammengefuehrt_in = None
+    uebersetzungen_loeschen(g)
+    db.session.delete(g)
+    db.session.commit()
+    return kollaboration.dateien_entfernen(pfade)
+
+
+def gebiet_zusammenfuehren(quelle, ziel):
+    """Admin: alle Diskussionen von `quelle` nach `ziel`; die Quelle wird ausgeblendet
+    und leitet kuenftig aufs Ziel weiter. Fruehere Weiterleitungen auf die Quelle zeigen
+    ebenfalls aufs Ziel (keine Ketten)."""
+    if quelle.id == ziel.id:
+        raise ValueError('Quelle und Ziel sind gleich')
+    for d in list(quelle.diskussionen):
+        d.themengebiet = ziel   # ueber die Beziehung, damit delete-orphan nichts loescht
+    for alt in Themengebiet.query.filter_by(zusammengefuehrt_in=quelle.id):
+        alt.zusammengefuehrt_in = ziel.id
+    quelle.zusammengefuehrt_in = ziel.id
+    quelle.sichtbar = False
+    db.session.commit()
+
+
 @themen_bp.route('/themen/beitrag/<int:beitrag_id>/entfernen', methods=['POST'])
 @zugang
 def beitrag_entfernen_route(nutzer, teilnahme, lang, beitrag_id):

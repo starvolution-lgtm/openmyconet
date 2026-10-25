@@ -20,6 +20,7 @@ from omn.admin import (  # noqa: F401  -- Import registriert die Routen
     kontakt,
     news,
     presse,
+    themen,
     uebersicht,
     wartung,
 )

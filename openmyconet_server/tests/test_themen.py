@@ -433,6 +433,140 @@ def test_schalter_standard_aus_auf_prod_an_auf_staging(monkeypatch):
         importlib.reload(konfig)
 
 
+# --- Schritt 4: Moderation im Admin -------------------------------------------------
+
+def _admin(client):
+    from conftest import eingeloggt
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+
+
+def test_admin_themen_nur_superadmin(client, app, editor):
+    from conftest import eingeloggt
+    _gebiet()
+    eingeloggt(client, 'editor_test', 'auch-geheim-123')
+    assert client.get('/admin/themen').status_code == 403
+    assert client.post('/admin/themen/gebiet/1/loeschen').status_code == 403
+    assert Themengebiet.query.count() == 1
+
+
+def test_admin_uebersicht_und_team_gebiet(client, app, superadmin):
+    from omn.models import AdminAudit
+    _admin(client)
+    assert client.get('/admin/themen').status_code == 200
+    resp = client.post('/admin/themen/gebiet/neu', data={'titel': 'Netzwerkmodelle', 'beschreibung': 'Graphen',
+                                                         'sprache': 'en'})
+    g = Themengebiet.query.one()
+    assert resp.headers['Location'].endswith(f'/admin/themen/gebiet/{g.id}')
+    assert g.von_team and g.sprache_original == 'en'
+    assert 'themen_gebiet_angelegt' in [a.aktion for a in AdminAudit.query.all()]
+
+
+def test_admin_umbenennen_bindet_handuebersetzungen_neu(client, app, superadmin):
+    g = _gebiet()
+    db.session.add(Uebersetzung(inhalt_typ='themengebiet', inhalt_id=g.id, feld='titel', ziel_sprache='en',
+                                quelltext_hash=quelltext_hash(g.titel), text='Alt'))
+    db.session.commit()
+    _admin(client)
+    client.post(f'/admin/themen/gebiet/{g.id}', data={
+        'titel': 'Mykologie, Mykorrhiza & Symbiosen', 'beschreibung': 'Neu', 'sprache': 'de', 'reihenfolge': '3',
+        'u_en_titel': 'Mycology, mycorrhiza & symbioses', 'u_fr_beschreibung': 'Nouveau'})
+    g = db.session.get(Themengebiet, g.id)
+    assert g.titel == 'Mykologie, Mykorrhiza & Symbiosen' and g.reihenfolge == 3
+    assert anzeige(g, 'titel', 'en')['text'] == 'Mycology, mycorrhiza & symbioses'
+    assert anzeige(g, 'beschreibung', 'fr')['text'] == 'Nouveau'
+    assert Uebersetzung.query.filter_by(text='Alt').count() == 0
+    assert Uebersetzung.query.count() == 2
+
+
+def test_admin_zusammenfuehren(client, app, superadmin):
+    a, b = _gebiet(titel='Mykorrhiza'), _gebiet(titel='Mycorrhiza (doppelt)')
+    alt = _gebiet(titel='Schon frueher hierher', sichtbar=False, zusammengefuehrt_in=b.id)
+    d = _diskussion(gebiet=b)
+    _admin(client)
+    assert client.post(f'/admin/themen/gebiet/{b.id}/zusammenfuehren', data={'ziel_id': b.id}).status_code == 302
+    assert db.session.get(Themengebiet, b.id).zusammengefuehrt_in is None      # nicht mit sich selbst
+    client.post(f'/admin/themen/gebiet/{b.id}/zusammenfuehren', data={'ziel_id': a.id})
+    b, alt, d = db.session.get(Themengebiet, b.id), db.session.get(Themengebiet, alt.id), db.session.get(Diskussion, d.id)
+    assert d.themengebiet_id == a.id
+    assert b.zusammengefuehrt_in == a.id and not b.sichtbar
+    assert alt.zusammengefuehrt_in == a.id                                      # keine Weiterleitungsketten
+    # Teilnehmende werden von der alten Adresse weitergeleitet
+    teilnehmer = app.test_client()
+    _teilnehmer(teilnehmer)
+    resp = teilnehmer.get(f'/themen/gebiet/{b.id}')
+    assert resp.status_code == 301 and resp.headers['Location'].endswith(f'/themen/gebiet/{a.id}')
+
+
+def test_admin_gebiet_ausblenden_und_loeschen(client, app, superadmin):
+    g = _gebiet()
+    d = _diskussion(gebiet=g)
+    b = Beitrag(diskussion_id=d.id, text='mit Datei', von_team=True)
+    db.session.add(b)
+    db.session.commit()
+    db.session.add(BeitragAnhang(beitrag_id=b.id, dateiname='g.csv', originalname='g.csv', groesse=1))
+    db.session.add(Uebersetzung(inhalt_typ='themengebiet', inhalt_id=g.id, feld='titel', ziel_sprache='en',
+                                quelltext_hash=quelltext_hash(g.titel), text='x'))
+    db.session.commit()
+    pfad = kollaboration.anhang_pfad_in('g.csv', 'themen')
+    with open(pfad, 'wb') as f:
+        f.write(b'x')
+    teilnehmer = app.test_client()
+    _teilnehmer(teilnehmer)
+    _admin(client)
+    client.post(f'/admin/themen/gebiet/{g.id}/ausblenden')
+    assert teilnehmer.get(f'/themen/gebiet/{g.id}').status_code == 404
+    assert teilnehmer.get(f'/themen/diskussion/{d.id}').status_code == 404
+    client.post(f'/admin/themen/gebiet/{g.id}/einblenden')
+    assert teilnehmer.get(f'/themen/gebiet/{g.id}').status_code == 200
+    client.post(f'/admin/themen/gebiet/{g.id}/loeschen')
+    assert Themengebiet.query.count() == Diskussion.query.count() == Beitrag.query.count() == 0
+    assert Uebersetzung.query.count() == 0 and not os.path.exists(pfad)
+
+
+def test_admin_diskussion_moderieren(client, app, superadmin):
+    g1, g2 = _gebiet(titel='Eins'), _gebiet(titel='Zwei')
+    d = _diskussion(gebiet=g1)
+    teilnehmer = app.test_client()
+    _teilnehmer(teilnehmer)
+    _admin(client)
+    client.post(f'/admin/themen/diskussion/{d.id}/verschieben', data={'gebiet_id': g2.id})
+    assert db.session.get(Diskussion, d.id).themengebiet_id == g2.id
+    client.post(f'/admin/themen/diskussion/{d.id}/schliessen')
+    assert teilnehmer.post(f'/themen/diskussion/{d.id}', data={'text': 'x'}).status_code == 403
+    client.post(f'/admin/themen/diskussion/{d.id}/oeffnen')
+    assert teilnehmer.post(f'/themen/diskussion/{d.id}', data={'text': 'x'}).status_code == 302
+    client.post(f'/admin/themen/diskussion/{d.id}/ausblenden')
+    assert teilnehmer.get(f'/themen/diskussion/{d.id}').status_code == 404
+    client.post(f'/admin/themen/diskussion/{d.id}/einblenden')
+    client.post(f'/admin/themen/diskussion/{d.id}/loeschen')
+    assert Diskussion.query.count() == 0 and Beitrag.query.count() == 0
+
+
+def test_admin_beitrag_moderieren_und_team_beitrag(client, app, superadmin):
+    d = _diskussion()
+    teilnehmer = app.test_client()
+    n = _teilnehmer(teilnehmer)
+    b = Beitrag(diskussion_id=d.id, autor_nutzer_id=n.id, text='UNPASSEND-MARKER')
+    db.session.add(b)
+    db.session.commit()
+    antwort = Beitrag(diskussion_id=d.id, antwort_auf=b.id, autor_nutzer_id=n.id, text='Antwort bleibt')
+    db.session.add(antwort)
+    db.session.commit()
+    _admin(client)
+    assert 'UNPASSEND-MARKER' in client.get(f'/admin/themen/diskussion/{d.id}').get_data(as_text=True)
+    client.post(f'/admin/themen/beitrag/{b.id}/ausblenden')
+    seite = teilnehmer.get(f'/themen/diskussion/{d.id}').get_data(as_text=True)
+    assert 'UNPASSEND-MARKER' not in seite and 'Antwort bleibt' in seite
+    client.post(f'/admin/themen/beitrag/{b.id}/einblenden')
+    client.post(f'/admin/themen/beitrag/{b.id}/loeschen')
+    assert db.session.get(Beitrag, b.id) is None
+    assert db.session.get(Beitrag, antwort.id).antwort_auf is None
+    client.post(f'/admin/themen/diskussion/{d.id}', data={'text': 'Hinweis vom Team', 'art': 'literatur'})
+    team = Beitrag.query.filter_by(text='Hinweis vom Team').one()
+    assert team.von_team and team.autor_nutzer_id is None
+    assert 'OpenMycoNet-Team' in teilnehmer.get(f'/themen/diskussion/{d.id}').get_data(as_text=True)
+
+
 def test_verlinken_escaped_html():
     html = str(verlinken('<script>alert(1)</script> https://a.example/x?y=1&z=2, ende'))
     assert '<script>' not in html and '&lt;script&gt;' in html

@@ -87,6 +87,20 @@ AENDERNDE_ADMIN_ROUTEN = [
     '/admin/austausch/1/geprueft',
     '/admin/austausch/1/loeschsperre',
     '/admin/austausch/1/loeschen',
+    '/admin/themen/gebiet/neu',
+    '/admin/themen/gebiet/1/zusammenfuehren',
+    '/admin/themen/gebiet/1/ausblenden',
+    '/admin/themen/gebiet/1/einblenden',
+    '/admin/themen/gebiet/1/loeschen',
+    '/admin/themen/diskussion/1/verschieben',
+    '/admin/themen/diskussion/1/schliessen',
+    '/admin/themen/diskussion/1/oeffnen',
+    '/admin/themen/diskussion/1/ausblenden',
+    '/admin/themen/diskussion/1/einblenden',
+    '/admin/themen/diskussion/1/loeschen',
+    '/admin/themen/beitrag/1/ausblenden',
+    '/admin/themen/beitrag/1/einblenden',
+    '/admin/themen/beitrag/1/loeschen',
 ]
 
 

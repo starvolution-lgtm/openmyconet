@@ -1,0 +1,66 @@
+{% extends "admin_base.html" %}
+{% block title %}OpenMycoNet — Themenräume moderieren{% endblock %}
+{% block heading %}🗂 Themenräume moderieren{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">{% endblock %}
+{% block content %}
+
+{% if not freigegeben %}
+<p class="err">Auf dieser Umgebung sind die Themenräume für Teilnehmende <strong>verborgen</strong>
+(Schalter THEMEN_FREIGEGEBEN, bis zur rechtlichen Freigabe). Moderation ist trotzdem möglich.</p>
+{% endif %}
+<p class="info">Gemeinsamer Bereich, getrennt vom vertraulichen Austausch. Teilnehmende legen Gebiete und
+Diskussionen ohne Freigabe an; hier wird umbenannt, zusammengeführt, ausgeblendet und gelöscht.
+Löschen entfernt immer auch Anhänge, Dateien und Übersetzungen.</p>
+
+<div class="karte">
+    <h2>Neues Themengebiet (als Team)</h2>
+    <form method="post" action="{{ url_for('admin.themen_gebiet_neu') }}" class="aus-formular">
+        <label>Titel <input type="text" name="titel" maxlength="200" required></label>
+        <label>Kurze Beschreibung <textarea name="beschreibung" rows="2" maxlength="500" required></textarea></label>
+        <label>Sprache des Textes
+            <select name="sprache">{% for code, name in sprachen.items() %}<option value="{{ code }}">{{ name }}</option>{% endfor %}</select>
+        </label>
+        <button type="submit">Anlegen</button>
+    </form>
+</div>
+
+<h2>Themengebiete</h2>
+{% for g in gebiete %}
+<div class="karte{% if not g.sichtbar %} pending{% endif %}">
+    <div class="kopf">
+        <a class="aus-titel" href="{{ url_for('admin.themen_gebiet', gebiet_id=g.id) }}">{{ g.titel }}</a>
+        {% if g.vorgegeben %}<span class="badge typ">vorgegeben</span>{% endif %}
+        {% if g.zusammengefuehrt_in %}<span class="badge typ">zusammengeführt → #{{ g.zusammengefuehrt_in }}</span>
+        {% elif not g.sichtbar %}<span class="badge pending">ausgeblendet</span>{% endif %}
+    </div>
+    <div class="meta">#{{ g.id }} · {{ admin_name(g) }} · {{ g.diskussionen|length }} Diskussionen
+        · {{ sprachen.get(g.sprache_original, g.sprache_original) }}</div>
+</div>
+{% endfor %}
+
+{% if diskussionen_aus %}
+<h2>Ausgeblendete Diskussionen</h2>
+{% for d in diskussionen_aus %}
+<p><a href="{{ url_for('admin.themen_diskussion', diskussion_id=d.id) }}">{{ d.titel }}</a>
+   <span class="info">· {{ d.themengebiet.titel }}</span></p>
+{% endfor %}
+{% endif %}
+
+{% if ausgeblendet %}
+<h2>Ausgeblendete Beiträge</h2>
+{% for b in ausgeblendet %}
+<p><a href="{{ url_for('admin.themen_diskussion', diskussion_id=b.diskussion_id) }}#b{{ b.id }}">#{{ b.id }}</a>
+   <span class="info">{{ admin_name(b) }} · {{ b.diskussion.titel }} · {{ b.text[:120] }}</span></p>
+{% endfor %}
+{% endif %}
+
+<h2>Neueste Beiträge</h2>
+{% for b in neueste %}
+<p><a href="{{ url_for('admin.themen_diskussion', diskussion_id=b.diskussion_id) }}#b{{ b.id }}">{{ b.diskussion.titel }}</a>
+   <span class="info">· {{ admin_name(b) }} · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}
+   {% if not b.sichtbar %}· ausgeblendet{% endif %}{% if b.entfernt_am %}· entfernt{% endif %}
+   · {{ b.text[:120] }}</span></p>
+{% else %}
+<p class="info">Noch keine Beiträge.</p>
+{% endfor %}
+{% endblock %}

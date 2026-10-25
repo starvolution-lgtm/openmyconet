@@ -1,0 +1,90 @@
+{% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
+{% block title %}OpenMycoNet — Diskussion: {{ d.titel }}{% endblock %}
+{% block heading %}🗂 Diskussion — {{ d.titel }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('admin.themen_gebiet', gebiet_id=d.themengebiet_id) }}">← {{ d.themengebiet.titel }}</a>
+   {% if d.sichtbar and freigegeben %} · <a href="{{ url_for('themen.diskussion', diskussion_id=d.id) }}" target="_blank" rel="noopener">Ansicht für Teilnehmende ↗</a>{% endif %}</p>
+
+<div class="karte{% if not d.sichtbar %} pending{% endif %}">
+    <div class="kopf">
+        <span class="firma">{{ d.titel }}</span>
+        {% if d.geschlossen %}<span class="badge typ">geschlossen</span>{% endif %}
+        {% if not d.sichtbar %}<span class="badge pending">ausgeblendet</span>{% endif %}
+    </div>
+    <div class="feld"><label>Beschreibung</label><p>{{ d.beschreibung }}</p></div>
+    <div class="meta">#{{ d.id }} · {{ admin_name(d) }} · {{ d.erstellt_am.strftime('%d.%m.%Y') }}
+        · {{ sprachen.get(d.sprache_original, d.sprache_original) }}</div>
+    <div class="aktionen">
+        {% if d.geschlossen %}
+        {{ post_knopf(url_for('admin.themen_diskussion_oeffnen', diskussion_id=d.id), '🔓 Öffnen') }}
+        {% else %}
+        {{ post_knopf(url_for('admin.themen_diskussion_schliessen', diskussion_id=d.id), '🔒 Schließen') }}
+        {% endif %}
+        {% if d.sichtbar %}
+        {{ post_knopf(url_for('admin.themen_diskussion_ausblenden', diskussion_id=d.id), '🙈 Ausblenden') }}
+        {% else %}
+        {{ post_knopf(url_for('admin.themen_diskussion_einblenden', diskussion_id=d.id), '👁 Einblenden') }}
+        {% endif %}
+        {{ post_knopf(url_for('admin.themen_diskussion_loeschen', diskussion_id=d.id), '🗑 Löschen',
+                      frage='Diskussion mit ALLEN Beiträgen und Dateien endgültig löschen?') }}
+    </div>
+    <form method="post" action="{{ url_for('admin.themen_diskussion_verschieben', diskussion_id=d.id) }}" class="aus-zeile">
+        <label class="aus-breit">Verschieben nach
+            <select name="gebiet_id">{% for g in gebiete %}<option value="{{ g.id }}"{% if g.id == d.themengebiet_id %} selected{% endif %}>{{ g.titel }}</option>{% endfor %}</select>
+        </label>
+        <button type="submit">Verschieben</button>
+    </form>
+</div>
+
+<h2>Beiträge</h2>
+{% for b in beitraege %}
+<div class="karte{% if not b.sichtbar %} pending{% endif %}" id="b{{ b.id }}">
+    <div class="kopf">
+        <strong>{{ admin_name(b) }}</strong>
+        <span class="info">#{{ b.id }} · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}{% if b.antwort_auf %} · Antwort auf #{{ b.antwort_auf }}{% endif %}
+            · {{ sprachen.get(b.sprache_original, b.sprache_original) }}</span>
+        {% if b.art %}<span class="badge typ">{{ b.art }}</span>{% endif %}
+        {% if not b.sichtbar %}<span class="badge pending">ausgeblendet</span>{% endif %}
+        {% if b.entfernt_am %}<span class="badge typ">vom Verfasser entfernt</span>{% endif %}
+    </div>
+    <p class="u-pre-wrap">{{ b.text }}</p>
+    {% for a in b.anhaenge %}
+    <p class="info">📎 <a href="{{ url_for('admin.themen_datei', anhang_id=a.id) }}">{{ a.originalname or a.dateiname }}</a> ({{ (a.groesse / 1024) | round | int }} KB)</p>
+    {% endfor %}
+    <div class="aktionen">
+        {% if b.sichtbar %}
+        {{ post_knopf(url_for('admin.themen_beitrag_ausblenden', beitrag_id=b.id), '🙈 Ausblenden') }}
+        {% else %}
+        {{ post_knopf(url_for('admin.themen_beitrag_einblenden', beitrag_id=b.id), '👁 Einblenden') }}
+        {% endif %}
+        {{ post_knopf(url_for('admin.themen_beitrag_loeschen', beitrag_id=b.id), '🗑 Löschen',
+                      frage='Beitrag endgültig löschen? Antworten darauf bleiben stehen.') }}
+    </div>
+</div>
+{% else %}
+<p class="info">Noch keine Beiträge.</p>
+{% endfor %}
+
+{% if not d.geschlossen %}
+<div class="karte">
+    <h2>Als OpenMycoNet-Team schreiben</h2>
+    <form method="post" class="aus-formular">
+        <textarea name="text" rows="4" required></textarea>
+        <div class="aus-zeile">
+            <label>Antwort auf
+                <select name="antwort_auf"><option value="">– neuer Beitrag –</option>{% for b in beitraege if not b.antwort_auf %}<option value="{{ b.id }}">#{{ b.id }} {{ admin_name(b) }}</option>{% endfor %}</select>
+            </label>
+            <label>Art
+                <select name="art"><option value="">– keine –</option>{% for a in arten %}<option value="{{ a }}">{{ a }}</option>{% endfor %}</select>
+            </label>
+            <label>Sprache
+                <select name="sprache">{% for code, name in sprachen.items() %}<option value="{{ code }}">{{ name }}</option>{% endfor %}</select>
+            </label>
+        </div>
+        <button type="submit">Veröffentlichen</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

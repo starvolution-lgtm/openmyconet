@@ -1,0 +1,79 @@
+{% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
+{% block title %}OpenMycoNet — Themengebiet: {{ g.titel }}{% endblock %}
+{% block heading %}🗂 Themengebiet — {{ g.titel }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('admin.themen_admin') }}">← zurück zu den Themenräumen</a>
+   {% if g.sichtbar and freigegeben %} · <a href="{{ url_for('themen.gebiet', gebiet_id=g.id) }}" target="_blank" rel="noopener">Ansicht für Teilnehmende ↗</a>{% endif %}</p>
+
+<div class="karte{% if not g.sichtbar %} pending{% endif %}">
+    <div class="kopf">
+        <span class="firma">{{ g.titel }}</span>
+        {% if g.vorgegeben %}<span class="badge typ">vorgegeben</span>{% endif %}
+        {% if g.zusammengefuehrt_in %}<span class="badge typ">zusammengeführt → #{{ g.zusammengefuehrt_in }}</span>
+        {% elif not g.sichtbar %}<span class="badge pending">ausgeblendet</span>{% endif %}
+    </div>
+    <div class="meta">#{{ g.id }} · angelegt von {{ admin_name(g) }} am {{ g.erstellt_am.strftime('%d.%m.%Y') }}</div>
+    <div class="aktionen">
+        {% if g.sichtbar %}
+        {{ post_knopf(url_for('admin.themen_gebiet_ausblenden', gebiet_id=g.id), '🙈 Ausblenden') }}
+        {% elif not g.zusammengefuehrt_in %}
+        {{ post_knopf(url_for('admin.themen_gebiet_einblenden', gebiet_id=g.id), '👁 Einblenden') }}
+        {% endif %}
+        {{ post_knopf(url_for('admin.themen_gebiet_loeschen', gebiet_id=g.id), '🗑 Löschen',
+                      frage='Gebiet mit ALLEN Diskussionen, Beiträgen und Dateien endgültig löschen?') }}
+    </div>
+</div>
+
+<div class="karte">
+    <h2>Umbenennen und Übersetzungen</h2>
+    <form method="post" class="aus-formular">
+        <div class="aus-zeile">
+            <label class="aus-breit">Titel (Original) <input type="text" name="titel" maxlength="200" required value="{{ g.titel }}"></label>
+            <label>Sprache
+                <select name="sprache">{% for code, name in sprachen.items() %}<option value="{{ code }}"{% if code == g.sprache_original %} selected{% endif %}>{{ name }}</option>{% endfor %}</select>
+            </label>
+            <label>Reihenfolge <input type="number" name="reihenfolge" min="1" value="{{ g.reihenfolge }}"></label>
+        </div>
+        <label>Beschreibung (Original) <textarea name="beschreibung" rows="2" maxlength="500" required>{{ g.beschreibung }}</textarea></label>
+        <p class="u-muted-note">Handübersetzungen (optional). Sie gelten für genau diese Fassung des Originals;
+           wer das Original ändert, sollte sie hier mit anpassen, sonst wird wieder das Original gezeigt.</p>
+        {% for s in zielsprachen if s != g.sprache_original %}
+        <div class="aus-zeile">
+            <label class="aus-breit">Titel {{ sprachen[s] }} <input type="text" name="u_{{ s }}_titel" maxlength="200" value="{{ uebersetzungen.get((s, 'titel'), '') }}"></label>
+            <label class="aus-breit">Beschreibung {{ sprachen[s] }} <input type="text" name="u_{{ s }}_beschreibung" maxlength="500" value="{{ uebersetzungen.get((s, 'beschreibung'), '') }}"></label>
+        </div>
+        {% endfor %}
+        <button type="submit">Speichern</button>
+    </form>
+</div>
+
+{% if not g.zusammengefuehrt_in %}
+<div class="karte">
+    <h2>Zusammenführen</h2>
+    <p class="u-muted-note">Alle Diskussionen wandern ins Zielgebiet, dieses Gebiet wird ausgeblendet und leitet weiter.</p>
+    <form method="post" action="{{ url_for('admin.themen_gebiet_zusammenfuehren', gebiet_id=g.id) }}"
+          class="aus-zeile js-confirm-submit" data-confirm="Wirklich zusammenführen? Das lässt sich nicht automatisch rückgängig machen.">
+        <label class="aus-breit">Zielgebiet
+            <select name="ziel_id">{% for a in andere %}<option value="{{ a.id }}">{{ a.titel }}{% if not a.sichtbar %} (ausgeblendet){% endif %}</option>{% endfor %}</select>
+        </label>
+        <button type="submit">Zusammenführen</button>
+    </form>
+</div>
+{% endif %}
+
+<h2>Diskussionen</h2>
+{% for d in diskussionen %}
+<div class="karte{% if not d.sichtbar %} pending{% endif %}">
+    <div class="kopf">
+        <a class="aus-titel" href="{{ url_for('admin.themen_diskussion', diskussion_id=d.id) }}">{{ d.titel }}</a>
+        {% if d.geschlossen %}<span class="badge typ">geschlossen</span>{% endif %}
+        {% if not d.sichtbar %}<span class="badge pending">ausgeblendet</span>{% endif %}
+    </div>
+    <div class="meta">{{ admin_name(d) }} · {{ d.beitraege|length }} Beiträge · zuletzt {{ d.letzte_aktivitaet.strftime('%d.%m.%Y') }}</div>
+</div>
+{% else %}
+<p class="info">Noch keine Diskussionen.</p>
+{% endfor %}
+{% endblock %}
