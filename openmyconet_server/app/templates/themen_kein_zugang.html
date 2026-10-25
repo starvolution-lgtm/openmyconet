@@ -1,0 +1,9 @@
+{% extends "dashboard_base.html" %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ tx('themen_titel') }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block content %}
+    <p class="eyebrow">OpenMycoNet</p>
+    <h1>{{ tx('themen_titel') }}</h1>
+    <div class="card"><p>{{ tx('themen_kein_zugang') }}</p></div>
+{% endblock %}

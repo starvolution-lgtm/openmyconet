@@ -18,6 +18,10 @@
     {% if not ansicht %}
     <div class="card"><p>{{ tx('austausch_bereich_leer') }}</p></div>
     {% endif %}
+    {% if themen_zugang(nutzer) %}
+    <p class="card"><a href="{{ url_for('themen.uebersicht') }}">{{ tx('themen_zu_den_themenraeumen') }}</a>
+       <span class="label">· {{ tx('themen_intro') }}</span></p>
+    {% endif %}
 
     {% for b in ansicht %}
     {% set x = b.a %}

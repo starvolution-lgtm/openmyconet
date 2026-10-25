@@ -75,6 +75,7 @@ def _testumgebung(monkeypatch):
     monkeypatch.setattr('omn.kontakt.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.dashboard.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.austausch.ip_erlaubt', lambda *a, **kw: True)
+    monkeypatch.setattr('omn.themen.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.admin.auth.ip_erlaubt', lambda *a, **kw: True)
     monkeypatch.setattr('omn.admin.auth.ip_gesperrt', lambda *a, **kw: False)
     monkeypatch.setattr('omn.rag_chatbot.ip_erlaubt', lambda *a, **kw: True)

@@ -30,6 +30,7 @@ from omn.bewerbung import bewerbung_bp
 from omn.kontakt import kontakt_bp
 from omn.registrierung import registrierung_bp
 from omn.austausch import austausch_bp
+from omn.themen import themen_bp
 from omn.dashboard import dashboard_bp
 from omn.datenlabor import datenlabor_bp
 from omn.eingang.empfang import empfang_bp
@@ -100,6 +101,7 @@ def create_app(config=None, instance_path=None):
     app.register_blueprint(registrierung_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(austausch_bp)
+    app.register_blueprint(themen_bp)
     app.register_blueprint(datenlabor_bp)
     app.register_blueprint(empfang_bp)
     app.register_blueprint(site_preview_bp)

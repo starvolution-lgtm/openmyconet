@@ -1,0 +1,42 @@
+{# Themenraeume: Anzeige eines Nutzertexts. Das Original ist immer in der Seite
+   (Plan 7.4) -- bei einer Uebersetzung aufklappbar, bei "Originale zuerst" umgekehrt.
+   a = omn.themen.anzeige(...); links=True macht Adressen klickbar (nur Fliesstext). #}
+{% macro text_anzeige(a, teilnahme, tx, sprachen, links=False) -%}
+{%- set orig_sprache = sprachen.get(a.sprache_original, a.sprache_original) -%}
+{%- if a.uebersetzt -%}
+  {%- if teilnahme and teilnahme.original_zuerst -%}
+    <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
+    <details class="th-alt"><summary>{{ tx('themen_uebersetzung_anzeigen') }}</summary>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</details>
+  {%- else -%}
+    <span>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</span>
+    <details class="th-alt"><summary>{{ tx('themen_uebersetzt_aus', sprache=orig_sprache) }} · {{ tx('themen_original_anzeigen') }}</summary><span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span></details>
+  {%- endif -%}
+{%- else -%}
+  <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
+{%- endif -%}
+{%- endmacro %}
+
+{# Kurzform fuer Listen (die Karte selbst ist ein Link -- dort kein Aufklappen):
+   Uebersetzung bzw. bei "Originale zuerst" das Original; das jeweils andere ist
+   eine Ebene tiefer auf der Seite des Gebiets bzw. der Diskussion aufklappbar. #}
+{% macro kurz_anzeige(a, teilnahme) -%}
+{%- if a.uebersetzt and not (teilnahme and teilnahme.original_zuerst) -%}{{ a.text }}
+{%- else -%}<span lang="{{ a.sprache_original }}">{{ a.original }}</span>{%- endif -%}
+{%- endmacro %}
+
+{% macro sprache_auswahl(sprachen, gewaehlt, tx) -%}
+<label class="th-sprache">{{ tx('themen_feld_sprache') }}
+    <select name="sprache">
+        {% for code, name in sprachen.items() %}<option value="{{ code }}"{% if code == gewaehlt %} selected{% endif %}>{{ name }}</option>{% endfor %}
+    </select>
+</label>
+{%- endmacro %}
+
+{% macro art_auswahl(arten, gewaehlt, tx) -%}
+<label class="th-art-wahl">{{ tx('themen_art') }}
+    <select name="art">
+        <option value="">{{ tx('themen_art_keine') }}</option>
+        {% for art in arten %}<option value="{{ art }}"{% if art == gewaehlt %} selected{% endif %}>{{ tx('themen_art_' ~ art) }}</option>{% endfor %}
+    </select>
+</label>
+{%- endmacro %}

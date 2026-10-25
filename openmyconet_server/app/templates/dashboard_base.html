@@ -24,6 +24,9 @@
             {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}
             <a href="{{ url_for('austausch.bereich') }}"{% if ep == 'austausch.bereich' %} aria-current="page"{% endif %}>{{ t('austausch_bereich_titel', lang if lang is defined else None) }}</a>
             {% endif %}
+            {% if themen_zugang(nutzer) %}
+            <a href="{{ url_for('themen.uebersicht') }}"{% if ep.startswith('themen.') %} aria-current="page"{% endif %}>{{ t('themen_titel', lang if lang is defined else None) }}</a>
+            {% endif %}
             <span class="db-nutzer">{{ nutzer.name }}</span>
             <a class="db-leise" href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout if T is defined else 'Logout' }}</a>
         </nav>

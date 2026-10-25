@@ -1,0 +1,22 @@
+{% extends "dashboard_base.html" %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ tx('themen_einstellungen') }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
+{% block content %}
+    <p class="th-pfad"><a href="{{ url_for('themen.uebersicht') }}">{{ tx('themen_zurueck') }}</a></p>
+    <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
+    <h1>{{ tx('themen_einstellungen') }}</h1>
+
+    {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
+
+    <form method="post" class="card">
+        <label class="th-feld">{{ tx('themen_anzeigename') }}
+            <input type="text" name="anzeigename" maxlength="100" required value="{{ teilnahme.anzeigename }}">
+        </label>
+        <p class="label">{{ tx('themen_anzeigename_hinweis') }}</p>
+        <label class="th-check"><input type="checkbox" name="original_zuerst" value="1"{% if teilnahme.original_zuerst %} checked{% endif %}>
+            {{ tx('themen_original_zuerst') }}</label>
+        <p class="label">{{ tx('themen_massgeblich') }}</p>
+        <button type="submit">{{ tx('themen_speichern') }}</button>
+    </form>
+{% endblock %}

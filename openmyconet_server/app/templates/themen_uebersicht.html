@@ -1,0 +1,28 @@
+{% extends "dashboard_base.html" %}
+{% from "_themen_makros.html" import text_anzeige, kurz_anzeige %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ tx('themen_titel') }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
+{% block content %}
+    <p class="eyebrow">OpenMycoNet</p>
+    <h1>{{ tx('themen_titel') }}</h1>
+    <p class="label">{{ tx('themen_intro') }}</p>
+
+    <p class="th-leiste">
+        <a class="th-knopf" href="{{ url_for('themen.gebiet_neu') }}">＋ {{ tx('themen_gebiet_neu') }}</a>
+        <a href="{{ url_for('themen.einstellungen') }}">{{ tx('themen_einstellungen') }}</a>
+    </p>
+
+    <h2>{{ tx('themen_gebiete') }}</h2>
+    {% for z in zeilen %}
+    <a class="card th-gebiet" href="{{ url_for('themen.gebiet', gebiet_id=z.g.id) }}">
+        <span class="th-gebiet-titel">{{ kurz_anzeige(z.titel, teilnahme) }}</span>
+        <span class="th-gebiet-text">{{ kurz_anzeige(z.beschreibung, teilnahme) }}</span>
+        <span class="th-meta">
+            {{ tx('themen_diskussionen_anzahl', n=z.anzahl) }}
+            {% if z.letzte %} · {{ tx('themen_letzte_aktivitaet', datum=z.letzte.strftime('%d.%m.%Y')) }}{% endif %}
+            {% if z.neu %} · <strong class="th-neu">{{ tx('themen_neu_seit', n=z.neu) }}</strong>{% endif %}
+        </span>
+    </a>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "dashboard_base.html" %}
+{% from "_themen_makros.html" import sprache_auswahl, art_auswahl %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ tx('themen_bearbeiten') }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
+{% block content %}
+    <p class="th-pfad"><a href="{{ url_for('themen.diskussion', diskussion_id=b.diskussion_id) }}#beitrag-{{ b.id }}">←</a></p>
+    <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
+    <h1>{{ tx('themen_bearbeiten') }}</h1>
+
+    {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
+
+    <form method="post" class="card">
+        <textarea name="text" rows="8" required aria-label="{{ tx('themen_beitrag_schreiben') }}">{{ b.text }}</textarea>
+        <div class="th-zeile">
+            {{ art_auswahl(arten, b.art, tx) }}
+            {{ sprache_auswahl(sprachen, b.sprache_original, tx) }}
+        </div>
+        <button type="submit">{{ tx('themen_speichern') }}</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "dashboard_base.html" %}
+{% from "_themen_makros.html" import text_anzeige, sprache_auswahl, art_auswahl %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ titel.text }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
+
+{% macro beitrag_karte(x, ist_antwort=False) %}
+{% set b = x.b %}
+<article class="th-beitrag{% if ist_antwort %} th-antwort{% endif %}" id="beitrag-{{ b.id }}">
+    <p class="th-kopfzeile">
+        <strong>{{ x.name }}</strong> · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}
+        {% if b.art %}<span class="th-etikett th-art-{{ b.art }}">{{ tx('themen_art_' ~ b.art) }}</span>{% endif %}
+        {% if b.bearbeitet_am and not b.entfernt_am %}<span class="label">· {{ tx('themen_bearbeitet') }}</span>{% endif %}
+    </p>
+    {% if b.entfernt_am %}
+    <p class="label"><em>{{ tx('themen_entfernt') }}</em></p>
+    {% else %}
+    <div class="th-text">{{ text_anzeige(x.text, teilnahme, tx, sprachen, links=True) }}</div>
+    {% for a in x.anhaenge %}
+    <p class="label">📎 <a href="{{ url_for('themen.datei', anhang_id=a.id) }}">{{ a.originalname or a.dateiname }}</a> ({{ (a.groesse / 1024) | round | int }} KB)</p>
+    {% endfor %}
+    {% if not d.geschlossen %}
+    <div class="th-aktionen">
+        {% if not ist_antwort %}
+        <details class="th-antwort-form">
+            <summary>{{ tx('themen_antworten') }}</summary>
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" name="antwort_auf" value="{{ b.id }}">
+                <textarea name="text" rows="3" required aria-label="{{ tx('themen_antworten') }}"></textarea>
+                {{ sprache_auswahl(sprachen, lang, tx) }}
+                <button type="submit">{{ tx('themen_senden') }}</button>
+            </form>
+        </details>
+        {% endif %}
+        {% if b.autor_nutzer_id == nutzer.id %}
+        <a href="{{ url_for('themen.beitrag_bearbeiten', beitrag_id=b.id) }}">{{ tx('themen_bearbeiten') }}</a>
+        <details class="th-entfernen">
+            <summary>{{ tx('themen_entfernen') }}</summary>
+            <form method="post" action="{{ url_for('themen.beitrag_entfernen_route', beitrag_id=b.id) }}">
+                <button type="submit" class="th-gefahr">{{ tx('themen_entfernen') }}</button>
+            </form>
+        </details>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+</article>
+{% endmacro %}
+
+{% block content %}
+    <p class="th-pfad"><a href="{{ url_for('themen.gebiet', gebiet_id=d.themengebiet_id) }}">← {{ text_anzeige(gebiet_titel, None, tx, sprachen) }}</a></p>
+    <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
+    <h1>{{ text_anzeige(titel, teilnahme, tx, sprachen) }}</h1>
+    <p class="label">{{ name_von(d) }} · {{ d.erstellt_am.strftime('%d.%m.%Y') }}</p>
+    <div class="card th-einleitung">{{ text_anzeige(beschreibung, teilnahme, tx, sprachen, links=True) }}</div>
+
+    {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
+
+    <h2>{{ tx('themen_beitraege') }}</h2>
+    {% for x in faden %}
+    <div class="card th-faden">
+        {{ beitrag_karte(x) }}
+        {% for y in x.antworten %}{{ beitrag_karte(y, True) }}{% endfor %}
+    </div>
+    {% else %}
+    <p class="label">{{ tx('themen_keine_beitraege') }}</p>
+    {% endfor %}
+
+    {% if d.geschlossen %}
+    <p class="card label">🔒 {{ tx('themen_geschlossen') }}</p>
+    {% else %}
+    <form method="post" enctype="multipart/form-data" class="card">
+        <h2>{{ tx('themen_beitrag_schreiben') }}</h2>
+        <p class="label">{{ tx('themen_sichtbar_hinweis') }}</p>
+        <textarea name="text" rows="5" required aria-label="{{ tx('themen_beitrag_schreiben') }}"></textarea>
+        <div class="th-zeile">
+            {{ art_auswahl(arten, None, tx) }}
+            {{ sprache_auswahl(sprachen, lang, tx) }}
+        </div>
+        <input type="file" name="dateien" multiple>
+        <p class="label">{{ tx('austausch_anhang_hinweis') }}</p>
+        <button type="submit">{{ tx('themen_senden') }}</button>
+    </form>
+    {% endif %}
+    <p class="label">{{ tx('themen_massgeblich') }}</p>
+{% endblock %}

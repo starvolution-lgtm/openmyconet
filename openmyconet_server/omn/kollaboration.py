@@ -259,8 +259,10 @@ def _anhang_verzeichnis(unterordner='kollaboration'):
     return d
 
 
-def _anhang_speichern(kommentar, datei):
-    """Gibt den KollaborationAnhang zurueck oder None bei Ablehnung."""
+def datei_ablegen(datei, unterordner='kollaboration'):
+    """Prueft Format + Groesse und legt die Datei unter einem Zufallsnamen in
+    instance/uploads/<unterordner>/ ab. Gibt (dateiname, originalname, groesse)
+    zurueck oder None bei Ablehnung. Auch fuer die Themenraeume (unterordner 'themen')."""
     if '.' not in datei.filename:
         return None
     ext = datei.filename.rsplit('.', 1)[-1].lower()
@@ -274,10 +276,18 @@ def _anhang_speichern(kommentar, datei):
         return None
 
     dateiname = f'{uuid.uuid4().hex}.{ext}'
-    datei.save(os.path.join(_anhang_verzeichnis(), dateiname))
+    datei.save(os.path.join(_anhang_verzeichnis(unterordner), dateiname))
+    return dateiname, secure_filename(datei.filename)[:255], groesse
+
+
+def _anhang_speichern(kommentar, datei):
+    """Gibt den KollaborationAnhang zurueck oder None bei Ablehnung."""
+    abgelegt = datei_ablegen(datei)
+    if abgelegt is None:
+        return None
+    dateiname, originalname, groesse = abgelegt
     anhang = KollaborationAnhang(
-        kommentar_id=kommentar.id, dateiname=dateiname,
-        originalname=secure_filename(datei.filename)[:255], groesse=groesse,
+        kommentar_id=kommentar.id, dateiname=dateiname, originalname=originalname, groesse=groesse,
     )
     db.session.add(anhang)
     return anhang
@@ -285,6 +295,11 @@ def _anhang_speichern(kommentar, datei):
 
 def anhang_pfad(anhang):
     return os.path.join(_anhang_verzeichnis(), anhang.dateiname)
+
+
+def anhang_pfad_in(dateiname, unterordner):
+    """Pfad einer abgelegten Datei in einem anderen Bereich (z. B. Themenraeume)."""
+    return os.path.join(_anhang_verzeichnis(unterordner), dateiname)
 
 
 def kontext_anhang_pfade(kontext):

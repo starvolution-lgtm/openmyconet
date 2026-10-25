@@ -8,6 +8,7 @@
         🍄 <a href="{{ url_for('dashboard.home') }}">{{ T.nav_dashboard }}</a>
         {% if nutzer %}· <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor }}</a>
         {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}· <a href="{{ url_for('austausch.bereich') }}">{{ t('austausch_bereich_titel', lang) }}</a>{% endif %}
+        {% if themen_zugang(nutzer) %}· <a href="{{ url_for('themen.uebersicht') }}">{{ t('themen_titel', lang) }}</a>{% endif %}
         · {{ nutzer.name }} · <a href="{{ url_for('dashboard.logout') }}">{{ T.nav_logout }}</a>{% endif %}
     </nav>
 {% endblock %}

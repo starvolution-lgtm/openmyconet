@@ -1,0 +1,45 @@
+/* Wissenschaftliche Themenraeume (omn/themen.py) -- auf Basis von dashboard-base.css */
+.th-pfad { font-family: var(--mono); font-size: 0.8rem; margin: 0 0 0.6rem; }
+.th-pfad a { text-decoration: none; }
+.th-leiste { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin: 1rem 0; }
+.th-knopf { display: inline-block; font-family: var(--mono); font-size: 0.8rem; padding: 0.7rem 1.1rem;
+            background: var(--akzent); color: #fff; border-radius: 6px; text-decoration: none; min-height: 44px; }
+.th-knopf:hover { background: var(--akzent-dunkel); color: #fff; }
+
+a.th-gebiet { display: block; text-decoration: none; color: var(--tinte); }
+a.th-gebiet:hover { border-color: var(--akzent); }
+.th-gebiet-titel { display: block; font-family: var(--display); font-size: 1.2rem; color: var(--tinte); }
+.th-gebiet-text { display: block; color: var(--tinte-leise); margin: 0.2rem 0 0.5rem; }
+.th-meta { display: block; font-family: var(--mono); font-size: 0.75rem; color: var(--tinte-leise); }
+.th-neu { color: var(--akzent); }
+
+.th-alt { margin-top: 0.3rem; font-size: 0.9em; color: var(--tinte-leise); }
+.th-alt summary { cursor: pointer; font-family: var(--mono); font-size: 0.72rem; color: var(--akzent); }
+.th-alt span, .th-alt { white-space: pre-wrap; }
+
+.th-feld { display: block; margin-top: 0.6rem; }
+.th-check { display: flex; gap: 0.6rem; align-items: flex-start; margin: 0.8rem 0; }
+.th-check input { margin-top: 0.35rem; }
+.th-regeln { white-space: pre-wrap; }
+.th-zeile { display: flex; flex-wrap: wrap; gap: 1rem; }
+.th-zeile label { flex: 1 1 14rem; }
+.th-sprache, .th-art-wahl { display: block; font-size: 0.9rem; color: var(--tinte-leise); }
+
+.th-einleitung { white-space: pre-wrap; }
+.th-faden { padding-top: 0.6rem; }
+.th-beitrag { padding: 0.6rem 0; }
+.th-beitrag + .th-beitrag { border-top: 1px solid var(--linie); }
+.th-antwort { margin-left: clamp(0.8rem, 4vw, 2rem); padding-left: 0.8rem; border-left: 3px solid var(--akzent-leise); }
+.th-kopfzeile { margin: 0 0 0.3rem; font-size: 0.9rem; }
+.th-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.th-etikett { display: inline-block; font-family: var(--mono); font-size: 0.68rem; padding: 0.1rem 0.5rem;
+              border-radius: 999px; border: 1px solid var(--linie); background: var(--grund); margin-left: 0.3rem; }
+.th-art-hypothese { border-color: #7a4f96; color: #5f3a78; }
+.th-art-literatur { border-color: #2f6690; color: #24527a; }
+.th-art-beobachtung { border-color: var(--akzent); color: var(--akzent-dunkel); }
+.th-art-messdaten { border-color: var(--warn); color: var(--warn); }
+.th-aktionen { display: flex; flex-wrap: wrap; gap: 1rem; align-items: baseline; margin-top: 0.4rem; font-size: 0.9rem; }
+.th-aktionen summary { cursor: pointer; color: var(--akzent); }
+.th-antwort-form { flex: 1 1 100%; }
+.th-gefahr { background: var(--schlecht); border-color: var(--schlecht); }
+.th-gefahr:hover { background: #82291f; }

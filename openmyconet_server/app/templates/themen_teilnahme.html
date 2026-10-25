@@ -1,0 +1,26 @@
+{% extends "dashboard_base.html" %}
+{# Erster Besuch bzw. neue Fassung der Nutzungsregeln: Anzeigename + Zustimmung #}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ tx('themen_teilnahme_titel') }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
+{% block content %}
+    <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
+    <h1>{{ tx('themen_teilnahme_titel') }}</h1>
+    <p class="label">{{ tx('themen_intro') }}</p>
+
+    {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
+
+    <form method="post" class="card">
+        <input type="hidden" name="weiter" value="{{ weiter }}">
+        <label class="th-feld">{{ tx('themen_anzeigename') }}
+            <input type="text" name="anzeigename" maxlength="100" required value="{{ anzeigename_wert }}">
+        </label>
+        <p class="label">{{ tx('themen_anzeigename_hinweis') }}</p>
+
+        <h2>{{ tx('themen_regeln_titel') }}</h2>
+        <p class="th-regeln">{{ tx('themen_regeln_text') }}</p>
+        <label class="th-check"><input type="checkbox" name="regeln" value="1" required> {{ tx('themen_regeln_zustimmen') }}</label>
+
+        <button type="submit">{{ tx('themen_teilnehmen') }}</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "dashboard_base.html" %}
+{# Neues Themengebiet (art_formular 'gebiet') bzw. neue Diskussion ('diskussion') #}
+{% from "_themen_makros.html" import text_anzeige, sprache_auswahl %}
+{% set ueberschrift = tx('themen_gebiet_neu') if art_formular == 'gebiet' else tx('themen_diskussion_neu') %}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ ueberschrift }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
+{% block content %}
+    {% if gebiet %}
+    <p class="th-pfad"><a href="{{ url_for('themen.gebiet', gebiet_id=gebiet.id) }}">{{ tx('themen_zurueck_gebiet') }}</a></p>
+    {% else %}
+    <p class="th-pfad"><a href="{{ url_for('themen.uebersicht') }}">{{ tx('themen_zurueck') }}</a></p>
+    {% endif %}
+    <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}{% if gebiet %} · {{ text_anzeige(gebiet_titel, None, tx, sprachen) }}{% endif %}</p>
+    <h1>{{ ueberschrift }}</h1>
+    <p class="label">{{ tx('themen_sichtbar_hinweis') }}</p>
+
+    {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
+
+    <form method="post" class="card">
+        <label class="th-feld">{{ tx('themen_feld_titel') }}
+            <input type="text" name="titel" maxlength="200" required value="{{ titel_wert }}">
+        </label>
+        <label class="th-feld">{{ tx('themen_feld_beschreibung') }}
+            <textarea name="beschreibung" rows="3" maxlength="500" required>{{ beschreibung_wert }}</textarea>
+        </label>
+        {{ sprache_auswahl(sprachen, sprache_wert, tx) }}
+        <button type="submit">{{ tx('themen_anlegen') }}</button>
+    </form>
+{% endblock %}
