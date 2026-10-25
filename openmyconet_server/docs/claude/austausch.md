@@ -44,7 +44,11 @@ Sprache (Einladung: `austausch.sprache`, danach `Nutzer.sprache`). Seiten: Websi
 Sprachwahl. Community-Oberfläche (`dashboard_base`, Login) bleibt beim „du“.
 
 ## Fristen (`omn/aufbewahrung.py`)
-F1 nicht angenommen / F1a nur vorbereitet → 6 Monate, ganzer Austausch;
+F1 nicht angenommen → 2 Jahre nach der (letzten) Einladung, ganzer Austausch (dieselbe
+Frist wie MCC-Kontakte, damit für eine Person nur **eine** Frist gilt – Robby 25.10.);
+F1a nur vorbereitet, nie eingeladen → 1 Monat (Art. 14 Abs. 3 lit. a), nach 3 Wochen
+einmal Admin-Mail (`austausch.vorbereitet_erinnern`, im Cron von `flask aufbewahrung-
+bereinigen`, Spalte `vorbereitet_erinnert_am`);
 F3 Profil-Link, Gesprächsbeginn, Vorgeschichte → 24 Monate nach `letzte_aktivitaet`
 geleert; F4 beendet/gesperrt → 6 Monate nach `status_geaendert_am`, ganzer Austausch;
 F2 Inaktivität 12 Monate → **nur** Markierung im Admin. Aktive Löschsperre (Grund +

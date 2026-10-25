@@ -471,6 +471,8 @@ class Austausch(db.Model):
     codes_fenster_beginn = db.Column(db.DateTime(timezone=True), nullable=True)
     # Pflege + Fristen
     geprueft_am = db.Column(db.DateTime(timezone=True), nullable=True)            # Inaktivitaetspruefung F2
+    # Admin-Mail "noch nicht eingeladen" vor Frist F1a (1 Monat, Art. 14 Abs. 3 lit. a DSGVO)
+    vorbereitet_erinnert_am = db.Column(db.DateTime(timezone=True), nullable=True)
     loeschsperre_bis = db.Column(db.Date, nullable=True)
     loeschsperre_grund = db.Column(db.String(300), nullable=False, default='')
     erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)

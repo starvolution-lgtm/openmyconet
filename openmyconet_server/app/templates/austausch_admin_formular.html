@@ -11,7 +11,9 @@
 {% else %}
 <p><a href="{{ url_for('admin.austausch_liste') }}">← zurück zur Übersicht</a></p>
 <p class="info">Hier wird nur vorbereitet, es geht noch keine Mail hinaus. Die Einladung verschickst du
-danach auf der Seite des Austauschs mit „✉ Einladung verschicken“.</p>
+danach auf der Seite des Austauschs mit „✉ Einladung verschicken“ – bitte innerhalb eines Monats:
+ein nie verschickter Austausch wird nach einem Monat automatisch gelöscht (Informationspflicht nach
+Art. 14 DSGVO), nach drei Wochen kommt eine Erinnerungsmail.</p>
 {% endif %}
 
 {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}

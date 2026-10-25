@@ -47,10 +47,15 @@ def register_cli(app):
     def aufbewahrung_bereinigen(still):
         """Loescht Chat-Verlaeufe, Fehlerprotokoll und Kontaktanfragen nach Ablauf der Frist (omn/aufbewahrung.py)."""
         from omn.aufbewahrung import bereinigen
+        from omn.austausch import vorbereitet_erinnern
 
         ergebnis = bereinigen()
         if any(ergebnis.values()) or not still:
             click.echo(', '.join(f'{name}: {n} gelöscht' for name, n in ergebnis.items()))
+        # Admin-Mail vor Frist F1a (vorbereitet, nie eingeladen -> nach 1 Monat geloescht)
+        erinnert = vorbereitet_erinnern()
+        if erinnert or not still:
+            click.echo(f'Austausch: {erinnert} vorbereitete Einladung(en) zur Erinnerung gemeldet')
 
     @app.cli.command('mcc-erinnerung')
     def mcc_erinnerung():

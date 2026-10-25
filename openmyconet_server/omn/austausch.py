@@ -91,6 +91,45 @@ def loeschsperre_aktiv(austausch, heute=None):
     return austausch.loeschsperre_bis is not None and austausch.loeschsperre_bis >= heute
 
 
+VORBEREITET_LOESCHEN_NACH = timedelta(days=30)  # Frist F1a (omn/aufbewahrung.py)
+VORBEREITET_ERINNERN_NACH = timedelta(days=21)  # Admin-Mail ~9 Tage vor F1a
+
+
+def vorbereitet_erinnern():
+    """Einmalige Admin-Mail fuer vorbereitete, noch nicht verschickte Austausche,
+    die bald unter Frist F1a fallen (1 Monat). Laeuft im taeglichen Cron mit
+    (`flask aufbewahrung-bereinigen`). Gibt die Zahl der erwaehnten Austausche zurueck."""
+    empfaenger = os.getenv('ADMIN_NOTIFY_EMAIL') or os.getenv('MAIL_USERNAME')
+    heute = jetzt().date()
+    faellig = (Austausch.query
+               .filter(Austausch.status == 'vorbereitet',
+                       Austausch.erstellt_am < jetzt() - VORBEREITET_ERINNERN_NACH,
+                       Austausch.vorbereitet_erinnert_am.is_(None),
+                       sa.or_(Austausch.loeschsperre_bis.is_(None), Austausch.loeschsperre_bis < heute))
+               .order_by(Austausch.erstellt_am.asc()).all())
+    if not faellig or not empfaenger:
+        return 0
+    zeilen = []
+    for a in faellig:
+        loeschung = aware(a.erstellt_am) + VORBEREITET_LOESCHEN_NACH
+        zeilen.append(f'- {a.titel} ({a.name}), angelegt {aware(a.erstellt_am):%d.%m.%Y}, '
+                      f'wird am {loeschung:%d.%m.%Y} gelöscht: {_base_url()}/admin/austausch/{a.id}')
+    msg = Message(subject=f'Austausch: {len(faellig)} vorbereitete Einladung(en) noch nicht verschickt',
+                  recipients=[empfaenger])
+    msg.body = ('Diese Austausche sind vorbereitet, aber die Einladung ist noch nicht verschickt. '
+                'Ohne Einladung werden sie einen Monat nach dem Anlegen gelöscht (Informationspflicht '
+                'nach Art. 14 DSGVO):\n\n' + '\n'.join(zeilen) + '\n')
+    try:
+        mail.send(msg)
+    except Exception as e:
+        logger.error('Austausch-Erinnerung (vorbereitet) fehlgeschlagen: %s', e)
+        return 0
+    for a in faellig:
+        a.vorbereitet_erinnert_am = jetzt()
+    db.session.commit()
+    return len(faellig)
+
+
 def austausch_loeschen(austausch):
     """Loescht einen Austausch samt Aufgaben, Kommentaren, Anhaengen UND deren
     Dateien (CASCADE entfernt nur die DB-Zeilen). Fuer den Admin-Knopf (F5), die
@@ -180,17 +219,20 @@ def einladung_verschicken(austausch):
     absaetze.append(tx('austausch_einl_unabhaengig', lang))
     gueltig = txa('austausch_einl_gueltig', a, lang, tage=EINLADUNG_GUELTIG.days)
     ignorieren = txa('austausch_einl_ignorieren', a, lang)
+    # Widerspruchsrecht als eigener, abgesetzter Absatz (Art. 21 Abs. 4 DSGVO)
+    widerspruch = txa('austausch_einl_widerspruch', a, lang)
     datenschutz = txa('austausch_einl_datenschutz', a, lang, link=datenschutz_url(lang))
     knopf = tx('austausch_einl_knopf', lang)
     team = tx('austausch_mail_team', lang)
 
     msg = Message(subject=tx('austausch_einl_betreff', lang, titel=a.titel), recipients=[a.email])
-    msg.body = ('\n\n'.join(absaetze) + f'\n\n{knopf}: {link}\n\n{gueltig} {ignorieren}\n\n{datenschutz}'
-                f'\n\n{team}\nhttps://www.openmyconet.de\n')
+    msg.body = ('\n\n'.join(absaetze) + f'\n\n{knopf}: {link}\n\n{gueltig} {ignorieren}\n\n{widerspruch}'
+                f'\n\n{datenschutz}\n\n{team}\nhttps://www.openmyconet.de\n')
     msg.html = render_template(
         'transaktions_email.html', mail_lang=lang, fusszeile=team,
         titel=tx('austausch_seite_titel', lang), zeilen=absaetze,
-        cta_text=knopf, cta_url=link, hinweis=f'{gueltig} {ignorieren}', unterschrift=[datenschutz],
+        cta_text=knopf, cta_url=link, hinweis=f'{gueltig} {ignorieren}',
+        unterschrift=[widerspruch, '', datenschutz],
     )
     try:
         mail.send(msg)

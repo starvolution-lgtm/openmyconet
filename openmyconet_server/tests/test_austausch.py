@@ -758,10 +758,11 @@ def _bereinigen():
     return bereinigen()
 
 
-def test_f1_nicht_angenommen_nach_6_monaten_geloescht_inkl_dateien(app):
-    alt = _austausch(status='eingeladen', eingeladen_am=_alt(190), titel='Alt')
+def test_f1_nicht_angenommen_nach_2_jahren_geloescht_inkl_dateien(app):
+    """Eine Frist fuer Kontaktaufnahme und Einladung: 2 Jahre (Robby, 25.10.2026)."""
+    alt = _austausch(status='eingeladen', eingeladen_am=_alt(740), titel='Alt')
     pfad = kollaboration.anhang_pfad(_anhang_kommentar(alt, wer='team'))
-    frisch = _austausch(status='eingeladen', eingeladen_am=_alt(100), titel='Frisch')
+    frisch = _austausch(status='eingeladen', eingeladen_am=_alt(700), titel='Frisch')
     ergebnis = _bereinigen()
     assert ergebnis['Austausch nicht angenommen'] == 1
     assert db.session.get(Austausch, alt.id) is None and not os.path.exists(pfad)
@@ -779,12 +780,53 @@ def test_f1_erneuerte_einladung_beginnt_neu(app):
     assert db.session.get(Austausch, a.id) is not None
 
 
-def test_f1a_nur_vorbereitet(app):
-    alt = _austausch(erstellt_am=_alt(190), titel='Alt')
-    frisch = _austausch(erstellt_am=_alt(30), titel='Frisch')
+def test_f1a_nur_vorbereitet_nach_einem_monat(app):
+    alt = _austausch(erstellt_am=_alt(31), titel='Alt')
+    frisch = _austausch(erstellt_am=_alt(25), titel='Frisch')
     assert _bereinigen()['Austausch nur vorbereitet'] == 1
     assert db.session.get(Austausch, alt.id) is None
     assert db.session.get(Austausch, frisch.id) is not None
+
+
+def test_erinnerung_vor_f1a_einmal_an_admin(app):
+    from omn import austausch as aus
+    faellig = _austausch(erstellt_am=_alt(22), titel='Bald weg')
+    _austausch(erstellt_am=_alt(10), titel='Noch Zeit')
+    _austausch(erstellt_am=_alt(25), titel='Schon eingeladen', status='eingeladen', eingeladen_am=_alt(25))
+    _austausch(erstellt_am=_alt(25), titel='Gesperrt', loeschsperre_bis=date.today() + timedelta(days=5),
+               loeschsperre_grund='Grund')
+    with mail.record_messages() as ausgehend:
+        assert aus.vorbereitet_erinnern() == 1
+        assert aus.vorbereitet_erinnern() == 0  # nur einmal
+    assert len(ausgehend) == 1
+    m = ausgehend[0]
+    assert m.recipients == ['admin@openmyconet.test']
+    assert 'Bald weg' in m.body and f'/admin/austausch/{faellig.id}' in m.body
+    assert 'Noch Zeit' not in m.body and 'Schon eingeladen' not in m.body and 'Gesperrt' not in m.body
+    assert db.session.get(Austausch, faellig.id).vorbereitet_erinnert_am is not None
+
+
+def test_cli_aufbewahrung_verschickt_erinnerung(app):
+    _austausch(erstellt_am=_alt(22), titel='Bald weg')
+    with mail.record_messages() as ausgehend:
+        erg = app.test_cli_runner().invoke(args=['aufbewahrung-bereinigen'])
+    assert erg.exit_code == 0, erg.output
+    assert '1 vorbereitete Einladung(en) zur Erinnerung gemeldet' in erg.output
+    assert len(ausgehend) == 1
+
+
+def test_einladungsmail_gespraechsbeginn_und_eigener_widerspruchssatz(app):
+    _, _, m = _einladen()
+    assert 'das Datum unseres Gesprächsbeginns' in m.body
+    assert '2 Jahre nach unserem letzten Kontakt' in m.body
+    widerspruch = 'Sie können der Speicherung Ihrer Angaben jederzeit widersprechen'
+    # eigener, abgesetzter Absatz -- nicht im Datenschutz-Absatz versteckt
+    absaetze = m.body.split('\n\n')
+    eigen = [x for x in absaetze if widerspruch in x]
+    assert len(eigen) == 1 and not eigen[0].startswith('Datenschutz:')
+    assert widerspruch in m.html
+    _, _, m_es = _einladen(email='es@example.com', sprache='es', anrede='informell')
+    assert 'Puedes oponerte en cualquier momento' in m_es.body
 
 
 def test_f3_notizen_nach_24_monaten_geleert_austausch_bleibt(app):
@@ -869,6 +911,8 @@ def test_datenschutzerklaerung_abschnitt_austausch(client):
             assert frist in text, (lang, frist)
         assert 'kontakt@openmyconet.de' in text
         assert [int(x['h'].split('.')[0]) for x in abschnitte] == list(range(1, len(abschnitte) + 1))
+    de = next(x['html'] for x in RECHTSTEXTE['de']['datenschutz']['abschnitte'] if x['id'] == 'austausch')
+    assert '2 Jahre nach unserem letzten Kontakt' in de and 'nach einem Monat' in de
     seite = client.get('/datenschutz.html').get_data(as_text=True)
     assert 'id="austausch"' in seite and '9. Fachlicher Austausch auf Einladung' in seite
     assert '(siehe Abschnitt 12)' in seite  # Verweis auf "Messdaten" mitgezogen

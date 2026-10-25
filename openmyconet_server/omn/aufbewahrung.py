@@ -13,10 +13,13 @@ zaehlt nach einem Datum (Tagesgenauigkeit reicht bei 2 Jahren). Ausnahme
 AdminAudit und Austausch (neue Tabellen, timestamptz): Vergleich mit tz-aware "jetzt".
 
 Fachlicher Austausch (seit 25.10.2026, docs/austausch_phase1_plan.md Abschnitt 5,
-Fristen F1-F4 von Robby festgelegt; rechtliche Pruefung vor dem Prod-Deploy):
-F1 nicht angenommen und F1a nur vorbereitet -> nach 6 Monaten loeschen, F3 interne
-Notizen -> 24 Monate nach der letzten Aktivitaet leeren, F4 beendet/gesperrt ->
-6 Monate nach dem Statuswechsel loeschen. Eine aktive Loeschsperre (berechtigter
+Fristen von Robby festgelegt, nach der rechtlichen Pruefung angepasst):
+F1 nicht angenommen -> 2 Jahre nach der (letzten) Einladung, also dieselbe Frist wie
+die Kontaktaufnahme im MCC (KontaktVersand, eine Frist fuer beides); F1a nur
+vorbereitet -> nach 1 Monat (Art. 14 Abs. 3 lit. a DSGVO), vorher Admin-Mail
+(omn/austausch.py::vorbereitet_erinnern, gleicher Cron); F3 interne Notizen ->
+24 Monate nach der letzten Aktivitaet leeren; F4 beendet/gesperrt -> 6 Monate nach
+dem Statuswechsel loeschen. Eine aktive Loeschsperre (berechtigter
 Aufbewahrungsgrund, Admin) setzt F1-F4 aus. F2 (Inaktivitaet) loescht nichts, das
 ist nur eine Markierung im Admin. Ganze Austausche gehen NICHT ueber FRISTEN: ein
 Massen-DELETE wuerde die Anhang-Dateien auf der Platte liegen lassen.
@@ -73,8 +76,8 @@ LEEREN = [
 # Ganze Austausche samt Aufgaben, Kommentaren, Anhaengen UND Dateien:
 # (Bezeichnung, Zeitpunkt, Frist in Tagen, Bedingung) -- immer ohne aktive Loeschsperre.
 AUSTAUSCH_LOESCHEN = [
-    ('Austausch nicht angenommen', Austausch.eingeladen_am, 182, Austausch.status == 'eingeladen'),         # F1
-    ('Austausch nur vorbereitet', Austausch.erstellt_am, 182, Austausch.status == 'vorbereitet'),           # F1a
+    ('Austausch nicht angenommen', Austausch.eingeladen_am, 730, Austausch.status == 'eingeladen'),         # F1
+    ('Austausch nur vorbereitet', Austausch.erstellt_am, 30, Austausch.status == 'vorbereitet'),            # F1a
     ('Austausch beendet/gesperrt', Austausch.status_geaendert_am, 182,
      Austausch.status.in_(('beendet', 'gesperrt'))),                                                          # F4
 ]

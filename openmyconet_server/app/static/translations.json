@@ -1064,8 +1064,8 @@
     "austausch_einl_knopf": "Einladung ansehen",
     "austausch_einl_gueltig_formell": "Der Link ist {tage} Tage gültig. Nach dem Öffnen bestätigen Sie die Annahme mit einem Code, den wir an diese Adresse senden.",
     "austausch_einl_gueltig_informell": "Der Link ist {tage} Tage gültig. Nach dem Öffnen bestätigst du die Annahme mit einem Code, den wir an diese Adresse senden.",
-    "austausch_einl_datenschutz_formell": "Datenschutz: Für diese Einladung haben wir Ihren Namen, Ihre E-Mail-Adresse und gegebenenfalls Ihre Institution gespeichert, außerdem eine eigene kurze Notiz zu unserem bisherigen Gespräch (z. B. über LinkedIn oder E-Mail). Rechtsgrundlage ist unser berechtigtes Interesse an der Fortführung des Gesprächs (Art. 6 Abs. 1 lit. f DSGVO). Wenn Sie die Einladung nicht annehmen, löschen wir diese Angaben spätestens nach 6 Monaten. Sie können jederzeit widersprechen oder die Löschung verlangen: kontakt@openmyconet.de. Einzelheiten, Verantwortlicher und Ihre Rechte: {link}",
-    "austausch_einl_datenschutz_informell": "Datenschutz: Für diese Einladung haben wir deinen Namen, deine E-Mail-Adresse und gegebenenfalls deine Institution gespeichert, außerdem eine eigene kurze Notiz zu unserem bisherigen Gespräch (z. B. über LinkedIn oder E-Mail). Rechtsgrundlage ist unser berechtigtes Interesse an der Fortführung des Gesprächs (Art. 6 Abs. 1 lit. f DSGVO). Wenn du die Einladung nicht annimmst, löschen wir diese Angaben spätestens nach 6 Monaten. Du kannst jederzeit widersprechen oder die Löschung verlangen: kontakt@openmyconet.de. Einzelheiten, Verantwortlicher und deine Rechte: {link}",
+    "austausch_einl_datenschutz_formell": "Datenschutz: Für diese Einladung haben wir Ihren Namen, Ihre E-Mail-Adresse, gegebenenfalls Ihre Institution und das Datum unseres Gesprächsbeginns gespeichert, außerdem eine eigene kurze Notiz zu unserem bisherigen Gespräch (z. B. über LinkedIn oder E-Mail). Rechtsgrundlage ist unser berechtigtes Interesse an der Fortführung des Gesprächs (Art. 6 Abs. 1 lit. f DSGVO). Nehmen Sie die Einladung nicht an, löschen wir diese Angaben 2 Jahre nach unserem letzten Kontakt. Einzelheiten, Verantwortlicher und Ihre Rechte: {link}",
+    "austausch_einl_datenschutz_informell": "Datenschutz: Für diese Einladung haben wir deinen Namen, deine E-Mail-Adresse, gegebenenfalls deine Institution und das Datum unseres Gesprächsbeginns gespeichert, außerdem eine eigene kurze Notiz zu unserem bisherigen Gespräch (z. B. über LinkedIn oder E-Mail). Rechtsgrundlage ist unser berechtigtes Interesse an der Fortführung des Gesprächs (Art. 6 Abs. 1 lit. f DSGVO). Nimmst du die Einladung nicht an, löschen wir diese Angaben 2 Jahre nach unserem letzten Kontakt. Einzelheiten, Verantwortlicher und deine Rechte: {link}",
     "austausch_einl_ignorieren_formell": "Wenn Sie nicht teilnehmen möchten, müssen Sie nichts tun.",
     "austausch_einl_ignorieren_informell": "Wenn du nicht teilnehmen möchtest, musst du nichts tun.",
     "austausch_seite_titel": "Einladung zum fachlichen Austausch",
@@ -1124,7 +1124,9 @@
     "austausch_msg_kommentar": "Kommentar gespeichert.",
     "austausch_fehler_titel": "Für die Aufgabe fehlt ein Titel.",
     "austausch_fehler_leer": "Der Kommentar ist leer.",
-    "austausch_fehler_anhang": "„{datei}“ wurde abgelehnt (Format oder Größe)."
+    "austausch_fehler_anhang": "„{datei}“ wurde abgelehnt (Format oder Größe).",
+    "austausch_einl_widerspruch_formell": "Sie können der Speicherung Ihrer Angaben jederzeit widersprechen, zum Beispiel mit einer kurzen Antwort auf diese E-Mail oder an kontakt@openmyconet.de. Wir löschen sie dann umgehend.",
+    "austausch_einl_widerspruch_informell": "Du kannst der Speicherung deiner Angaben jederzeit widersprechen, zum Beispiel mit einer kurzen Antwort auf diese E-Mail oder an kontakt@openmyconet.de. Wir löschen sie dann umgehend."
   },
   "en": {
     "nav_warum": "Why",
@@ -2191,8 +2193,8 @@
     "austausch_einl_knopf": "View invitation",
     "austausch_einl_gueltig_formell": "The link is valid for {tage} days. After opening it, you confirm your acceptance with a code that we send to this address.",
     "austausch_einl_gueltig_informell": "The link is valid for {tage} days. After opening it, you confirm your acceptance with a code that we send to this address.",
-    "austausch_einl_datenschutz_formell": "Data protection: For this invitation we have stored your name, your email address and, where applicable, your institution, as well as a short note of our own about our previous conversation (e.g. via LinkedIn or email). The legal basis is our legitimate interest in continuing the conversation (Art. 6(1)(f) GDPR). If you do not accept the invitation, we will delete this information after 6 months at the latest. You can object or request deletion at any time: kontakt@openmyconet.de. Details, controller and your rights: {link}",
-    "austausch_einl_datenschutz_informell": "Data protection: For this invitation we have stored your name, your email address and, where applicable, your institution, as well as a short note of our own about our previous conversation (e.g. via LinkedIn or email). The legal basis is our legitimate interest in continuing the conversation (Art. 6(1)(f) GDPR). If you do not accept the invitation, we will delete this information after 6 months at the latest. You can object or request deletion at any time: kontakt@openmyconet.de. Details, controller and your rights: {link}",
+    "austausch_einl_datenschutz_formell": "Data protection: For this invitation we have stored your name, your email address, your institution where applicable and the date our conversation began, as well as a short note of our own about our previous conversation (e.g. via LinkedIn or email). The legal basis is our legitimate interest in continuing the conversation (Art. 6(1)(f) GDPR). If you do not accept the invitation, we will delete this information 2 years after our last contact. Details, controller and your rights: {link}",
+    "austausch_einl_datenschutz_informell": "Data protection: For this invitation we have stored your name, your email address, your institution where applicable and the date our conversation began, as well as a short note of our own about our previous conversation (e.g. via LinkedIn or email). The legal basis is our legitimate interest in continuing the conversation (Art. 6(1)(f) GDPR). If you do not accept the invitation, we will delete this information 2 years after our last contact. Details, controller and your rights: {link}",
     "austausch_einl_ignorieren_formell": "If you do not wish to take part, you do not need to do anything.",
     "austausch_einl_ignorieren_informell": "If you do not wish to take part, you do not need to do anything.",
     "austausch_seite_titel": "Invitation to a scientific exchange",
@@ -2251,7 +2253,9 @@
     "austausch_msg_kommentar": "Comment saved.",
     "austausch_fehler_titel": "The task needs a title.",
     "austausch_fehler_leer": "The comment is empty.",
-    "austausch_fehler_anhang": "“{datei}” was rejected (format or size)."
+    "austausch_fehler_anhang": "“{datei}” was rejected (format or size).",
+    "austausch_einl_widerspruch_formell": "You can object to the storage of your information at any time, for example with a short reply to this email or by writing to kontakt@openmyconet.de. We will then delete it without delay.",
+    "austausch_einl_widerspruch_informell": "You can object to the storage of your information at any time, for example with a short reply to this email or by writing to kontakt@openmyconet.de. We will then delete it without delay."
   },
   "nl": {
     "nav_warum": "Waarom",
@@ -3318,8 +3322,8 @@
     "austausch_einl_knopf": "Uitnodiging bekijken",
     "austausch_einl_gueltig_formell": "De link is {tage} dagen geldig. Na het openen bevestigt u de aanname met een code die we naar dit adres sturen.",
     "austausch_einl_gueltig_informell": "De link is {tage} dagen geldig. Na het openen bevestig je de aanname met een code die we naar dit adres sturen.",
-    "austausch_einl_datenschutz_formell": "Privacy: voor deze uitnodiging hebben we uw naam, uw e-mailadres en eventueel uw instelling opgeslagen, evenals een eigen korte notitie over ons eerdere gesprek (bijv. via LinkedIn of e-mail). De rechtsgrond is ons gerechtvaardigd belang bij het voortzetten van het gesprek (art. 6 lid 1 sub f AVG). Als u de uitnodiging niet aanneemt, verwijderen we deze gegevens uiterlijk na 6 maanden. U kunt op elk moment bezwaar maken of om verwijdering vragen: kontakt@openmyconet.de. Details, verwerkingsverantwoordelijke en uw rechten: {link}",
-    "austausch_einl_datenschutz_informell": "Privacy: voor deze uitnodiging hebben we je naam, je e-mailadres en eventueel je instelling opgeslagen, evenals een eigen korte notitie over ons eerdere gesprek (bijv. via LinkedIn of e-mail). De rechtsgrond is ons gerechtvaardigd belang bij het voortzetten van het gesprek (art. 6 lid 1 sub f AVG). Als je de uitnodiging niet aanneemt, verwijderen we deze gegevens uiterlijk na 6 maanden. Je kunt op elk moment bezwaar maken of om verwijdering vragen: kontakt@openmyconet.de. Details, verwerkingsverantwoordelijke en je rechten: {link}",
+    "austausch_einl_datenschutz_formell": "Privacy: voor deze uitnodiging hebben we uw naam, uw e-mailadres, eventueel uw instelling en de datum waarop ons gesprek begon opgeslagen, evenals een eigen korte notitie over ons eerdere gesprek (bijv. via LinkedIn of e-mail). De rechtsgrond is ons gerechtvaardigd belang bij het voortzetten van het gesprek (art. 6 lid 1 sub f AVG). Als u de uitnodiging niet aanneemt, verwijderen we deze gegevens 2 jaar na ons laatste contact. Details, verwerkingsverantwoordelijke en uw rechten: {link}",
+    "austausch_einl_datenschutz_informell": "Privacy: voor deze uitnodiging hebben we je naam, je e-mailadres, eventueel je instelling en de datum waarop ons gesprek begon opgeslagen, evenals een eigen korte notitie over ons eerdere gesprek (bijv. via LinkedIn of e-mail). De rechtsgrond is ons gerechtvaardigd belang bij het voortzetten van het gesprek (art. 6 lid 1 sub f AVG). Als je de uitnodiging niet aanneemt, verwijderen we deze gegevens 2 jaar na ons laatste contact. Details, verwerkingsverantwoordelijke en je rechten: {link}",
     "austausch_einl_ignorieren_formell": "Als u niet wilt deelnemen, hoeft u niets te doen.",
     "austausch_einl_ignorieren_informell": "Als je niet wilt deelnemen, hoef je niets te doen.",
     "austausch_seite_titel": "Uitnodiging voor een vakinhoudelijke uitwisseling",
@@ -3378,7 +3382,9 @@
     "austausch_msg_kommentar": "Reactie opgeslagen.",
     "austausch_fehler_titel": "De taak heeft een titel nodig.",
     "austausch_fehler_leer": "De reactie is leeg.",
-    "austausch_fehler_anhang": "„{datei}” is geweigerd (formaat of grootte)."
+    "austausch_fehler_anhang": "„{datei}” is geweigerd (formaat of grootte).",
+    "austausch_einl_widerspruch_formell": "U kunt op elk moment bezwaar maken tegen de opslag van uw gegevens, bijvoorbeeld met een kort antwoord op deze e-mail of via kontakt@openmyconet.de. We verwijderen ze dan onmiddellijk.",
+    "austausch_einl_widerspruch_informell": "Je kunt op elk moment bezwaar maken tegen de opslag van je gegevens, bijvoorbeeld met een kort antwoord op deze e-mail of via kontakt@openmyconet.de. We verwijderen ze dan onmiddellijk."
   },
   "fr": {
     "nav_warum": "Pourquoi",
@@ -4445,8 +4451,8 @@
     "austausch_einl_knopf": "Voir l'invitation",
     "austausch_einl_gueltig_formell": "Le lien est valable {tage} jours. Après l'avoir ouvert, vous confirmez votre acceptation à l'aide d'un code que nous envoyons à cette adresse.",
     "austausch_einl_gueltig_informell": "Le lien est valable {tage} jours. Après l'avoir ouvert, tu confirmes ton acceptation à l'aide d'un code que nous envoyons à cette adresse.",
-    "austausch_einl_datenschutz_formell": "Protection des données : pour cette invitation, nous avons enregistré votre nom, votre adresse e-mail et, le cas échéant, votre institution, ainsi qu'une courte note personnelle sur notre échange précédent (par ex. via LinkedIn ou e-mail). La base juridique est notre intérêt légitime à poursuivre la conversation (art. 6, par. 1, point f du RGPD). Si vous n'acceptez pas l'invitation, nous supprimerons ces données au plus tard après 6 mois. Vous pouvez à tout moment vous y opposer ou en demander la suppression : kontakt@openmyconet.de. Détails, responsable du traitement et vos droits : {link}",
-    "austausch_einl_datenschutz_informell": "Protection des données : pour cette invitation, nous avons enregistré ton nom, ton adresse e-mail et, le cas échéant, ton institution, ainsi qu'une courte note personnelle sur notre échange précédent (par ex. via LinkedIn ou e-mail). La base juridique est notre intérêt légitime à poursuivre la conversation (art. 6, par. 1, point f du RGPD). Si tu n'acceptes pas l'invitation, nous supprimerons ces données au plus tard après 6 mois. Tu peux à tout moment t'y opposer ou en demander la suppression : kontakt@openmyconet.de. Détails, responsable du traitement et tes droits : {link}",
+    "austausch_einl_datenschutz_formell": "Protection des données : pour cette invitation, nous avons enregistré votre nom, votre adresse e-mail, le cas échéant votre institution et la date du début de notre échange, ainsi qu'une courte note personnelle sur notre échange précédent (par ex. via LinkedIn ou e-mail). La base juridique est notre intérêt légitime à poursuivre la conversation (art. 6, par. 1, point f du RGPD). Si vous n'acceptez pas l'invitation, nous supprimerons ces données 2 ans après notre dernier contact. Détails, responsable du traitement et vos droits : {link}",
+    "austausch_einl_datenschutz_informell": "Protection des données : pour cette invitation, nous avons enregistré ton nom, ton adresse e-mail, le cas échéant ton institution et la date du début de notre échange, ainsi qu'une courte note personnelle sur notre échange précédent (par ex. via LinkedIn ou e-mail). La base juridique est notre intérêt légitime à poursuivre la conversation (art. 6, par. 1, point f du RGPD). Si tu n'acceptes pas l'invitation, nous supprimerons ces données 2 ans après notre dernier contact. Détails, responsable du traitement et tes droits : {link}",
     "austausch_einl_ignorieren_formell": "Si vous ne souhaitez pas participer, vous n'avez rien à faire.",
     "austausch_einl_ignorieren_informell": "Si tu ne souhaites pas participer, tu n'as rien à faire.",
     "austausch_seite_titel": "Invitation à un échange scientifique",
@@ -4505,7 +4511,9 @@
     "austausch_msg_kommentar": "Commentaire enregistré.",
     "austausch_fehler_titel": "La tâche doit avoir un titre.",
     "austausch_fehler_leer": "Le commentaire est vide.",
-    "austausch_fehler_anhang": "« {datei} » a été refusé (format ou taille)."
+    "austausch_fehler_anhang": "« {datei} » a été refusé (format ou taille).",
+    "austausch_einl_widerspruch_formell": "Vous pouvez à tout moment vous opposer à l'enregistrement de vos données, par exemple par une courte réponse à cet e-mail ou à l'adresse kontakt@openmyconet.de. Nous les supprimerons alors sans délai.",
+    "austausch_einl_widerspruch_informell": "Tu peux à tout moment t'opposer à l'enregistrement de tes données, par exemple par une courte réponse à cet e-mail ou à l'adresse kontakt@openmyconet.de. Nous les supprimerons alors sans délai."
   },
   "es": {
     "nav_warum": "Por qué",
@@ -5572,8 +5580,8 @@
     "austausch_einl_knopf": "Ver la invitación",
     "austausch_einl_gueltig_formell": "El enlace es válido durante {tage} días. Después de abrirlo, confirmará la aceptación con un código que enviaremos a esta dirección.",
     "austausch_einl_gueltig_informell": "El enlace es válido durante {tage} días. Después de abrirlo, confirmarás la aceptación con un código que enviaremos a esta dirección.",
-    "austausch_einl_datenschutz_formell": "Protección de datos: para esta invitación hemos guardado su nombre, su dirección de correo electrónico y, en su caso, su institución, así como una breve nota propia sobre nuestra conversación anterior (p. ej., por LinkedIn o correo electrónico). La base jurídica es nuestro interés legítimo en continuar la conversación (art. 6, apdo. 1, letra f del RGPD). Si no acepta la invitación, eliminaremos estos datos como máximo a los 6 meses. Puede oponerse o solicitar la supresión en cualquier momento: kontakt@openmyconet.de. Detalles, responsable y sus derechos: {link}",
-    "austausch_einl_datenschutz_informell": "Protección de datos: para esta invitación hemos guardado tu nombre, tu dirección de correo electrónico y, en su caso, tu institución, así como una breve nota propia sobre nuestra conversación anterior (p. ej., por LinkedIn o correo electrónico). La base jurídica es nuestro interés legítimo en continuar la conversación (art. 6, apdo. 1, letra f del RGPD). Si no aceptas la invitación, eliminaremos estos datos como máximo a los 6 meses. Puedes oponerte o solicitar la supresión en cualquier momento: kontakt@openmyconet.de. Detalles, responsable y tus derechos: {link}",
+    "austausch_einl_datenschutz_formell": "Protección de datos: para esta invitación hemos guardado su nombre, su dirección de correo electrónico, en su caso su institución y la fecha en que comenzó nuestra conversación, así como una breve nota propia sobre nuestra conversación anterior (p. ej., por LinkedIn o correo electrónico). La base jurídica es nuestro interés legítimo en continuar la conversación (art. 6, apdo. 1, letra f del RGPD). Si no acepta la invitación, eliminaremos estos datos 2 años después de nuestro último contacto. Detalles, responsable y sus derechos: {link}",
+    "austausch_einl_datenschutz_informell": "Protección de datos: para esta invitación hemos guardado tu nombre, tu dirección de correo electrónico, en su caso tu institución y la fecha en que comenzó nuestra conversación, así como una breve nota propia sobre nuestra conversación anterior (p. ej., por LinkedIn o correo electrónico). La base jurídica es nuestro interés legítimo en continuar la conversación (art. 6, apdo. 1, letra f del RGPD). Si no aceptas la invitación, eliminaremos estos datos 2 años después de nuestro último contacto. Detalles, responsable y tus derechos: {link}",
     "austausch_einl_ignorieren_formell": "Si no desea participar, no tiene que hacer nada.",
     "austausch_einl_ignorieren_informell": "Si no deseas participar, no tienes que hacer nada.",
     "austausch_seite_titel": "Invitación a un intercambio científico",
@@ -5632,6 +5640,8 @@
     "austausch_msg_kommentar": "Comentario guardado.",
     "austausch_fehler_titel": "La tarea necesita un título.",
     "austausch_fehler_leer": "El comentario está vacío.",
-    "austausch_fehler_anhang": "«{datei}» se ha rechazado (formato o tamaño)."
+    "austausch_fehler_anhang": "«{datei}» se ha rechazado (formato o tamaño).",
+    "austausch_einl_widerspruch_formell": "Puede oponerse en cualquier momento a que guardemos sus datos, por ejemplo con una breve respuesta a este correo o escribiendo a kontakt@openmyconet.de. En ese caso los eliminaremos sin demora.",
+    "austausch_einl_widerspruch_informell": "Puedes oponerte en cualquier momento a que guardemos tus datos, por ejemplo con una breve respuesta a este correo o escribiendo a kontakt@openmyconet.de. En ese caso los eliminaremos sin demora."
   }
 }

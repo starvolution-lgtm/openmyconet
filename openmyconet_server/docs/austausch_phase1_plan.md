@@ -293,7 +293,7 @@ Umsetzung:
 
 | # | Regel | Beginn der Frist | Wirkung | Umsetzung |
 |---|---|---|---|---|
-| F1 | Nicht angenommene Einladung | `eingeladen_am` (bei Erneuerung neu gesetzt) | nach **6 Monaten** ganzer Austausch gelöscht, inkl. vom Team schon angelegter Aufgaben/Kommentare/Dateien | Löschfunktion (5.3) |
+| F1 | Nicht angenommene Einladung | `eingeladen_am` (bei Erneuerung neu gesetzt) | nach **2 Jahren** ganzer Austausch gelöscht (geändert 25.10. nach der Rechtsprüfung: dieselbe Frist wie MCC-Kontakte), inkl. vom Team schon angelegter Aufgaben/Kommentare/Dateien | Löschfunktion (5.3) |
 | F2 | Inaktivität | `letzte_aktivitaet` | nach **12 Monaten** im Admin **zur Prüfung markiert**, **keine** automatische Sperrung oder Löschung | Anzeige (5.4) |
 | F3 | Interne Kontaktnotizen (LinkedIn-URL, Gesprächsbeginn, Vorgeschichte) | `letzte_aktivitaet` | nach **24 Monaten** ohne Aktivität **geleert**; der Austausch selbst bleibt | `LEEREN` in `aufbewahrung.py` |
 | F4 | Gesperrter oder beendeter Austauschbereich | `status_geaendert_am` | nach **6 Monaten** ganz gelöscht, inkl. aller Aufgaben, Kommentare und **Dateien** | Löschfunktion (5.3) |
@@ -310,7 +310,7 @@ also niemand stillschweigend.
 setzt `eingeladen_am` neu. Damit beginnt auch F1 neu. Der alte Link wird ungültig.
 
 **F1a (bestätigt am 25.10.):** Ein Austausch, der nur **vorbereitet** und nie verschickt wurde, wird ebenfalls
-nach 6 Monaten (ab `erstellt_am`) gelöscht, sonst blieben die eingetragenen Kontaktdaten unbegrenzt liegen.
+nach **einem Monat** (ab `erstellt_am`) gelöscht (geändert 25.10. nach der Rechtsprüfung, Art. 14 Abs. 3 lit. a DSGVO); nach drei Wochen geht einmal eine Erinnerungsmail an den Admin.
 Umsetzung wie F1 über die Löschfunktion, Löschsperre gilt auch hier.
 
 ### 5.2 Rechtliche Prüfung vor Produktivfreigabe
