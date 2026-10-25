@@ -16,6 +16,7 @@ Moderation (Ausblenden, Zusammenfuehren, Schliessen) liegt im Admin (Schritt 4).
 """
 import hashlib
 import re
+import unicodedata
 from datetime import datetime, timezone
 from functools import wraps
 
@@ -47,12 +48,18 @@ schuetze_blueprint(themen_bp)
 
 # --- Berechtigung -------------------------------------------------------------
 
+def themen_freigegeben():
+    """Schalter bis zur rechtlichen Freigabe (Config THEMEN_FREIGEGEBEN): auf Prod
+    zunaechst aus -> alle /themen-Routen 404, kein Link in Navigation und Austausch."""
+    return bool(current_app.config.get('THEMEN_FREIGEGEBEN', False))
+
+
 def darf_themenraeume_nutzen(nutzer):
     """Die EINE Pruefung fuer alle Themenraum-Routen und -Downloads.
     Haengt bewusst NIE an ist_hyphist, ist_sporist, Foerderung oder Zahlung.
     Kreis 'fachkontakte' (Start): wer einen aktiven fachlichen Austausch hat.
     Kreis 'alle' (Ziel): jeder bestaetigte Nutzer (Mycelists)."""
-    if nutzer is None or not nutzer.bestaetigt:
+    if not themen_freigegeben() or nutzer is None or not nutzer.bestaetigt:
         return False
     kreis = current_app.config.get('THEMEN_KREIS', 'fachkontakte')
     if kreis == 'alle':
@@ -129,6 +136,75 @@ def verlinken(text):
     return Markup('').join(teile)
 
 
+# --- Aehnliche Themen (Plan 8: vor dem Anlegen zeigen, ohne KI) --------------------
+
+# Haeufige Woerter (ab 4 Buchstaben) in den 5 Sprachen, die nichts ueber das Thema sagen
+_FUELLWOERTER = {
+    'eine', 'einer', 'eines', 'einem', 'einen', 'und', 'oder', 'aber', 'auch', 'nicht', 'sind', 'wird', 'werden',
+    'kann', 'koennen', 'mit', 'ohne', 'fuer', 'ueber', 'unter', 'zwischen', 'durch', 'beim', 'diese', 'dieser',
+    'dieses', 'sowie', 'frage', 'fragen', 'thema', 'with', 'from', 'that', 'this', 'there', 'their', 'about',
+    'between', 'during', 'could', 'would', 'should', 'have', 'into', 'what', 'which', 'question', 'topic',
+    'voor', 'zijn', 'wordt', 'deze', 'naar', 'over', 'tussen', 'tijdens', 'avec', 'dans', 'pour', 'sont', 'entre',
+    'pendant', 'sujet', 'como', 'para', 'durante', 'sobre', 'esta', 'este', 'tema',
+}
+
+
+def _normalisieren(text):
+    """Kleinschreibung, Akzente/Umlaute weg (ae/oe/ue), grobe Lautangleichung
+    (c->k, ph->f, th->t, y->i), damit z. B. 'Mykorrhiza', 'mycorrhiza' und
+    'mycorhize' zusammenfinden."""
+    text = (text or '').lower()
+    for a, b in (('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('ß', 'ss')):
+        text = text.replace(a, b)
+    text = unicodedata.normalize('NFKD', text)
+    text = ''.join(c for c in text if not unicodedata.combining(c))
+    for a, b in (('ph', 'f'), ('th', 't'), ('c', 'k'), ('y', 'i')):
+        text = text.replace(a, b)
+    return re.sub(r'(.)\1+', r'\1', text)   # Doppelbuchstaben zusammenziehen (rr -> r)
+
+
+STAMM_LAENGE = 6
+
+
+def _stamm(wort):
+    """Grober Wortstamm fuer 5 Sprachen: die ersten 6 Zeichen ('elektrische',
+    'electrical' -> 'elektr'; 'mykorrhiza', 'mycorhize' -> 'mikorh')."""
+    return wort[:STAMM_LAENGE]
+
+
+def woerter(text):
+    """Aussagekraeftige Wortstaemme eines Texts (ab 4 Buchstaben, ohne Fuellwoerter)."""
+    roh = re.findall(r'[a-z0-9]+', _normalisieren(text))
+    fuell = {_normalisieren(w) for w in _FUELLWOERTER}
+    return {_stamm(w) for w in roh if len(w) >= 4 and w not in fuell}
+
+
+def _alle_fassungen(inhalt):
+    """Original + vorhandene Uebersetzungen von Titel und Beschreibung."""
+    texte = [inhalt.titel, inhalt.beschreibung]
+    texte += [u.text for u in Uebersetzung.query.filter_by(inhalt_typ=inhalt_typ(inhalt), inhalt_id=inhalt.id)]
+    return ' '.join(texte)
+
+
+def aehnliche(titel, beschreibung, kandidaten, hoechstens=5):
+    """Bis zu `hoechstens` aehnliche Gebiete/Diskussionen, aehnlichste zuerst. Treffer,
+    wenn ein Wortstamm des neuen Titels vorkommt oder mindestens ein Viertel aller
+    Wortstaemme uebereinstimmt -- grob, aber ohne KI, Kosten oder Datenweitergabe."""
+    titel_w = woerter(titel)
+    alle_w = titel_w | woerter(beschreibung)
+    if not alle_w:
+        return []
+    treffer = []
+    for k in kandidaten:
+        k_w = woerter(_alle_fassungen(k))
+        gemeinsam = alle_w & k_w
+        anteil = len(gemeinsam) / len(alle_w)
+        if (titel_w & k_w) or anteil >= 0.25:
+            treffer.append((len(titel_w & k_w), anteil, k))
+    treffer.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    return [k for _, _, k in treffer[:hoechstens]]
+
+
 # --- Hilfen ---------------------------------------------------------------------
 
 def jetzt():
@@ -188,6 +264,8 @@ def zugang(f):
     @wraps(f)
     def innen(*args, **kwargs):
         from omn.datenlabor import _nutzer, seiten_sprache
+        if not themen_freigegeben():
+            abort(404)
         nutzer = _nutzer()
         if nutzer is None:
             return redirect(url_for('dashboard.login'))
@@ -224,6 +302,8 @@ def _diskussion_oder_404(diskussion_id):
 @themen_bp.route('/themen/teilnahme', methods=['GET', 'POST'])
 def teilnahme():
     from omn.datenlabor import _nutzer, seiten_sprache
+    if not themen_freigegeben():
+        abort(404)
     nutzer = _nutzer()
     if nutzer is None:
         return redirect(url_for('dashboard.login'))
@@ -308,6 +388,15 @@ def gebiet_neu(nutzer, teilnahme, lang):
     fehler = []
     if request.method == 'POST':
         titel, beschreibung, sprache, fehler = _formular_lesen(lang)
+        if not fehler and not request.form.get('trotzdem'):
+            kandidaten = Themengebiet.query.filter_by(sichtbar=True).all()
+            treffer = aehnliche(titel, beschreibung, kandidaten)
+            if treffer:
+                return _seite('themen_formular.html', lang, nutzer=nutzer, art_formular='gebiet', titel_wert=titel,
+                              beschreibung_wert=beschreibung, sprache_wert=sprache, fehler=[], gebiet=None,
+                              treffer=[{'ziel': url_for('themen.gebiet', gebiet_id=k.id),
+                                        'titel': anzeige(k, 'titel', lang),
+                                        'beschreibung': anzeige(k, 'beschreibung', lang)} for k in treffer])
         if not fehler and not _schreiben_erlaubt(nutzer):
             fehler = [t('themen_zu_viele', lang)]
         if not fehler:
@@ -344,6 +433,16 @@ def diskussion_neu(nutzer, teilnahme, lang, gebiet_id):
     fehler = []
     if request.method == 'POST':
         titel, beschreibung, sprache, fehler = _formular_lesen(lang)
+        if not fehler and not request.form.get('trotzdem'):
+            kandidaten = [d for d in g.diskussionen if d.sichtbar]
+            treffer = aehnliche(titel, beschreibung, kandidaten)
+            if treffer:
+                return _seite('themen_formular.html', lang, nutzer=nutzer, art_formular='diskussion',
+                              titel_wert=titel, beschreibung_wert=beschreibung, sprache_wert=sprache, fehler=[],
+                              gebiet=g, gebiet_titel=anzeige(g, 'titel', lang),
+                              treffer=[{'ziel': url_for('themen.diskussion', diskussion_id=k.id),
+                                        'titel': anzeige(k, 'titel', lang),
+                                        'beschreibung': anzeige(k, 'beschreibung', lang)} for k in treffer])
         if not fehler and not _schreiben_erlaubt(nutzer):
             fehler = [t('themen_zu_viele', lang)]
         if not fehler:

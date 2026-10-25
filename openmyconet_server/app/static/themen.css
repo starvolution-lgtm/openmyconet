@@ -43,3 +43,6 @@ a.th-gebiet:hover { border-color: var(--akzent); }
 .th-antwort-form { flex: 1 1 100%; }
 .th-gefahr { background: var(--schlecht); border-color: var(--schlecht); }
 .th-gefahr:hover { background: #82291f; }
+.th-aehnlich { border-color: var(--warn); }
+.th-aehnlich ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+.th-aehnlich li { margin: 0.3rem 0; }

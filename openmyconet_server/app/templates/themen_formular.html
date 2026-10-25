@@ -1,6 +1,6 @@
 {% extends "dashboard_base.html" %}
 {# Neues Themengebiet (art_formular 'gebiet') bzw. neue Diskussion ('diskussion') #}
-{% from "_themen_makros.html" import text_anzeige, sprache_auswahl %}
+{% from "_themen_makros.html" import text_anzeige, kurz_anzeige, sprache_auswahl %}
 {% set ueberschrift = tx('themen_gebiet_neu') if art_formular == 'gebiet' else tx('themen_diskussion_neu') %}
 {% block html_lang %}{{ lang }}{% endblock %}
 {% block title %}OpenMycoNet — {{ ueberschrift }}{% endblock %}
@@ -17,6 +17,19 @@
 
     {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
 
+    {% if treffer %}
+    <div class="card th-aehnlich">
+        <h2>{{ tx('themen_aehnlich_titel') }}</h2>
+        <p class="label">{{ tx('themen_aehnlich_text') }}</p>
+        <ul>
+            {% for x in treffer %}
+            <li><a href="{{ x.ziel }}">{{ kurz_anzeige(x.titel, None) }}</a>
+                <span class="label">– {{ kurz_anzeige(x.beschreibung, None) }}</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     <form method="post" class="card">
         <label class="th-feld">{{ tx('themen_feld_titel') }}
             <input type="text" name="titel" maxlength="200" required value="{{ titel_wert }}">
@@ -25,6 +38,11 @@
             <textarea name="beschreibung" rows="3" maxlength="500" required>{{ beschreibung_wert }}</textarea>
         </label>
         {{ sprache_auswahl(sprachen, sprache_wert, tx) }}
+        {% if treffer %}
+        <input type="hidden" name="trotzdem" value="1">
+        <button type="submit">{{ tx('themen_trotzdem_anlegen') }}</button>
+        {% else %}
         <button type="submit">{{ tx('themen_anlegen') }}</button>
+        {% endif %}
     </form>
 {% endblock %}

@@ -110,6 +110,12 @@ class Config:
     # 'fachkontakte' (Start) = aktiver fachlicher Austausch; 'alle' = jeder bestaetigte
     # Nutzer (erklaertes Ziel, Robby 25.10.2026). Nie an Rolle/Foerderung gebunden.
     THEMEN_KREIS = os.getenv('THEMEN_KREIS', 'fachkontakte').strip() or 'fachkontakte'
+    # Schalter bis zur rechtlichen Freigabe (Nutzungsregeln + Datenschutzerklaerung,
+    # Phase 2a Schritt 5): auf Prod (OMN_ENV=prod) verborgen -- Routen 404, kein
+    # Navigationslink --, auf Staging/lokal sichtbar. THEMEN_FREIGEGEBEN=1/0 in der
+    # .env ueberschreibt das. Nach der Freigabe wird der Standard hier umgestellt.
+    THEMEN_FREIGEGEBEN = (os.getenv('THEMEN_FREIGEGEBEN', '0' if OMN_ENV == 'prod' else '1').strip().lower()
+                          in ('1', 'true', 'yes', 'on'))
 
     # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).
     # Nach dem Cutover auf DATENLABOR_SCHEMA=live setzen; Sandbox bleibt parallel verfügbar.
@@ -131,3 +137,5 @@ class TestConfig(Config):
     MAIL_SUPPRESS_SEND = True
     MAIL_DEFAULT_SENDER = 'test@openmyconet.test'
     SERVER_NAME = 'testserver.local'
+    # Themenraeume in Tests immer an (der Prod-Schalter hat einen eigenen Test)
+    THEMEN_FREIGEGEBEN = True

@@ -1182,7 +1182,10 @@
     "themen_einstellungen": "Einstellungen",
     "themen_original_zuerst": "Originale zuerst anzeigen",
     "themen_einstellungen_gespeichert": "Einstellungen gespeichert.",
-    "themen_zu_viele": "Zu viele Einträge in kurzer Zeit – bitte später erneut versuchen."
+    "themen_zu_viele": "Zu viele Einträge in kurzer Zeit – bitte später erneut versuchen.",
+    "themen_aehnlich_titel": "Ähnliche Themen gibt es schon",
+    "themen_aehnlich_text": "Vielleicht passt eines davon – dann lässt sich dort direkt weiterdiskutieren. Sonst kann das neue Thema trotzdem angelegt werden.",
+    "themen_trotzdem_anlegen": "Trotzdem anlegen"
   },
   "en": {
     "nav_warum": "Why",
@@ -2367,7 +2370,10 @@
     "themen_einstellungen": "Settings",
     "themen_original_zuerst": "Show originals first",
     "themen_einstellungen_gespeichert": "Settings saved.",
-    "themen_zu_viele": "Too many entries in a short time – please try again later."
+    "themen_zu_viele": "Too many entries in a short time – please try again later.",
+    "themen_aehnlich_titel": "Similar topics already exist",
+    "themen_aehnlich_text": "Perhaps one of them fits – the discussion can then continue there directly. Otherwise the new topic can still be created.",
+    "themen_trotzdem_anlegen": "Create anyway"
   },
   "nl": {
     "nav_warum": "Waarom",
@@ -3552,7 +3558,10 @@
     "themen_einstellungen": "Instellingen",
     "themen_original_zuerst": "Originelen eerst tonen",
     "themen_einstellungen_gespeichert": "Instellingen opgeslagen.",
-    "themen_zu_viele": "Te veel bijdragen in korte tijd – probeer het later opnieuw."
+    "themen_zu_viele": "Te veel bijdragen in korte tijd – probeer het later opnieuw.",
+    "themen_aehnlich_titel": "Er bestaan al vergelijkbare onderwerpen",
+    "themen_aehnlich_text": "Misschien past een daarvan – dan kan de discussie daar direct verder. Anders kan het nieuwe onderwerp toch worden aangemaakt.",
+    "themen_trotzdem_anlegen": "Toch aanmaken"
   },
   "fr": {
     "nav_warum": "Pourquoi",
@@ -4737,7 +4746,10 @@
     "themen_einstellungen": "Paramètres",
     "themen_original_zuerst": "Afficher d'abord les originaux",
     "themen_einstellungen_gespeichert": "Paramètres enregistrés.",
-    "themen_zu_viele": "Trop de contributions en peu de temps – merci de réessayer plus tard."
+    "themen_zu_viele": "Trop de contributions en peu de temps – merci de réessayer plus tard.",
+    "themen_aehnlich_titel": "Des sujets similaires existent déjà",
+    "themen_aehnlich_text": "L'un d'eux convient peut-être – la discussion peut alors s'y poursuivre directement. Sinon, le nouveau sujet peut tout de même être créé.",
+    "themen_trotzdem_anlegen": "Créer quand même"
   },
   "es": {
     "nav_warum": "Por qué",
@@ -5922,6 +5934,9 @@
     "themen_einstellungen": "Ajustes",
     "themen_original_zuerst": "Mostrar primero los originales",
     "themen_einstellungen_gespeichert": "Ajustes guardados.",
-    "themen_zu_viele": "Demasiadas entradas en poco tiempo; inténtelo de nuevo más tarde."
+    "themen_zu_viele": "Demasiadas entradas en poco tiempo; inténtelo de nuevo más tarde.",
+    "themen_aehnlich_titel": "Ya existen temas parecidos",
+    "themen_aehnlich_text": "Quizá encaje alguno: entonces el debate puede continuar allí directamente. Si no, el nuevo tema puede crearse igualmente.",
+    "themen_trotzdem_anlegen": "Crear de todos modos"
   }
 }

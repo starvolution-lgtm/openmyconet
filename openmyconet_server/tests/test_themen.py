@@ -362,6 +362,77 @@ def test_navigation_und_link_aus_dem_austausch(client, app):
     assert 'href="/themen"' in seite and 'Zu den Themenräumen' in seite
 
 
+# --- Schritt 3: aehnliche Themen, Schalter fuer Prod ------------------------------
+
+def test_woerter_finden_sich_ueber_sprachen_hinweg():
+    from omn.themen import woerter
+    assert woerter('Mykorrhiza und Phosphor') & woerter('Mycology & mycorrhiza') == {'mikorh'}
+    assert woerter('Mycologie & mycorhize') & woerter('Mykorrhiza') == {'mikorh'}
+    assert woerter('Elektrische Signale') == woerter('Electrical signals')
+    assert woerter('und die der with from about') == set()     # nur Fuellwoerter / zu kurz
+
+
+def test_neues_gebiet_zeigt_aehnliche_ueber_uebersetzungen(client, app):
+    _teilnehmer(client)
+    g = _gebiet(titel='Mykologie & Mykorrhiza', beschreibung='Pilzphysiologie und Symbiosen', vorgegeben=True)
+    db.session.add(Uebersetzung(inhalt_typ='themengebiet', inhalt_id=g.id, feld='titel', ziel_sprache='en',
+                                quelltext_hash=quelltext_hash(g.titel), text='Mycology & mycorrhiza'))
+    db.session.commit()
+    daten = {'titel': 'Mycorrhizal networks', 'beschreibung': 'Exchange of nutrients', 'sprache': 'en'}
+    seite = client.post('/themen/gebiet/neu?lang=de', data=daten).get_data(as_text=True)
+    assert 'Ähnliche Themen gibt es schon' in seite
+    assert f'/themen/gebiet/{g.id}' in seite and 'Trotzdem anlegen' in seite
+    assert 'value="Mycorrhizal networks"' in seite                 # Eingaben bleiben erhalten
+    assert Themengebiet.query.count() == 1
+    resp = client.post('/themen/gebiet/neu', data={**daten, 'trotzdem': '1'})
+    assert resp.status_code == 302 and Themengebiet.query.count() == 2
+
+
+def test_ohne_aehnliche_wird_direkt_angelegt(client, app):
+    _teilnehmer(client)
+    _gebiet(titel='Mykologie & Mykorrhiza', beschreibung='Pilzphysiologie')
+    resp = client.post('/themen/gebiet/neu', data={'titel': 'Bodenfeuchte im Winter', 'beschreibung': 'Frostperioden'})
+    assert resp.status_code == 302 and Themengebiet.query.count() == 2
+
+
+def test_aehnliche_diskussionen_nur_im_selben_gebiet(client, app):
+    _teilnehmer(client)
+    g1, g2 = _gebiet(titel='Eins'), _gebiet(titel='Zwei')
+    _diskussion(gebiet=g2, titel='Calcium-Oszillationen im Myzel', beschreibung='Messungen')
+    daten = {'titel': 'Calcium oscillations', 'beschreibung': 'Imaging data'}
+    resp = client.post(f'/themen/gebiet/{g1.id}/diskussion/neu', data=daten)
+    assert resp.status_code == 302                                   # anderes Gebiet -> kein Treffer
+    seite = client.post(f'/themen/gebiet/{g2.id}/diskussion/neu', data=daten).get_data(as_text=True)
+    assert 'Ähnliche Themen gibt es schon' in seite and 'Calcium-Oszillationen im Myzel' in seite
+
+
+def test_schalter_verbirgt_themenraeume(client, app):
+    _teilnehmer(client)
+    app.config['THEMEN_FREIGEGEBEN'] = False
+    for pfad in ('/themen', '/themen/teilnahme', '/themen/gebiet/neu', '/themen/einstellungen'):
+        assert client.get(pfad).status_code == 404, pfad
+    seite = client.get('/austausch').get_data(as_text=True)
+    assert '/themen' not in seite and 'Themenräume' not in seite
+
+
+def test_schalter_standard_aus_auf_prod_an_auf_staging(monkeypatch):
+    import importlib
+
+    import omn.config as konfig
+    monkeypatch.delenv('THEMEN_FREIGEGEBEN', raising=False)
+    try:
+        monkeypatch.setenv('OMN_ENV', 'prod')
+        assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is False
+        monkeypatch.setenv('OMN_ENV', 'staging')
+        assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is True
+        monkeypatch.setenv('OMN_ENV', 'prod')
+        monkeypatch.setenv('THEMEN_FREIGEGEBEN', '1')
+        assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is True
+    finally:
+        monkeypatch.undo()
+        importlib.reload(konfig)
+
+
 def test_verlinken_escaped_html():
     html = str(verlinken('<script>alert(1)</script> https://a.example/x?y=1&z=2, ende'))
     assert '<script>' not in html and '&lt;script&gt;' in html
