@@ -49,8 +49,8 @@ schuetze_blueprint(themen_bp)
 # --- Berechtigung -------------------------------------------------------------
 
 def themen_freigegeben():
-    """Schalter bis zur rechtlichen Freigabe (Config THEMEN_FREIGEGEBEN): auf Prod
-    zunaechst aus -> alle /themen-Routen 404, kein Link in Navigation und Austausch."""
+    """Schalter (Config THEMEN_FREIGEGEBEN, seit der Freigabe am 25.10.2026 standardmaessig
+    an). Aus -> alle /themen-Routen 404, kein Link in Navigation und Austausch."""
     return bool(current_app.config.get('THEMEN_FREIGEGEBEN', False))
 
 

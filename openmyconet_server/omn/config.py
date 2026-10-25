@@ -110,11 +110,11 @@ class Config:
     # 'fachkontakte' (Start) = aktiver fachlicher Austausch; 'alle' = jeder bestaetigte
     # Nutzer (erklaertes Ziel, Robby 25.10.2026). Nie an Rolle/Foerderung gebunden.
     THEMEN_KREIS = os.getenv('THEMEN_KREIS', 'fachkontakte').strip() or 'fachkontakte'
-    # Schalter bis zur rechtlichen Freigabe (Nutzungsregeln + Datenschutzerklaerung,
-    # Phase 2a Schritt 5): auf Prod (OMN_ENV=prod) verborgen -- Routen 404, kein
-    # Navigationslink --, auf Staging/lokal sichtbar. THEMEN_FREIGEGEBEN=1/0 in der
-    # .env ueberschreibt das. Nach der Freigabe wird der Standard hier umgestellt.
-    THEMEN_FREIGEGEBEN = (os.getenv('THEMEN_FREIGEGEBEN', '0' if OMN_ENV == 'prod' else '1').strip().lower()
+    # Schalter fuer die Themenraeume. Bis zur rechtlichen Freigabe war er auf Prod aus;
+    # seit 25.10.2026 freigegeben (Robby, docs/themen_rechtspruefung.md) -> ueberall an.
+    # THEMEN_FREIGEGEBEN=0 in der .env verbirgt sie wieder (Routen 404, kein Link),
+    # z. B. falls die Themenraeume voruebergehend geschlossen werden muessen.
+    THEMEN_FREIGEGEBEN = (os.getenv('THEMEN_FREIGEGEBEN', '1').strip().lower()
                           in ('1', 'true', 'yes', 'on'))
 
     # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).

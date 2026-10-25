@@ -3,8 +3,7 @@
 Stand: 25.10.2026 · Maßgeblich ist die deutsche Fassung; en/nl/fr/es sind nachgezogen.
 Hinweis: Zusammenstellung mit Anmerkungen, **keine Rechtsberatung**.
 
-Die Themenräume sind gebaut, aber auf **Prod verborgen** (Schalter `THEMEN_FREIGEGEBEN`, auf Staging sichtbar).
-Nach deiner Freigabe stelle ich den Schalter um.
+Die Themenräume sind gebaut und seit der Freigabe am 25.10.2026 überall aktiv (Schalter `THEMEN_FREIGEGEBEN`).
 
 ---
 
@@ -78,6 +77,8 @@ Bei jeder Änderung neue Fassung → alle stimmen beim nächsten Besuch neu zu.
 | Gebiet/Diskussion/Beitrag gelöscht (Admin) | sofort | inkl. Dateien + Übersetzungen |
 
 ## 7. Nach der Freigabe
+
+**Freigegeben von Robby am 25.10.2026.** ENTWURF-Vermerk entfernt, Schalter standardmäßig an.
 
 1. Änderungen einarbeiten; ENTWURF-Vermerk in `omn/rechtstexte.json` entfernen.
 2. Schalter `THEMEN_FREIGEGEBEN` im Code auf Prod freischalten.

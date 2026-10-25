@@ -415,19 +415,18 @@ def test_schalter_verbirgt_themenraeume(client, app):
     assert '/themen' not in seite and 'Themenräume' not in seite
 
 
-def test_schalter_standard_aus_auf_prod_an_auf_staging(monkeypatch):
+def test_schalter_seit_freigabe_ueberall_an_per_env_abschaltbar(monkeypatch):
+    """Seit Robbys Freigabe (25.10.2026) standardmaessig an, auch auf Prod;
+    THEMEN_FREIGEGEBEN=0 schliesst die Themenraeume wieder."""
     import importlib
 
     import omn.config as konfig
     monkeypatch.delenv('THEMEN_FREIGEGEBEN', raising=False)
     try:
         monkeypatch.setenv('OMN_ENV', 'prod')
+        assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is True
+        monkeypatch.setenv('THEMEN_FREIGEGEBEN', '0')
         assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is False
-        monkeypatch.setenv('OMN_ENV', 'staging')
-        assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is True
-        monkeypatch.setenv('OMN_ENV', 'prod')
-        monkeypatch.setenv('THEMEN_FREIGEGEBEN', '1')
-        assert importlib.reload(konfig).Config.THEMEN_FREIGEGEBEN is True
     finally:
         monkeypatch.undo()
         importlib.reload(konfig)

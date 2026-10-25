@@ -75,8 +75,9 @@ Evidenz-Art, Anhänge unter `instance/uploads/themen/`), `themen_teilnahme` (fre
 Anzeigename, Zustimmung zur Regelfassung `REGELN_FASSUNG`, „Originale zuerst“), `uebersetzung`
 (an den Hash des Originals gebunden; 2a nur Handübersetzungen der 6 Startgebiete, Migration
 `8be9ab181351`). Ähnliche Themen beim Anlegen: Wortvergleich ohne KI (`themen.aehnliche`).
-- **Schalter `THEMEN_FREIGEGEBEN`** (Config): auf Prod (`OMN_ENV=prod`) aus → alle `/themen`-Routen
-  404, kein Link; Staging an. Erst nach Robbys Rechtsprüfung umstellen (`docs/themen_rechtspruefung.md`).
+- **Schalter `THEMEN_FREIGEGEBEN`** (Config): seit Robbys Freigabe am 25.10.2026 standardmäßig an
+  (`docs/themen_rechtspruefung.md`); `THEMEN_FREIGEGEBEN=0` in der `.env` schließt die Themenräume
+  wieder (alle `/themen`-Routen 404, kein Link).
 - **Kreis `THEMEN_KREIS`**: `fachkontakte` (aktiver Austausch) | `alle` (bestätigte Nutzer). Nur über
   `themen.darf_themenraeume_nutzen` prüfen – nie Rolle/Förderung.
 - **Wissen bleibt** (Robby 25.10.): Beiträge CC BY 4.0; Kontolöschung → Beiträge bleiben ohne Namen
