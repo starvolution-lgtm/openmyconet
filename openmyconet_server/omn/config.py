@@ -117,6 +117,15 @@ class Config:
     THEMEN_FREIGEGEBEN = (os.getenv('THEMEN_FREIGEGEBEN', '1').strip().lower()
                           in ('1', 'true', 'yes', 'on'))
 
+    # Automatische Uebersetzung in den Themenraeumen (Phase 2b, omn/uebersetzung.py).
+    # Schalter bis zur rechtlichen Freigabe: auf Prod aus, auf Staging/lokal an;
+    # UEBERSETZUNG_AKTIV=1/0 in der .env ueberschreibt das. Tageslimit = Kostenbremse
+    # (automatische Uebersetzungen je Tag, Robby 26.10.2026: 100).
+    UEBERSETZUNG_AKTIV = (os.getenv('UEBERSETZUNG_AKTIV', '0' if OMN_ENV == 'prod' else '1').strip().lower()
+                          in ('1', 'true', 'yes', 'on'))
+    UEBERSETZUNG_ANBIETER = os.getenv('UEBERSETZUNG_ANBIETER', 'claude').strip() or 'claude'
+    UEBERSETZUNG_TAGESLIMIT = int(os.getenv('UEBERSETZUNG_TAGESLIMIT', '100'))
+
     # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).
     # Nach dem Cutover auf DATENLABOR_SCHEMA=live setzen; Sandbox bleibt parallel verfügbar.
     DATENLABOR_SCHEMA = os.getenv('DATENLABOR_SCHEMA', 'sandbox')
@@ -139,3 +148,6 @@ class TestConfig(Config):
     SERVER_NAME = 'testserver.local'
     # Themenraeume in Tests immer an (der Prod-Schalter hat einen eigenen Test)
     THEMEN_FREIGEGEBEN = True
+    # Uebersetzung in Tests an; der Anbieter wird in den Tests immer ersetzt (keine echten API-Aufrufe)
+    UEBERSETZUNG_AKTIV = True
+    UEBERSETZUNG_TAGESLIMIT = 100

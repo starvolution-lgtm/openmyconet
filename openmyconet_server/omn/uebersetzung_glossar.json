@@ -1,0 +1,20 @@
+{
+  "_hinweis": "Glossar fuer die automatische Uebersetzung der Themenraeume (omn/uebersetzung.py, Phase 2b). 'fest' = nie uebersetzen. 'begriffe' = so in der jeweiligen Sprache verwenden. Ein Eintrag wird der Uebersetzung nur mitgegeben, wenn eine seiner Fassungen im Text vorkommt. Pflege: Robby/Claude; Sprachen de, en, nl, fr, es.",
+  "fest": ["BioComm", "OpenMycoNet", "Mycelist", "Hyphist", "Sporist", "CC BY 4.0"],
+  "begriffe": [
+    {"de": "Myzel", "en": "mycelium", "nl": "mycelium", "fr": "mycélium", "es": "micelio"},
+    {"de": "Hyphe", "en": "hypha", "nl": "hyfe", "fr": "hyphe", "es": "hifa"},
+    {"de": "Hyphennetz", "en": "hyphal network", "nl": "hyfennetwerk", "fr": "réseau d'hyphes", "es": "red de hifas"},
+    {"de": "Mykorrhiza", "en": "mycorrhiza", "nl": "mycorrhiza", "fr": "mycorhize", "es": "micorriza"},
+    {"de": "arbuskuläre Mykorrhiza", "en": "arbuscular mycorrhiza", "nl": "arbusculaire mycorrhiza", "fr": "mycorhize arbusculaire", "es": "micorriza arbuscular"},
+    {"de": "Ektomykorrhiza", "en": "ectomycorrhiza", "nl": "ectomycorrhiza", "fr": "ectomycorhize", "es": "ectomicorriza"},
+    {"de": "Fruchtkörper", "en": "fruiting body", "nl": "vruchtlichaam", "fr": "carpophore", "es": "cuerpo fructífero"},
+    {"de": "Rhizosphäre", "en": "rhizosphere", "nl": "rizosfeer", "fr": "rhizosphère", "es": "rizosfera"},
+    {"de": "Substrat", "en": "substrate", "nl": "substraat", "fr": "substrat", "es": "sustrato"},
+    {"de": "extrazelluläres Potenzial", "en": "extracellular potential", "nl": "extracellulaire potentiaal", "fr": "potentiel extracellulaire", "es": "potencial extracelular"},
+    {"de": "Aktionspotenzial", "en": "action potential", "nl": "actiepotentiaal", "fr": "potentiel d'action", "es": "potencial de acción"},
+    {"de": "Calcium-Oszillationen", "en": "calcium oscillations", "nl": "calciumoscillaties", "fr": "oscillations calciques", "es": "oscilaciones de calcio"},
+    {"de": "Elektrode", "en": "electrode", "nl": "elektrode", "fr": "électrode", "es": "electrodo"},
+    {"de": "Elektrophysiologie", "en": "electrophysiology", "nl": "elektrofysiologie", "fr": "électrophysiologie", "es": "electrofisiología"}
+  ]
+}
