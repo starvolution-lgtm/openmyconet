@@ -36,6 +36,9 @@
             </label>
             <label>Reihenfolge <input type="number" name="reihenfolge" min="1" value="{{ g.reihenfolge }}"></label>
         </div>
+        <label class="aus-check"><input type="checkbox" name="sprache_aendern" value="1">
+            Sprache des Originals wirklich ändern (nur nötig, wenn oben eine andere Sprache als
+            {{ sprachen[g.sprache_original] }} gewählt ist)</label>
         <label>Beschreibung (Original) <textarea name="beschreibung" rows="2" maxlength="500" required>{{ g.beschreibung }}</textarea></label>
         <p class="u-muted-note">Handübersetzungen (optional). Sie gelten für genau diese Fassung des Originals;
            wer das Original ändert, sollte sie hier mit anpassen, sonst wird wieder das Original gezeigt.</p>

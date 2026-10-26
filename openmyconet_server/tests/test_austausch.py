@@ -1028,3 +1028,18 @@ def test_aufgaben_ausgeblendet_bis_admin_einschaltet(client, app, superadmin):
         'titel': a.titel, 'name': a.name, 'email': a.email, 'sprache': 'de', 'anrede': 'formell', 'start': 'd:9999'})
     a = db.session.get(Austausch, a.id)
     assert a.start_gebiet_id is None and a.start_diskussion_id is None and a.aufgaben_aktiv is False
+
+
+def test_admin_detail_zeigt_start_und_nachrichten(client, app, superadmin):
+    _, a = _fachkontakt()
+    _g, d = _gebiet_und_diskussion()
+    _admin(client)
+    seite = client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+    assert '– keiner –' in seite and 'Aufgaben ausgeblendet' in seite
+    assert 'Nachrichten sind sofort für die andere Seite sichtbar' in seite
+    a.start_diskussion_id = d.id
+    db.session.commit()
+    assert 'Diskussion „450 Millionen Jahre“ (in Vererbung)' in client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+    d.sichtbar = False
+    db.session.commit()
+    assert 'ausgeblendet – die Person landet' in client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)

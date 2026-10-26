@@ -19,7 +19,8 @@ from omn.extensions import db
 from omn.i18n import LANGS, SPRACHNAMEN
 from omn.models import Beitrag, BeitragAnhang, Diskussion, Themengebiet, Uebersetzung
 
-ZIELSPRACHEN = [s for s in LANGS if s != 'de']
+# Handuebersetzungen: alle Sprachen ausser der des Originals (auch Deutsch, wenn das Original nicht deutsch ist)
+ZIELSPRACHEN = list(LANGS)
 FELDER = ('titel', 'beschreibung')
 
 
@@ -113,9 +114,16 @@ def themen_gebiet(gebiet_id):
         if not titel or not beschreibung:
             flash('Titel und Beschreibung sind Pflicht.', 'error')
             return redirect(url_for('admin.themen_gebiet', gebiet_id=g.id))
+        sprache = request.form.get('sprache') if request.form.get('sprache') in LANGS else g.sprache_original
+        if sprache != g.sprache_original and not request.form.get('sprache_aendern'):
+            # Schutz gegen versehentliches Umstellen (26.10.2026: Gebiet 2 stand ploetzlich auf
+            # Englisch, die englische Handuebersetzung war weg). Nichts speichern.
+            flash(f'Nichts gespeichert: Die Sprache des Originals würde von {SPRACHNAMEN[g.sprache_original]} '
+                  f'auf {SPRACHNAMEN[sprache]} geändert. Wenn das gewollt ist, zusätzlich den Haken '
+                  '„Sprache des Originals wirklich ändern“ setzen.', 'error')
+            return redirect(url_for('admin.themen_gebiet', gebiet_id=g.id))
         g.titel, g.beschreibung = titel, beschreibung
-        if request.form.get('sprache') in LANGS:
-            g.sprache_original = request.form.get('sprache')
+        g.sprache_original = sprache
         g.reihenfolge = request.form.get('reihenfolge', type=int) or g.reihenfolge
         # Handuebersetzungen: alte manuelle Fassungen dieses Gebiets ersetzen, an das neue Original binden
         Uebersetzung.query.filter_by(inhalt_typ='themengebiet', inhalt_id=g.id, anbieter='manuell').delete(

@@ -21,7 +21,8 @@
     Projekt- und partnerschaftsbezogener Austausch mit dem Kooperationspartner.
     Nur zwischen Partner und Team sichtbar.
     {% endif %}
-    Kein Freigabeschritt — Kommentare und Aufgaben sind sofort für die andere Seite sichtbar.
+    {% if fach %}Kein Freigabeschritt — Nachrichten{% if austausch.aufgaben_aktiv %} und Aufgaben{% endif %} sind sofort für die andere Seite sichtbar.
+    {%- else %}Kein Freigabeschritt — Kommentare und Aufgaben sind sofort für die andere Seite sichtbar.{% endif %}
 </p>
 
 {% if fach %}

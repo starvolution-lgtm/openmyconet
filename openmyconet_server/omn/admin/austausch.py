@@ -65,6 +65,22 @@ def _start_lesen(wert):
     return None, None
 
 
+def _start_anzeige(a):
+    """Start-Themenraum fuer die Detailseite: (Text, Hinweis oder None)."""
+    if a.start_diskussion_id:
+        d = db.session.get(Diskussion, a.start_diskussion_id)
+        if d is None:
+            return 'Diskussion gelöscht', 'Die Person landet in der Übersicht der Themenräume.'
+        hinweis = None if d.sichtbar and d.themengebiet.sichtbar else 'ausgeblendet – die Person landet im Gebiet bzw. in der Übersicht'
+        return f'Diskussion „{d.titel}“ (in {d.themengebiet.titel})', hinweis
+    if a.start_gebiet_id:
+        g = db.session.get(Themengebiet, a.start_gebiet_id)
+        if g is None:
+            return 'Themengebiet gelöscht', 'Die Person landet in der Übersicht der Themenräume.'
+        return f'Themengebiet „{g.titel}“', None if g.sichtbar else 'ausgeblendet – die Person landet in der Übersicht'
+    return '– keiner – (Übersicht der Themenräume)', None
+
+
 def _start_auswahl():
     """Waehlbare Start-Themenraeume: sichtbare Gebiete, darunter ihre sichtbaren Diskussionen."""
     gebiete = (Themengebiet.query.filter_by(sichtbar=True)
@@ -149,6 +165,7 @@ def austausch_detail(austausch_id):
         kommentare=kollaboration.kommentare_fuer(a),
         nachricht=nachricht, fehler=fehler, sprachen=SPRACHNAMEN,
         zu_pruefen=aus.inaktiv_zu_pruefen(a), loeschsperre_aktiv=aus.loeschsperre_aktiv(a),
+        start=_start_anzeige(a),
     )
 
 

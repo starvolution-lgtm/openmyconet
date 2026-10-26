@@ -658,3 +658,26 @@ def test_verlinken_escaped_html():
     assert '<script>' not in html and '&lt;script&gt;' in html
     assert '<a href="https://a.example/x?y=1&amp;z=2" rel="nofollow noopener noreferrer"' in html
     assert html.endswith(', ende')
+
+
+def test_admin_sprachwechsel_nur_mit_bestaetigung(client, app, superadmin):
+    """26.10.2026: Gebiet stand versehentlich auf Englisch, englische Handuebersetzung weg."""
+    g = _gebiet(titel='Mykologie', beschreibung='Pilze')
+    db.session.add(Uebersetzung(inhalt_typ='themengebiet', inhalt_id=g.id, feld='titel', ziel_sprache='en',
+                                quelltext_hash=quelltext_hash('Mykologie'), text='Mycology', anbieter='manuell'))
+    db.session.commit()
+    _admin(client)
+    seite = client.get(f'/admin/themen/gebiet/{g.id}').get_data(as_text=True)
+    assert 'name="sprache_aendern"' in seite and 'name="u_de_titel"' not in seite
+    daten = {'titel': 'Mykologie', 'beschreibung': 'Pilze', 'sprache': 'en', 'u_en_titel': 'Mycology'}
+    r = client.post(f'/admin/themen/gebiet/{g.id}', data=daten, follow_redirects=True).get_data(as_text=True)
+    assert 'Nichts gespeichert' in r
+    g = db.session.get(Themengebiet, g.id)
+    assert g.sprache_original == 'de'
+    assert Uebersetzung.query.filter_by(inhalt_id=g.id, ziel_sprache='en', anbieter='manuell').count() == 1
+    # gewollt: mit Haken -> umgestellt; dann gibt es Felder fuer Deutsch
+    client.post(f'/admin/themen/gebiet/{g.id}', data={**daten, 'sprache_aendern': '1', 'u_de_titel': 'Mykologie DE'})
+    g = db.session.get(Themengebiet, g.id)
+    assert g.sprache_original == 'en'
+    assert Uebersetzung.query.filter_by(inhalt_id=g.id, ziel_sprache='de', anbieter='manuell').one().text == 'Mykologie DE'
+    assert 'name="u_de_titel"' in client.get(f'/admin/themen/gebiet/{g.id}').get_data(as_text=True)
