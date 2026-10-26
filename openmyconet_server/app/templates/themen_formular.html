@@ -15,7 +15,7 @@
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}{% if gebiet %} · {{ text_anzeige(gebiet_titel, None, tx, sprachen) }}{% endif %}</p>
     <h1>{{ ueberschrift }}</h1>
     <p class="label">{{ tx('themen_sichtbar_hinweis') }}</p>
-    {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }}</p>{% endif %}
+    {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }} <a href="{{ url_for('site_live.datenschutz', lang=lang) }}" target="_blank" rel="noopener">{{ tx('themen_hinweis_uebersetzung_link') }}</a></p>{% endif %}
 
     {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
 

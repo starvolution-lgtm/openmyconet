@@ -16,7 +16,7 @@
             {{ art_auswahl(arten, b.art, tx) }}
             {{ sprache_auswahl(sprachen, b.sprache_original, tx) }}
         </div>
-        {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }}</p>{% endif %}
+        {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }} <a href="{{ url_for('site_live.datenschutz', lang=lang) }}" target="_blank" rel="noopener">{{ tx('themen_hinweis_uebersetzung_link') }}</a></p>{% endif %}
         <button type="submit">{{ tx('themen_speichern') }}</button>
     </form>
 {% endblock %}

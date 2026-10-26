@@ -135,9 +135,9 @@ def test_hinweis_beim_schreiben(client, app):
     _teilnehmer(client)
     d = _diskussion()
     seite = client.get(f'/themen/diskussion/{d.id}?lang=de').get_data(as_text=True)
-    assert 'an Anthropic (Claude)' in seite
+    assert 'automatisch übersetzt (Anthropic)' in seite and '/datenschutz.html?lang=de' in seite
     neu = client.get(f'/themen/gebiet/{d.themengebiet_id}/diskussion/neu?lang=fr').get_data(as_text=True)
-    assert 'transmis à Anthropic' in neu
+    assert 'traduits automatiquement (Anthropic)' in neu and 'Politique de confidentialité' in neu
 
 
 def test_admin_zaehler_und_loeschen(client, app, superadmin, monkeypatch):

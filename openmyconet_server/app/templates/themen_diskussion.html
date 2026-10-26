@@ -80,7 +80,7 @@
         </div>
         <input type="file" name="dateien" multiple>
         <p class="label">{{ tx('austausch_anhang_hinweis') }}</p>
-        {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }}</p>{% endif %}
+        {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }} <a href="{{ url_for('site_live.datenschutz', lang=lang) }}" target="_blank" rel="noopener">{{ tx('themen_hinweis_uebersetzung_link') }}</a></p>{% endif %}
         <button type="submit">{{ tx('themen_senden') }}</button>
     </form>
     {% endif %}
