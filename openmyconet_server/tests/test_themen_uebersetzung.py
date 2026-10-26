@@ -166,3 +166,65 @@ def test_admin_zeigt_ausgeschaltet(client, app, superadmin):
     app.config['UEBERSETZUNG_AKTIV'] = False
     _admin(client)
     assert 'UEBERSETZUNG_AKTIV=0' in client.get('/admin/themen').get_data(as_text=True)
+
+
+# --- Widerspruch: eigene Texte nicht uebersetzen (E1, Robby 26.10.2026) ----------------
+
+def _eigener_beitrag(n, d, text='Eigene Messung mit 3 Elektroden.'):
+    b = Beitrag(diskussion_id=d.id, autor_nutzer_id=n.id, text=text, sprache_original='de',
+                uebersetzen=not n.themen_teilnahme.nicht_uebersetzen)
+    db.session.add(b)
+    db.session.commit()
+    return b
+
+
+def test_einstellung_nicht_uebersetzen(client, app, monkeypatch):
+    aufrufe = _anbieter(monkeypatch)
+    n = _teilnehmer(client)
+    d = _diskussion()
+    b = _eigener_beitrag(n, d)
+    assert ue.uebersetzung_erzeugen(b, 'text', 'en') == 'EN: Eigene Messung mit 3 Elektroden.'
+    assert 'name="nicht_uebersetzen"' in client.get('/themen/einstellungen?lang=de').get_data(as_text=True)
+    client.post('/themen/einstellungen', data={'anzeigename': 'Dr. T. Muster', 'nicht_uebersetzen': '1'})
+    db.session.refresh(b)
+    assert b.uebersetzen is False and n.themen_teilnahme.nicht_uebersetzen is True
+    assert Uebersetzung.query.count() == 0                 # vorhandene geloescht
+    # kein Platzhalter, keine Erzeugung, Nachladen liefert nichts
+    seite = client.get(f'/themen/diskussion/{d.id}?lang=en').get_data(as_text=True)
+    assert f'data-typ="beitrag" data-id="{b.id}"' not in seite
+    assert 'Eigene Messung mit 3 Elektroden.' in seite
+    assert _holen(client, typ='beitrag', id=b.id, feld='text').get_json() == {'html': None}
+    assert len(aufrufe) == 1
+    # neue Beitraege erben die Einstellung
+    client.post(f'/themen/diskussion/{d.id}', data={'text': 'Noch ein Beitrag', 'sprache': 'de'})
+    neu = Beitrag.query.filter_by(text='Noch ein Beitrag').one()
+    assert neu.uebersetzen is False
+    # Inhalte anderer (Team-Diskussion) werden weiter uebersetzt
+    assert _holen(client, typ='diskussion', id=d.id, feld='titel').get_json()['html']
+    # wieder einschalten
+    client.post('/themen/einstellungen', data={'anzeigename': 'Dr. T. Muster'})
+    db.session.refresh(b)
+    assert b.uebersetzen is True
+
+
+def test_widerspruch_bleibt_nach_kontoloeschung(client, app, monkeypatch):
+    aufrufe = _anbieter(monkeypatch)
+    n = _teilnehmer(client)
+    d = _diskussion()
+    n.themen_teilnahme.nicht_uebersetzen = True
+    b = _eigener_beitrag(n, d)
+    db.session.delete(n)
+    db.session.commit()
+    b = db.session.get(Beitrag, b.id)
+    assert b.autor_nutzer_id is None and b.uebersetzen is False
+    assert ue.uebersetzung_erzeugen(b, 'text', 'en') is None
+    assert aufrufe == []
+
+
+def test_nutzungsregeln_nennen_uebersetzung(client, app):
+    from omn.themen import REGELN_FASSUNG
+    assert REGELN_FASSUNG == '2026-10-26'
+    n = _teilnehmer(client, regeln='2026-10-25')        # alte Fassung -> neu zustimmen
+    seite = client.get('/themen?lang=de', follow_redirects=True).get_data(as_text=True)
+    assert 'an Anthropic übermittelt' in seite and 'Einstellungen' in seite
+    assert n.themen_teilnahme.regeln_fassung == '2026-10-25'

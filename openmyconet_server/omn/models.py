@@ -503,6 +503,8 @@ class Themengebiet(db.Model):
     zusammengefuehrt_in = db.Column(db.Integer, db.ForeignKey('themengebiet.id', ondelete='SET NULL'), nullable=True)
     sichtbar = db.Column(db.Boolean, nullable=False, default=True)
     erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+    # Phase 2b: False = Verfasser hat der automatischen Uebersetzung widersprochen (Einstellung)
+    uebersetzen = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true())
 
     diskussionen = db.relationship('Diskussion', backref='themengebiet', lazy=True,
                                    cascade='all, delete-orphan')
@@ -527,6 +529,8 @@ class Diskussion(db.Model):
     letzte_aktivitaet = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware, index=True)
     sichtbar = db.Column(db.Boolean, nullable=False, default=True)
     geschlossen = db.Column(db.Boolean, nullable=False, default=False)   # lesbar, keine neuen Beitraege
+    # Phase 2b: False = Verfasser hat der automatischen Uebersetzung widersprochen (Einstellung)
+    uebersetzen = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true())
 
     beitraege = db.relationship('Beitrag', backref='diskussion', lazy=True,
                                 cascade='all, delete-orphan')
@@ -555,6 +559,8 @@ class Beitrag(db.Model):
     sichtbar = db.Column(db.Boolean, nullable=False, default=True)        # Moderation (Admin)
     # Zeitpunkt des Ausblendens -> nach 6 Monaten endgueltig geloescht (omn/aufbewahrung.py)
     ausgeblendet_am = db.Column(db.DateTime(timezone=True), nullable=True, index=True)
+    # Phase 2b: False = Verfasser hat der automatischen Uebersetzung widersprochen (Einstellung)
+    uebersetzen = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true())
 
     anhaenge = db.relationship('BeitragAnhang', backref='beitrag', lazy=True,
                                cascade='all, delete-orphan')
@@ -587,6 +593,8 @@ class ThemenTeilnahme(db.Model):
     # Beitraege bleiben bei Kontoloeschung ohne Namen) -- keine Wahl je Person.
     beitraege_nach_loeschung = db.Column(db.String(10), nullable=False, default='entfernen')
     original_zuerst = db.Column(db.Boolean, nullable=False, default=False)
+    # Phase 2b, Widerspruch (E1, Robby 26.10.2026): eigene Texte nicht automatisch uebersetzen
+    nicht_uebersetzen = db.Column(db.Boolean, nullable=False, default=False, server_default=db.false())
     zuletzt_gesehen = db.Column(db.DateTime(timezone=True), nullable=True)
 
     nutzer = db.relationship('Nutzer', backref=db.backref('themen_teilnahme', uselist=False, lazy=True,

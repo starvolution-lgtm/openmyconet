@@ -185,6 +185,8 @@ def uebersetzung_erzeugen(inhalt, feld, sprache):
     original = (getattr(inhalt, feld) or '').strip()
     if not original or sprache == inhalt.sprache_original:
         return None
+    if not inhalt.uebersetzen:      # Verfasser hat widersprochen (Einstellung, E1)
+        return None
     vorhanden = uebersetzung_holen(inhalt, feld, sprache)
     if vorhanden is not None:
         return vorhanden

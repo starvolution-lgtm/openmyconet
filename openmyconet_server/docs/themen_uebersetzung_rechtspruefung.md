@@ -3,7 +3,7 @@
 Stand: 26.10.2026 · Maßgeblich ist die deutsche Fassung; en/nl/fr/es sind nachgezogen.
 Hinweis: Zusammenstellung mit Anmerkungen, **keine Rechtsberatung**.
 
-Die Übersetzung ist gebaut (Commits `f1a52d7`, `23b6e2d`, `85613aa`) und hängt am Schalter
+Die Übersetzung ist gebaut (Commits `f1a52d7`, `23b6e2d`, `85613aa`, `ef2fbb6` + E1/E2) und hängt am Schalter
 `UEBERSETZUNG_AKTIV`: **auf Prod aus** (Standard dort), auf Staging und lokal an. Solange er aus ist, geht
 kein Text an Anthropic, es erscheinen weder Platzhalter noch Hinweis. Der neue Datenschutztext steht im
 Repo als ENTWURF (vermerkt im `_hinweis` von `omn/rechtstexte.json`). **Prod erst nach der Freigabe
@@ -18,6 +18,9 @@ deployen**, sonst wäre der Text schon öffentlich, obwohl die Übersetzung dort
 | Anbieter | **Claude (Anthropic)**, dasselbe Modell wie Chatbot und News-Übersetzung (`claude-sonnet-5-5`) – kein neuer Vertrag |
 | Kostenbremse | **100** automatische Übersetzungen je Tag (UTC); zusätzlich 300 Abrufe je Person und Stunde |
 | Hinweis beim Schreiben | **Variante 2:** „Texte werden automatisch übersetzt (Anthropic) – Datenschutzerklärung“ (Link) |
+| E1 Widerspruch | **Einstellung „Eigene Texte nicht automatisch übersetzen“** (umgesetzt, s. Abschnitt 5) |
+| E2 Nutzungsregeln | **neuer Absatz**, Fassung `2026-10-26` – alle stimmen beim nächsten Besuch neu zu (s. Abschnitt 5) |
+| E3 Kennzeichnung | **bleibt** „Automatisch übersetzt aus …“ |
 
 ## 2. Was genau passiert
 
@@ -49,42 +52,40 @@ deployen**, sonst wäre der Text schon öffentlich, obwohl die Übersetzung dort
 **Neu:**
 > Außer für die automatische Übersetzung (nächster Absatz) geben wir die Inhalte nicht weiter.
 >
-> Automatische Übersetzung: Damit Teilnehmende verschiedener Sprachen miteinander diskutieren können, werden Titel, Beschreibungen und Beiträge in den Themenräumen automatisch übersetzt, wenn jemand sie in einer anderen Sprache der Website aufruft. Dafür übermitteln wir nur den jeweiligen Text an Anthropic, ohne Anzeigenamen, E-Mail-Adresse, IP-Adresse oder andere Kennungen; Anthropic erzeugt daraus die Übersetzung. Vertragspartner, Verarbeitung in den USA, Standardvertragsklauseln und Ausschluss des Trainings sind wie beim Chatbot geregelt (Abschnitt 12). Die Übersetzung speichern wir neben dem Original und löschen sie spätestens mit ihm; ändert sich das Original, wird sie nicht mehr angezeigt. Maßgeblich ist immer das Original; Übersetzungen sind als automatisch gekennzeichnet und können Fehler enthalten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse und das der Teilnehmenden ist eine mehrsprachige wissenschaftliche Diskussion. Sie können widersprechen (kontakt@openmyconet.de); bitte schreiben Sie in den Themenräumen nichts, was nicht an diesen Dienstleister übermittelt werden soll.
+> Automatische Übersetzung: Damit Teilnehmende verschiedener Sprachen miteinander diskutieren können, werden Titel, Beschreibungen und Beiträge in den Themenräumen automatisch übersetzt, wenn jemand sie in einer anderen Sprache der Website aufruft. Dafür übermitteln wir nur den jeweiligen Text an Anthropic, ohne Anzeigenamen, E-Mail-Adresse, IP-Adresse oder andere Kennungen; Anthropic erzeugt daraus die Übersetzung. Vertragspartner, Verarbeitung in den USA, Standardvertragsklauseln und Ausschluss des Trainings sind wie beim Chatbot geregelt (Abschnitt 12). Die Übersetzung speichern wir neben dem Original und löschen sie spätestens mit ihm; ändert sich das Original, wird sie nicht mehr angezeigt. Maßgeblich ist immer das Original; Übersetzungen sind als automatisch gekennzeichnet und können Fehler enthalten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse und das der Teilnehmenden ist eine mehrsprachige wissenschaftliche Diskussion. Sie können jederzeit widersprechen: In den Einstellungen der Themenräume lässt sich die Übersetzung Ihrer eigenen Texte abschalten; vorhandene Übersetzungen löschen wir dann, und das gilt auch nach einer Kontolöschung weiter. Bitte schreiben Sie in den Themenräumen nichts, was nicht an diesen Dienstleister übermittelt werden soll.
 
 Stand der Datenschutzerklärung: 26. Oktober 2026 (in allen 5 Sprachen).
 
-## 5. Offene Entscheidungen – bitte festlegen
+## 5. Umgesetzte Entscheidungen E1–E3 (Robby, 26.10.2026)
 
-**E1 – Widerspruch praktisch umsetzbar machen.** Der Text sagt „Sie können widersprechen“. Bisher gibt es
-aber keinen Weg, die Texte einer Person von der Übersetzung auszunehmen – ein Widerspruch per Mail ließe sich
-nur durch Löschen der Beiträge erfüllen.
-- (a) **Empfehlung:** Einstellung „Eigene Texte nicht automatisch übersetzen“ in den Themenraum-Einstellungen
-  (gilt für alle eigenen Gebiete, Diskussionen, Beiträge; vorhandene Übersetzungen werden gelöscht). Klein,
-  etwa ein halber Schritt. Der Datenschutztext würde dann auf die Einstellung verweisen.
-- (b) Nur per Mail; das Team löscht dann Übersetzungen von Hand und muss neue verhindern → bräuchte trotzdem (a).
+**E1 – Widerspruch: Einstellung „Eigene Texte nicht automatisch übersetzen“.** In den Einstellungen der
+Themenräume. Gilt für alle eigenen Themengebiete, Diskussionen und Beiträge; neue Texte übernehmen die
+Einstellung. Beim Einschalten werden die vorhandenen automatischen Übersetzungen sofort gelöscht, danach
+wird nichts mehr an Anthropic geschickt. Gespeichert **je Inhalt** (`uebersetzen`), damit der Widerspruch
+auch nach einer Kontolöschung gilt, wenn die Beiträge ohne Namen stehen bleiben (Migration `b7c41e2d9a05`).
+Inhalte des Teams sind davon nicht betroffen.
 
-**E2 – Nutzungsregeln ergänzen?** Die Regeln (Fassung 2026-10-25), denen alle beim ersten Besuch zustimmen,
-erwähnen die Übersetzung nur indirekt („auch übersetzt … weiterverwendet“), nicht die Übermittlung an Anthropic.
-- (a) **Empfehlung:** einen Satz ergänzen, z. B. „Texte werden zur automatischen Übersetzung an Anthropic
-  übermittelt (ohne Name und E-Mail-Adresse); maßgeblich ist das Original.“ Neue Fassung → alle stimmen beim
-  nächsten Besuch einmal neu zu. Stärkt die Interessenabwägung (Erwartbarkeit).
-- (b) Nicht ergänzen; Hinweis beim Schreiben + Datenschutzerklärung reichen.
+Text der Einstellung:
+> Eigene Texte nicht automatisch übersetzen
+> Gilt für alle eigenen Themengebiete, Diskussionen und Beiträge, auch nach einer Kontolöschung. Vorhandene automatische Übersetzungen werden gelöscht; Teilnehmende anderer Sprachen sehen dann nur das Original.
 
-**E3 – Kennzeichnung „automatisch“ oder „KI“?** Derzeit „Automatisch übersetzt aus …“. Die
-Transparenzpflichten der KI-Verordnung (Art. 50) zielen vor allem auf KI-erzeugte Inhalte, die die
-Öffentlichkeit informieren sollen; die Themenräume sind nicht öffentlich. Eine Übersetzung mit
-sichtbarem Original ist meiner Einschätzung nach ausreichend gekennzeichnet.
-- (a) **Empfehlung:** so lassen.
-- (b) Ausdrücklich „KI-übersetzt (Claude)“.
+**E2 – Nutzungsregeln, neue Fassung `2026-10-26`.** Neuer Absatz vor dem Moderations-Absatz (alle
+Teilnehmenden stimmen beim nächsten Besuch einmal neu zu):
+> Texte in den Themenräumen werden automatisch in die anderen Sprachen der Website übersetzt; dafür wird nur der Text, ohne Name und E-Mail-Adresse, an Anthropic übermittelt. Maßgeblich ist das Original. In den Einstellungen lässt sich die Übersetzung der eigenen Texte jederzeit abschalten.
+
+Hinweis: Auch die neue Regelfassung darf erst nach der Freigabe auf Prod – sonst würden dort alle einer
+Übersetzung zustimmen, die noch aus ist.
+
+**E3 – Kennzeichnung bleibt** „Automatisch übersetzt aus: … · Original anzeigen“.
 
 ## 6. Zu prüfen – meine Anmerkungen
 
 1. **lit. f statt lit. b.** Man könnte die Übersetzung als Teil der Nutzung (lit. b) sehen. Ausgelöst wird sie aber
    durch die Lesenden, nicht durch die Verfasser, und die Themenräume funktionieren auch ohne sie. lit. f mit
-   Widerspruchsmöglichkeit (E1) halte ich für sauberer.
+   Widerspruchsmöglichkeit (E1, umgesetzt) halte ich für sauberer.
 2. **Unveröffentlichte Forschung.** Für Fachkontakte ist das größere Risiko kein Personenbezug, sondern
    Vertraulichkeit (z. B. noch nicht publizierte Ergebnisse). Abgefedert durch: Nutzungsregeln (keine vertraulichen
-   Inhalte), Hinweis beim Schreiben, kein Training bei Anthropic, Opt-out (E1).
+   Inhalte), Hinweis beim Schreiben, kein Training bei Anthropic, Opt-out (E1, umgesetzt).
 3. **Besondere Kategorien (Art. 9).** Nicht vorgesehen und laut Nutzungsregeln unerwünscht; fachliche Texte.
 4. **Veraltete Übersetzungen.** Ändert der Admin den Titel eines Gebiets, bleiben die alten automatischen
    Übersetzungen gespeichert (werden aber nicht mehr angezeigt), bis das Gebiet gelöscht wird oder der Admin sie
@@ -106,8 +107,7 @@ sichtbarem Original ist meiner Einschätzung nach ausreichend gekennzeichnet.
 
 ## 8. Nach der Freigabe
 
-1. E1–E3 umsetzen (je nach Entscheidung), ggf. Nutzungsregeln neue Fassung.
-2. ENTWURF-Vermerk im `_hinweis` von `omn/rechtstexte.json` durch die Freigabe ersetzen.
-3. `UEBERSETZUNG_AKTIV` Standard überall an (Prod), per `.env` abschaltbar.
-4. Staging → Prod deployen; danach einmal einen Beitrag in einer anderen Sprache aufrufen und im Admin
+1. ENTWURF-Vermerk im `_hinweis` von `omn/rechtstexte.json` durch die Freigabe ersetzen.
+2. `UEBERSETZUNG_AKTIV` Standard überall an (Prod), per `.env` abschaltbar.
+3. Staging → Prod deployen; danach einmal einen Beitrag in einer anderen Sprache aufrufen und im Admin
    (`/admin/themen/uebersetzungen`) nachsehen.

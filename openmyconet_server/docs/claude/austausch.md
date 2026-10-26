@@ -108,3 +108,9 @@ Einträge gehen in den Prompt). Prüfunterlage `docs/themen_uebersetzung_rechtsp
 - Admin: Zähler auf `/admin/themen`, Liste + Einzellöschen `/admin/themen/uebersetzungen` (Audit).
 - Datenschutzerklärung Abschnitt 10, Absatz „Automatische Übersetzung“ – **ENTWURF** bis zu Robbys Freigabe
   (vermerkt im `_hinweis` von `omn/rechtstexte.json`); Prod erst danach deployen.
+- **Widerspruch (E1, Robby 26.10.):** Einstellung „Eigene Texte nicht automatisch übersetzen“
+  (`themen_teilnahme.nicht_uebersetzen`), wirkt über die Spalte `uebersetzen` je Gebiet/Diskussion/Beitrag
+  (`themen.uebersetzung_widerspruch_setzen`; neue Inhalte erben sie; bleibt nach Kontolöschung). Neue
+  Inhaltsarten, die übersetzt werden, brauchen diese Spalte ebenfalls.
+- Nutzungsregeln Fassung `2026-10-26` nennen die Übersetzung (E2) – wie der Datenschutztext erst nach der
+  Freigabe auf Prod.

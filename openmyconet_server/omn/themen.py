@@ -38,7 +38,7 @@ from omn.spam_schutz import ip_erlaubt
 ARTEN = ('hypothese', 'literatur', 'beobachtung', 'messdaten')
 KREISE = ('fachkontakte', 'alle')
 # Fassung der Nutzungsregeln; bei Aenderung erhoehen -> alle stimmen beim naechsten Besuch neu zu
-REGELN_FASSUNG = '2026-10-25'
+REGELN_FASSUNG = '2026-10-26'   # 26.10.: Absatz zur automatischen Uebersetzung (E2)
 UPLOAD_ORDNER = 'themen'
 TITEL_MAX = 200
 BESCHREIBUNG_MAX = 500
@@ -114,14 +114,34 @@ def _nachladen_moeglich():
     return anfrage._ue_moeglich
 
 
+def uebersetzung_widerspruch_setzen(nutzer, widerspricht):
+    """Einstellung "Eigene Texte nicht automatisch uebersetzen" (E1, Robby 26.10.2026):
+    gilt fuer alle eigenen Gebiete, Diskussionen und Beitraege (je Inhalt gespeichert, damit
+    der Widerspruch auch nach einer Kontoloeschung bleibt). Bei Widerspruch werden die
+    vorhandenen automatischen Uebersetzungen geloescht. Commit macht der Aufrufer."""
+    nutzer.themen_teilnahme.nicht_uebersetzen = widerspricht
+    eigene = (Themengebiet.query.filter_by(erstellt_von=nutzer.id, von_team=False).all()
+              + Diskussion.query.filter_by(erstellt_von=nutzer.id, von_team=False).all()
+              + Beitrag.query.filter_by(autor_nutzer_id=nutzer.id, von_team=False).all())
+    for inhalt in eigene:
+        inhalt.uebersetzen = not widerspricht
+        if widerspricht:
+            (Uebersetzung.query.filter(Uebersetzung.inhalt_typ == inhalt_typ(inhalt),
+                                       Uebersetzung.inhalt_id == inhalt.id, Uebersetzung.anbieter != 'manuell')
+             .delete(synchronize_session=False))
+
+
 def anzeige(inhalt, feld, sprache):
     """Was die Seite zeigt: {'text', 'original', 'sprache_original', 'uebersetzt',
     'automatisch', 'nachladen', 'typ', 'id', 'feld'}. Das Original ist IMMER dabei
     (Plan 7.4: sofort erreichbar). nachladen = es fehlt eine Uebersetzung, die die
     Seite per POST /themen/uebersetzung nachholen soll (Phase 2b)."""
     original = getattr(inhalt, feld) or ''
+    erlaubt = inhalt.uebersetzen
     eintrag = _uebersetzung_eintrag(inhalt, feld, sprache)
-    fehlt = (eintrag is None and bool(original.strip()) and sprache != inhalt.sprache_original)
+    if eintrag is not None and not erlaubt and eintrag.anbieter != 'manuell':
+        eintrag = None
+    fehlt = (erlaubt and eintrag is None and bool(original.strip()) and sprache != inhalt.sprache_original)
     return {
         'text': eintrag.text if eintrag else original,
         'original': original,
@@ -367,6 +387,7 @@ def einstellungen(nutzer, teilnahme, lang):
         else:
             teilnahme.anzeigename = name
             teilnahme.original_zuerst = bool(request.form.get('original_zuerst'))
+            uebersetzung_widerspruch_setzen(nutzer, bool(request.form.get('nicht_uebersetzen')))
             db.session.commit()
             flash(t('themen_einstellungen_gespeichert', lang))
             return redirect(url_for('themen.einstellungen'))
@@ -423,7 +444,8 @@ def gebiet_neu(nutzer, teilnahme, lang):
         if not fehler and not _schreiben_erlaubt(nutzer):
             fehler = [t('themen_zu_viele', lang)]
         if not fehler:
-            g = Themengebiet(titel=titel, beschreibung=beschreibung, sprache_original=sprache, erstellt_von=nutzer.id)
+            g = Themengebiet(titel=titel, beschreibung=beschreibung, sprache_original=sprache, erstellt_von=nutzer.id,
+                             uebersetzen=not teilnahme.nicht_uebersetzen)
             db.session.add(g)
             db.session.commit()
             return redirect(url_for('themen.gebiet', gebiet_id=g.id))
@@ -470,7 +492,7 @@ def diskussion_neu(nutzer, teilnahme, lang, gebiet_id):
             fehler = [t('themen_zu_viele', lang)]
         if not fehler:
             d = Diskussion(themengebiet_id=g.id, titel=titel, beschreibung=beschreibung, sprache_original=sprache,
-                           erstellt_von=nutzer.id)
+                           erstellt_von=nutzer.id, uebersetzen=not teilnahme.nicht_uebersetzen)
             db.session.add(d)
             db.session.commit()
             return redirect(url_for('themen.diskussion', diskussion_id=d.id))
@@ -506,7 +528,8 @@ def diskussion(nutzer, teilnahme, lang, diskussion_id):
             fehler.append(t('themen_zu_viele', lang))
         else:
             b = Beitrag(diskussion_id=d.id, antwort_auf=antwort_auf or None, autor_nutzer_id=nutzer.id, text=text,
-                        art=art, sprache_original=_sprache_aus_formular(lang))
+                        art=art, sprache_original=_sprache_aus_formular(lang),
+                        uebersetzen=not teilnahme.nicht_uebersetzen)
             db.session.add(b)
             db.session.flush()
             for datei in request.files.getlist('dateien'):
