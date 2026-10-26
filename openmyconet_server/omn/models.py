@@ -477,6 +477,14 @@ class Austausch(db.Model):
     loeschsperre_grund = db.Column(db.String(300), nullable=False, default='')
     erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
     letzte_aktivitaet = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware, index=True)
+    # Seit 26.10.2026 (Robby): Austausch = vertrauliche Nachrichten + Dateien; Aufgaben nur noch
+    # auf Wunsch je Austausch (Admin), vorhandene bleiben gespeichert.
+    aufgaben_aktiv = db.Column(db.Boolean, nullable=False, default=False, server_default=db.false())
+    # Start-Themenraum: wohin der Kontakt nach dem Login kommt (Gebiet ODER Diskussion).
+    # Bewusst OHNE Fremdschluessel -- keine Verbindung von den Themenraeumen zum vertraulichen
+    # Austausch; ein geloeschtes/ausgeblendetes Ziel wird beim Aufloesen einfach ignoriert.
+    start_gebiet_id = db.Column(db.Integer, nullable=True)
+    start_diskussion_id = db.Column(db.Integer, nullable=True)
 
     nutzer = db.relationship('Nutzer', backref=db.backref('austausche', lazy=True))
 

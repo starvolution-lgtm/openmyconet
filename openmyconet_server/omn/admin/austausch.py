@@ -17,7 +17,7 @@ from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 from omn.i18n import LANGS, SPRACHNAMEN
-from omn.models import Austausch, Bewerbung, Foerderer, Nutzer
+from omn.models import Austausch, Bewerbung, Diskussion, Foerderer, Nutzer, Themengebiet
 
 FELDER_TEXT = ('titel', 'name', 'email', 'institution', 'themenueberblick', 'persoenliche_einleitung',
                'linkedin_url', 'vorgeschichte_notiz')
@@ -48,7 +48,29 @@ def _formular_lesen(form):
             fehler.append('Das Datum des Gesprächsbeginns ist ungültig.')
     w['linkedin_url'] = w['linkedin_url'] or None
     w['vorgeschichte_notiz'] = w['vorgeschichte_notiz'] or None
+    w['aufgaben_aktiv'] = bool(form.get('aufgaben_aktiv'))
+    w['start_gebiet_id'], w['start_diskussion_id'] = _start_lesen(form.get('start') or '')
     return w, fehler
+
+
+def _start_lesen(wert):
+    """'g:<id>' = Themengebiet, 'd:<id>' = Diskussion, sonst keiner."""
+    art, _, nummer = wert.partition(':')
+    if not nummer.isdigit():
+        return None, None
+    if art == 'g' and db.session.get(Themengebiet, int(nummer)):
+        return int(nummer), None
+    if art == 'd' and db.session.get(Diskussion, int(nummer)):
+        return None, int(nummer)
+    return None, None
+
+
+def _start_auswahl():
+    """Waehlbare Start-Themenraeume: sichtbare Gebiete, darunter ihre sichtbaren Diskussionen."""
+    gebiete = (Themengebiet.query.filter_by(sichtbar=True)
+               .order_by(Themengebiet.vorgegeben.desc(), Themengebiet.reihenfolge, Themengebiet.titel).all())
+    return [{'g': g, 'diskussionen': sorted((d for d in g.diskussionen if d.sichtbar), key=lambda d: d.titel)}
+            for g in gebiete]
 
 
 def _austausch_oder_404(austausch_id):
@@ -60,7 +82,7 @@ def _austausch_oder_404(austausch_id):
 
 def _formular_seite(austausch, werte, fehler):
     return render_template('austausch_admin_formular.html', austausch=austausch, werte=werte,
-                           fehler=fehler, sprachen=SPRACHNAMEN)
+                           fehler=fehler, sprachen=SPRACHNAMEN, start_auswahl=_start_auswahl())
 
 
 @admin_bp.route('/admin/austausch')
@@ -108,7 +130,8 @@ def austausch_bearbeiten(austausch_id):
             flash('Änderungen gespeichert.')
             return redirect(url_for('admin.austausch_detail', austausch_id=a.id))
         return _formular_seite(a, werte, fehler)
-    werte = {f: getattr(a, f) for f in (*FELDER_TEXT, 'sprache', 'anrede', 'gespraech_begonnen_am')}
+    werte = {f: getattr(a, f) for f in (*FELDER_TEXT, 'sprache', 'anrede', 'gespraech_begonnen_am',
+                                        'aufgaben_aktiv', 'start_gebiet_id', 'start_diskussion_id')}
     return _formular_seite(a, werte, [])
 
 

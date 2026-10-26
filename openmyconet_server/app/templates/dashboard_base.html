@@ -21,6 +21,12 @@
         {% if nutzer %}
         <nav class="db-nav">
             <a href="{{ url_for('datenlabor.seite') }}">{{ T.nav_labor if T is defined else 'BioComm-Datenlabor' }}</a>
+            {% if nutzer.knoten %}
+            <a href="{{ url_for('dashboard.knotenbetreiber') }}"{% if ep == 'dashboard.knotenbetreiber' %} aria-current="page"{% endif %}>{{ t('nav_messknoten', lang if lang is defined else None) }}</a>
+            {% endif %}
+            {% if kooperation_zugang(nutzer) %}
+            <a href="{{ url_for('dashboard.hyphist') }}"{% if ep == 'dashboard.hyphist' %} aria-current="page"{% endif %}>{{ t('nav_kooperation', lang if lang is defined else None) }}</a>
+            {% endif %}
             {% if nutzer.austausche|selectattr('status', 'equalto', 'aktiv')|list %}
             <a href="{{ url_for('austausch.bereich') }}"{% if ep == 'austausch.bereich' %} aria-current="page"{% endif %}>{{ t('austausch_bereich_titel', lang if lang is defined else None) }}</a>
             {% endif %}

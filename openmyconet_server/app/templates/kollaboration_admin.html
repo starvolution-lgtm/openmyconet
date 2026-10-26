@@ -14,8 +14,9 @@
     Technischer Austausch mit dem Knotenbetreiber: Inbetriebnahme, Wartung,
     Fehlermeldungen, Firmware-Updates. Nur zwischen Betreiber und Team sichtbar.
     {% elif fach %}
-    Fachlicher Austausch mit einem eingeladenen Fachkontakt. Aufgaben und Kommentare
-    sieht nur die eingeladene Person (sobald sie die Einladung angenommen hat) und das Team.
+    Fachlicher Austausch mit einem eingeladenen Fachkontakt: vertrauliche Nachrichten und Dateien
+    {%- if austausch and austausch.aufgaben_aktiv %} sowie Aufgaben{% endif %}. Sichtbar nur für die
+    eingeladene Person (sobald sie die Einladung angenommen hat) und das Team.
     {% else %}
     Projekt- und partnerschaftsbezogener Austausch mit dem Kooperationspartner.
     Nur zwischen Partner und Team sichtbar.
@@ -34,6 +35,10 @@
 
 {% block kontext_info %}{% endblock %}
 
+{% if fach and not austausch.aufgaben_aktiv %}
+<p class="info">Aufgaben sind in diesem Austausch ausgeblendet{% if aufgaben %} ({{ aufgaben|length }} gespeichert){% endif %}
+— einschalten unter „Bearbeiten“.</p>
+{% else %}
 <div class="karte">
     <h2>Aufgaben</h2>
     <table class="ka-1">
@@ -66,9 +71,10 @@
         <button type="submit">Aufgabe hinzufügen</button>
     </form>
 </div>
+{% endif %}
 
 <div class="karte">
-    <h2>Kommentare</h2>
+    <h2>{{ 'Vertrauliche Nachrichten' if fach else 'Kommentare' }}</h2>
     {% for k in kommentare %}
     <div class="ka-4">
         <small><strong>{{ 'Team' if k.autor == 'team' else partner_label }}</strong> · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</small>

@@ -61,6 +61,27 @@ Art. 14 DSGVO), nach drei Wochen kommt eine Erinnerungsmail.</p>
         </label>
     </div>
 
+    <div class="karte">
+        <h2>Bereich der eingeladenen Person</h2>
+        <label>Start-Themenraum (dort landet die Person nach dem Annehmen und beim Login)
+            <select name="start">
+                <option value="">– keiner (Übersicht der Themenräume) –</option>
+                {% for z in start_auswahl %}
+                <option value="g:{{ z.g.id }}"{% if werte.start_gebiet_id == z.g.id %} selected{% endif %}>{{ z.g.titel }}</option>
+                {% for d in z.diskussionen %}
+                <option value="d:{{ d.id }}"{% if werte.start_diskussion_id == d.id %} selected{% endif %}>&nbsp;&nbsp;↳ {{ d.titel }}</option>
+                {% endfor %}
+                {% endfor %}
+            </select>
+        </label>
+        <p class="u-muted-note">Themengebiet oder einzelne Diskussion. Betreibt die Person einen Messknoten, landet sie
+            weiter beim Messknoten; der Themenraum ist dann über den Austausch und die Leiste erreichbar.</p>
+        <label class="aus-check"><input type="checkbox" name="aufgaben_aktiv" value="1"{% if werte.aufgaben_aktiv %} checked{% endif %}>
+            Aufgaben in diesem Austausch anzeigen</label>
+        <p class="u-muted-note">Standard aus: der Austausch zeigt nur vertrauliche Nachrichten und Dateien. Vorhandene
+            Aufgaben bleiben gespeichert und erscheinen wieder, wenn der Haken gesetzt wird.</p>
+    </div>
+
     <div class="karte aus-intern">
         <h2>🔒 Nur für das Team (nie für die eingeladene Person sichtbar)</h2>
         <label>LinkedIn-Profil (https://…)

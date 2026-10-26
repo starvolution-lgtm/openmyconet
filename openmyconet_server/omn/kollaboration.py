@@ -23,7 +23,7 @@ from werkzeug.utils import secure_filename
 
 from omn.extensions import db, mail
 from omn.i18n import LANGS, t
-from omn.models import Aufgabe, Kommentar, KollaborationAnhang
+from omn.models import Aufgabe, Austausch, Kommentar, KollaborationAnhang
 from omn.zeit import utcnow
 
 logger = logging.getLogger(__name__)
@@ -147,6 +147,7 @@ MELDUNGEN_DE = {
     'kommentar_leer': 'Der Kommentar ist leer.',
     'anhang_abgelehnt': '"{datei}" abgelehnt (Format oder Groesse).',
     'unbekannt': 'Unbekannte Aktion.',
+    'aufgaben_aus': 'In diesem Austausch sind Aufgaben ausgeschaltet.',
 }
 
 
@@ -163,6 +164,10 @@ def post_verarbeiten(kontext, wer, form, files, meldungen=None):
     m = {**MELDUNGEN_DE, **(meldungen or {})}
     filt = kontext_filter(kontext)
     aktion = form.get('action')
+
+    # Austausch: Aufgaben nur, wenn im Admin eingeschaltet (seit 26.10.2026 Standard aus)
+    if aktion in ('aufgabe_neu', 'aufgabe_toggle') and isinstance(kontext, Austausch) and not kontext.aufgaben_aktiv:
+        return None, m['aufgaben_aus']
 
     def _aufgabe_dieses_kontexts(aufgabe_id):
         a = Aufgabe.query.get(aufgabe_id) if aufgabe_id else None

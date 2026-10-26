@@ -51,6 +51,15 @@ def _aktueller_nutzer():
 
 # --- Login / Logout ---
 
+@dashboard_bp.app_context_processor
+def _bereiche_helfer():
+    """Fuer die Leiste in dashboard_base.html: jeder Bereich hat seinen eigenen Knopf
+    (Messknoten, Kooperation, Fachlicher Austausch, Themenraeume), Robby 26.10.2026."""
+    def kooperation_zugang(nutzer):
+        return bool(nutzer and nutzer.ist_hyphist and kollaboration.kooperationen_von(nutzer))
+    return {'kooperation_zugang': kooperation_zugang}
+
+
 @dashboard_bp.route('/dashboard/login', methods=['GET', 'POST'])
 def login():
     nachricht = None
@@ -183,7 +192,8 @@ def home():
     if nutzer.ist_hyphist and kollaboration.kooperationen_von(nutzer):
         return redirect(url_for('dashboard.hyphist'))
     if kollaboration.austausch_bereiche_von(nutzer):
-        return redirect(url_for('austausch.bereich'))
+        from omn.austausch import ziel_nach_login
+        return redirect(ziel_nach_login(nutzer))
     if Bewerbung.query.filter_by(nutzer_id=nutzer.id).first():
         return redirect(url_for('dashboard.bewerber'))
     return redirect(url_for('dashboard.basis'))

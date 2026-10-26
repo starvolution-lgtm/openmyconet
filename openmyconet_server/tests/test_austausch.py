@@ -118,7 +118,7 @@ def test_anrede_informell_und_sprache_des_kontos(app):
     with mail.record_messages() as ausgehend:
         kollaboration.kommentar_anlegen(a, 'Gibt es Rohdaten zur Messung?', 'team')
     m = ausgehend[0]
-    assert m.subject == 'OpenMycoNet — Nuevo comentario: Gibt es Rohdaten zur Messung?'
+    assert m.subject == 'OpenMycoNet — Nuevo mensaje: Gibt es Rohdaten zur Messung?'
     assert 'en tu intercambio' in m.body
     assert 'Recibes este mensaje' in m.body
     assert '<html lang="es">' in m.html
@@ -317,6 +317,8 @@ def test_admin_bearbeiten(client, app, superadmin):
 
 def test_admin_arbeitsbereich_aufgabe_und_kommentar(client, app, superadmin):
     _, a = _fachkontakt()
+    a.aufgaben_aktiv = True          # seit 26.10.2026 je Austausch einschaltbar, Standard aus
+    db.session.commit()
     _admin(client)
     with mail.record_messages() as ausgehend:
         resp = client.post(f'/admin/austausch/{a.id}', data={'action': 'aufgabe_neu', 'titel': 'Daten teilen'})
@@ -715,9 +717,13 @@ def test_arbeitsbereich_schreiben_mit_uebersetzten_meldungen(client, app):
     with mail.record_messages() as ausgehend:
         seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'kommentar_neu',
                                                 'text': 'Hola equipo'}).get_data(as_text=True)
-    assert 'Comentario guardado.' in seite
+    assert 'Mensaje enviado.' in seite
     assert Kommentar.query.filter_by(austausch_id=a.id, autor='partner').count() == 1
     assert ausgehend[0].recipients == ['admin@openmyconet.test']
+    seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': 'x'}).get_data(as_text=True)
+    assert 'En este intercambio no hay tareas.' in seite      # Aufgaben ausgeschaltet
+    a.aufgaben_aktiv = True
+    db.session.commit()
     seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': ''}).get_data(as_text=True)
     assert 'La tarea necesita un título.' in seite
     assert 'Solo visible para ti' in seite
@@ -737,7 +743,12 @@ def test_dashboard_leitet_fachkontakt_zum_austausch(client, app):
     n, a = _fachkontakt()
     _als(client, n.id)
     resp = client.get('/dashboard')
-    assert resp.status_code == 302 and resp.headers['Location'].endswith('/austausch')
+    # seit 26.10.2026: ohne Start-Themenraum in die Themenraum-Uebersicht ...
+    assert resp.status_code == 302 and resp.headers['Location'].endswith('/themen')
+    # ... und ohne Zugang zu den Themenraeumen wie bisher in den Austausch
+    app.config['THEMEN_FREIGEGEBEN'] = False
+    assert client.get('/dashboard').headers['Location'].endswith('/austausch')
+    app.config['THEMEN_FREIGEGEBEN'] = True
     # kein Hyphist-Bereich, keine Kooperation
     seite = client.get('/dashboard/hyphist').get_data(as_text=True)
     assert 'Elektrophysiologie an Myzel' not in seite
@@ -942,3 +953,78 @@ def test_bestand_kooperationsmail_unveraendert(app):
     assert 'Kooperation "Koop GmbH"' in ausgehend[0].body
     assert '<html lang="de">' in ausgehend[0].html
     assert 'Das OpenMycoNet-Team' in ausgehend[0].html
+
+
+# --- Seit 26.10.2026: Start-Themenraum, Aufgaben nur auf Wunsch, eigene Knoepfe -----------
+
+def _gebiet_und_diskussion():
+    from omn.models import Diskussion, Themengebiet
+    g = Themengebiet(titel='Vererbung', beschreibung='B', von_team=True)
+    db.session.add(g)
+    db.session.commit()
+    d = Diskussion(themengebiet_id=g.id, titel='450 Millionen Jahre', beschreibung='B', von_team=True)
+    db.session.add(d)
+    db.session.commit()
+    return g, d
+
+
+def test_start_themenraum_nach_login_und_im_austausch(client, app):
+    n, a = _fachkontakt()
+    g, d = _gebiet_und_diskussion()
+    a.start_diskussion_id = d.id
+    db.session.commit()
+    _als(client, n.id)
+    assert client.get('/dashboard').headers['Location'].endswith(f'/themen/diskussion/{d.id}')
+    seite = client.get('/austausch').get_data(as_text=True)
+    assert 'Zum Themenraum: 450 Millionen Jahre' in seite
+    # Diskussion ausgeblendet -> Ziel ignoriert, Gebiet als Ersatz
+    a.start_gebiet_id = g.id
+    d.sichtbar = False
+    db.session.commit()
+    assert client.get('/dashboard').headers['Location'].endswith(f'/themen/gebiet/{g.id}')
+    # Ziel geloescht -> Uebersicht
+    a.start_gebiet_id = 9999
+    db.session.commit()
+    assert client.get('/dashboard').headers['Location'].endswith('/themen')
+
+
+def test_messknoten_geht_vor_und_hat_eigenen_knopf(client, app):
+    from omn.models import Knoten
+    n, a = _fachkontakt()
+    _g, d = _gebiet_und_diskussion()
+    a.start_diskussion_id = d.id
+    db.session.add(Knoten(knoten_id='K-1', nutzer_id=n.id))
+    db.session.commit()
+    _als(client, n.id)
+    assert client.get('/dashboard').headers['Location'].endswith('/dashboard/knotenbetreiber')
+    seite = client.get('/austausch').get_data(as_text=True)
+    assert '/dashboard/knotenbetreiber' in seite and 'Messknoten' in seite      # Knopf in der Leiste
+    assert 'Fachlicher Austausch' in seite and '/themen' in seite
+
+
+def test_aufgaben_ausgeblendet_bis_admin_einschaltet(client, app, superadmin):
+    n, a = _fachkontakt()
+    db.session.add(Aufgabe(titel='Alte Aufgabe', erstellt_von='team', austausch_id=a.id))
+    db.session.commit()
+    _als(client, n.id)
+    seite = client.get('/austausch').get_data(as_text=True)
+    assert 'Alte Aufgabe' not in seite and 'Vertrauliche Nachrichten' in seite
+    _admin(client)
+    admin = client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+    assert 'Aufgaben sind in diesem Austausch ausgeblendet (1 gespeichert)' in admin
+    g, _d = _gebiet_und_diskussion()
+    form = client.get(f'/admin/austausch/{a.id}/bearbeiten').get_data(as_text=True)
+    assert f'value="g:{g.id}"' in form and 'name="aufgaben_aktiv"' in form
+    client.post(f'/admin/austausch/{a.id}/bearbeiten', data={
+        'titel': a.titel, 'name': a.name, 'email': a.email, 'sprache': 'de', 'anrede': 'formell',
+        'aufgaben_aktiv': '1', 'start': f'g:{g.id}'})
+    a = db.session.get(Austausch, a.id)
+    assert a.aufgaben_aktiv is True and a.start_gebiet_id == g.id and a.start_diskussion_id is None
+    _als(client, n.id)
+    assert 'Alte Aufgabe' in client.get('/austausch').get_data(as_text=True)
+    # ungueltige Auswahl -> kein Start
+    _admin(client)
+    client.post(f'/admin/austausch/{a.id}/bearbeiten', data={
+        'titel': a.titel, 'name': a.name, 'email': a.email, 'sprache': 'de', 'anrede': 'formell', 'start': 'd:9999'})
+    a = db.session.get(Austausch, a.id)
+    assert a.start_gebiet_id is None and a.start_diskussion_id is None and a.aufgaben_aktiv is False

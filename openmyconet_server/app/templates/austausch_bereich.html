@@ -1,7 +1,8 @@
 {% extends "dashboard_base.html" %}
 {# Arbeitsbereich des eingeladenen Fachkontakts (omn/austausch.py::bereich).
-   Bekommt NUR titel/themenueberblick/aufgaben/kommentare -- keine admin-only Felder
-   (LinkedIn, Notiz, Gespraechsbeginn, Kontaktdaten). Anrede je Austausch (txa(key, x)). #}
+   Bekommt NUR titel/themenueberblick/aufgaben/kommentare/start -- keine admin-only Felder
+   (LinkedIn, Notiz, Gespraechsbeginn, Kontaktdaten). Anrede je Austausch (txa(key, x)).
+   Seit 26.10.2026: vertrauliche Nachrichten + Dateien; Aufgaben nur, wenn x.aufgaben_aktiv. #}
 {% block html_lang %}{{ lang }}{% endblock %}
 {% block title %}OpenMycoNet — {{ tx('austausch_bereich_titel') }}{% endblock %}
 {% block head %}
@@ -29,8 +30,10 @@
         <h2>{{ x.titel }}</h2>
         <p class="label">{{ txa('austausch_bereich_hinweis', x) }}</p>
         {% if x.themenueberblick %}<p class="u-pre-wrap">{{ x.themenueberblick }}</p>{% endif %}
+        {% if b.start %}<p><a href="{{ b.start.url }}">{{ tx('austausch_zum_start', titel=b.start.titel) }}</a></p>{% endif %}
     </div>
 
+    {% if x.aufgaben_aktiv %}
     <div class="card">
         <h2>{{ tx('austausch_aufgaben') }}</h2>
         <table>
@@ -69,6 +72,7 @@
             <button type="submit">{{ tx('austausch_aufgabe_knopf') }}</button>
         </form>
     </div>
+    {% endif %}
 
     <div class="card">
         <h2>{{ tx('austausch_kommentare') }}</h2>

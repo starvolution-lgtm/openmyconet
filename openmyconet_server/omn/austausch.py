@@ -409,13 +409,48 @@ def einladung(token):
             db.session.commit()
         elif _einloesen(a, a.einladung_token_hash):
             flash(tx('austausch_willkommen', lang))
-            return redirect(url_for('austausch.bereich', lang=lang))
+            start = start_themenraum(a, a.nutzer, lang)    # direkt in den Start-Themenraum
+            return redirect(start['url'] if start else url_for('austausch.bereich', lang=lang))
         else:
             return _ungueltig(lang)
         return _seite('austausch_einladung.html', a, lang, zustand='code', email=email,
                       minuten=minuten, fehler=fehler)
 
     return _seite('austausch_einladung.html', a, lang, zustand='start', email=email)
+
+
+def start_themenraum(austausch, nutzer, lang):
+    """Start-Themenraum dieses Austauschs ({'url', 'titel'}) oder None: nicht gesetzt,
+    kein Zugang zu den Themenraeumen oder Ziel inzwischen geloescht/ausgeblendet.
+    Die Themenraeume kennen den Austausch nicht (keine Verbindung in diese Richtung)."""
+    from omn import themen
+    from omn.models import Diskussion, Themengebiet
+    if not themen.darf_themenraeume_nutzen(nutzer):
+        return None
+    if austausch.start_diskussion_id:
+        d = db.session.get(Diskussion, austausch.start_diskussion_id)
+        if d is not None and d.sichtbar and d.themengebiet.sichtbar:
+            return {'url': url_for('themen.diskussion', diskussion_id=d.id),
+                    'titel': themen.anzeige(d, 'titel', lang)['text']}
+    if austausch.start_gebiet_id:
+        g = db.session.get(Themengebiet, austausch.start_gebiet_id)
+        if g is not None and g.sichtbar:
+            return {'url': url_for('themen.gebiet', gebiet_id=g.id),
+                    'titel': themen.anzeige(g, 'titel', lang)['text']}
+    return None
+
+
+def ziel_nach_login(nutzer, lang=None):
+    """Fachkontakt ohne Messknoten/Kooperation: Start-Themenraum des (neuesten aktiven)
+    Austauschs, sonst die Themenraum-Uebersicht, sonst der Austausch selbst."""
+    from omn import themen
+    for a in sorted(kollaboration.austausch_bereiche_von(nutzer), key=lambda x: x.id, reverse=True):
+        start = start_themenraum(a, nutzer, lang)
+        if start:
+            return start['url']
+    if themen.darf_themenraeume_nutzen(nutzer):
+        return url_for('themen.uebersicht')
+    return url_for('austausch.bereich')
 
 
 def _meldungen(lang):
@@ -426,6 +461,7 @@ def _meldungen(lang):
         'titel_fehlt': tx('austausch_fehler_titel', lang),
         'kommentar_leer': tx('austausch_fehler_leer', lang),
         'anhang_abgelehnt': tx('austausch_fehler_anhang', lang),
+        'aufgaben_aus': tx('austausch_fehler_aufgaben_aus', lang),
     }
 
 
@@ -448,8 +484,9 @@ def bereich():
 
     ansicht = [{
         'a': x,
-        'aufgaben': kollaboration.aufgaben_fuer(x),
+        'aufgaben': kollaboration.aufgaben_fuer(x) if x.aufgaben_aktiv else [],
         'kommentare': kollaboration.kommentare_fuer(x),
+        'start': start_themenraum(x, nutzer, lang),
     } for x in bereiche]
     return _seite('austausch_bereich.html', bereiche[0] if bereiche else None, lang,
                   nutzer=nutzer, ansicht=ansicht, nachricht=nachricht, fehler=fehler)

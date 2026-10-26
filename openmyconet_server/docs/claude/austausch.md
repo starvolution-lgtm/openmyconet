@@ -68,6 +68,19 @@ Datenschutzerklärung Abschnitt `austausch` (9.) nennt genau diese Fristen.
   Interessenabwägung + VVT-Eintrag im Kontrollzentrum `03_Website_Backend`). Änderungen an
   Datenarten, Fristen oder Texten → Datenschutzerklärung Abschnitt 9 + Interessenabwägung nachziehen.
 
+## Austausch = vertrauliche Nachrichten, Start-Themenraum, eigene Knöpfe (seit 26.10.2026)
+Robby: Aufgaben wirkten wie der Messknoten-Bereich. Seitdem:
+- **Aufgaben je Austausch nur auf Wunsch** (`austausch.aufgaben_aktiv`, Standard aus, Admin → Bearbeiten).
+  Aus → Seite zeigt nur „Vertrauliche Nachrichten“ + Dateien, `post_verarbeiten` lehnt Aufgaben-Aktionen
+  ab (keine Mail über Unsichtbares); vorhandene Aufgaben bleiben gespeichert. Abschnitt 9 der
+  Datenschutzerklärung bleibt richtig (Aufgaben sind weiter möglich).
+- **Start-Themenraum** (`start_gebiet_id` / `start_diskussion_id`, bewusst **ohne FK** – die Themenräume
+  kennen den Austausch nicht): Ziel nach dem Annehmen und beim Login (`austausch.ziel_nach_login`,
+  `start_themenraum`); ausgeblendet/gelöscht → Gebiet, sonst Themenraum-Übersicht, ohne Themenzugang → Austausch.
+- **Reihenfolge nach Login** (`dashboard.home`): Messknoten → Kooperation (Hyphist) → Fachkontakt → Bewerber.
+  Jeder Bereich hat einen eigenen Knopf in der Leiste (`dashboard_base.html`: Messknoten, Kooperation,
+  Fachlicher Austausch, Themenräume). Daten bleiben je Kontext getrennt (`kontext_filter`).
+
 ## Phase 2a: Wissenschaftliche Themenräume (seit 25.10.2026)
 Gemeinsamer Bereich `/themen` (Blueprint `omn/themen.py`), Moderation `/admin/themen`
 (`omn/admin/themen.py`). Themengebiet → Diskussion → Beitrag (eine Ebene Antworten, optionale
