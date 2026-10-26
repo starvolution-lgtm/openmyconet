@@ -10,7 +10,7 @@ Grundregeln:
   dasselbe Modell wie Chatbot und News-Uebersetzung (omn/ki.py). Der Schluessel liegt
   nur auf dem Server; uebermittelt wird nur der Text, kein Name, keine E-Mail.
 - Kostenbremse: UEBERSETZUNG_TAGESLIMIT automatische Uebersetzungen je Tag (UTC).
-- Schalter UEBERSETZUNG_AKTIV: auf Prod bis zur rechtlichen Freigabe aus.
+- Schalter UEBERSETZUNG_AKTIV: seit der Freigabe am 26.10.2026 ueberall an, per .env abschaltbar.
 - Sicherheit (Plan 7.7): Der Beitrag ist fremder Text. Er steht im Prompt klar
   abgegrenzt, das Modell hat keine Werkzeuge, die Antwort wird nur escaped als Text
   angezeigt und als "automatisch uebersetzt" markiert. Zusaetzlich verwirft

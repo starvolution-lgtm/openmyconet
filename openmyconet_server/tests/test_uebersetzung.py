@@ -157,16 +157,16 @@ def test_gleichzeitige_anfrage_nimmt_vorhandene_fassung(app, monkeypatch):
     assert Uebersetzung.query.count() == 1
 
 
-def test_schalter_standard_aus_auf_prod_an_auf_staging(monkeypatch):
+def test_schalter_seit_freigabe_ueberall_an_per_env_abschaltbar(monkeypatch):
     import importlib
 
     import omn.config as konfig
     monkeypatch.delenv('UEBERSETZUNG_AKTIV', raising=False)
     try:
         monkeypatch.setenv('OMN_ENV', 'prod')
-        assert importlib.reload(konfig).Config.UEBERSETZUNG_AKTIV is False
-        monkeypatch.setenv('OMN_ENV', 'staging')
         assert importlib.reload(konfig).Config.UEBERSETZUNG_AKTIV is True
+        monkeypatch.setenv('UEBERSETZUNG_AKTIV', '0')
+        assert importlib.reload(konfig).Config.UEBERSETZUNG_AKTIV is False
         assert konfig.Config.UEBERSETZUNG_TAGESLIMIT == 100
     finally:
         monkeypatch.undo()

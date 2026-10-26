@@ -118,10 +118,11 @@ class Config:
                           in ('1', 'true', 'yes', 'on'))
 
     # Automatische Uebersetzung in den Themenraeumen (Phase 2b, omn/uebersetzung.py).
-    # Schalter bis zur rechtlichen Freigabe: auf Prod aus, auf Staging/lokal an;
-    # UEBERSETZUNG_AKTIV=1/0 in der .env ueberschreibt das. Tageslimit = Kostenbremse
+    # Schalter: bis zur rechtlichen Freigabe war er auf Prod aus; seit 26.10.2026 freigegeben
+    # (Robby, docs/themen_uebersetzung_rechtspruefung.md) -> ueberall an. UEBERSETZUNG_AKTIV=0
+    # in der .env schaltet ab (kein Text mehr an den Anbieter). Tageslimit = Kostenbremse
     # (automatische Uebersetzungen je Tag, Robby 26.10.2026: 100).
-    UEBERSETZUNG_AKTIV = (os.getenv('UEBERSETZUNG_AKTIV', '0' if OMN_ENV == 'prod' else '1').strip().lower()
+    UEBERSETZUNG_AKTIV = (os.getenv('UEBERSETZUNG_AKTIV', '1').strip().lower()
                           in ('1', 'true', 'yes', 'on'))
     UEBERSETZUNG_ANBIETER = os.getenv('UEBERSETZUNG_ANBIETER', 'claude').strip() or 'claude'
     UEBERSETZUNG_TAGESLIMIT = int(os.getenv('UEBERSETZUNG_TAGESLIMIT', '100'))

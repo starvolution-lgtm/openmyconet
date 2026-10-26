@@ -3,11 +3,14 @@
 Stand: 26.10.2026 · Maßgeblich ist die deutsche Fassung; en/nl/fr/es sind nachgezogen.
 Hinweis: Zusammenstellung mit Anmerkungen, **keine Rechtsberatung**.
 
-Die Übersetzung ist gebaut (Commits `f1a52d7`, `23b6e2d`, `85613aa`, `ef2fbb6` + E1/E2) und hängt am Schalter
-`UEBERSETZUNG_AKTIV`: **auf Prod aus** (Standard dort), auf Staging und lokal an. Solange er aus ist, geht
-kein Text an Anthropic, es erscheinen weder Platzhalter noch Hinweis. Der neue Datenschutztext steht im
-Repo als ENTWURF (vermerkt im `_hinweis` von `omn/rechtstexte.json`). **Prod erst nach der Freigabe
-deployen**, sonst wäre der Text schon öffentlich, obwohl die Übersetzung dort aus ist.
+**Freigegeben von Robby am 26.10.2026** (Datenschutztext, Nutzungsregeln Fassung 2026-10-26, E1–E3).
+Seitdem ist der Schalter `UEBERSETZUNG_AKTIV` überall standardmäßig an; `UEBERSETZUNG_AKTIV=0` in der `.env`
+schaltet ab.
+
+Die Übersetzung ist gebaut (Commits `f1a52d7`, `23b6e2d`, `85613aa`, `ef2fbb6`, `fd56240`). Vor der Freigabe war
+der Schalter auf Prod aus. Solange er aus ist, geht
+kein Text an Anthropic, es erscheinen weder Platzhalter noch Hinweis. Die Freigabe ist im `_hinweis` von
+`omn/rechtstexte.json` vermerkt.
 
 ---
 
@@ -107,7 +110,7 @@ Hinweis: Auch die neue Regelfassung darf erst nach der Freigabe auf Prod – son
 
 ## 8. Nach der Freigabe
 
-1. ENTWURF-Vermerk im `_hinweis` von `omn/rechtstexte.json` durch die Freigabe ersetzen.
-2. `UEBERSETZUNG_AKTIV` Standard überall an (Prod), per `.env` abschaltbar.
+1. ✅ Freigabe im `_hinweis` von `omn/rechtstexte.json` vermerkt (26.10.2026).
+2. ✅ `UEBERSETZUNG_AKTIV` Standard überall an (Prod), per `.env` abschaltbar.
 3. Staging → Prod deployen; danach einmal einen Beitrag in einer anderen Sprache aufrufen und im Admin
    (`/admin/themen/uebersetzungen`) nachsehen.
