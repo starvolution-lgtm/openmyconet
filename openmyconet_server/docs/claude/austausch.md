@@ -1,7 +1,7 @@
 # Fachlicher Austausch mit eingeladenen Fachkontakten (seit 25.10.2026)
 
 Pläne: `docs/austausch_phase1_plan.md` (umgesetzt), `docs/austausch_phase2_plan.md`
-(Themenräume + Übersetzung, nur Architektur, **nicht** freigegeben).
+(Themenräume 2a freigegeben + live; Übersetzung 2b gebaut, Freigabe offen).
 
 ## Wozu
 Gespräche, die z. B. auf LinkedIn oder per Mail begonnen haben, in einem geschützten
@@ -87,3 +87,24 @@ Anzeigename, Zustimmung zur Regelfassung `REGELN_FASSUNG`, „Originale zuerst�
 - Texte ohne direkte Anrede (`themen_*` in `translations.json`, 5 Sprachen).
 - **Getrennt vom Austausch:** keine FKs zu aufgabe/kommentar/austausch (Test), eigene Download-Route.
 - Ändert sich die Regelfassung, `REGELN_FASSUNG` erhöhen (alle stimmen neu zu).
+
+## Phase 2b: Automatische Übersetzung der Themenräume (gebaut 26.10.2026, Prod aus bis Freigabe)
+`omn/uebersetzung.py` (Anbieter `claude` über `ki.MODELL`, austauschbar per `UEBERSETZUNG_ANBIETER`),
+Glossar `omn/uebersetzung_glossar.json` (`fest` = nie übersetzen, `begriffe` je Sprache; nur passende
+Einträge gehen in den Prompt). Prüfunterlage `docs/themen_uebersetzung_rechtspruefung.md`.
+- **Schalter `UEBERSETZUNG_AKTIV`**: Standard auf Prod aus (`OMN_ENV=prod`), sonst an; aus → kein Aufruf,
+  kein Platzhalter, kein Hinweis beim Schreiben; vorhandene Übersetzungen werden weiter angezeigt.
+- **Nur bei Bedarf, je Fassung + Sprache einmal:** Seiten rufen die API nie selbst. `themen.anzeige()`
+  setzt `nachladen`, die Makros (`_themen_makros.html`) geben einen Platzhalter `.th-ue` mit
+  `data-typ/id/feld` aus, `nachlade_skript()` holt per `POST /themen/uebersetzung` (CSRF-Header,
+  gleiche Sichtbarkeit wie die Seiten, Feld gegen `uebersetzung.FELDER`) die fertige, escapte Anzeige
+  desselben Makros. „Originale zuerst“ → erst beim Aufklappen.
+- **Kostenbremse:** `UEBERSETZUNG_TAGESLIMIT` (100, Robby 26.10.) automatische Übersetzungen je Tag (UTC),
+  Handübersetzungen (`anbieter='manuell'`) zählen nicht; Route 300/h je Nutzer.
+- **Prüfung:** `inhalt_erhalten()` verwirft Übersetzungen, in denen Zahlen, Links, DOIs oder E-Mails nicht
+  mit dem Original übereinstimmen. Text im Prompt in `<text>` abgegrenzt, keine Werkzeuge.
+- **Tests rufen nie die echte API:** conftest ersetzt `uebersetzung.ANBIETER['claude']` durch eine
+  Funktion, die `UebersetzungFehler` wirft; Tests setzen selbst eine Attrappe.
+- Admin: Zähler auf `/admin/themen`, Liste + Einzellöschen `/admin/themen/uebersetzungen` (Audit).
+- Datenschutzerklärung Abschnitt 10, Absatz „Automatische Übersetzung“ – **ENTWURF** bis zu Robbys Freigabe
+  (vermerkt im `_hinweis` von `omn/rechtstexte.json`); Prod erst danach deployen.
