@@ -1,0 +1,807 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "855bc575-f0d2-4f86-93ff-29b6f2faafda")
+	(paper "A4")
+	(title_block
+		(title "TITLE_HEADER")
+		(date "2026-10-25")
+		(rev "3.6")
+	)
+	(lib_symbols)
+	(rectangle
+		(start 232.41 74.93)
+		(end 257.81 100.33)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "0e9b981b-a4aa-4a41-90b8-e7e6cb85e62d")
+	)
+	(rectangle
+		(start 12.7 13.208)
+		(end 83.82 134.62)
+		(stroke
+			(width 0.3)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "373d363d-9195-4369-9b95-f1486e3cfa1d")
+	)
+	(rectangle
+		(start 187.96 113.03)
+		(end 213.36 138.43)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "4dd7d273-f3a6-49dd-883b-03d69719733d")
+	)
+	(rectangle
+		(start 99.06 74.93)
+		(end 124.46 100.33)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "86596b58-bfa3-4afb-a5e3-d88c3683c9cc")
+	)
+	(rectangle
+		(start 104.14 135.89)
+		(end 175.26 196.85)
+		(stroke
+			(width 0.3)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "9c976403-1cbc-4a82-96e8-aa9c91a0fc92")
+	)
+	(rectangle
+		(start 232.41 113.03)
+		(end 257.81 138.43)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "acd90806-7ee3-4a66-9f9c-6c14f0ef4210")
+	)
+	(rectangle
+		(start 232.41 36.83)
+		(end 257.81 62.23)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "b6f73801-6fd9-45c7-a2a3-ea1636a1adf2")
+	)
+	(rectangle
+		(start 99.06 36.83)
+		(end 124.46 62.23)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "c1ea6e29-2296-476f-a1f3-56d76ba18c45")
+	)
+	(rectangle
+		(start 187.96 74.93)
+		(end 213.36 100.33)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "f41ac802-99d3-4537-8631-e4bdb11ee69d")
+	)
+	(rectangle
+		(start 143.51 74.93)
+		(end 168.91 100.33)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 132 0 0 1)
+		)
+		(fill
+			(type color)
+			(color 0 210 1 1)
+		)
+		(uuid "fbb32baa-94a9-443b-9af7-19db73e5379c")
+	)
+	(rectangle
+		(start 12.7 135.89)
+		(end 102.87 196.85)
+		(stroke
+			(width 0.3)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "ff42690b-c88d-4329-ae69-c4b45c346e29")
+	)
+	(text "PAGE#"
+		(exclude_from_sim no)
+		(at 26.162 44.196 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+				(italic yes)
+			)
+		)
+		(uuid "09503cc8-f8b9-4f9a-be2a-9e5336ca9f5e")
+	)
+	(text "PREVIOUS TARGET CHECKLIST (3.5)\n=======================\n\n"
+		(exclude_from_sim no)
+		(at 13.208 140.208 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+				(italic yes)
+			)
+			(justify left)
+		)
+		(uuid "0eab9793-2669-4742-be71-46e71e101380")
+	)
+	(text "File : LoRa.kicad_sch"
+		(exclude_from_sim no)
+		(at 187.96 139.954 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "0f8b55d1-d0e9-4ec6-aa18-578ab0cf4dd8")
+	)
+	(text "MICRO_SD"
+		(exclude_from_sim no)
+		(at 232.41 111.76 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "0fb08eed-0a22-41b5-8afc-ac839655631e")
+	)
+	(text "USB-C"
+		(exclude_from_sim no)
+		(at 232.41 35.306 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "10fec2b9-53fc-4eaf-a2aa-6e446e26c7fc")
+	)
+	(text "NODE_VARIATIONS"
+		(exclude_from_sim no)
+		(at 50.8 25.146 0)
+		(effects
+			(font
+				(face "KiCad Font")
+				(size 2 2)
+				(thickness 0.4)
+				(bold yes)
+				(italic yes)
+			)
+		)
+		(uuid "114b0172-0e88-4cf6-bc7b-8a71fa02b469")
+	)
+	(text "TITLE_HEADER"
+		(exclude_from_sim no)
+		(at 99.06 35.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "1436e178-c8d9-43d5-8b89-6926e0b3a12a")
+	)
+	(text "VARIANT: "
+		(exclude_from_sim no)
+		(at 26.924 24.384 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "14d9ee48-5a92-41b7-a023-824070e9c0e5")
+	)
+	(text "File : MICRO_SD.kicad_sch"
+		(exclude_from_sim no)
+		(at 232.41 139.954 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "16506ff0-8dda-42e6-be18-3c62ce5f2f06")
+	)
+	(text "MCU"
+		(exclude_from_sim no)
+		(at 187.96 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "1fea0cb3-3de7-4fab-bb93-f8994daefebc")
+	)
+	(text "5"
+		(exclude_from_sim no)
+		(at 121.666 97.536 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "282931bb-eeb8-45fc-a91a-0959c00485b9")
+	)
+	(text "File : REGULATORS.kicad_sch"
+		(exclude_from_sim no)
+		(at 99.06 101.854 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "2eb85a9f-35c7-4d98-90b2-515c1d2ad5f1")
+	)
+	(text "FINAL REVISION TARGET CHECKLIST (3.6) \n======================="
+		(exclude_from_sim no)
+		(at 104.902 139.192 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "2f2053e6-1286-4db3-a942-bf392909f366")
+	)
+	(text "1"
+		(exclude_from_sim no)
+		(at 121.92 59.436 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "37c74964-23f9-4a7e-a6a3-c04d1475cce7")
+	)
+	(text "File : KOMBINODE BOARD.kicad_sch"
+		(exclude_from_sim no)
+		(at 99.06 63.754 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "38debc95-bda5-47fd-adb2-738edde1bc83")
+	)
+	(text "INDEX:"
+		(exclude_from_sim no)
+		(at 47.244 44.196 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+				(italic yes)
+			)
+		)
+		(uuid "3e3d6676-4fce-4f76-b8b7-42e61a52d525")
+	)
+	(text "REVISION: 3.6"
+		(exclude_from_sim no)
+		(at 29.21 19.05 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "4363c1cf-128c-4d94-9a8b-8c5d39ce01bb")
+	)
+	(text "BATTERY"
+		(exclude_from_sim no)
+		(at 143.51 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "467a3bba-013f-444a-91c0-3d830b738d5a")
+	)
+	(text "STATUS: "
+		(exclude_from_sim no)
+		(at 25.908 29.464 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "47387ab1-8e74-41f5-8c6c-d48b3384dcd5")
+	)
+	(text "7"
+		(exclude_from_sim no)
+		(at 210.82 97.536 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "4d6de3d8-4d03-4ede-a6a5-c2a9ca7d149e")
+	)
+	(text "2"
+		(exclude_from_sim no)
+		(at 166.37 59.69 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "4f5cb7e1-6fe8-43b0-9acb-2dbba945e18a")
+	)
+	(text "3"
+		(exclude_from_sim no)
+		(at 210.82 59.69 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "537b25a5-f703-4aac-99a9-deafcef09009")
+	)
+	(text "10"
+		(exclude_from_sim no)
+		(at 254 135.636 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "57fa617c-b10a-4a15-a30c-6d7e033748f3")
+	)
+	(text "DIGI_&_ANA_SENSORS"
+		(exclude_from_sim no)
+		(at 232.41 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "58c51f39-2ae6-4504-8b84-8ccefdff4ad3")
+	)
+	(text "DONE"
+		(exclude_from_sim no)
+		(at 30.988 121.666 0)
+		(effects
+			(font
+				(face "KiCad Font")
+				(size 8 8)
+				(thickness 1)
+				(bold yes)
+				(italic yes)
+				(color 64 64 64 1)
+			)
+		)
+		(uuid "84c936fc-ff04-40c5-9105-84864d0737af")
+	)
+	(text "READY_FOR_MANUFACTURING"
+		(exclude_from_sim no)
+		(at 58.42 29.718 0)
+		(effects
+			(font
+				(size 2 2)
+				(thickness 0.4)
+				(bold yes)
+				(italic yes)
+			)
+		)
+		(uuid "8b1f4da6-887a-43bf-9071-6c1d8f563f91")
+	)
+	(text "TITLE_HEADER\nRESULT & REVIEW\nBLOCK_DIAGRAM\nUSB-C\nREGULATORS\nBATTERY\nMCU\nDIGI_&_ANA\nLoRa\nMICRO_SD"
+		(exclude_from_sim no)
+		(at 39.37 71.374 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 0.6)
+				(bold yes)
+				(italic yes)
+				(color 132 0 0 1)
+			)
+			(justify left)
+		)
+		(uuid "8b7926fa-86de-498f-802c-55e9022f25b7")
+	)
+	(text "9"
+		(exclude_from_sim no)
+		(at 210.566 135.382 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "94fcf879-3980-4aa8-97ba-db426f9cb868")
+	)
+	(text "File : BATTERY.kicad_sch"
+		(exclude_from_sim no)
+		(at 143.51 101.854 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "94fde75c-a5ca-4e61-bfa9-284c73f8ef42")
+	)
+	(text "[■] POINT 06: 1.65V MIDPOINT REFERENCE DISTRIBUTION (VMID_REFF)\n    • Connect R44 (10k) and C34 (100n) bottom pins to GND.\n    • Route 1.65V node via R62 (22 Ω isolation resistor) to net VMID_REFF.\n    • Distribute VMID_REFF to:\n      1) INA333 (U8) Pin 5 (REF)\n      2) Input bias network R32\n      3) OPA2320 (U13B) Pin 7 (+INB)\n      4) Stimulation return (J11 Pin 2 & bottom of R46)\n\n[■] POINT 07: EC COUPLING CAPACITOR UPGRADE (C28)\n    • Change C28 from 1 µF to 100 µF (1206 MLCC, >= 6.3V rating).\n    • Lowers 16 Hz AC capacitive reactance (Xc) from ~9.95 kΩ to ~99.5 Ω.\n\n[■] POINT 08: ONE-WIRE TEMP SENSOR PULL-UP (J8 / DS18B20)\n    • Add 4.7 kΩ pull-up resistor between DS18B20_DATA and +3.3V rail.\n\n[■] POINT 09: C22 GROUND NET CORRECTION\n    • Re-route C22 ground pin from digital GNDA to intended GND net.\n\n[■] POINT 10: LED POWER SUPPLY RE-INTEGRATION\n    • Reconnect LED current-limiting resistors to +BATT supply (not VDD).\n\n[■] POINT 11: INA333 BIAS-RETURNS, U13 DECOUPLING & SHEET NOTES\n    • Add 10 MΩ bias-return resistors (R63, R64) from INA+ and INA- to VMID_REFF.\n    • Add 100 nF decoupling capacitor (C35) between U13 Pin 10 (+3.3VA) and GNDA.\n    • Update DIGI_&_ANA_SENSORS design text notes to reflect current Rev 3.5 schematic."
+		(exclude_from_sim no)
+		(at 12.954 167.894 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "96065430-76d0-4f70-b572-70843903ada8")
+	)
+	(text "6"
+		(exclude_from_sim no)
+		(at 166.37 97.79 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "98549be0-f7ef-46be-b3cd-6c990ad5d530")
+	)
+	(text "File : MCU.kicad_sch"
+		(exclude_from_sim no)
+		(at 187.96 101.854 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "b9618217-8deb-4495-aeb3-695f16c5afe8")
+	)
+	(text "8"
+		(exclude_from_sim no)
+		(at 255.016 97.79 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "c2e15969-b1ab-4d73-99c2-6a17af99b263")
+	)
+	(text "4"
+		(exclude_from_sim no)
+		(at 255.016 59.69 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "c4824543-64c8-4a9c-aefa-589525597e65")
+	)
+	(text "RELEASED STATUS PROJECT"
+		(exclude_from_sim no)
+		(at 46.99 112.268 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "d2f3c0f4-64aa-4746-99bd-69d3598ad85b")
+	)
+	(text "DATE: 2026 - 10 - 25"
+		(exclude_from_sim no)
+		(at 43.18 130.556 0)
+		(effects
+			(font
+				(size 3 3)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "d552ec03-ffc8-429b-87bd-a4c169b3868b")
+	)
+	(text "LoRa"
+		(exclude_from_sim no)
+		(at 187.96 111.76 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "d7dcb072-14c9-4f25-8378-9f30dd150677")
+	)
+	(text "[■] POINT 12: TH1 THERMISTOR DNP ASSIGNMENT\n    • Set TH1 attribute to DNP (Do Not Populate) in the schematic.\n    • Verify TH1 is completely excluded from the final BOM and CPL files.\n\n[■] POINT 13: ANALOG RAIL ISOLATION (FB1 REMOVAL)\n    • Remove FB1 bridging +3.3V and +3.3VA between U2 and U3 outputs.\n    • Verify regulator outputs are physically and electrically separated \n      to guarantee clean analog rail integrity.\n\n[■] POINT 14: VMID_REFF BUFFER & QUIESCENT CURRENT REDUCTION\n    • Insert a low-quiescent-current voltage follower (buffer) between \n      the C34 midpoint and the VMID_REFF distribution node.\n    • Increase voltage divider resistor values (R43/R44) to reduce \n      continuous quiescent current consumption.\n\n[■] POINT 15: DESIGNATOR ALIGNMENT, LAYOUT & BOM CLEANUP\n    • PCB Layout: Ensure the 100 nF decoupling cap (C48) is physically \n      placed as close to U13 Pin 10 as practical.\n    • Documentation Sync: Update all notes and reports to reflect the \n      actual schematic designators: \n      - DS18B20 Pull-up: R61 (previously R19)\n      - LED Series Resistors: R59/R60 (previously R33/R36)\n      - INA333: U10 (previously U8)\n    • BOM Update: Correct J5/J6 descriptions from \n     \"LED_BLANK\" to \"LED_BANK\".\n    • Verify and update the stated standby current in \n      the final design notes."
+		(exclude_from_sim no)
+		(at 104.394 168.656 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "db3a5cc1-a5bc-423c-bb8a-61e39f173b16")
+	)
+	(text "1.\n2.\n3.\n4.\n5.\n6.\n7.\n8.\n9.\n10."
+		(exclude_from_sim no)
+		(at 23.622 71.12 0)
+		(effects
+			(font
+				(face "KiCad Font")
+				(size 3 3)
+				(thickness 0.6)
+				(bold yes)
+				(italic yes)
+				(color 132 0 0 1)
+			)
+		)
+		(uuid "e8bec3b8-637f-4856-9908-b23b9ffbec73")
+	)
+	(text ""
+		(exclude_from_sim no)
+		(at 80.772 60.198 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+				(bold yes)
+				(italic yes)
+			)
+		)
+		(uuid "eb7457e4-31bc-4d9f-8025-369b4e239320")
+	)
+	(text "OpenMycoNet - COMBO_NODE"
+		(exclude_from_sim no)
+		(at 178.816 22.352 0)
+		(effects
+			(font
+				(size 6 6)
+				(thickness 1)
+				(bold yes)
+			)
+		)
+		(uuid "ee9e942f-0fe1-421a-b860-65a84c2c4b0a")
+	)
+	(text "REGULATORS"
+		(exclude_from_sim no)
+		(at 99.06 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 0 107 128 1)
+			)
+			(justify left)
+		)
+		(uuid "f207364d-0bf1-461b-b3cd-7bc4c845c49f")
+	)
+	(text "File : USB-C.kicad_sch"
+		(exclude_from_sim no)
+		(at 232.41 63.754 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "f6003505-ad29-4ab9-a139-21ad6e879bdb")
+	)
+	(text "File : DIG_&_ANA_SENSORS.kicad_sch"
+		(exclude_from_sim no)
+		(at 232.41 101.854 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(color 139 87 35 1)
+			)
+			(justify left)
+		)
+		(uuid "fef650d8-c8e5-4841-a578-5bba5dd4b523")
+	)
+	(sheet
+		(at 187.96 36.83)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "447d1237-883c-43a4-9339-cd46481b472f")
+		(property "Sheetname" "RESULT AND REVIEW"
+			(at 143.51 35.9946 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "BLOCK_DIAGRAM.kicad_sch"
+			(at 143.51 62.9384 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "COMBO_NODE"
+				(path "/855bc575-f0d2-4f86-93ff-29b6f2faafda"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 143.51 36.83)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "f9b3f65e-1333-4daf-a4f1-8dcc6aff01b0")
+		(property "Sheetname" "BLOCK_DIAGRAM"
+			(at 187.96 36.1184 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "RESULT_&_REVIEW.kicad_sch"
+			(at 187.96 62.8146 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "COMBO_NODE"
+				(path "/855bc575-f0d2-4f86-93ff-29b6f2faafda"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
