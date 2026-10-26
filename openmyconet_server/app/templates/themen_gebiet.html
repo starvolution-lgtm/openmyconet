@@ -1,11 +1,13 @@
 {% extends "dashboard_base.html" %}
 {% from "_themen_makros.html" import text_anzeige, kurz_anzeige %}
 {% from "_themen_makros.html" import nachlade_skript with context %}
+{% from "_themen_makros.html" import ansicht_umschalter with context %}
 {% block html_lang %}{{ lang }}{% endblock %}
 {% block title %}OpenMycoNet — {{ titel.text }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
 {% block content %}
     <p class="th-pfad"><a href="{{ url_for('themen.uebersicht') }}">{{ tx('themen_zurueck') }}</a></p>
+    {{ ansicht_umschalter(teilnahme, tx) }}
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
     <h1>{{ text_anzeige(titel, teilnahme, tx, sprachen) }}</h1>
     <p class="label">{{ text_anzeige(beschreibung, teilnahme, tx, sprachen, links=True) }}</p>

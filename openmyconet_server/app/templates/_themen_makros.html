@@ -40,6 +40,17 @@
 {%- else -%}<span lang="{{ a.sprache_original }}">{{ a.original }}</span>{%- endif -%}
 {%- endmacro %}
 
+{# Umschalter oben auf der Seite: alles uebersetzt <-> alles im Original (ein Klick). #}
+{% macro ansicht_umschalter(teilnahme, tx) -%}
+{%- set zuerst = teilnahme and teilnahme.original_zuerst -%}
+<form method="post" action="{{ url_for('themen.ansicht_umschalten') }}" class="th-ansicht">
+    <input type="hidden" name="weiter" value="{{ request.full_path.rstrip('?') }}">
+    <input type="hidden" name="ansicht" value="{{ 'uebersetzt' if zuerst else 'original' }}">
+    <span class="th-ansicht-jetzt">🌐 {{ tx('themen_ansicht_jetzt_original' if zuerst else 'themen_ansicht_jetzt_uebersetzt') }}</span>
+    <button type="submit" class="linkknopf">{{ tx('themen_ansicht_zu_uebersetzt' if zuerst else 'themen_ansicht_zu_original') }}</button>
+</form>
+{%- endmacro %}
+
 {# Holt fehlende Uebersetzungen nach (hoechstens zwei Anfragen gleichzeitig). Die
    Antwort ist von Jinja escaptes HTML desselben Makros -- nie Nutzer-HTML. #}
 {% macro nachlade_skript(tx) -%}

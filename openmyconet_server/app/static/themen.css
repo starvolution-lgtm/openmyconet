@@ -50,3 +50,10 @@ a.th-gebiet:hover { border-color: var(--akzent); }
 /* Automatische Uebersetzung (Phase 2b): Platzhalter, bis sie nachgeladen ist */
 .th-ue-status { display: block; font-family: var(--mono); font-size: 0.72rem; font-weight: normal;
                 letter-spacing: 0; color: var(--tinte-leise); }
+
+/* Umschalter "alles uebersetzt <-> alles im Original" oben auf jeder Themenraum-Seite */
+.th-ansicht { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.8rem; margin: 0 0 0.8rem;
+              font-family: var(--mono); font-size: 0.78rem; color: var(--tinte-leise); }
+.th-ansicht button { font: inherit; padding: 0.25rem 0.7rem; cursor: pointer; background: var(--erhaben);
+                     color: var(--akzent-dunkel); border: 1px solid var(--linie); box-shadow: none; }
+.th-ansicht button:hover { border-color: var(--akzent); }

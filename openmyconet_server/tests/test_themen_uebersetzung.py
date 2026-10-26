@@ -228,3 +228,24 @@ def test_nutzungsregeln_nennen_uebersetzung(client, app):
     seite = client.get('/themen?lang=de', follow_redirects=True).get_data(as_text=True)
     assert 'an Anthropic übermittelt' in seite and 'Einstellungen' in seite
     assert n.themen_teilnahme.regeln_fassung == '2026-10-25'
+
+
+# --- Umschalter oben auf der Seite (Robby 26.10.2026) ---------------------------------
+
+def test_umschalter_ganze_seite(client, app):
+    _teilnehmer(client)
+    d = _diskussion()
+    seite = client.get(f'/themen/diskussion/{d.id}?lang=en').get_data(as_text=True)
+    assert 'View: translated' in seite and 'Show everything in the original' in seite
+    r = client.post('/themen/ansicht', data={'ansicht': 'original', 'weiter': f'/themen/diskussion/{d.id}?lang=en'})
+    assert r.status_code == 302 and r.headers['Location'].endswith(f'/themen/diskussion/{d.id}?lang=en')
+    assert ThemenTeilnahme.query.one().original_zuerst is True
+    seite = client.get(f'/themen/diskussion/{d.id}?lang=en').get_data(as_text=True)
+    assert 'View: originals' in seite and 'Show everything translated' in seite and 'data-spaet="1"' in seite
+    client.post('/themen/ansicht', data={'ansicht': 'uebersetzt', 'weiter': '/themen'})
+    assert ThemenTeilnahme.query.one().original_zuerst is False
+    # fremde Ziele -> Uebersicht
+    r = client.post('/themen/ansicht', data={'ansicht': 'original', 'weiter': 'https://example.org/'})
+    assert r.headers['Location'].endswith('/themen')
+    for seite in ('/themen', f'/themen/gebiet/{d.themengebiet_id}'):
+        assert 'th-ansicht' in client.get(seite + '?lang=en').get_data(as_text=True)

@@ -1,6 +1,7 @@
 {% extends "dashboard_base.html" %}
 {% from "_themen_makros.html" import text_anzeige, sprache_auswahl, art_auswahl %}
 {% from "_themen_makros.html" import nachlade_skript with context %}
+{% from "_themen_makros.html" import ansicht_umschalter with context %}
 {% block html_lang %}{{ lang }}{% endblock %}
 {% block title %}OpenMycoNet — {{ titel.text }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
@@ -50,6 +51,7 @@
 
 {% block content %}
     <p class="th-pfad"><a href="{{ url_for('themen.gebiet', gebiet_id=d.themengebiet_id) }}">← {{ text_anzeige(gebiet_titel, None, tx, sprachen) }}</a></p>
+    {{ ansicht_umschalter(teilnahme, tx) }}
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
     <h1>{{ text_anzeige(titel, teilnahme, tx, sprachen) }}</h1>
     <p class="label">{{ name_von(d) }} · {{ d.erstellt_am.strftime('%d.%m.%Y') }}</p>

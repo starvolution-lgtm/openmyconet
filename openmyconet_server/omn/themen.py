@@ -376,6 +376,16 @@ def teilnahme():
                   weiter=weiter or '', erneut=vorhanden is not None)
 
 
+@themen_bp.route('/themen/ansicht', methods=['POST'])
+@zugang
+def ansicht_umschalten(nutzer, teilnahme, lang):
+    """Umschalter oben auf jeder Themenraum-Seite (Robby 26.10.2026): ganze Seite uebersetzt
+    oder im Original -- dieselbe Einstellung wie "Originale zuerst anzeigen"."""
+    teilnahme.original_zuerst = request.form.get('ansicht') == 'original'
+    db.session.commit()
+    return redirect(_sicheres_ziel(request.form.get('weiter')))
+
+
 @themen_bp.route('/themen/einstellungen', methods=['GET', 'POST'])
 @zugang
 def einstellungen(nutzer, teilnahme, lang):
