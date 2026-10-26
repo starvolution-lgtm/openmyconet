@@ -1,16 +1,29 @@
 {# Themenraeume: Anzeige eines Nutzertexts. Das Original ist immer in der Seite
    (Plan 7.4) -- bei einer Uebersetzung aufklappbar, bei "Originale zuerst" umgekehrt.
-   a = omn.themen.anzeige(...); links=True macht Adressen klickbar (nur Fliesstext). #}
+   a = omn.themen.anzeige(...); links=True macht Adressen klickbar (nur Fliesstext).
+   Fehlt die Uebersetzung noch (a.nachladen), steht das Original in einem Platzhalter,
+   den nachlade_skript() ueber POST /themen/uebersetzung durch dieses Makro ersetzt;
+   bei "Originale zuerst" erst beim Aufklappen (keine Kosten fuer Ungelesenes). #}
 {% macro text_anzeige(a, teilnahme, tx, sprachen, links=False) -%}
 {%- set orig_sprache = sprachen.get(a.sprache_original, a.sprache_original) -%}
+{%- set zuerst = teilnahme and teilnahme.original_zuerst -%}
 {%- if a.uebersetzt -%}
-  {%- if teilnahme and teilnahme.original_zuerst -%}
+  {%- if zuerst -%}
     <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
-    <details class="th-alt"><summary>{{ tx('themen_uebersetzung_anzeigen') }}</summary>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</details>
+    <details class="th-alt"><summary>{{ tx('themen_uebersetzung_anzeigen') }}{% if a.automatisch %} · {{ tx('themen_automatisch') }}{% endif %}</summary>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</details>
   {%- else -%}
     <span>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</span>
-    <details class="th-alt"><summary>{{ tx('themen_uebersetzt_aus', sprache=orig_sprache) }} · {{ tx('themen_original_anzeigen') }}</summary><span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span></details>
+    <details class="th-alt"><summary>{{ tx('themen_auto_uebersetzt_aus' if a.automatisch else 'themen_uebersetzt_aus', sprache=orig_sprache) }} · {{ tx('themen_original_anzeigen') }}</summary><span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span></details>
   {%- endif -%}
+{%- elif a.nachladen -%}
+  <span class="th-ue" data-typ="{{ a.typ }}" data-id="{{ a.id }}" data-feld="{{ a.feld }}"{% if links %} data-links="1"{% endif %}{% if zuerst %} data-spaet="1"{% endif %}>
+    <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
+    {%- if zuerst %}
+    <details class="th-alt"><summary>{{ tx('themen_uebersetzung_anzeigen') }}</summary><span class="th-ue-status">{{ tx('themen_wird_uebersetzt') }}</span></details>
+    {%- else %}
+    <span class="th-alt th-ue-status">{{ tx('themen_wird_uebersetzt') }}</span>
+    {%- endif %}
+  </span>
 {%- else -%}
   <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
 {%- endif -%}
@@ -18,10 +31,64 @@
 
 {# Kurzform fuer Listen (die Karte selbst ist ein Link -- dort kein Aufklappen):
    Uebersetzung bzw. bei "Originale zuerst" das Original; das jeweils andere ist
-   eine Ebene tiefer auf der Seite des Gebiets bzw. der Diskussion aufklappbar. #}
+   eine Ebene tiefer auf der Seite des Gebiets bzw. der Diskussion aufklappbar.
+   Fehlende Uebersetzung: Original im Platzhalter, wird still ersetzt. #}
 {% macro kurz_anzeige(a, teilnahme) -%}
-{%- if a.uebersetzt and not (teilnahme and teilnahme.original_zuerst) -%}{{ a.text }}
+{%- set zuerst = teilnahme and teilnahme.original_zuerst -%}
+{%- if a.uebersetzt and not zuerst -%}{{ a.text }}
+{%- elif a.nachladen and not zuerst -%}<span class="th-ue" data-typ="{{ a.typ }}" data-id="{{ a.id }}" data-feld="{{ a.feld }}" data-kurz="1"><span lang="{{ a.sprache_original }}">{{ a.original }}</span></span>
 {%- else -%}<span lang="{{ a.sprache_original }}">{{ a.original }}</span>{%- endif -%}
+{%- endmacro %}
+
+{# Holt fehlende Uebersetzungen nach (hoechstens zwei Anfragen gleichzeitig). Die
+   Antwort ist von Jinja escaptes HTML desselben Makros -- nie Nutzer-HTML. #}
+{% macro nachlade_skript(tx) -%}
+<script nonce="{{ csp_nonce }}">
+(function () {
+  var adresse = {{ url_for('themen.uebersetzung_nachladen')|tojson }};
+  var token = {{ csrf_token()|tojson }};
+  var nichtDa = {{ tx('themen_nicht_uebersetzt')|tojson }};
+  var warteschlange = [], laufend = 0;
+  function ersetzen(platz, html) {
+    var vorlage = document.createElement('template');
+    vorlage.innerHTML = html;
+    var aufklappen = platz.dataset.spaet && vorlage.content.querySelector('details');
+    if (aufklappen) { aufklappen.open = true; }
+    platz.replaceWith(vorlage.content);
+  }
+  function holen(platz) {
+    laufend++;
+    fetch(adresse, {
+      method: 'POST', credentials: 'same-origin',
+      headers: {'Content-Type': 'application/json', 'X-CSRFToken': token},
+      body: JSON.stringify({typ: platz.dataset.typ, id: platz.dataset.id, feld: platz.dataset.feld,
+                            links: !!platz.dataset.links, kurz: !!platz.dataset.kurz})
+    }).then(function (r) { return r.ok ? r.json() : {html: null}; })
+      .catch(function () { return {html: null}; })
+      .then(function (d) {
+        if (d.html) { ersetzen(platz, d.html); }
+        else {
+          var s = platz.querySelector('.th-ue-status');
+          if (s) { s.textContent = nichtDa; }
+        }
+        laufend--; weiter();
+      });
+  }
+  function weiter() {
+    while (laufend < 2 && warteschlange.length) { holen(warteschlange.shift()); }
+  }
+  document.querySelectorAll('.th-ue').forEach(function (platz) {
+    if (platz.dataset.spaet) {
+      var d = platz.querySelector('details');
+      d.addEventListener('toggle', function einmal() {
+        d.removeEventListener('toggle', einmal);
+        warteschlange.push(platz); weiter();
+      });
+    } else { warteschlange.push(platz); }
+  });
+  weiter();
+})();
+</script>
 {%- endmacro %}
 
 {% macro sprache_auswahl(sprachen, gewaehlt, tx) -%}

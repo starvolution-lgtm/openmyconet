@@ -1,0 +1,11 @@
+<div class="karte">
+    <h2>Automatische Übersetzung</h2>
+    {% if not zaehler.aktiv %}
+    <p class="err">Auf dieser Umgebung <strong>ausgeschaltet</strong> (UEBERSETZUNG_AKTIV=0) – es werden keine Texte
+    an den Anbieter übermittelt; vorhandene Übersetzungen werden weiter angezeigt.</p>
+    {% endif %}
+    <p>Heute (UTC): <strong>{{ zaehler.heute }}</strong> von {{ zaehler.limit }}
+        {% if zaehler.heute >= zaehler.limit %}<span class="badge pending">Tageslimit erreicht</span>{% endif %}
+        · dieser Monat: <strong>{{ zaehler.monat }}</strong> · insgesamt: {{ zaehler.gesamt }}
+        · Anbieter: {{ zaehler.anbieter }}</p>
+</div>

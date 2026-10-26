@@ -7,8 +7,9 @@ verschieben, schliessen/oeffnen, aus-/einblenden, loeschen. Beitraege: aus-/
 einblenden, loeschen; das Team schreibt hier als "OpenMycoNet-Team".
 Jede aendernde Aktion ist ein POST mit Audit-Eintrag (test_csrf.AENDERNDE_ADMIN_ROUTEN).
 Loeschen entfernt immer auch Anhaenge, Dateien und Uebersetzungen (omn/themen.py).
+Automatische Uebersetzungen (Phase 2b): Zaehler + einzeln loeschen (/admin/themen/uebersetzungen).
 """
-from flask import abort, flash, redirect, render_template, request, send_file, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, send_file, url_for
 
 from omn import kollaboration
 from omn import themen as th
@@ -70,7 +71,7 @@ def themen_admin():
     ausgeblendet = Beitrag.query.filter_by(sichtbar=False).order_by(Beitrag.erstellt_am.desc()).all()
     diskussionen_aus = Diskussion.query.filter_by(sichtbar=False).all()
     return _seite('admin_themen.html', gebiete=gebiete, neueste=neueste, ausgeblendet=ausgeblendet,
-                  diskussionen_aus=diskussionen_aus)
+                  diskussionen_aus=diskussionen_aus, zaehler=_uebersetzung_zaehler())
 
 
 @admin_bp.route('/admin/themen/gebiet/neu', methods=['POST'])
@@ -327,3 +328,64 @@ def themen_datei(anhang_id):
         abort(404)
     return send_file(kollaboration.anhang_pfad_in(a.dateiname, th.UPLOAD_ORDNER), as_attachment=True,
                      download_name=a.originalname or a.dateiname)
+
+
+# --- Automatische Uebersetzungen (Phase 2b) ------------------------------------------
+
+def _uebersetzung_zaehler():
+    from datetime import datetime, timezone
+
+    from omn import uebersetzung as ue
+    jetzt = datetime.now(timezone.utc)
+    monatsbeginn = datetime(jetzt.year, jetzt.month, 1, tzinfo=timezone.utc)
+    automatisch = Uebersetzung.query.filter(Uebersetzung.anbieter != 'manuell')
+    return {
+        'aktiv': ue.aktiv(),
+        'heute': ue.heute_erzeugt(),
+        'monat': automatisch.filter(Uebersetzung.erstellt_am >= monatsbeginn).count(),
+        'gesamt': automatisch.count(),
+        'limit': int(current_app.config.get('UEBERSETZUNG_TAGESLIMIT', 100)),
+        'anbieter': current_app.config.get('UEBERSETZUNG_ANBIETER', 'claude'),
+    }
+
+
+def _quelle(u):
+    """(Original-Objekt oder None, Link in die Moderation oder None)."""
+    modell = {'themengebiet': Themengebiet, 'diskussion': Diskussion, 'beitrag': Beitrag}.get(u.inhalt_typ)
+    inhalt = db.session.get(modell, u.inhalt_id) if modell else None
+    if inhalt is None:
+        return None, None
+    if u.inhalt_typ == 'themengebiet':
+        return inhalt, url_for('admin.themen_gebiet', gebiet_id=inhalt.id)
+    if u.inhalt_typ == 'diskussion':
+        return inhalt, url_for('admin.themen_diskussion', diskussion_id=inhalt.id)
+    return inhalt, url_for('admin.themen_diskussion', diskussion_id=inhalt.diskussion_id) + f'#b{inhalt.id}'
+
+
+@admin_bp.route('/admin/themen/uebersetzungen')
+@role_required('superadmin')
+def themen_uebersetzungen():
+    neueste = (Uebersetzung.query.filter(Uebersetzung.anbieter != 'manuell')
+               .order_by(Uebersetzung.erstellt_am.desc(), Uebersetzung.id.desc()).limit(100).all())
+    zeilen = []
+    for u in neueste:
+        inhalt, link = _quelle(u)
+        aktuell = inhalt is not None and th.quelltext_hash(getattr(inhalt, u.feld, '')) == u.quelltext_hash
+        zeilen.append({'u': u, 'inhalt': inhalt, 'link': link, 'aktuell': aktuell})
+    return _seite('admin_themen_uebersetzungen.html', zaehler=_uebersetzung_zaehler(), zeilen=zeilen)
+
+
+@admin_bp.route('/admin/themen/uebersetzung/<int:uebersetzung_id>/loeschen', methods=['POST'])
+@role_required('superadmin')
+def themen_uebersetzung_loeschen(uebersetzung_id):
+    """Eine (z. B. misslungene) automatische Uebersetzung verwerfen. Beim naechsten
+    Aufruf der Seite wird sie neu erzeugt -- zaehlt dann wieder zum Tageslimit."""
+    u = db.session.get(Uebersetzung, uebersetzung_id)
+    if u is None or u.anbieter == 'manuell':
+        abort(404)
+    ziel = f'{u.inhalt_typ} #{u.inhalt_id} {u.feld} {u.ziel_sprache}'
+    db.session.delete(u)
+    db.session.commit()
+    protokollieren('themen_uebersetzung_geloescht', ziel)
+    flash('Übersetzung gelöscht – sie wird beim nächsten Aufruf neu erzeugt.')
+    return redirect(url_for('admin.themen_uebersetzungen'))

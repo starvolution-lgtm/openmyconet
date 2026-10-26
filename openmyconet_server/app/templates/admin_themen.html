@@ -12,6 +12,9 @@
 Diskussionen ohne Freigabe an; hier wird umbenannt, zusammengeführt, ausgeblendet und gelöscht.
 Löschen entfernt immer auch Anhänge, Dateien und Übersetzungen.</p>
 
+{% include "_admin_themen_zaehler.html" %}
+<p><a href="{{ url_for('admin.themen_uebersetzungen') }}">→ Automatische Übersetzungen ansehen und einzeln löschen</a></p>
+
 <div class="karte">
     <h2>Neues Themengebiet (als Team)</h2>
     <form method="post" action="{{ url_for('admin.themen_gebiet_neu') }}" class="aus-formular">

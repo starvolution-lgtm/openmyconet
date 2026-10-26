@@ -1,5 +1,6 @@
 {% extends "dashboard_base.html" %}
 {% from "_themen_makros.html" import text_anzeige, kurz_anzeige %}
+{% from "_themen_makros.html" import nachlade_skript with context %}
 {% block html_lang %}{{ lang }}{% endblock %}
 {% block title %}OpenMycoNet — {{ tx('themen_titel') }}{% endblock %}
 {% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
@@ -26,3 +27,4 @@
     </a>
     {% endfor %}
 {% endblock %}
+{% block scripts %}{{ nachlade_skript(tx) }}{% endblock %}

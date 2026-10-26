@@ -8,7 +8,8 @@ Verzeichnis (instance/uploads/themen/), eigene Berechtigung (darf_themenraeume_n
 
 Texte werden IMMER im Original gespeichert (+ sprache_original, gewaehlt beim
 Schreiben, vorbelegt mit der Website-Sprache). Andere Sprachen kommen aus
-Uebersetzung (in 2a nur die Handuebersetzungen der 6 Startgebiete; automatisch ab 2b).
+Uebersetzung (Handuebersetzungen der 6 Startgebiete; alles andere automatisch, Phase 2b:
+omn/uebersetzung.py, von der Seite nachgeladen ueber POST /themen/uebersetzung).
 Beitraege sind Klartext; Links werden beim Anzeigen klickbar (verlinken), kein HTML.
 
 Seitentexte ohne direkte Anrede (Sie/du ist fuer die Themenraeume noch offen).
@@ -21,7 +22,8 @@ from datetime import datetime, timezone
 from functools import wraps
 
 from flask import (
-    Blueprint, abort, current_app, flash, make_response, redirect, render_template, request, send_file, url_for,
+    Blueprint, abort, current_app, flash, get_template_attribute, jsonify, make_response, redirect,
+    render_template, request, send_file, url_for,
 )
 from markupsafe import Markup, escape
 
@@ -69,7 +71,8 @@ def darf_themenraeume_nutzen(nutzer):
 
 @themen_bp.app_context_processor
 def _vorlagen_helfer():
-    return {'themen_zugang': darf_themenraeume_nutzen}
+    from omn import uebersetzung
+    return {'themen_zugang': darf_themenraeume_nutzen, 'themen_uebersetzung_aktiv': uebersetzung.aktiv}
 
 
 # --- Original + Uebersetzung ---------------------------------------------------
@@ -84,29 +87,49 @@ def inhalt_typ(inhalt):
     return inhalt.__tablename__
 
 
-def uebersetzung_holen(inhalt, feld, sprache):
-    """Vorhandene Uebersetzung dieses Felds in `sprache` fuer die AKTUELLE
-    Originalfassung, sonst None. Erzeugt nichts (automatisch erst ab Phase 2b)."""
+def _uebersetzung_eintrag(inhalt, feld, sprache):
     original = getattr(inhalt, feld) or ''
     if not original or sprache == inhalt.sprache_original:
         return None
-    eintrag = Uebersetzung.query.filter_by(
+    return Uebersetzung.query.filter_by(
         inhalt_typ=inhalt_typ(inhalt), inhalt_id=inhalt.id, feld=feld,
         ziel_sprache=sprache, quelltext_hash=quelltext_hash(original),
     ).first()
+
+
+def uebersetzung_holen(inhalt, feld, sprache):
+    """Vorhandene Uebersetzung dieses Felds in `sprache` fuer die AKTUELLE
+    Originalfassung, sonst None. Erzeugt nichts (das macht omn.uebersetzung)."""
+    eintrag = _uebersetzung_eintrag(inhalt, feld, sprache)
     return eintrag.text if eintrag else None
 
 
+def _nachladen_moeglich():
+    """Einmal je Anfrage: Uebersetzung an und Tageslimit nicht erreicht?"""
+    from flask import g as anfrage
+
+    from omn import uebersetzung
+    if '_ue_moeglich' not in anfrage:
+        anfrage._ue_moeglich = uebersetzung.aktiv() and not uebersetzung.limit_erreicht()
+    return anfrage._ue_moeglich
+
+
 def anzeige(inhalt, feld, sprache):
-    """Was die Seite zeigt: {'text', 'original', 'sprache_original', 'uebersetzt'}.
-    Das Original ist IMMER dabei (Plan 7.4: sofort erreichbar)."""
+    """Was die Seite zeigt: {'text', 'original', 'sprache_original', 'uebersetzt',
+    'automatisch', 'nachladen', 'typ', 'id', 'feld'}. Das Original ist IMMER dabei
+    (Plan 7.4: sofort erreichbar). nachladen = es fehlt eine Uebersetzung, die die
+    Seite per POST /themen/uebersetzung nachholen soll (Phase 2b)."""
     original = getattr(inhalt, feld) or ''
-    uebersetzt = uebersetzung_holen(inhalt, feld, sprache)
+    eintrag = _uebersetzung_eintrag(inhalt, feld, sprache)
+    fehlt = (eintrag is None and bool(original.strip()) and sprache != inhalt.sprache_original)
     return {
-        'text': uebersetzt if uebersetzt is not None else original,
+        'text': eintrag.text if eintrag else original,
         'original': original,
         'sprache_original': inhalt.sprache_original,
-        'uebersetzt': uebersetzt is not None,
+        'uebersetzt': eintrag is not None,
+        'automatisch': eintrag is not None and eintrag.anbieter != 'manuell',
+        'nachladen': fehlt and _nachladen_moeglich(),
+        'typ': inhalt_typ(inhalt), 'id': inhalt.id, 'feld': feld,
     }
 
 
@@ -639,3 +662,55 @@ def datei(nutzer, teilnahme, lang, anhang_id):
         abort(404)
     return send_file(kollaboration.anhang_pfad_in(a.dateiname, UPLOAD_ORDNER), as_attachment=True,
                      download_name=a.originalname or a.dateiname)
+
+
+# --- Automatische Uebersetzung nachladen (Phase 2b) -------------------------------
+
+_INHALTE = {'themengebiet': Themengebiet, 'diskussion': Diskussion, 'beitrag': Beitrag}
+
+
+def _inhalt_sichtbar_oder_404(typ, inhalt_id):
+    """Nur was die Person auf einer Seite der Themenraeume auch sehen darf."""
+    modell = _INHALTE.get(typ)
+    inhalt = db.session.get(modell, inhalt_id) if modell else None
+    if inhalt is None:
+        abort(404)
+    if typ == 'themengebiet':
+        return _gebiet_oder_404(inhalt.id)
+    if typ == 'diskussion':
+        return _diskussion_oder_404(inhalt.id)
+    if not inhalt.sichtbar:
+        abort(404)
+    _diskussion_oder_404(inhalt.diskussion_id)
+    return inhalt
+
+
+@themen_bp.route('/themen/uebersetzung', methods=['POST'])
+@zugang
+def uebersetzung_nachladen(nutzer, teilnahme, lang):
+    """Von der Seite aufgerufen (fetch, CSRF-Header) fuer einen Platzhalter.
+    Antwort {'html': ...} = fertige Anzeige (gleiches Makro wie die Seite) oder
+    {'html': None}, wenn es gerade keine Uebersetzung gibt (aus, Limit, Fehler)."""
+    from omn import uebersetzung
+    daten =request.get_json(silent=True) or {}
+    typ, feld = daten.get('typ'), daten.get('feld')
+    try:
+        inhalt_id = int(daten.get('id'))
+    except (TypeError, ValueError):
+        abort(400)
+    if feld not in uebersetzung.FELDER.get(typ, ()):
+        abort(400)
+    inhalt = _inhalt_sichtbar_oder_404(typ, inhalt_id)
+    if not ip_erlaubt(f'nutzer-{nutzer.id}', 'themen_uebersetzung', limit=300, window=3600):
+        return jsonify(html=None), 429
+    if uebersetzung.uebersetzung_erzeugen(inhalt, feld, lang) is None:
+        return jsonify(html=None)
+    a = anzeige(inhalt, feld, lang)
+    if daten.get('kurz'):
+        html = get_template_attribute('_themen_makros.html', 'kurz_anzeige')(a, None)
+    else:
+        def tx(k, **w):
+            return _einsetzen(t(k, lang), w)
+        html = get_template_attribute('_themen_makros.html', 'text_anzeige')(
+            a, teilnahme, tx, SPRACHNAMEN, links=bool(daten.get('links')))
+    return jsonify(html=str(html))

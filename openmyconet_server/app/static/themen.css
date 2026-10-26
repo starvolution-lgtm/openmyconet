@@ -46,3 +46,7 @@ a.th-gebiet:hover { border-color: var(--akzent); }
 .th-aehnlich { border-color: var(--warn); }
 .th-aehnlich ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
 .th-aehnlich li { margin: 0.3rem 0; }
+
+/* Automatische Uebersetzung (Phase 2b): Platzhalter, bis sie nachgeladen ist */
+.th-ue-status { display: block; font-family: var(--mono); font-size: 0.72rem; font-weight: normal;
+                letter-spacing: 0; color: var(--tinte-leise); }

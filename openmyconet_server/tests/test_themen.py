@@ -79,10 +79,12 @@ def test_anzeige_nimmt_uebersetzung_nur_fuer_die_aktuelle_fassung(app):
     db.session.commit()
     en = anzeige(g, 'titel', 'en')
     assert en == {'text': 'Mycology & mycorrhiza', 'original': 'Mykologie & Mykorrhiza',
-                  'sprache_original': 'de', 'uebersetzt': True}
+                  'sprache_original': 'de', 'uebersetzt': True, 'automatisch': False, 'nachladen': False,
+                  'typ': 'themengebiet', 'id': g.id, 'feld': 'titel'}
     assert anzeige(g, 'titel', 'de')['uebersetzt'] is False
-    assert anzeige(g, 'titel', 'nl') == {'text': 'Mykologie & Mykorrhiza', 'original': 'Mykologie & Mykorrhiza',
-                                         'sprache_original': 'de', 'uebersetzt': False}
+    assert anzeige(g, 'titel', 'de')['nachladen'] is False          # Originalsprache: nichts zu tun
+    nl = anzeige(g, 'titel', 'nl')
+    assert (nl['text'], nl['uebersetzt'], nl['nachladen']) == ('Mykologie & Mykorrhiza', False, True)
     # Original geaendert -> alte Uebersetzung passt nicht mehr
     g.titel = 'Mykologie, Mykorrhiza & Symbiosen'
     db.session.commit()

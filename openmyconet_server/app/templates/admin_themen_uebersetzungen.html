@@ -1,0 +1,33 @@
+{% extends "admin_base.html" %}
+{% from "_admin_makros.html" import post_knopf %}
+{% block title %}OpenMycoNet — Automatische Übersetzungen{% endblock %}
+{% block heading %}🌐 Automatische Übersetzungen{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-austausch.css') }}">{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('admin.themen_admin') }}">← Themenräume moderieren</a></p>
+
+{% include "_admin_themen_zaehler.html" %}
+
+<p class="info">Die neuesten 100 automatischen Übersetzungen (Handübersetzungen der Gebiete stehen beim Gebiet).
+Eine misslungene Übersetzung hier löschen – beim nächsten Aufruf der Seite wird sie neu erzeugt.
+„veraltet“ = das Original wurde seither geändert; die Übersetzung wird nicht mehr angezeigt.</p>
+
+{% for z in zeilen %}
+{% set u = z.u %}
+<div class="karte">
+    <div class="kopf">
+        {% if z.link %}<a class="aus-titel" href="{{ z.link }}">{{ u.inhalt_typ }} #{{ u.inhalt_id }} · {{ u.feld }}</a>
+        {% else %}<span class="aus-titel">{{ u.inhalt_typ }} #{{ u.inhalt_id }} · {{ u.feld }}</span>{% endif %}
+        <span class="badge typ">{{ sprachen.get(z.inhalt.sprache_original, '?') if z.inhalt else '?' }} → {{ sprachen.get(u.ziel_sprache, u.ziel_sprache) }}</span>
+        {% if not z.inhalt %}<span class="badge pending">Original gelöscht</span>
+        {% elif not z.aktuell %}<span class="badge pending">veraltet</span>{% endif %}
+    </div>
+    <div class="meta">{{ u.erstellt_am.strftime('%d.%m.%Y %H:%M') }} UTC · {{ u.anbieter }}
+        · {{ post_knopf(url_for('admin.themen_uebersetzung_loeschen', uebersetzung_id=u.id), 'Löschen', frage='Diese Übersetzung löschen?') }}</div>
+    {% if z.inhalt %}<p class="info" lang="{{ z.inhalt.sprache_original }}">{{ ((z.inhalt|attr(u.feld)) or '')[:300] }}</p>{% endif %}
+    <p lang="{{ u.ziel_sprache }}">{{ u.text[:300] }}{% if u.text|length > 300 %} …{% endif %}</p>
+</div>
+{% else %}
+<p class="info">Noch keine automatischen Übersetzungen.</p>
+{% endfor %}
+{% endblock %}

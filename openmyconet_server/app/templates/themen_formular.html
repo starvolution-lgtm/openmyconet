@@ -1,5 +1,6 @@
 {% extends "dashboard_base.html" %}
 {# Neues Themengebiet (art_formular 'gebiet') bzw. neue Diskussion ('diskussion') #}
+{% from "_themen_makros.html" import nachlade_skript with context %}
 {% from "_themen_makros.html" import text_anzeige, kurz_anzeige, sprache_auswahl %}
 {% set ueberschrift = tx('themen_gebiet_neu') if art_formular == 'gebiet' else tx('themen_diskussion_neu') %}
 {% block html_lang %}{{ lang }}{% endblock %}
@@ -14,6 +15,7 @@
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}{% if gebiet %} · {{ text_anzeige(gebiet_titel, None, tx, sprachen) }}{% endif %}</p>
     <h1>{{ ueberschrift }}</h1>
     <p class="label">{{ tx('themen_sichtbar_hinweis') }}</p>
+    {% if themen_uebersetzung_aktiv() %}<p class="label">{{ tx('themen_hinweis_uebersetzung') }}</p>{% endif %}
 
     {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
 
@@ -46,3 +48,4 @@
         {% endif %}
     </form>
 {% endblock %}
+{% block scripts %}{{ nachlade_skript(tx) }}{% endblock %}
