@@ -50,8 +50,11 @@ Ohne TH1 misst der Laderegler die Temperatur über den Akkupack. Deshalb:
 - **Akkus müssen 3-adrig sein, mit 10-kΩ-NTC (B ≈ 3435) an der mittleren Ader.**
 - Ein Akku mit nur 2 Adern lässt TS offen: Der BQ24075 sieht einen Temperaturfehler und
   **lädt nicht**. Dann TH1 bzw. einen festen 10-kΩ-Widerstand doch bestücken.
-- Firmware: Die Node misst keine eigene Platinentemperatur. Lädt der Akku nicht, zeigt das
-  der Ausgang CHG des BQ24075; die Firmware soll das melden.
+- Firmware: Die Node misst keine eigene Platinentemperatur. Die Ausgänge CHG und PGOOD
+  des BQ24075 hängen auf beiden Platinen nur an Pull-ups (R15/R16), **nicht am ESP32**
+  (Netzliste geprüft 27.10.2026). Die Firmware sieht nur die Laderate des MAX17048
+  (positiv = lädt) und meldet „lädt“ bzw. „lädt nicht“ im Protokoll. Für eine spätere
+  Revision: CHG an einen freien Eingang führen.
 
 ## Offene Kleinigkeit
 
