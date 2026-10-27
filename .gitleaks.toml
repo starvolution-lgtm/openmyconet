@@ -12,4 +12,7 @@ paths = [
   '''openmyconet_server/docs/.*[Tt]estvektor''',
   '''openmyconet_server/requirements.*\.txt''',
   '''openmyconet_server/deploy/env\.staging\.example''',
+  # Interaktive BOM aus KiCad (InteractiveHtmlBom): eingebettetes JavaScript, z. B.
+  # "c.ctrlKey=b.ctrlKey" trifft die Regel generic-api-key
+  '''hardware/.*/ibom\.html''',
 ]
