@@ -56,11 +56,12 @@ Ohne TH1 misst der Laderegler die Temperatur über den Akkupack. Deshalb:
   (positiv = lädt) und meldet „lädt“ bzw. „lädt nicht“ im Protokoll. Für eine spätere
   Revision: CHG an einen freien Eingang führen.
 
-## Offene Kleinigkeit
+## BQ24075: zwei LCSC-Nummern (geklärt)
 
-Der BQ24075RGT (U4) hat in den beiden BOMs verschiedene LCSC-Nummern: Node `C15464`,
-Bridge `C2865459`. Vermutlich dasselbe Teil in anderer Verpackung, vor der Bestellung
-kurz prüfen.
+Der BQ24075 (U4) hat in den beiden BOMs verschiedene LCSC-Nummern: Node `C15464`, Bridge
+`C2865459`. Laut Richard (27.10.2026) beabsichtigt: Die Suffixe RGTR und RGTT unterscheiden
+nur die Verpackung (Rollengröße), Footprint und Pads sind gleich. Beide Nummern sind für ihre
+Platine richtig, die BOMs bleiben so.
 
 ## Pin-Merkblatt Firmware (Watchdog, Akkualarm)
 
