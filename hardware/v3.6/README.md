@@ -59,10 +59,22 @@ Der BQ24075RGT (U4) hat in den beiden BOMs verschiedene LCSC-Nummern: Node `C154
 Bridge `C2865459`. Vermutlich dasselbe Teil in anderer Verpackung, vor der Bestellung
 kurz prüfen.
 
-## Noch nicht abgelegt
+## Pin-Merkblatt Firmware (Watchdog, Akkualarm)
 
-Das Pin-Merkblatt zur Bridge-Firmware (bleibt laut Prüfung gültig) liegt hier noch nicht;
-es kommt nach `hardware/v3.6/` dazu, sobald es vorliegt.
+`BioComm_Bridge_V3.6_Pinbelegung_Firmware.md` (Stand 27.10.2026), unverändert abgelegt.
+Gegen die Netzlisten V3.6 geprüft (27.10.2026), alle Angaben stimmen
+(Modul-Pin → GPIO nach Datenblatt ESP32-S3-WROOM-1):
+
+| Signal | Node | Bridge | Netz in der Netzliste |
+|---|---|---|---|
+| BATT_ALERT | GPIO21 (U6-23) | GPIO47 (U6-24) | MAX17048 U5-5 (ALRT), Pull-up Node R20 / Bridge R32 (10 kΩ), Bridge zusätzlich D3 |
+| WCD_SLEEP | GPIO47 (U6-24) | GPIO48 (U6-25) | TPS3851 U7-5 (SET1), Pull-down Node R55 / Bridge R27 (100 kΩ) |
+| RST_WDI | GPIO4 (U6-4) | GPIO21 (U6-23) | TPS3851 U7-6 (WDI) |
+| LED_ON | – | GPIO41 (U6-34) | über R23 (1 kΩ) an D7 |
+
+Ergänzung für die **Node-Firmware**: Auch die Node hat den TPS3851H33 mit 100 nF an CWD
+(C20). Ist ihr Watchdog über GPIO47 eingeschaltet, gilt dort dasselbe Zeitfenster von
+rund 323 ms (GPIO4 etwa alle 300 ms umschalten oder vorher abschalten).
 
 ## Inhalt
 
