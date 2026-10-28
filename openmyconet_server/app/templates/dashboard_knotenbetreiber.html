@@ -1,11 +1,10 @@
 {% extends "dashboard_base.html" %}
 {% block title %}OpenMycoNet — Mein Dashboard{% endblock %}
+{% from "_bereich_makros.html" import vertraulich, leiste, nachrichten, aufgaben %}
+{% block head %}<link rel="stylesheet" href="{{ asset('dashboard-bereiche.css') }}">{% endblock %}
 {% block content %}
     <p class="eyebrow">OpenMycoNet · Knotenbetrieb</p>
     <h1>Willkommen, <em>{{ nutzer.name }}</em></h1>
-    {% if nutzer.ist_hyphist %}
-    <p class="label"><a href="{{ url_for('dashboard.hyphist') }}">→ Zum Kooperationsbereich</a></p>
-    {% endif %}
     <div class="card">
         <p><span class="label">E-Mail:</span> {{ nutzer.email }}</p>
         {% if nutzer.fachrolle %}<p><span class="label">Fachrolle:</span> {{ nutzer.fachrolle }}</p>{% endif %}
@@ -21,7 +20,7 @@
         <tr>
             <td>{{ knoten.knoten_id }}</td>
             <td>{{ knoten.substrat }}</td>
-            <td>{{ 'Aktiv' if knoten.aktiv else 'Inaktiv' }}</td>
+            <td><span class="br-status {{ 'br-status-an' if knoten.aktiv else 'br-status-aus' }}">● {{ 'Aktiv' if knoten.aktiv else 'Inaktiv' }}</span></td>
             <td>{{ knoten.erstellt_am.strftime('%d.%m.%Y') }}</td>
         </tr>
         {% endfor %}
@@ -29,67 +28,35 @@
 
     {% for b in bereiche %}
     {% set knoten = b.knoten %}
+    {% set t = {'schreiben': 'Nachricht schreiben', 'offen_eins': '1 offene Aufgabe', 'offen_n': '{n} offene Aufgaben',
+             'neu': 'Neu vom Team', 'team': 'OpenMycoNet-Team', 'ich': 'Du', 'keine': 'Noch keine Nachrichten.',
+             'umschalten': 'Erledigt / offen umschalten', 'keine_aufgaben': 'Noch keine Aufgaben.'} %}
     <h2 class="dk-1">Knoten {{ knoten.knoten_id }} — Betrieb &amp; Technik</h2>
-    <p class="label">Inbetriebnahme, Wartung, Fehlermeldungen, Firmware — nur zwischen dir und dem OpenMycoNet-Team sichtbar.</p>
+    {{ vertraulich('Inbetriebnahme, Wartung, Fehlermeldungen, Firmware — nur zwischen dir und dem OpenMycoNet-Team sichtbar.') }}
+    {{ leiste('knoten-' ~ knoten.id, t, b.aufgaben|selectattr('status', 'ne', 'erledigt')|list|length) }}
 
-    <div class="card">
+    <div class="card" id="knoten-{{ knoten.id }}-aufgaben">
         <h2>Aufgaben</h2>
-        <table>
-            <tr><th></th><th>Aufgabe</th><th>Von</th><th>Angelegt</th></tr>
-            {% for a in b.aufgaben %}
-            <tr>
-                <td>
-                    <form class="u-m0" method="post">
-                        <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
-                        <input type="hidden" name="action" value="aufgabe_toggle">
-                        <input type="hidden" name="aufgabe_id" value="{{ a.id }}">
-                        <button class="dk-2" type="submit" title="Status umschalten">
-                            {{ '✓' if a.status == 'erledigt' else '○' }}
-                        </button>
-                    </form>
-                </td>
-                <td>
-                    <strong{% if a.status == 'erledigt' %} class="u-strike-faded"{% endif %}>{{ a.titel }}</strong>
-                    {% if a.beschreibung %}<br><span class="label">{{ a.beschreibung }}</span>{% endif %}
-                </td>
-                <td class="label">{{ 'Team' if a.erstellt_von == 'team' else 'Du' }}</td>
-                <td class="label">{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
-            </tr>
-            {% else %}
-            <tr><td></td><td class="label">Noch keine Aufgaben.</td><td></td><td></td></tr>
-            {% endfor %}
-        </table>
-
+        {{ aufgaben(b.aufgaben, t, {'knoten_pk': knoten.id}) }}
         <form class="u-mt-16" method="post">
             <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
             <input type="hidden" name="action" value="aufgabe_neu">
             <input type="text" name="titel" placeholder="Neue Aufgabe" required>
             <input type="text" name="beschreibung" placeholder="Details (optional)">
-            <button type="submit">Aufgabe hinzufügen</button>
+            <button type="submit" class="br-zweitrangig">Aufgabe hinzufügen</button>
         </form>
     </div>
 
     <div class="card">
-        <h2>Kommentare</h2>
-        {% for k in b.kommentare %}
-        <div class="u-mb-14">
-            <span class="label">{{ 'OpenMycoNet-Team' if k.autor == 'team' else 'Du' }} · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</span>
-            <p class="u-pre-wrap">{{ k.text }}</p>
-            {% for anhang in k.anhaenge %}
-            <div class="label">📎 <a href="{{ url_for('dashboard.kollaboration_datei', anhang_id=anhang.id) }}">{{ anhang.originalname or anhang.dateiname }}</a> ({{ (anhang.groesse / 1024) | round | int }} KB)</div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p class="label">Noch keine Kommentare.</p>
-        {% endfor %}
-
-        <form class="u-mt-16" method="post" enctype="multipart/form-data">
+        <h2>Nachrichten</h2>
+        {{ nachrichten(b.kommentare, t) }}
+        <form class="u-mt-16 br-schreiben" method="post" enctype="multipart/form-data" id="knoten-{{ knoten.id }}">
             <input type="hidden" name="knoten_pk" value="{{ knoten.id }}">
             <input type="hidden" name="action" value="kommentar_neu">
-            <textarea class="dk-3" name="text" rows="3" placeholder="Kommentar schreiben…" required></textarea>
+            <textarea class="dk-3" name="text" rows="3" placeholder="Nachricht schreiben…" required></textarea>
             <input type="file" name="dateien" multiple>
             <p class="label">Erlaubt: Bilder, PDF, TXT/LOG/CSV/JSON, ZIP — max. 5 MB pro Datei.</p>
-            <button type="submit">Kommentar senden</button>
+            <button type="submit">Nachricht senden</button>
         </form>
     </div>
     {% endfor %}

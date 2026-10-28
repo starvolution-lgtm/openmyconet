@@ -1,0 +1,65 @@
+{# Gemeinsame Bausteine fuer die vertraulichen Bereiche zwischen Partner und Team:
+   Messknoten (dashboard_knotenbetreiber), Kooperation (dashboard_hyphist), Fachlicher
+   Austausch (austausch_bereich). Design 28.10.2026: Wichtiges auf einen Blick.
+   Stile in dashboard-bereiche.css. Texte kommen fertig uebersetzt herein (t = dict). #}
+
+{# Hinweis "nur zwischen ... sichtbar" als deutliches Band #}
+{% macro vertraulich(text) -%}
+<p class="br-vertraulich">🔒 {{ text }}</p>
+{%- endmacro %}
+
+{# Leiste oben: Hauptaktion (zum Schreibfeld) + offene Aufgaben #}
+{% macro leiste(anker, t, offen=None) -%}
+<div class="br-leiste">
+    <a class="br-knopf" href="#{{ anker }}">✎ {{ t.schreiben }}</a>
+    {% if offen is not none and offen > 0 %}<a class="br-badge-offen" href="#{{ anker }}-aufgaben">● {{ t.offen_eins if offen == 1 else t.offen_n|replace('{n}', offen) }}</a>{% endif %}
+</div>
+{%- endmacro %}
+
+{# Nachrichten als Verlauf: Team links, eigene rechts. "Neu vom Team" = Team-Nachrichten
+   nach der letzten eigenen Nachricht (noch nicht beantwortet). #}
+{% macro nachrichten(kommentare, t, datei_endpoint='dashboard.kollaboration_datei') -%}
+{%- set ns = namespace(letzte_eigene=-1) -%}
+{%- for k in kommentare %}{% if k.autor != 'team' %}{% set ns.letzte_eigene = loop.index0 %}{% endif %}{% endfor -%}
+<div class="br-verlauf">
+{% for k in kommentare %}
+    {% set vom_team = k.autor == 'team' %}
+    {% set neu = vom_team and loop.index0 > ns.letzte_eigene %}
+    <div class="br-nachricht {{ 'br-team' if vom_team else 'br-ich' }}{% if neu %} br-neu{% endif %}">
+        <p class="br-kopf">{% if neu %}<span class="br-badge-neu">● {{ t.neu }}</span> {% endif %}<strong>{{ t.team if vom_team else t.ich }}</strong> · {{ k.erstellt_am.strftime('%d.%m.%Y %H:%M') }}</p>
+        <p class="u-pre-wrap br-text">{{ k.text }}</p>
+        {% for anhang in k.anhaenge %}
+        <div class="label">📎 <a href="{{ url_for(datei_endpoint, anhang_id=anhang.id) }}">{{ anhang.originalname or anhang.dateiname }}</a> ({{ (anhang.groesse / 1024) | round | int }} KB)</div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="label">{{ t.keine }}</p>
+{% endfor %}
+</div>
+{%- endmacro %}
+
+{# Aufgaben: offene oben und deutlich, erledigte gedaempft darunter.
+   versteckt = {name: wert} der Formulare (Kontext). #}
+{% macro aufgaben(liste, t, versteckt) -%}
+{%- set offen = liste|selectattr('status', 'ne', 'erledigt')|list -%}
+{%- set erledigt = liste|selectattr('status', 'equalto', 'erledigt')|list -%}
+<ul class="br-aufgaben">
+{% for a in offen + erledigt %}
+    <li class="br-aufgabe{% if a.status == 'erledigt' %} br-erledigt{% endif %}">
+        <form class="u-m0" method="post">
+            {% for n, w in versteckt.items() %}<input type="hidden" name="{{ n }}" value="{{ w }}">{% endfor %}
+            <input type="hidden" name="action" value="aufgabe_toggle">
+            <input type="hidden" name="aufgabe_id" value="{{ a.id }}">
+            <button type="submit" class="br-haken" title="{{ t.umschalten }}" aria-label="{{ t.umschalten }}">{{ '✓' if a.status == 'erledigt' else '' }}</button>
+        </form>
+        <div class="br-aufgabe-text">
+            <strong>{{ a.titel }}</strong>
+            {% if a.beschreibung %}<span class="label">{{ a.beschreibung }}</span>{% endif %}
+            <span class="br-meta">{{ t.team if a.erstellt_von == 'team' else t.ich }} · {{ a.erstellt_am.strftime('%d.%m.%Y') }}</span>
+        </div>
+    </li>
+{% else %}
+    <li class="label">{{ t.keine_aufgaben }}</li>
+{% endfor %}
+</ul>
+{%- endmacro %}
