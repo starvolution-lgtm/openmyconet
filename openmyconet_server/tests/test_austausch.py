@@ -907,7 +907,7 @@ def test_admin_uebersicht_zeigt_pruefhinweis(client, app, superadmin):
     a.letzte_aktivitaet = _alt(400)
     db.session.commit()
     seite = client.get('/admin').get_data(as_text=True)
-    assert '1 fachlicher Austausch seit 12 Monaten ohne Aktivität' in seite
+    assert '1 Austausch zur Prüfung (12 Monate ohne Aktivität)' in seite and 'Steht an' in seite
 
 
 def test_datenschutzerklaerung_abschnitt_austausch(client):

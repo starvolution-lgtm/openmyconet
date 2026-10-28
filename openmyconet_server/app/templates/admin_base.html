@@ -17,33 +17,40 @@
       <span class="eyebrow">OpenMycoNet · Admin</span>
       <h1>{% block heading %}🍄 Admin{% endblock %}</h1>
     </div>
+    {#- Leiste: aktueller Bereich hervorgehoben, Zaehler fuer "steht an" (Design 28.10.2026) -#}
+    {%- macro nav(endpoint, text, zaehl=(), klasse='') -%}
+      {%- set pfad = url_for(endpoint) -%}
+      {%- set aktiv = request.endpoint == endpoint or (pfad != url_for('admin.admin') and request.path.startswith(pfad)) -%}
+      {%- set n = steht_an_zahl(*zaehl) if zaehl else 0 -%}
+      <a href="{{ pfad }}" class="{{ klasse }}{% if aktiv %} aktiv{% endif %}"{% if aktiv %} aria-current="page"{% endif %}>{{ text }}{% if n %} <span class="nav-zaehler">{{ n }}</span>{% endif %}</a>
+    {%- endmacro %}
     <nav class="admin-nav">
       {% if session.admin_role == 'superadmin' %}
-      <a href="{{ url_for('admin.admin') }}">👥 Nutzer</a>
+      {{ nav('admin.admin', '👥 Nutzer') }}
       {% endif %}
-      <a href="{{ url_for('admin.newsletter') }}">📧 Newsletter</a>
-      <a href="{{ url_for('admin.news_admin') }}">📰 News</a>
+      {{ nav('admin.newsletter', '📧 Newsletter') }}
+      {{ nav('admin.news_admin', '📰 News') }}
       {% if session.admin_role == 'superadmin' %}
-      <a href="{{ url_for('admin.knoten_admin') }}">📡 Knoten</a>
-      <a href="{{ url_for('admin.biocomm_admin') }}">🧬 BioComm</a>
-      <a href="{{ url_for('admin.bewerbungen_admin') }}">🗺️ Bewerbungen</a>
-      <a href="{{ url_for('admin.kontakt_admin') }}">✉️ Kontakt</a>
-      <a href="{{ url_for('admin.austausch_liste') }}">🔬 Austausch</a>
-      <a href="{{ url_for('admin.themen_admin') }}">🗂 Themenräume</a>
+      {{ nav('admin.knoten_admin', '📡 Knoten') }}
+      {{ nav('admin.biocomm_admin', '🧬 BioComm') }}
+      {{ nav('admin.bewerbungen_admin', '🗺️ Bewerbungen', ('bewerbungen',)) }}
+      {{ nav('admin.kontakt_admin', '✉️ Kontakt', ('kontakt',)) }}
+      {{ nav('admin.austausch_liste', '🔬 Austausch', ('austausch', 'austausch_vorbereitet')) }}
+      {{ nav('admin.themen_admin', '🗂 Themenräume', ('themen',)) }}
       <a class="zum-mcc" href="{{ url_for('mcc.start') }}">🧭 Zum MCC</a>
       {% endif %}
-      <a href="{{ url_for('admin.spenden_admin') }}">💚 Spenden</a>
-      <a href="{{ url_for('admin.foerderer_admin') }}">🤝 Förderer</a>
-      <a href="{{ url_for('admin.presse_admin') }}">📰 Presse</a>
-      <a href="{{ url_for('admin.inhalte_admin') }}">📝 Inhalte</a>
+      {{ nav('admin.spenden_admin', '💚 Spenden') }}
+      {{ nav('admin.foerderer_admin', '🤝 Förderer', ('foerderer',)) }}
+      {{ nav('admin.presse_admin', '📰 Presse') }}
+      {{ nav('admin.inhalte_admin', '📝 Inhalte') }}
       {% if session.admin_role == 'superadmin' %}
-      <a href="{{ url_for('admin.chatlogs') }}">💬 Chat-Logs</a>
-      <a href="{{ url_for('admin.fehler_admin') }}">🚨 Fehler</a>
-      <a href="{{ url_for('admin.audit_admin') }}">🧾 Audit</a>
-      <a href="{{ url_for('admin.accounts') }}">🔑 Accounts</a>
+      {{ nav('admin.chatlogs', '💬 Chat-Logs') }}
+      {{ nav('admin.fehler_admin', '🚨 Fehler', ('fehler',)) }}
+      {{ nav('admin.audit_admin', '🧾 Audit') }}
+      {{ nav('admin.accounts', '🔑 Accounts') }}
       {% endif %}
-      <a href="{{ url_for('admin.change_password') }}">Passwort</a>
-      <a href="{{ url_for('admin.zwei_faktor') }}">🔐 2FA</a>
+      {{ nav('admin.change_password', 'Passwort') }}
+      {{ nav('admin.zwei_faktor', '🔐 2FA') }}
       <a class="logout" href="{{ url_for('admin.logout') }}">Logout</a>
     </nav>
   </header>

@@ -7,7 +7,7 @@ from omn.admin.auth import PASSWORT_MIN
 from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
-from omn.models import AdminUser, Austausch, Nutzer
+from omn.models import AdminUser, Nutzer
 
 FACHROLLEN = ['wissenschaftler', 'wiss_mitarbeiter', 'student']
 
@@ -36,12 +36,9 @@ def admin():
     gesamt = Nutzer.query.count()
     bestaetigt = Nutzer.query.filter_by(bestaetigt=True).count()
     unbestaetigt = gesamt - bestaetigt
-    bezug = austausch.jetzt()
-    austausch_pruefen = sum(1 for a in Austausch.query.filter_by(status='aktiv')
-                            if austausch.inaktiv_zu_pruefen(a, bezug))
     return render_template('admin.html',
         nutzer_liste=nutzer_liste, gesamt=gesamt,
-        bestaetigt=bestaetigt, unbestaetigt=unbestaetigt, austausch_pruefen=austausch_pruefen,
+        bestaetigt=bestaetigt, unbestaetigt=unbestaetigt,
         filter_gruppe=filter_gruppe, filter_sprache=filter_sprache,
         filter_fachrolle=filter_fachrolle, fachrollen=FACHROLLEN,
         filter_rolle=filter_rolle

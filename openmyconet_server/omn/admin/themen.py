@@ -9,6 +9,8 @@ Jede aendernde Aktion ist ein POST mit Audit-Eintrag (test_csrf.AENDERNDE_ADMIN_
 Loeschen entfernt immer auch Anhaenge, Dateien und Uebersetzungen (omn/themen.py).
 Automatische Uebersetzungen (Phase 2b): Zaehler + einzeln loeschen (/admin/themen/uebersetzungen).
 """
+from datetime import timedelta
+
 from flask import abort, current_app, flash, redirect, render_template, request, send_file, url_for
 
 from omn import kollaboration, themen_mails
@@ -71,8 +73,10 @@ def themen_admin():
     neueste = Beitrag.query.order_by(Beitrag.erstellt_am.desc()).limit(30).all()
     ausgeblendet = Beitrag.query.filter_by(sichtbar=False).order_by(Beitrag.erstellt_am.desc()).all()
     diskussionen_aus = Diskussion.query.filter_by(sichtbar=False).all()
+    seit = th.jetzt() - timedelta(days=1)
+    neu_ids = {b.id for b in neueste if not b.von_team and th._aware(b.erstellt_am) >= seit}   # "neu" = letzte 24 Std.
     return _seite('admin_themen.html', gebiete=gebiete, neueste=neueste, ausgeblendet=ausgeblendet,
-                  diskussionen_aus=diskussionen_aus, zaehler=_uebersetzung_zaehler())
+                  diskussionen_aus=diskussionen_aus, zaehler=_uebersetzung_zaehler(), neu_ids=neu_ids)
 
 
 @admin_bp.route('/admin/themen/gebiet/neu', methods=['POST'])

@@ -94,3 +94,62 @@ def role_required(*roles):
             return f(*args, **kwargs)
         return decorated
     return decorator
+
+
+# --- "Steht an": Zaehler fuer Leiste + Uebersicht (Design 28.10.2026) -----------------------
+
+def steht_an():
+    """Was im Admin Handlung braucht, je Bereich {schluessel: (anzahl, url, text)}.
+    Nur fuer eingeloggte Superadmins, einmal je Anfrage berechnet (am request-Objekt: flask.g
+    lebt so lange wie der App-Kontext und der kann mehrere Anfragen ueberdauern, z. B. in Tests)."""
+    from datetime import datetime, timedelta, timezone
+
+    from omn import austausch as aus
+    from omn.models import Austausch, Beitrag, Bewerbung, Fehlerprotokoll, Foerderer, Kontaktanfrage
+    from omn.zeit import utcnow
+    if not session.get('admin_logged_in') or session.get('admin_role') != 'superadmin':
+        return {}
+    vorhanden = getattr(request, '_omn_steht_an', None)
+    if vorhanden is not None:
+        return vorhanden
+    eintraege = {}
+
+    def merken(schluessel, anzahl, endpoint, einzahl, mehrzahl, **args):
+        if anzahl:
+            eintraege[schluessel] = (anzahl, url_for(endpoint, **args), einzahl if anzahl == 1 else mehrzahl.format(n=anzahl))
+
+    try:
+        merken('bewerbungen', Bewerbung.query.filter_by(status='neu').count(), 'admin.bewerbungen_admin',
+               '1 neue Bewerbung', '{n} neue Bewerbungen')
+        merken('kontakt', Kontaktanfrage.query.filter_by(status='neu').count(), 'admin.kontakt_admin',
+               '1 neue Kontaktanfrage', '{n} neue Kontaktanfragen')
+        foerderer = (Foerderer.query.filter_by(status='zahlung_eingegangen').count()
+                     + Foerderer.query.filter_by(typ='kooperation', status='pending').count())
+        merken('foerderer', foerderer, 'admin.foerderer_admin', '1 Förderer/Kooperation zu prüfen',
+               '{n} Förderer/Kooperationen zu prüfen')
+        bezug = aus.jetzt()
+        pruefen = sum(1 for a in Austausch.query.filter_by(status='aktiv').all() if aus.inaktiv_zu_pruefen(a, bezug))
+        merken('austausch', pruefen, 'admin.austausch_liste', '1 Austausch zur Prüfung (12 Monate ohne Aktivität)',
+               '{n} Austausche zur Prüfung (12 Monate ohne Aktivität)', filter='pruefen')
+        vorbereitet = Austausch.query.filter_by(status='vorbereitet').count()
+        merken('austausch_vorbereitet', vorbereitet, 'admin.austausch_liste', '1 Austausch vorbereitet, noch nicht eingeladen',
+               '{n} Austausche vorbereitet, noch nicht eingeladen')
+        merken('fehler', Fehlerprotokoll.query.filter(Fehlerprotokoll.zeitpunkt >= utcnow() - timedelta(days=1)).count(),
+               'admin.fehler_admin', '1 Fehler in den letzten 24 Stunden', '{n} Fehler in den letzten 24 Stunden')
+        seit = datetime.now(timezone.utc) - timedelta(days=1)
+        merken('themen', Beitrag.query.filter(Beitrag.von_team.is_(False), Beitrag.erstellt_am >= seit).count(),
+               'admin.themen_admin', '1 neuer Beitrag in den Themenräumen (24 Std.)',
+               '{n} neue Beiträge in den Themenräumen (24 Std.)')
+    except Exception:  # Zaehler duerfen nie eine Admin-Seite kaputt machen
+        current_app.logger.exception('Steht-an-Zaehler fehlgeschlagen')
+        db.session.rollback()
+    request._omn_steht_an = eintraege
+    return eintraege
+
+
+@admin_bp.app_context_processor
+def _steht_an_helfer():
+    def zaehler(*schluessel):
+        an = steht_an()
+        return sum(an[s][0] for s in schluessel if s in an)
+    return {'steht_an': steht_an, 'steht_an_zahl': zaehler}

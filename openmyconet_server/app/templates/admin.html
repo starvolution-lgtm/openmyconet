@@ -19,10 +19,19 @@
     </div>
 </div>
 
-{% if austausch_pruefen %}
-{% set anzahl_text = '1 fachlicher Austausch' if austausch_pruefen == 1 else austausch_pruefen ~ ' fachliche Austausche' %}
-<p class="info">🔬 <a href="{{ url_for('admin.austausch_liste', filter='pruefen') }}">{{ anzahl_text }} seit 12 Monaten ohne Aktivität – zur Prüfung</a></p>
-{% endif %}
+{% set an = steht_an() %}
+<div class="karte steht-an{% if not an %} steht-an-leer{% endif %}">
+  <h2>📋 Steht an</h2>
+  {% if an %}
+  <ul>
+    {% for schluessel, (anzahl, url, text) in an.items() %}
+    <li><a href="{{ url }}"><span class="nav-zaehler">{{ anzahl }}</span> {{ text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="info">Nichts offen – alles erledigt. ✔</p>
+  {% endif %}
+</div>
 
 <form method="GET">
     <label>Gruppe: </label>

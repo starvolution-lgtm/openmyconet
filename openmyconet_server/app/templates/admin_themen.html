@@ -16,7 +16,19 @@ Löschen entfernt immer auch Anhänge, Dateien und Übersetzungen.</p>
 <p><a href="{{ url_for('admin.themen_uebersetzungen') }}">→ Automatische Übersetzungen ansehen und einzeln löschen</a></p>
 
 <div class="karte">
-    <h2>Neues Themengebiet (als Team)</h2>
+<h2>🗨 Neueste Beiträge</h2>
+{% for b in neueste %}
+<p>{% if b.id in neu_ids %}<span class="nav-zaehler">neu</span> {% endif %}<a href="{{ url_for('admin.themen_diskussion', diskussion_id=b.diskussion_id) }}#b{{ b.id }}">{{ b.diskussion.titel }}</a>
+   <span class="info">· {{ admin_name(b) }} · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}
+   {% if not b.sichtbar %}· ausgeblendet{% endif %}{% if b.entfernt_am %}· entfernt{% endif %}
+   · {{ b.text[:120] }}</span></p>
+{% else %}
+<p class="info">Noch keine Beiträge.</p>
+{% endfor %}
+</div>
+
+<details class="karte">
+    <summary><strong>＋ Neues Themengebiet (als Team)</strong></summary>
     <form method="post" action="{{ url_for('admin.themen_gebiet_neu') }}" class="aus-formular">
         <label>Titel <input type="text" name="titel" maxlength="200" required></label>
         <label>Kurze Beschreibung <textarea name="beschreibung" rows="2" maxlength="500" required></textarea></label>
@@ -25,7 +37,7 @@ Löschen entfernt immer auch Anhänge, Dateien und Übersetzungen.</p>
         </label>
         <button type="submit">Anlegen</button>
     </form>
-</div>
+</details>
 
 <h2>Themengebiete</h2>
 {% for g in gebiete %}
@@ -57,13 +69,4 @@ Löschen entfernt immer auch Anhänge, Dateien und Übersetzungen.</p>
 {% endfor %}
 {% endif %}
 
-<h2>Neueste Beiträge</h2>
-{% for b in neueste %}
-<p><a href="{{ url_for('admin.themen_diskussion', diskussion_id=b.diskussion_id) }}#b{{ b.id }}">{{ b.diskussion.titel }}</a>
-   <span class="info">· {{ admin_name(b) }} · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}
-   {% if not b.sichtbar %}· ausgeblendet{% endif %}{% if b.entfernt_am %}· entfernt{% endif %}
-   · {{ b.text[:120] }}</span></p>
-{% else %}
-<p class="info">Noch keine Beiträge.</p>
-{% endfor %}
 {% endblock %}
