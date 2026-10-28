@@ -9,8 +9,8 @@ themen_mails.py -- Benachrichtigungen aus den Themenraeumen (Robby, 28.10.2026).
   den Themenraeumen). Sprache = Website-Sprache der Empfaengerin, neutrale Anrede.
 - Admin (ADMIN_NOTIFY_EMAIL): jede neue Diskussion, jedes neue Gebiet und jeder neue
   Beitrag von Teilnehmenden sofort (Moderation) -- unabhaengig vom Schalter.
-- Schalter THEMEN_BENACHRICHTIGUNG: Mails an Teilnehmende; auf Prod bis zur rechtlichen
-  Freigabe aus (Datenschutzerklaerung Abschnitt 10).
+- Schalter THEMEN_BENACHRICHTIGUNG: Mails an Teilnehmende; seit der Freigabe am 28.10.2026
+  ueberall an, per .env abschaltbar (Datenschutzerklaerung Abschnitt 10).
 Versand ueber die Mail-Queue (omn.mailer.mailqueue_einreihen), nie im Request per SMTP.
 """
 import logging

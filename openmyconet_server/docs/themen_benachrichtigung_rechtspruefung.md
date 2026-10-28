@@ -3,10 +3,9 @@
 Stand: 28.10.2026 · Maßgeblich ist die deutsche Fassung; en/nl/fr/es sind nachgezogen.
 Hinweis: Zusammenstellung mit Anmerkungen, **keine Rechtsberatung**.
 
-Gebaut und hinter dem Schalter `THEMEN_BENACHRICHTIGUNG`: **auf Prod aus**, auf Staging und lokal an.
-Solange er aus ist, bekommen Teilnehmende keine Mails (die Admin-Mail an dich läuft unabhängig davon).
-Der Datenschutztext steht als ENTWURF im Repo (`_hinweis` in `omn/rechtstexte.json`) –
-**Prod erst nach der Freigabe deployen**, sonst wäre er schon öffentlich.
+**Freigegeben von Robby am 28.10.2026.** Seitdem ist der Schalter `THEMEN_BENACHRICHTIGUNG` überall an;
+`THEMEN_BENACHRICHTIGUNG=0` in der `.env` schaltet die Mails an Teilnehmende ab (die Admin-Mail läuft
+unabhängig davon). Die Freigabe ist im `_hinweis` von `omn/rechtstexte.json` vermerkt.
 
 ## 1. Entscheidungen (Robby, 28.10.2026)
 
@@ -47,6 +46,6 @@ Stand der Datenschutzerklärung: 28. Oktober 2026 (alle 5 Sprachen).
 
 ## 6. Nach der Freigabe
 
-1. ENTWURF-Vermerk im `_hinweis` von `omn/rechtstexte.json` durch die Freigabe ersetzen.
-2. `THEMEN_BENACHRICHTIGUNG` Standard überall an.
+1. ✅ Freigabe im `_hinweis` von `omn/rechtstexte.json` vermerkt (28.10.2026).
+2. ✅ `THEMEN_BENACHRICHTIGUNG` Standard überall an.
 3. Staging → Prod deployen.
