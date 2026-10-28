@@ -29,3 +29,11 @@ def test_editor_sieht_keine_zaehler(client, app, editor):
     eingeloggt(client, 'editor_test', 'auch-geheim-123')
     seite = client.get('/admin/news').get_data(as_text=True)
     assert 'nav-zaehler' not in seite
+
+
+def test_mcc_startseite_zeigt_admin_offen(client, app, superadmin):
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    db.session.add(Kontaktanfrage(email='a@example.org', anliegen='frage', nachricht='Hallo'))
+    db.session.commit()
+    seite = client.get('/mcc/').get_data(as_text=True)
+    assert 'Admin: steht an' in seite and '1 neue Kontaktanfrage' in seite

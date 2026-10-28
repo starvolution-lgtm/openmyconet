@@ -8,26 +8,36 @@
 <a class="mcc-banner" href="{{ url_for('mcc.kontakte', status='faellig') }}">🔔 <strong>{{ faellig }} Kontakt{{ 'e' if faellig != 1 }} fällig</strong> — abhaken oder nachfragen →</a>
 {% endif %}
 
+{# Design 28.10.2026: die entscheidende Zahl gross in die Kachel, Farbe = Handlungsbedarf #}
+{% set admin_offen = steht_an_zahl('bewerbungen', 'kontakt', 'foerderer', 'austausch', 'austausch_vorbereitet', 'fehler', 'themen') %}
 <div class="mcc-kacheln">
   <a class="mcc-kachel{{ ' warn' if faellig else ' ok' }}" href="{{ url_for('mcc.kontakte', status='faellig' if faellig else None) }}">
     <strong>Kontakte</strong>
-    <span>{{ faellig }} fällig · {{ offen }} offen · {{ gesamt }} insgesamt</span>
+    <em class="mcc-zahl">{{ faellig }}</em>
+    <span>fällig · {{ offen }} offen · {{ gesamt }} insgesamt</span>
   </a>
-  <a class="mcc-kachel" href="{{ url_for('mcc.vorlagen_seite') }}">
-    <strong>E-Mail-Vorlagen</strong>
-    <span>Vorstellungs-Mail schreiben und senden</span>
+  <a class="mcc-kachel{{ ' warn' if admin_offen else ' ok' }}" href="{{ url_for('admin.admin') }}">
+    <strong>Admin: steht an</strong>
+    <em class="mcc-zahl">{{ admin_offen }}</em>
+    <span>{% if admin_offen %}{{ steht_an().values()|map(attribute=2)|join(' · ') }}{% else %}nichts offen{% endif %}</span>
+  </a>
+  <a class="mcc-kachel{% if ampel %}{{ ' fehler' if ampel.fehler else ' ok' }}{% endif %}" href="{{ url_for('mcc.server') }}">
+    <strong>Server-Ampel</strong>
+    {% if ampel %}<em class="mcc-zahl">{{ ampel.fehler if ampel.fehler else '✔' }}</em>{% endif %}
+    <span>{% if ampel %}{{ 'alles grün' if not ampel.fehler else 'von ' ~ ampel.gesamt ~ ' Prüfungen rot' }}{% else %}Website, Backups, Mailserver, Datenbank – zum Prüfen öffnen{% endif %}</span>
+  </a>
+  <a class="mcc-kachel{{ ' warn' if offen_punkte }}" href="{{ url_for('mcc.offen') }}">
+    <strong>Offene Punkte</strong>
+    <em class="mcc-zahl">{{ offen_punkte }}</em>
+    <span>Einträge aus den Statusdateien</span>
   </a>
   <a class="mcc-kachel{{ ' warn' if stand and stand.veraltet }}" href="{{ url_for('mcc.status') }}">
     <strong>Statusdateien</strong>
     <span>{% if stand %}Stand {{ stand.text }}{% if stand.veraltet %} – PC länger nicht verbunden{% endif %}{% else %}noch nicht gespiegelt{% endif %}</span>
   </a>
-  <a class="mcc-kachel" href="{{ url_for('mcc.offen') }}">
-    <strong>Offene Punkte</strong>
-    <span>{{ offen_punkte }} Einträge aus den Statusdateien</span>
-  </a>
-  <a class="mcc-kachel{% if ampel %}{{ ' fehler' if ampel.fehler else ' ok' }}{% endif %}" href="{{ url_for('mcc.server') }}">
-    <strong>Server-Ampel</strong>
-    <span>{% if ampel %}{{ 'alles grün' if not ampel.fehler else ampel.fehler ~ ' von ' ~ ampel.gesamt ~ ' Prüfungen rot' }}{% else %}Website, Backups, Mailserver, Datenbank – zum Prüfen öffnen{% endif %}</span>
+  <a class="mcc-kachel" href="{{ url_for('mcc.vorlagen_seite') }}">
+    <strong>E-Mail-Vorlagen</strong>
+    <span>Vorstellungs-Mail schreiben und senden</span>
   </a>
 </div>
 {% endblock %}

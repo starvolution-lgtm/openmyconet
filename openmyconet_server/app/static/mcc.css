@@ -145,3 +145,9 @@ details.kz-tile .kz-detail { margin: 0.6rem 0 0; font-size: 0.88rem; overflow-wr
 details.kz-tile.fehler .kz-detail { color: var(--schlecht); }
 details.kz-tile.neutral .kz-detail { color: #5a5a52; }
 .kz-aktionen form { margin: 0; }
+
+/* Design 28.10.2026: die entscheidende Zahl gross in der Kachel */
+.mcc-zahl { font-style: normal; font-family: var(--serif); font-size: 2rem; line-height: 1.1; color: var(--tinte); }
+.mcc-kachel.warn .mcc-zahl { color: var(--warn); }
+.mcc-kachel.fehler .mcc-zahl { color: var(--schlecht); }
+.mcc-kachel.ok .mcc-zahl { color: var(--gut); }
