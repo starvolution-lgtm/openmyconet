@@ -8,9 +8,10 @@
 
 {% macro beitrag_karte(x, ist_antwort=False) %}
 {% set b = x.b %}
-<article class="th-beitrag{% if ist_antwort %} th-antwort{% endif %}" id="beitrag-{{ b.id }}">
+<article class="th-beitrag{% if ist_antwort %} th-antwort{% endif %}{% if x.neu %} th-neu-beitrag{% endif %}" id="beitrag-{{ b.id }}">
+    {% if x.erster_neu %}<span id="erster-neuer"></span>{% endif %}
     <p class="th-kopfzeile">
-        <strong>{{ x.name }}</strong> · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}
+        {% if x.neu %}<span class="th-badge-neu">● {{ tx('themen_neu') }}</span> {% endif %}<strong>{{ x.name }}</strong> · {{ b.erstellt_am.strftime('%d.%m.%Y %H:%M') }}
         {% if b.art %}<span class="th-etikett th-art-{{ b.art }}">{{ tx('themen_art_' ~ b.art) }}</span>{% endif %}
         {% if b.bearbeitet_am and not b.entfernt_am %}<span class="label">· {{ tx('themen_bearbeitet') }}</span>{% endif %}
     </p>
@@ -51,16 +52,23 @@
 
 {% block content %}
     <p class="th-pfad"><a href="{{ url_for('themen.gebiet', gebiet_id=d.themengebiet_id) }}">← {{ text_anzeige(gebiet_titel, None, tx, sprachen) }}</a></p>
-    {{ ansicht_umschalter(teilnahme, tx) }}
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
     <h1>{{ text_anzeige(titel, teilnahme, tx, sprachen) }}</h1>
     <p class="label">{{ name_von(d) }} · {{ d.erstellt_am.strftime('%d.%m.%Y') }}</p>
     {% set folgt = abo and abo.aktiv %}
-    <form method="post" action="{{ url_for('themen.folgen_umschalten', diskussion_id=d.id) }}" class="th-ansicht">
-        <input type="hidden" name="aktion" value="{{ 'nicht_folgen' if folgt else 'folgen' }}">
-        <span>🔔 {{ tx('themen_folgst_du' if folgt else 'themen_folgst_nicht') }}</span>
-        <button type="submit">{{ tx('themen_nicht_folgen' if folgt else 'themen_folgen') }}</button>
-    </form>
+    <div class="th-leiste">
+        {% if not d.geschlossen %}<a class="th-knopf" href="#schreiben">✎ {{ tx('themen_beitrag_schreiben') }}</a>{% endif %}
+        <form method="post" action="{{ url_for('themen.folgen_umschalten', diskussion_id=d.id) }}"
+              class="th-schalter{% if folgt %} th-an{% endif %}">
+            <input type="hidden" name="aktion" value="{{ 'nicht_folgen' if folgt else 'folgen' }}">
+            <span class="th-schalter-status">🔔 {{ tx('themen_folgst_du' if folgt else 'themen_folgst_nicht') }}</span>
+            <button type="submit">{{ tx('themen_nicht_folgen' if folgt else 'themen_folgen') }}</button>
+        </form>
+        {{ ansicht_umschalter(teilnahme, tx) }}
+    </div>
+    {% if neu_anzahl %}
+    <p class="th-hinweis-neu">● {{ tx('themen_neu_beitrag_eins') if neu_anzahl == 1 else tx('themen_neu_beitraege', n=neu_anzahl) }} · <a href="#erster-neuer">{{ tx('themen_zum_ersten_neuen') }}</a></p>
+    {% endif %}
     <div class="card th-einleitung">{{ text_anzeige(beschreibung, teilnahme, tx, sprachen, links=True) }}</div>
 
     {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}
@@ -78,7 +86,7 @@
     {% if d.geschlossen %}
     <p class="card label">🔒 {{ tx('themen_geschlossen') }}</p>
     {% else %}
-    <form method="post" enctype="multipart/form-data" class="card">
+    <form method="post" enctype="multipart/form-data" class="card th-schreiben" id="schreiben">
         <h2>{{ tx('themen_beitrag_schreiben') }}</h2>
         <p class="label">{{ tx('themen_sichtbar_hinweis') }}</p>
         <textarea name="text" rows="5" required aria-label="{{ tx('themen_beitrag_schreiben') }}"></textarea>

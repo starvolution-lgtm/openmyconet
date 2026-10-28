@@ -486,8 +486,10 @@ def gebiet(nutzer, teilnahme, lang, gebiet_id):
         return redirect(url_for('themen.gebiet', gebiet_id=g.zusammengefuehrt_in), code=301)
     diskussionen = sorted((d for d in g.diskussionen if d.sichtbar),
                           key=lambda d: _aware(d.letzte_aktivitaet), reverse=True)
+    abos = {a.diskussion_id: a for a in nutzer.themen_abos if a.aktiv}
     zeilen = [{'d': d, 'titel': anzeige(d, 'titel', lang), 'beschreibung': anzeige(d, 'beschreibung', lang),
-               'anzahl': sum(1 for b in d.beitraege if b.sichtbar)} for d in diskussionen]
+               'anzahl': sum(1 for b in d.beitraege if b.sichtbar),
+               'folgt': d.id in abos, 'neu': _neu_seit(d, abos.get(d.id), nutzer)} for d in diskussionen]
     return _seite('themen_gebiet.html', lang, nutzer=nutzer, teilnahme=teilnahme, g=g,
                   titel=anzeige(g, 'titel', lang), beschreibung=anzeige(g, 'beschreibung', lang), zeilen=zeilen)
 
@@ -529,9 +531,20 @@ def diskussion_neu(nutzer, teilnahme, lang, gebiet_id):
                   gebiet_titel=anzeige(g, 'titel', lang))
 
 
-def _beitrag_ansicht(b, lang):
+def _neu_seit(d, abo, nutzer):
+    """Anzahl Beitraege anderer seit dem letzten Ansehen (nur fuer gefolgte Diskussionen,
+    dort ist "zuletzt angesehen" bekannt -- themen_abo.gesehen_am)."""
+    if abo is None or abo.gesehen_am is None:
+        return 0
+    seit = _aware(abo.gesehen_am)
+    return sum(1 for b in d.beitraege if b.sichtbar and b.autor_nutzer_id != nutzer.id
+               and _aware(b.erstellt_am) > seit)
+
+
+def _beitrag_ansicht(b, lang, neu_seit=None, nutzer=None):
+    neu = bool(neu_seit and nutzer and b.autor_nutzer_id != nutzer.id and _aware(b.erstellt_am) > neu_seit)
     return {'b': b, 'text': anzeige(b, 'text', lang), 'name': anzeigename(b, lang),
-            'anhaenge': [a for a in b.anhaenge]}
+            'anhaenge': [a for a in b.anhaenge], 'neu': neu}
 
 
 @themen_bp.route('/themen/diskussion/<int:diskussion_id>', methods=['GET', 'POST'])
@@ -579,22 +592,29 @@ def diskussion(nutzer, teilnahme, lang, diskussion_id):
                 flash(' '.join(fehler), 'error')
             return redirect(url_for('themen.diskussion', diskussion_id=d.id) + f'#beitrag-{b.id}')
 
+    abo = themen_mails.abo_von(nutzer, d)
+    neu_seit = _aware(abo.gesehen_am) if abo is not None and abo.gesehen_am else None   # vor dem Aktualisieren
     themen_mails.gesehen(nutzer, d)
     sichtbar = [b for b in d.beitraege if b.sichtbar]
     oben = sorted((b for b in sichtbar if b.antwort_auf is None), key=lambda b: _aware(b.erstellt_am))
     antworten = {}
     for b in sorted((b for b in sichtbar if b.antwort_auf is not None), key=lambda b: _aware(b.erstellt_am)):
-        antworten.setdefault(b.antwort_auf, []).append(_beitrag_ansicht(b, lang))
-    faden = [{**_beitrag_ansicht(b, lang), 'antworten': antworten.get(b.id, [])} for b in oben]
+        antworten.setdefault(b.antwort_auf, []).append(_beitrag_ansicht(b, lang, neu_seit, nutzer))
+    faden = [{**_beitrag_ansicht(b, lang, neu_seit, nutzer), 'antworten': antworten.get(b.id, [])} for b in oben]
     # Antworten auf ausgeblendete/geloeschte Beitraege nicht verlieren: ans Ende haengen
     oben_ids = {b.id for b in oben}
     for eltern_id, liste in antworten.items():
         if eltern_id not in oben_ids:
             faden.extend({**x, 'antworten': []} for x in liste)
+    # Sprungziel "Zum ersten neuen Beitrag": der erste markierte in Lesereihenfolge
+    for x in (y for f in faden for y in (f, *f['antworten'])):
+        if x['neu']:
+            x['erster_neu'] = True
+            break
     return _seite('themen_diskussion.html', lang, nutzer=nutzer, teilnahme=teilnahme, d=d,
                   titel=anzeige(d, 'titel', lang), beschreibung=anzeige(d, 'beschreibung', lang),
                   gebiet_titel=anzeige(d.themengebiet, 'titel', lang), faden=faden, fehler=fehler,
-                  abo=themen_mails.abo_von(nutzer, d))
+                  abo=abo, neu_anzahl=sum(x['neu'] + sum(y['neu'] for y in x['antworten']) for x in faden))
 
 
 # --- Eigene Beitraege bearbeiten / entfernen -------------------------------------

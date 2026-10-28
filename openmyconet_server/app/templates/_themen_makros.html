@@ -5,24 +5,29 @@
    den nachlade_skript() ueber POST /themen/uebersetzung durch dieses Makro ersetzt;
    bei "Originale zuerst" erst beim Aufklappen (keine Kosten fuer Ungelesenes). #}
 {% macro text_anzeige(a, teilnahme, tx, sprachen, links=False) -%}
+{#- Ausgabe ohne Leerraum zwischen den Tags: die Container (.th-text, .th-einleitung) haben
+    white-space: pre-wrap, sonst erscheinen Einrueckungen und Leerzeilen (Design 28.10.2026). -#}
 {%- set orig_sprache = sprachen.get(a.sprache_original, a.sprache_original) -%}
 {%- set zuerst = teilnahme and teilnahme.original_zuerst -%}
 {%- if a.uebersetzt -%}
   {%- if zuerst -%}
     <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
+    {#- -#}
     <details class="th-alt"><summary>{{ tx('themen_uebersetzung_anzeigen') }}{% if a.automatisch %} · {{ tx('themen_automatisch') }}{% endif %}</summary>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</details>
   {%- else -%}
     <span>{% if links %}{{ a.text|verlinken }}{% else %}{{ a.text }}{% endif %}</span>
+    {#- -#}
     <details class="th-alt"><summary>{{ tx('themen_auto_uebersetzt_aus' if a.automatisch else 'themen_uebersetzt_aus', sprache=orig_sprache) }} · {{ tx('themen_original_anzeigen') }}</summary><span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span></details>
   {%- endif -%}
 {%- elif a.nachladen -%}
   <span class="th-ue" data-typ="{{ a.typ }}" data-id="{{ a.id }}" data-feld="{{ a.feld }}"{% if links %} data-links="1"{% endif %}{% if zuerst %} data-spaet="1"{% endif %}>
+    {#- -#}
     <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
-    {%- if zuerst %}
+    {%- if zuerst -%}
     <details class="th-alt"><summary>{{ tx('themen_uebersetzung_anzeigen') }}</summary><span class="th-ue-status">{{ tx('themen_wird_uebersetzt') }}</span></details>
-    {%- else %}
+    {%- else -%}
     <span class="th-alt th-ue-status">{{ tx('themen_wird_uebersetzt') }}</span>
-    {%- endif %}
+    {%- endif -%}
   </span>
 {%- else -%}
   <span lang="{{ a.sprache_original }}">{% if links %}{{ a.original|verlinken }}{% else %}{{ a.original }}{% endif %}</span>
@@ -43,11 +48,11 @@
 {# Umschalter oben auf der Seite: alles uebersetzt <-> alles im Original (ein Klick). #}
 {% macro ansicht_umschalter(teilnahme, tx) -%}
 {%- set zuerst = teilnahme and teilnahme.original_zuerst -%}
-<form method="post" action="{{ url_for('themen.ansicht_umschalten') }}" class="th-ansicht">
+<form method="post" action="{{ url_for('themen.ansicht_umschalten') }}" class="th-schalter th-ansicht">
     <input type="hidden" name="weiter" value="{{ request.full_path.rstrip('?') }}">
     <input type="hidden" name="ansicht" value="{{ 'uebersetzt' if zuerst else 'original' }}">
-    <span class="th-ansicht-jetzt">🌐 {{ tx('themen_ansicht_jetzt_original' if zuerst else 'themen_ansicht_jetzt_uebersetzt') }}</span>
-    <button type="submit" class="linkknopf">{{ tx('themen_ansicht_zu_uebersetzt' if zuerst else 'themen_ansicht_zu_original') }}</button>
+    <span class="th-schalter-status">🌐 {{ tx('themen_ansicht_jetzt_original' if zuerst else 'themen_ansicht_jetzt_uebersetzt') }}</span>
+    <button type="submit">{{ tx('themen_ansicht_zu_uebersetzt' if zuerst else 'themen_ansicht_zu_original') }}</button>
 </form>
 {%- endmacro %}
 

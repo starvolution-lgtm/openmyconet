@@ -7,17 +7,21 @@
 {% block head %}<meta name="robots" content="noindex, nofollow"><link rel="stylesheet" href="{{ asset('themen.css') }}">{% endblock %}
 {% block content %}
     <p class="th-pfad"><a href="{{ url_for('themen.uebersicht') }}">{{ tx('themen_zurueck') }}</a></p>
-    {{ ansicht_umschalter(teilnahme, tx) }}
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
     <h1>{{ text_anzeige(titel, teilnahme, tx, sprachen) }}</h1>
     <p class="label">{{ text_anzeige(beschreibung, teilnahme, tx, sprachen, links=True) }}</p>
 
-    <p class="th-leiste">
+    <div class="th-leiste">
         <a class="th-knopf" href="{{ url_for('themen.diskussion_neu', gebiet_id=g.id) }}">＋ {{ tx('themen_diskussion_neu') }}</a>
-    </p>
+        {{ ansicht_umschalter(teilnahme, tx) }}
+    </div>
 
     {% for z in zeilen %}
-    <a class="card th-gebiet" href="{{ url_for('themen.diskussion', diskussion_id=z.d.id) }}">
+    <a class="card th-gebiet{% if z.neu %} th-hat-neues{% endif %}" href="{{ url_for('themen.diskussion', diskussion_id=z.d.id) }}">
+        {% if z.neu or z.folgt %}<span class="th-badges">
+            {%- if z.neu %}<span class="th-badge-neu">● {{ tx('themen_neu_seit', n=z.neu) }}</span>{% endif -%}
+            {%- if z.folgt %}<span class="th-badge-folgt">🔔 {{ tx('themen_du_folgst') }}</span>{% endif -%}
+        </span>{% endif %}
         <span class="th-gebiet-titel">{{ kurz_anzeige(z.titel, teilnahme) }}{% if z.d.geschlossen %} 🔒{% endif %}</span>
         <span class="th-gebiet-text">{{ kurz_anzeige(z.beschreibung, teilnahme) }}</span>
         <span class="th-meta">{{ name_von(z.d) }} · {{ tx('themen_beitraege') }}: {{ z.anzahl }}

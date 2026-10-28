@@ -11,7 +11,6 @@ a.th-gebiet:hover { border-color: var(--akzent); }
 .th-gebiet-titel { display: block; font-family: var(--display); font-size: 1.2rem; color: var(--tinte); }
 .th-gebiet-text { display: block; color: var(--tinte-leise); margin: 0.2rem 0 0.5rem; }
 .th-meta { display: block; font-family: var(--mono); font-size: 0.75rem; color: var(--tinte-leise); }
-.th-neu { color: var(--akzent); }
 
 .th-alt { margin-top: 0.3rem; font-size: 0.9em; color: var(--tinte-leise); }
 .th-alt summary { cursor: pointer; font-family: var(--mono); font-size: 0.72rem; color: var(--akzent); }
@@ -51,9 +50,44 @@ a.th-gebiet:hover { border-color: var(--akzent); }
 .th-ue-status { display: block; font-family: var(--mono); font-size: 0.72rem; font-weight: normal;
                 letter-spacing: 0; color: var(--tinte-leise); }
 
-/* Umschalter "alles uebersetzt <-> alles im Original" oben auf jeder Themenraum-Seite */
-.th-ansicht { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.8rem; margin: 0 0 0.8rem;
-              font-family: var(--mono); font-size: 0.78rem; color: var(--tinte-leise); }
-.th-ansicht button { font: inherit; padding: 0.25rem 0.7rem; cursor: pointer; background: var(--erhaben);
-                     color: var(--akzent-dunkel); border: 1px solid var(--linie); box-shadow: none; }
-.th-ansicht button:hover { border-color: var(--akzent); }
+/* --- Design 28.10.2026: Wichtiges auf einen Blick ------------------------------------
+   Neu = kraeftiges Etikett in Akzentfarbe; Schalter (Folgen, Ansicht) als Pillen mit klarem
+   an/aus; Hauptaktion je Seite = einziger gefuellter Knopf; Uebersetzungs-Kennzeichnung lesbar. */
+.th-leiste { align-items: center; }
+.th-leise-link { font-family: var(--mono); font-size: 0.8rem; text-decoration: none; color: var(--tinte-leise); }
+.th-leise-link:hover { color: var(--akzent); }
+
+.th-badge-neu { display: inline-block; font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
+                padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--akzent); color: #fff;
+                letter-spacing: 0.02em; vertical-align: middle; }
+.th-badge-folgt { display: inline-block; font-family: var(--mono); font-size: 0.72rem; padding: 0.15rem 0.6rem;
+                  border-radius: 999px; background: var(--akzent-leise); color: var(--akzent-dunkel); }
+.th-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.4rem; }
+a.th-gebiet > .th-badge-neu { margin-bottom: 0.4rem; }
+.th-gebiet.th-hat-neues { border-left: 4px solid var(--akzent); }
+
+.th-hinweis-neu { display: inline-block; margin: 0 0 1rem; padding: 0.45rem 0.9rem; border-radius: 6px;
+                  background: var(--akzent-leise); color: var(--akzent-dunkel); font-weight: 600; }
+.th-neu-beitrag { background: color-mix(in srgb, var(--akzent-leise) 45%, transparent);
+                  box-shadow: inset 4px 0 0 var(--akzent); padding-left: 0.8rem; border-radius: 4px; }
+#erster-neuer { position: relative; top: -1rem; }
+
+/* Schalter-Pillen: Status links, Aktion rechts; "an" = Akzentfarbe, "aus" = grau */
+.th-schalter { display: inline-flex; align-items: stretch; margin: 0; border: 1px solid var(--linie);
+               border-radius: 999px; overflow: hidden; font-family: var(--mono); font-size: 0.78rem;
+               background: var(--erhaben); }
+.th-schalter-status { display: flex; align-items: center; padding: 0.35rem 0.8rem; color: var(--tinte-leise); }
+.th-schalter.th-an { border-color: var(--akzent); }
+.th-schalter.th-an .th-schalter-status { background: var(--akzent-leise); color: var(--akzent-dunkel); font-weight: 600; }
+.th-schalter button { font: inherit; margin: 0; padding: 0.35rem 0.9rem; border: 0; border-left: 1px solid var(--linie);
+                      border-radius: 0; background: transparent; color: var(--akzent-dunkel); box-shadow: none;
+                      cursor: pointer; min-height: 36px; }
+.th-schalter button:hover { background: var(--akzent-leise); }
+
+/* Uebersetzungs-Kennzeichnung: als kleine Pille statt Mini-Text */
+.th-alt summary { display: inline-block; font-size: 0.75rem; padding: 0.1rem 0.6rem; border-radius: 999px;
+                  background: var(--akzent-leise); color: var(--akzent-dunkel); list-style: none; }
+.th-alt summary::-webkit-details-marker { display: none; }
+.th-alt summary::before { content: "🌐 "; }
+.th-alt[open] summary { margin-bottom: 0.3rem; }
+.th-schreiben { scroll-margin-top: 1rem; }
