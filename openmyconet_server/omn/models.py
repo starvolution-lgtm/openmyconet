@@ -604,9 +604,30 @@ class ThemenTeilnahme(db.Model):
     # Phase 2b, Widerspruch (E1, Robby 26.10.2026): eigene Texte nicht automatisch uebersetzen
     nicht_uebersetzen = db.Column(db.Boolean, nullable=False, default=False, server_default=db.false())
     zuletzt_gesehen = db.Column(db.DateTime(timezone=True), nullable=True)
+    # Mail-Benachrichtigungen ueber neue Beitraege in gefolgten Diskussionen (Robby 28.10.2026)
+    benachrichtigungen = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true())
 
     nutzer = db.relationship('Nutzer', backref=db.backref('themen_teilnahme', uselist=False, lazy=True,
                                                            cascade='all, delete-orphan'))
+
+
+class ThemenAbo(db.Model):
+    """Wer einer Diskussion folgt (Robby 28.10.2026): automatisch nach Anlegen bzw. eigenem
+    Beitrag, sonst ueber "Folgen". Gedrosselt: nach einer Mail die naechste erst, wenn die
+    Person die Diskussion wieder angesehen hat (gesehen_am >= benachrichtigt_am)."""
+    __tablename__ = 'themen_abo'
+    __table_args__ = (db.UniqueConstraint('nutzer_id', 'diskussion_id', name='uq_themen_abo'),)
+    id = db.Column(db.Integer, primary_key=True)
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='CASCADE'), nullable=False, index=True)
+    diskussion_id = db.Column(db.Integer, db.ForeignKey('diskussion.id', ondelete='CASCADE'), nullable=False,
+                              index=True)
+    aktiv = db.Column(db.Boolean, nullable=False, default=True)          # False = "Nicht mehr folgen"
+    gesehen_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    benachrichtigt_am = db.Column(db.DateTime(timezone=True), nullable=True)
+    erstellt_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+
+    nutzer = db.relationship('Nutzer', backref=db.backref('themen_abos', lazy=True, cascade='all, delete-orphan'))
+    diskussion = db.relationship('Diskussion', backref=db.backref('abos', lazy=True, cascade='all, delete-orphan'))
 
 
 class Uebersetzung(db.Model):

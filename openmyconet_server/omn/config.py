@@ -127,6 +127,13 @@ class Config:
     UEBERSETZUNG_ANBIETER = os.getenv('UEBERSETZUNG_ANBIETER', 'claude').strip() or 'claude'
     UEBERSETZUNG_TAGESLIMIT = int(os.getenv('UEBERSETZUNG_TAGESLIMIT', '100'))
 
+    # Mail-Benachrichtigungen an Teilnehmende ueber neue Beitraege in gefolgten Diskussionen
+    # (omn/themen_mails.py, Robby 28.10.2026). Bis zur rechtlichen Freigabe auf Prod aus,
+    # auf Staging/lokal an; THEMEN_BENACHRICHTIGUNG=1/0 in der .env ueberschreibt das.
+    # Die Admin-Mail bei neuen Inhalten haengt NICHT an diesem Schalter.
+    THEMEN_BENACHRICHTIGUNG = (os.getenv('THEMEN_BENACHRICHTIGUNG', '0' if OMN_ENV == 'prod' else '1').strip().lower()
+                               in ('1', 'true', 'yes', 'on'))
+
     # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).
     # Nach dem Cutover auf DATENLABOR_SCHEMA=live setzen; Sandbox bleibt parallel verfügbar.
     DATENLABOR_SCHEMA = os.getenv('DATENLABOR_SCHEMA', 'sandbox')
@@ -152,3 +159,4 @@ class TestConfig(Config):
     # Uebersetzung in Tests an; der Anbieter wird in den Tests immer ersetzt (keine echten API-Aufrufe)
     UEBERSETZUNG_AKTIV = True
     UEBERSETZUNG_TAGESLIMIT = 100
+    THEMEN_BENACHRICHTIGUNG = True

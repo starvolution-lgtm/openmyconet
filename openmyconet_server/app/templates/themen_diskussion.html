@@ -55,6 +55,12 @@
     <p class="eyebrow">OpenMycoNet · {{ tx('themen_titel') }}</p>
     <h1>{{ text_anzeige(titel, teilnahme, tx, sprachen) }}</h1>
     <p class="label">{{ name_von(d) }} · {{ d.erstellt_am.strftime('%d.%m.%Y') }}</p>
+    {% set folgt = abo and abo.aktiv %}
+    <form method="post" action="{{ url_for('themen.folgen_umschalten', diskussion_id=d.id) }}" class="th-ansicht">
+        <input type="hidden" name="aktion" value="{{ 'nicht_folgen' if folgt else 'folgen' }}">
+        <span>🔔 {{ tx('themen_folgst_du' if folgt else 'themen_folgst_nicht') }}</span>
+        <button type="submit">{{ tx('themen_nicht_folgen' if folgt else 'themen_folgen') }}</button>
+    </form>
     <div class="card th-einleitung">{{ text_anzeige(beschreibung, teilnahme, tx, sprachen, links=True) }}</div>
 
     {% for f in fehler %}<p class="err">{{ f }}</p>{% endfor %}

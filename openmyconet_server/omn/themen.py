@@ -27,7 +27,7 @@ from flask import (
 )
 from markupsafe import Markup, escape
 
-from omn import kollaboration
+from omn import kollaboration, themen_mails
 from omn.csrf import schuetze_blueprint
 from omn.extensions import db
 from omn.i18n import LANGS, SPRACHNAMEN, t
@@ -386,6 +386,19 @@ def ansicht_umschalten(nutzer, teilnahme, lang):
     return redirect(_sicheres_ziel(request.form.get('weiter')))
 
 
+@themen_bp.route('/themen/diskussion/<int:diskussion_id>/folgen', methods=['POST'])
+@zugang
+def folgen_umschalten(nutzer, teilnahme, lang, diskussion_id):
+    """Knopf "Folgen" / "Nicht mehr folgen" in der Diskussion (Robby 28.10.2026)."""
+    d = _diskussion_oder_404(diskussion_id)
+    if request.form.get('aktion') == 'folgen':
+        themen_mails.folgen(nutzer, d)
+    else:
+        themen_mails.nicht_folgen(nutzer, d)
+    db.session.commit()
+    return redirect(url_for('themen.diskussion', diskussion_id=d.id))
+
+
 @themen_bp.route('/themen/einstellungen', methods=['GET', 'POST'])
 @zugang
 def einstellungen(nutzer, teilnahme, lang):
@@ -397,6 +410,7 @@ def einstellungen(nutzer, teilnahme, lang):
         else:
             teilnahme.anzeigename = name
             teilnahme.original_zuerst = bool(request.form.get('original_zuerst'))
+            teilnahme.benachrichtigungen = bool(request.form.get('benachrichtigungen'))
             uebersetzung_widerspruch_setzen(nutzer, bool(request.form.get('nicht_uebersetzen')))
             db.session.commit()
             flash(t('themen_einstellungen_gespeichert', lang))
@@ -458,6 +472,7 @@ def gebiet_neu(nutzer, teilnahme, lang):
                              uebersetzen=not teilnahme.nicht_uebersetzen)
             db.session.add(g)
             db.session.commit()
+            themen_mails.neues_gebiet(g)
             return redirect(url_for('themen.gebiet', gebiet_id=g.id))
     return _seite('themen_formular.html', lang, nutzer=nutzer, art_formular='gebiet', titel_wert=titel,
                   beschreibung_wert=beschreibung, sprache_wert=sprache, fehler=fehler, gebiet=None)
@@ -504,7 +519,10 @@ def diskussion_neu(nutzer, teilnahme, lang, gebiet_id):
             d = Diskussion(themengebiet_id=g.id, titel=titel, beschreibung=beschreibung, sprache_original=sprache,
                            erstellt_von=nutzer.id, uebersetzen=not teilnahme.nicht_uebersetzen)
             db.session.add(d)
+            db.session.flush()
+            themen_mails.folgen(nutzer, d)          # wer anlegt, folgt automatisch
             db.session.commit()
+            themen_mails.neue_diskussion(d)
             return redirect(url_for('themen.diskussion', diskussion_id=d.id))
     return _seite('themen_formular.html', lang, nutzer=nutzer, art_formular='diskussion', titel_wert=titel,
                   beschreibung_wert=beschreibung, sprache_wert=sprache, fehler=fehler, gebiet=g,
@@ -553,12 +571,15 @@ def diskussion(nutzer, teilnahme, lang, diskussion_id):
                 db.session.add(BeitragAnhang(beitrag_id=b.id, dateiname=dateiname, originalname=originalname,
                                              groesse=groesse))
             d.letzte_aktivitaet = jetzt()
+            themen_mails.folgen(nutzer, d)          # wer schreibt, folgt automatisch
             db.session.commit()
+            themen_mails.neuer_beitrag(b)
             flash(t('themen_gespeichert', lang))
             if fehler:
                 flash(' '.join(fehler), 'error')
             return redirect(url_for('themen.diskussion', diskussion_id=d.id) + f'#beitrag-{b.id}')
 
+    themen_mails.gesehen(nutzer, d)
     sichtbar = [b for b in d.beitraege if b.sichtbar]
     oben = sorted((b for b in sichtbar if b.antwort_auf is None), key=lambda b: _aware(b.erstellt_am))
     antworten = {}
@@ -572,7 +593,8 @@ def diskussion(nutzer, teilnahme, lang, diskussion_id):
             faden.extend({**x, 'antworten': []} for x in liste)
     return _seite('themen_diskussion.html', lang, nutzer=nutzer, teilnahme=teilnahme, d=d,
                   titel=anzeige(d, 'titel', lang), beschreibung=anzeige(d, 'beschreibung', lang),
-                  gebiet_titel=anzeige(d.themengebiet, 'titel', lang), faden=faden, fehler=fehler)
+                  gebiet_titel=anzeige(d.themengebiet, 'titel', lang), faden=faden, fehler=fehler,
+                  abo=themen_mails.abo_von(nutzer, d))
 
 
 # --- Eigene Beitraege bearbeiten / entfernen -------------------------------------

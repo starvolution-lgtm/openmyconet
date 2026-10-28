@@ -11,7 +11,7 @@ Automatische Uebersetzungen (Phase 2b): Zaehler + einzeln loeschen (/admin/theme
 """
 from flask import abort, current_app, flash, redirect, render_template, request, send_file, url_for
 
-from omn import kollaboration
+from omn import kollaboration, themen_mails
 from omn import themen as th
 from omn.admin.audit import protokollieren
 from omn.admin.core import admin_bp, role_required
@@ -222,6 +222,7 @@ def themen_diskussion(diskussion_id):
             d.letzte_aktivitaet = th.jetzt()
             db.session.commit()
             protokollieren('themen_team_beitrag', f'Diskussion #{d.id}, Beitrag #{b.id}')
+            themen_mails.neuer_beitrag(b)
             flash('Beitrag als OpenMycoNet-Team veröffentlicht.')
         return redirect(url_for('admin.themen_diskussion', diskussion_id=d.id))
     beitraege = sorted(d.beitraege, key=lambda b: th._aware(b.erstellt_am))

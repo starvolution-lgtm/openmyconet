@@ -144,7 +144,8 @@ def test_kontoloeschung_loest_nur_den_autor(app):
 def test_themenraeume_getrennt_vom_vertraulichen_austausch(app):
     """Kein Fremdschluessel zwischen Themenraeumen und Austausch/Kollaboration."""
     vertraulich = {'aufgabe', 'kommentar', 'kollaboration_anhang', 'austausch', 'foerderer', 'knoten'}
-    for tabelle in ('themengebiet', 'diskussion', 'beitrag', 'beitrag_anhang', 'themen_teilnahme', 'uebersetzung'):
+    for tabelle in ('themengebiet', 'diskussion', 'beitrag', 'beitrag_anhang', 'themen_teilnahme', 'uebersetzung',
+                    'themen_abo'):
         ziele = {fk.column.table.name for fk in db.metadata.tables[tabelle].foreign_keys}
         assert not (ziele & vertraulich), tabelle
 

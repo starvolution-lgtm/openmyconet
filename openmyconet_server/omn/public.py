@@ -400,6 +400,9 @@ def register(app):
     app.add_url_rule('/register', 'register', neuen_nutzer_registrieren, methods=['GET', 'POST'])
     app.add_url_rule('/confirm/<token>', 'confirm', confirm)
     app.add_url_rule('/abmelden/<token>', 'abmelden', abmelden, methods=['GET', 'POST'])
+    from omn.themen_mails import folgen_beenden
+    app.add_url_rule('/themen-folgen-beenden/<token>', 'themen_folgen_beenden', folgen_beenden,
+                     methods=['GET', 'POST'])
     app.add_url_rule('/newsletter/einwilligen/<token>', 'newsletter_einwilligen', newsletter_einwilligen,
                      methods=['GET', 'POST'])
     app.add_url_rule('/news', 'news', news)

@@ -128,3 +128,15 @@ Einträge gehen in den Prompt). Prüfunterlage `docs/themen_uebersetzung_rechtsp
   Inhaltsarten, die übersetzt werden, brauchen diese Spalte ebenfalls.
 - Nutzungsregeln Fassung `2026-10-26` nennen die Übersetzung (E2). Ändert sich der Ablauf der Übersetzung,
   Datenschutztext + Nutzungsregeln (neue Fassung) nachziehen.
+
+## Benachrichtigungen aus den Themenräumen (gebaut 28.10.2026, Prod aus bis Freigabe)
+`omn/themen_mails.py`, Tabelle `themen_abo` (folgt, gesehen_am, benachrichtigt_am; timestamptz),
+`themen_teilnahme.benachrichtigungen`. Unterlage `docs/themen_benachrichtigung_rechtspruefung.md`.
+- **Folgen:** automatisch beim Anlegen/Schreiben (`folgen`), Knopf `POST /themen/diskussion/<id>/folgen`.
+  Ansehen der Diskussion setzt `gesehen_am`.
+- **Drosselung:** Mail nur, wenn `benachrichtigt_am` leer oder `gesehen_am >= benachrichtigt_am`.
+- **Ohne Beitragstext**, Sprache der Empfängerin, neutrale Anrede, Versand über die Mail-Queue.
+- **Abbestellen ohne Login:** `/themen-folgen-beenden/<token>` (in `public.register`, itsdangerous-signiert,
+  GET fragt, POST beendet; dazu `List-Unsubscribe` + One-Click-Header).
+- **Admin-Mail** bei neuem Gebiet/Diskussion/Beitrag von Teilnehmenden: immer, unabhängig vom Schalter.
+- **Schalter `THEMEN_BENACHRICHTIGUNG`:** Standard auf Prod aus (`OMN_ENV=prod`), sonst an.

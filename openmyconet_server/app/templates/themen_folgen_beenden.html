@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{# Folgen einer Diskussion beenden -- Link aus jeder Benachrichtigung (omn/themen_mails.py).
+   GET fragt nur, POST beendet; ohne Login (signierter Token). Neutrale Anrede. #}
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>OpenMycoNet — {{ tx('themen_mail_abbestellen') }}</title>
+<link rel="stylesheet" href="{{ asset('register.css') }}">
+</head>
+<body>
+    <h1>🍄 OpenMycoNet</h1>
+    <h2>{{ tx('themen_mail_abbestellen') }}</h2>
+    {% if fertig %}
+        <p class="msg">{{ tx('themen_folgen_beendet') }}</p>
+    {% else %}
+        <p>{{ tx('themen_folgen_beenden_frage') }}</p>
+        <form method="POST" action="{{ url_for('themen_folgen_beenden', token=token) }}">
+            <button type="submit">{{ tx('themen_nicht_folgen') }}</button>
+        </form>
+    {% endif %}
+    <p><a href="https://www.openmyconet.de">← www.openmyconet.de</a></p>
+</body>
+</html>
