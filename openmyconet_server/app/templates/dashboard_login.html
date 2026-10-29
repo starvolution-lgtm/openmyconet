@@ -1,19 +1,21 @@
 {% extends "dashboard_base.html" %}
-{% block title %}OpenMycoNet — Dashboard-Login{% endblock %}
+{# Login per Mail-Link, 5 Sprachen + neutrale Anrede seit 29.10.2026 (lang aus ?lang= bzw. Website-Cookie). #}
+{% block html_lang %}{{ lang }}{% endblock %}
+{% block title %}OpenMycoNet — {{ t('login_titel', lang) }}{% endblock %}
 {% block content %}
-    <p class="eyebrow">OpenMycoNet · Anmeldung</p>
-    <h1>Dashboard-<em>Login</em></h1>
-    <p class="label">Trag deine registrierte E-Mail-Adresse ein — du bekommst einen Login-Link zugeschickt. Kein Passwort nötig.</p>
+    <p class="eyebrow">OpenMycoNet</p>
+    <h1>{{ t('login_titel', lang) }}</h1>
+    <p class="label">{{ t('login_text', lang) }}</p>
 
     {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
     {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
 
     <form method="POST" class="card texture-card">
-        <label class="label">E-Mail-Adresse</label>
-        <input type="email" name="email" required>
+        <label class="label" for="login-email">{{ t('login_email_label', lang) }}</label>
+        <input type="email" name="email" id="login-email" required autocomplete="email">
         {% if weiter %}<input type="hidden" name="weiter" value="{{ weiter }}">{% endif %}
         <!-- Honeypot: für Menschen unsichtbar, Bots füllen es oft trotzdem aus -->
         <input type="text" name="website" class="dl-honeypot" tabindex="-1" autocomplete="off">
-        <button type="submit">Login-Link anfordern</button>
+        <button type="submit">{{ t('login_knopf', lang) }}</button>
     </form>
 {% endblock %}

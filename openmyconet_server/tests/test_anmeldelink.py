@@ -91,3 +91,21 @@ def test_ziel_aus_mail_link_ueberlebt_den_login(app):
 def test_neue_ziele_bleiben_sicher(app, ziel):
     from omn.dashboard import _sicheres_ziel
     assert _sicheres_ziel(ziel) is None
+
+
+def test_login_seite_und_mail_mehrsprachig(app):
+    """29.10.2026: Seite in der Website-Sprache, Mail in der Sprache des Kontos."""
+    from omn.extensions import mail
+    with app.app_context():
+        db.session.add(Nutzer(name='Lazare', email='l@example.org', bestaetigt=True, sprache='fr'))
+        db.session.commit()
+    client = app.test_client()
+    seite = client.get('/dashboard/login?lang=en').get_data(as_text=True)
+    assert 'Request login link' in seite and '<html lang="en">' in seite
+    with mail.record_messages() as ausgehend:
+        antwort = client.post('/dashboard/login?lang=en', data={'email': 'l@example.org'}).get_data(as_text=True)
+    assert 'a login link has just been sent' in antwort
+    m = ausgehend[0]
+    assert m.subject == 'OpenMycoNet — Lien de connexion'
+    assert 'Bonjour Lazare,' in m.body and 'valable 30 minutes' in m.body
+    assert 'Dein' not in m.body and 'du ' not in m.body

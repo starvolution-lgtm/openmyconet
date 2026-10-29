@@ -19,6 +19,7 @@ from flask import (
 from flask_mail import Message
 
 from omn.extensions import db, mail
+from omn.i18n import LANGS, t
 from omn.models import Nutzer, Bewerbung, KollaborationAnhang
 from omn.spam_schutz import ip_erlaubt
 from omn.zeit import utcnow
@@ -76,30 +77,32 @@ def vorwort_kenntnis():
 
 @dashboard_bp.route('/dashboard/login', methods=['GET', 'POST'])
 def login():
+    from omn.datenlabor import seiten_sprache
+    lang = seiten_sprache(None)          # ?lang= -> Website-Cookie -> de (Seite in 5 Sprachen seit 29.10.2026)
     nachricht = None
     fehler = None
+    weiter = _sicheres_ziel(request.values.get('weiter'))
     if request.method == 'POST':
         if request.form.get('website'):
             # Honeypot getroffen — stiller Erfolg vortäuschen, nichts verschicken.
-            return render_template('dashboard_login.html', nachricht=_versand_hinweis())
+            return render_template('dashboard_login.html', nachricht=_versand_hinweis(lang), lang=lang)
 
         email = (request.form.get('email') or '').strip().lower()
         ip = request.remote_addr
         if not ip_erlaubt(ip, 'dashboard_login'):
-            fehler = 'Zu viele Anfragen — bitte später erneut versuchen.'
+            fehler = t('login_zu_viele', lang)
         elif not email:
-            fehler = 'Bitte E-Mail-Adresse eingeben.'
+            fehler = t('login_email_fehlt', lang)
         else:
-            _link_anfordern(email, request.form.get('weiter'))
+            _link_anfordern(email, weiter, lang)
             # Bewusst dieselbe Meldung, unabhängig davon ob die E-Mail existiert/bestätigt
             # ist — verhindert, dass die Login-Seite zum E-Mail-Enumerationsorakel wird.
-            nachricht = _versand_hinweis()
-    return render_template('dashboard_login.html', nachricht=nachricht, fehler=fehler,
-                           weiter=_sicheres_ziel(request.values.get('weiter')))
+            nachricht = _versand_hinweis(lang)
+    return render_template('dashboard_login.html', nachricht=nachricht, fehler=fehler, weiter=weiter, lang=lang)
 
 
-def _versand_hinweis():
-    return 'Falls diese E-Mail-Adresse registriert und bestätigt ist, wurde gerade ein Login-Link verschickt.'
+def _versand_hinweis(lang):
+    return t('login_versand_hinweis', lang)
 
 
 def anmeldelink_erzeugen(nutzer, weiter=None):
@@ -133,35 +136,30 @@ def _sicheres_ziel(weiter):
     return weiter
 
 
-def _link_anfordern(email, weiter=None):
+def _link_anfordern(email, weiter=None, lang='de'):
+    """Login-Mail in der Sprache des Kontos (Registrierung/Einladung), sonst der Seite;
+    neutrale Anrede (Fachkontakte werden teils gesiezt), Robby 29.10.2026."""
     nutzer = Nutzer.query.filter_by(email=email, bestaetigt=True).first()
     if not nutzer:
         return
+    if nutzer.sprache in LANGS:
+        lang = nutzer.sprache
     link = anmeldelink_erzeugen(nutzer, weiter)
-    msg = Message(subject='OpenMycoNet — Dein Login-Link', recipients=[email])
-    msg.body = f'''Hallo {nutzer.name},
-
-hier ist dein Login-Link fürs OpenMycoNet-Dashboard:
-
-{link}
-
-Der Link ist {LINK_GUELTIG_MINUTEN} Minuten gültig und nur einmal nutzbar.
-Falls du diesen Link nicht angefordert hast, kannst du diese Mail ignorieren.
-
-Das OpenMycoNet-Team
-https://www.openmyconet.de
-'''
+    hallo = t('login_mail_hallo', lang).replace('{name}', nutzer.name)
+    zeile = t('login_mail_zeile', lang)
+    hinweis = t('login_mail_hinweis', lang).replace('{min}', str(LINK_GUELTIG_MINUTEN))
+    team = t('austausch_mail_team', lang)
+    msg = Message(subject=t('login_mail_betreff', lang), recipients=[email])
+    msg.body = '\n\n'.join([hallo, zeile, link, hinweis, f'{team}\nhttps://www.openmyconet.de']) + '\n'
     msg.html = render_template(
         'transaktions_email.html',
-        titel='Dein Login-Link',
-        zeilen=[
-            f'Hallo {nutzer.name},',
-            'hier ist dein Login-Link fürs OpenMycoNet-Dashboard:',
-        ],
-        cta_text='Zum Dashboard',
+        mail_lang=lang,
+        fusszeile=team,
+        titel=t('login_mail_titel', lang),
+        zeilen=[hallo, zeile],
+        cta_text=t('login_mail_knopf', lang),
         cta_url=link,
-        hinweis=(f'Der Link ist {LINK_GUELTIG_MINUTEN} Minuten gültig und nur einmal nutzbar. '
-                 'Falls du diesen Link nicht angefordert hast, kannst du diese Mail ignorieren.'),
+        hinweis=hinweis,
     )
     try:
         mail.send(msg)
@@ -172,11 +170,12 @@ https://www.openmyconet.de
 @dashboard_bp.route('/dashboard/auth/<token>')
 def auth(token):
     nutzer = Nutzer.query.filter_by(login_token=token).first()
+    from omn.datenlabor import seiten_sprache
     if not nutzer or not nutzer.login_token_angefordert_am:
-        flash('Login-Link ungültig oder bereits verwendet.', 'error')
+        flash(t('login_link_ungueltig', seiten_sprache(None)), 'error')
         return redirect(url_for('dashboard.login'))
     if utcnow() - nutzer.login_token_angefordert_am > timedelta(minutes=LINK_GUELTIG_MINUTEN):
-        flash('Login-Link ist abgelaufen — bitte einen neuen anfordern.', 'error')
+        flash(t('login_link_abgelaufen', seiten_sprache(nutzer)), 'error')
         return redirect(url_for('dashboard.login'))
 
     # Einmalgebrauch: Token sofort verbrauchen, unabhaengig davon was danach passiert.
