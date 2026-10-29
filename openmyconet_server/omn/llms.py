@@ -76,6 +76,7 @@ SEITEN_GRUPPEN = [
         ('/medien.html', 'h1_medien', 'desc_medien'),
         ('/news', {'de': 'Neuigkeiten', 'en': 'News'}, None),
         ('/status', 'status_page_title', 'status_meta_desc'),
+        ('/ueber-den-initiator', 'footer_initiator', 'vorwort_meta_desc'),
     ]),
 ]
 SEITEN = [s for _, seiten in SEITEN_GRUPPEN for s in seiten]

@@ -18,6 +18,7 @@ from omn.admin.core import admin_bp, role_required
 from omn.extensions import db
 from omn.i18n import LANGS, SPRACHNAMEN
 from omn.models import Austausch, Bewerbung, Diskussion, Foerderer, Nutzer, Themengebiet
+from omn.vorwort import VORWORT_FASSUNG
 
 FELDER_TEXT = ('titel', 'name', 'email', 'institution', 'themenueberblick', 'persoenliche_einleitung',
                'linkedin_url', 'vorgeschichte_notiz')
@@ -165,7 +166,7 @@ def austausch_detail(austausch_id):
         kommentare=kollaboration.kommentare_fuer(a),
         nachricht=nachricht, fehler=fehler, sprachen=SPRACHNAMEN,
         zu_pruefen=aus.inaktiv_zu_pruefen(a), loeschsperre_aktiv=aus.loeschsperre_aktiv(a),
-        start=_start_anzeige(a),
+        start=_start_anzeige(a), vorwort_fassung=VORWORT_FASSUNG,
     )
 
 

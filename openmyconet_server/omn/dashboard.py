@@ -60,6 +60,19 @@ def _bereiche_helfer():
     return {'kooperation_zugang': kooperation_zugang}
 
 
+@dashboard_bp.route('/dashboard/vorwort', methods=['POST'])
+@login_required
+def vorwort_kenntnis():
+    """Kenntnisnahme des persoenlichen Vorworts (Formular auf /ueber-den-initiator, CSRF)."""
+    from omn import vorwort
+    nutzer = _aktueller_nutzer()
+    if not nutzer:
+        return redirect(url_for('dashboard.login'))
+    weiter = vorwort.sicheres_ziel(request.form.get('weiter'))
+    vorwort.bestaetigen(nutzer)          # der Klick auf "Gelesen – weiter" ist die Kenntnisnahme
+    return redirect(weiter)
+
+
 @dashboard_bp.route('/dashboard/login', methods=['GET', 'POST'])
 def login():
     nachricht = None

@@ -97,6 +97,19 @@ def wie_wir_arbeiten():
     return render_template('site/wie-wir-arbeiten.html', current_page='wie-wir-arbeiten')
 
 
+@site_live_bp.route('/ueber-den-initiator')
+def ueber_den_initiator():
+    """Persoenliches Vorwort (omn/vorwort.py). Oeffentlich ohne Kenntnisnahme; der Haken
+    erscheint nur mit ?kenntnisnahme=1 fuer angemeldete Personen mit offener Kenntnisnahme."""
+    from omn import vorwort
+    from omn.datenlabor import _nutzer
+    nutzer = _nutzer()
+    kenntnis = vorwort.kenntnis(nutzer) if nutzer else None
+    haken = bool(request.args.get('kenntnisnahme') and nutzer is not None and kenntnis is None and vorwort.aktiv())
+    return render_template('site/initiator.html', current_page='ueber-den-initiator', absaetze=vorwort.absatz_keys(),
+                           haken=haken, kenntnis=kenntnis, weiter=vorwort.sicheres_ziel(request.args.get('weiter')))
+
+
 @site_live_bp.route('/kontakt')
 def kontakt():
     return render_template('site/kontakt.html', current_page='kontakt')

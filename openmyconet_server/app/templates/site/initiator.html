@@ -1,0 +1,67 @@
+{% extends "site/base.html" %}
+{# Persoenliches Vorwort des Initiators (omn/vorwort.py, docs/vorwort_plan.md). EINE Seite fuer
+   oeffentlich (Footer "Über den Initiator") und den wissenschaftlichen Austausch ("Ein paar
+   persoenliche Worte"). Knopf "Gelesen – weiter" nur mit ?kenntnisnahme=1 fuer angemeldete Personen
+   mit offener Kenntnisnahme (Robby 29.10.2026: kein Haken, der Klick zaehlt) -- gespeichert wird nur
+   per POST /dashboard/vorwort. #}
+
+{% block title %}{{ t('footer_initiator') }} — OpenMycoNet{% endblock %}
+{% block meta_description %}{{ t('vorwort_meta_desc') }}{% endblock %}
+
+{% block hreflang %}
+<link rel="alternate" hreflang="de" href="https://www.openmyconet.de/ueber-den-initiator">
+<link rel="alternate" hreflang="en" href="https://www.openmyconet.de/ueber-den-initiator?lang=en">
+<link rel="alternate" hreflang="nl" href="https://www.openmyconet.de/ueber-den-initiator?lang=nl">
+<link rel="alternate" hreflang="fr" href="https://www.openmyconet.de/ueber-den-initiator?lang=fr">
+<link rel="alternate" hreflang="es" href="https://www.openmyconet.de/ueber-den-initiator?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://www.openmyconet.de/ueber-den-initiator">
+<link id="canonical" rel="canonical" href="https://www.openmyconet.de/ueber-den-initiator">
+{% if haken %}<meta name="robots" content="noindex">{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ asset('page-initiator.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="inner initiator-kopf">
+    <img class="initiator-portraet" src="{{ asset('initiator-portraet.webp') }}" width="160" height="160"
+         alt="{{ t('vorwort_portraet_alt') }}">
+    <div>
+      <p class="section-label" data-i18n="vorwort_tag">{{ t('vorwort_tag') }}</p>
+      <h1 data-i18n="vorwort_titel">{{ t('vorwort_titel') }}</h1>
+    </div>
+  </div>
+</div>
+
+<section class="u-bg-a">
+  <div class="inner initiator-text">
+    {% if current_lang() != 'de' %}
+    <p class="initiator-hinweis"><span data-i18n="vorwort_uebersetzung_hinweis">{{ t('vorwort_uebersetzung_hinweis') }}</span>
+      <a href="?lang=de{% if haken %}&amp;kenntnisnahme=1&amp;weiter={{ weiter|urlencode }}{% endif %}" data-i18n="vorwort_zum_original">{{ t('vorwort_zum_original') }}</a></p>
+    {% endif %}
+
+    {% for k in absaetze %}
+    <p{% if loop.last %} class="initiator-schluss"{% endif %} data-i18n="{{ k }}">{{ t(k) }}</p>
+    {% endfor %}
+
+    <div class="initiator-unterschrift">
+      <img src="{{ asset('initiator-unterschrift-hell.png') }}" width="200" height="99"
+           alt="{{ t('vorwort_unterschrift_alt') }}">
+      <p><strong>Robert Jank</strong><br><span data-i18n="vorwort_rolle">{{ t('vorwort_rolle') }}</span></p>
+    </div>
+
+    {% if haken %}
+    <form class="initiator-kenntnis" method="post" action="{{ url_for('dashboard.vorwort_kenntnis') }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="weiter" value="{{ weiter }}">
+      <p data-i18n="vorwort_kenntnis_hinweis">{{ t('vorwort_kenntnis_hinweis') }}</p>
+      <button type="submit" class="btn btn-green" data-i18n="vorwort_gelesen_weiter">{{ t('vorwort_gelesen_weiter') }}</button>
+    </form>
+    {% elif kenntnis %}
+    <p class="initiator-gelesen">{{ t('vorwort_gelesen_am')|replace('{datum}', kenntnis.gelesen_am.strftime('%d.%m.%Y')) }}</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

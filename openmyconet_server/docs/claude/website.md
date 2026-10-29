@@ -105,3 +105,9 @@ Bewerbungsformular (`site/index.html`): Karte + Nominatim-Adresssuche erst nach 
 „Karte und Adresssuche aktivieren (OpenStreetMap)“ (`nodeOsmErlaubt`, gilt nur für den
 Seitenaufruf); ohne Klick geht keine Anfrage an OSM, auch nicht beim Absenden.
 Datenschutzerklärung Abschnitt `karte`: Einwilligung, Art. 6 Abs. 1 lit. a.
+
+## Über den Initiator (seit 29.10.2026)
+`/ueber-den-initiator` (`site/initiator.html`, `page-initiator.css`): Robbys persönliches Vorwort mit Porträt
+und Unterschrift, Footer-Link „Über den Initiator“, in `llms.txt` + Audit-Listen. Dieselbe Seite dient im
+wissenschaftlichen Austausch der Kenntnisnahme (Details `docs/claude/austausch.md`). Bilder klein halten:
+Unterschrift absichtlich nur 300 px (nicht druckfähig), Originalscan nie auf den Server.

@@ -14,6 +14,7 @@
         <a class="th-knopf" href="{{ url_for('themen.gebiet_neu') }}">＋ {{ tx('themen_gebiet_neu') }}</a>
         {{ ansicht_umschalter(teilnahme, tx) }}
         <a class="th-leise-link" href="{{ url_for('themen.einstellungen') }}">⚙ {{ tx('themen_einstellungen') }}</a>
+        <a class="th-leise-link" href="{{ url_for('site_live.ueber_den_initiator', lang=lang) }}">✉ {{ tx('vorwort_titel') }}</a>
     </div>
 
     <h2>{{ tx('themen_gebiete') }}</h2>

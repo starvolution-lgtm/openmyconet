@@ -18,6 +18,7 @@
     {% if nachricht %}<p class="msg">{{ nachricht }}</p>{% endif %}
     {% if fehler %}<p class="err">{{ fehler }}</p>{% endif %}
 
+    <p class="label"><a href="{{ url_for('site_live.ueber_den_initiator', lang=lang) }}">✉ {{ tx('vorwort_titel') }}</a></p>
     {% if not ansicht %}
     <div class="card"><p>{{ tx('austausch_bereich_leer') }}</p></div>
     {% endif %}

@@ -22,6 +22,10 @@
         <p>{{ sprachen.get(austausch.sprache, austausch.sprache) }} · {{ 'förmlich' if austausch.anrede == 'formell' else 'persönlich' }}</p></div>
     <div class="feld"><label>Konto</label>
         <p>{% if austausch.nutzer %}verknüpft (#{{ austausch.nutzer.id }}, {{ austausch.nutzer.email }}){% else %}noch keins – Einladung nicht eingelöst{% endif %}</p></div>
+    <div class="feld"><label>Persönliches Vorwort</label>
+        <p>{% set vk = austausch.nutzer.vorwort_kenntnis if austausch.nutzer else none %}
+           {%- if vk %}zur Kenntnis genommen am {{ vk.gelesen_am.strftime('%d.%m.%Y') }} (Fassung {{ vk.fassung }}{% if vk.fassung != vorwort_fassung %}, <strong>veraltet</strong>{% endif %})
+           {%- else %}noch nicht zur Kenntnis genommen{% endif %}</p></div>
     <div class="feld"><label>Start-Themenraum · Aufgaben</label>
         <p>{{ start[0] }}{% if start[1] %} <span class="badge pending">{{ start[1] }}</span>{% endif %}
            · Aufgaben {{ 'angezeigt' if austausch.aufgaben_aktiv else 'ausgeblendet' }}</p></div>

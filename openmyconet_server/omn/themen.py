@@ -315,6 +315,10 @@ def zugang(f):
         lang = seiten_sprache(nutzer)
         if not darf_themenraeume_nutzen(nutzer):
             return _seite('themen_kein_zugang.html', lang, status=403, nutzer=nutzer)
+        from omn import vorwort
+        umleitung = vorwort.pruefen(nutzer, lang)     # persoenliches Vorwort einmal je Fassung
+        if umleitung is not None:
+            return umleitung
         teilnahme = nutzer.themen_teilnahme
         if teilnahme is None or teilnahme.regeln_fassung != REGELN_FASSUNG:
             return redirect(url_for('themen.teilnahme', weiter=request.path))

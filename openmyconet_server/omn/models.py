@@ -630,6 +630,19 @@ class ThemenAbo(db.Model):
     diskussion = db.relationship('Diskussion', backref=db.backref('abos', lazy=True, cascade='all, delete-orphan'))
 
 
+class VorwortKenntnis(db.Model):
+    """Kenntnisnahme des persoenlichen Vorworts des Initiators (Robby 29.10.2026,
+    docs/vorwort_plan.md): je Konto die zuletzt bestaetigte Fassung + Zeitpunkt. Nur durch
+    das Absenden des Hakens, nie durch blosses Aufrufen der (auch oeffentlichen) Seite."""
+    __tablename__ = 'vorwort_kenntnis'
+    nutzer_id = db.Column(db.Integer, db.ForeignKey('nutzer.id', ondelete='CASCADE'), primary_key=True)
+    fassung = db.Column(db.String(20), nullable=False)
+    gelesen_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc_aware)
+
+    nutzer = db.relationship('Nutzer', backref=db.backref('vorwort_kenntnis', uselist=False, lazy=True,
+                                                           cascade='all, delete-orphan'))
+
+
 class Uebersetzung(db.Model):
     """Darstellung eines Nutzertexts in einer anderen Sprache. Gilt nur fuer genau
     die Originalfassung mit diesem quelltext_hash (Aenderung des Originals -> alte

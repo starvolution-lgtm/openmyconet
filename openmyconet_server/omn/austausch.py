@@ -474,6 +474,11 @@ def bereich():
     lang = seiten_sprache(nutzer)
     bereiche = kollaboration.austausch_bereiche_von(nutzer)
     nachricht = fehler = None
+    if bereiche:
+        from omn import vorwort
+        umleitung = vorwort.pruefen(nutzer, lang)     # persoenliches Vorwort einmal je Fassung
+        if umleitung is not None:
+            return umleitung
 
     if request.method == 'POST':
         kontext = next((x for x in bereiche if x.id == request.form.get('austausch_id', type=int)), None)

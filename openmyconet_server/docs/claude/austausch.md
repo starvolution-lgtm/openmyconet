@@ -140,3 +140,17 @@ Einträge gehen in den Prompt). Prüfunterlage `docs/themen_uebersetzung_rechtsp
   GET fragt, POST beendet; dazu `List-Unsubscribe` + One-Click-Header).
 - **Admin-Mail** bei neuem Gebiet/Diskussion/Beitrag von Teilnehmenden: immer, unabhängig vom Schalter.
 - **Schalter `THEMEN_BENACHRICHTIGUNG`:** seit der Freigabe am 28.10.2026 überall an, `=0` in der `.env` schaltet ab.
+
+## Persönliches Vorwort des Initiators (gebaut 29.10.2026, Prüfung auf Prod aus bis Freigabe)
+`omn/vorwort.py`, Seite `/ueber-den-initiator` (`site_live`, `site/initiator.html`, Texte `vorwort_*` in
+`translations.json`, 5 Sprachen, Porträt + Unterschrift als kleine Bilder in `app/static/`), Plan
+`docs/vorwort_plan.md`, Texte `docs/vorwort_texte.md` (Deutsch maßgeblich).
+- **Eine Seite, zwei Zugänge:** öffentlich (Footer „Über den Initiator“) ohne Kenntnisnahme; im Austausch Link
+  „Ein paar persönliche Worte“.
+- **Eingangs-Prüfung** `vorwort.pruefen()` in `themen.zugang` und `austausch.bereich`: offene Kenntnisnahme der
+  aktuellen `VORWORT_FASSUNG` → Redirect auf `?kenntnisnahme=1&weiter=…`. Gespeichert (`vorwort_kenntnis`,
+  timestamptz) nur per `POST /dashboard/vorwort` (CSRF), nie durch Aufrufen. Ziele nur `/themen`, `/austausch`,
+  `/dashboard`.
+- **Kein Haken:** Knopf „Gelesen – weiter“, der Klick ist die Kenntnisnahme (Robby 29.10.2026).
+- **Neue Fassung** nur bei wesentlicher Textänderung (`VORWORT_FASSUNG` erhöhen) → alle bestätigen einmal neu.
+- **Schalter `VORWORT_AKTIV`:** Prod aus bis Freigabe, sonst an; in Tests aus (`test_vorwort.py` schaltet an).

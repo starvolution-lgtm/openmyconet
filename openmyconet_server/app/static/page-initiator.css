@@ -1,0 +1,14 @@
+/* Ueber den Initiator / persoenliches Vorwort (site/initiator.html) */
+.initiator-kopf { display:flex; align-items:center; gap:clamp(1rem,4vw,2rem); flex-wrap:wrap; }
+.initiator-portraet { width:160px; height:160px; border-radius:50%; object-fit:cover; border:3px solid #0a6040; flex:0 0 auto; }
+.initiator-kopf h1 { margin:0; }
+.initiator-text > * { max-width:42rem; }
+.initiator-text p { margin:0 0 1.1rem; }
+.initiator-schluss { font-family:'Playfair Display',Georgia,serif; font-size:1.25rem; color:#f0b84a; margin-top:1.6rem !important; }
+.initiator-hinweis { font-size:0.85rem; color:#a0c8a0; border-left:3px solid #d4a030; padding-left:0.8rem; }
+.initiator-hinweis a { text-decoration:underline; }
+.initiator-unterschrift { margin-top:2rem; }
+.initiator-unterschrift img { display:block; width:200px; height:auto; margin-bottom:0.3rem; }
+.initiator-unterschrift p { color:#a0c8a0; font-size:0.95rem; line-height:1.5; }
+.initiator-kenntnis { margin-top:2.5rem; padding:1.4rem; border:1px solid #d4a030; border-radius:8px; background:rgba(212,160,48,0.08); }
+.initiator-gelesen { margin-top:2rem; font-size:0.85rem; color:#a0c8a0; }
