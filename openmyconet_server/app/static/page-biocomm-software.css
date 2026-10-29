@@ -35,3 +35,9 @@
   .workflow-step p, .workflow-step .quote-line { margin-left:0; }
   .deepen-grid { grid-template-columns:1fr; }
 }
+/* Schmale Bildschirme: Bereich und Stand untereinander (laengere Stand-Texte seit 29.10.2026) */
+@media (max-width:600px) {
+  .status-table td { display:block; padding:0.15rem 0.2rem; }
+  .status-table td:first-child { padding-top:0.8rem; }
+  .status-table td:last-child { text-align:left; padding-bottom:0.8rem; }
+}

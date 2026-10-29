@@ -104,12 +104,13 @@
     <h2 data-i18n="bch_s6_h2">{{ t('bch_s6_h2') }}</h2>
     <div class="status-steps">
       {% for i in range(1,6) %}
-      <span class="step{{ ' active' if i == 1 else '' }}" data-i18n="bch_step_{{ i }}">{{ t('bch_step_' ~ i) }}</span>{% if i < 5 %}<span class="arrow">→</span>{% endif %}
+      {# Stand 29.10.2026: Platinendesign Node + Bridge abgeschlossen -> Prototyping #}
+      <span class="step{{ ' active' if i == 3 else '' }}" data-i18n="bch_step_{{ i }}">{{ t('bch_step_' ~ i) }}</span>{% if i < 5 %}<span class="arrow">→</span>{% endif %}
       {% endfor %}
     </div>
     <table class="status-table">
       {% for i in range(1,7) %}
-      <tr><td data-i18n="bch_table_{{ i }}_area">{{ t('bch_table_' ~ i ~ '_area') }}</td><td class="{{ 'status-pending' if i in [5,6] else 'status-progress' }}" data-i18n="bch_table_{{ i }}_status">{{ t('bch_table_' ~ i ~ '_status') }}</td></tr>
+      <tr><td data-i18n="bch_table_{{ i }}_area">{{ t('bch_table_' ~ i ~ '_area') }}</td><td class="{{ 'status-implemented' if i in [1,4] else ('status-pending' if i == 6 else 'status-progress') }}" data-i18n="bch_table_{{ i }}_status">{{ t('bch_table_' ~ i ~ '_status') }}</td></tr>
       {% endfor %}
     </table>
   </div>
