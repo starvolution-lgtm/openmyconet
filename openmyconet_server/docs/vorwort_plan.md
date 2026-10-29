@@ -1,6 +1,6 @@
 # Persönliches Vorwort des Initiators – Umsetzungsplan
 
-Stand: 29.10.2026 · Entwurf von Cody, Entscheidungen V1–V5 von Robby eingearbeitet · noch nichts gebaut
+Stand: 29.10.2026 · gebaut und von Robby freigegeben (29.10.2026); Eingangs-Prüfung überall an
 
 ## 1. Ziel
 

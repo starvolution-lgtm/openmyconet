@@ -10,7 +10,7 @@ translations.json, 5 Sprachen, Porträt + Unterschrift):
   Haken, Robby 29.10.2026); gespeichert wird ausschliesslich per POST /dashboard/vorwort (CSRF),
   nie durch blosses Aufrufen.
 Neue Fassung (VORWORT_FASSUNG) nur bei wesentlicher Aenderung -> alle bestaetigen einmal neu.
-Schalter VORWORT_AKTIV: Eingangs-Pruefung bis zur Freigabe des Datenschutz-Halbsatzes auf Prod aus.
+Schalter VORWORT_AKTIV: seit der Freigabe am 29.10.2026 ueberall an, per .env abschaltbar.
 """
 from datetime import datetime, timezone
 

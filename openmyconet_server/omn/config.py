@@ -135,10 +135,10 @@ class Config:
                                in ('1', 'true', 'yes', 'on'))
 
     # Persoenliches Vorwort des Initiators (omn/vorwort.py, Robby 29.10.2026): Kenntnisnahme vor
-    # dem wissenschaftlichen Austausch. Bis zur Freigabe des Datenschutz-Halbsatzes auf Prod aus,
-    # sonst an; VORWORT_AKTIV=1/0 in der .env ueberschreibt das. Die oeffentliche Seite
+    # dem wissenschaftlichen Austausch. Seit der Freigabe am 29.10.2026 ueberall an;
+    # VORWORT_AKTIV=0 in der .env schaltet die Eingangs-Pruefung ab. Die oeffentliche Seite
     # /ueber-den-initiator haengt NICHT an diesem Schalter.
-    VORWORT_AKTIV = (os.getenv('VORWORT_AKTIV', '0' if OMN_ENV == 'prod' else '1').strip().lower()
+    VORWORT_AKTIV = (os.getenv('VORWORT_AKTIV', '1').strip().lower()
                      in ('1', 'true', 'yes', 'on'))
 
     # Datenbankschema für das Datenlabor: 'sandbox' (Simulation) oder 'live' (echte Messdaten).
