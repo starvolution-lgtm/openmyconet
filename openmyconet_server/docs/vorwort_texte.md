@@ -50,7 +50,7 @@ That is also how OpenMycoNet came about.
 
 I had been looking into fungi, mycorrhizal networks and their electrical activity, and noticed how much is still unexplained. At some point the thought came up whether one could contribute something oneself to investigating these processes more closely.
 
-I am not a scientist. I trained as a gas and water fitter, a structural steel fitter and an upholsterer. Over the course of my life, however, I have also dealt with quite a few other things. Which field a question comes from doesn't really matter to me. What interests me is whether we can find a way to answer it.
+I am not a scientist. I trained as a plumber, a steel fabricator and an upholsterer. Over the course of my life, however, I have also dealt with quite a few other things. Which field a question comes from doesn't really matter to me. What interests me is whether we can find a way to answer it.
 
 So at OpenMycoNet I mainly take care of creating the technical basis that allows us to measure and investigate in the first place.
 
@@ -83,7 +83,7 @@ Zo is ook OpenMycoNet ontstaan.
 
 Ik heb me beziggehouden met schimmels, mycorrhizanetwerken en hun elektrische activiteit en daarbij gemerkt hoeveel er nog onopgehelderd is. Op een gegeven moment kwam de gedachte op of je niet zelf iets zou kunnen bijdragen om deze processen nauwkeuriger te onderzoeken.
 
-Ik ben geen wetenschapper. Ik ben opgeleid tot gas- en waterinstallateur, constructiebankwerker en stoffeerder. In de loop van mijn leven heb ik me echter ook met heel wat andere dingen beziggehouden. Uit welk vakgebied een vraag komt, maakt me eigenlijk niet uit. Wat me interesseert, is of we een manier vinden om haar te beantwoorden.
+Ik ben geen wetenschapper. Ik ben opgeleid tot loodgieter, constructiebankwerker en meubelstoffeerder. In de loop van mijn leven heb ik me echter ook met heel wat andere dingen beziggehouden. Uit welk vakgebied een vraag komt, maakt me eigenlijk niet uit. Wat me interesseert, is of we een manier vinden om haar te beantwoorden.
 
 Bij OpenMycoNet zorg ik daarom vooral voor de technische voorwaarden, zodat we überhaupt kunnen meten en onderzoeken.
 
@@ -116,7 +116,7 @@ C'est aussi ainsi qu'est né OpenMycoNet.
 
 Je me suis intéressé aux champignons, aux réseaux mycorhiziens et à leur activité électrique, et j'ai constaté combien de choses restent encore inexpliquées. À un moment donné est venue l'idée que l'on pourrait peut-être contribuer soi-même à étudier ces processus de plus près.
 
-Je ne suis pas un scientifique. J'ai appris les métiers d'installateur gaz et eau, de serrurier en construction métallique et de tapissier. Au cours de ma vie, je me suis cependant aussi occupé de bien d'autres choses. De quel domaine vient une question m'est au fond égal. Ce qui m'intéresse, c'est de savoir si nous trouvons un moyen d'y répondre.
+Je ne suis pas un scientifique. J'ai appris les métiers de plombier, de constructeur métallique et de tapissier d'ameublement. Au cours de ma vie, je me suis cependant aussi occupé de bien d'autres choses. De quel domaine vient une question m'est au fond égal. Ce qui m'intéresse, c'est de savoir si nous trouvons un moyen d'y répondre.
 
 Chez OpenMycoNet, je m'occupe donc surtout de créer les conditions techniques qui nous permettent tout simplement de mesurer et d'étudier.
 
@@ -149,7 +149,7 @@ Así nació también OpenMycoNet.
 
 Me he dedicado a los hongos, las redes de micorrizas y su actividad eléctrica, y me he dado cuenta de cuánto queda aún sin aclarar. En algún momento surgió la idea de si uno mismo no podría aportar algo para investigar estos procesos con más detalle.
 
-No soy científico. Aprendí los oficios de instalador de gas y agua, cerrajero de estructuras metálicas y tapicero. Sin embargo, a lo largo de mi vida también me he ocupado de muchas otras cosas. De qué disciplina venga una pregunta me da, en realidad, igual. Lo que me interesa es si encontramos una forma de responderla.
+No soy científico. Aprendí los oficios de fontanero, montador de estructuras metálicas y tapicero. Sin embargo, a lo largo de mi vida también me he ocupado de muchas otras cosas. De qué disciplina venga una pregunta me da, en realidad, igual. Lo que me interesa es si encontramos una forma de responderla.
 
 Por eso, en OpenMycoNet me ocupo sobre todo de crear las condiciones técnicas para que podamos medir e investigar.
 
@@ -184,11 +184,10 @@ Iniciador de OpenMycoNet
 
 ## Anmerkungen zu Übersetzungsentscheidungen
 
-- **Berufe:** Es gibt keine genauen Entsprechungen. Gewählt: en *gas and water fitter / structural steel fitter /
-  upholsterer*; nl *gas- en waterinstallateur / constructiebankwerker / stoffeerder*; fr *installateur gaz et eau /
-  serrurier en construction métallique / tapissier*; es *instalador de gas y agua / cerrajero de estructuras
-  metálicas / tapicero*. Ein Muttersprachler würde „Gas-Wasser-Installateur“ eher mit *plumber* / *plombier* /
-  *fontanero* übersetzen – das ist geläufiger, aber ungenauer (Gas fehlt). Bitte entscheiden.
+- **Berufe (Robby 29.10.2026):** Gas-Wasser-Installateur = *plumber* / *loodgieter* / *plombier* / *fontanero*;
+  Stahlbauschlosser = *steel fabricator* / *constructiebankwerker* / *constructeur métallique* /
+  *montador de estructuras metálicas*; Polsterer = *upholsterer* / *meubelstoffeerder* / *tapissier d'ameublement* /
+  *tapicero*.
 - **„Ich natürlich auch nicht“:** en *Me included, of course* (natürlicher als *Neither do I, of course*).
 - **„anrechnen“:** en *take credit for*, fr *m'attribuer*, es *atribuirme*, nl *toe-eigenen* – alle meinen
   „mir als Verdienst zuschreiben“, nicht „stehlen“.
