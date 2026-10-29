@@ -27,7 +27,7 @@
 <div class="page-header">
   <div class="inner initiator-kopf">
     <img class="initiator-portraet" src="{{ asset('initiator-portraet.webp') }}" width="160" height="160"
-         alt="{{ t('vorwort_portraet_alt') }}">
+         alt="{{ t('vorwort_portraet_alt') }}" data-i18n-alt="vorwort_portraet_alt">
     <div>
       <p class="section-label" data-i18n="vorwort_tag">{{ t('vorwort_tag') }}</p>
       <h1 data-i18n="vorwort_titel">{{ t('vorwort_titel') }}</h1>
@@ -37,10 +37,9 @@
 
 <section class="u-bg-a">
   <div class="inner initiator-text">
-    {% if current_lang() != 'de' %}
-    <p class="initiator-hinweis"><span data-i18n="vorwort_uebersetzung_hinweis">{{ t('vorwort_uebersetzung_hinweis') }}</span>
+    {# Immer ausgegeben, bei Deutsch verborgen: das Seitenskript blendet ihn beim Umschalten ein/aus. #}
+    <p class="initiator-hinweis" id="initiator-hinweis"{% if current_lang() == 'de' %} hidden{% endif %}><span data-i18n="vorwort_uebersetzung_hinweis">{{ t('vorwort_uebersetzung_hinweis') }}</span>
       <a href="?lang=de{% if haken %}&amp;kenntnisnahme=1&amp;weiter={{ weiter|urlencode }}{% endif %}" data-i18n="vorwort_zum_original">{{ t('vorwort_zum_original') }}</a></p>
-    {% endif %}
 
     {% for k in absaetze %}
     <p{% if loop.last %} class="initiator-schluss"{% endif %} data-i18n="{{ k }}">{{ t(k) }}</p>
@@ -48,7 +47,7 @@
 
     <div class="initiator-unterschrift">
       <img src="{{ asset('initiator-unterschrift-hell.png') }}" width="200" height="99"
-           alt="{{ t('vorwort_unterschrift_alt') }}">
+           alt="{{ t('vorwort_unterschrift_alt') }}" data-i18n-alt="vorwort_unterschrift_alt">
       <p><strong>Robert Jank</strong><br><span data-i18n="vorwort_rolle">{{ t('vorwort_rolle') }}</span></p>
     </div>
 
@@ -60,8 +59,53 @@
       <button type="submit" class="btn btn-green" data-i18n="vorwort_gelesen_weiter">{{ t('vorwort_gelesen_weiter') }}</button>
     </form>
     {% elif kenntnis %}
-    <p class="initiator-gelesen">{{ t('vorwort_gelesen_am')|replace('{datum}', kenntnis.gelesen_am.strftime('%d.%m.%Y')) }}</p>
+    <p class="initiator-gelesen" id="initiator-gelesen" data-datum="{{ kenntnis.gelesen_am.strftime('%d.%m.%Y') }}">{{ t('vorwort_gelesen_am')|replace('{datum}', kenntnis.gelesen_am.strftime('%d.%m.%Y')) }}</p>
     {% endif %}
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+// Sprachwechsel ohne Neuladen wie auf den anderen Seiten. Vorher hatte diese Seite kein setLang:
+// Ein Flaggen-Klick hier aenderte nur den Footer, der Text blieb bis zum Neuladen deutsch.
+function setLang(lang) {
+  currentLang = lang;
+  var url = new URL(window.location.href);
+  if (lang === 'de') { url.searchParams.delete('lang'); } else { url.searchParams.set('lang', lang); }
+  window.history.replaceState({}, '', url);
+  applyPage(lang);
+  renderSidebar();
+}
+
+function applyPage(lang) {
+  var T = TRANSLATIONS[lang] || {}, D = TRANSLATIONS.de || {};
+  function text(k) { return T[k] || D[k]; }
+  document.getElementById('html-root').setAttribute('lang', lang);
+  if (text('footer_initiator')) document.title = text('footer_initiator') + ' — OpenMycoNet';
+  var meta = document.getElementById('meta-description');
+  if (meta && text('vorwort_meta_desc')) meta.setAttribute('content', text('vorwort_meta_desc'));
+  document.querySelectorAll('main [data-i18n]').forEach(function(el) {
+    var k = el.getAttribute('data-i18n');
+    if (text(k)) el.textContent = text(k);
+  });
+  document.querySelectorAll('main [data-i18n-alt]').forEach(function(el) {
+    var k = el.getAttribute('data-i18n-alt');
+    if (text(k)) el.setAttribute('alt', text(k));
+  });
+  // Uebersetzungshinweis nur ausserhalb des deutschen Originals
+  document.getElementById('initiator-hinweis').hidden = (lang === 'de');
+  var gelesen = document.getElementById('initiator-gelesen');
+  if (gelesen && text('vorwort_gelesen_am')) {
+    gelesen.textContent = text('vorwort_gelesen_am').replace('{datum}', gelesen.getAttribute('data-datum'));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  TRANSLATIONS_READY.then(function() {
+    if (OMN_UMSCHREIBEN) applyPage(currentLang);
+    renderSidebar();
+  });
+});
+</script>
 {% endblock %}

@@ -25,6 +25,9 @@ def test_oeffentliche_seite_ohne_kenntnisnahme(client, app):
     en = client.get('/ueber-den-initiator?lang=en').get_data(as_text=True)
     assert 'A few personal words' in en and 'the German original is authoritative' in en
     assert 'Über den Initiator' in client.get('/impressum.html?lang=de').get_data(as_text=True)   # Footer
+    # Sprachwechsel ohne Neuladen: Seite bringt eigenes setLang mit, Hinweis bei Deutsch nur verborgen
+    assert 'function setLang' in seite and 'id="initiator-hinweis" hidden' in seite
+    assert 'id="initiator-hinweis">' in en
 
 
 def test_alle_sprachen_gleich_viele_absaetze(app):
