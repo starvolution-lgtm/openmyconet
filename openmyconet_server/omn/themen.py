@@ -311,7 +311,7 @@ def zugang(f):
             abort(404)
         nutzer = _nutzer()
         if nutzer is None:
-            return redirect(url_for('dashboard.login'))
+            return redirect(url_for('dashboard.login', weiter=request.full_path.rstrip('?')))
         lang = seiten_sprache(nutzer)
         if not darf_themenraeume_nutzen(nutzer):
             return _seite('themen_kein_zugang.html', lang, status=403, nutzer=nutzer)
@@ -353,7 +353,7 @@ def teilnahme():
         abort(404)
     nutzer = _nutzer()
     if nutzer is None:
-        return redirect(url_for('dashboard.login'))
+        return redirect(url_for('dashboard.login', weiter=request.full_path.rstrip('?')))
     lang = seiten_sprache(nutzer)
     if not darf_themenraeume_nutzen(nutzer):
         return _seite('themen_kein_zugang.html', lang, status=403, nutzer=nutzer)

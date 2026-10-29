@@ -77,6 +77,9 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
 .mobile-lang { display:flex; align-items:center; position:fixed !important; top:50%; right:0.8rem; transform:translateY(-50%); margin-top:0 !important; flex-direction:column !important; gap:0.9rem !important; background:rgba(20,31,20,0.9); border:1px solid #0a6040; border-radius:8px; padding:0.9rem 0.6rem; z-index:1000; }
 
 .nav-tools { display:flex; align-items:center; gap:0.5rem; margin-left:auto; margin-right:1rem; }
+.nav-login { font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:#f0b84a; border:1px solid #d4a030; padding:0.45rem 0.8rem; white-space:nowrap; transition:background-color 0.2s; }
+.nav-login:hover { background-color:rgba(212,160,48,0.15); }
+.mobile-menu-login { color:#f0b84a !important; }
 .nav-tool-btn { background:none; border:none; padding:2px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.2s, transform 0.2s; border-radius:12px; overflow:hidden; }
 .nav-tool-btn:hover { opacity:0.85; transform:scale(1.05); }
 #omn-fab, #omn-faq-fab { display:none !important; }
@@ -106,6 +109,7 @@ footer { padding:2.5rem clamp(1.5rem,5vw,5rem); border-top:1px solid #0a6040; te
      den rechten Rand hinausgeschoben -- 2026-08-02 per Handy-Screenshot gefunden). */
   .nav-logo-img { height:44px !important; }
   .hamburger-label { display:none; }
+  .nav-login { display:none; }   /* schmal: Login steht im Menue ganz oben */
   .hamburger { padding:8px 10px; gap:0; }
   .nav-tools { gap:0.15rem; margin-right:0.3rem; }
   .nav-tool-btn img { width:32px; height:32px; }

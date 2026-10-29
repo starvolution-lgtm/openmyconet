@@ -87,6 +87,8 @@
     <li><a href="{{ live('kontakt') }}" {% if current_page=='kontakt' %}class="nav-active"{% endif %} data-i18n="nav_kontakt">{{ t('nav_kontakt') }}</a></li>
   </ul>
   <div class="nav-tools">
+    {# Login fuer Mitglieder + Eingeladene (Robby 29.10.2026) -- getrennt von "Anmelden" (= Registrierung) #}
+    <a class="nav-login" href="{{ live('dashboard/login') }}" data-i18n="nav_login">{{ t('nav_login') }}</a>
     <button class="nav-tool-btn" id="nav-chat-btn" aria-label="Chatbot" title="Chatbot">
       <img class="nav-tool-icon" src="{{ asset('icon-chat.webp') }}" alt="Chat">
     </button>
@@ -103,6 +105,7 @@
 <!-- Mobile Overlay-Menü -->
 <div class="mobile-menu" id="mobileMenu">
   <button id="mobileClose" class="mobile-close-btn">✕</button>
+  <a href="{{ live('dashboard/login') }}" class="mobile-menu-link mobile-menu-login" data-i18n="nav_login">{{ t('nav_login') }}</a>
   <a href="{{ live('index.html#warum') }}" class="mobile-menu-link" data-i18n="nav_warum">{{ t('nav_warum') }}</a>
   <a href="{{ live('index.html#mitmachen') }}" class="mobile-menu-link" data-i18n="nav_mitmachen">{{ t('nav_mitmachen') }}</a>
   <a href="{{ live('index.html#spenden') }}" class="mobile-menu-link" data-i18n="nav_spenden">{{ t('nav_spenden') }}</a>

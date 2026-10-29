@@ -470,7 +470,7 @@ def bereich():
     from omn.datenlabor import _nutzer, seiten_sprache
     nutzer = _nutzer()
     if nutzer is None:
-        return redirect(url_for('dashboard.login'))
+        return redirect(url_for('dashboard.login', weiter=request.full_path.rstrip('?')))
     lang = seiten_sprache(nutzer)
     bereiche = kollaboration.austausch_bereiche_von(nutzer)
     nachricht = fehler = None

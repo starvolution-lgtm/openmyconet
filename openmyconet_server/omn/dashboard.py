@@ -8,6 +8,7 @@ Einbinden in app.py: from dashboard import dashboard_bp; app.register_blueprint(
 import logging
 import os
 import secrets
+from urllib.parse import quote
 from datetime import timedelta
 from functools import wraps
 
@@ -89,11 +90,12 @@ def login():
         elif not email:
             fehler = 'Bitte E-Mail-Adresse eingeben.'
         else:
-            _link_anfordern(email)
+            _link_anfordern(email, request.form.get('weiter'))
             # Bewusst dieselbe Meldung, unabhängig davon ob die E-Mail existiert/bestätigt
             # ist — verhindert, dass die Login-Seite zum E-Mail-Enumerationsorakel wird.
             nachricht = _versand_hinweis()
-    return render_template('dashboard_login.html', nachricht=nachricht, fehler=fehler)
+    return render_template('dashboard_login.html', nachricht=nachricht, fehler=fehler,
+                           weiter=_sicheres_ziel(request.values.get('weiter')))
 
 
 def _versand_hinweis():
@@ -111,25 +113,31 @@ def anmeldelink_erzeugen(nutzer, weiter=None):
     base_url = os.getenv('BASE_URL', 'https://api.openmyconet.de')
     link = f'{base_url}/dashboard/auth/{nutzer.login_token}'
     ziel = _sicheres_ziel(weiter)
-    return f'{link}?weiter={ziel}' if ziel else link
+    return f'{link}?weiter={quote(ziel, safe="/")}' if ziel else link
+
+
+ZIEL_PRAEFIXE = ('/dashboard/', '/themen', '/austausch')
 
 
 def _sicheres_ziel(weiter):
-    """Nur Pfade des eigenen Dashboards, keine fremden Adressen (kein offener Redirect)."""
-    if not weiter or not isinstance(weiter, str):
+    """Nur eigene Seiten (Dashboard, Themenraeume, Austausch), keine fremden Adressen
+    (kein offener Redirect). Seit 29.10.2026 auch /themen + /austausch mit Abfrage
+    (?lang=...), damit Links aus Benachrichtigungs-Mails den Login ueberstehen."""
+    if not weiter or not isinstance(weiter, str) or len(weiter) > 300:
         return None
-    if not weiter.startswith('/dashboard/') or '//' in weiter or '\\' in weiter or ':' in weiter:
+    if (not weiter.startswith(ZIEL_PRAEFIXE) or '//' in weiter or '\\' in weiter or ':' in weiter
+            or '..' in weiter):
         return None
-    if not all((c.isascii() and c.isalnum()) or c in '/-_' for c in weiter):
+    if not all((c.isascii() and c.isalnum()) or c in '/-_?=&.' for c in weiter):
         return None
     return weiter
 
 
-def _link_anfordern(email):
+def _link_anfordern(email, weiter=None):
     nutzer = Nutzer.query.filter_by(email=email, bestaetigt=True).first()
     if not nutzer:
         return
-    link = anmeldelink_erzeugen(nutzer)
+    link = anmeldelink_erzeugen(nutzer, weiter)
     msg = Message(subject='OpenMycoNet — Dein Login-Link', recipients=[email])
     msg.body = f'''Hallo {nutzer.name},
 

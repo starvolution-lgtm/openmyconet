@@ -1,5 +1,6 @@
 """Login-Link fuers Nutzer-Dashboard (omn/dashboard.py) und der Direktzugang
 fuers lokale MCC (`flask dashboard-anmeldelink`, braucht den SSH-Zugang)."""
+import re
 from urllib.parse import urlsplit
 
 import pytest
@@ -66,3 +67,27 @@ def test_mail_link_ohne_ziel_wie_bisher(app):
     assert '?' not in link
     antwort = app.test_client().get(_pfad(link))
     assert antwort.status_code == 302 and urlsplit(antwort.headers['Location']).path == '/dashboard'
+
+
+def test_ziel_aus_mail_link_ueberlebt_den_login(app):
+    """29.10.2026: Link aus einer Themenraum-Mail -> Login -> zurueck in die Diskussion."""
+    from omn.extensions import mail
+    with app.app_context():
+        db.session.add(Nutzer(name='T', email='t@example.org', bestaetigt=True))
+        db.session.commit()
+    client = app.test_client()
+    r = client.get('/themen/diskussion/7?lang=en')
+    assert r.status_code == 302 and '/dashboard/login?weiter=' in r.headers['Location']
+    seite = client.get(r.headers['Location']).get_data(as_text=True)
+    assert 'name="weiter" value="/themen/diskussion/7?lang=en"' in seite
+    with mail.record_messages() as ausgehend:
+        client.post('/dashboard/login', data={'email': 't@example.org', 'weiter': '/themen/diskussion/7?lang=en'})
+    link = re.search(r'https?://\S+/dashboard/auth/\S+', ausgehend[0].body).group(0)
+    antwort = app.test_client().get(_pfad(link))
+    assert antwort.headers['Location'].endswith('/themen/diskussion/7?lang=en')
+
+
+@pytest.mark.parametrize('ziel', ['/themen/../admin', '/austausch//evil', 'https://evil.example/themen'])
+def test_neue_ziele_bleiben_sicher(app, ziel):
+    from omn.dashboard import _sicheres_ziel
+    assert _sicheres_ziel(ziel) is None

@@ -11,6 +11,7 @@
     <form method="POST" class="card texture-card">
         <label class="label">E-Mail-Adresse</label>
         <input type="email" name="email" required>
+        {% if weiter %}<input type="hidden" name="weiter" value="{{ weiter }}">{% endif %}
         <!-- Honeypot: für Menschen unsichtbar, Bots füllen es oft trotzdem aus -->
         <input type="text" name="website" class="dl-honeypot" tabindex="-1" autocomplete="off">
         <button type="submit">Login-Link anfordern</button>
