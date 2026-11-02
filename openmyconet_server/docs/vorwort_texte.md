@@ -1,7 +1,10 @@
 # Persönliches Vorwort – Texte zur Prüfung (5 Sprachen)
 
-Stand: 29.10.2026 · Deutsch = Robbys Fassung vom 29.10.2026 (maßgeblich), mit dem ergänzten „er“ (V1).
-Übersetzungen von Cody: bewusst schlicht und nah am Original, nicht geglättet. **Bitte prüfen (V2).**
+Stand: 02.11.2026 · Deutsch = Robbys Fassung vom 02.11.2026 (maßgeblich): neuer Absatz zu
+wissenschaftlichen Grundsätzen (p04), KI-Absatz erweitert (p10, p11), „jeder Einzelne“ statt „er“ (p09),
+14 statt 12 Absätze.
+Übersetzungen von Cody: bewusst schlicht und nah am Original, nicht geglättet. **Neue und geänderte
+Absätze (p04–p06, p09–p11) bitte prüfen.**
 
 Anmerkungen zu Übersetzungsentscheidungen stehen am Ende.
 
@@ -17,17 +20,21 @@ So ist auch OpenMycoNet entstanden.
 
 Ich habe mich mit Pilzen, Mykorrhizanetzwerken und ihrer elektrischen Aktivität beschäftigt und dabei festgestellt, wie vieles noch ungeklärt ist. Irgendwann kam die Überlegung auf, ob man nicht selbst etwas dazu beitragen könnte, diese Vorgänge genauer zu untersuchen.
 
-Ich bin kein Wissenschaftler. Gelernt habe ich Gas-Wasser-Installateur, Stahlbauschlosser und Polsterer. Im Laufe meines Lebens habe ich mich allerdings auch mit etlichen anderen Dingen beschäftigt. Aus welchem Fachgebiet eine Frage kommt, ist mir eigentlich egal. Mich interessiert, ob wir einen Weg finden, sie zu beantworten.
+Ich bin kein Wissenschaftler im akademischen Sinne. Aber als jemand, der forscht, halte ich mich selbstverständlich an wissenschaftliche Grundsätze: sorgfältig beobachten, nachvollziehbar messen und Ergebnisse kritisch hinterfragen.
 
-Bei OpenMycoNet kümmere ich mich deshalb vor allem darum, die technischen Voraussetzungen zu schaffen, damit wir überhaupt messen und untersuchen können.
+Gelernt habe ich Gas-Wasser-Installateur, Stahlbauschlosser und Polsterer. Im Laufe meines Lebens habe ich mich aber mit vielen weiteren Dingen beschäftigt. Aus welchem Fachgebiet eine Frage stammt, ist für mich zweitrangig. Mich interessiert, ob wir einen Weg finden, sie zu beantworten.
+
+Bei OpenMycoNet kümmere ich mich deshalb vor allem um die technischen Voraussetzungen, damit wir überhaupt messen und untersuchen können.
 
 Was ich dabei nicht vergessen möchte: Jeder von uns bringt andere Erfahrungen und anderes Wissen mit. Ein Mykologe sieht Dinge, die mir entgehen. Dafür fällt mir aus meiner praktischen Erfahrung vielleicht etwas auf, das ein anderer nicht auf dem Schirm hat. Keiner weiß alles, und keiner hat immer recht. Ich natürlich auch nicht.
 
 Wir dürfen unterschiedliche Vorstellungen haben, Vermutungen anstellen und uns auch mal gründlich irren. Entscheidend ist für mich, dass wir bereit sind, unsere Annahmen zu überprüfen und Ergebnisse zu akzeptieren, selbst wenn sie uns nicht gefallen.
 
-Und noch etwas ist mir wichtig: Ich werde mir weder das Wissen noch die Ideen anderer als meine eigenen anrechnen. Entstehen aus unserer Zusammenarbeit neue Erkenntnisse, dann soll erkennbar bleiben, wer daran beteiligt war und welchen Beitrag er geleistet hat.
+Und noch etwas ist mir wichtig: Ich werde mir weder das Wissen noch die Ideen anderer als meine eigenen anrechnen. Entstehen aus unserer Zusammenarbeit neue Erkenntnisse, dann soll erkennbar bleiben, wer daran beteiligt war und welchen Beitrag jeder Einzelne geleistet hat.
 
-Ich nutze auch KI, unter anderem bei der Entwicklung unseres BioComm-Messsystems, der Datenverarbeitung und um wissenschaftliche Fragen besser zu verstehen. Dabei diskutiere ich durchaus mit den Systemen und hinterfrage ihre Antworten. Denn auch eine KI kann sich irren. Und das mitunter ausgesprochen überzeugend.
+Ich nutze auch KI, unter anderem bei der Entwicklung unseres BioComm-Messsystems, bei der Datenverarbeitung und um wissenschaftliche Fragen besser zu verstehen. KI hilft mir, Zusammenhänge zu erschließen, Lösungsansätze zu entwickeln und meine eigenen Überlegungen kritisch zu prüfen. Dabei diskutiere ich durchaus mit den Systemen und hinterfrage ihre Antworten. Denn auch eine KI kann sich irren. Und das mitunter ausgesprochen überzeugend.
+
+Sie ersetzt deshalb weder das eigene Denken noch die praktische Überprüfung. Entscheidungen treffe ich selbst. Und wo Fachwissen gefragt ist, das über meines hinausgeht, suche ich ausdrücklich den Austausch mit Menschen, die es haben.
 
 Ich habe OpenMycoNet angestoßen. Was daraus wird, hängt aber nicht allein von mir ab. Ich wünsche mir Menschen, die ihre Kenntnisse einbringen, Fragen stellen, Kritik üben und auch widersprechen, wenn sie etwas anders sehen.
 
@@ -50,17 +57,21 @@ That is also how OpenMycoNet came about.
 
 I had been looking into fungi, mycorrhizal networks and their electrical activity, and noticed how much is still unexplained. At some point the thought came up whether one could contribute something oneself to investigating these processes more closely.
 
-I am not a scientist. I trained as a plumber, a steel fabricator and an upholsterer. Over the course of my life, however, I have also dealt with quite a few other things. Which field a question comes from doesn't really matter to me. What interests me is whether we can find a way to answer it.
+I am not a scientist in the academic sense. But as someone who does research, it goes without saying that I follow scientific principles: observe carefully, measure in a traceable way and question results critically.
 
-So at OpenMycoNet I mainly take care of creating the technical basis that allows us to measure and investigate in the first place.
+I trained as a plumber, a steel fabricator and an upholsterer. Over the course of my life, however, I have dealt with many other things as well. Which field a question comes from is secondary to me. What interests me is whether we can find a way to answer it.
+
+So at OpenMycoNet I mainly take care of the technical basis that allows us to measure and investigate in the first place.
 
 What I don't want to forget: each of us brings different experience and different knowledge. A mycologist sees things that escape me. In turn, my practical experience may make me notice something that someone else doesn't have on their radar. Nobody knows everything, and nobody is always right. Me included, of course.
 
 We may have different ideas, make guesses and sometimes be thoroughly wrong. What matters to me is that we are willing to check our assumptions and to accept results, even when we don't like them.
 
-And one more thing is important to me: I will not take credit for other people's knowledge or ideas as my own. If new insights emerge from our collaboration, it should remain clear who was involved and what contribution they made.
+And one more thing is important to me: I will not take credit for other people's knowledge or ideas as my own. If new insights emerge from our collaboration, it should remain clear who was involved and what contribution each of them made.
 
-I also use AI, among other things in developing our BioComm measurement system and the data processing, and to better understand scientific questions. I do argue with these systems and question their answers. Because an AI can be wrong too. And sometimes remarkably convincingly.
+I also use AI, among other things in developing our BioComm measurement system, in data processing and to better understand scientific questions. AI helps me to uncover connections, develop possible solutions and critically examine my own thinking. I do argue with these systems and question their answers. Because an AI can be wrong too. And sometimes remarkably convincingly.
+
+That is why it replaces neither one's own thinking nor practical verification. I make the decisions myself. And where expertise is needed that goes beyond mine, I make a point of seeking exchange with people who have it.
 
 I started OpenMycoNet. But what becomes of it does not depend on me alone. I hope for people who contribute their knowledge, ask questions, offer criticism and also disagree when they see something differently.
 
@@ -83,7 +94,9 @@ Zo is ook OpenMycoNet ontstaan.
 
 Ik heb me beziggehouden met schimmels, mycorrhizanetwerken en hun elektrische activiteit en daarbij gemerkt hoeveel er nog onopgehelderd is. Op een gegeven moment kwam de gedachte op of je niet zelf iets zou kunnen bijdragen om deze processen nauwkeuriger te onderzoeken.
 
-Ik ben geen wetenschapper. Ik ben opgeleid tot loodgieter, constructiebankwerker en meubelstoffeerder. In de loop van mijn leven heb ik me echter ook met heel wat andere dingen beziggehouden. Uit welk vakgebied een vraag komt, maakt me eigenlijk niet uit. Wat me interesseert, is of we een manier vinden om haar te beantwoorden.
+Ik ben geen wetenschapper in academische zin. Maar als iemand die onderzoek doet, houd ik me vanzelfsprekend aan wetenschappelijke principes: zorgvuldig observeren, navolgbaar meten en resultaten kritisch tegen het licht houden.
+
+Ik ben opgeleid tot loodgieter, constructiebankwerker en meubelstoffeerder. In de loop van mijn leven heb ik me echter met veel andere dingen beziggehouden. Uit welk vakgebied een vraag komt, is voor mij bijzaak. Wat me interesseert, is of we een manier vinden om haar te beantwoorden.
 
 Bij OpenMycoNet zorg ik daarom vooral voor de technische voorwaarden, zodat we überhaupt kunnen meten en onderzoeken.
 
@@ -91,9 +104,11 @@ Wat ik daarbij niet wil vergeten: ieder van ons brengt andere ervaringen en ande
 
 We mogen verschillende ideeën hebben, vermoedens uitspreken en ons ook eens flink vergissen. Waar het mij om gaat, is dat we bereid zijn onze aannames te toetsen en resultaten te accepteren, ook als ze ons niet bevallen.
 
-En nog iets is belangrijk voor me: ik zal me de kennis of de ideeën van anderen niet als de mijne toe-eigenen. Als uit onze samenwerking nieuwe inzichten ontstaan, moet herkenbaar blijven wie eraan heeft meegewerkt en welke bijdrage hij heeft geleverd.
+En nog iets is belangrijk voor me: ik zal me de kennis of de ideeën van anderen niet als de mijne toe-eigenen. Als uit onze samenwerking nieuwe inzichten ontstaan, moet herkenbaar blijven wie eraan heeft meegewerkt en welke bijdrage ieder afzonderlijk heeft geleverd.
 
-Ik gebruik ook AI, onder andere bij de ontwikkeling van ons BioComm-meetsysteem en de gegevensverwerking, en om wetenschappelijke vragen beter te begrijpen. Daarbij discussieer ik wel degelijk met de systemen en zet ik vraagtekens bij hun antwoorden. Want ook een AI kan zich vergissen. En dat soms bijzonder overtuigend.
+Ik gebruik ook AI, onder andere bij de ontwikkeling van ons BioComm-meetsysteem, bij de gegevensverwerking en om wetenschappelijke vragen beter te begrijpen. AI helpt me verbanden te ontdekken, oplossingen uit te werken en mijn eigen overwegingen kritisch te toetsen. Daarbij discussieer ik wel degelijk met de systemen en zet ik vraagtekens bij hun antwoorden. Want ook een AI kan zich vergissen. En dat soms bijzonder overtuigend.
+
+Daarom vervangt AI noch het eigen denken noch de praktische toetsing. Beslissingen neem ik zelf. En waar vakkennis nodig is die verder gaat dan de mijne, zoek ik uitdrukkelijk het gesprek met mensen die erover beschikken.
 
 Ik heb OpenMycoNet in gang gezet. Wat ervan wordt, hangt echter niet alleen van mij af. Ik wens me mensen die hun kennis inbrengen, vragen stellen, kritiek geven en ook tegenspreken als ze iets anders zien.
 
@@ -116,9 +131,11 @@ C'est aussi ainsi qu'est né OpenMycoNet.
 
 Je me suis intéressé aux champignons, aux réseaux mycorhiziens et à leur activité électrique, et j'ai constaté combien de choses restent encore inexpliquées. À un moment donné est venue l'idée que l'on pourrait peut-être contribuer soi-même à étudier ces processus de plus près.
 
-Je ne suis pas un scientifique. J'ai appris les métiers de plombier, de constructeur métallique et de tapissier d'ameublement. Au cours de ma vie, je me suis cependant aussi occupé de bien d'autres choses. De quel domaine vient une question m'est au fond égal. Ce qui m'intéresse, c'est de savoir si nous trouvons un moyen d'y répondre.
+Je ne suis pas un scientifique au sens académique. Mais en tant que personne qui fait de la recherche, je m'en tiens évidemment aux principes scientifiques : observer avec soin, mesurer de manière traçable et remettre les résultats en question de façon critique.
 
-Chez OpenMycoNet, je m'occupe donc surtout de créer les conditions techniques qui nous permettent tout simplement de mesurer et d'étudier.
+J'ai appris les métiers de plombier, de constructeur métallique et de tapissier d'ameublement. Au cours de ma vie, je me suis cependant occupé de bien d'autres choses. De quel domaine vient une question est pour moi secondaire. Ce qui m'intéresse, c'est de savoir si nous trouvons un moyen d'y répondre.
+
+Chez OpenMycoNet, je m'occupe donc surtout des conditions techniques qui nous permettent tout simplement de mesurer et d'étudier.
 
 Ce que je ne veux pas oublier : chacun de nous apporte d'autres expériences et d'autres connaissances. Un mycologue voit des choses qui m'échappent. En revanche, grâce à mon expérience pratique, je remarquerai peut-être quelque chose qu'un autre n'a pas en tête. Personne ne sait tout, et personne n'a toujours raison. Moi non plus, bien sûr.
 
@@ -126,7 +143,9 @@ Nous pouvons avoir des idées différentes, faire des suppositions et aussi nous
 
 Et autre chose m'importe : je ne m'attribuerai ni les connaissances ni les idées des autres. Si de nouvelles connaissances naissent de notre collaboration, il doit rester clair qui y a participé et quelle contribution chacun a apportée.
 
-J'utilise aussi l'IA, entre autres pour le développement de notre système de mesure BioComm et du traitement des données, et pour mieux comprendre des questions scientifiques. Je discute d'ailleurs volontiers avec ces systèmes et je remets en question leurs réponses. Car une IA peut, elle aussi, se tromper. Et cela parfois de manière tout à fait convaincante.
+J'utilise aussi l'IA, entre autres pour le développement de notre système de mesure BioComm, pour le traitement des données et pour mieux comprendre des questions scientifiques. L'IA m'aide à mettre au jour des liens, à élaborer des pistes de solution et à examiner mes propres réflexions d'un œil critique. Je discute d'ailleurs volontiers avec ces systèmes et je remets en question leurs réponses. Car une IA peut, elle aussi, se tromper. Et cela parfois de manière tout à fait convaincante.
+
+C'est pourquoi elle ne remplace ni la réflexion personnelle ni la vérification pratique. Les décisions, je les prends moi-même. Et lorsque des connaissances spécialisées dépassant les miennes sont nécessaires, je recherche expressément l'échange avec des personnes qui les possèdent.
 
 J'ai lancé OpenMycoNet. Mais ce qu'il deviendra ne dépend pas de moi seul. Je souhaite des personnes qui apportent leurs connaissances, posent des questions, formulent des critiques et contredisent aussi lorsqu'elles voient les choses autrement.
 
@@ -149,17 +168,21 @@ Así nació también OpenMycoNet.
 
 Me he dedicado a los hongos, las redes de micorrizas y su actividad eléctrica, y me he dado cuenta de cuánto queda aún sin aclarar. En algún momento surgió la idea de si uno mismo no podría aportar algo para investigar estos procesos con más detalle.
 
-No soy científico. Aprendí los oficios de fontanero, montador de estructuras metálicas y tapicero. Sin embargo, a lo largo de mi vida también me he ocupado de muchas otras cosas. De qué disciplina venga una pregunta me da, en realidad, igual. Lo que me interesa es si encontramos una forma de responderla.
+No soy científico en el sentido académico. Pero, como alguien que investiga, me atengo por supuesto a los principios científicos: observar con cuidado, medir de forma comprobable y cuestionar los resultados de forma crítica.
 
-Por eso, en OpenMycoNet me ocupo sobre todo de crear las condiciones técnicas para que podamos medir e investigar.
+Aprendí los oficios de fontanero, montador de estructuras metálicas y tapicero. Sin embargo, a lo largo de mi vida me he ocupado de muchas otras cosas. De qué disciplina venga una pregunta es para mí secundario. Lo que me interesa es si encontramos una forma de responderla.
+
+Por eso, en OpenMycoNet me ocupo sobre todo de las condiciones técnicas para que podamos medir e investigar.
 
 Lo que no quiero olvidar: cada uno de nosotros aporta experiencias y conocimientos distintos. Un micólogo ve cosas que a mí se me escapan. A cambio, por mi experiencia práctica, quizá me llame la atención algo que otro no tiene en el radar. Nadie lo sabe todo y nadie tiene siempre razón. Yo tampoco, por supuesto.
 
 Podemos tener ideas distintas, hacer suposiciones y equivocarnos de lleno. Lo decisivo para mí es que estemos dispuestos a comprobar nuestros supuestos y a aceptar los resultados, aunque no nos gusten.
 
-Y algo más es importante para mí: no me atribuiré como propios ni los conocimientos ni las ideas de otros. Si de nuestra colaboración surgen nuevos conocimientos, debe quedar claro quién participó y qué aportación hizo.
+Y algo más es importante para mí: no me atribuiré como propios ni los conocimientos ni las ideas de otros. Si de nuestra colaboración surgen nuevos conocimientos, debe quedar claro quién participó y qué aportación hizo cada uno.
 
-También uso la IA, entre otras cosas en el desarrollo de nuestro sistema de medición BioComm y del procesamiento de datos, y para entender mejor cuestiones científicas. Y sí, discuto con estos sistemas y cuestiono sus respuestas. Porque también una IA puede equivocarse. Y a veces de forma muy convincente.
+También uso la IA, entre otras cosas en el desarrollo de nuestro sistema de medición BioComm, en el procesamiento de datos y para entender mejor cuestiones científicas. La IA me ayuda a descubrir relaciones, desarrollar posibles soluciones y examinar críticamente mis propias reflexiones. Y sí, discuto con estos sistemas y cuestiono sus respuestas. Porque también una IA puede equivocarse. Y a veces de forma muy convincente.
+
+Por eso no sustituye ni el pensamiento propio ni la comprobación práctica. Las decisiones las tomo yo. Y donde se necesitan conocimientos especializados que van más allá de los míos, busco expresamente el intercambio con personas que los tienen.
 
 Puse en marcha OpenMycoNet. Pero lo que llegue a ser no depende solo de mí. Deseo encontrar personas que aporten sus conocimientos, hagan preguntas, critiquen y también lleven la contraria cuando vean algo de otra manera.
 
@@ -191,6 +214,8 @@ Iniciador de OpenMycoNet
 - **„Ich natürlich auch nicht“:** en *Me included, of course* (natürlicher als *Neither do I, of course*).
 - **„anrechnen“:** en *take credit for*, fr *m'attribuer*, es *atribuirme*, nl *toe-eigenen* – alle meinen
   „mir als Verdienst zuschreiben“, nicht „stehlen“.
-- **„welchen Beitrag er geleistet hat“:** im Englischen geschlechtsneutral *they*; fr *chacun*, es ohne
-  Pronomen, nl *hij* wie im Deutschen.
+- **„welchen Beitrag jeder Einzelne geleistet hat“ (Robby 02.11.2026: neutral, aber nicht gegendert):**
+  en *each of them*, nl *ieder afzonderlijk*, fr *chacun*, es *cada uno*.
+- **„nachvollziehbar messen“:** en *measure in a traceable way*, nl *navolgbaar*, fr *de manière traçable*,
+  es *de forma comprobable*.
 - **„mitunter ausgesprochen überzeugend“:** en *remarkably convincingly* – trockener Ton bleibt erhalten.

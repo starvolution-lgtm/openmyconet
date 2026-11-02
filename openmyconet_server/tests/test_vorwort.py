@@ -33,10 +33,10 @@ def test_oeffentliche_seite_ohne_kenntnisnahme(client, app):
 def test_alle_sprachen_gleich_viele_absaetze(app):
     from omn.i18n import TRANSLATIONS
     keys = vorwort.absatz_keys()
-    assert len(keys) == 12
+    assert len(keys) == 14
     for sprache in ('de', 'en', 'nl', 'fr', 'es'):
         assert all(TRANSLATIONS[sprache].get(k) for k in keys), sprache
-    assert 'welchen Beitrag er geleistet hat' in ' '.join(TRANSLATIONS['de'][k] for k in keys)
+    assert 'welchen Beitrag jeder Einzelne geleistet hat' in ' '.join(TRANSLATIONS['de'][k] for k in keys)
 
 
 def test_eingangspruefung_themenraeume(client, an):
