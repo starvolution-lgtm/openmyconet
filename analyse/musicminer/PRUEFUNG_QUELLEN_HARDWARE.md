@@ -37,58 +37,86 @@ und Datenblättern. Gemessen an der BioComm-Hardware ist noch nichts. Für Phase
 
 ## 2. Eingangsschaltung der BioComm-Platine (Konstruktionsunterlagen)
 
-**Grundlage:** KiCad-Projekt „OpenMyCoNet_Project_Completed_Package_V3.3“ (Kombi-Node,
-Revision 3.3, Konstruktionsnotizen vom 01.–03.10.2026, Dateien vom 06.10.2026, lokal unter
-`Downloads/…/COMBO NODE BOARD/COMBO_NODE/`). Ausgewertet wurden nur lesend die Netzzuordnung der
-Pads in `COMBO_NODE.kicad_pcb` und die Notizen in den Schaltplänen. Dazu kommen die Datenblätter
-TI INA333 (SBOS445C) und ADS1115 (SBAS444E). **Ob Revision 3.3 der Fertigungsstand ist, muss
-Richard bestätigen.**
+### 2.1 Grundlage und Fassungen
 
-### 2.1 Was die Unterlagen zeigen
+- **Maßgeblich ist die Finalfassung von Revision 3.6**
+  (`OpenMyCoNet_Project_Completed_Package_Finale_Ver3.6.zip`, Konstruktionsnotizen „Revision
+  3.6, Date 2026-10-25“). Robby hat sie als aktuellen Stand genannt.
+- Ausgewertet wurden nur lesend die Netzzuordnung der Pads in `COMBO_NODE.kicad_pcb` und die
+  Notizen in den Schaltplänen, dazu die Datenblätter TI INA333 (SBOS445C) und ADS1115
+  (SBAS444E). Gemessen ist nichts. **Ob diese Fassung gefertigt wird, muss Richard bestätigen.**
+- Geprüft wurden der Reihe nach drei Fassungen: zuerst versehentlich Rev. 3.3 (06.10.), dann
+  Rev. 3.6 vom 21.10., schließlich die Finalfassung vom 25.10. (siehe 2.4 und `VERLAUF.md`). In
+  der Eingangsschaltung unterscheidet sich die Finalfassung von der Fassung vom 21.10. nur durch
+  einen eigenen Puffer für die Mittenspannung (U19).
 
-| Punkt | Befund (Rev. 3.3) | Datenblatt |
+### 2.2 Was die Unterlagen der Finalfassung zeigen
+
+| Punkt | Befund (Rev. 3.6 final) | Datenblatt |
 |---|---|---|
-| Verstärker | INA333 (U10), Versorgung **einseitig** +3,3 V (+3.3VA / GND) | Eingangs-Gleichtaktbereich (V−) + 0,1 V bis (V+) − 0,1 V; Ausgang bis etwa 50 mV an die Versorgungsgrenzen (10 kΩ Last) |
-| Verstärkung | Schalter SWITCH1 wählt R_G = 100 Ω / 1 kΩ / 10 kΩ, also **G = 1001 / 101 / 11** | G = 1 + 100 kΩ / R_G |
-| REF-Anschluss | Pad 5 (REF) liegt auf **GND** | Bei einseitiger Versorgung empfiehlt das Datenblatt REF auf **halbe Versorgung**: „Zero differential input voltage demands an output voltage of mid-supply“ |
-| Bezugselektrode | Koaxbuchse über 100 Ω ∥ 100 nF an **GND**, also kein Anschluss an den Verstärker. Sie legt das Substrat auf das Massepotenzial der Platine. | „VIN+ and VIN– must both be 0.1 V more than ground for linear operation“ |
-| Eingänge | J4 (IN+/IN−) direkt an INA333, Klemmdioden BAV199 nach +3.3VA/GND. **Die in den Notizen genannten 1-kΩ-Vorwiderstände sind in der Netzliste nicht vorhanden.** Kein Eingangs-RC-Filter. | Pfad für den Eingangsruhestrom nötig (Abschnitt 8.2.2.5) |
-| ADC | ADS1115 (U8), **AIN0 einpolig** (AIN1–3 offen), Messbereich ±0,256 V. Davor 100 Ω + 1 nF (Grenzfrequenz ≈ 1,6 MHz) und der Analogschalter TS5A3159 (Umschaltung Bio/EC). | Einpolige Messung nutzt nur Codes 0000h–7FFFh, also **0 bis +0,256 V**. Empfohlenes Anti-Aliasing-RC: Grenzfrequenz bei der Datenrate bis 10-fach darüber, hier also 250 Hz bis 2,5 kHz. |
-| Rauschen | – | INA333: 50 nV/√Hz, 1 µVss (0,1–10 Hz) bei G = 100. ADS1115 bei 250 SPS und ±0,256 V: 7,81 µV eff. (18,5 µVss) am ADC, durch G = 101 geteilt also ≈ 0,08 µV am Eingang. **Das Rauschen der Elektronik ist klein gegen das Modellrauschen der Sandbox (4–22 µV).** |
-| Datenrate | 250 SPS, Toleranz ±10 % | Datenblatt: Datenrate −10 % bis +10 % |
-| Bandbreite INA | – | 3,5 kHz bei G = 100 |
-| Stimulation | Rückleiter der Stimulationsklemme J11 liegt auf derselben **GND** wie die Bezugselektrode | – |
-| EC-Messung | teilt sich den ADC-Kanal mit dem Biosignal (Analogschalter), Einschwingzeit 100–150 ms nach dem Umschalten (Notiz) | – |
+| Verstärker | INA333 (U10), Versorgung einseitig +3.3VA / GND | Eingangs-Gleichtaktbereich (V−) + 0,1 V bis (V+) − 0,1 V; Ausgang bis etwa 50 mV an die Versorgungsgrenzen |
+| Verstärkung | R_G = 100 Ω / 1 kΩ / 10 kΩ per Schalter, also **G = 1001 / 101 / 11** | G = 1 + 100 kΩ / R_G |
+| Mittenspannung VMID_REFF | Teiler R43/R44 (je 100 kΩ) + C34 100 nF; **eigener Puffer U19 (OPA333, Spannungsfolger, ohne Abschaltung)**, über R62 (22 Ω) auf VMID_REFF. Der EC-Verstärker U13B nutzt nur noch den Teiler als Bezug und ist von VMID_REFF getrennt. | REF muss niederohmig angesteuert werden; das ist erfüllt |
+| REF-Anschluss | Pad 5 an **VMID_REFF (≈ 1,65 V)** | entspricht der Empfehlung für einseitige Versorgung |
+| Bezugselektrode | Koaxbuchse über 100 Ω ∥ 100 nF an **VMID_REFF** | Eingänge liegen in der Mitte des Gleichtaktbereichs |
+| Eingänge | J4 → **R56/R57 je 1 kΩ** → INA333; Klemmdioden BAV199; **10 MΩ (R63/R64) von jedem Eingang nach VMID_REFF** | Ruhestrompfad vorhanden. Kein Eingangs-RC-Filter. |
+| Rückleiter Stimulation | J11 Pin 2 und der Abschwächer (R46) an **VMID_REFF** | – |
+| ADC | ADS1115 (U8), **AIN0 einpolig gegen GND** (AIN1–3 offen); davor TS5A3159 (Bio/EC), 100 Ω + 1 nF (Grenzfrequenz ≈ 1,6 MHz) | Einpolig: 0 V bis +FSR (höchstens VDD). Empfohlenes Anti-Aliasing-RC: Grenzfrequenz bei der Datenrate bis 10-fach darüber. |
+| Messbereich ADC | **nicht festgelegt** (Firmware). Der INA-Ausgang ruht bei ≈ 1,65 V. Bei ±0,256 V (so steht es im Datenformat) läge schon die Ruhelage außerhalb des Bereichs. Nutzbar sind ±2,048 V (0–2,048 V, also −16 mV bis +3,9 mV am Eingang bei G = 101) oder ±4,096 V (0–3,3 V, also etwa ±16 mV). | ADS1115 bei 250 SPS: ±2,048 V → 62,5 µV eff. (0,62 µV am Eingang), LSB 0,62 µV; ±4,096 V → 125 µV eff. (1,24 µV am Eingang), LSB 1,24 µV |
+| Stromversorgung ADC | Netzliste: ADS1115 an **+3.3V** (digital). Die Notizen nennen +3.3VA. | – |
+| Bauteilbezeichnungen | In einer Notiztabelle heißt U19 „LPV811DBV“, sonst und auf der Platine OPA333AIDBVR. Die Notizen nennen den ADS1115 U14 und den Analogschalter U15, auf der Platine sind es U8 und U9. | – |
 
-### 2.2 Folgen, sofern Rev. 3.3 so gefertigt wird (von Richard zu prüfen)
+### 2.3 Folgen, sofern die Finalfassung so gefertigt wird (von Richard zu prüfen)
 
-1. **Negative Spannungen gehen verloren.** REF liegt auf GND, und der ADC misst einpolig. Damit
-   kann nur IN+ > IN− dargestellt werden, also bei G = 101 etwa **0 bis +2,5 mV** am Eingang.
-   Nahe 0 V kommt eine tote Zone dazu: Der Ausgang kommt nur bis etwa 50 mV an GND heran. Das
-   entspricht rund 0,5 mV am Eingang (Datenblattwert für 10 kΩ Last; bei der hochohmigen
-   ADC-Last vermutlich weniger, nicht spezifiziert). Biphasische Spikes würden halbiert.
-   Die Sandbox nimmt dagegen einen **zweiseitigen** Bereich von ±2,56 mV an.
-2. **Gleichtakt an der Grenze.** Die Bezugselektrode legt das Substrat auf GND. Die
-   Messelektroden liegen damit nahe 0 V, der INA333 braucht aber mindestens 0,1 V über GND.
-   Je nach Elektrodenpotenzial arbeitet der Verstärker außerhalb seines linearen Bereichs.
-3. **Gleichspannungsanteil der Elektroden.** Der Eingang ist gleichspannungsgekoppelt. Jede
-   Spannungsdifferenz zwischen den beiden Messelektroden (Elektrodenpotenziale, Polarisation)
-   wird mitverstärkt. Bei G = 101 reichen etwa 2,5 mV für die Sättigung. Wie groß die
-   Differenz bei Edelstahlelektroden im Substrat ist, ist unbekannt und **muss gemessen
-   werden**. Die Literaturgruppe misst mit 156 mV Messbereich.
-4. **Kein Anti-Aliasing.** Netzeinstreuung und Oberwellen werden nur durch das Digitalfilter
-   des ADS1115 gedämpft. Dessen Verlauf ist im Datenblatt nur als Grafik angegeben (Abb. 5-21),
-   die Dämpfung bei 100–150 Hz ist daraus nicht genau ablesbar. Anteile nahe der
-   Modulatorfrequenz (250 kHz) werden laut Datenblatt gar nicht gedämpft.
-5. **Gemeinsame Masse von Stimulation und Messung.** Elektrische Stimulation und Bezugselektrode
-   teilen sich GND. Stimulationsartefakte (Klemmung über die BAV199, Erholung) sind deshalb
-   wahrscheinlich. Das passt zum offenen Hardware-Punkt „Messpfad-Entkopplung“ vom 27.09.2026.
-6. **Verstärkung 101 statt 100.** Im Datenformat steht „Verstärkung 100“. Der Unterschied
-   beträgt 1 % in allen µV-Werten. Klein, aber beim ersten Lauf richtig eintragen.
+**Behoben gegenüber 3.3:** REF und Bezugselektrode liegen auf der Mittenspannung, es gibt einen
+Ruhestrompfad über 10 MΩ und die 1-kΩ-Vorwiderstände. **Behoben gegenüber der Fassung vom
+21.10.:** Der Puffer der Mittenspannung ist nicht mehr zugleich EC-Transimpedanzverstärker.
+Damit sind **zweiseitige Signale messbar**, die Eingänge liegen im linearen Bereich, und
+EC-Ströme verschieben den Bezugspunkt nicht mehr.
 
-Das sind **Befunde aus den Unterlagen, keine Messung**. Sie gehören an Richard (Hardware) und in
-den Hardware-Status im Kontrollzentrum. Für die Analyse folgt: Phase B rechnet mit **zwei
-Hardware-Modellen** (Abschnitt 3), damit sichtbar wird, was die Schaltung mit den Signalen macht.
+Offen:
+
+1. **ADC-Messbereich muss zur Mittenspannung passen.** Mit ±4,096 V (einpolig) beträgt der
+   Eingangsbereich bei G = 101 etwa ±16 mV, bei 1,24 µV Auflösung und rund 1,2 µV Rauschen. Für
+   Pilzsignale von 0,03–2 mV reicht das, und Elektroden-Gleichanteile bis über 10 mV passen
+   hinein. Das Datenformat (`pga_v` 0,256, `lsb_uv` 7,8125) muss dann entsprechend gesetzt
+   werden; die Felder dafür gibt es je Kanal schon.
+2. **Versorgungsdrift geht in den Messwert ein.** Der ADC misst einpolig gegen GND, die
+   Mittenspannung ist die halbe Analogversorgung. Ändert sich +3.3VA um 10 mV (Temperatur,
+   Last), wandert der Messwert um 5 mV am ADC, also um rund 50 µV am Eingang (G = 101). Das
+   liegt genau im Bereich der langsamen Pilzsignale (0,1–1 mV über Stunden). Abhilfe wäre
+   eine **differenzielle Messung AIN0 gegen AIN1 = VMID_REFF**. Damit hebt sich die Drift auf,
+   und der kleine Messbereich ±0,256 V mit 0,08 µV Auflösung wäre wieder nutzbar (dann ±2,5 mV
+   am Eingang). Dafür müsste AIN1 verbunden werden.
+3. **Stimulation am Bezugspunkt.** Der Rückstrom der elektrischen Stimulation fließt über R62
+   (22 Ω) in den Puffer U19, also in den Bezugspunkt von Verstärker und Bezugselektrode. Schon
+   1 mA ergibt 22 mV Verschiebung, am Eingang rund 0,2 mV. Stimulationsartefakte sind damit
+   sicher. Eine Abtrennung des Messpfads während der Stimulation (Punkt 3 der Prüfrunde vom
+   27.09.) ist nicht zu erkennen.
+4. **Kein Anti-Aliasing** (unverändert, Grenzfrequenz ≈ 1,6 MHz). Netzeinstreuung und Oberwellen
+   dämpft nur das Digitalfilter des ADS1115. Dessen Verlauf ist im Datenblatt nur als Grafik
+   angegeben. Anteile nahe 250 kHz werden gar nicht gedämpft.
+5. **Gleichspannungsanteil der Elektroden** (unverändert) wird mitverstärkt. Mit ±16 mV Bereich
+   ist er weniger kritisch als in 3.3. Seine Größe muss gemessen werden.
+6. **Einschwingen der Eingänge** nach dem Einschalten bzw. nach Stimulation über 10 MΩ und die
+   Elektroden- und Leitungskapazität: Die Dauer ist unbekannt, die ersten Werte sind zu
+   markieren. VMID selbst bleibt dank U19 ohne Abschaltung stehen.
+7. **Unterlagen widersprechen sich** in Kleinigkeiten (Versorgung des ADC, Bezeichnung von U19,
+   Bauteilnummern). Vor der Fertigung zu bereinigen.
+8. **Verstärkung 101 statt 100** (unverändert); 1 % in allen µV-Werten.
+
+### 2.4 Zum Vergleich: frühere Fassungen (überholt)
+
+- **Rev. 3.3 (06.10.):** REF und Bezugselektrode auf GND, kein Ruhestrompfad, Vorwiderstände
+  fehlten in der Netzliste. Damit wären nur positive Spannungen von 0 bis +2,5 mV messbar
+  gewesen, mit einer toten Zone nahe 0, und der Gleichtakt hätte außerhalb des INA333-Bereichs
+  gelegen.
+- **Rev. 3.6 vom 21.10.:** wie die Finalfassung, aber die Mittenspannung wurde von U13B
+  gepuffert, der zugleich EC-Transimpedanzverstärker war (invertierender Eingang an der
+  EC-Sense-Elektrode). EC-Ströme hätten den Bezugspunkt verschoben. In der Finalfassung ist das
+  durch U19 behoben.
+- In allen Fassungen gleich geblieben: einpoliger ADC-Eingang, kein Anti-Aliasing,
+  Verstärkung 101, Rückstrom der Stimulation am Bezugspunkt.
 
 ## 3. Folgen für die Signalparameter in Phase B
 
@@ -97,10 +125,10 @@ Hardware-Modellen** (Abschnitt 3), damit sichtbar wird, was die Schaltung mit de
 | Zeitskalen der Fenster | nur 10 s | **drei Skalen:** 10 s (schnell), 2 min (Spikes nach Literatur), 20 min (Züge, Drift); für die langen Skalen Mittelung auf 1 Wert/s (wie in der Literatur) |
 | Spike-Familien | 20–300 µV, 10–200 ms | (a) **schnell** 10–200 ms, nur als Methodentest; (b) **pilzähnlich** Dauer 30 s – 20 min, einzelne bis 2 h, Amplitude 0,03–2 mV, in Zügen (2–8 Spikes, Zugdauer 20–120 min) |
 | Grundliniendrift | 0,01–5 µV/s | Wellen von **1–12 h**, 0,1–1 mV; dazu langsame Rhythmen (30 min, 24 h). Wochenperioden passen nicht in die Laufzeit der Testsignale, nur als Hinweis. |
-| Hardware-Modell | ideal, ±2,56 mV | **H-ideal** (zweiseitig ±2,53 mV, G = 101) und **H-Rev3.3** (einseitig 0 bis +2,53 mV, tote Zone 0–0,5 mV, Elektroden-Gleichanteil, Sättigung, kein Anti-Aliasing); dieselben Signale durch beide Modelle |
+| Hardware-Modell | ideal, ±2,56 mV | **H-ideal** (zweiseitig ±2,53 mV, G = 101, wie die Sandbox) und **H-Rev3.6** (±16 mV, Auflösung 1,24 µV, ADC-Rauschen 1,2 µV am Eingang, Elektroden-Gleichanteil, Sättigung, kein Anti-Aliasing, Drift der Versorgung im Messwert, Verschiebung der Mittenspannung durch Stimulationsströme); dieselben Signale durch beide Modelle |
 | Netzeinstreuung | 1–200 µV | bis zur Sättigung; Faltung über ein Filtermodell, das als **Annahme** gekennzeichnet ist (sinc-Verlauf), bis das Digitalfilter nachgemessen ist |
 | Elektroden-Gleichanteil | – | 0 bis ± einige mV, unbekannt → als Parameterreihe, bis zur Messung |
-| Rauschen | weiß, 4–22 µV | weiß + 1/f; Elektronik vernachlässigbar (siehe 2.1), Elektrode/Umgebung unbekannt |
+| Rauschen | weiß, 4–22 µV | weiß + 1/f; Elektronik bei Rev. 3.6 ≈ 1,2 µV eff. am Eingang (ADC bei ±4,096 V, siehe 2.2), Elektrode/Umgebung unbekannt |
 
 ## 4. Was nur durch Messungen an der Hardware zu klären ist
 

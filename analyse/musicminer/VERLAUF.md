@@ -37,6 +37,16 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 6. **8b.5 vermischte Übertragung und Neuheit.** Die Sättigung kam in A4 nur in einem Segment
    vor und galt deshalb als „nicht übertragbar“, obwohl das gar nicht prüfbar war. Für Phase B
    gibt es drei Ergebnisse (bestanden / nicht bestanden / nicht prüfbar, E2 10.2).
+7. **Zuerst die falsche Hardware-Revision geprüft.** Die Eingangsschaltung wurde zunächst an
+   Revision 3.3 (06.10.2026) beurteilt, und eine Notiz an Richard dazu war schon geschrieben
+   (nicht versendet). Robby wies auf Revision 3.6 (21.10.2026) hin. Sie lag nur als ZIP vor,
+   und die Suche nach dem neuesten Schaltplan hatte nur entpackte Ordner erfasst. Nach der
+   Prüfung von 3.6 waren die meisten 3.3-Befunde behoben, dafür kamen zwei neue Punkte dazu
+   (ADC-Messbereich, Doppelrolle des Mittenspannungspuffers). Danach reichte Robby die
+   **Finalfassung von 3.6 (25.10.2026)** nach. Darin ist die Doppelrolle durch einen eigenen
+   Puffer (U19) bereits behoben. Die 3.3-Notiz wurde durch eine Notiz zur Finalfassung ersetzt.
+   **Lehre:** Vor jeder Hardware-Aussage den aktuellen Stand bei Robby erfragen, auch ZIP-Archive
+   durchsuchen und die Revision im Text nennen.
 
 ## Verworfene Ansätze
 
@@ -69,11 +79,21 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 
 ## Befunde außerhalb der Analyse (zur Weitergabe)
 
-- **Eingangsschaltung Rev. 3.3** (aus Konstruktionsunterlagen, nicht gemessen): REF des INA333
-  auf GND bei einseitiger Versorgung, einpoliger ADC-Eingang, Bezugselektrode auf GND, kein
-  Anti-Aliasing, Vorwiderstände aus den Notizen fehlen in der Netzliste, Verstärkung 101 statt
-  100. Details und Folgen: `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 2. Bestätigung durch Richard
-  steht aus.
+- **Eingangsschaltung Rev. 3.6, Finalfassung 25.10.** (aus Konstruktionsunterlagen, nicht
+  gemessen): Die Schwächen von 3.3 (REF und Bezugselektrode auf GND, kein Ruhestrompfad,
+  fehlende Vorwiderstände) sind behoben, die Mittenspannung hat einen eigenen Puffer (U19).
+  Offen:
+  - Der ADC-Messbereich muss zur Mittenspannung 1,65 V passen (±4,096 V statt der ±0,256 V
+    aus dem Datenformat).
+  - Der ADC misst einpolig gegen GND. Drift der Analogversorgung geht deshalb zur Hälfte in den
+    Messwert ein (10 mV Versorgung ≈ 50 µV am Eingang). Abhilfe: differenzielle Messung gegen
+    VMID.
+  - Der Rückstrom der Stimulation fließt in den Bezugspunkt.
+  - Es gibt kein Anti-Aliasing.
+  - Die Unterlagen widersprechen sich in einigen Punkten.
+  - Die Verstärkung ist 101 statt 100.
+
+  Details: `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 2. Bestätigung durch Richard steht aus.
 - **Literatur:** Extrazelluläre Pilzsignale werden überwiegend von einer Arbeitsgruppe berichtet.
   Es gibt eine Artefakt-Kritik (Blatt et al. 2024). Kontrollmessungen ohne lebendes Myzel sind
   für BioComm unverzichtbar.
