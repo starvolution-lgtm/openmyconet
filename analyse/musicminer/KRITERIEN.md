@@ -3,6 +3,11 @@
 Stand 05.11.2026, **vor dem ersten Training** festgehalten. Änderungen an Kriterien danach nur
 mit Datum, Begründung und neuer Versionsnummer.
 
+**Ergänzung E1 zu v2** (05.11.2026, nach A3, **vor A4** festgelegt, gilt prospektiv ab A4,
+Abschnitt 9): größenabhängiger Nullmodellvergleich, drei Ergebnisstufen, Operationalisierung von
+8b, Robustheitstest der Kartentopologie, Vergleichsverfahren für A4. v2 und die damit bewerteten
+Ergebnisse von A1–A3 bleiben unverändert.
+
 **Kriterien v2** (05.11.2026, ebenfalls vor dem ersten Training, nach Rückmeldung Robby):
 Klassifikation und explorative Entdeckung werden getrennt bewertet (8a/8b); faire
 Vergleichsbedingungen und zwei Nullmodelle (7); kleine SOM und große ESOM werden getrennt
@@ -174,6 +179,8 @@ Eine Gruppe (oder ein Übergangsbereich) gilt als **entdeckte Struktur**, wenn a
 2. **Über den Nullmodellen:** ihre Abgrenzung (Abschnitt 4) liegt über dem 95. Perzentil der
    Abgrenzungen aller Gruppen und Inseln auf N1 und N2. Zeigen die Nullmodelle in allen Seeds nur
    eine einzige Gruppe, ist dieser Punkt durch die Existenz der Gruppe erfüllt.
+   (Ab A4 ergänzt durch den größenabhängigen Vergleich in Abschnitt 9; dieser Punkt bleibt als
+   globale, konservative Schwelle bestehen.)
 3. **Nachprüfbar:** Beispielfenster in den Rohdaten zeigen eine benennbare gemeinsame
    Eigenschaft; die Gruppe lässt sich danach durch eine einfache Regel auf die Merkmale beschreiben.
 4. **Kein Verfahrensartefakt:** nicht durch Segmentränder, Kartenrand (planar ↔ toroidal) oder
@@ -190,3 +197,106 @@ Vergleichsverfahren sie ebenso, ist es eine Entdeckung, aber kein Vorteil der ES
   ≥ 0,5 hat, wird mit 5 Beispielfenstern dokumentiert und ihre Ursache untersucht.
 - Jedes Ergebnis wird mit Schnappschuss-Prüfsumme, Merkmalssatz, Kartenparametern und Seed
   gespeichert und als SIMULATION gekennzeichnet.
+
+## 9. Ergänzung E1 zu v2 (prospektiv, vor A4 festgelegt, gilt für A4 und Phase B)
+
+Festgelegt am 05.11.2026 nach dem Bericht zu A1–A3 und **bevor A4 gerechnet wurde** (Vorgaben
+Robby). Die Ergebnisse von A1–A3 bleiben nach v2 bewertet und werden nicht neu eingestuft. Alle
+Bezeichnungen hier betreffen nur die **Erkennung von Strukturen in Simulationsdaten**, nie
+biologische Ursachen.
+
+### 9.1 Kandidaten
+
+- Hauptkonfiguration: ESOM 40 × 60 **toroidal**, Endradius 0,75 (wie A3), je Satz P und P + L.
+  Die planare Karte dient der Prüfung 8b.4.
+- Kandidaten sind alle Komponenten (Gruppen außer der größten, und Inseln) der Seed-0-Karte.
+  **Wiedergefunden** in einem anderen Seed heißt: Dort gibt es eine Komponente mit Jaccard ≥ 0,5
+  zu den Seed-0-Fenstern des Kandidaten.
+- Berichtet werden Kandidaten, die in ≥ 5 von 10 Seeds wiedergefunden werden. Die übrigen werden
+  nur gezählt.
+
+### 9.2 Größenklassen und Vergleichsmetrik
+
+- **Größe** eines Kandidaten = Median seiner Fensterzahl über die Seeds, in denen er wiedergefunden
+  wird. **Klassen** (Fenster): G1 10–19, G2 20–39, G3 40–79, G4 80–159, G5 160–319, G6 320–639,
+  G7 640–1 279, G8 1 280–2 559, G9 ≥ 2 560.
+- **Kandidatenwert A** = Median seiner Abgrenzung (Abschnitt 4) über die Seeds, in denen er
+  wiedergefunden wird. Ein einzelner, zufällig besonders auffälliger Lauf zählt so nicht.
+- **Nullläufe** je Satz in der Hauptkonfiguration: N1 mit den Seeds 0–99 (100 Läufe), N2 mit den
+  Seeds 0–24 (25 Läufe). Komponenten nach Regel v2, mit Größe und Abgrenzung.
+- **Nullstatistik je Klasse:** Für jeden Nulllauf mit mindestens einer Komponente in der Klasse
+  zählt das **Maximum** der Abgrenzungen in dieser Klasse. Damit ist berücksichtigt, dass eine Karte
+  viele Inseln zeigt und wir alle ansehen.
+- **Schwelle je Klasse** = (1 − 0,05 / K)-Quantil dieser Maxima, K = Zahl der Klassen, in denen in
+  dieser Konfiguration Kandidaten geprüft werden (Bonferroni über die Klassen).
+- **Zu wenig Nulldaten:** Hat eine Klasse weniger als 20 Nullkomponenten oder weniger als 20 × K
+  Nullläufe mit Komponente, wird für diese Klasse **keine Signifikanz behauptet**.
+- **Bestanden (größenabhängig):** A liegt über der Schwelle seiner Klasse und die Klasse hat
+  genug Nulldaten.
+
+### 9.3 Globale Schwelle (Kriterium 8b.2 aus v2, konservativer Referenzwert)
+
+Das 95. Perzentil der Abgrenzungen **aller** Nullkomponenten (N1 und N2, alle Nullläufe der
+Konfiguration); gibt es keine, ist der Punkt durch die Existenz erfüllt. Verglichen wird A.
+
+### 9.4 Operationalisierung der übrigen Punkte von 8b (eigenständige Voraussetzungen)
+
+- **8b.1 stabil:** in ≥ 8 von 10 Seeds wiedergefunden.
+- **8b.3 nachprüfbar:** (a) Ein Entscheidungsbaum der Tiefe 2 auf den unnormierten Merkmalen
+  trennt Kandidat und Rest mit F1 ≥ 0,8; die Regel wird ausgegeben. (b) Beispielfenster in den
+  Rohdaten werden angesehen, die gemeinsame Eigenschaft wird im Bericht in einem Satz benannt.
+- **8b.4 kein Verfahrensartefakt:** (a) weniger als die Hälfte der Fenster liegt < 10 s an einem
+  Segmentrand; (b) auf der planaren Karte in ≥ 5 von 10 Seeds wiedergefunden; (c) nicht ≥ 90 %
+  der Fenster liegen in demselben Merkmal an der Normierungsgrenze ±8 (Ein-Merkmal-Extremstruktur).
+- **8b.5 überträgt sich:** GroupKFold (4 Teile nach Segment) × Seeds 0–9, Normierung nur aus dem
+  Training. In jedem Fall mit ≥ 5 Kandidatenfenstern im Testteil: Jaccard zwischen diesen Fenstern
+  und der bestpassenden Komponente der Teilkarte (nur Testfenster). Erfüllt bei ≥ 3 Fällen und
+  Median ≥ 0,5.
+
+### 9.5 Drei Ergebnisstufen
+
+| Stufe | Bedingungen |
+|---|---|
+| **Bestätigt nach ursprünglichem Kriterium** | 8b.1, globale Schwelle (9.3), 8b.3, 8b.4, 8b.5 |
+| **Explorativ gestützt** | 8b.1, größenabhängig bestanden (9.2), 8b.3, 8b.4, 8b.5, aber globale Schwelle nicht |
+| **Unbestätigter Kandidat** | in ≥ 5 von 10 Seeds wiedergefunden, erfüllt aber keine der beiden Stufen |
+
+### 9.6 Zeigen einfachere Verfahren die Struktur ebenfalls? (ESOM-spezifischer Mehrwert)
+
+Dieselbe normierte Merkmalsmatrix, **ohne Vorgabe der Struktur**:
+
+- **k-Means** mit k = Zahl der Gruppen und k = Zahl aller Komponenten der ESOM (Seed 0), Seeds 0–9:
+  zeigt die Struktur, wenn in ≥ 8 von 10 Seeds ein Cluster Jaccard ≥ 0,5 erreicht.
+- **HDBSCAN** (min_cluster_size = 10): ein Cluster mit Jaccard ≥ 0,5.
+- **Isolation Forest** (Seeds 0–9), **robuste Mahalanobis-Distanz** (MinCovDet), **LOF** (20
+  Nachbarn): zeigt die Struktur, wenn ≥ 50 % der Kandidatenfenster unter den 1 % auffälligsten
+  Fenstern liegen (Isolation Forest: in ≥ 8 von 10 Seeds).
+- **Hauptkomponenten 2D:** Median-Anteil von Kandidatenfenstern unter den 10 nächsten Nachbarn
+  ≥ 0,5.
+- Wissensbasierte Schwellen zählen hier nicht, weil sie die Struktur vorgeben.
+- **ESOM-spezifischer Mehrwert:** Keines dieser Verfahren zeigt die Struktur.
+
+### 9.7 Klassifikation bekannter Strukturen (8a) in A4
+
+- Aufgaben: **K1** Sättigung gegen alle übrigen Fenster; **K2** „0–10 min danach“ gegen „vor“ und
+  **K3** „während“ gegen „vor“, beide nur in den Stimulationsreihen. Jeweils Satz P und P + L.
+- Aufteilung: GroupKFold (4 Teile nach Segment) × Seeds 0–9. Jedes Verfahren wird auf den
+  Trainingsteilen angepasst (Normierung ebenfalls), bewertet die Testfenster; AUC über alle
+  Testfenster eines Seeds.
+- **ESOM-Wert = Quantisierungsfehler** (vorab festgelegt). Die U-Höhe wird nur zusätzlich berichtet.
+- Vergleich: Isolation Forest, MinCovDet-Mahalanobis, LOF (novelty), Abstand zum nächsten
+  k-Means-Zentrum (k = 8), Rekonstruktionsfehler der Hauptkomponenten (95 % Varianz).
+  Wissensbasierte Schwellen werden getrennt gezeigt: K1 Anteil am ADC-Rand, K2 |Abweichung vom
+  Vorlauf|.
+- Entscheidung nach 8a (v2).
+
+### 9.8 Robustheit der Kartentopologie (Endradius)
+
+- Endradius 0,75 (Basis), 1,5 und 3,0; ESOM planar und toroidal, beide Sätze, Seeds 0–9.
+- Berichtet: Quantisierungs- und Topologiefehler, Zahl der Gruppen/Inseln und für jeden
+  berichteten Kandidaten der Basis, in wie vielen Seeds er wiedergefunden wird und mit welcher
+  Abgrenzung.
+- **Maßgeblich für die Ergebnisstufen bleibt der Basisradius 0,75** (keine Auswahl nach Ergebnis).
+  Ein größerer Radius gilt als „ohne Trennungsverlust“, wenn Sättigung, Reaktion und alle
+  Kandidaten ab „explorativ gestützt“ dort ebenfalls in ≥ 8 von 10 Seeds wiedergefunden werden.
+  Der Topologiefehler allein entscheidet nichts.
