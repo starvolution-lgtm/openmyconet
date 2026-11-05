@@ -64,7 +64,7 @@ und Datenblättern. Gemessen an der BioComm-Hardware ist noch nichts. Für Phase
 | ADC | ADS1115 (U8), **AIN0 einpolig gegen GND** (AIN1–3 offen); davor TS5A3159 (Bio/EC), 100 Ω + 1 nF (Grenzfrequenz ≈ 1,6 MHz) | Einpolig: 0 V bis +FSR (höchstens VDD). Empfohlenes Anti-Aliasing-RC: Grenzfrequenz bei der Datenrate bis 10-fach darüber. |
 | Messbereich ADC | **nicht festgelegt** (Firmware). Der INA-Ausgang ruht bei ≈ 1,65 V. Bei ±0,256 V (so steht es im Datenformat) läge schon die Ruhelage außerhalb des Bereichs. Nutzbar sind ±2,048 V (0–2,048 V, also −16 mV bis +3,9 mV am Eingang bei G = 101) oder ±4,096 V (0–3,3 V, also etwa ±16 mV). | ADS1115 bei 250 SPS: ±2,048 V → 62,5 µV eff. (0,62 µV am Eingang), LSB 0,62 µV; ±4,096 V → 125 µV eff. (1,24 µV am Eingang), LSB 1,24 µV |
 | Stromversorgung ADC | Netzliste: ADS1115 an **+3.3V** (digital). Die Notizen nennen +3.3VA. | – |
-| Bauteilbezeichnungen | In einer Notiztabelle heißt U19 „LPV811DBV“, sonst und auf der Platine OPA333AIDBVR. Die Notizen nennen den ADS1115 U14 und den Analogschalter U15, auf der Platine sind es U8 und U9. | – |
+| Bauteilbezeichnungen | In einer Notiztabelle heißt U19 „LPV811DBV“, sonst, auf der Platine und in der korrigierten Stückliste (`COMBO_NODE_V3.6_bom_korrigiert.csv`) OPA333AIDBVR. Die Notizen nennen den ADS1115 U14 und den Analogschalter U15, auf der Platine sind es U8 und U9. | – |
 
 ### 2.3 Folgen, sofern die Finalfassung so gefertigt wird (von Richard zu prüfen)
 
