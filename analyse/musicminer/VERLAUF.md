@@ -13,7 +13,7 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 | 05.11.2026 | A1–A3: Fenster, Merkmalssatz `mv1`, eigene Batch-SOM, Bericht | b5d7fd1 |
 | 05.11.2026 | Ergänzung E1 (größenabhängige Nullmodelle, drei Stufen), **vor A4** | 0301a87 |
 | 05.11.2026 | A4: Methodenvergleich, E1, Robustheit Endradius; Phase-B-Entwurf Fassung 1 | be3804c |
-| 05.11.2026 | Prüfung Literatur + Eingangsschaltung, Ergänzung E2, Phase-B-Vorbereitung Fassung 2 | (dieser Commit) |
+| 05.11.2026 | Prüfung Literatur + Eingangsschaltung, Ergänzung E2, Phase-B-Vorbereitung Fassung 2 | bb6ecd1 |
 
 ## Abweichungen vom Plan und ihre Gründe
 
