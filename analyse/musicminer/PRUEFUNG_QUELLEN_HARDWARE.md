@@ -19,9 +19,13 @@ und Datenblättern. Gemessen an der BioComm-Hardware ist noch nichts. Für Phase
 | Fukasawa, Akai, Takehi, Osada, *Electrical integrity and week-long oscillation in fungal mycelia*, Sci. Rep. 14, 15601 (2024), doi 10.1038/s41598-024-66223-6 | *Pholiota brunnescens* auf Agar mit Holzköder, über **100 Tage** aufgezeichnet | gerichteter Potenzialfluss vom Köder ins übrige Myzel, nach etwa 60 Tagen Schwingungen mit etwa **einer Woche** Periode. Die Arbeit fasst die berichteten Perioden zusammen: Millisekunden bis 20–40 s (aktionspotenzialähnlich), etwa 30 min (Fruchtkörper), 20–24 h (tagesrhythmisch). |
 | Olsson & Hansson, Naturwissenschaften 82, 30–31 (1995); Slayman, Long & Gradmann, BBA 426, 732–744 (1976) | **intrazelluläre** Ableitung (*Armillaria*, *Pleurotus* bzw. *Neurospora*) | aktionspotenzialähnliche Aktivität, schneller als die extrazellulären Befunde. Volltexte nicht geprüft, nur Sekundärquellen. |
 | Blatt et al., *Does electrical activity in fungi function as a language?*, Fungal Ecology (2024), doi 10.1016/j.funeco.2023.101326 | Kommentar | **Kritik:** Die Spannungsschwankungen könnten nicht biologisch sein, sondern Mess- und Elektrodenartefakte (z. B. Bewegung oder Drift der Elektrodenspitze im Substrat). Nur Zusammenfassungen gelesen. |
+| Buffi et al., *Detection of electrical signals in fungal mycelia in response to external stimuli*, iScience 28 (10), 113484 (2025), doi 10.1016/j.isci.2025.113484 | Leiterplatte mit vergoldeten Elektrodenpaaren (ENIG), Faraday-Käfig, Logger ADC-24, Abtastung ≈ 17 Hz, Aufzeichnung über Tage | Signalanteile unter 1,5 Hz und charakteristische Frequenzen 1,5–8 Hz, verändert durch Stimuli (u. a. Cycloheximid). Kontrollen ohne Pilz nur einfach vorhanden, nicht in der Statistik. Volltext gelesen. |
+| Buffi et al., *Electrical signaling in fungi: past and present challenges*, FEMS Microbiology Reviews 49 (2025), doi 10.1093/femsre/fuaf009 | Übersicht | methodische Herausforderungen und Empfehlungen; nur die Zusammenfassung gelesen. |
 
 ### 1.2 Einordnung
 
+- Buffi et al. (2025) finden zusätzlich Anteile im **Hertz-Bereich (1,5–8 Hz)**. Die 10-s-Skala bleibt
+  damit relevant.
 - Die extrazellulären Befunde (wie BioComm sie messen würde) liegen bei **Minuten bis Stunden**
   (Spikes), **Stunden** (Grundliniendrift) und bis zu **Tagen bzw. einer Woche** (Rhythmen). Die
   Amplituden reichen von etwa **0,03 bis 2 mV**, in einzelnen Berichten mehr.
@@ -118,8 +122,11 @@ Offen (Stand vor der Änderung):
 4. **Kein Anti-Aliasing** (unverändert, Grenzfrequenz ≈ 1,6 MHz). Netzeinstreuung und Oberwellen
    dämpft nur das Digitalfilter des ADS1115. Dessen Verlauf ist im Datenblatt nur als Grafik
    angegeben. Anteile nahe 250 kHz werden gar nicht gedämpft.
-5. **Gleichspannungsanteil der Elektroden** (unverändert) wird mitverstärkt. Mit ±16 mV Bereich
-   ist er weniger kritisch als in 3.3. Seine Größe muss gemessen werden.
+5. **Gleichspannungsanteil der Elektroden** (unverändert) wird mitverstärkt. Bei Edelstahlelektroden
+   im Boden kann er nach Einschätzung aus der Hardware-Durchsicht (Nody, 05.11.2026) leicht 10–100 mV
+   betragen (nicht belegt). Das würde bei Verstärkung 101 jeden der möglichen Messbereiche (±2,5 bis
+   ±20 mV) übersteuern. Er bestimmt also, welche Verstärkung überhaupt nutzbar ist (eventuell nur 11),
+   und muss vor allem anderen gemessen werden.
 6. **Einschwingen der Eingänge** nach dem Einschalten bzw. nach Stimulation über 10 MΩ und die
    Elektroden- und Leitungskapazität: Die Dauer ist unbekannt, die ersten Werte sind zu
    markieren. VMID selbst bleibt dank U19 ohne Abschaltung stehen.
@@ -149,7 +156,7 @@ Offen (Stand vor der Änderung):
 | Grundliniendrift | 0,01–5 µV/s | Wellen von **1–12 h**, 0,1–1 mV; dazu langsame Rhythmen (30 min, 24 h). Wochenperioden passen nicht in die Laufzeit der Testsignale, nur als Hinweis. |
 | Hardware-Modell | ideal, ±2,56 mV | **H-ideal** (zweiseitig ±2,53 mV, G = 101, wie die Sandbox) und **H-Rev3.6** (±16 mV, Auflösung 1,24 µV, ADC-Rauschen 1,2 µV am Eingang, Elektroden-Gleichanteil, Sättigung, kein Anti-Aliasing, Drift der Versorgung im Messwert, Verschiebung der Mittenspannung durch Stimulationsströme); dieselben Signale durch beide Modelle |
 | Netzeinstreuung | 1–200 µV | bis zur Sättigung; Faltung über ein Filtermodell, das als **Annahme** gekennzeichnet ist (sinc-Verlauf), bis das Digitalfilter nachgemessen ist |
-| Elektroden-Gleichanteil | – | 0 bis ± einige mV, unbekannt → als Parameterreihe, bis zur Messung |
+| Elektroden-Gleichanteil | – | 0 bis ±100 mV (Einschätzung, unbelegt) → als Parameterreihe, bis zur Messung; bestimmt die nutzbare Verstärkung |
 | Rauschen | weiß, 4–22 µV | weiß + 1/f; Elektronik bei Rev. 3.6 ≈ 1,2 µV eff. am Eingang (ADC bei ±4,096 V, siehe 2.2), Elektrode/Umgebung unbekannt |
 
 ## 4. Was nur durch Messungen an der Hardware zu klären ist

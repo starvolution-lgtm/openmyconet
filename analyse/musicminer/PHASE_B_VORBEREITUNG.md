@@ -30,6 +30,7 @@ den Dauerbetrieb (B7) werden eigens geprüft.
 | Langsame Rhythmen | 30 min, 24 h | Literatur (Zusammenfassung Fukasawa et al. 2024) |
 | Pilzähnliche Spikes | Dauer 30 s – 20 min (einzelne bis 2 h), 0,03–2 mV, Abstand 3–40 min, in Zügen von 2–8 Spikes, Zugdauer 20–120 min | Literatur (Adamatzky 2018, 2022; Adamatzky & Gandia 2022) |
 | Schnelle Spikes | 20–300 µV, Abklingen 10–200 ms | **Methodentest**, ausdrücklich nicht pilztypisch |
+| Schwingungen im Hertz-Bereich | 1,5–8 Hz, Amplitude und Dauer als Parameterreihe | Literatur (Buffi et al. 2025, iScience) |
 | Sprünge / Niveauwechsel | 5 µV – 1 mV, Anstiegszeit 0 / 1 / 10 / 60 s | Methodentest; B5 |
 | Netzeinstreuung | 50 Hz ± 0,2 Hz + Oberwellen, 1 µV bis Sättigung | Annahme; Faltung siehe 2.3 |
 | Kontaktstörung | Grundliniensprünge, mehr Rauschen, Wandern unter 1 Hz, austrocknender Kontakt (Rauschen steigt über Stunden) | Annahme |
@@ -56,7 +57,7 @@ zusammen. Gemessen wird, wie oft ein Verfahren ein Artefakt für eine Reaktion h
 - **H-Rev3.6:** so, wie die Konstruktionsunterlagen der Finalfassung von Revision 3.6 (25.10.2026) die Schaltung zeigen (zur
   Bestätigung durch Richard). Variante a, wie gezeichnet: etwa ±16 mV am Eingang (G = 101, ADC einpolig ±4,096 V),
   Auflösung 1,24 µV, ADC-Rauschen ≈ 1,2 µV am Eingang, Elektroden-Gleichanteil (Parameterreihe
-  0 bis ±10 mV), kein Anti-Aliasing, Drift der Analogversorgung (halb, 1 : 1 im Messwert),
+  0 bis ±100 mV, Einschätzung; bei Übersteuerung Verstärkung 11 als Variante), kein Anti-Aliasing, Drift der Analogversorgung (halb, 1 : 1 im Messwert),
   Verschiebung der Mittenspannung durch Stimulationsströme, Einschwingen der Eingänge.
   Variante b, nach der am 05.11. erbetenen Änderung: differenziell gegen VMID (keine
   Versorgungsdrift), Anti-Aliasing-RC bei ≈ 720 Hz, Messbereich ±2,5 / ±10 / ±20 mV.
