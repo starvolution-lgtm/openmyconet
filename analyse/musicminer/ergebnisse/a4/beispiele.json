@@ -1,0 +1,234 @@
+[
+ {
+  "satz": "P",
+  "id": 2,
+  "art": "insel",
+  "fenster": 31,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 0.96,
+  "groesster_einzelschritt_median_uV": 106.95,
+  "lage_groesster_schritt_quartile": [
+   0.15,
+   0.5,
+   0.73
+  ],
+  "streuung_median_uV": 20.73
+ },
+ {
+  "satz": "P",
+  "id": 3,
+  "art": "gruppe",
+  "fenster": 584,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 1.44,
+  "groesster_einzelschritt_median_uV": 151.88,
+  "lage_groesster_schritt_quartile": [
+   0.12,
+   0.33,
+   0.88
+  ],
+  "streuung_median_uV": 20.36
+ },
+ {
+  "satz": "P",
+  "id": 10,
+  "art": "gruppe",
+  "fenster": 628,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 1.63,
+  "groesster_einzelschritt_median_uV": 161.25,
+  "lage_groesster_schritt_quartile": [
+   0.37,
+   0.5,
+   0.62
+  ],
+  "streuung_median_uV": 16.95
+ },
+ {
+  "satz": "P",
+  "id": 13,
+  "art": "insel",
+  "fenster": 12,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 16.66,
+  "groesster_einzelschritt_median_uV": 63.09,
+  "lage_groesster_schritt_quartile": [
+   0.24,
+   0.41,
+   0.55
+  ],
+  "streuung_median_uV": 17.56
+ },
+ {
+  "satz": "P",
+  "id": 16,
+  "art": "insel",
+  "fenster": 23,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 0.0,
+  "groesster_einzelschritt_median_uV": 0.0,
+  "lage_groesster_schritt_quartile": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "streuung_median_uV": 0.0
+ },
+ {
+  "satz": "PL",
+  "id": 1,
+  "art": "insel",
+  "fenster": 10,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 9.25,
+  "groesster_einzelschritt_median_uV": 69.53,
+  "lage_groesster_schritt_quartile": [
+   0.36,
+   0.47,
+   0.62
+  ],
+  "streuung_median_uV": 15.67
+ },
+ {
+  "satz": "PL",
+  "id": 2,
+  "art": "insel",
+  "fenster": 23,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 9.69,
+  "groesster_einzelschritt_median_uV": 58.91,
+  "lage_groesster_schritt_quartile": [
+   0.21,
+   0.39,
+   0.69
+  ],
+  "streuung_median_uV": 15.48
+ },
+ {
+  "satz": "PL",
+  "id": 3,
+  "art": "insel",
+  "fenster": 13,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 3.23,
+  "groesster_einzelschritt_median_uV": 198.12,
+  "lage_groesster_schritt_quartile": [
+   0.53,
+   0.67,
+   0.68
+  ],
+  "streuung_median_uV": 24.87
+ },
+ {
+  "satz": "PL",
+  "id": 6,
+  "art": "gruppe",
+  "fenster": 243,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 1.8,
+  "groesster_einzelschritt_median_uV": 166.17,
+  "lage_groesster_schritt_quartile": [
+   0.41,
+   0.5,
+   0.6
+  ],
+  "streuung_median_uV": 15.77
+ },
+ {
+  "satz": "PL",
+  "id": 13,
+  "art": "gruppe",
+  "fenster": 229,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 0.3,
+  "groesster_einzelschritt_median_uV": 66.02,
+  "lage_groesster_schritt_quartile": [
+   0.25,
+   0.51,
+   0.78
+  ],
+  "streuung_median_uV": 13.19
+ },
+ {
+  "satz": "PL",
+  "id": 28,
+  "art": "insel",
+  "fenster": 68,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 2.02,
+  "groesster_einzelschritt_median_uV": 195.35,
+  "lage_groesster_schritt_quartile": [
+   0.84,
+   0.89,
+   0.94
+  ],
+  "streuung_median_uV": 21.47
+ },
+ {
+  "satz": "PL",
+  "id": 37,
+  "art": "insel",
+  "fenster": 84,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 1.97,
+  "groesster_einzelschritt_median_uV": 177.42,
+  "lage_groesster_schritt_quartile": [
+   0.07,
+   0.12,
+   0.19
+  ],
+  "streuung_median_uV": 20.67
+ },
+ {
+  "satz": "PL",
+  "id": 40,
+  "art": "insel",
+  "fenster": 71,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 1.92,
+  "groesster_einzelschritt_median_uV": 158.44,
+  "lage_groesster_schritt_quartile": [
+   0.05,
+   0.09,
+   0.15
+  ],
+  "streuung_median_uV": 22.96
+ },
+ {
+  "satz": "PL",
+  "id": 46,
+  "art": "insel",
+  "fenster": 48,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 2.25,
+  "groesster_einzelschritt_median_uV": 209.73,
+  "lage_groesster_schritt_quartile": [
+   0.84,
+   0.92,
+   0.96
+  ],
+  "streuung_median_uV": 24.18
+ },
+ {
+  "satz": "PL",
+  "id": 52,
+  "art": "insel",
+  "fenster": 24,
+  "stufe": "Unbestätigter Kandidat",
+  "sprung_median_uV": 0.0,
+  "groesster_einzelschritt_median_uV": 0.0,
+  "lage_groesster_schritt_quartile": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "streuung_median_uV": 0.0
+ },
+ {
+  "satz": "Referenz",
+  "id": "zufällige 3000 Fenster",
+  "sprung_median_uV": 0.29,
+  "groesster_einzelschritt_median_uV": 67.7,
+  "streuung_median_uV": 13.45
+ }
+]

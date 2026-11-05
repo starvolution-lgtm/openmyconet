@@ -41,6 +41,10 @@ Abhängigkeiten ändern: `requirements.in` anpassen, dann
 | `mm/fenster.py`, `mm/merkmale.py`, `mm/karte.py` | A1 Fenster + Etiketten, A2 Merkmalssatz `mv1`, A3 Batch-SOM (planar/toroidal), U-/P-Matrix, Gruppenregel v2 |
 | `werkzeuge/a3_laufen.py` | kompletter A1–A3-Lauf (≈ 35 min, `MM_PROBE=1` = Kurzlauf), danach `werkzeuge/a3_beispiele.py` |
 | `ergebnisse/a3/` | `BERICHT.md`, `metriken.json`, `abbildungen/` (große `.npz` nur lokal) |
+| `mm/kriterien.py` | gerechnete Regeln der Ergänzung E1 (Größenklassen, Schwellen, Ergebnisstufen) |
+| `werkzeuge/a4_laufen.py` | A4: Methodenvergleich, größenabhängige Nullmodelle, Robustheit Endradius (≈ 80 min, braucht `ergebnisse/a3/vorbereitung.npz`), danach `werkzeuge/a4_beispiele.py` |
+| `ergebnisse/a4/` | `BERICHT.md`, `metriken.json`, `beispiele.json`, `abbildungen/` |
+| `PHASE_B_VORBEREITUNG.md` | Entwurf Phase B (synthetische Signale), noch nicht gerechnet |
 | `mm/schnappschuss.py` | Schnappschuss lesen + vollständig prüfen (Datei-Hashes, Block-Hashes, Prüfsummenkette, Kontrollwert), Rohsignale als lückenlose Segmente in µV |
 | `werkzeuge/` | Schnappschuss holen (läuft auf dem Server) und prüfen |
 | `tests/` | Tests mit kleinem, selbst gebautem Schnappschuss |
