@@ -54,10 +54,12 @@ zusammen. Gemessen wird, wie oft ein Verfahren ein Artefakt für eine Reaktion h
 
 - **H-ideal:** zweiseitig ±2,53 mV am Eingang (G = 101, ±0,256 V), wie in der Sandbox angenommen.
 - **H-Rev3.6:** so, wie die Konstruktionsunterlagen der Finalfassung von Revision 3.6 (25.10.2026) die Schaltung zeigen (zur
-  Bestätigung durch Richard): etwa ±16 mV am Eingang (G = 101, ADC einpolig ±4,096 V),
+  Bestätigung durch Richard). Variante a, wie gezeichnet: etwa ±16 mV am Eingang (G = 101, ADC einpolig ±4,096 V),
   Auflösung 1,24 µV, ADC-Rauschen ≈ 1,2 µV am Eingang, Elektroden-Gleichanteil (Parameterreihe
   0 bis ±10 mV), kein Anti-Aliasing, Drift der Analogversorgung (halb, 1 : 1 im Messwert),
   Verschiebung der Mittenspannung durch Stimulationsströme, Einschwingen der Eingänge.
+  Variante b, nach der am 05.11. erbetenen Änderung: differenziell gegen VMID (keine
+  Versorgungsdrift), Anti-Aliasing-RC bei ≈ 720 Hz, Messbereich ±2,5 / ±10 / ±20 mV.
 - Faltung über ein **angenommenes** sinc-Filter bei 250 SPS, bis der Filterverlauf gemessen
   ist. 16-Bit-Quantisierung, Datenrate mit Abweichung bis ±10 %, Lücken und Zeitunsicherheit wie
   im Datenformat (`TIMING_UNCERTAIN`).

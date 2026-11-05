@@ -74,7 +74,29 @@ Ruhestrompfad über 10 MΩ und die 1-kΩ-Vorwiderstände. **Behoben gegenüber d
 Damit sind **zweiseitige Signale messbar**, die Eingänge liegen im linearen Bereich, und
 EC-Ströme verschieben den Bezugspunkt nicht mehr.
 
-Offen:
+**Stand 05.11.2026, nachmittags:** Robby hat Richard gebeten, vor der Fertigung zwei Punkte
+zu ändern (`Richard_Kommunikation/2026-11-05_BioComm_V3.6_Bitte_ADC.pdf` im Kontrollzentrum):
+
+- **AIN1 an VMID_REFF**, Messung AIN0 − AIN1 differenziell (löst Punkt 2 unten). Das ist eine
+  Leiterbahnänderung, nicht nur ein Wertetausch.
+- **R35 1 kΩ, C22 220 nF** (Grenzfrequenz ≈ 720 Hz, löst Punkt 4).
+
+Gegengeprüft: Beides passt. Bei 125 Hz dämpft das neue RC-Glied nur um etwa 0,13 dB, bei
+250 kHz um rund 50 dB. Gegenüber der Eingangsimpedanz des ADS1115 (≈ 710 kΩ bei ±0,256 V)
+erzeugt 1 kΩ nur etwa 0,14 % Verstärkungsfehler. Nach dem Umschalten Bio/EC lädt sich C22 mit
+τ ≈ 0,2 ms um; das ist klein gegen die 100–150 ms Einschwingzeit. Zusätzlicher Vorteil der
+differenziellen Messung: Weil der INA333 über REF ebenfalls auf VMID_REFF bezogen ist, hebt sich
+auch die Verschiebung durch Stimulationsströme über R62 im Messwert weitgehend auf (Punkt 3
+betrifft dann vor allem die Eingänge selbst). Zwei Kleinigkeiten, ohne Handlungsbedarf vor der
+Fertigung: X7R-Kondensatoren sind leicht mikrofonisch, was beim Vibrationsartefakt bedacht
+werden sollte; außerdem verliert X7R unter 1,65 V Vorspannung etwas Kapazität, die
+Grenzfrequenz steigt dann etwas, was unschädlich ist.
+
+Nach der Änderung wählt die Firmware den Messbereich frei, etwa ±0,256 V (±2,5 mV am
+Eingang bei G = 101, LSB 0,08 µV), ±1,024 V (±10 mV, LSB 0,31 µV) oder ±2,048 V (±20 mV, LSB
+0,62 µV). Welcher passt, hängt vom gemessenen Elektroden-Gleichanteil ab.
+
+Offen (Stand vor der Änderung):
 
 1. **ADC-Messbereich muss zur Mittenspannung passen.** Mit ±4,096 V (einpolig) beträgt der
    Eingangsbereich bei G = 101 etwa ±16 mV, bei 1,24 µV Auflösung und rund 1,2 µV Rauschen. Für
