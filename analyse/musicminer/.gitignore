@@ -1,0 +1,6 @@
+# Schnappschuss (~136 MB) und Analyse-Zwischendateien bleiben lokal
+daten/
+ergebnisse/**/*.npz
+ergebnisse/**/*.npy
+venv/
+.pytest_cache/
