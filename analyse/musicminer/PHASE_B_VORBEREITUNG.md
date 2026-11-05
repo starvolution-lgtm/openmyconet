@@ -1,98 +1,135 @@
-# Phase B: Vorbereitung (Entwurf, noch nicht gerechnet)
+# Phase B: Vorbereitung (Fassung 2, noch nicht gerechnet)
 
-Stand 05.11.2026. Phase B wird separat vorbereitet. Kriterien und Signalkatalog werden **vor**
-dem ersten B-Lauf verbindlich festgelegt (eigener Abschnitt in `KRITERIEN.md`). Es gelten
-v2 + Ergänzung E1 (Abschnitt 9), soweit dort nichts Abweichendes beschlossen wird.
+Stand 05.11.2026. Fassung 2 nach A4, der Abstimmung mit Robby und der Prüfung von Literatur und
+Hardware (`PRUEFUNG_QUELLEN_HARDWARE.md`). Verbindliche Regeln: `KRITERIEN.md`, v2 + E1 + **E2**
+(Abschnitt 10). Fassung 1 (nur 10-s-Fenster, nur ESOM gegen einfache Verfahren) ist in
+`VERLAUF.md` als überholt beschrieben.
 
 > SYNTHETISCH. Alle Testsignale in Phase B dienen ausschließlich der technischen und
 > methodischen Prüfung. Sie werden nur als Dateien erzeugt, nie in eine BioComm-Datenbank
 > geschrieben, nie mit Messdaten vermischt und nie als biologische Trainingsgrundlage verwendet.
+> Parameter sind **literaturgestützt, aber nicht hardware-validiert**. Sie werden ersetzt, sobald
+> Referenzmessungen an der BioComm-Hardware vorliegen.
 
-## 1. Was aus Phase A mitgenommen wird
+## 1. Ziel
 
-### 1.1 Lageabhängigkeit der Merkmale (A3, H8)
+Die am besten geeignete **Kombination von Verfahren** für die explorative Analyse bioelektrischer
+Signale finden, unabhängig davon, ob die ESOM darin eine zentrale, ergänzende oder gar keine
+Rolle spielt. Der MusicMiner-Gedanke wird dabei nicht auf das automatische Erkennen einzelner
+Cluster reduziert: Die **Kartenansicht für Menschen** (B8) und die **feste Referenzkarte** für
+den Dauerbetrieb (B7) werden eigens geprüft.
 
-Spike-Fenster zerfielen nach der **Lage des Spikes im Fenster**. Ursache: lineare
-Trendentfernung und Hann-Fenster gewichten Anfang und Ende anders als die Mitte.
+## 2. Testsignale
 
-Vorschlag für Merkmalssatz `mv2` (wird vor B festgelegt):
-- Trendentfernung robust und lageneutral (gleitender Median statt Geradenanpassung über das
-  ganze Fenster).
-- Ereignismerkmale aus einer Spitzenerkennung (Zahl, Höhe, Breite der Ereignisse), unabhängig
-  davon, wo sie liegen.
-- Spektrum über mehrere überlappende Teilfenster gemittelt (Welch), statt eines Hann-Fensters
-  über 10 s.
-- **Verschiebungstest als Pflichttest:** Dasselbe Ereignis an 20 Positionen im Fenster muss
-  Merkmale innerhalb einer vorab festgelegten Toleranz ergeben. `mv1` dient als Vergleich.
+### 2.1 Bausteine (je Baustein eine Wahrheitsmarkierung je Sample)
 
-### 1.2 Abruptes Einsetzen der simulierten Reaktion (A3, H5)
-
-Die Sprung-Insel geht auf eine Modelleigenschaft zurück: Die angenommene Reaktion setzt am Ende
-der Stimulation schlagartig mit voller Höhe ein (`omn/sandbox/modell.py`, `Reaktion.wert`).
-
-In Phase B gezielt untersuchen:
-- Reaktion mit veränderlicher **Anstiegszeit** (0 s, 1 s, 10 s, 60 s) und gleicher Höhe: Ab
-  welcher Anstiegszeit verschwindet die eigene Insel? Unterscheidet die ESOM „Sprung“ und
-  „langsamer Anstieg“ noch als Übergang?
-- Dasselbe mit kleiner werdender Höhe (Signal-Rausch-Verhältnis).
-- **Keine Änderung am Sandbox-Generator ohne gesonderte Freigabe.** Eine Anpassung des
-  öffentlichen Rechenmodells wäre eine neue Szenario-Version mit Folgen für Datenlabor,
-  Datengrundlage und Startseiten-Vorschau.
-
-### 1.3 Realistischere Stimulationsartefakte
-
-Die Sandbox enthält **kein** Stimulationsartefakt. Für Phase B sind getrennt erzeugbare,
-dokumentierte Artefaktmodelle vorgesehen. Alle Parameter gelten zunächst als frei gewählt
-(`ARBITRARY_DEMO`), bis Referenzmessungen an der BioComm-Hardware vorliegen:
-- **elektrisch:** Einkopplung des Stimulationspulses (Rechteck mit Flanken), Übersteuerung des
-  Verstärkers bis zur ADC-Sättigung, danach exponentielle Erholung (Zeitkonstante des
-  Eingangs, z. B. 0,1–10 s);
-- **optisch:** kleiner Sprung bzw. kurze Spitzen beim Ein- und Ausschalten der LED
-  (photoelektrischer Effekt, Einstreuung des Treibers);
-- **Vibration:** Mikrofonie, also eine Schwingung mit der Anregungsfrequenz und abklingendem
-  Nachschwingen.
-Jedes Artefakt bekommt eine Wahrheitsmarkierung je Sample.
-
-## 2. Signalkatalog (Vorschlag)
-
-| Baustein | Parameter (Bereich, vorläufig) | Wahrheit |
+| Baustein | Parameter (vorläufig) | Herkunft |
 |---|---|---|
-| Hintergrund | weißes und farbiges Rauschen (1/f), σ 4–22 µV | Rauschart, σ |
-| langsame Schwingung | 0,005–1 Hz, 2–50 µV | Frequenz, Amplitude |
-| Impulse/Spikes | 20–300 µV, Abklingen 10–200 ms, Poisson-Rate | Zeitpunkte |
-| Sprünge | 5–100 µV | Zeitpunkt, Höhe |
-| Drift/Rampe | 0,01–5 µV/s | Steigung |
-| Netzeinstreuung | 50 Hz ± 0,2 Hz, Oberwellen, 1–200 µV | Frequenz, Amplitude |
-| Kontaktstörung | Grundlinien-Sprünge + mehr Rauschen + Wandern unter 1 Hz | Zeitraum |
-| Sättigung | Abschneiden an der ADC-Grenze | Samples |
-| Stimulationsartefakte | siehe 1.3 | Zeitraum, Art |
-| Überlagerungen | Kombinationen aus 2–3 Bausteinen | alle Einzelwahrheiten |
-| **neuartige Formen** (im Training nie enthalten) | z. B. Frequenz-Chirp, Sägezahn-Burst, 7-Hz-Burst | Zeitraum, Art |
+| Hintergrundrauschen | weiß + 1/f, σ 2–25 µV | Annahme (Elektronik laut Datenblatt viel leiser, Elektrode unbekannt) |
+| Grundliniendrift | Wellen 1–12 h, 0,1–1 mV | Literatur (Adamatzky & Gandia 2022: Median 8,3 h, 0,45 mV) |
+| Langsame Rhythmen | 30 min, 24 h | Literatur (Zusammenfassung Fukasawa et al. 2024) |
+| Pilzähnliche Spikes | Dauer 30 s – 20 min (einzelne bis 2 h), 0,03–2 mV, Abstand 3–40 min, in Zügen von 2–8 Spikes, Zugdauer 20–120 min | Literatur (Adamatzky 2018, 2022; Adamatzky & Gandia 2022) |
+| Schnelle Spikes | 20–300 µV, Abklingen 10–200 ms | **Methodentest**, ausdrücklich nicht pilztypisch |
+| Sprünge / Niveauwechsel | 5 µV – 1 mV, Anstiegszeit 0 / 1 / 10 / 60 s | Methodentest; B5 |
+| Netzeinstreuung | 50 Hz ± 0,2 Hz + Oberwellen, 1 µV bis Sättigung | Annahme; Faltung siehe 2.3 |
+| Kontaktstörung | Grundliniensprünge, mehr Rauschen, Wandern unter 1 Hz, austrocknender Kontakt (Rauschen steigt über Stunden) | Annahme |
+| Sättigung | an der Grenze des jeweiligen Hardware-Modells | Hardware-Modell |
 
-**Hinweis zur Abtastrate:** Bei 250 Hz liegt die Nyquist-Grenze bei 125 Hz. Oberwellen über
-125 Hz falten sich zurück (150 Hz → 100 Hz, 200 Hz → 50 Hz). Der Generator muss das
-Eingangsfilter des ADS1115 nachbilden oder die Faltung ausdrücklich erzeugen, sonst sind die
-Testsignale unrealistisch sauber.
+### 2.2 Stimulationsartefakte (erst getrennt, dann kombiniert)
 
-## 3. Geplante Versuche
-
-| | Frage |
+| Artefakt | Modell |
 |---|---|
-| B1 | Werden bekannte Artefaktklassen unterschieden (8a), mit `mv1` und `mv2`? |
-| B2 | **Neuheit:** Training ohne eine Signalform, dann zeigen. Fällt sie als neue Insel oder Ausreißer auf, bei vorab festgelegter Fehlalarmquote (z. B. 1 %)? Vergleich mit denselben Verfahren wie in A4. |
-| B3 | **Störgrad-Reihe:** Ab welchem Signal-Rausch-Verhältnis ist eine schwache Struktur nicht mehr unterscheidbar? Kurve je Verfahren. |
-| B4 | **Überlagerungen:** Bleiben Einzelstrukturen trennbar, wenn 2–3 Störquellen zusammenkommen? |
-| B5 | **Anstiegszeit der Reaktion** (Abschnitt 1.2). |
-| B6 | **Verschiebungstest** `mv1` gegen `mv2` (Abschnitt 1.1). |
+| elektrisch, Einkopplung | Pulsform des Reizes, Klemmung über die Eingangsdioden bis zur Sättigung, exponentielle Erholung 0,1–10 s |
+| elektrisch, **Polarisation** | langsames Abklingen über 1–30 min nach dem Reiz. **Wichtigster Verwechslungskandidat**, weil es zeitlich wie eine Reaktion aussieht. |
+| optisch, LED | kleiner Sprung bzw. Spitzen beim Ein- und Ausschalten; **PWM-Frequenz** gefaltet ins Messband |
+| Vibration | Schwingung mit der Anregungsfrequenz, abklingendes Nachschwingen |
+| **Umschaltung Bio/EC** | Einschwingen 100–150 ms nach jedem Umschalten des gemeinsamen ADC-Kanals (laut Konstruktionsnotiz) |
+| **Funk (ESP32/LoRa)** | Störimpulse im Sendetakt |
+| Hantieren / Temperatur | mechanische Störungen; Drift beim Öffnen der Box |
 
-Alle Versuche: Seeds 0–9, Aufteilung nach zusammenhängenden Signalabschnitten (nie überlappende
-Fenster in Training und Test), Nullmodelle wie in E1, drei Ergebnisstufen wie in E1 9.5.
+**Verwechslungstest (Teil von B1):** jeweils nur Artefakt, nur synthetische Reaktion, beides
+zusammen. Gemessen wird, wie oft ein Verfahren ein Artefakt für eine Reaktion hält.
 
-## 4. Offen, vor Phase B zu entscheiden
+### 2.3 Hardware-Modelle (dieselben Signale durch beide)
 
-1. Parameterbereiche des Signalkatalogs: plausibel genug, oder vorher fachlich gegenprüfen
-   (Hardware/Elektrode)?
-2. Ob die Stimulationsartefakte später durch **Referenzmessungen an der BioComm-Platine**
-   ersetzt werden (dann gehört ein Messplan dazu).
-3. Wie die Ergebnisse von A4 den Umfang von Phase B beeinflussen (z. B. falls die ESOM in A4
-   gegenüber einfacheren Verfahren nichts zeigt, ob B dann trotzdem in voller Breite läuft).
+- **H-ideal:** zweiseitig ±2,53 mV am Eingang (G = 101, ±0,256 V), wie in der Sandbox angenommen.
+- **H-Rev3.3:** so, wie die Konstruktionsunterlagen die Schaltung zeigen (zur Bestätigung durch
+  Richard). Einseitig 0 bis +2,53 mV, tote Zone nahe 0 (Parameter 0–0,5 mV),
+  Elektroden-Gleichanteil (Parameterreihe 0 bis ± einige mV), kein Anti-Aliasing.
+- Faltung über ein **angenommenes** sinc-Filter bei 250 SPS, bis der Filterverlauf gemessen
+  ist. 16-Bit-Quantisierung, Datenrate mit Abweichung bis ±10 %, Lücken und Zeitunsicherheit wie
+  im Datenformat (`TIMING_UNCERTAIN`).
+
+### 2.4 Aufbau der Datensätze
+
+- Viele unabhängig erzeugte Reihen, jede mit eigenem Seed. Jede bekannte Struktur kommt in ≥ 4
+  Reihen vor (E2 10.2). Keine identischen Rohfenster zwischen Reihen (Prüfsumme).
+- Laufzeit je Reihe so lang, dass die langen Skalen tragen: ≥ 48 h für Drift- und
+  Spike-Züge, gemittelt auf 1 Wert/s; dazu kurze Abschnitte mit voller Rate (250 Hz) für die
+  schnelle Skala.
+
+## 3. Merkmale `mv2` (vor B2 eingefroren)
+
+- **Drei Zeitskalen:** 10 s (volle Rate), 2 min und 20 min (aus der 1-Hz-Mittelung).
+- **Form-Merkmale** (lageneutral): robuste Trendentfernung (gleitender Median), Spektrum nach
+  Welch über Teilfenster, Ereignismerkmale aus einer Spitzenerkennung (Zahl, Höhe, Breite,
+  Vorzeichen), unabhängig von der Lage im Fenster.
+- **Niveau- und Langsam-Merkmale** getrennt davon: Mittel, Steigung und Abweichung vom Vorlauf
+  auf jeder Skala. Damit entfernt die Trendentfernung der Form-Merkmale keine langsamen
+  Strukturen, denn diese stecken in eigenen Merkmalen.
+- `mv1` läuft in B6 zum Vergleich mit.
+
+## 4. Verfahren
+
+| Verfahren | Rolle |
+|---|---|
+| ESOM, eigene Umsetzung (`karte-v1`) | wie in Phase A |
+| **ESOM, Referenzumsetzung**: R-Paket `Umatrix` (`esomTrain`, U-/P-/U*-Matrix; Lerch, Thrun, Ultsch, Lötsch) | originalgetreuere Umsetzung; Gruppierung wie dort vorgesehen |
+| UMAP + HDBSCAN, Ansicht mit **generalisierter U-Matrix** (R-Paket `GeneralizedUmatrix`, Thrun & Ultsch 2020) | heutiger Standard für explorative Gruppensuche; faire Vergleichsansicht |
+| HDBSCAN auf den Merkmalen | in A4 das stärkste einfache Verfahren |
+| **Matrix-Profile** (Python, `stumpy`) | Motive und Abweichungen **direkt im Rohsignal**, ohne Merkmale und ohne Lageproblem |
+| **Change-Point-Erkennung** (Python, `ruptures`) | Sprünge, Niveauwechsel, Drift-Brüche |
+| Isolation Forest, robuste Mahalanobis-Distanz | Ausreißer |
+| Wissensbasierte Schwellen | nur zur Einordnung (8a), nie für die Entdeckung |
+
+Weggelassen: k-Means mit einem k, das von der ESOM übernommen wird (Begründung in `VERLAUF.md`).
+
+Neue Abhängigkeiten (`umap-learn`, `stumpy`, `ruptures`; R mit `Umatrix`, `GeneralizedUmatrix`)
+kommen gepinnt und mit Prüfsummen in die Analyse-Umgebung, getrennt vom Server.
+
+## 5. Versuche und Reihenfolge
+
+| Schritt | Frage | Bemerkung |
+|---|---|---|
+| **B0** | Erzeugt der Generator, was die Wahrheit behauptet? (Spektren, Amplituden, Faltung, Hardware-Modelle) | nur Tests, keine Analyse |
+| **B6** | Verschiebungstest `mv1` gegen `mv2`: dasselbe Ereignis an 20 Lagen im Fenster. **Erhaltungstest:** Bleiben langsame Schwingungen, Rampen und Sprünge unterscheidbar? | danach `mv2` einfrieren |
+| **B1** | Unterscheidung bekannter Artefakte (8a), getrennt und kombiniert, mit Verwechslungstest | |
+| **B3** | Störgrad-Reihe: ab welchem Signal-Rausch-Verhältnis ist eine schwache Struktur nicht mehr unterscheidbar? Kurve je Verfahren | Bedingung 2 in E2 10.4 |
+| **B5** | Anstiegszeit einer Reaktion (0 / 1 / 10 / 60 s) und kleiner werdende Höhe | Ursache der Sprung-Insel aus A3/A4 |
+| **B4** | Überlagerungen aus 2–3 Bausteinen | |
+| **B2** | **Hauptendpunkt:** neue Formen, einzeln zurückgehalten, selten (0,2 %) und wiederkehrend (3 %), mit Negativkontrolle, verblindet nach E2 10.5 | zuletzt, mit eingefrorenem Code |
+| **B7** | Langzeitstabilität einer festen Referenzkarte (E2 10.7) | eigener Versuch |
+| **B8** | Verblindeter Ansichtstest U-Matrix gegen UMAP (E2 10.6) | ≥ 3 Personen, sonst explorativ |
+
+Jeder Versuch läuft mit beiden Hardware-Modellen. Maßgeblich für den Hauptendpunkt ist
+H-ideal; H-Rev3.3 zeigt, was die Schaltung in ihrer gezeichneten Form kosten würde.
+
+## 6. Katalog möglicher neuer Formen für B2 (Entwurf, ≥ 16, Auswahl durch Robby)
+
+Wird vor dem Einfrieren von `mv2` als eigene Datei mit Parametern committet. Arten von Neuheit:
+neue Form (Frequenz-Chirp, Sägezahn-Burst, Doppelspike mit fester Verzögerung), neue Frequenz
+(7-Hz-Burst, 0,5-Hz-Schwingung über Minuten), langsames Ereignis (Plateau über 30 min, asymmetrische
+Welle), nur veränderte Häufigkeit (Spike-Zug mit doppelter Rate), feste Abfolge bekannter
+Ereignisse (Spike, dann Sprung nach 2 min), schwer erkennbare Varianten (Spike mit 5-facher
+Abklingzeit, Vorzeichenumkehr), Formen aus der Literatur (Zug-Muster nach Adamatzky). Dazu kommen
+Beiträge von Robby oder Dritten.
+
+## 7. Offen (vor dem ersten B-Lauf)
+
+1. **Richard:** Befunde zur Eingangsschaltung Rev. 3.3 bestätigen oder korrigieren
+   (`PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 2.2). Davon hängt ab, wie wichtig H-Rev3.3 ist.
+2. **Robby:** Formen beisteuern (oder Dritte fragen, z. B. Prof. Ultsch), Auswahl für B2
+   verblindet treffen, Beurteilende für B8 suchen (≥ 3).
+3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen.
+4. Später, mit Hardware: Referenzmessungen nach `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 4,
+   und die Synthese-Parameter danach ersetzen.

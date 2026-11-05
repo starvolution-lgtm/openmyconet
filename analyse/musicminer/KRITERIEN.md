@@ -8,6 +8,11 @@ Abschnitt 9): größenabhängiger Nullmodellvergleich, drei Ergebnisstufen, Oper
 8b, Robustheitstest der Kartentopologie, Vergleichsverfahren für A4. v2 und die damit bewerteten
 Ergebnisse von A1–A3 bleiben unverändert.
 
+**Ergänzung E2** (05.11.2026, nach A4, **vor Phase B** festgelegt, gilt nur für Phase B,
+Abschnitt 10): Ein-Merkmal-Struktur und Übertragung präzisiert, geprüfte Schlupflöcher,
+Hauptendpunkt und Entscheidungsregel zur ESOM, Verblindung, Ansichtstest, Langzeitversuch.
+Phase A bleibt unverändert bewertet.
+
 **Kriterien v2** (05.11.2026, ebenfalls vor dem ersten Training, nach Rückmeldung Robby):
 Klassifikation und explorative Entdeckung werden getrennt bewertet (8a/8b); faire
 Vergleichsbedingungen und zwei Nullmodelle (7); kleine SOM und große ESOM werden getrennt
@@ -300,3 +305,128 @@ Dieselbe normierte Merkmalsmatrix, **ohne Vorgabe der Struktur**:
   Ein größerer Radius gilt als „ohne Trennungsverlust“, wenn Sättigung, Reaktion und alle
   Kandidaten ab „explorativ gestützt“ dort ebenfalls in ≥ 8 von 10 Seeds wiedergefunden werden.
   Der Topologiefehler allein entscheidet nichts.
+
+## 10. Ergänzung E2 (prospektiv, vor Phase B festgelegt, gilt nur für Phase B)
+
+Festgelegt am 05.11.2026 nach A4 und **bevor Phase B gerechnet wurde** (Vorgaben Robby).
+Grundlagen: `PRUEFUNG_QUELLEN_HARDWARE.md`, Ablauf: `PHASE_B_VORBEREITUNG.md`. Die Ergebnisse
+und Bewertungen von Phase A (v2 bzw. v2 + E1) bleiben unverändert. Wo E2 nichts sagt, gilt E1.
+Alle Ergebnisse betreffen nur die Erkennung von Strukturen in **synthetischen** Signalen.
+
+### 10.1 Ersatz für 8b.4c (Ein-Merkmal-Struktur) in Phase B
+
+Grundlage sind die unnormierten Merkmale aller Fenster des Laufs. Zur **Merkmalsgruppe** eines
+Merkmals m gehören m selbst und alle Merkmale mit |Spearman-ρ| ≥ 0,8 zu m (über alle Fenster).
+
+- **(c1) Ein-Merkmal-Struktur:** Sie liegt vor, wenn beide Bedingungen gelten:
+  (i) Eine einzelne Schwelle auf **einem** Merkmal m trennt den Kandidaten vom Rest mit
+  F1 ≥ 0,90 (Entscheidungsbaum mit einem Knoten, Klassengewichte ausgeglichen).
+  (ii) Ohne die **ganze Merkmalsgruppe** von m erreicht ein Baum der Tiefe 2 auf den übrigen
+  Merkmalen nur F1 < 0,50.
+  Eine Ein-Merkmal-Struktur besteht 8b.4 nicht. Sie wird mit ihrer Schwelle berichtet und kann
+  nie als „ESOM-spezifischer Mehrwert“ gelten, weil schon eine einfache Schwelle sie findet.
+- **(c2) Normierungsgrenze:** Der Kandidat muss auch mit der Normierungsgrenze ±16 statt ±8 in
+  ≥ 5 von 10 Seeds wiedergefunden werden (Jaccard ≥ 0,5). Sonst besteht er 8b.4 nicht, weil
+  erst das Abschneiden ihn erzeugt.
+- 8b.4a (Segmentrand) und 8b.4b (planar ≥ 5 von 10) gelten unverändert.
+
+### 10.2 Ersatz für 8b.5 (Übertragung) in Phase B
+
+- **Gültiger Prüffall:** GroupKFold nach unabhängig erzeugter Reihe × Seeds 0–9. Ein Fall zählt
+  nur, wenn **Trainings- und Testteil** je ≥ 5 Kandidatenfenster enthalten. Fälle, in denen das
+  Training die Struktur nie gesehen hat, prüfen Neuheit statt Übertragung. Sie werden getrennt
+  berichtet, aber nicht mitgezählt. Die Neuheit prüft B2.
+- **≥ 3 gültige Fälle:** bestanden bei Median-Jaccard ≥ 0,5, sonst **nicht bestanden**.
+- **< 3 gültige Fälle:** **nicht prüfbar**. Ein solcher Kandidat erreicht höchstens die Stufe
+  „Unbestätigter Kandidat (Übertragung nicht prüfbar)“, nie eine der beiden oberen Stufen.
+- **Aufbau der Testsignale:** Jede Struktur des Generators kommt in ≥ 4 unabhängig erzeugten
+  Reihen vor, jede Reihe mit eigenem Seed. Damit ist 8b.5 für alle bekannten Strukturen
+  prüfbar. Ist eine bekannte Struktur trotzdem „nicht prüfbar“, gilt das als Fehler im
+  Versuchsaufbau und wird berichtet.
+
+### 10.3 Geprüfte Schlupflöcher
+
+| Mögliches Schlupfloch | Gegenmaßnahme |
+|---|---|
+| Fast gleiche Merkmale (z. B. Flachheit und Gleichheitsfolge bei Sättigung): Nach dem Entfernen von m trennt das Zwillingsmerkmal weiter, (ii) wäre nie erfüllt. | Die ganze Merkmalsgruppe (ρ ≥ 0,8) wird entfernt (10.1). |
+| Eine Gruppe entsteht erst durch das Abschneiden an ±8, weil viele Fenster auf demselben Grenzwert liegen. | Zusatzprüfung c2 mit ±16, verbindlich. |
+| Bäume finden bei sehr kleinen Inseln zufällig eine Regel. | Kontrolle je Lauf und Größenklasse: Für 20 zufällige Fenstermengen gleicher Größe muss ein Baum der Tiefe 2 im Median F1 < 0,3 erreichen. Sonst ist 8b.3a für diese Größe nicht aussagekräftig und wird als „nicht prüfbar“ geführt. |
+| „Nicht prüfbar“ statt „nicht bestanden“ könnte schwache Kandidaten besser aussehen lassen. | „Nicht prüfbar“ sperrt beide oberen Stufen (10.2). |
+| Fälle ohne Kandidat im Training werden weggelassen, die Übertragung sieht dadurch besser aus. | Gewollt, denn das sind Neuheitsfälle. Ihre Zahl und ihr Ergebnis werden getrennt berichtet. |
+| Zwei Reihen mit identischem Rauschen würden eine Übertragung vortäuschen. | Eigener Seed je Reihe; Prüfsumme je Rohfenster, keine identischen Fenster zwischen Reihen. |
+| Merkmale werden angepasst, nachdem man die B2-Daten gesehen hat. | `mv2` und der gesamte Auswertungscode werden vor dem Öffnen der B2-Auswahl eingefroren (Commit, 10.5). Jede spätere Änderung ist eine Protokollabweichung und wird berichtet. |
+| Viele Verfahren × viele Formen × viele Kennzahlen. | Ein einziger Hauptendpunkt (10.4); alles andere sind Nebenergebnisse ohne Bestätigungsanspruch. |
+
+### 10.4 Hauptendpunkt und Entscheidungsregel zur ESOM
+
+**Hauptendpunkt:** B2 mit **wiederkehrenden** neuen Formen (Anteil 3 %), Merkmalssatz `mv2`,
+Hardware-Modell H-ideal. Eine neue Form gilt für ein Verfahren als **gefunden**, wenn ein Cluster
+bzw. eine Komponente in ≥ 8 von 10 Seeds Jaccard ≥ 0,5 zu den Fenstern der Form erreicht. Bei
+Ausreißerverfahren muss die Trefferquote unter den 1 % auffälligsten Fenstern ≥ 0,5 sein.
+
+Vergleichsverfahren: HDBSCAN (auf den Merkmalen), UMAP + HDBSCAN, Matrix-Profile (Motive im
+Rohsignal), Change-Point-Erkennung, Isolation Forest, robuste Mahalanobis-Distanz. Die ESOM läuft
+in zwei Formen, die getrennt berichtet werden: die eigene Umsetzung (`karte-v1`) und die
+Referenzumsetzung (R-Paket `Umatrix`, `esomTrain`, mit der dort vorgesehenen Gruppierung).
+
+Ein **weiterer Einsatz der ESOM ist gerechtfertigt**, wenn mindestens eine Bedingung gilt:
+
+1. Die ESOM (eine der beiden Umsetzungen) findet **≥ 2 neue Formen, die keines der übrigen
+   Verfahren findet**, und sie findet insgesamt nicht weniger Formen als das beste übrige
+   Verfahren.
+2. In B3 trennt die ESOM eine schwache Struktur noch bei einem um **≥ 3 dB** kleineren
+   Signal-Rausch-Verhältnis als das beste übrige Verfahren (Median über die Seeds, in ≥ 8 von
+   10 Seeds).
+3. Im verblindeten Ansichtstest (10.6) markiert die Mehrheit von ≥ 3 Personen auf der U-Matrix
+   **mehr Strukturen richtig** als auf der UMAP-Ansicht (mit generalisierter U-Matrix), ohne
+   mehr Falschmarkierungen.
+4. Im Langzeitversuch B7 (10.7) bleibt die feste ESOM-Referenzkarte nach den dort festgelegten
+   Kennzahlen stabiler als die übrigen festen Verfahren.
+
+**Ein Gleichstand reicht nicht.** Dann wird für BioComm das einfachere, verbreitete Verfahren
+empfohlen. Erfüllt die ESOM nur Bedingung 3 oder 4, wird sie als **ergänzendes Ansichts- bzw.
+Einordnungswerkzeug** empfohlen, nicht als Entdeckungsverfahren.
+
+### 10.5 Verblindung der neuen Formen (B2)
+
+1. Cody erstellt einen **Katalog von ≥ 16 möglichen neuen Formen** mit Generatorparametern und
+   committet ihn (Datum, Prüfsumme). Erwünscht sind zusätzlich Formen aus der Literatur
+   (`PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 1) sowie Formen von Robby oder Dritten. Bei jeder
+   Form wird vermerkt, wer sie beigetragen hat.
+2. `mv2`, Generator, Hardware-Modelle und der gesamte Auswertungscode für B2 werden
+   **eingefroren und committet**.
+3. **Robby** wählt **≥ 8 Formen** aus (oder lost sie mit einem nur ihm bekannten Startwert). Er
+   legt die Auswahl als Datei mit einem geheimen Zusatz (Salt) ab. Committet wird **nur deren
+   Prüfsumme**.
+4. Erst danach wird die Auswahl geöffnet und B2 mit dem eingefrorenen Code gerechnet.
+5. **Bekannte Einschränkung:** Cody entwirft sowohl die Merkmale als auch den Katalog. Echte
+   Unabhängigkeit gibt es nur für Formen, die jemand anderes beisteuert. Der Bericht nennt diese
+   Einschränkung ausdrücklich und weist das Ergebnis **getrennt** für Formen von Cody und für
+   Formen von anderen aus.
+6. **Negativkontrolle:** Immer dabei ist eine bekannte Form mit Parametern innerhalb des
+   Trainingsbereichs. Sie darf nicht als neu gemeldet werden.
+
+### 10.6 Verblindeter Ansichtstest (U-Matrix gegen UMAP)
+
+- Die Beurteilenden kennen weder die Wahrheit noch die Auswahl der Formen. Sie bekommen dieselben
+  Daten einmal als U-Matrix und einmal als UMAP-Ansicht mit generalisierter U-Matrix, in
+  zufälliger Reihenfolge, und markieren auffällige Bereiche. Ausgewertet wird gegen die
+  Wahrheit: richtig markierte Strukturen und Falschmarkierungen.
+- **Mit ≥ 3 Personen** wird nach 10.4, Bedingung 3 bewertet. **Mit weniger als 3 Personen** wird
+  das Ergebnis nur explorativ berichtet, ohne Anspruch auf einen bestätigten Vorteil.
+
+### 10.7 Langzeitversuch B7 (feste Referenzkarte)
+
+- Die Karte und die Vergleichsverfahren (feste UMAP-Abbildung, feste PCA, feste
+  k-Means-Zentren, Isolation Forest) werden auf Zeitraum 1 angepasst und danach **nicht mehr
+  verändert**. Eingeordnet werden dann drei Zeiträume: (a) unveränderte Bedingungen,
+  (b) langsame Drift (Elektrodenalterung, Jahreszeit), (c) dieselbe Drift plus eine neue Form.
+- **Kennzahlen:**
+  - Anteil der Fenster einer bekannten Struktur, die in derselben Komponente landen wie im
+    Zeitraum 1;
+  - Verschiebung der Trefferverteilung (Jensen-Shannon-Abstand);
+  - Fehlalarme unter reiner Drift (a, b) gegen Treffer der neuen Form (c), bei einer vorab
+    festgelegten Fehlalarmquote von 1 %.
+- **Stabil** heißt: In (a) und (b) bleiben ≥ 90 % der Fenster bekannter Strukturen in ihrer
+  Komponente. In (c) wird die neue Form mit einer Trefferquote ≥ 0,5 gemeldet, und (b)
+  überschreitet die Fehlalarmquote nicht.

@@ -44,7 +44,9 @@ Abhängigkeiten ändern: `requirements.in` anpassen, dann
 | `mm/kriterien.py` | gerechnete Regeln der Ergänzung E1 (Größenklassen, Schwellen, Ergebnisstufen) |
 | `werkzeuge/a4_laufen.py` | A4: Methodenvergleich, größenabhängige Nullmodelle, Robustheit Endradius (≈ 80 min, braucht `ergebnisse/a3/vorbereitung.npz`), danach `werkzeuge/a4_beispiele.py` |
 | `ergebnisse/a4/` | `BERICHT.md`, `metriken.json`, `beispiele.json`, `abbildungen/` |
-| `PHASE_B_VORBEREITUNG.md` | Entwurf Phase B (synthetische Signale), noch nicht gerechnet |
+| `PHASE_B_VORBEREITUNG.md` | Phase B (synthetische Signale), Fassung 2, noch nicht gerechnet |
+| `PRUEFUNG_QUELLEN_HARDWARE.md` | Literatur zu Zeitskalen von Pilzsignalen, Eingangsschaltung Rev. 3.3 + Datenblätter |
+| `VERLAUF.md` | Versuchsverlauf: Abweichungen, verworfene Ansätze, negative Ergebnisse |
 | `mm/schnappschuss.py` | Schnappschuss lesen + vollständig prüfen (Datei-Hashes, Block-Hashes, Prüfsummenkette, Kontrollwert), Rohsignale als lückenlose Segmente in µV |
 | `werkzeuge/` | Schnappschuss holen (läuft auf dem Server) und prüfen |
 | `tests/` | Tests mit kleinem, selbst gebautem Schnappschuss |
