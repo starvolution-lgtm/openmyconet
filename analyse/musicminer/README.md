@@ -38,6 +38,9 @@ Abhängigkeiten ändern: `requirements.in` anpassen, dann
 
 | Pfad | Inhalt |
 |---|---|
+| `mm/fenster.py`, `mm/merkmale.py`, `mm/karte.py` | A1 Fenster + Etiketten, A2 Merkmalssatz `mv1`, A3 Batch-SOM (planar/toroidal), U-/P-Matrix, Gruppenregel v2 |
+| `werkzeuge/a3_laufen.py` | kompletter A1–A3-Lauf (≈ 35 min, `MM_PROBE=1` = Kurzlauf), danach `werkzeuge/a3_beispiele.py` |
+| `ergebnisse/a3/` | `BERICHT.md`, `metriken.json`, `abbildungen/` (große `.npz` nur lokal) |
 | `mm/schnappschuss.py` | Schnappschuss lesen + vollständig prüfen (Datei-Hashes, Block-Hashes, Prüfsummenkette, Kontrollwert), Rohsignale als lückenlose Segmente in µV |
 | `werkzeuge/` | Schnappschuss holen (läuft auf dem Server) und prüfen |
 | `tests/` | Tests mit kleinem, selbst gebautem Schnappschuss |

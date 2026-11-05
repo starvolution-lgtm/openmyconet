@@ -1,7 +1,12 @@
 # Phase A: Datengrundlage, Vorhersage und Bewertungskriterien
 
 Stand 05.11.2026, **vor dem ersten Training** festgehalten. Änderungen an Kriterien danach nur
-mit Datum, Begründung und neuer Versionsnummer (hier: Kriterien v1).
+mit Datum, Begründung und neuer Versionsnummer.
+
+**Kriterien v2** (05.11.2026, ebenfalls vor dem ersten Training, nach Rückmeldung Robby):
+Klassifikation und explorative Entdeckung werden getrennt bewertet (8a/8b); faire
+Vergleichsbedingungen und zwei Nullmodelle (7); kleine SOM und große ESOM werden getrennt
+betrachtet (4); Normierung präzisiert (3).
 
 > SIMULATION. Die Daten stammen aus dem Rechenmodell des Sandbox-Generators (`sbx-gen-1.0`,
 > Szenario-Version 2, Parametergrundlage `ARBITRARY_DEMO`). Findet die ESOM darin Muster, zeigt das
@@ -53,18 +58,40 @@ dient nur der Vorhersage.
   Anteil Werte am ADC-Rand, Anteil gleichbleibender Folgewerte.
 - **Satz L (Pegel):** Mittelwert, Steigung, Abweichung des Mittels vom Median der vorangehenden
   120 s. Fehlt dieser Vorlauf im Segment, fällt das Fenster aus Satz L heraus (wird gezählt).
-- Normierung: robust (Median, Quartilsabstand), Parameter werden mit dem Modell gespeichert.
+- Normierung: stark schiefe, positive Merkmale (Streuung, Ausschlagzahl, größter Ausschlag)
+  zuerst logarithmiert (`log1p`), dann robust skaliert (Median, Quartilsabstand; ist der
+  Quartilsabstand 0, die Standardabweichung), danach auf ±8 begrenzt, damit einzelne Extremwerte
+  die Karte nicht beherrschen. Konstante Merkmale fallen heraus (wird protokolliert). Die
+  Parameter werden mit dem Ergebnis gespeichert.
 - Ausgewertet werden P allein und P + L.
 
 ## 4. Karte
 
-- MiniSom 2.3.6, rechteckig, ca. 40 × 60 Neuronen (deutlich mehr Neuronen als erwartete Gruppen,
-  wie bei ESOM üblich), 10 Läufe mit den Seeds 0–9.
-- MiniSom kann keine toroidale Karte (in 2.3.6 geprüft). Vergleich deshalb mit einer kleinen
-  eigenen toroidalen Batch-SOM (numpy), damit Randeffekte nicht als Struktur durchgehen.
+- **Zwei Kartengrößen, getrennt bewertet:** kleine SOM 6 × 8 (48 Neuronen, Neuronen ≈ Gruppen) und
+  ESOM 40 × 60 (2 400 Neuronen, deutlich mehr Neuronen als erwartete Gruppen, wie bei ESOM üblich).
+  Aussagen über den MusicMiner-Ansatz stützen sich auf die ESOM; ein negatives Ergebnis der kleinen
+  Karte gilt nicht als Widerlegung.
+- Je Größe planar und toroidal (ohne Rand), je 10 Läufe mit den Seeds 0–9.
+- Umsetzung: eine eigene Batch-SOM in numpy (derselbe Code für alle Varianten, deterministisch je
+  Seed). MiniSom 2.3.6 kann keine toroidale Karte (geprüft) und dient als Gegenprobe der eigenen
+  Umsetzung auf der planaren Karte (Quantisierungs- und Topologiefehler vergleichbar).
 - U-Matrix und P-Matrix (Dichte) je Lauf.
-- **Gruppenbildung (Regel v1):** zusammenhängende Kartenbereiche unterhalb des 75. Perzentils der
-  U-Höhe; Bereiche mit < 0,5 % der Fenster werden dem nächstgelegenen Bereich zugeschlagen.
+- **Gruppenbildung (Regel v2, 05.11.2026, vor dem ersten Training auf Simulationsdaten):**
+  Neuronen mit mindestens einem Fenster sind Knoten, **leere Neuronen sind Mauer** (ESOM-Prinzip:
+  dort liegen keine Daten). Benachbarte getroffene Neuronen bleiben verbunden, wenn ihr
+  Prototypabstand ≤ 3 × Median dieser Abstände ist. Zusammenhängende Bereiche mit ≥ 0,5 % der
+  Fenster sind **Gruppen**, kleinere mit ≥ 10 Fenstern bleiben als **Inseln** eigenständig (seltene
+  Ereignisse), noch kleinere gehen im Merkmalsraum in den nächstgelegenen Bereich.
+  *Grund für den Wechsel von v1:* Regel v1 (75. Perzentil der U-Höhe) fand im Komponententest auf
+  der toroidalen Karte bei drei klar getrennten Punktwolken nur zwei Gruppen, weil die Mauern dort
+  mehr als ein Viertel der Neuronen ausmachen. Außerdem hätte ihre Mindestgröße seltene Ereignisse
+  (z. B. die 25 Sättigungsfenster) weggemischt. Regel v2 findet im Test die drei Wolken auf beiden
+  Topologien, ergibt auf einer einzelnen Normalverteilung genau eine Gruppe und erhält eine Insel
+  aus 12 Ausreißern (`tests/test_karte.py`). Voraussetzung: deutlich mehr Fenster als Neuronen
+  (hier ≈ 15 je Neuron).
+- **Abgrenzung einer Gruppe:** Median über ihre Fenster von (Abstand zum nächsten getroffenen
+  Prototyp einer anderen Gruppe) ÷ (Abstand zum eigenen Gewinnerneuron). Werte > 1 heißen
+  abgegrenzt; maßstabsfrei, daher mit den Nullmodellen vergleichbar.
 
 ## 5. Etiketten für die nachträgliche Auswertung
 
@@ -103,21 +130,62 @@ Strukturen enthält. Die eigentliche Frage nach unbekannten Strukturen beantwort
 - **Paarvergleich Stimulation/Kontrolle:** Anteil der zeitgleichen Fensterpaare, deren
   Gewinnerneuronen > 3 Karteneinheiten auseinanderliegen, je Phase. Erwartung: nur „0–10 min
   danach“ (und mit P + L) deutlich über „vor“.
-- **Nullmodell:** Training auf Merkmalen, deren Spalten unabhängig zufällig vertauscht sind
-  (Zusammenhänge zerstört). Gruppen, die nicht deutlich über dem Nullmodell liegen, zählen nicht
-  als Struktur.
+- **Zwei Nullmodelle**, jeweils mit denselben Kartenparametern und Seeds trainiert:
+  (N1) Spalten unabhängig zufällig vertauscht (alle Zusammenhänge zwischen Merkmalen zerstört);
+  (N2) eine einzige Normalverteilung mit demselben Mittel und derselben Kovarianz wie die echten
+  Merkmale (lineare Zusammenhänge bleiben, Gruppen gibt es per Konstruktion keine). Was eine Karte
+  auf N2 an „Mauern“ und Gruppen zeigt, ist Eigenleistung des Verfahrens und zählt nicht als Struktur.
+  Maß: Zahl der Gruppen und Inseln nach Regel v2, Abgrenzungen, U-Kontrast (90. ÷ 50. Perzentil
+  der U-Höhe).
 - **Vergleichsverfahren** auf denselben Merkmalen: Hauptkomponenten (2D), k-Means (k = Gruppenzahl
   der ESOM), Isolation Forest, robuste Mahalanobis-Distanz, einfache Schwellen (ADC-Rand,
   Ausschlagzahl).
 
+### Faire Vergleichsbedingungen
+
+- ESOM und Vergleichsverfahren bekommen **dieselben Fenster und dieselbe normierte
+  Merkmalsmatrix** (eine Datei, Prüfsumme im Ergebnis).
+- Fenster überlappen (10 s, Schritt 5 s) und hängen zeitlich zusammen. Wo Daten zurückgehalten
+  werden (Projektionstest, Schwellen für Fehlalarme, jede Klassifikation), wird **nach
+  Rohdatenstunde (Segment) gruppiert** aufgeteilt (GroupKFold, 4 Teile), zusätzlich ein Standort
+  ganz zurückgehalten. Nie liegen Fenster desselben Segments in Training und Test.
+- Normierungsparameter und Schwellen (z. B. 1 % Fehlalarme) werden nur auf den Trainingsteilen
+  bestimmt.
+- Zufallsabhängige Vergleichsverfahren (k-Means, Isolation Forest) laufen ebenfalls mit den Seeds
+  0–9.
+
 ## 8. Entscheidungsregeln
+
+Klassifikation und Entdeckung werden **getrennt** bewertet; ein Mehrwert in einer der beiden
+reicht für „Mehrwert“, muss aber als solcher benannt werden.
+
+### 8a. Klassifikation bekannter Strukturen
 
 - **Mehrwert für eine Frage**, wenn der Median über die 10 Seeds das beste Vergleichsverfahren um
   ≥ 0,05 (AUC bzw. ARI) übertrifft **und** in ≥ 8 von 10 Seeds besser ist. Gleich gut oder
   schlechter → das einfachere Verfahren hat Vorrang.
-- **Zusätzlicher Mehrwert** durch eine Gruppe, die kein Vergleichsverfahren zeigt, wenn sie in
-  ≥ 8 von 10 Seeds auftritt, über dem Nullmodell liegt und sich an Beispielfenstern in den
-  Rohdaten nachvollziehen lässt.
+
+### 8b. Explorative Entdeckung
+
+Eine Gruppe (oder ein Übergangsbereich) gilt als **entdeckte Struktur**, wenn alle Punkte gelten:
+
+1. **Stabil:** in ≥ 8 von 10 Seeds wiederzufinden (beste Übereinstimmung der Fenstermengen,
+   Jaccard ≥ 0,5).
+2. **Über den Nullmodellen:** ihre Abgrenzung (Abschnitt 4) liegt über dem 95. Perzentil der
+   Abgrenzungen aller Gruppen und Inseln auf N1 und N2. Zeigen die Nullmodelle in allen Seeds nur
+   eine einzige Gruppe, ist dieser Punkt durch die Existenz der Gruppe erfüllt.
+3. **Nachprüfbar:** Beispielfenster in den Rohdaten zeigen eine benennbare gemeinsame
+   Eigenschaft; die Gruppe lässt sich danach durch eine einfache Regel auf die Merkmale beschreiben.
+4. **Kein Verfahrensartefakt:** nicht durch Segmentränder, Kartenrand (planar ↔ toroidal) oder
+   ein einzelnes extremes Merkmal erklärt.
+5. **Überträgt sich:** im Projektionstest (zurückgehaltene Segmente) landen passende Fenster in
+   derselben Gruppe.
+
+Eine auffällige U-Matrix allein reicht nicht. Eine entdeckte Struktur ist ein **ESOM-spezifischer
+Mehrwert**, wenn sie die Vergleichsverfahren nicht ohne Weiteres zeigen (k-Means mit derselben
+Gruppenzahl trifft sie nicht mit Jaccard ≥ 0,5, sie ist in der 2D-Hauptkomponentenansicht nicht
+abgegrenzt, und Isolation Forest/Mahalanobis heben sie nicht als auffällig hervor). Zeigt ein
+Vergleichsverfahren sie ebenso, ist es eine Entdeckung, aber kein Vorteil der ESOM.
 - **Scheingruppen:** Jede Gruppe mit ≥ 1 % der Fenster, die zu keinem Etikett eine Reinheit
   ≥ 0,5 hat, wird mit 5 Beispielfenstern dokumentiert und ihre Ursache untersucht.
 - Jedes Ergebnis wird mit Schnappschuss-Prüfsumme, Merkmalssatz, Kartenparametern und Seed
