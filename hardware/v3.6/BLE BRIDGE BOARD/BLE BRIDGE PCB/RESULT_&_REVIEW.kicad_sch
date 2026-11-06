@@ -1,0 +1,24 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "735504be-2027-4a38-b599-fec2fb8090ed")
+	(paper "A5")
+	(title_block
+		(title "RESULT & REVIEW")
+		(date "2026-10-25")
+		(rev "2.3")
+	)
+	(lib_symbols)
+	(text "# BLE_BRIDGE SUBSYSTEM DESIGN & REVIEW NOTES (REV 2.3)\nProject: OpenMycoNet BLE_BRIDGE\nSheet: /RESULT AND REVIEW/\nDate: 2026-10-25\nRevision: 2.3\nStatus: READY FOR MANUFACTURING (JLCPCB 4-Layer Solid GND Stackup)\n\n1. WATCHDOG SUPERVISOR STANDARDIZATION (U7)\n• Supervisor IC: TPS3851H33EDRBR (U7) timing capacitor C45 synchronized to 100 nF across Schematic, PCB Layout, BOM, and CPL deliverables.\n• Timeout Window: Configured to 323.4 ms nominal timeout window (tWD = 323.4 ms) to eliminate false resets during active I2C and SPI transmission\n  cycles.\n• Sleep Override: WCD_SLEEP signal on IO47 (Pin 24) pulls U7 SET1 (Pin 5) LOW prior to deep sleep to cleanly disable watchdog resets.\n\n2. POWER INDICATOR RAIL MIGRATION & SOFTWARE CONTROL (D7)\n• Supply Migration: Power indicator LED D7 anode migrated from continuous unregulated battery rail (+BATT) to MCU GPIO control (IO41 / Pin 34) via\n  1 kohm series resistor R23.\n• Quiescent Drain Elimination: Prevents continuous 2 mA to 5 mA battery drain during deep sleep. Indication can now be dynamically disabled under\n  software control.\n\n3. POWER SUPPLY REGULATOR SEPARATION & FEEDBACK CALIBRATION (U2 / U3)\n• Rail Isolation: Removed FB1 bridging resistor between +3.3V and +3.3VA outputs. Buck-boost converters U2 (+3.3V digital) and U3 (+3.3VA clean\n  analog) operate with complete physical and electrical isolation.\n• Feedback Divider Verification: R6/R9 (1 Mohm) and R7/R10 (180 kohm) feedback dividers establish exact +3.28V supply regulation (V_OUT = 0.5 V x\n  (1 + 1M / 180k) = 3.278 V) on both digital and analog domains, preventing overvoltage faults on sensitive 3.3V peripherals.\n\n4. RF POWER RAIL ISOLATION (U9 SX1262)\n• Filtered RF Domain: SX1262 power pins (VDD_IN, VBAT, VBAT_IO) powered via dedicated +3V3_RF rail filtered from digital +3.3V through low-DCR\n  ferrite bead FB1 and local decoupling array C22 (10 uF), C23 (100 nF), C25 (47 uF).\n• Noise Immunity: Prevents high-frequency digital clock harmonics from entering the RF synthesizer while isolating analog rail +3.3VA from LoRa\n  power amplifier transmit pulses.\n\n5. THERMISTOR DNP ASSIGNMENT & FALLBACK TOPOLOGY (TH1)\n• Manufacturing Deliverables: On-board thermistor TH1 designated Do Not Populate (DNP) and excluded from BOM and CPL files.\n• Operational Rationale: Prevents parallel resistance errors (5 kohm equivalent) on BQ24075 (U4) TS pin when standard 3-wire battery packs with \n  internal 10 kohm NTC are connected via J2.\n• Footprint Retention: Symbol and PCB footprint retained on layout for bench testing fallback with 2-wire battery packs.\n\n6. DELIVERABLE SYNCHRONIZATION & DESIGN RULE VERIFICATION\n• Deliverable Alignment: KiCad schematic netlist, 4-layer PCB layout routing, Bill of Materials (BOM), Component Placement List (CPL), and RS-274X\n  Gerber output files re-generated and fully synchronized under Revision 2.3.\n• Rule Verification: ERC and DRC re-run with zero errors and zero warnings across all release deliverables."
+		(exclude_from_sim no)
+		(at 12.954 54.61 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "29e65f6c-7bb8-4c72-bf6a-cb0b04f21ada")
+	)
+)

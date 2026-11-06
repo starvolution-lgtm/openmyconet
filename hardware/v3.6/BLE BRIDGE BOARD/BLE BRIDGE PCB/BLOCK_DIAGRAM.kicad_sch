@@ -1,0 +1,464 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "bd5c4dbf-48af-4b99-96cd-37ddff94dedc")
+	(paper "A3")
+	(title_block
+		(title "BLOCK_DIAGRAM")
+		(date "2026-10-25")
+		(rev "2.3")
+	)
+	(lib_symbols)
+	(text "# BLOCK DIAGRAM & SUBSYSTEM INTERCONNECT DESIGN NOTES\nProject: BLEBridge Board\nStatus: READY FOR MANUFACTURING (JLCPCB 4-Layer Stackup)\nDate: 2026-10-25\nRevision: 2.3\n\nSYSTEM OVERVIEW\nThe top-level block diagram outlines the system interconnect topology and power distribution across five functional sheets: USB-C, BATTERY, MCU, \nREGULATOR, and LoRa. All power domains and signal paths reference a unified system ground (GND) to simplify return paths \nand maximize board-level signal integrity.\n\n---\n\n1. TOP-LEVEL INTERCONNECT ARCHITECTURE\n- USB-C Interface: USB_C sheet exports the USB_DATA(USB_D+ USB_D-) bus to the MCU sheet. This is the native USB 2.0 full-speed differential \n  pair after USBLC6-25C6 ESD array clamping and 27 ohm series impedance-matching resistors.\n- Battery & Fuel Gauge Interface: BATTERY sheet exports the I2C_BUS(SDA SCL) shared telemetry lines and active-LOW BATT_ALERT interrupt signal \n  to the MCU sheet.\n- LoRa Radio Control & Data Bus: MCU sheet exports SPI(SPI_MOSI, SPI_SCK, SPI_MISO, SPI_NSS), BUSY_LoRa, RESET_LoRa, and DIO10 control lines \n  to the LoRa sheet.\n- System Power Distribution: REGULATOR sheet acts as the global power distribution block, stepping down primary VDD into +3.3V (digital) \n  and +3.3VA (analog) rails.\n- Unified Ground Topology: All functional schematic blocks reference a single common system GND return plane, eliminating separate GNDA \n  or star-ground tie resistors.\n\n---\n\n2. POWER ARCHITECTURE & RAIL ROUTING\n- Primary Power Input: USB-C VBUS feeds directly into the BQ24075 standalone charger and power-path manager on the BATTERY sheet.\n- System Supply Rail (VDD): Main power-path output rail VDD feeds both buck-boost switching regulators on the REGULATOR sheet.\n- Battery Connection (+BATT): Single-cell LiPo/Li-ion battery rail +BATT connects to BQ24075 BAT terminal for dynamic charging \n  and MAX17048 fuel gauge CELL input for state-of-charge telemetry.\n- Dual Buck-Boost Regulators: U2 (TPS63020DSJR) converts VDD into +3.3V for MCU and digital logic; U3 (TPS63020DSJR) converts \n  VDD into +3.3VA for sensitive analog/RF circuitry.\n- Ground Verification: Both +3.3V and +3.3VA rails reference the common ground plane across all board layers.\n\n---\n\n3. COMPLETE INTERFACE MATRIX\n| Net / Bus Signal | Source Block | Destination Block | Signal Function & Description |\n| :--- | :--- | :--- | :--- |\n| USB_DATA(USB_D+ USB_D-) | USB-C (J1) | MCU (U6) | Native USB 2.0 data pair, ESD-protected and series-matched. |\n| I2C_BUS(SDA SCL) | BATTERY (U5) | MCU (U6) | Shared I2C bus for MAX17048 fuel gauge state-of-charge telemetry. |\n| BATT_ALERT | BATTERY (U5) | MCU (U6) | Active-LOW fuel gauge state-of-charge interrupt line. |\n| SPI(SPI_MOSI, SPI_SCK, SPI_MISO, SPI_NSS) | MCU (U6) | LoRa (U9) | High-speed SPI data and chip-select bus for SX1262 transceiver. |\n| BUSY_LoRa | LoRa (U16) | MCU (U6) | Transceiver busy handshake status line. |\n| RESET_LoRa | MCU (U6) | LoRa (U9) | Active-LOW transceiver hardware reset control line. |\n| DIO10 | LoRa (U16) | MCU (U6) | Transceiver interrupt request line (DIO1). |\n| VDD | BATTERY (U4) | REGULATOR (U2/U3) | System power output rail from BQ24075 power-path manager. |\n| +3.3V | REGULATOR (U2) | MCU / Digital Peripherals | Main regulated digital power supply rail. |\n| +3.3VA | REGULATOR (U3) | LoRa / Analog Peripherals | Dedicated low-noise analog power supply rail referenced to common GND. |\n| GND | All Sheets | All Sheets | Common system ground return for USB-C, BATTERY, MCU, LoRa, and REGULATOR. |"
+		(exclude_from_sim no)
+		(at 13.208 66.548 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6d3100f3-8912-4cac-b1ee-eb14e65a0278")
+	)
+	(wire
+		(pts
+			(xy 162.56 139.7) (xy 175.26 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5791f4eb-e7d5-4b2c-8e5f-4383bcd94350")
+	)
+	(wire
+		(pts
+			(xy 238.76 130.81) (xy 251.46 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ba7e275-396d-4485-8340-9dba20e70b67")
+	)
+	(bus
+		(pts
+			(xy 162.56 143.51) (xy 175.26 143.51)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7c956127-341d-4632-a7c3-fdb78eff042e")
+	)
+	(wire
+		(pts
+			(xy 238.76 133.35) (xy 251.46 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95051224-d658-4875-a424-37bf65ee75d5")
+	)
+	(bus
+		(pts
+			(xy 238.76 140.97) (xy 251.46 140.97)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bd08049d-ee18-4c00-97d4-dea2ee659400")
+	)
+	(wire
+		(pts
+			(xy 238.76 137.16) (xy 251.46 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d9a3b3e9-a3bc-4dd2-937a-5901c0294bb6")
+	)
+	(bus
+		(pts
+			(xy 162.56 128.27) (xy 175.26 128.27)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dc955d9a-add0-4b8c-bb14-1064434c4686")
+	)
+	(sheet
+		(at 132.08 125.73)
+		(size 30.48 5.08)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "24ce101b-8fe3-4e53-b2e6-2c414b0077d5")
+		(property "Sheetname" "USB_C"
+			(at 132.08 124.8946 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "USB_C.kicad_sch"
+			(at 132.08 131.5184 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "USB_DATA{USB_D+ USB_D-}" input
+			(at 162.56 128.27 0)
+			(uuid "25cc1024-5056-444d-aa83-d0b67fc98c05")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "BLEBRIDGE_BOARD"
+				(path "/520ed86b-d225-4355-8e70-361c8d4b3a86/1e3a498a-11ee-44cf-a381-c9bda4bd1bb5"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 175.26 123.19)
+		(size 63.5 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "43709632-1850-4cc3-a806-8d11c7548783")
+		(property "Sheetname" ""
+			(at 175.26 122.3546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "MCU.kicad_sch"
+			(at 175.26 149.2984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "BATT_ALERT" output
+			(at 175.26 139.7 180)
+			(uuid "5271d5cd-29ce-4dfc-abff-5f4eea795b6a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "BUSY_LoRa" output
+			(at 238.76 130.81 0)
+			(uuid "895eee71-f68b-41e5-b91c-a2f51e795d91")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DIO1" output
+			(at 238.76 137.16 0)
+			(uuid "ac251e0f-b2ab-4c54-acab-c7bb292a5092")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "I2C_BUS{SDA SCL}" output
+			(at 175.26 143.51 180)
+			(uuid "60137df2-19d1-4a17-8776-ff1c3832d493")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "RESET_LoRa" output
+			(at 238.76 133.35 0)
+			(uuid "12623a5b-cd20-4915-80dc-cb636635ada5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "SPI{SPI_MOSI SPI_SCK SPI_MISO SPI_NSS}" output
+			(at 238.76 140.97 0)
+			(uuid "b5c5c22a-888f-471d-b25c-3ac2d6414a00")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "USB_DATA{USB_D+ USB_D-}" output
+			(at 175.26 128.27 180)
+			(uuid "c12a0ef5-ae9e-4b0d-8147-1204603f81c8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "BLEBRIDGE_BOARD"
+				(path "/520ed86b-d225-4355-8e70-361c8d4b3a86/1e3a498a-11ee-44cf-a381-c9bda4bd1bb5"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 251.46 128.27)
+		(size 45.72 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "a118cca7-4e17-41b1-a8aa-c69b55bd7db2")
+		(property "Sheetname" "LoRa"
+			(at 251.46 127.4346 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "LoRa.kicad_sch"
+			(at 251.46 144.2184 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "BUSY_LoRa" input
+			(at 251.46 130.81 180)
+			(uuid "ef4fe97d-16a8-4f3e-b485-813093590d7b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DIO1" input
+			(at 251.46 137.16 180)
+			(uuid "ebae5bf6-8b25-4b98-8565-6bb8db47ddcd")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "RESET_LoRa" input
+			(at 251.46 133.35 180)
+			(uuid "fd42b2a8-e678-40d5-8166-722a8c0543a5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SPI{ SPI_MOSI SPI_SCK SPI_MISO SPI_NSS}" input
+			(at 251.46 140.97 180)
+			(uuid "acadb7bf-03ab-4ca0-ac22-440692c87b86")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "BLEBRIDGE_BOARD"
+				(path "/520ed86b-d225-4355-8e70-361c8d4b3a86/1e3a498a-11ee-44cf-a381-c9bda4bd1bb5"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 193.04 161.29)
+		(size 25.4 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "aaeeb404-2b12-4e52-a4ea-36bf36fa0475")
+		(property "Sheetname" "REGULATOR"
+			(at 193.04 160.4546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "REGULATOR.kicad_sch"
+			(at 193.04 187.3984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "BLEBRIDGE_BOARD"
+				(path "/520ed86b-d225-4355-8e70-361c8d4b3a86/1e3a498a-11ee-44cf-a381-c9bda4bd1bb5"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 142.24 137.16)
+		(size 20.32 8.89)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.4)
+			(type solid)
+		)
+		(fill
+			(color 0 210 1 1)
+		)
+		(uuid "bc047900-4a6e-4d0a-bed3-cb5cfc06441a")
+		(property "Sheetname" "BATTERY"
+			(at 142.24 136.3246 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "BATTERY.kicad_sch"
+			(at 142.24 146.7584 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "BATT_ALERT" input
+			(at 162.56 139.7 0)
+			(uuid "e4d65192-b57e-49fa-ab50-e3dd86352a63")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "I2C_BUS{SDA SCL}" input
+			(at 162.56 143.51 0)
+			(uuid "cd51ecd3-6091-4a15-b031-ea718911b339")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "BLEBRIDGE_BOARD"
+				(path "/520ed86b-d225-4355-8e70-361c8d4b3a86/1e3a498a-11ee-44cf-a381-c9bda4bd1bb5"
+					(page "6")
+				)
+			)
+		)
+	)
+)
