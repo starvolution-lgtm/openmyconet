@@ -25,6 +25,25 @@ registrierung_bp = Blueprint("registrierung", __name__)
 NAME_MAX_LAENGE = 100   # wie Nutzer.name
 FEHLER_BEREITS_REGISTRIERT = 'Diese E-Mail ist bereits registriert.'
 
+# Antworten von /api/register: "code" waehlt im Formular die uebersetzte Meldung
+# (translations.json a_err_<code>). Die Rohmeldung des Mailservers geht nie an den
+# Browser, sie steht nur im Log.
+API_FEHLER = {
+    'email': 'E-Mail-Adresse fehlt.',
+    'limit': 'Zu viele Anfragen — bitte später erneut versuchen.',
+    'mail': 'Die Bestätigungsmail konnte nicht verschickt werden.',
+}
+
+
+def _api_fehler(code, status):
+    return jsonify({"error": API_FEHLER[code], "code": code}), status
+
+
+def _maskiert(email):
+    """Fuers Log: genug, um eine Meldung zuzuordnen (Domain), ohne die volle Adresse."""
+    name, _, domain = (email or '').partition('@')
+    return f'{name[:1]}***@{domain}'
+
 
 def register_nutzer_core(name, email, sprache, land, gruppe, ip=None, rollback_on_mail_fail=True,
                          newsletter=False):
@@ -100,6 +119,10 @@ https://www.openmyconet.de
         if rollback_on_mail_fail:
             db.session.delete(nutzer)
             db.session.commit()
+            # Ohne diese Zeile bleibt kein Hinweis: das Konto ist ja wieder geloescht
+            # (Anlass: Registrierung eines Doktoranden scheiterte im Nov. 2026 spurlos).
+            logger.error("Registrierung zurückgenommen, Bestätigungsmail an %s fehlgeschlagen: %s",
+                         _maskiert(email), e)
             return None, fehler
         logger.error("Registrierungs-Bestätigungsmail konnte nicht gesendet werden (%s): %s", email, e)
         return nutzer, fehler
@@ -188,7 +211,7 @@ def api_register():
 
     ip = request.remote_addr
     if not ip_erlaubt(ip, "register"):
-        return jsonify({"error": "Zu viele Anfragen — bitte später erneut versuchen."}), 429
+        return _api_fehler('limit', 429)
 
     name = (request.form.get("name") or "").strip()
     email = (request.form.get("email") or "").strip().lower()
@@ -199,13 +222,12 @@ def api_register():
     newsletter = (request.form.get("newsletter") or "").strip().lower() in ("on", "1", "true", "ja")
 
     if not email:
-        return jsonify({"error": "E-Mail-Adresse fehlt."}), 400
+        return _api_fehler('email', 400)
 
     vorhanden = Nutzer.query.filter_by(email=email).first()
     if vorhanden and newsletter and vorhanden.keine_mails:
-        fehler = _einwilligung_anfragen(vorhanden)
-        if fehler:
-            return jsonify({"error": fehler}), 400
+        if _einwilligung_anfragen(vorhanden):
+            return _api_fehler('mail', 400)
         return jsonify({"ok": True, "einwilligung_angefragt": True})
 
     if vorhanden:
@@ -216,6 +238,6 @@ def api_register():
     _nutzer, fehler = register_nutzer_core(
         name, email, sprache, land, gruppe, ip=ip, newsletter=newsletter,
     )
-    if fehler:
-        return jsonify({"error": fehler}), 400
+    if fehler and fehler != FEHLER_BEREITS_REGISTRIERT:   # Doppelklick-Rennen: wie oben, keine Auskunft
+        return _api_fehler('mail', 400)
     return jsonify({"ok": True})

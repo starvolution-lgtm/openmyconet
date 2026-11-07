@@ -382,6 +382,7 @@
     </div>
 
     <button type="submit" class="btn btn-green" id="reg-btn">{{ t('a_submit') }}</button>
+    <p class="mg-mono-hint" id="reg-meldung" role="status" aria-live="polite" hidden></p>
   </form>
 </section>
 
@@ -806,25 +807,36 @@ function handleReg(e) {
   var form = document.getElementById('reg-form');
   var data = new FormData(form);
   data.append('lang', currentLang);
+  var meldung = document.getElementById('reg-meldung');
+  meldung.hidden = true;
+  meldung.textContent = '';
   btn.textContent = T.a_sending;
   btn.disabled = true;
+  btn.classList.remove('btn-state-err');
+  // Grund des Fehlers zeigen statt nur "Fehler" (Anlass: Nov. 2026, eine
+  // Registrierung scheiterte, ohne dass jemand den Grund sehen konnte).
+  function fehler(text) {
+    btn.textContent = T.a_error;
+    btn.classList.add('btn-state-err');
+    btn.disabled = false;
+    if (text) { meldung.textContent = text; meldung.hidden = false; }
+  }
   fetch('https://api.openmyconet.de/api/register', { method:'POST', body:data })
-    .then(function(r){ return r.json(); })
-    .then(function(resp) {
-      if (resp && resp.ok) {
+    .then(function(r) {
+      // nginx-Grenze (429/503) antwortet mit HTML, nicht mit JSON
+      return r.json().catch(function(){ return {}; })
+        .then(function(resp){ return { status: r.status, resp: resp || {} }; });
+    })
+    .then(function(x) {
+      if (x.resp.ok) {
         btn.textContent = T.a_success;
         btn.classList.add('btn-state-ok');
-      } else {
-        btn.textContent = T.a_error;
-        btn.classList.add('btn-state-err');
-        btn.disabled = false;
+        return;
       }
+      var code = x.resp.code || ((x.status === 429 || x.status === 503) ? 'limit' : '');
+      fehler(code ? T['a_err_' + code] : '');
     })
-    .catch(function() {
-      btn.textContent = T.a_error;
-      btn.classList.add('btn-state-err');
-      btn.disabled = false;
-    });
+    .catch(function() { fehler(T.a_err_netz); });
 }
 
 // ─── Adress-Geocoding (Nominatim/OpenStreetMap) ───────────────

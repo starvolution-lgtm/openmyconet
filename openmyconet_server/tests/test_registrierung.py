@@ -241,3 +241,53 @@ def test_name_wird_begrenzt_und_ohne_zeilenumbrueche_gespeichert(client, app):
         name = Nutzer.query.filter_by(email='lang@example.com').first().name
     assert len(name) <= 100
     assert '\n' not in name and '\r' not in name
+
+
+# --- Fehlerfaelle: Grund fuers Formular, Spur im Log (Nov. 2026) --------------
+
+def test_mailfehler_wird_geloggt_und_als_code_gemeldet(client, app, monkeypatch):
+    """Scheitert die Bestaetigungsmail, ist das Konto wieder weg -- ohne Log bliebe keine
+    Spur. Der Browser bekommt den Code 'mail', nie die Rohmeldung des Mailservers."""
+    def kaputt(_msg):
+        raise RuntimeError('550 geheimes SMTP-Innenleben')
+    monkeypatch.setattr(mail, 'send', kaputt)
+    # Logger direkt abfangen: andere Tests stellen die Logging-Weitergabe um (caplog unzuverlaessig).
+    from omn import registrierung
+    zeilen = []
+    monkeypatch.setattr(registrierung.logger, 'error', lambda fmt, *a: zeilen.append(fmt % a))
+    resp = client.post('/api/register', data={'name': 'M', 'email': 'marthos@uni.example'})
+    assert resp.status_code == 400
+    antwort = resp.get_json()
+    assert antwort['code'] == 'mail'
+    assert 'SMTP' not in antwort['error']
+    with app.app_context():
+        assert Nutzer.query.filter_by(email='marthos@uni.example').first() is None
+    log = ' | '.join(zeilen)
+    assert 'm***@uni.example' in log and '550' in log
+    assert 'marthos@uni.example' not in log
+
+
+def test_einwilligungsmail_fehler_als_code(client, monkeypatch):
+    client.post('/api/register', data={'name': 'A', 'email': 'einw@example.com'})
+    monkeypatch.setattr(mail, 'send', lambda _m: (_ for _ in ()).throw(RuntimeError('weg')))
+    resp = client.post('/api/register', data={'name': 'A', 'email': 'einw@example.com', 'newsletter': 'on'})
+    assert resp.status_code == 400
+    assert resp.get_json()['code'] == 'mail'
+
+
+def test_fehlende_email_und_grenze_mit_code(client, monkeypatch):
+    assert client.post('/api/register', data={'name': 'X'}).get_json()['code'] == 'email'
+    monkeypatch.setattr('omn.registrierung.ip_erlaubt', lambda *_a, **_k: False)
+    resp = client.post('/api/register', data={'name': 'X', 'email': 'x@example.com'})
+    assert resp.status_code == 429
+    assert resp.get_json()['code'] == 'limit'
+
+
+def test_jeder_fehlercode_hat_texte_in_allen_sprachen():
+    import json
+    from pathlib import Path
+    from omn.registrierung import API_FEHLER
+    texte = json.loads((Path(__file__).parent.parent / 'app/static/translations.json').read_text('utf-8'))
+    for lang in ('de', 'en', 'nl', 'fr', 'es'):
+        for code in [*API_FEHLER, 'netz']:
+            assert texte[lang].get(f'a_err_{code}'), (lang, code)
