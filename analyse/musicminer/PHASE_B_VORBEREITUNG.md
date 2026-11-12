@@ -194,6 +194,7 @@ Beiträge von Robby oder Dritten.
    verblindet treffen, Beurteilende für B8 suchen (≥ 3).
 3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen
    (`Umatrix`, `GeneralizedUmatrix`; falls 4.1 bzw. 4.2 beschlossen werden, auch
-   `DataVisualizations`, `DRquality`, `FCPS` und ggf. `AdaptGauss`, alle GPL-3). Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
+   `DataVisualizations`, `DRquality`, `FCPS` und ggf. `AdaptGauss`, alle GPL-3).
+   Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
 4. Später, mit Hardware: Referenzmessungen nach `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 4,
    und die Synthese-Parameter danach ersetzen.
