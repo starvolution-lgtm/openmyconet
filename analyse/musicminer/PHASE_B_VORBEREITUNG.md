@@ -105,7 +105,8 @@ kommen gepinnt und mit Prüfsummen in die Analyse-Umgebung, getrennt vom Server.
 ### 4.1 Ergänzende Darstellungen (Vorschlag, R-Paket `DataVisualizations`)
 
 Vorschlag vom 12.11.2026, noch nicht beschlossen. Das R-Paket `DataVisualizations` (Thrun;
-<https://github.com/Mthrun/DataVisualizations>, auf CRAN) stammt aus demselben Umfeld wie
+<https://github.com/Mthrun/DataVisualizations>, auf CRAN; MD-Plot nach Thrun, Gehlert & Ultsch
+2020, PLoS ONE, doi:10.1371/journal.pone.0238835) stammt aus demselben Umfeld wie
 `Umatrix` und `GeneralizedUmatrix`. Es enthält Darstellungen für die explorative Analyse, die
 die bestehenden Auswertungen ergänzen. Die Darstellungen sind **reine Ansichten**: Sie ändern
 weder Merkmale noch Training noch Bewertungskriterien und dienen nur der Auswertung.
@@ -117,6 +118,7 @@ weder Merkmale noch Training noch Bewertungskriterien und dienen nur der Auswert
 | `Heatmap` (Distanzmatrix, nach Gruppen sortiert), `Silhouetteplot` | Gruppen je Verfahren (ESOM, UMAP + HDBSCAN, HDBSCAN) sichtbar machen: Sind sie kompakt und nach außen abgegrenzt? Visuelles Gegenstück zur Abgrenzung A | B1, B2, B4 |
 | `DensityScatter` | 2D-Ansichten (PCA, UMAP) als Dichte statt Einzelpunkte, damit kleine Inseln (z. B. ≈ 23 Sättigungsfenster) bei Tausenden Fenstern sichtbar bleiben | wie `pca_kandidaten_*.png` in A4 |
 | `Pixelmatrix` | Gesamtbild der Merkmalsmatrix (Fenster × Merkmale): auffällige Blöcke, konstante Spalten | B0, Plausibilitätsprüfung |
+| Shepard-Dichteplot | Wie gut erhält eine Projektion (ESOM, UMAP) die Abstände der Merkmale? Ergänzt Quantisierungs- und Topologiefehler | B8, Vergleich der Ansichten |
 
 Bedingungen:
 
@@ -127,7 +129,11 @@ Bedingungen:
   z. B. CSV aus den `.npz`). Jede Abbildung nennt wie bisher Schnappschuss bzw. Datensatz,
   Merkmalssatz-Version und Seed.
 - Das Paket kommt gepinnt in die R-Umgebung (zusammen mit `Umatrix`, `GeneralizedUmatrix`; siehe
-  Abschnitt 7, Punkt 3). Die aktuelle Version ist noch zu prüfen.
+  Abschnitt 7, Punkt 3). Stand CRAN: **Version 1.4.0**, veröffentlicht 31.10.2025, braucht
+  R ≥ 3.5. Direkte Abhängigkeiten: `Rcpp`, `RcppParallel`, `ggplot2`, `sp`, `pracma`, `reshape2`.
+  Das Paket wird kompiliert (C++17); für Windows gibt es fertige Binärpakete, ohne sie braucht es
+  Rtools. Einige Funktionen nutzen zusätzlich optionale Pakete (Suggests), welche genau, zeigt
+  erst die Einrichtung.
 - **Lizenz: GPL-3** (Angabe Robby, 12.11.2026). Für die Nutzung in der Analyse ist das
   unproblematisch, der Ordner wird nicht deployt. Code aus dem Paket wird nicht in dieses Repo
   kopiert; sonst stünde dieser Teil unter GPL-3.
