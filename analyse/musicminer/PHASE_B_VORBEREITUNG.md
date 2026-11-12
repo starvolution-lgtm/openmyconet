@@ -127,7 +127,10 @@ Bedingungen:
   z. B. CSV aus den `.npz`). Jede Abbildung nennt wie bisher Schnappschuss bzw. Datensatz,
   Merkmalssatz-Version und Seed.
 - Das Paket kommt gepinnt in die R-Umgebung (zusammen mit `Umatrix`, `GeneralizedUmatrix`; siehe
-  Abschnitt 7, Punkt 3). Lizenz und aktuelle Version sind noch zu prüfen.
+  Abschnitt 7, Punkt 3). Die aktuelle Version ist noch zu prüfen.
+- **Lizenz: GPL-3** (Angabe Robby, 12.11.2026). Für die Nutzung in der Analyse ist das
+  unproblematisch, der Ordner wird nicht deployt. Code aus dem Paket wird nicht in dieses Repo
+  kopiert; sonst stünde dieser Teil unter GPL-3.
 
 ## 5. Versuche und Reihenfolge
 
@@ -165,6 +168,6 @@ Beiträge von Robby oder Dritten.
    verblindet treffen, Beurteilende für B8 suchen (≥ 3).
 3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen
    (`Umatrix`, `GeneralizedUmatrix`; falls 4.1 beschlossen wird, auch `DataVisualizations`
-   einschließlich Lizenzprüfung). Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
+   Lizenz GPL-3, siehe 4.1). Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
 4. Später, mit Hardware: Referenzmessungen nach `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 4,
    und die Synthese-Parameter danach ersetzen.
