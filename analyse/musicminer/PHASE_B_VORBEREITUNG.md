@@ -138,6 +138,26 @@ Bedingungen:
   unproblematisch, der Ordner wird nicht deployt. Code aus dem Paket wird nicht in dieses Repo
   kopiert; sonst stünde dieser Teil unter GPL-3.
 
+### 4.2 Weitere R-Pakete aus demselben Umfeld (Vorschlag)
+
+Vorschlag vom 12.11.2026, noch nicht beschlossen. Quelle: Paketübersicht
+<https://www.deepbionics.de/rpackages.html> (Thrun), durchgesehen am 12.11.2026. Die drei Pakete
+stehen unter **GPL-3**, auf CRAN und GitHub. Für sie gelten dieselben Bedingungen wie in 4.1:
+gepinnt, Übergabe per Datei, kein Code im Repo.
+
+| Paket | Einsatz bei uns | Bezug |
+|---|---|---|
+| **`DRquality`** (Gütemaße für Projektionen) | Misst, wie gut eine 2D-Projektion die Nachbarschaften und Abstände der Merkmale erhält, gleich für ESOM und UMAP. Liefert eine **zahlenmäßige** Ergänzung zum Urteil der Beurteilenden; bisher gibt es nur Quantisierungs- und Topologiefehler, und nur für die ESOM | B8 (ergänzend, ändert E2 10.6 nicht) |
+| **`FCPS`** (Fundamental Clustering Problems Suite) | Testdatensätze mit bekannter Gruppenstruktur und eine einheitliche Schnittstelle zu vielen Clusterverfahren. **Vorprüfung:** eigene ESOM (`karte-v1`) und Gruppenregel v2 auf diesen Datensätzen laufen lassen, bevor sie auf die B-Signale angewandt werden. Erweitert die Prüfungen in `tests/test_karte.py` (eine Normalverteilung → eine Gruppe; Insel aus 12 Ausreißern) | vor B1, unabhängig vom Generator |
+| `AdaptGauss` (Gauß-Mischmodelle in 1D), **Option** | Schwellen aus der Verteilung herleiten statt von Hand setzen, z. B. für die wissensbasierten Schwellen (8a) oder die Spike-Erkennung. Nur zur Einordnung, nie für die Entdeckung (wie in Abschnitt 4) | B1 |
+
+Geprüft und **nicht vorgesehen**: `DatabionicSwarm` (weiteres Projektions- und Clusterverfahren;
+A4 zeigt, dass einfache Verfahren genügen), `ABCanalysis` (Merkmalsbedeutung; der
+Entscheidungsbaum für F1 deckt das ab), `ProjectionBasedClustering` (überschneidet sich mit
+`GeneralizedUmatrix`), `RHmm` (seit 2014 nicht mehr auf CRAN). `TSAT`, `Classifiers` und
+`dbt.DataIO` stehen unter **CC BY-NC** bzw. **CC BY-NC-SA** (nur nicht-kommerziell) und werden
+nicht verwendet, solange nicht geklärt ist, ob das für BioComm passt.
+
 ## 5. Versuche und Reihenfolge
 
 | Schritt | Frage | Bemerkung |
@@ -173,7 +193,7 @@ Beiträge von Robby oder Dritten.
 2. **Robby:** Formen beisteuern (oder Dritte fragen, z. B. Prof. Ultsch), Auswahl für B2
    verblindet treffen, Beurteilende für B8 suchen (≥ 3).
 3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen
-   (`Umatrix`, `GeneralizedUmatrix`; falls 4.1 beschlossen wird, auch `DataVisualizations`
-   Lizenz GPL-3, siehe 4.1). Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
+   (`Umatrix`, `GeneralizedUmatrix`; falls 4.1 bzw. 4.2 beschlossen werden, auch
+   `DataVisualizations`, `DRquality`, `FCPS` und ggf. `AdaptGauss`, alle GPL-3). Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
 4. Später, mit Hardware: Referenzmessungen nach `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 4,
    und die Synthese-Parameter danach ersetzen.
