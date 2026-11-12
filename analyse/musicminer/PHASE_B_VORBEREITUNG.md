@@ -102,6 +102,33 @@ Weggelassen: k-Means mit einem k, das von der ESOM übernommen wird (Begründung
 Neue Abhängigkeiten (`umap-learn`, `stumpy`, `ruptures`; R mit `Umatrix`, `GeneralizedUmatrix`)
 kommen gepinnt und mit Prüfsummen in die Analyse-Umgebung, getrennt vom Server.
 
+### 4.1 Ergänzende Darstellungen (Vorschlag, R-Paket `DataVisualizations`)
+
+Vorschlag vom 12.11.2026, noch nicht beschlossen. Das R-Paket `DataVisualizations` (Thrun;
+<https://github.com/Mthrun/DataVisualizations>, auf CRAN) stammt aus demselben Umfeld wie
+`Umatrix` und `GeneralizedUmatrix`. Es enthält Darstellungen für die explorative Analyse, die
+die bestehenden Auswertungen ergänzen. Die Darstellungen sind **reine Ansichten**: Sie ändern
+weder Merkmale noch Training noch Bewertungskriterien und dienen nur der Auswertung.
+
+| Funktion | Einsatz bei uns | Bezug |
+|---|---|---|
+| `MDplot` (Verteilungen per Pareto-Dichteschätzung, PDE) | Alle Merkmale von `mv1`/`mv2` vor und nach der Transformation zeigen. Prüfen, ob die `log1p`-Auswahl (`streuung`, `ausschlaege`, `max_ausschlag`) und die Begrenzung auf ± 8 passen, und wo Merkmale mehrgipflig sind (Hinweis auf Gruppenstruktur schon vor jeder Karte) | Abschnitt 3, vor dem Einfrieren von `mv2` |
+| `InspectVariable` | Einzelmerkmal genauer ansehen (Histogramm, PDE, QQ-Plot, Boxplot), wenn der MD-Plot etwas Auffälliges zeigt | Abschnitt 3 |
+| `Heatmap` (Distanzmatrix, nach Gruppen sortiert), `Silhouetteplot` | Gruppen je Verfahren (ESOM, UMAP + HDBSCAN, HDBSCAN) sichtbar machen: Sind sie kompakt und nach außen abgegrenzt? Visuelles Gegenstück zur Abgrenzung A | B1, B2, B4 |
+| `DensityScatter` | 2D-Ansichten (PCA, UMAP) als Dichte statt Einzelpunkte, damit kleine Inseln (z. B. ≈ 23 Sättigungsfenster) bei Tausenden Fenstern sichtbar bleiben | wie `pca_kandidaten_*.png` in A4 |
+| `Pixelmatrix` | Gesamtbild der Merkmalsmatrix (Fenster × Merkmale): auffällige Blöcke, konstante Spalten | B0, Plausibilitätsprüfung |
+
+Bedingungen:
+
+- **Verblindung bleibt unberührt.** Ansichten mit Etiketten (Szenario, Wahrheitsmarkierung)
+  entstehen in B2 erst nach der Entblindung. Die Beurteilenden in B8 bekommen nur die dort
+  festgelegten Ansichten zu sehen, keine dieser Darstellungen.
+- **Übergabe Python → R** über exportierte Dateien (Merkmale, Gruppenzuordnung, Fensterkennung;
+  z. B. CSV aus den `.npz`). Jede Abbildung nennt wie bisher Schnappschuss bzw. Datensatz,
+  Merkmalssatz-Version und Seed.
+- Das Paket kommt gepinnt in die R-Umgebung (zusammen mit `Umatrix`, `GeneralizedUmatrix`; siehe
+  Abschnitt 7, Punkt 3). Lizenz und aktuelle Version sind noch zu prüfen.
+
 ## 5. Versuche und Reihenfolge
 
 | Schritt | Frage | Bemerkung |
@@ -136,6 +163,8 @@ Beiträge von Robby oder Dritten.
    Versorgungsdrift (differenzielle Messung gegen VMID). Davon hängt ab, wie H-Rev3.6 aussieht.
 2. **Robby:** Formen beisteuern (oder Dritte fragen, z. B. Prof. Ultsch), Auswahl für B2
    verblindet treffen, Beurteilende für B8 suchen (≥ 3).
-3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen.
+3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen
+   (`Umatrix`, `GeneralizedUmatrix`; falls 4.1 beschlossen wird, auch `DataVisualizations`
+   einschließlich Lizenzprüfung). Pinnen der R-Pakete festlegen, z. B. über eine `renv`-Sperrdatei.
 4. Später, mit Hardware: Referenzmessungen nach `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 4,
    und die Synthese-Parameter danach ersetzen.
