@@ -33,7 +33,7 @@ Bisher:
 > Sachlich und respektvoll diskutieren. Keine personenbezogenen Daten Dritter, keine vertraulichen Inhalte aus Einzelgesprächen, keine Werbung. Beiträge sind für alle Teilnehmenden der Themenräume sichtbar; der Kreis der Teilnehmenden kann künftig auf alle registrierten Mitglieder erweitert werden – das wird vorher angekündigt.
 
 Neu:
-> Sachlich und respektvoll diskutieren. Keine personenbezogenen Daten Dritter, keine vertraulichen Inhalte aus Einzelgesprächen, keine Werbung. **Keine Bestimmung von Pilzen zum Verzehr und keine Ratschläge zu Gesundheit oder Behandlung; Beiträge ersetzen keine fachkundige Beratung.** Beiträge sind für alle Teilnehmenden der Themenräume sichtbar. **Teilnehmen können alle registrierten Mitglieder mit bestätigter E-Mail-Adresse.**
+> Sachlich und respektvoll diskutieren. Keine personenbezogenen Daten Dritter, keine vertraulichen Inhalte aus Einzelgesprächen, keine Werbung. **Keine Bestimmung von Pilzen zum Verzehr und keine persönliche medizinische Beratung (Diagnose, Behandlung, Dosierung). Gesundheitsthemen wie gesunder Boden, gesunde Lebensmittel oder Pilze in der Medizin dürfen sachlich diskutiert werden; Beiträge ersetzen keine ärztliche oder sonstige fachkundige Beratung.** Beiträge sind für alle Teilnehmenden der Themenräume sichtbar. **Teilnehmen können alle registrierten Mitglieder mit bestätigter E-Mail-Adresse.**
 
 ## 4. Datenschutzerklärung Abschnitt 10, erster Absatz (nur ein Satz ändert sich)
 

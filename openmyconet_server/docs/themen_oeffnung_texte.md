@@ -62,8 +62,9 @@ eine eigene Diskussion anlegen.
 > So klappt es am besten:
 > - Für jede Frage eine eigene Diskussion mit einem aussagekräftigen Titel anlegen.
 > - Kurz beschreiben, worum es geht: Ort, Boden, was ihr beobachtet habt. Fotos helfen.
-> - Bitte keine Pilze zum Verzehr bestimmen lassen und keine Gesundheitsfragen stellen. Dafür sind
->   Pilzsachverständige bzw. Ärzte da.
+> - Bitte keine Pilze zum Verzehr bestimmen lassen und keine persönliche medizinische Beratung
+>   erfragen – dafür sind Pilzsachverständige bzw. Ärzte da. Über gesunden Boden, gesunde Lebensmittel
+>   oder Pilze in der Medizin dürft ihr dagegen gern diskutieren.
 >
 > Antworten kommen von anderen Mitgliedern, darunter Fachleute aus Wissenschaft und Praxis. Sie ersetzen
 > keine fachkundige Beratung vor Ort.

@@ -46,19 +46,19 @@ GEBIETE = [
     (8, False, {
         'de': ('Fragen aus der Praxis',
                'Fragen rund um Boden, Pilze und Bodenleben – auch ohne Vorwissen. Keine Pilzbestimmung zum '
-               'Verzehr und keine Gesundheitsfragen.'),
+               'Verzehr und keine persönliche medizinische Beratung.'),
         'en': ('Questions from practice',
                'Questions about soil, fungi and soil life – no prior knowledge needed. No identification of '
-               'mushrooms for eating and no health questions.'),
+               'mushrooms for eating and no personal medical advice.'),
         'nl': ('Vragen uit de praktijk',
                'Vragen over bodem, schimmels en bodemleven – ook zonder voorkennis. Geen determinatie van '
-               'paddenstoelen om te eten en geen gezondheidsvragen.'),
+               'paddenstoelen om te eten en geen persoonlijk medisch advies.'),
         'fr': ('Questions de terrain',
                'Questions sur le sol, les champignons et la vie du sol – sans connaissances préalables. Pas '
-               'd’identification de champignons destinés à la consommation ni de questions de santé.'),
+               'd’identification de champignons destinés à la consommation ni de conseils médicaux personnels.'),
         'es': ('Preguntas desde la práctica',
                'Preguntas sobre el suelo, los hongos y la vida del suelo, sin necesidad de conocimientos previos. '
-               'No se identifican setas para consumo ni se tratan cuestiones de salud.')}),
+               'No se identifican setas para consumo ni se ofrece asesoramiento médico personal.')}),
 ]
 
 
