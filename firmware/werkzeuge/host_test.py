@@ -2,11 +2,14 @@
 
     python firmware/werkzeuge/host_test.py [--sanitize] [--ohne-kreuztest]
 
-1. übersetzt komponenten/omn_paket + Monocypher + tests/*.c mit dem ersten
+1. übersetzt komponenten/omn_paket, komponenten/omn_treiber, Monocypher und
+   tests/*.c mit dem ersten
    gefundenen C-Compiler: $CC, gcc, clang, cc oder `python -m ziglang cc`
    (pip install ziglang -- so ganz ohne Visual Studio/MinGW unter Windows),
 2. test_paket: Normvektoren (SHA-256, HMAC, Ed25519) und die drei
    Paket-Testvektoren aus openmyconet_server/docs Byte für Byte,
+   test_treiber / test_zeitachse: Treiber gegen einen simulierten I2C-Bus,
+   Zeitstempel der Messwerte mit simulierten Takten,
 3. kette + Kreuztest: eine signierte Paketkette aus der Firmware wird mit dem
    Python-Code des Servers gelesen und nachgerechnet (braucht dessen
    Abhängigkeiten, also z. B. openmyconet_server/venv oder requirements.txt).
@@ -29,13 +32,17 @@ DOCS = SERVER / 'docs'
 
 BIBLIOTHEK = FIRMWARE / 'komponenten' / 'omn_paket'
 MONOCYPHER = FIRMWARE / 'drittanbieter' / 'monocypher'
-EIGENE_QUELLEN = sorted((BIBLIOTHEK / 'src').glob('*.c'))
+TREIBER = FIRMWARE / 'komponenten' / 'omn_treiber'
+EIGENE_QUELLEN = sorted((BIBLIOTHEK / 'src').glob('*.c')) + sorted((TREIBER / 'src').glob('*.c'))
 FREMDE_QUELLEN = [MONOCYPHER / 'monocypher.c', MONOCYPHER / 'monocypher-ed25519.c']
-INCLUDES = ['-I', str(BIBLIOTHEK / 'include'), '-I', str(MONOCYPHER)]
+INCLUDES = ['-I', str(BIBLIOTHEK / 'include'), '-I', str(TREIBER / 'include'), '-I', str(MONOCYPHER)]
 # Eigener Code streng; Monocypher wie geliefert (nur -O2, keine Warnungen als Fehler).
 STRENG = ['-std=c99', '-O2', '-Wall', '-Wextra', '-Wpedantic', '-Wshadow', '-Wconversion',
           '-Wno-sign-conversion', '-Werror']
 LOCKER = ['-std=c99', '-O2']
+
+
+PROGRAMME = ('test_paket', 'kette', 'test_sammler', 'test_treiber', 'test_zeitachse', 'test_messkette')
 
 
 def compiler_finden():
@@ -68,12 +75,13 @@ def bauen(cc, ordner, sanitize):
         objekte.append(obj)
     programme = {}
     endung = '.exe' if os.name == 'nt' else ''
-    for name in ('test_paket', 'kette', 'test_sammler'):
+    bibliotheken = [] if os.name == 'nt' else ['-lm']
+    for name in PROGRAMME:
         quelle = FIRMWARE / 'tests' / f'{name}.c'
         obj = ordner / f'{name}.o'
         ausfuehren(cc + STRENG + extra + INCLUDES + ['-c', str(quelle), '-o', str(obj)])
         programm = ordner / f'{name}{endung}'
-        ausfuehren(cc + extra + [str(o) for o in objekte] + [str(obj), '-o', str(programm)])
+        ausfuehren(cc + extra + [str(o) for o in objekte] + [str(obj), '-o', str(programm)] + bibliotheken)
         programme[name] = programm
     return programme
 
@@ -172,6 +180,58 @@ def kreuztest_sammler(ordner):
           f'Regeln des Eingangs eingehalten')
 
 
+def kreuztest_messkette(ordner):
+    """Pakete der Messkette (Zeitachse + Sammler wie im Knoten) mit dem Server-Code lesen:
+    Kette, Hashes, Bloecke im Messzeitraum, Raten in der Toleranz, keine Zeit rueckwaerts,
+    Akkukanaele im Minutentakt, jeder gegebene Biowert genau einmal."""
+    sys.path.insert(0, str(SERVER))
+    os.environ.setdefault('SECRET_KEY', 'firmware-kreuztest')
+    from datetime import timedelta
+    from omn.eingang import format_v1
+    from omn.eingang.einlesen import RATE_TOLERANZ
+
+    erwartung = dict(z.split('=') for z in (ordner / 'erwartung.txt').read_text().split())
+    lauf, pakete = sammler_pakete(ordner)
+    assert len(pakete) == int(erwartung['pakete']) >= 12, pakete
+    vorg, naechster, nenn, bio, akku, bio_bloecke = None, {}, {}, 0, 0, 0
+    letzte_zeit = {}
+    for nr, datei in enumerate(pakete, 1):
+        roh = datei.read_bytes()
+        p = format_v1.paket_lesen(roh)
+        vorg = vorg or format_v1.genesis_berechnen(p.geraet, p.lauf)
+        assert (p.lauf, p.sequenz) == (lauf.name, nr) and p.vorgaenger_hash == vorg, f'Paket {nr}: Kette'
+        assert p.payload_hash == p.payload_hash_ist() and p.batch_hash == p.batch_hash_ist(), f'Paket {nr}: Hash'
+        assert p.signatur_art == 'KEINE' and p.flags == format_v1.FLAG_ZEIT_UNSICHER
+        assert format_v1.paket_schreiben(p) == roh, f'Paket {nr}: Python schreibt es anders'
+        daten = [format_v1.ereignis_auswerten(e) for e in p.ereignisse]
+        typen = [type(d).__name__ for d in daten]
+        assert ('LaufStart' in typen) == (nr == 1) and ('LaufEnde' in typen) == (nr == len(pakete))
+        if nr == 1:
+            ls = daten[typen.index('LaufStart')]
+            nenn = {(k.eingang, k.groesse): k.rate_zaehler / k.rate_nenner for k in ls.kanaele}
+            assert ls.hardware_revision == 'COMBO-NODE-V3.6' and len(nenn) == 3
+        for b in p.bloecke:
+            kanal = (b.eingang, b.groesse)
+            letztes = b.zeitanker + timedelta(seconds=(b.anzahl - 1) / b.rate_hz)
+            assert p.messzeitraum_von <= b.zeitanker and letztes < p.messzeitraum_bis, f'Paket {nr}: {kanal}'
+            assert abs(b.rate_hz - nenn[kanal]) <= RATE_TOLERANZ * nenn[kanal], f'Paket {nr}: Rate {b.rate_hz}'
+            assert b.erster_index == naechster.get(kanal, 0), f'Paket {nr}: Index {kanal}'
+            naechster[kanal] = b.erster_index + b.anzahl
+            if kanal in letzte_zeit:
+                assert b.zeitanker > letzte_zeit[kanal], f'Paket {nr}: {kanal} rueckwaerts'
+            letzte_zeit[kanal] = letztes
+            if b.groesse == 'bioelectric_potential':
+                bio += b.anzahl
+                bio_bloecke += 1
+            else:
+                akku += b.anzahl
+        vorg = p.batch_hash
+    assert bio == int(erwartung['bio']), (bio, erwartung['bio'])
+    assert akku == 2 * 12, akku
+    print(f'Kreuztest Messkette: {len(pakete)} Pakete, {bio} Biowerte in {bio_bloecke} Bloecken, '
+          f'{akku} Akkuwerte, Regeln des Eingangs eingehalten')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--sanitize', action='store_true', help='AddressSanitizer + UBSan (Linux/macOS)')
@@ -184,6 +244,8 @@ def main():
         tmp = Path(tmp)
         programme = bauen(cc, tmp, args.sanitize)
         ausfuehren([str(programme['test_paket']), str(DOCS)])
+        ausfuehren([str(programme['test_treiber'])])
+        ausfuehren([str(programme['test_zeitachse'])])
         if not args.ohne_kreuztest:
             kette = tmp / 'kette_pakete'
             kette.mkdir()
@@ -193,6 +255,10 @@ def main():
             sammler.mkdir()
             ausfuehren([str(programme['test_sammler']), str(sammler)])
             kreuztest_sammler(sammler)
+            messkette = tmp / 'messkette_pakete'
+            messkette.mkdir()
+            ausfuehren([str(programme['test_messkette']), str(messkette)])
+            kreuztest_messkette(messkette)
     print('Firmware-Tests grün')
 
 

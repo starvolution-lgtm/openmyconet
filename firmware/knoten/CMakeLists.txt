@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 
 set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../komponenten")
 # Firmware-Version: geht im LAUF_START als firmware_version an den Server.
-set(PROJECT_VER "0.1.0")
+set(PROJECT_VER "0.2.0")
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(omn_knoten)
