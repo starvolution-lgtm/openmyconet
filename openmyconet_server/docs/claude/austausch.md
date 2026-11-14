@@ -92,7 +92,17 @@ Anzeigename, Zustimmung zur Regelfassung `REGELN_FASSUNG`, „Originale zuerst�
   (`docs/themen_rechtspruefung.md`); `THEMEN_FREIGEGEBEN=0` in der `.env` schließt die Themenräume
   wieder (alle `/themen`-Routen 404, kein Link).
 - **Kreis `THEMEN_KREIS`**: `fachkontakte` (aktiver Austausch) | `alle` (bestätigte Nutzer). Nur über
-  `themen.darf_themenraeume_nutzen` prüfen – nie Rolle/Förderung.
+  `themen.darf_themenraeume_nutzen` prüfen – nie Rolle/Förderung. **Öffnung (freigegeben 14.11.2026,
+  `docs/themen_oeffnung_rechtspruefung.md`):** ab `THEMEN_OEFFNUNG_AM` (Standard `2026-11-21`, Ortsdatum
+  Europe/Berlin) gilt automatisch `alle` (`themen.themen_kreis()`); leer in der `.env` = keine automatische
+  Öffnung. Das Datum steht wörtlich in Nutzungsregeln (`themen_regeln_text`), `themen_kein_zugang` und
+  Datenschutz Abschnitt 10 → bei Änderung alle drei in 5 Sprachen nachziehen. Neue Gebiete 7 „Bodenleben &
+  Bodengesundheit“ und 8 „Fragen aus der Praxis“ (Migration `f3b7d91a2c64`, 8 bis zur Öffnung ausgeblendet).
+  Nutzungsregeln 2026-11-14: keine Pilzbestimmung zum Verzehr, keine persönliche medizinische Beratung,
+  Gesundheitsthemen erlaubt.
+- **Fotos ohne Standort (Ö4, 14.11.2026):** `kollaboration.datei_ablegen` speichert png/jpg/jpeg/webp über
+  `metadaten_entfernen` neu (EXIF/XMP weg, Ausrichtung angewendet, Farbprofil bleibt); nicht lesbare
+  Bilder werden abgelehnt. Gilt für Themenräume und Austausch.
 - **Wissen bleibt** (Robby 25.10.): Beiträge CC BY 4.0; Kontolöschung → Beiträge bleiben ohne Namen
   („ehemaliges Mitglied“, `autor_nutzer_id` NULL, `von_team` False); eigene Beiträge entfernen = Text
   leer + `entfernt_am`, Platzhalter bleibt. Ausgeblendete Beiträge (`ausgeblendet_am`) nach 6 Monaten

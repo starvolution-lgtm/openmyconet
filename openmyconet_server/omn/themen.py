@@ -18,8 +18,9 @@ Moderation (Ausblenden, Zusammenfuehren, Schliessen) liegt im Admin (Schritt 4).
 import hashlib
 import re
 import unicodedata
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from functools import wraps
+from zoneinfo import ZoneInfo
 
 from flask import (
     Blueprint, abort, current_app, flash, get_template_attribute, jsonify, make_response, redirect,
@@ -27,7 +28,7 @@ from flask import (
 )
 from markupsafe import Markup, escape
 
-from omn import kollaboration, themen_mails
+from omn import kollaboration, themen_mails, zeit
 from omn.csrf import schuetze_blueprint
 from omn.extensions import db
 from omn.i18n import LANGS, SPRACHNAMEN, t
@@ -38,7 +39,7 @@ from omn.spam_schutz import ip_erlaubt
 ARTEN = ('hypothese', 'literatur', 'beobachtung', 'messdaten')
 KREISE = ('fachkontakte', 'alle')
 # Fassung der Nutzungsregeln; bei Aenderung erhoehen -> alle stimmen beim naechsten Besuch neu zu
-REGELN_FASSUNG = '2026-10-26'   # 26.10.: Absatz zur automatischen Uebersetzung (E2)
+REGELN_FASSUNG = '2026-11-14'   # 14.11.: Oeffnung ab 21.11., keine Pilzbestimmung/med. Beratung (vorher 2026-10-26)
 UPLOAD_ORDNER = 'themen'
 TITEL_MAX = 200
 BESCHREIBUNG_MAX = 500
@@ -60,13 +61,30 @@ def darf_themenraeume_nutzen(nutzer):
     """Die EINE Pruefung fuer alle Themenraum-Routen und -Downloads.
     Haengt bewusst NIE an ist_hyphist, ist_sporist, Foerderung oder Zahlung.
     Kreis 'fachkontakte' (Start): wer einen aktiven fachlichen Austausch hat.
-    Kreis 'alle' (Ziel): jeder bestaetigte Nutzer (Mycelists)."""
+    Kreis 'alle': jeder bestaetigte Nutzer (Mycelists), ab THEMEN_OEFFNUNG_AM automatisch."""
     if not themen_freigegeben() or nutzer is None or not nutzer.bestaetigt:
         return False
-    kreis = current_app.config.get('THEMEN_KREIS', 'fachkontakte')
-    if kreis == 'alle':
+    if themen_kreis() == 'alle':
         return True
     return bool(kollaboration.austausch_bereiche_von(nutzer))
+
+
+def oeffnungstag():
+    """THEMEN_OEFFNUNG_AM als date, None wenn leer oder ungueltig."""
+    try:
+        return date.fromisoformat(current_app.config.get('THEMEN_OEFFNUNG_AM') or '')
+    except ValueError:
+        return None
+
+
+def themen_kreis():
+    """Wirksamer Kreis: 'alle', wenn THEMEN_KREIS=alle gesetzt ist oder der Oeffnungstag
+    (Ortsdatum Europe/Berlin) erreicht ist; sonst 'fachkontakte'."""
+    if current_app.config.get('THEMEN_KREIS') == 'alle':
+        return 'alle'
+    tag = oeffnungstag()
+    heute = zeit.utcnow().replace(tzinfo=timezone.utc).astimezone(ZoneInfo('Europe/Berlin')).date()
+    return 'alle' if tag is not None and heute >= tag else 'fachkontakte'
 
 
 @themen_bp.app_context_processor

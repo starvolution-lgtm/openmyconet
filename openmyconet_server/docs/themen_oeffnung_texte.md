@@ -95,7 +95,7 @@ eine eigene Diskussion anlegen.
 ## D. Vorab-Nachricht an die bisherigen Teilnehmenden (Ö2, einige Tage vorher)
 
 **Englisch (alle bisherigen Fachkontakte schreiben Englisch):**
-> As promised when you joined, a short note in advance: on [date] we will open the topic rooms to all
+> As promised when you joined, a short note in advance: on Saturday, 21 November, we will open the topic rooms to all
 > registered OpenMycoNet members, with two new areas on soil life and practical questions. Your posts stay
 > where they are and remain visible only to logged-in participants, not publicly. If you would like to
 > remove one of your own posts before then, you can do so at any time from the post itself.

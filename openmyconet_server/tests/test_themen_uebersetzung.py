@@ -223,7 +223,7 @@ def test_widerspruch_bleibt_nach_kontoloeschung(client, app, monkeypatch):
 
 def test_nutzungsregeln_nennen_uebersetzung(client, app):
     from omn.themen import REGELN_FASSUNG
-    assert REGELN_FASSUNG == '2026-10-26'
+    assert REGELN_FASSUNG == '2026-11-14'                 # 14.11.: Oeffnung; Uebersetzungsabsatz unveraendert
     n = _teilnehmer(client, regeln='2026-10-25')        # alte Fassung -> neu zustimmen
     seite = client.get('/themen?lang=de', follow_redirects=True).get_data(as_text=True)
     assert 'an Anthropic übermittelt' in seite and 'Einstellungen' in seite

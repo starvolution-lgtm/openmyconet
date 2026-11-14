@@ -682,3 +682,67 @@ def test_admin_sprachwechsel_nur_mit_bestaetigung(client, app, superadmin):
     assert g.sprache_original == 'en'
     assert Uebersetzung.query.filter_by(inhalt_id=g.id, ziel_sprache='de', anbieter='manuell').one().text == 'Mykologie DE'
     assert 'name="u_de_titel"' in client.get(f'/admin/themen/gebiet/{g.id}').get_data(as_text=True)
+
+
+# --- Oeffnung fuer alle Registrierten ab THEMEN_OEFFNUNG_AM (Robby 14.11.2026) ----------------------
+
+def test_oeffnungstag_schaltet_kreis_automatisch(app, monkeypatch):
+    from omn import zeit
+    from omn.themen import themen_kreis
+    n = _nutzer('neu@example.com')
+    app.config['THEMEN_OEFFNUNG_AM'] = '2026-11-21'
+    # 20.11. 22:59 UTC = 23:59 in Berlin -> noch zu
+    monkeypatch.setattr(zeit, 'utcnow', lambda: datetime(2026, 11, 20, 22, 59))
+    assert themen_kreis() == 'fachkontakte' and not darf_themenraeume_nutzen(n)
+    # 20.11. 23:00 UTC = 00:00 am 21.11. in Berlin -> offen
+    monkeypatch.setattr(zeit, 'utcnow', lambda: datetime(2026, 11, 20, 23, 0))
+    assert themen_kreis() == 'alle' and darf_themenraeume_nutzen(n)
+    assert not darf_themenraeume_nutzen(_nutzer('offen@example.com', bestaetigt=False))
+    # leer oder ungueltig -> keine automatische Oeffnung
+    for wert in ('', 'kein-datum'):
+        app.config['THEMEN_OEFFNUNG_AM'] = wert
+        assert themen_kreis() == 'fachkontakte'
+
+
+def test_regeln_nennen_oeffnung_und_grenzen(app):
+    from omn.i18n import t
+    for lang in ('de', 'en', 'nl', 'fr', 'es'):
+        assert '2026' in t('themen_regeln_text', lang) and '21' in t('themen_kein_zugang', lang)
+    regeln = t('themen_regeln_text', 'de')
+    assert 'Keine Bestimmung von Pilzen zum Verzehr' in regeln and 'Pilze in der Medizin' in regeln
+    assert 'Ab dem 21. November 2026' in regeln
+    assert REGELN_FASSUNG == '2026-11-14'
+
+
+def _foto_mit_standort(fmt):
+    from PIL import Image
+    bild = Image.new('RGB', (40, 20), 'green')
+    exif = Image.Exif()
+    exif[0x0112] = 6                                   # Ausrichtung: 90 Grad gedreht
+    exif.get_ifd(0x8825)[2] = (52.0, 31.0, 12.0)       # GPS-Breite
+    puffer = io.BytesIO()
+    bild.save(puffer, format=fmt, exif=exif.tobytes())
+    puffer.seek(0)
+    return puffer
+
+
+def test_foto_anhang_ohne_standort(client, app):
+    from PIL import Image
+    _teilnehmer(client)
+    d = _diskussion()
+    for fmt, name in (('JPEG', 'boden.jpg'), ('PNG', 'boden.png'), ('WEBP', 'boden.webp')):
+        resp = client.post(f'/themen/diskussion/{d.id}', data={
+            'text': f'Foto {name}', 'dateien': (_foto_mit_standort(fmt), name)}, content_type='multipart/form-data')
+        assert resp.status_code == 302
+    anhaenge = BeitragAnhang.query.all()
+    assert len(anhaenge) == 3
+    for a in anhaenge:
+        pfad = kollaboration.anhang_pfad_in(a.dateiname, 'themen')
+        with Image.open(pfad) as b:
+            assert dict(b.getexif()) == {}              # GPS + Ausrichtung weg
+            assert b.size == (20, 40)                   # Ausrichtung auf die Pixel angewendet
+        assert a.groesse == os.path.getsize(pfad)
+    # getarnte Datei mit Bild-Endung wird abgelehnt statt mit unbekanntem Inhalt abgelegt
+    client.post(f'/themen/diskussion/{d.id}', data={
+        'text': 'Kein Bild', 'dateien': (io.BytesIO(b'kein bild'), 'falsch.jpg')}, content_type='multipart/form-data')
+    assert BeitragAnhang.query.count() == 3

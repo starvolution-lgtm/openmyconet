@@ -1,6 +1,6 @@
 # Öffnung der Themenräume für alle Registrierten – Unterlage zur Freigabe
 
-Stand: 14.11.2026 · ENTWURF, noch nicht umgesetzt. Maßgeblich ist die deutsche Fassung; en/nl/fr/es
+Stand: 14.11.2026 · **Freigegeben von Robby am 14.11.2026 (Abschnitte 3–6, Ö1–Ö4 wie vorgeschlagen), Öffnung am 21.11.2026.** Maßgeblich ist die deutsche Fassung; en/nl/fr/es
 werden nach der Freigabe nachgezogen. Hinweis: Zusammenstellung mit Anmerkungen, **keine Rechtsberatung**.
 
 Ziel (Robby, 14.11.2026): Die Themenräume öffnen sich für Fragen rund um gesunden Boden, Bakterien und
@@ -18,11 +18,16 @@ BioComm (künftige Knotenbetreiber).
 
 | Punkt | bisher | nach der Öffnung |
 |---|---|---|
-| Teilnehmerkreis (`THEMEN_KREIS`) | `fachkontakte` (aktiver Austausch) | `alle` (jedes bestätigte Konto) – Standard in `omn/config.py`, per `.env` zurückstellbar |
+| Teilnehmerkreis | `fachkontakte` (aktiver Austausch) | `alle` (jedes bestätigte Konto) **automatisch ab 21.11.2026** (`THEMEN_OEFFNUNG_AM`, leer in der `.env` = keine Öffnung) |
 | Nutzungsregeln | Fassung 2026-10-26 | neue Fassung (Abschnitt 3); alle stimmen beim nächsten Besuch neu zu |
 | Datenschutzerklärung Abschnitt 10 | „derzeit eingeladene Personen, künftig …“ | Abschnitt 4 |
 | Gebiet „Fragen aus der Praxis“ | ausgeblendet | in `/admin/themen` einblenden |
-| Hinweis ohne Zugang (`themen_kein_zugang`) | „nur auf Einladung“ | „nur mit bestätigtem Konto“ |
+| Hinweis ohne Zugang (`themen_kein_zugang`) | „nur auf Einladung“ | „bis 20.11. nur auf Einladung, ab 21.11. für alle registrierten Mitglieder …“ |
+
+**Umsetzung mit festem Datum** (14.11.2026): Regeln und Datenschutzerklärung nennen den 21.11.2026 und stimmen damit
+schon vor und auch nach der Öffnung; der Code kann sofort deployt werden, die Öffnung geschieht am Stichtag von selbst.
+Die neue Regelfassung gilt ab dem Deploy (die bisherigen Teilnehmenden stimmen beim nächsten Besuch neu zu und sehen
+damit die Ankündigung).
 
 Unverändert: nicht öffentlich im Netz (nur angemeldete Teilnehmende lesen), keine Rolle/Förderung als
 Voraussetzung, CC BY 4.0, „Wissen bleibt“, automatische Übersetzung mit Widerspruch, Benachrichtigungen.
@@ -33,7 +38,7 @@ Bisher:
 > Sachlich und respektvoll diskutieren. Keine personenbezogenen Daten Dritter, keine vertraulichen Inhalte aus Einzelgesprächen, keine Werbung. Beiträge sind für alle Teilnehmenden der Themenräume sichtbar; der Kreis der Teilnehmenden kann künftig auf alle registrierten Mitglieder erweitert werden – das wird vorher angekündigt.
 
 Neu:
-> Sachlich und respektvoll diskutieren. Keine personenbezogenen Daten Dritter, keine vertraulichen Inhalte aus Einzelgesprächen, keine Werbung. **Keine Bestimmung von Pilzen zum Verzehr und keine persönliche medizinische Beratung (Diagnose, Behandlung, Dosierung). Gesundheitsthemen wie gesunder Boden, gesunde Lebensmittel oder Pilze in der Medizin dürfen sachlich diskutiert werden; Beiträge ersetzen keine ärztliche oder sonstige fachkundige Beratung.** Beiträge sind für alle Teilnehmenden der Themenräume sichtbar. **Teilnehmen können alle registrierten Mitglieder mit bestätigter E-Mail-Adresse.**
+> Sachlich und respektvoll diskutieren. Keine personenbezogenen Daten Dritter, keine vertraulichen Inhalte aus Einzelgesprächen, keine Werbung. **Keine Bestimmung von Pilzen zum Verzehr und keine persönliche medizinische Beratung (Diagnose, Behandlung, Dosierung). Gesundheitsthemen wie gesunder Boden, gesunde Lebensmittel oder Pilze in der Medizin dürfen sachlich diskutiert werden; Beiträge ersetzen keine ärztliche oder sonstige fachkundige Beratung.** Beiträge sind für alle Teilnehmenden der Themenräume sichtbar. **Ab dem 21. November 2026 können alle registrierten Mitglieder mit bestätigter E-Mail-Adresse teilnehmen, bis dahin eingeladene Personen.**
 
 ## 4. Datenschutzerklärung Abschnitt 10, erster Absatz (nur ein Satz ändert sich)
 
@@ -41,9 +46,9 @@ Bisher:
 > … Teilnehmen können derzeit eingeladene Personen, künftig voraussichtlich alle registrierten Mitglieder; eine solche Erweiterung kündigen wir vorher an. …
 
 Neu:
-> … Teilnehmen können alle registrierten Mitglieder mit bestätigter E-Mail-Adresse; die Themenräume sind nicht öffentlich, Inhalte sehen nur Teilnehmende. …
+> … Teilnehmen können eingeladene Personen und ab dem 21. November 2026 alle registrierten Mitglieder mit bestätigter E-Mail-Adresse; die Themenräume sind nicht öffentlich, Inhalte sehen nur Teilnehmende. …
 
-Dazu: `stand` aller fünf Sprachen auf das Freigabedatum.
+Dazu: `stand` aller fünf Sprachen auf 14.11.2026.
 
 ## 5. Interessenabwägung – Wiedervorlage (Kontrollzentrum `03_Website_Backend/Interessenabwaegung_Themenraeume.md`)
 

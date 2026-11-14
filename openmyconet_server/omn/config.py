@@ -110,6 +110,11 @@ class Config:
     # 'fachkontakte' (Start) = aktiver fachlicher Austausch; 'alle' = jeder bestaetigte
     # Nutzer (erklaertes Ziel, Robby 25.10.2026). Nie an Rolle/Foerderung gebunden.
     THEMEN_KREIS = os.getenv('THEMEN_KREIS', 'fachkontakte').strip() or 'fachkontakte'
+    # Oeffnung fuer alle Registrierten (Robby 14.11.2026, docs/themen_oeffnung_rechtspruefung.md):
+    # ab diesem Tag (Ortsdatum Europe/Berlin) gilt der Kreis 'alle' automatisch. Leer = keine
+    # automatische Oeffnung (dann zaehlt nur THEMEN_KREIS). Nutzungsregeln + Datenschutzerklaerung
+    # nennen das Datum -- bei Aenderung dort nachziehen.
+    THEMEN_OEFFNUNG_AM = os.getenv('THEMEN_OEFFNUNG_AM', '2026-11-21').strip()
     # Schalter fuer die Themenraeume. Bis zur rechtlichen Freigabe war er auf Prod aus;
     # seit 25.10.2026 freigegeben (Robby, docs/themen_rechtspruefung.md) -> ueberall an.
     # THEMEN_FREIGEGEBEN=0 in der .env verbirgt sie wieder (Routen 404, kein Link),
@@ -163,6 +168,8 @@ class TestConfig(Config):
     SERVER_NAME = 'testserver.local'
     # Themenraeume in Tests immer an (der Prod-Schalter hat einen eigenen Test)
     THEMEN_FREIGEGEBEN = True
+    # Kreis in Tests nicht vom Kalender abhaengig; test_themen.py prueft das Oeffnungsdatum eigens
+    THEMEN_OEFFNUNG_AM = ''
     # Uebersetzung in Tests an; der Anbieter wird in den Tests immer ersetzt (keine echten API-Aufrufe)
     UEBERSETZUNG_AKTIV = True
     UEBERSETZUNG_TAGESLIMIT = 100

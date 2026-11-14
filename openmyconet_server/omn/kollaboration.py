@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 
 from flask import current_app, render_template
 from flask_mail import Message
+from PIL import Image, ImageOps
 from werkzeug.utils import secure_filename
 
 from omn.extensions import db, mail
@@ -35,6 +36,8 @@ ERLAUBTE_ANHANG_EXT = {
     'pdf', 'txt', 'log', 'csv', 'json', 'zip',
 }
 MAX_ANHANG_BYTES = 5 * 1024 * 1024  # 5 MB pro Datei
+# Fotos, aus denen beim Hochladen die Metadaten entfernt werden (Oe4, 14.11.2026). GIF hat kein EXIF.
+FOTO_EXT = {'png', 'jpg', 'jpeg', 'webp'}
 
 
 # --- Kontext-Abstraktion -----------------------------------------------------
@@ -281,8 +284,50 @@ def datei_ablegen(datei, unterordner='kollaboration'):
         return None
 
     dateiname = f'{uuid.uuid4().hex}.{ext}'
-    datei.save(os.path.join(_anhang_verzeichnis(unterordner), dateiname))
+    pfad = os.path.join(_anhang_verzeichnis(unterordner), dateiname)
+    datei.save(pfad)
+    if ext in FOTO_EXT:
+        if not metadaten_entfernen(pfad):
+            os.remove(pfad)
+            return None
+        groesse = os.path.getsize(pfad)
     return dateiname, secure_filename(datei.filename)[:255], groesse
+
+
+def metadaten_entfernen(pfad):
+    """Speichert ein Foto ohne EXIF/XMP/Textangaben neu -- Handyfotos tragen oft den GPS-Standort,
+    bei Hof oder Garten praktisch die Wohnadresse (Oe4, docs/themen_oeffnung_rechtspruefung.md).
+    Die EXIF-Ausrichtung wird vorher auf die Pixel angewendet, das Farbprofil bleibt. Animierte
+    Bilder werden mit allen Einzelbildern neu gespeichert. False, wenn sich die Datei nicht als
+    Bild lesen laesst -- dann wird sie abgelehnt, statt mit Metadaten abgelegt."""
+    try:
+        with Image.open(pfad) as bild:
+            bild.load()
+            format_ = bild.format
+            icc = bild.info.get('icc_profile')
+            animiert = getattr(bild, 'is_animated', False)
+            if animiert:
+                einzelbilder = []
+                for i in range(bild.n_frames):
+                    bild.seek(i)
+                    einzelbilder.append(bild.copy())
+                sauber = einzelbilder[0]
+                weitere = {'save_all': True, 'append_images': einzelbilder[1:],
+                           'duration': bild.info.get('duration'), 'loop': bild.info.get('loop', 0)}
+            else:
+                sauber = ImageOps.exif_transpose(bild)
+                weitere = {}
+        sauber.info = {}
+        optionen = {'exif': b''}
+        if icc:
+            optionen['icc_profile'] = icc
+        if format_ == 'JPEG':
+            optionen['quality'] = 95
+        sauber.save(pfad, format=format_, **optionen, **{k: v for k, v in weitere.items() if v is not None})
+        return True
+    except Exception:  # kaputte oder getarnte Datei
+        logger.warning('Anhang %s: Bild nicht lesbar, abgelehnt', os.path.basename(pfad))
+        return False
 
 
 def _anhang_speichern(kommentar, datei):
