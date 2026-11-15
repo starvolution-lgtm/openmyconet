@@ -167,6 +167,27 @@ pydbt `karte-v1` nachbaut.
 
 Da alle Läufe toroidal sind, betreffen 1–3 die Nachrechnung nicht.
 
+## 7b. Nachtrag vor R0 (15.11.2026, nach Antwort der Entwickler, vor jedem Lauf)
+
+- **Neuer pydbt-Commit:** Die Entwickler haben die Punkte 1–4 am 14.11. behoben. Maßgeblich ist
+  jetzt `4a4b33e4334e4d19f75640d1687034466a0f1b44` (Version 0.0.125). Der Diff gegenüber
+  `cdedeba` betrifft nur planare Karten (Nachbarschaft, Ecke der U-Matrix), die Kennzeichnung
+  `is_toroid`, den `.wts`-Leser und die Lizenzangabe. Der toroidale Trainingsweg und die
+  C-Bibliothek sind unverändert. Weil noch kein Lauf stattgefunden hat, gilt das nicht als
+  Wechsel nach Abschnitt 2.
+- **Seed:** `np.random.seed(...)` ist laut Entwicklern der vorgesehene Weg und auf derselben
+  Plattform wiederholbar. R0 prüft das trotzdem.
+- **R1:** Die Entwickler verweisen für Parameterempfehlungen auf Prof. Ultsch. Es bleibt bei
+  den Standardwerten aus 7a. Kommt eine Empfehlung vor dem Start von R1, wird sie hier
+  eingetragen und als **R1b** zusätzlich gerechnet. R1 mit Standardwerten bleibt bestehen.
+- **Veröffentlichung:** Die Entwickler sind einverstanden, dass wir pydbt nennen und Bilder und
+  Werte vor der Veröffentlichung der Bibliothek zeigen. Die Einschränkung aus Abschnitt 2 und
+  Abschnitt 7 entfällt damit für Ergebnisse. Für den Code gilt sie weiter, bis er veröffentlicht
+  ist.
+- **Inseln:** Auch die Entwickler halten die automatische Inselbestimmung für offen und
+  arbeiten oft manuell im UmatrixLab. Maßgeblich für die Nachrechnung bleibt unsere Regel v2.
+  Ein Austausch dazu ist ausdrücklich erwünscht, gehört aber nicht zu diesem Schritt.
+
 ## 8. Was ausdrücklich nicht dazugehört
 
 - Keine Änderung an Phase A, an den Kriterien v2/E1/E2 oder an Phase B.
