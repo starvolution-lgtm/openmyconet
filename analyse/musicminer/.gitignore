@@ -4,3 +4,4 @@ ergebnisse/**/*.npz
 ergebnisse/**/*.npy
 venv/
 .pytest_cache/
+ergebnisse/nachrechnung/**/*.lock
