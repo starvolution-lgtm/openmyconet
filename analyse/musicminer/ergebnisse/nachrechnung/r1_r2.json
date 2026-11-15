@@ -1,0 +1,637 @@
+{
+ "simuliert": true,
+ "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 6 und 7d",
+ "schritte": {
+  "R1": {
+   "P": {
+    "laeufe": 10,
+    "seeds": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ],
+    "qe_median": 1.099772274721158,
+    "te_median": 0.18579360780065005,
+    "gruppen_median": 2.0,
+    "inseln_median": 4.0,
+    "sekunden_median": 1585.1,
+    "pydbt_commit": [
+     "4a4b33e4334e4d19f75640d1687034466a0f1b44"
+    ],
+    "kandidaten": [
+     {
+      "id": 2,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 6,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 31,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.0008730549885558538,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.4125282717888457,
+      "reinheit_median": 0.967741935483871
+     },
+     {
+      "id": 3,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 584,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.4199187678969138,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 2.1546122336887907,
+      "reinheit_median": 0.985445205479452
+     },
+     {
+      "id": 10,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 8,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 628,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.47342691520800184,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 3.0246242647702064,
+      "reinheit_median": 0.9848726114649682
+     },
+     {
+      "id": 13,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 9,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 12,
+      "wiedergefunden": 8,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 0.7324561403508771,
+      "abgrenzung_median": 1.5399244697077048,
+      "a4_abgrenzung_median": 1.8174516956532083,
+      "reinheit_median": 0.8333333333333334
+     },
+     {
+      "id": 16,
+      "bekannt": "Sättigung",
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 23,
+      "wiedergefunden": 10,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 1.0,
+      "abgrenzung_median": 516.9001597738832,
+      "a4_abgrenzung_median": 13.268630340321348,
+      "reinheit_median": 1.0
+     }
+    ],
+    "neue_komponenten": [
+     {
+      "fenster": 13,
+      "wiedergefunden": 5,
+      "jaccard_bester_a4_kandidat": 0.087,
+      "jaccard_beste_a4_komponente": 0.846
+     },
+     {
+      "fenster": 1378,
+      "wiedergefunden": 10,
+      "jaccard_bester_a4_kandidat": 0.456,
+      "jaccard_beste_a4_komponente": 0.456
+     }
+    ]
+   },
+   "PL": {
+    "laeufe": 10,
+    "seeds": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ],
+    "qe_median": 1.549621556519741,
+    "te_median": 0.19832135638895126,
+    "gruppen_median": 2.5,
+    "inseln_median": 11.0,
+    "sekunden_median": 1757.9,
+    "pydbt_commit": [
+     "4a4b33e4334e4d19f75640d1687034466a0f1b44"
+    ],
+    "kandidaten": [
+     {
+      "id": 1,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 8,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 10,
+      "wiedergefunden": 5,
+      "von": 10,
+      "urteil": "teilweise",
+      "jaccard_median": 0.4880952380952381,
+      "abgrenzung_median": 1.4306156714508282,
+      "a4_abgrenzung_median": 1.4349534577371978,
+      "reinheit_median": 1.0
+     },
+     {
+      "id": 2,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 23,
+      "wiedergefunden": 10,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 0.7026515151515151,
+      "abgrenzung_median": 1.7729176168660334,
+      "a4_abgrenzung_median": 1.4938667917065809,
+      "reinheit_median": 0.9782608695652174
+     },
+     {
+      "id": 3,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 5,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 13,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.014372294372294373,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.238069273599334,
+      "reinheit_median": 0.7692307692307693
+     },
+     {
+      "id": 6,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 7,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 243,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.12400545950864422,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.535875680243385,
+      "reinheit_median": 0.9320987654320987
+     },
+     {
+      "id": 13,
+      "bekannt": "Reaktion",
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 229,
+      "wiedergefunden": 8,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 0.9803968103284602,
+      "abgrenzung_median": 2.0695311967424006,
+      "a4_abgrenzung_median": 1.9420369992736854,
+      "reinheit_median": 0.9956331877729258
+     },
+     {
+      "id": 28,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 9,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 68,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.06359182187686352,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.354247916983003,
+      "reinheit_median": 0.9338235294117647
+     },
+     {
+      "id": 37,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 84,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.05817533625020256,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.2755468693516179,
+      "reinheit_median": 0.8511904761904762
+     },
+     {
+      "id": 40,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 6,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 71,
+      "wiedergefunden": 1,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.12065545792107751,
+      "abgrenzung_median": 1.4312058562803418,
+      "a4_abgrenzung_median": 1.2748258008174342,
+      "reinheit_median": 0.8873239436619718
+     },
+     {
+      "id": 46,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 9,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 48,
+      "wiedergefunden": 2,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.22087289029535864,
+      "abgrenzung_median": 1.529553938280291,
+      "a4_abgrenzung_median": 1.2739640067423876,
+      "reinheit_median": 0.8854166666666667
+     },
+     {
+      "id": 52,
+      "bekannt": "Sättigung",
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 24,
+      "wiedergefunden": 10,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 1.0,
+      "abgrenzung_median": 5.168130152739815,
+      "a4_abgrenzung_median": 4.486477015123066,
+      "reinheit_median": 1.0
+     }
+    ],
+    "neue_komponenten": [
+     {
+      "fenster": 795,
+      "wiedergefunden": 5,
+      "jaccard_bester_a4_kandidat": 0.297,
+      "jaccard_beste_a4_komponente": 0.297
+     },
+     {
+      "fenster": 18,
+      "wiedergefunden": 9,
+      "jaccard_bester_a4_kandidat": 0.474,
+      "jaccard_beste_a4_komponente": 0.474
+     }
+    ]
+   }
+  },
+  "R2": {
+   "P": {
+    "laeufe": 10,
+    "seeds": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ],
+    "qe_median": 1.177758841650674,
+    "te_median": 0.22200704225352114,
+    "gruppen_median": 2.0,
+    "inseln_median": 6.5,
+    "sekunden_median": 1664.7,
+    "pydbt_commit": [
+     "4a4b33e4334e4d19f75640d1687034466a0f1b44"
+    ],
+    "kandidaten": [
+     {
+      "id": 2,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 6,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 31,
+      "wiedergefunden": 1,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.0015838026369292182,
+      "abgrenzung_median": 1.277140752675738,
+      "a4_abgrenzung_median": 1.4125282717888457,
+      "reinheit_median": 0.967741935483871
+     },
+     {
+      "id": 3,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 584,
+      "wiedergefunden": 2,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.42016390900633016,
+      "abgrenzung_median": 2.13994705092154,
+      "a4_abgrenzung_median": 2.1546122336887907,
+      "reinheit_median": 0.9743150684931506
+     },
+     {
+      "id": 10,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 8,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 628,
+      "wiedergefunden": 2,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.478918624538027,
+      "abgrenzung_median": 4.260333457677906,
+      "a4_abgrenzung_median": 3.0246242647702064,
+      "reinheit_median": 0.9777070063694268
+     },
+     {
+      "id": 13,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 9,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 12,
+      "wiedergefunden": 8,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 0.75,
+      "abgrenzung_median": 1.539566536588683,
+      "a4_abgrenzung_median": 1.8174516956532083,
+      "reinheit_median": 0.9166666666666666
+     },
+     {
+      "id": 16,
+      "bekannt": "Sättigung",
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 23,
+      "wiedergefunden": 10,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 1.0,
+      "abgrenzung_median": 298.15728454233493,
+      "a4_abgrenzung_median": 13.268630340321348,
+      "reinheit_median": 1.0
+     }
+    ],
+    "neue_komponenten": [
+     {
+      "fenster": 1360,
+      "wiedergefunden": 9,
+      "jaccard_bester_a4_kandidat": 0.462,
+      "jaccard_beste_a4_komponente": 0.462
+     },
+     {
+      "fenster": 20,
+      "wiedergefunden": 5,
+      "jaccard_bester_a4_kandidat": 0.025,
+      "jaccard_beste_a4_komponente": 0.167
+     },
+     {
+      "fenster": 11,
+      "wiedergefunden": 5,
+      "jaccard_bester_a4_kandidat": 0.045,
+      "jaccard_beste_a4_komponente": 0.833
+     }
+    ]
+   },
+   "PL": {
+    "laeufe": 10,
+    "seeds": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ],
+    "qe_median": 1.643287237950107,
+    "te_median": 0.2381961598922075,
+    "gruppen_median": 4.0,
+    "inseln_median": 19.0,
+    "sekunden_median": 2047.35,
+    "pydbt_commit": [
+     "4a4b33e4334e4d19f75640d1687034466a0f1b44"
+    ],
+    "kandidaten": [
+     {
+      "id": 1,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 8,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 10,
+      "wiedergefunden": 3,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.2222222222222222,
+      "abgrenzung_median": 1.6182049303438233,
+      "a4_abgrenzung_median": 1.4349534577371978,
+      "reinheit_median": 0.7
+     },
+     {
+      "id": 2,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 23,
+      "wiedergefunden": 10,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 0.8237577639751552,
+      "abgrenzung_median": 1.8727438301165051,
+      "a4_abgrenzung_median": 1.4938667917065809,
+      "reinheit_median": 1.0
+     },
+     {
+      "id": 3,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 5,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 13,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.02096823286705464,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.238069273599334,
+      "reinheit_median": 0.8461538461538461
+     },
+     {
+      "id": 6,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 7,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 243,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.3689580031695721,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.535875680243385,
+      "reinheit_median": 0.9115226337448559
+     },
+     {
+      "id": 13,
+      "bekannt": "Reaktion",
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 229,
+      "wiedergefunden": 5,
+      "von": 10,
+      "urteil": "teilweise",
+      "jaccard_median": 0.4758104821698886,
+      "abgrenzung_median": 1.8774492634292579,
+      "a4_abgrenzung_median": 1.9420369992736854,
+      "reinheit_median": 0.9934497816593886
+     },
+     {
+      "id": 28,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 9,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 68,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.27426389400073614,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.354247916983003,
+      "reinheit_median": 0.8823529411764706
+     },
+     {
+      "id": 37,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 84,
+      "wiedergefunden": 0,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.30041407867494824,
+      "abgrenzung_median": null,
+      "a4_abgrenzung_median": 1.2755468693516179,
+      "reinheit_median": 0.8333333333333334
+     },
+     {
+      "id": 40,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 6,
+      "a4_stabil_8b1": false,
+      "fenster_a4": 71,
+      "wiedergefunden": 2,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.345308419350827,
+      "abgrenzung_median": 1.3131036198468007,
+      "a4_abgrenzung_median": 1.2748258008174342,
+      "reinheit_median": 0.8943661971830986
+     },
+     {
+      "id": 46,
+      "bekannt": null,
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 9,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 48,
+      "wiedergefunden": 2,
+      "von": 10,
+      "urteil": "nicht reproduziert",
+      "jaccard_median": 0.39359082594625017,
+      "abgrenzung_median": 1.4386207283483314,
+      "a4_abgrenzung_median": 1.2739640067423876,
+      "reinheit_median": 0.7708333333333334
+     },
+     {
+      "id": 52,
+      "bekannt": "Sättigung",
+      "a4_stufe": "Unbestätigter Kandidat",
+      "a4_wiedergefunden_von_10": 10,
+      "a4_stabil_8b1": true,
+      "fenster_a4": 24,
+      "wiedergefunden": 10,
+      "von": 10,
+      "urteil": "reproduziert",
+      "jaccard_median": 1.0,
+      "abgrenzung_median": 5.331606684319773,
+      "a4_abgrenzung_median": 4.486477015123066,
+      "reinheit_median": 1.0
+     }
+    ],
+    "neue_komponenten": [
+     {
+      "fenster": 246,
+      "wiedergefunden": 10,
+      "jaccard_bester_a4_kandidat": 0.31,
+      "jaccard_beste_a4_komponente": 0.31
+     },
+     {
+      "fenster": 662,
+      "wiedergefunden": 10,
+      "jaccard_bester_a4_kandidat": 0.313,
+      "jaccard_beste_a4_komponente": 0.313
+     },
+     {
+      "fenster": 13,
+      "wiedergefunden": 5,
+      "jaccard_bester_a4_kandidat": 0.0,
+      "jaccard_beste_a4_komponente": 0.444
+     }
+    ]
+   }
+  }
+ },
+ "vollstaendig": true,
+ "teilurteil_r2": {
+  "v2_bekannte_reproduziert": false,
+  "stabile_a4_kandidaten": 11,
+  "davon_reproduziert_anteil": 0.364,
+  "mindestens_zwei_drittel": false,
+  "hinweis": "Gesamturteil erst mit V4 (R3)"
+ }
+}

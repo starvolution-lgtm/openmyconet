@@ -14,6 +14,9 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 | 05.11.2026 | Ergänzung E1 (größenabhängige Nullmodelle, drei Stufen), **vor A4** | 0301a87 |
 | 05.11.2026 | A4: Methodenvergleich, E1, Robustheit Endradius; Phase-B-Entwurf Fassung 1 | be3804c |
 | 05.11.2026 | Prüfung Literatur + Eingangsschaltung, Ergänzung E2, Phase-B-Vorbereitung Fassung 2 | bb6ecd1 |
+| 14.11.2026 | Vergleichsregeln für die Nachrechnung mit pydbt (`NACHRECHNUNG_PYDBT.md`), vor jedem Lauf | 6e92179 |
+| 15.11.2026 | Nachrechnung R0 (Technik, V0 übereinstimmend) | 79e49e3 |
+| 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | (dieser Commit) |
 
 ## Abweichungen vom Plan und ihre Gründe
 
@@ -76,6 +79,11 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 7. **A4: Nullmodelle liefern für große Gruppen keine Vergleichsgrundlage** (0 Komponenten ≥ 160
    Fenster), deshalb dort keine größenabhängige Signifikanz.
 8. **Größenabhängige Schwelle nicht durchweg milder:** In G2 lag sie über der globalen Schwelle.
+9. **Nachrechnung mit pydbt (R2): abweichend.** Sättigung und die Sprung-Gruppen übertragen sich,
+   die Reaktion nur in 5/10 Läufen, von 11 stabilen A4-Kandidaten nur 4. pydbt fasst die
+   Spike-Lage-Fragmente zu größeren Gruppen zusammen; die feine Aufteilung aus A4 hängt also
+   auch von der ESOM-Umsetzung ab. Ursache offen (Endradius σ 0,75 nicht einstellbar,
+   Online- statt Batch-Training). Details `ergebnisse/nachrechnung/BERICHT.md`.
 
 ## Befunde außerhalb der Analyse (zur Weitergabe)
 

@@ -1,0 +1,257 @@
+{
+ "simuliert": true,
+ "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
+ "schritt": "R2",
+ "saetze": {
+  "P": [
+   {
+    "id": 2,
+    "fenster": 31,
+    "anteil_in_haupt_komponente_median": 0.968,
+    "komponente_zu_kandidat_median": 1144.37,
+    "laeufe_im_rest": 7,
+    "mitgezogen_laeufe": {
+     "K17": 3,
+     "K21": 2,
+     "K3": 2,
+     "Rest": 1,
+     "K19": 1
+    }
+   },
+   {
+    "id": 3,
+    "fenster": 584,
+    "anteil_in_haupt_komponente_median": 0.955,
+    "komponente_zu_kandidat_median": 2.23,
+    "laeufe_im_rest": 1,
+    "mitgezogen_laeufe": {
+     "K10": 7
+    }
+   },
+   {
+    "id": 10,
+    "fenster": 628,
+    "anteil_in_haupt_komponente_median": 1.0,
+    "komponente_zu_kandidat_median": 2.07,
+    "laeufe_im_rest": 1,
+    "mitgezogen_laeufe": {
+     "K3": 7
+    }
+   },
+   {
+    "id": 13,
+    "fenster": 12,
+    "anteil_in_haupt_komponente_median": 0.958,
+    "komponente_zu_kandidat_median": 1.12,
+    "laeufe_im_rest": 1,
+    "mitgezogen_laeufe": {
+     "K11": 4,
+     "K8": 1
+    }
+   },
+   {
+    "id": 16,
+    "fenster": 23,
+    "anteil_in_haupt_komponente_median": 1.0,
+    "komponente_zu_kandidat_median": 1.0,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {}
+   }
+  ],
+  "PL": [
+   {
+    "id": 1,
+    "fenster": 10,
+    "anteil_in_haupt_komponente_median": 0.7,
+    "komponente_zu_kandidat_median": 1710.8,
+    "laeufe_im_rest": 5,
+    "mitgezogen_laeufe": {
+     "K2": 4,
+     "K13": 1
+    }
+   },
+   {
+    "id": 2,
+    "fenster": 23,
+    "anteil_in_haupt_komponente_median": 0.826,
+    "komponente_zu_kandidat_median": 0.83,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K1": 3
+    }
+   },
+   {
+    "id": 3,
+    "fenster": 13,
+    "anteil_in_haupt_komponente_median": 1.0,
+    "komponente_zu_kandidat_median": 47.69,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K6": 10,
+     "K9": 10,
+     "K11": 8,
+     "K14": 8,
+     "K18": 8,
+     "K10": 8,
+     "K24": 8,
+     "K16": 8,
+     "K7": 8,
+     "K8": 8,
+     "K20": 8,
+     "K31": 8,
+     "K25": 8,
+     "K17": 8,
+     "K22": 7,
+     "K30": 6,
+     "K26": 6,
+     "K21": 6,
+     "K32": 6,
+     "K23": 5,
+     "K19": 4,
+     "K33": 4,
+     "K12": 3,
+     "K35": 2,
+     "K36": 2,
+     "K48": 2,
+     "K50": 2,
+     "K47": 2,
+     "K29": 1,
+     "K4": 1,
+     "K46": 1,
+     "K38": 1,
+     "K37": 1
+    }
+   },
+   {
+    "id": 6,
+    "fenster": 243,
+    "anteil_in_haupt_komponente_median": 0.947,
+    "komponente_zu_kandidat_median": 2.57,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K8": 10,
+     "K7": 9,
+     "K20": 9,
+     "K11": 8,
+     "K10": 7,
+     "K9": 7,
+     "K24": 6,
+     "K33": 1
+    }
+   },
+   {
+    "id": 13,
+    "fenster": 229,
+    "anteil_in_haupt_komponente_median": 0.996,
+    "komponente_zu_kandidat_median": 75.07,
+    "laeufe_im_rest": 5,
+    "mitgezogen_laeufe": {}
+   },
+   {
+    "id": 28,
+    "fenster": 68,
+    "anteil_in_haupt_komponente_median": 0.949,
+    "komponente_zu_kandidat_median": 3.36,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K37": 10,
+     "K45": 8,
+     "K42": 8,
+     "K27": 8,
+     "K38": 6,
+     "K47": 5,
+     "K34": 4,
+     "K22": 2,
+     "K29": 2,
+     "K48": 2,
+     "K32": 1,
+     "K33": 1,
+     "K50": 1,
+     "K40": 1,
+     "K49": 1,
+     "K41": 1
+    }
+   },
+   {
+    "id": 37,
+    "fenster": 84,
+    "anteil_in_haupt_komponente_median": 0.917,
+    "komponente_zu_kandidat_median": 2.72,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K28": 10,
+     "K45": 8,
+     "K42": 8,
+     "K27": 8,
+     "K38": 6,
+     "K47": 5,
+     "K22": 1,
+     "K34": 1,
+     "K32": 1,
+     "K48": 1,
+     "K33": 1
+    }
+   },
+   {
+    "id": 40,
+    "fenster": 71,
+    "anteil_in_haupt_komponente_median": 0.873,
+    "komponente_zu_kandidat_median": 2.25,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K48": 7,
+     "K39": 6,
+     "K41": 6,
+     "K36": 5,
+     "K46": 3,
+     "K38": 3,
+     "K33": 3,
+     "K47": 3,
+     "K43": 3,
+     "K50": 3,
+     "K27": 3,
+     "K32": 2,
+     "K44": 2,
+     "K26": 1,
+     "K45": 1,
+     "K42": 1,
+     "K35": 1
+    }
+   },
+   {
+    "id": 46,
+    "fenster": 48,
+    "anteil_in_haupt_komponente_median": 0.958,
+    "komponente_zu_kandidat_median": 2.32,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {
+     "K38": 9,
+     "K43": 9,
+     "K48": 7,
+     "K40": 6,
+     "K39": 5,
+     "K36": 3,
+     "K32": 2,
+     "K33": 2,
+     "K41": 2,
+     "K50": 2,
+     "K35": 2,
+     "K47": 1,
+     "K44": 1,
+     "K22": 1,
+     "K27": 1,
+     "K12": 1,
+     "K26": 1
+    }
+   },
+   {
+    "id": 52,
+    "fenster": 24,
+    "anteil_in_haupt_komponente_median": 1.0,
+    "komponente_zu_kandidat_median": 1.0,
+    "laeufe_im_rest": 0,
+    "mitgezogen_laeufe": {}
+   }
+  ]
+ }
+}
