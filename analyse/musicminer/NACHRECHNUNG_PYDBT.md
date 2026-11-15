@@ -188,6 +188,66 @@ Da alle Läufe toroidal sind, betreffen 1–3 die Nachrechnung nicht.
   arbeiten oft manuell im UmatrixLab. Maßgeblich für die Nachrechnung bleibt unsere Regel v2.
   Ein Austausch dazu ist ausdrücklich erwünscht, gehört aber nicht zu diesem Schritt.
 
+## 7c. Nachtrag während R0 (15.11.2026, vor jeder Rechnung auf Chainlink oder unseren Daten)
+
+- **Umgebung:** Python **3.13.17** (über uv), pydbt-Abhängigkeiten genau nach
+  `pydbt/requirements.txt` (u. a. numpy 2.3.5, scikit-learn 1.8.0), vollständige Liste in
+  `openmyconet_extern/pydbt_umgebung.txt`. Unter Python 3.14 lässt sich pydbt nicht importieren
+  (`from _ctypes import POINTER` gibt es dort nicht mehr). pydbt wird dafür **nicht** verändert;
+  Hinweis an die Entwickler.
+- **pydbt-eigene Tests:** 79 von 84 bestanden (mit `MPLBACKEND=Agg`), darunter alle 15
+  Trainingstests. Die 5 übrigen vergleichen erzeugte PNG-Bilder Byte für Byte mit
+  Referenzbildern (politische Karte, Delaunay/Gabriel-Darstellung). Sie betreffen nur die
+  Darstellung, nicht Training, Gewinnerneuronen oder U-Matrix-Werte. Ohne `Agg` scheitert
+  zusätzlich ein Test an der fehlenden Tk-Grafikausgabe der uv-Python-Installation.
+- **R0b, Kartengröße:** Chainlink hat nur 1 000 Punkte. Regel v2 setzt deutlich mehr Punkte als
+  Neuronen voraus (in Phase A ≈ 15 je Neuron); auf einer 50 × 80-Karte zerfiele fast alles in
+  Mauern. Maßgeblich für V0 ist deshalb eine **toroidale Karte 10 × 15** (150 Neuronen, ≈ 6,7
+  Punkte je Neuron), 40 Epochen:
+  - `karte-v1` mit ihren Standardwerten (σ 3,75 → 0,75 geometrisch, Seeds 0–9);
+  - pydbt mit derselben Zuordnung wie R2 (r = 2σ − 1): `start_radius=6.5, end_radius=1`,
+    linear, Lernrate Standard, `np.random.seed(s)` mit s = 0–9.
+  Chainlink wird so verwendet, wie es in der `.lrn` steht (keine Normierung). Gruppen nach
+  Regel v2 mit unseren Standardwerten.
+- **Nur berichtet (keine Entscheidung):** pydbt mit den Standardwerten 50 × 80 / 24 Epochen auf
+  Chainlink, ausgewertet (a) mit Regel v2 und (b) mit einem von der Gruppenregel unabhängigen
+  Maß: Anteil der Punkte, deren Gewinnerneuron nur Punkte derselben Klasse trägt.
+- **Determinismus:** pydbt zweimal mit Seed 0 auf Chainlink (10 × 15); identisch heißt gleiche
+  Gewichte (nach pydbts Rundung auf 4 Stellen) und gleiche Gewinnerneuronen.
+- **Laufzeit:** eine einzelne Epoche mit R1-Parametern auf P + L und eine mit R2-Parametern;
+  die Gewichte werden verworfen und nicht ausgewertet. Hochgerechnet auf alle Epochen
+  entscheidet das über den Umfang von R3 (Abschnitt 5).
+
+## 7d. Ergebnis R0 und Folgen für R1–R3 (15.11.2026, vor R1)
+
+Werte: `ergebnisse/nachrechnung/r0.json`, Skript `werkzeuge/nachrechnung_r0.py`.
+
+- **Technik:** pydbt `4a4b33e`, Python 3.13.17, C-Bibliothek geladen. Zweimal Seed 0 ergibt
+  identische Gewichte und Gewinnerneuronen. Unser Code berechnet aus den pydbt-Gewichten in
+  allen Läufen genau dieselben Gewinnerneuronen wie pydbt (Anteil 1,0), die Übergabe stimmt also.
+- **V0 (Chainlink, 10 × 15 toroidal): übereinstimmend.** `karte-v1` und pydbt trennen die beiden
+  Ringe in allen 10 Seeds fehlerfrei (ARI 1,0, je genau 2 Gruppen). Quantisierungsfehler
+  `karte-v1` 0,073–0,076, pydbt 0,064–0,067; Topologiefehler 0,06–0,18 bzw. 0,02–0,14.
+- **Nur berichtet, 50 × 80 auf Chainlink:** Jedes Gewinnerneuron trägt nur Punkte eines Rings
+  (Reinheit 1,0): Die Karte trennt richtig. **Unsere Gruppenregel v2 zerlegt sie aber in 51–60
+  Komponenten (ARI 0,04).** Bei 1 000 Punkten auf 4 000 Neuronen sind fast alle Neuronen leer
+  und damit Mauer. Das bestätigt die in Abschnitt 4 von `KRITERIEN.md` genannte Voraussetzung
+  von Regel v2 (deutlich mehr Punkte als Neuronen) und ist ein Ergebnis über **unsere
+  Gruppenregel**, nicht über pydbt.
+- **Folge für R1 (vor R1 festgehalten):** R1 hat 50 × 80 = 4 000 Neuronen, also rund 9 Fenster je
+  Neuron statt rund 15 in Phase A und R2. Ein in R1 „nicht reproduzierter“ Kandidat kann deshalb
+  an der Gruppenregel liegen statt am Training. R1 wird deshalb zusätzlich mit der Reinheit
+  ausgewertet: Anteil der Kandidatenfenster, deren Gewinnerneuron überwiegend
+  (≥ 50 %) Kandidatenfenster trägt (nur berichtet). Das Gesamturteil stützt sich ohnehin auf R2
+  (Abschnitt 6), daran ändert sich nichts.
+- **Laufzeit:** eine Epoche auf P + L 89,5 s (R1) bzw. 63,3 s (R2), hochgerechnet ≈ 36 bzw.
+  ≈ 42 min je Lauf (Obergrenze, gemessen mit größtem Radius). Damit greift die Regel aus
+  Abschnitt 5: **R3 = N1 Seeds 0–24 und N2 Seeds 0–24.** Die Läufe sind unabhängig und werden
+  zu viert parallel gerechnet (4 Prozessorkerne); jeder Lauf bleibt durch seinen Seed
+  festgelegt. Geschätzt: R1 + R2 (40 Läufe) ≈ 7 h, R3 (100 Läufe) ≈ 18 h.
+- **Hinweise an die Entwickler:** Python 3.14 (Import `_ctypes.POINTER`); fünf Bildvergleichs-
+  Tests scheitern unter Windows; `cool_down_linear` teilt bei `epochs=1` durch 0.
+
 ## 8. Was ausdrücklich nicht dazugehört
 
 - Keine Änderung an Phase A, an den Kriterien v2/E1/E2 oder an Phase B.
