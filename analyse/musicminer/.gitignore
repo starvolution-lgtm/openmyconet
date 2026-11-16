@@ -5,3 +5,4 @@ ergebnisse/**/*.npy
 venv/
 .pytest_cache/
 ergebnisse/nachrechnung/**/*.lock
+ergebnisse/nachrechnung_*.err

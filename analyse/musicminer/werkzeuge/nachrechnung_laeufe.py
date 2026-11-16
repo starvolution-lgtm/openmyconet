@@ -10,6 +10,8 @@ Läuft in der pydbt-Umgebung (Python 3.13):
     PYTHONPATH=. MPLBACKEND=Agg <openmyconet_extern>/venv_pydbt/Scripts/python.exe \
         -m werkzeuge.nachrechnung_laeufe <pfad zum pydbt-Klon> [arbeiter-name]
 
+MM_SCHRITTE=R3: Nullmodelle (N1/N2 je Seeds 0–24, R2-Parameter) statt R1/R2. Die Nulldaten
+erzeugt vorher `werkzeuge.nachrechnung_nulldaten` im Analyse-venv (gleicher Code wie A4).
 MM_PROBE=1: Kurzlauf (2 Epochen, 2 000 Fenster, 1 Seed) nach ergebnisse/nachrechnung/probe/.
 SIMULATION: Grundlage sind die Merkmale aus Phase A (Simulationsdaten, keine Messwerte).
 """
@@ -40,12 +42,27 @@ SCHRITTE = {
     'R1': {'rows': 50, 'cols': 80, 'epochs': 24, 'toroid': True},
     'R2': {'rows': 40, 'cols': 60, 'epochs': 40, 'toroid': True, 'start_radius': 29, 'end_radius': 1},
 }
+SCHRITTE['R3'] = dict(SCHRITTE['R2'])      # R3 = Nullmodelle mit R2-Parametern (Abschnitt 5)
+AKTIV = os.environ.get('MM_SCHRITTE', 'R1,R2').split(',')
+NULLDATEN = WURZEL / 'ergebnisse' / 'nachrechnung' / 'nulldaten'
 SAETZE = ('P', 'PL')
 SEEDS = range(1) if PROBE else range(10)
+NULL_SEEDS = range(1) if PROBE else range(25)
 
 
 def auftraege():
-    return [(s, satz, seed) for s in SCHRITTE for satz in SAETZE for seed in SEEDS]
+    """(Schritt, Satz, Daten, Seed); Daten = 'echt' oder N1/N2."""
+    liste = []
+    for s in AKTIV:
+        if s == 'R3':
+            liste += [(s, satz, art, seed) for satz in SAETZE for art in ('N1', 'N2') for seed in NULL_SEEDS]
+        else:
+            liste += [(s, satz, 'echt', seed) for satz in SAETZE for seed in SEEDS]
+    return liste
+
+
+def kennung_von(schritt, satz, daten, seed):
+    return f'{schritt}_{satz}_s{seed}' if daten == 'echt' else f'{schritt}_{satz}_{daten}_s{seed}'
 
 
 def niedrige_prioritaet_und_wach():
@@ -96,8 +113,8 @@ def main():
             f.write(zeile + '\n')
 
     log(f'Start: pydbt {commit[:7]}, C-Bibliothek {c_bib}, Python {platform.python_version()}')
-    for schritt, satz, seed in auftraege():
-        kennung = f'{schritt}_{satz}_s{seed}'
+    for schritt, satz, art, seed in auftraege():
+        kennung = kennung_von(schritt, satz, art, seed)
         datei = ZIEL / f'{kennung}.npz'
         if datei.exists() or not sperren(ZIEL / f'{kennung}.lock'):
             continue
@@ -105,7 +122,12 @@ def main():
             param = dict(SCHRITTE[schritt])
             if PROBE:
                 param['epochs'] = 2
-            x = daten[satz]
+            if art == 'echt':
+                x, daten_sha = daten[satz], hashes[satz]
+            else:
+                x = np.load(NULLDATEN / f'{satz}_{art}_s{seed}.npz')['x']
+                x = x[:2000] if PROBE else x
+                daten_sha = hashlib.sha256(np.ascontiguousarray(x).tobytes()).hexdigest()
             log(f'{kennung}: rechne ({len(x)} Fenster, {param})')
             np.random.seed(seed)
             t = time.perf_counter()
@@ -117,7 +139,8 @@ def main():
                            dtype=np.int32)
             meta = {'schritt': schritt, 'satz': satz, 'seed': seed, 'parameter': repr(p),
                     'pydbt_commit': commit, 'c_bibliothek': c_bib, 'python': platform.python_version(),
-                    'numpy': np.__version__, 'merkmale_sha256': hashes[satz], 'fenster': len(x),
+                    'numpy': np.__version__, 'merkmale_sha256': hashes[satz], 'daten': art,
+                    'daten_sha256': daten_sha, 'fenster': len(x),
                     'sekunden': round(sek, 1), 'arbeiter': name, 'probe': PROBE,
                     'fertig': time.strftime('%Y-%m-%d %H:%M:%S')}
             tmp = ZIEL / f'{kennung}.tmp.npz'
@@ -127,7 +150,7 @@ def main():
             log(f'{kennung}: fertig in {sek / 60:.1f} min')
         finally:
             (ZIEL / f'{kennung}.lock').unlink(missing_ok=True)
-    offen = [a for a in auftraege() if not (ZIEL / f'{a[0]}_{a[1]}_s{a[2]}.npz').exists()]
+    offen = [a for a in auftraege() if not (ZIEL / f'{kennung_von(*a)}.npz').exists()]
     log(f'Ende: keine freien Aufträge mehr ({len(offen)} offen oder in Arbeit bei anderen)')
 
 
