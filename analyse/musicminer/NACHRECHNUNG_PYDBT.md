@@ -248,6 +248,37 @@ Werte: `ergebnisse/nachrechnung/r0.json`, Skript `werkzeuge/nachrechnung_r0.py`.
 - **Hinweise an die Entwickler:** Python 3.14 (Import `_ctypes.POINTER`); fünf Bildvergleichs-
   Tests scheitern unter Windows; `cool_down_linear` teilt bei `epochs=1` durch 0.
 
+## 7e. R4: Ursachentest Endradius (freigegeben von Robby am 17.11.2026, nach R3, vor jedem R4-Lauf)
+
+**Anlass:** Die Abweichung in R2 (Bericht, Abschnitt 5). pydbt endet bei σ = 1,0, `karte-v1`
+bei σ = 0,75. R4 prüft von unserer Seite, ob allein dieser Unterschied die Abweichung erklärt.
+Beschlossen von Robby am 16.11.2026.
+
+**Lauf:** `karte-v1` unverändert (Batch-SOM, Initialisierung aus Datenpunkten, 40 × 60
+toroidal, 40 Epochen, geometrische Abkühlung ab max(2, 60/4) = 15), **nur `sigma_ende = 1,0`**
+statt 0,75. Seeds 0–9, Sätze P und PL, dieselben Merkmale wie A4. Kein pydbt. Gruppen, Maße und
+Wiederfinden wie in V3 (Jaccard ≥ 0,5 mit den A4-Kandidaten der Seed-0-Karte).
+
+**Geprüfte Kandidaten:** die 7 in A4 stabilen Kandidaten, die in R2 **nicht** reproduziert
+wurden: P K3, P K10, PL K1, PL K13 (Reaktion), PL K28, PL K37, PL K46. Ein Kandidat gilt in R4 als
+**verloren**, wenn er in weniger als 8 von 10 Läufen wiedergefunden wird. Das ist dieselbe Grenze
+wie bei „reproduziert“ in V3.
+
+**Entscheidung (vorab):**
+- **≥ 5 der 7 verloren:** Der Endradius erklärt die Abweichung **überwiegend**.
+- **3–4 verloren:** Der Endradius erklärt sie **teilweise**.
+- **≤ 2 verloren:** Der Endradius erklärt sie **nicht**. Die Ursache liegt dann eher im
+  Training (online statt Batch, Initialisierung, Lernrate) und bleibt offen.
+
+**Gegenprobe:** Die 4 in R2 reproduzierten Kandidaten (P K16, P K13, PL K52, PL K2) sollten auch
+in R4 reproduziert sein. Fehlt einer, wird das berichtet, und das Urteil gilt nur unter Vorbehalt.
+
+**Nur berichtet:** QE, TE, Zahl der Gruppen und Inseln. Dazu für die verlorenen Kandidaten, ob
+sie mit denselben Partnern verschmelzen wie in pydbt (`ursache_r2.json`).
+
+**Was R4 nicht entscheidet:** welcher Endradius „richtig“ ist, und auch nichts an Phase A.
+Abschnitt 8 gilt unverändert.
+
 ## 8. Was ausdrücklich nicht dazugehört
 
 - Keine Änderung an Phase A, an den Kriterien v2/E1/E2 oder an Phase B.
