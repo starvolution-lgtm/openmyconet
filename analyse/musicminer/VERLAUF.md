@@ -17,7 +17,8 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 | 14.11.2026 | Vergleichsregeln für die Nachrechnung mit pydbt (`NACHRECHNUNG_PYDBT.md`), vor jedem Lauf | 6e92179 |
 | 15.11.2026 | Nachrechnung R0 (Technik, V0 übereinstimmend) | 79e49e3 |
 | 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | e4c32fa |
-| 17.11.2026 | Nachrechnung R3 (100 Nullläufe) + V4: Schwellen-Rangfolge wie A4; Bericht R0–R3 | (dieser Commit) |
+| 17.11.2026 | Nachrechnung R3 (100 Nullläufe) + V4: Schwellen-Rangfolge wie A4; Bericht R0–R3 | 49f4b61 |
+| 17.11.2026 | Nachrechnung R4 (unsere Karte, Endradius 1,0, 20 Läufe): Endradius erklärt die Abweichung **teilweise**, unter Vorbehalt; Bericht R0–R4 | (dieser Commit) |
 
 ## Abweichungen vom Plan und ihre Gründe
 
@@ -88,6 +89,10 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
    V4 (R3): Die globale Schwelle bestehen unter pydbt wie in A4 nur Sättigung und die
    Spike-Gruppe der Fenstermitte. Diese ist mit einer Nachbargruppe verschmolzen und gilt nach der
    Zuordnung (Jaccard ≥ 0,5, nicht vorab festgelegt) als „neu bestanden“.
+   R4 (Regeln 7e): Unsere Karte mit Endradius 1,0 verliert 4 der 7 betroffenen Kandidaten
+   (Urteil „teilweise“, unter Vorbehalt, weil P K13 nur 7/10). Das Muster ist anders als
+   bei pydbt (Reaktion und PL K28 bleiben, kaum Verschmelzungen); der Rest liegt vermutlich
+   im Training, ungeprüft.
 
 ## Befunde außerhalb der Analyse (zur Weitergabe)
 

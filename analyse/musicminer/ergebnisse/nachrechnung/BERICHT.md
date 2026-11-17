@@ -1,14 +1,14 @@
-# Nachrechnung von Phase A mit pydbt: Bericht R0–R3
+# Nachrechnung von Phase A mit pydbt: Bericht R0–R4
 
-Stand 17.11.2026 · Regeln `NACHRECHNUNG_PYDBT.md` (Abschnitte 6, 7a–7d, alle vor dem jeweiligen
+Stand 17.11.2026 · Regeln `NACHRECHNUNG_PYDBT.md` (Abschnitte 6, 7a–7e, alle vor dem jeweiligen
 Lauf festgelegt) · pydbt `4a4b33e` (0.0.125), Python 3.13.17, C-Bibliothek geladen · Merkmale
-`mv1` aus A3 (sha256 je Lauf in den Lauf-Metadaten) · 140 Läufe (R1 + R2 je 20, R3 100), alle
-ohne Fehler. Zwischenfassung (R0–R2) vom 15.11. in der Git-Historie.
+`mv1` aus A3 (sha256 je Lauf in den Lauf-Metadaten) · 140 pydbt-Läufe (R1 + R2 je 20, R3 100)
+und 20 Läufe unserer Karte (R4), alle ohne Fehler. Zwischenfassung (R0–R2) vom 15.11. in der Git-Historie.
 
 > **SIMULATION.** Grundlage sind die Sandbox-Szenarien `sbx-gen-1.0`. Es sind keine Messwerte.
 > Die Ergebnisse sagen etwas über die Verfahren, nie über Biologie.
 
-Dateien: `r0.json`, `r1_r2.json` (V1–V3), `ursache_r2.json` (Ursachensuche), `v4.json` (V4),
+Dateien: `r0.json`, `r1_r2.json` (V1–V3), `ursache_r2.json` (Ursachensuche), `v4.json` (V4), `r4.json` (R4),
 `nulldaten.json` (Prüfsummen der Nulldaten). Gewichte und Nulldaten (`laeufe/`, `nulldaten/`)
 bleiben lokal.
 
@@ -18,7 +18,9 @@ Nach den vorab festgelegten Regeln ist das Gesamturteil **abweichend**. Es wäre
 gewesen: In R2 ist die Reaktionsgruppe nur teilweise reproduziert (5/10), und von den 11 in A4
 stabilen Kandidaten sind nur 4 reproduziert (36 %, verlangt sind zwei Drittel). Die Abweichung
 betrifft fast nur Spike-Gruppen, die schon in A4 als Lage-Fragmente eingestuft waren. pydbt
-fasst sie zu größeren Gruppen zusammen. Die Ursache dafür ist offen (Abschnitt 5).
+fasst sie zu größeren Gruppen zusammen. Die Ursache ist nicht abschließend geklärt (Abschnitt 5).
+Nach R4 (Abschnitt 5b) erklärt der größere Endradius von pydbt die Abweichung **teilweise**, und
+das nur unter Vorbehalt. Das Muster der Verluste ist bei unserer Karte ein anderes.
 
 **V4** (Abschnitt 6) bestätigt dagegen das Bild aus A4: Die globale Schwelle bestehen unter pydbt
 nur die beiden Sättigungen und die Spike-Gruppe der Fenstermitte. Die Spike-Gruppe hat pydbt
@@ -141,6 +143,51 @@ Nachbargruppe A4 K3. Eine neue Struktur, die A4 übersehen hätte, ist das nicht
 gut abgegrenzt, aber unter der Schwelle. P K5, P K7 und PL K13 sind kleine, nur in 5 von 10
 Läufen gefundene Inseln. Keine davon besteht die globale Schwelle.
 
+## 5b. R4: Ursachentest Endradius (Regeln 7e, vor dem Lauf festgelegt)
+
+`werkzeuge/nachrechnung_r4.py`: unsere `karte-v1` wie in A4 (40 × 60 Torus, 40 Epochen), nur mit
+Endradius σ = 1,0 statt 0,75. Kein pydbt. 20 Läufe, je etwa 40 s. Datei `r4.json`.
+
+| Satz | Kandidat | Rolle (7e) | A4 | R2 pydbt | **R4** | R4 verschmolzen mit |
+|---|---|---|---|---|---|---|
+| P | K3 | geprüft | 10 | 2 | **9** | – |
+| P | K10 | geprüft | 8 | 2 | **1** | – |
+| PL | K1 | geprüft | 8 | 3 | **3** | K2 (6/10), 3× in der größten Komponente |
+| PL | K13 Reaktion | geprüft | 10 | 5 | **10** | – |
+| PL | K28 | geprüft | 9 | 0 | **10** | K27 (6/10) |
+| PL | K37 | geprüft | 10 | 0 | **6** | – |
+| PL | K46 | geprüft | 9 | 2 | **7** | K43 (5/10), K40 (3/10) |
+| P | K16 Sättigung | Gegenprobe | 10 | 10 | **10** | – |
+| P | K13 Sprung | Gegenprobe | 9 | 8 | **7** | K11 (8/10) |
+| PL | K52 Sättigung | Gegenprobe | 10 | 10 | **10** | – |
+| PL | K2 Sprung | Gegenprobe | 10 | 10 | **10** | K1 (5/10) |
+
+(Wiedergefunden von 10 Läufen, Jaccard ≥ 0,5 mit der A4-Seed-0-Karte. „Verschmolzen mit“: andere
+A4-Komponenten mit ≥ 10 % der Kandidatengröße in derselben Komponente, wie in Abschnitt 5.)
+
+**Urteil nach 7e:** 4 der 7 geprüften Kandidaten sind verloren (P K10, PL K1, PL K37, PL K46). Der
+Endradius erklärt die Abweichung damit **teilweise**. Weil in der Gegenprobe P K13 nur in 7 von 10
+Läufen wiedergefunden wird, gilt das Urteil nach 7e **nur unter Vorbehalt**.
+
+**Nur berichtet** (Mediane): QE P / PL 1,30 / 1,79, TE 0,070 / 0,071, Gruppen 3 / 2, Inseln 30 / 60.
+Unsere Karte mit σ = 1,0 ist etwas ungenauer als A4 (QE höher) und noch nachbarschaftstreuer (TE
+0,07 statt 0,115). Bei pydbt ist der TE dagegen auf 0,22 gestiegen.
+
+**Beschreibend, ohne neue Regel:** Das Muster ist ein anderes als bei pydbt.
+- Die beiden größten Verluste unter pydbt bleiben in R4 erhalten: die Reaktion (10/10, nie in der
+  größten Komponente) und PL K28 (10/10).
+- P K3 und P K10 verschmelzen in R4 nicht miteinander (unter pydbt 7/10). K3 bleibt, K10 verliert
+  sich ohne einen erkennbaren Partner, zerfällt also eher. Dasselbe gilt für PL K37.
+- Gleich wie unter pydbt verhalten sich nur PL K1, das mit dem Sprung K2 zusammengeht, und
+  teilweise PL K46 mit K43.
+- PL K46 (7/10) und P K13 (7/10) liegen knapp unter der Grenze von 8.
+
+Der Zähler nach 7e lautet also „teilweise“. Die Läufe zeigen aber nicht, dass der größere
+Endradius dieselben Verschmelzungen wie pydbt hervorruft. Zusammen mit dem gegenläufigen
+Topologiefehler spricht das dafür, dass der größere Teil der Abweichung im Training liegt
+(online statt Batch, Initialisierung, Lernrate). Das ist eine Deutung und kein Ergebnis nach
+den Regeln.
+
 ## 6. Was das für Phase A heißt
 
 - **Stabil über beide Umsetzungen:** Sättigung, Sprung am Reaktionsbeginn (PL K2) und Sprung in
@@ -165,8 +212,8 @@ Läufen gefundene Inseln. Keine davon besteht die globale Schwelle.
 
 ## 8. Offen
 
-- Ursache der Abweichung. Nächster Schritt R4 (von Robby am 16.11. beschlossen, Regeln werden
-  vorher in `NACHRECHNUNG_PYDBT.md` festgelegt): unsere `karte-v1` mit Endradius σ = 1,0, dem
-  Endwert von pydbt.
+- Ursache der Abweichung: Nach R4 erklärt der Endradius sie nur teilweise und unter Vorbehalt
+  (5b). Ob Online-Training, Initialisierung oder Lernrate den Rest ausmachen, ist nicht
+  geprüft. Weitere Läufe gibt es nur nach neuer Absprache.
 - Rückfrage an die Entwickler (16.11. gestellt): Lässt sich in pydbt ein Endradius unter 1
   einstellen, und wie grenzen sie Inseln ab?

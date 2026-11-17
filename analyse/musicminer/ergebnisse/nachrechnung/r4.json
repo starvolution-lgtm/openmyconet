@@ -1,0 +1,399 @@
+{
+ "simuliert": true,
+ "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 7e",
+ "karte": "karte-v1 (mm.karte.BatchSOM)",
+ "sigma_ende": 1.0,
+ "groesse": [
+  40,
+  60
+ ],
+ "epochen": 40,
+ "saetze": {
+  "P": {
+   "qe_median": 1.3042072761987327,
+   "te_median": 0.06990790899241603,
+   "gruppen_median": 3.0,
+   "inseln_median": 30.0,
+   "sekunden_median": 38.349999999999994,
+   "kandidaten": [
+    {
+     "id": 2,
+     "rolle": null,
+     "fenster_a4": 31,
+     "a4_wiedergefunden_von_10": 6,
+     "r2_pydbt_wiedergefunden": 1,
+     "r4_wiedergefunden": 7,
+     "r4_urteil": "teilweise",
+     "r4_partner": {
+      "K3": 2,
+      "K1": 1
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K17": 3,
+      "K21": 2,
+      "K3": 2,
+      "Rest": 1,
+      "K19": 1
+     },
+     "r2_im_rest": 7
+    },
+    {
+     "id": 3,
+     "rolle": "geprueft",
+     "fenster_a4": 584,
+     "a4_wiedergefunden_von_10": 10,
+     "r2_pydbt_wiedergefunden": 2,
+     "r4_wiedergefunden": 9,
+     "r4_urteil": "reproduziert",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K10": 7
+     },
+     "r2_im_rest": 1
+    },
+    {
+     "id": 10,
+     "rolle": "geprueft",
+     "fenster_a4": 628,
+     "a4_wiedergefunden_von_10": 8,
+     "r2_pydbt_wiedergefunden": 2,
+     "r4_wiedergefunden": 1,
+     "r4_urteil": "nicht reproduziert",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K3": 7
+     },
+     "r2_im_rest": 1
+    },
+    {
+     "id": 13,
+     "rolle": "gegenprobe",
+     "fenster_a4": 12,
+     "a4_wiedergefunden_von_10": 9,
+     "r2_pydbt_wiedergefunden": 8,
+     "r4_wiedergefunden": 7,
+     "r4_urteil": "teilweise",
+     "r4_partner": {
+      "K11": 8,
+      "K8": 3
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K11": 4,
+      "K8": 1
+     },
+     "r2_im_rest": 1
+    },
+    {
+     "id": 16,
+     "rolle": "gegenprobe",
+     "fenster_a4": 23,
+     "a4_wiedergefunden_von_10": 10,
+     "r2_pydbt_wiedergefunden": 10,
+     "r4_wiedergefunden": 10,
+     "r4_urteil": "reproduziert",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {},
+     "r2_im_rest": 0
+    }
+   ]
+  },
+  "PL": {
+   "qe_median": 1.7899597142903567,
+   "te_median": 0.07096339546373231,
+   "gruppen_median": 2.0,
+   "inseln_median": 60.5,
+   "sekunden_median": 37.05,
+   "kandidaten": [
+    {
+     "id": 1,
+     "rolle": "geprueft",
+     "fenster_a4": 10,
+     "a4_wiedergefunden_von_10": 8,
+     "r2_pydbt_wiedergefunden": 3,
+     "r4_wiedergefunden": 3,
+     "r4_urteil": "nicht reproduziert",
+     "r4_partner": {
+      "K2": 6,
+      "K3": 1
+     },
+     "r4_im_rest": 3,
+     "r2_partner": {
+      "K2": 4,
+      "K13": 1
+     },
+     "r2_im_rest": 5
+    },
+    {
+     "id": 2,
+     "rolle": "gegenprobe",
+     "fenster_a4": 23,
+     "a4_wiedergefunden_von_10": 10,
+     "r2_pydbt_wiedergefunden": 10,
+     "r4_wiedergefunden": 10,
+     "r4_urteil": "reproduziert",
+     "r4_partner": {
+      "K1": 5
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K1": 3
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 3,
+     "rolle": null,
+     "fenster_a4": 13,
+     "a4_wiedergefunden_von_10": 5,
+     "r2_pydbt_wiedergefunden": 0,
+     "r4_wiedergefunden": 3,
+     "r4_urteil": "nicht reproduziert",
+     "r4_partner": {
+      "K6": 8,
+      "K9": 5,
+      "K10": 1,
+      "K23": 1,
+      "K8": 1,
+      "K20": 1,
+      "K7": 1,
+      "K19": 1,
+      "K24": 1
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K6": 10,
+      "K9": 10,
+      "K11": 8,
+      "K14": 8,
+      "K18": 8,
+      "K10": 8,
+      "K24": 8,
+      "K16": 8,
+      "K7": 8,
+      "K8": 8,
+      "K20": 8,
+      "K31": 8,
+      "K25": 8,
+      "K17": 8,
+      "K22": 7,
+      "K30": 6,
+      "K26": 6,
+      "K21": 6,
+      "K32": 6,
+      "K23": 5,
+      "K19": 4,
+      "K33": 4,
+      "K12": 3,
+      "K35": 2,
+      "K36": 2,
+      "K48": 2,
+      "K50": 2,
+      "K47": 2,
+      "K29": 1,
+      "K4": 1,
+      "K46": 1,
+      "K38": 1,
+      "K37": 1
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 6,
+     "rolle": null,
+     "fenster_a4": 243,
+     "a4_wiedergefunden_von_10": 7,
+     "r2_pydbt_wiedergefunden": 0,
+     "r4_wiedergefunden": 2,
+     "r4_urteil": "nicht reproduziert",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K8": 10,
+      "K7": 9,
+      "K20": 9,
+      "K11": 8,
+      "K10": 7,
+      "K9": 7,
+      "K24": 6,
+      "K33": 1
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 13,
+     "rolle": "geprueft",
+     "fenster_a4": 229,
+     "a4_wiedergefunden_von_10": 10,
+     "r2_pydbt_wiedergefunden": 5,
+     "r4_wiedergefunden": 10,
+     "r4_urteil": "reproduziert",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {},
+     "r2_im_rest": 5
+    },
+    {
+     "id": 28,
+     "rolle": "geprueft",
+     "fenster_a4": 68,
+     "a4_wiedergefunden_von_10": 9,
+     "r2_pydbt_wiedergefunden": 0,
+     "r4_wiedergefunden": 10,
+     "r4_urteil": "reproduziert",
+     "r4_partner": {
+      "K27": 6,
+      "K42": 2,
+      "K37": 1
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K37": 10,
+      "K45": 8,
+      "K42": 8,
+      "K27": 8,
+      "K38": 6,
+      "K47": 5,
+      "K34": 4,
+      "K22": 2,
+      "K29": 2,
+      "K48": 2,
+      "K32": 1,
+      "K33": 1,
+      "K50": 1,
+      "K40": 1,
+      "K49": 1,
+      "K41": 1
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 37,
+     "rolle": "geprueft",
+     "fenster_a4": 84,
+     "a4_wiedergefunden_von_10": 10,
+     "r2_pydbt_wiedergefunden": 0,
+     "r4_wiedergefunden": 6,
+     "r4_urteil": "teilweise",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K28": 10,
+      "K45": 8,
+      "K42": 8,
+      "K27": 8,
+      "K38": 6,
+      "K47": 5,
+      "K22": 1,
+      "K34": 1,
+      "K32": 1,
+      "K48": 1,
+      "K33": 1
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 40,
+     "rolle": null,
+     "fenster_a4": 71,
+     "a4_wiedergefunden_von_10": 6,
+     "r2_pydbt_wiedergefunden": 2,
+     "r4_wiedergefunden": 0,
+     "r4_urteil": "nicht reproduziert",
+     "r4_partner": {
+      "K39": 1
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K48": 7,
+      "K39": 6,
+      "K41": 6,
+      "K36": 5,
+      "K46": 3,
+      "K38": 3,
+      "K33": 3,
+      "K47": 3,
+      "K43": 3,
+      "K50": 3,
+      "K27": 3,
+      "K32": 2,
+      "K44": 2,
+      "K26": 1,
+      "K45": 1,
+      "K42": 1,
+      "K35": 1
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 46,
+     "rolle": "geprueft",
+     "fenster_a4": 48,
+     "a4_wiedergefunden_von_10": 9,
+     "r2_pydbt_wiedergefunden": 2,
+     "r4_wiedergefunden": 7,
+     "r4_urteil": "teilweise",
+     "r4_partner": {
+      "K43": 5,
+      "K40": 3,
+      "K38": 1,
+      "K39": 1
+     },
+     "r4_im_rest": 0,
+     "r2_partner": {
+      "K38": 9,
+      "K43": 9,
+      "K48": 7,
+      "K40": 6,
+      "K39": 5,
+      "K36": 3,
+      "K32": 2,
+      "K33": 2,
+      "K41": 2,
+      "K50": 2,
+      "K35": 2,
+      "K47": 1,
+      "K44": 1,
+      "K22": 1,
+      "K27": 1,
+      "K12": 1,
+      "K26": 1
+     },
+     "r2_im_rest": 0
+    },
+    {
+     "id": 52,
+     "rolle": "gegenprobe",
+     "fenster_a4": 24,
+     "a4_wiedergefunden_von_10": 10,
+     "r2_pydbt_wiedergefunden": 10,
+     "r4_wiedergefunden": 10,
+     "r4_urteil": "reproduziert",
+     "r4_partner": {},
+     "r4_im_rest": 0,
+     "r2_partner": {},
+     "r2_im_rest": 0
+    }
+   ]
+  }
+ },
+ "urteil": {
+  "verloren": [
+   "P K10",
+   "PL K1",
+   "PL K37",
+   "PL K46"
+  ],
+  "anzahl_verloren_von_7": 4,
+  "endradius_erklaert_abweichung": "teilweise",
+  "gegenprobe_nicht_reproduziert": [
+   "P K13"
+  ],
+  "unter_vorbehalt": true
+ }
+}
