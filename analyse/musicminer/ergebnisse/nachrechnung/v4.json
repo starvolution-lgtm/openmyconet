@@ -1,0 +1,365 @@
+{
+ "simuliert": true,
+ "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
+ "kriterien": "v2+E1",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 6 (V4)",
+ "saetze": {
+  "P": {
+   "nulllaeufe": 50,
+   "nullkomponenten_gesamt": 500,
+   "globale_schwelle": {
+    "nullkomponenten": 475,
+    "schwelle": 3.159107293617179
+   },
+   "a4_globale_schwelle": {
+    "nullkomponenten": 2058,
+    "schwelle": 2.529555625993777
+   },
+   "a4_nullkomponenten_gesamt": 2083,
+   "klassen_geprueft": [
+    "G1 (10–19)",
+    "G2 (20–39)",
+    "G8 (1280–2559)"
+   ],
+   "kandidaten_r2": [
+    {
+     "id": 1,
+     "art": "insel",
+     "fenster_seed0": 23,
+     "groesse_median": 23.0,
+     "klasse": "G2 (20–39)",
+     "A_abgrenzung_median": 298.15728454233493,
+     "wiedergefunden_von_10": 10,
+     "baum_f1": 1.0,
+     "groessentest": {
+      "klasse": "G2 (20–39)",
+      "nullkomponenten": 266,
+      "laeufe_mit_komponente": 25,
+      "quantil": 0.9833,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": true,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": true,
+     "a4_gegenstueck": "K16",
+     "a4_jaccard": 1.0,
+     "a4_global_bestanden": true
+    },
+    {
+     "id": 3,
+     "art": "gruppe",
+     "fenster_seed0": 1360,
+     "groesse_median": 1287.0,
+     "klasse": "G8 (1280–2559)",
+     "A_abgrenzung_median": 3.472233036860227,
+     "wiedergefunden_von_10": 9,
+     "baum_f1": 0.946,
+     "groessentest": {
+      "klasse": "G8 (1280–2559)",
+      "nullkomponenten": 1,
+      "laeufe_mit_komponente": 1,
+      "quantil": 0.9833,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": true,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": true,
+     "a4_gegenstueck": null,
+     "a4_jaccard": 0.462,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 5,
+     "art": "insel",
+     "fenster_seed0": 20,
+     "groesse_median": 19.0,
+     "klasse": "G1 (10–19)",
+     "A_abgrenzung_median": 1.2667834758044347,
+     "wiedergefunden_von_10": 5,
+     "baum_f1": 0.851,
+     "groessentest": {
+      "klasse": "G1 (10–19)",
+      "nullkomponenten": 114,
+      "laeufe_mit_komponente": 25,
+      "quantil": 0.9833,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": false,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": null,
+     "a4_jaccard": 0.025,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 6,
+     "art": "insel",
+     "fenster_seed0": 11,
+     "groesse_median": 12.5,
+     "klasse": "G1 (10–19)",
+     "A_abgrenzung_median": 1.539566536588683,
+     "wiedergefunden_von_10": 8,
+     "baum_f1": 0.957,
+     "groessentest": {
+      "klasse": "G1 (10–19)",
+      "nullkomponenten": 114,
+      "laeufe_mit_komponente": 25,
+      "quantil": 0.9833,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": "K13",
+     "a4_jaccard": 0.917,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 7,
+     "art": "insel",
+     "fenster_seed0": 11,
+     "groesse_median": 11.0,
+     "klasse": "G1 (10–19)",
+     "A_abgrenzung_median": 1.2109794047810754,
+     "wiedergefunden_von_10": 5,
+     "baum_f1": 0.667,
+     "groessentest": {
+      "klasse": "G1 (10–19)",
+      "nullkomponenten": 114,
+      "laeufe_mit_komponente": 25,
+      "quantil": 0.9833,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": false,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": false
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": null,
+     "a4_jaccard": 0.045,
+     "a4_global_bestanden": false
+    }
+   ],
+   "nicht_berichtet_unter_5_seeds": 2
+  },
+  "PL": {
+   "nulllaeufe": 50,
+   "nullkomponenten_gesamt": 326,
+   "globale_schwelle": {
+    "nullkomponenten": 301,
+    "schwelle": 3.328317349351671
+   },
+   "a4_globale_schwelle": {
+    "nullkomponenten": 1429,
+    "schwelle": 2.22573129914917
+   },
+   "a4_nullkomponenten_gesamt": 1454,
+   "klassen_geprueft": [
+    "G1 (10–19)",
+    "G2 (20–39)",
+    "G5 (160–319)",
+    "G6 (320–639)"
+   ],
+   "kandidaten_r2": [
+    {
+     "id": 1,
+     "art": "gruppe",
+     "fenster_seed0": 246,
+     "groesse_median": 228.5,
+     "klasse": "G5 (160–319)",
+     "A_abgrenzung_median": 1.5438111554599532,
+     "wiedergefunden_von_10": 10,
+     "baum_f1": 0.633,
+     "groessentest": {
+      "klasse": "G5 (160–319)",
+      "nullkomponenten": 0,
+      "laeufe_mit_komponente": 0,
+      "quantil": 0.9875,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": false
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": null,
+     "a4_jaccard": 0.31,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 2,
+     "art": "insel",
+     "fenster_seed0": 26,
+     "groesse_median": 19.0,
+     "klasse": "G1 (10–19)",
+     "A_abgrenzung_median": 1.8727438301165051,
+     "wiedergefunden_von_10": 10,
+     "baum_f1": 0.897,
+     "groessentest": {
+      "klasse": "G1 (10–19)",
+      "nullkomponenten": 63,
+      "laeufe_mit_komponente": 22,
+      "quantil": 0.9875,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": "K2",
+     "a4_jaccard": 0.885,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 5,
+     "art": "gruppe",
+     "fenster_seed0": 662,
+     "groesse_median": 624.5,
+     "klasse": "G6 (320–639)",
+     "A_abgrenzung_median": 1.9190461974660007,
+     "wiedergefunden_von_10": 10,
+     "baum_f1": 0.906,
+     "groessentest": {
+      "klasse": "G6 (320–639)",
+      "nullkomponenten": 0,
+      "laeufe_mit_komponente": 0,
+      "quantil": 0.9875,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": null,
+     "a4_jaccard": 0.313,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 13,
+     "art": "insel",
+     "fenster_seed0": 13,
+     "groesse_median": 15.0,
+     "klasse": "G1 (10–19)",
+     "A_abgrenzung_median": 1.3007824325026491,
+     "wiedergefunden_von_10": 5,
+     "baum_f1": 0.107,
+     "groessentest": {
+      "klasse": "G1 (10–19)",
+      "nullkomponenten": 63,
+      "laeufe_mit_komponente": 22,
+      "quantil": 0.9875,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": false,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": false
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": null,
+     "a4_jaccard": 0.0,
+     "a4_global_bestanden": false
+    },
+    {
+     "id": 15,
+     "art": "insel",
+     "fenster_seed0": 24,
+     "groesse_median": 24.0,
+     "klasse": "G2 (20–39)",
+     "A_abgrenzung_median": 5.331606684319773,
+     "wiedergefunden_von_10": 10,
+     "baum_f1": 1.0,
+     "groessentest": {
+      "klasse": "G2 (20–39)",
+      "nullkomponenten": 178,
+      "laeufe_mit_komponente": 25,
+      "quantil": 0.9875,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": true,
+      "global": true,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": true,
+     "a4_gegenstueck": "K52",
+     "a4_jaccard": 1.0,
+     "a4_global_bestanden": true
+    },
+    {
+     "id": 16,
+     "art": "gruppe",
+     "fenster_seed0": 230,
+     "groesse_median": 226.0,
+     "klasse": "G5 (160–319)",
+     "A_abgrenzung_median": 1.8774492634292579,
+     "wiedergefunden_von_10": 5,
+     "baum_f1": 0.975,
+     "groessentest": {
+      "klasse": "G5 (160–319)",
+      "nullkomponenten": 0,
+      "laeufe_mit_komponente": 0,
+      "quantil": 0.9875,
+      "genug_nulldaten": false,
+      "schwelle": null
+     },
+     "pruefungen": {
+      "stabil": false,
+      "global": false,
+      "groesse": false,
+      "nachpruefbar": true
+     },
+     "wuerde_schwellen_bestehen": false,
+     "a4_gegenstueck": "K13",
+     "a4_jaccard": 0.945,
+     "a4_global_bestanden": false
+    }
+   ],
+   "nicht_berichtet_unter_5_seeds": 10
+  }
+ },
+ "v4": {
+  "kandidaten_global_neu_bestanden": [
+   "P K3"
+  ],
+  "v4_erfuellt": false
+ }
+}

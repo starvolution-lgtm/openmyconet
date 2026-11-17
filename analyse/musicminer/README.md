@@ -46,7 +46,7 @@ Abhängigkeiten ändern: `requirements.in` anpassen, dann
 | `ergebnisse/a4/` | `BERICHT.md`, `metriken.json`, `beispiele.json`, `abbildungen/` |
 | `PHASE_B_VORBEREITUNG.md` | Phase B (synthetische Signale), Fassung 2, noch nicht gerechnet |
 | `PRUEFUNG_QUELLEN_HARDWARE.md` | Literatur zu Zeitskalen von Pilzsignalen, Eingangsschaltung Rev. 3.6 (Finalfassung 25.10.) + Datenblätter |
-| `NACHRECHNUNG_PYDBT.md` | Vergleichsregeln für die Nachrechnung von Phase A mit der Referenz-ESOM pydbt (vor jedem Lauf festgelegt); R0–R2 gerechnet, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md`, R3 offen |
+| `NACHRECHNUNG_PYDBT.md` | Vergleichsregeln für die Nachrechnung von Phase A mit der Referenz-ESOM pydbt (vor jedem Lauf festgelegt); R0–R3 gerechnet, Bericht `ergebnisse/nachrechnung/BERICHT.md`, Ursache offen (R4 geplant) |
 | `VERLAUF.md` | Versuchsverlauf: Abweichungen, verworfene Ansätze, negative Ergebnisse |
 | `mm/schnappschuss.py` | Schnappschuss lesen + vollständig prüfen (Datei-Hashes, Block-Hashes, Prüfsummenkette, Kontrollwert), Rohsignale als lückenlose Segmente in µV |
 | `werkzeuge/` | Schnappschuss holen (läuft auf dem Server) und prüfen |

@@ -16,7 +16,8 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 | 05.11.2026 | Prüfung Literatur + Eingangsschaltung, Ergänzung E2, Phase-B-Vorbereitung Fassung 2 | bb6ecd1 |
 | 14.11.2026 | Vergleichsregeln für die Nachrechnung mit pydbt (`NACHRECHNUNG_PYDBT.md`), vor jedem Lauf | 6e92179 |
 | 15.11.2026 | Nachrechnung R0 (Technik, V0 übereinstimmend) | 79e49e3 |
-| 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | (dieser Commit) |
+| 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | e4c32fa |
+| 17.11.2026 | Nachrechnung R3 (100 Nullläufe) + V4: Schwellen-Rangfolge wie A4; Bericht R0–R3 | (dieser Commit) |
 
 ## Abweichungen vom Plan und ihre Gründe
 
@@ -84,6 +85,9 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
    Spike-Lage-Fragmente zu größeren Gruppen zusammen; die feine Aufteilung aus A4 hängt also
    auch von der ESOM-Umsetzung ab. Ursache offen (Endradius σ 0,75 nicht einstellbar,
    Online- statt Batch-Training). Details `ergebnisse/nachrechnung/BERICHT.md`.
+   V4 (R3): Die globale Schwelle bestehen unter pydbt wie in A4 nur Sättigung und die
+   Spike-Gruppe der Fenstermitte. Diese ist mit einer Nachbargruppe verschmolzen und gilt nach der
+   Zuordnung (Jaccard ≥ 0,5, nicht vorab festgelegt) als „neu bestanden“.
 
 ## Befunde außerhalb der Analyse (zur Weitergabe)
 
