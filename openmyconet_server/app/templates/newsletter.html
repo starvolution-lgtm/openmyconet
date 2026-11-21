@@ -23,48 +23,55 @@
         <option value="foerderer">Förderer / Sponsor</option>
     </select>
 
-    <label>Sprache (optional)</label>
-    <select name="sprache">
-        <option value="">Alle Sprachen</option>
-        <option value="de">Deutsch</option>
-        <option value="en">English</option>
-        <option value="nl">Nederlands</option>
-        <option value="fr">Français</option>
-        <option value="es">Español</option>
-    </select>
 
-    <label>Betreff</label>
+    <label>Betreff (auf Deutsch)</label>
     <input type="text" name="betreff" required>
 
     <label>Nachricht (HTML-Tags wie &lt;b&gt;, &lt;a href=""&gt; werden im Mail-Layout gerendert)</label>
     <textarea name="inhalt" required></textarea>
-    <p class="info">Du kannst {name} verwenden — wird durch den Namen des Empfängers ersetzt.</p>
+    <p class="info">Du kannst {name} verwenden — wird durch den Namen des Empfängers ersetzt.
+    Geschrieben wird auf Deutsch. Für jede Sprache, die Empfänger eingestellt haben, erzeugt die Vorschau eine
+    Übersetzung zum Prüfen; jeder Empfänger bekommt den vollen Text in seiner Sprache. Kein Eintrag in der Newsanzeige
+    (dafür: News mit Rund-Mail).</p>
 
-    <button type="submit">Vorschau &amp; Senden</button>
+    <button type="submit">Vorschau &amp; Übersetzungen</button>
 </form>
 
 {% if vorschau %}
 <hr>
 <h2>Vorschau ({{ empfaenger_anzahl }} Empfänger)</h2>
-<p class="info">Betreff: <strong>{{ vorschau.betreff }}</strong></p>
-{# Vorschau ueber eigene Route mit eigener CSP (Inline-Styles der Mail); das Formular laedt sie ins iframe #}
-<iframe name="nl-vorschau" class="nl-1" title="Vorschau der Mail"></iframe>
-<form method="POST" action="{{ url_for('admin.newsletter_vorschau') }}" target="nl-vorschau" id="nl-vorschau-form">
+<p class="info">Texte prüfen und bei Bedarf ändern, dann „Vorschau aktualisieren“. Gesendet wird, was hier steht.</p>
+{# Ein Formular fuer alles: "Vorschau aktualisieren" schickt es per formaction/formtarget an die
+   Vorschau-Route (eigene CSP fuer die Inline-Styles der Mail) ins iframe der Sprache, "Senden" an den Versand. #}
+<form method="POST" id="nl-senden">
     <input type="hidden" name="gruppe" value="{{ vorschau.gruppe }}">
-    <input type="hidden" name="sprache" value="{{ vorschau.sprache }}">
-    <input type="hidden" name="inhalt" value="{{ vorschau.inhalt }}">
-    <button type="submit">Vorschau neu laden</button>
+    {% for f in vorschau.fassungen %}
+    {% set suffix = '' if f.lang == 'de' else '_' ~ f.lang %}
+    <h3>{{ SPRACHNAMEN[f.lang] }}{% if f.lang == 'de' %} (Original){% endif %} — {{ f.anzahl }} Empfänger</h3>
+    {% if f.fehler %}<p class="err">{{ f.fehler }}</p>{% endif %}
+    <label>Betreff</label>
+    <input type="text" name="betreff{{ suffix }}" value="{{ f.betreff }}" required>
+    <label>Nachricht</label>
+    <textarea name="inhalt{{ suffix }}" rows="12" required>{{ f.inhalt }}</textarea>
+    <button type="submit" class="nl-vorschau-knopf" formaction="{{ url_for('admin.newsletter_vorschau', lang=f.lang) }}"
+            formtarget="nl-vorschau-{{ f.lang }}" formnovalidate>Vorschau aktualisieren</button>
+    <iframe name="nl-vorschau-{{ f.lang }}" class="nl-1" title="Vorschau {{ SPRACHNAMEN[f.lang] }}"></iframe>
+    {% endfor %}
+    <button type="submit" name="bestaetigt_senden" value="1" class="loeschen">Jetzt an {{ empfaenger_anzahl }} Empfänger senden</button>
 </form>
 <script nonce="{{ csp_nonce }}">
-document.addEventListener('DOMContentLoaded', function () { document.getElementById('nl-vorschau-form').requestSubmit(); });
+document.addEventListener('DOMContentLoaded', function () {
+  // Nacheinander laden: ein neues Absenden desselben Formulars bricht die laufende Navigation ab
+  var form = document.getElementById('nl-senden');
+  var knoepfe = Array.prototype.slice.call(form.querySelectorAll('.nl-vorschau-knopf'));
+  (function naechste() {
+    var knopf = knoepfe.shift();
+    if (!knopf) return;
+    var rahmen = document.getElementsByName(knopf.getAttribute('formtarget'))[0];
+    rahmen.addEventListener('load', naechste, { once: true });
+    form.requestSubmit(knopf);
+  })();
+});
 </script>
-<form method="POST">
-    <input type="hidden" name="gruppe" value="{{ vorschau.gruppe }}">
-    <input type="hidden" name="sprache" value="{{ vorschau.sprache }}">
-    <input type="hidden" name="betreff" value="{{ vorschau.betreff }}">
-    <input type="hidden" name="inhalt" value="{{ vorschau.inhalt }}">
-    <input type="hidden" name="bestaetigt_senden" value="1">
-    <button type="submit" class="loeschen">Jetzt an {{ empfaenger_anzahl }} Empfänger senden</button>
-</form>
 {% endif %}
 {% endblock %}

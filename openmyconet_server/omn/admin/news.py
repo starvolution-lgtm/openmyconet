@@ -301,17 +301,59 @@ def _newsletter_html(text):
     return text.replace('\r\n', '\n').replace('\n', '<br>\n')
 
 
-def _newsletter_empfaenger(gruppe, sprache):
+def _newsletter_empfaenger(gruppe):
     query = Nutzer.query.filter_by(bestaetigt=True, keine_mails=False)
     if gruppe:
         query = query.filter_by(gruppe=gruppe)
-    if sprache:
-        query = query.filter_by(sprache=sprache)
     return query.all()
+
+
+def _empfaenger_sprache(nutzer):
+    return nutzer.sprache if nutzer.sprache in LANGS else 'de'
+
+
+def _newsletter_sprachen(empfaenger):
+    """{sprache: anzahl} der Empfaenger, Deutsch (Original) immer zuerst, dann in LANGS-Reihenfolge."""
+    zahlen = {lang: 0 for lang in LANGS}
+    for n in empfaenger:
+        zahlen[_empfaenger_sprache(n)] += 1
+    return {lang: anzahl for lang, anzahl in zahlen.items() if lang == 'de' or anzahl}
+
+
+def _newsletter_uebersetzen(betreff, inhalt, lang):
+    """Entwurf {betreff, inhalt, fehler} in der Zielsprache ueber die News-Uebersetzung (KI).
+    Fehlt danach der Platzhalter {name}, wird das als Hinweis gemeldet (Feld bleibt editierbar)."""
+    entwurf = uebersetzungsentwurf_erzeugen(SimpleNamespace(titel=betreff, untertitel='', inhalt=inhalt), lang)
+    fehler = entwurf['fehler']
+    if not fehler and '{name}' in inhalt and '{name}' not in entwurf['inhalt']:
+        fehler = 'Der Platzhalter {name} fehlt in der Übersetzung – bitte unten ergänzen.'
+    return {'betreff': entwurf['titel'], 'inhalt': entwurf['inhalt'], 'fehler': fehler}
+
+
+def _newsletter_fassungen(form, sprachen):
+    """{sprache: (betreff, inhalt)} aus dem Formular; Deutsch aus betreff/inhalt, sonst betreff_xx/inhalt_xx.
+    Fehlt eine Fassung, gilt die deutsche."""
+    original = (form.get('betreff', '').strip(), form.get('inhalt', '').strip())
+    fassungen = {'de': original}
+    for lang in sprachen:
+        if lang != 'de':
+            b, i = form.get(f'betreff_{lang}', '').strip(), form.get(f'inhalt_{lang}', '').strip()
+            fassungen[lang] = (b, i) if b and i else original
+    return fassungen
+
+
+# Fusszeile der Newsletter-Mail in der Sprache der Empfaengerin
+NEWSLETTER_ABMELDEN = {'de': 'Keine E-Mails mehr erhalten', 'en': 'Unsubscribe from emails',
+                       'nl': 'Geen e-mails meer ontvangen', 'fr': 'Ne plus recevoir d’e-mails',
+                       'es': 'Dejar de recibir correos'}
+
 
 @admin_bp.route('/admin/newsletter', methods=['GET', 'POST'])
 @login_required
 def newsletter():
+    """Newsletter = voller Text in der Mail, kein Eintrag in der Newsanzeige (Robby 21.11.2026).
+    Geschrieben wird auf Deutsch; fuer jede Sprache, die Empfaenger eingestellt haben, erzeugt die
+    Vorschau eine KI-Uebersetzung zum Pruefen/Bearbeiten. Jede Empfaengerin bekommt ihre Sprache."""
     nachricht = None
     fehler = None
     vorschau = None
@@ -319,25 +361,27 @@ def newsletter():
 
     if request.method == 'POST':
         gruppe = request.form.get('gruppe', '')
-        sprache = request.form.get('sprache', '')
         betreff = request.form.get('betreff', '').strip()
         inhalt = request.form.get('inhalt', '').strip()
-        bestaetigt_senden = request.form.get('bestaetigt_senden', '')
-
-        empfaenger = _newsletter_empfaenger(gruppe, sprache)
+        empfaenger = _newsletter_empfaenger(gruppe)
         empfaenger_anzahl = len(empfaenger)
+        sprachen = _newsletter_sprachen(empfaenger)
 
-        if bestaetigt_senden:
+        if request.form.get('bestaetigt_senden'):
+            fassungen = _newsletter_fassungen(request.form, sprachen)
             nachrichten = []
             for nutzer in empfaenger:
-                personalisiert = inhalt.replace('{name}', nutzer.name)
+                lang = _empfaenger_sprache(nutzer)
+                n_betreff, n_inhalt = fassungen.get(lang, fassungen['de'])
+                personalisiert = n_inhalt.replace('{name}', nutzer.name)
                 abmelde_url = url_for('abmelden', token=nutzer.token, _external=True)
-                msg = Message(subject=betreff, recipients=[nutzer.email],
+                msg = Message(subject=n_betreff, recipients=[nutzer.email],
                               extra_headers=_list_unsubscribe_header(abmelde_url))
                 msg.html = render_template('newsletter_email.html', inhalt=_newsletter_html(personalisiert),
-                                           abmelde_url=abmelde_url)
+                                           abmelde_url=abmelde_url, lang=lang,
+                                           abmelden_text=NEWSLETTER_ABMELDEN[lang])
                 msg.body = re.sub(r'<[^>]+>', '', personalisiert) + \
-                    f'\n\n---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
+                    f'\n\n---\n{NEWSLETTER_ABMELDEN[lang]}: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
                 nachrichten.append(msg)
             mailqueue_einreihen(nachrichten)
             protokollieren('newsletter_versand', f'{len(nachrichten)} Empfänger: {betreff}')
@@ -345,10 +389,15 @@ def newsletter():
                          f'Versand läuft im Hintergrund (jede Minute), Ergebnis im '
                          f'Journal (journalctl --user -u omn).')
         else:
-            # 'inhalt' bleibt mit {name}: das Senden-Formular schickt ihn zurueck, ersetzt wird je
-            # Empfaenger. (Bis 21.11.2026 stand hier der Text mit dem Namen des ersten Empfaengers --
-            # alle hätten dessen Namen bekommen.)
-            vorschau = {'betreff': betreff, 'inhalt': inhalt, 'gruppe': gruppe, 'sprache': sprache}
+            # Texte bleiben mit {name}: ersetzt wird erst beim Senden je Empfaenger. (Bis 21.11.2026 trug
+            # das Senden-Formular den Text mit dem Namen des ersten Empfaengers -- alle haetten ihn bekommen.)
+            fassungen = [{'lang': 'de', 'anzahl': sprachen['de'], 'betreff': betreff, 'inhalt': inhalt,
+                          'fehler': None}]
+            for lang, anzahl in sprachen.items():
+                if lang != 'de':
+                    fassungen.append({'lang': lang, 'anzahl': anzahl,
+                                      **_newsletter_uebersetzen(betreff, inhalt, lang)})
+            vorschau = {'gruppe': gruppe, 'fassungen': fassungen}
 
     return render_template('newsletter.html',
         nachricht=nachricht, fehler=fehler,
@@ -356,15 +405,21 @@ def newsletter():
     )
 
 
-@admin_bp.route('/admin/newsletter/vorschau', methods=['POST'])
+@admin_bp.route('/admin/newsletter/vorschau/<lang>', methods=['POST'])
 @login_required
-def newsletter_vorschau():
-    """HTML der Mail fuer das Vorschau-iframe, so wie sie versendet wird ({name} = erster Empfaenger)."""
-    empfaenger = _newsletter_empfaenger(request.form.get('gruppe', ''), request.form.get('sprache', ''))
+def newsletter_vorschau(lang):
+    """HTML der Mail in einer Sprache fuer das Vorschau-iframe, so wie sie versendet wird
+    ({name} = erste Empfaengerin dieser Sprache)."""
+    if lang not in LANGS:
+        abort(404)
+    empfaenger = [n for n in _newsletter_empfaenger(request.form.get('gruppe', ''))
+                  if _empfaenger_sprache(n) == lang]
     name = empfaenger[0].name if empfaenger else 'Beispielname'
-    inhalt = request.form.get('inhalt', '').strip().replace('{name}', name)
+    _, inhalt = _newsletter_fassungen(request.form, [lang]).get(lang)
     g.csp_override = NEWSLETTER_VORSCHAU_CSP
-    return Response(render_template('newsletter_email.html', inhalt=_newsletter_html(inhalt)), mimetype='text/html')
+    return Response(render_template('newsletter_email.html', inhalt=_newsletter_html(inhalt.replace('{name}', name)),
+                                    lang=lang, abmelden_text=NEWSLETTER_ABMELDEN[lang]),
+                    mimetype='text/html')
 
 
 # --- News / Blog ---

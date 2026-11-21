@@ -184,7 +184,7 @@ def test_newsletter_vorschau_schickt_platzhalter_zurueck_nicht_ersten_namen(clie
     _nutzer(app, 'bert@example.com')
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
     seite = client.post('/admin/newsletter', data={'betreff': 'Test', 'inhalt': 'Hallo {name}\nZeile 2'}).get_data(as_text=True)
-    assert 'value="Hallo {name}' in seite and 'nl-vorschau' in seite
+    assert '>Hallo {name}' in seite and 'nl-vorschau-de' in seite
     with mail.record_messages() as ausgehend:
         client.post('/admin/newsletter', data={
             'betreff': 'Test', 'inhalt': 'Hallo {name}\nZeile 2', 'bestaetigt_senden': '1'}, follow_redirects=True)
@@ -195,8 +195,48 @@ def test_newsletter_vorschau_schickt_platzhalter_zurueck_nicht_ersten_namen(clie
 def test_newsletter_vorschau_mit_eigener_csp(client, app, superadmin):
     _nutzer(app, 'anna@example.com')
     eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
-    r = client.post('/admin/newsletter/vorschau', data={'inhalt': 'Hallo {name}\n\nAbsatz'})
+    r = client.post('/admin/newsletter/vorschau/de', data={'inhalt': 'Hallo {name}\n\nAbsatz', 'betreff': 'B'})
     html = r.get_data(as_text=True)
     assert r.status_code == 200 and 'Hallo anna<br>' in html and 'background:#012a1e' in html
     csp = r.headers['Content-Security-Policy']
     assert "style-src 'unsafe-inline'" in csp and 'script-src' not in csp and "default-src 'none'" in csp
+    assert client.post('/admin/newsletter/vorschau/xx', data={}).status_code == 404
+
+
+def test_newsletter_in_der_sprache_jedes_empfaengers(client, app, superadmin, monkeypatch):
+    """Robby 21.11.2026: voller Text in der Mail, je Empfaengersprache eine (KI-)Fassung."""
+    from omn.admin import news as news_modul
+    _nutzer(app, 'de@example.com')
+    _nutzer(app, 'en@example.com', sprache='en')
+    _nutzer(app, 'es@example.com', sprache='es')
+    aufrufe = []
+
+    def fake_anfordern(n, ziel):
+        aufrufe.append(ziel)
+        return f'TITEL: Betreff {ziel}\nUNTERTITEL: LEER\nINHALT:\nHello {{name}} ({ziel})'
+    monkeypatch.setattr(news_modul, '_uebersetzung_anfordern', fake_anfordern)
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    seite = client.post('/admin/newsletter', data={'betreff': 'Betreff', 'inhalt': 'Hallo {name}'}).get_data(as_text=True)
+    assert sorted(aufrufe) == ['en', 'es']                     # nur Sprachen, die Empfaenger haben
+    assert 'name="inhalt_en"' in seite and 'name="inhalt_es"' in seite and 'name="inhalt_nl"' not in seite
+    assert 'Hello {name} (en)' in seite
+    with mail.record_messages() as ausgehend:
+        client.post('/admin/newsletter', data={
+            'betreff': 'Betreff', 'inhalt': 'Hallo {name}', 'betreff_en': 'Subject', 'inhalt_en': 'Hello {name}',
+            'betreff_es': '', 'inhalt_es': '', 'bestaetigt_senden': '1'}, follow_redirects=True)
+    post = {m.recipients[0]: m for m in ausgehend}
+    assert post['de@example.com'].subject == 'Betreff' and 'Hallo de' in post['de@example.com'].html
+    assert post['en@example.com'].subject == 'Subject' and 'Hello en' in post['en@example.com'].html
+    assert 'Unsubscribe from emails' in post['en@example.com'].html and 'lang="en"' in post['en@example.com'].html
+    # leere Fassung -> deutsche gilt
+    assert post['es@example.com'].subject == 'Betreff' and 'Hallo es' in post['es@example.com'].html
+
+
+def test_newsletter_meldet_fehlenden_platzhalter(client, app, superadmin, monkeypatch):
+    from omn.admin import news as news_modul
+    _nutzer(app, 'en@example.com', sprache='en')
+    monkeypatch.setattr(news_modul, '_uebersetzung_anfordern',
+                        lambda n, ziel: 'TITEL: S\nUNTERTITEL: LEER\nINHALT:\nHello there')
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    seite = client.post('/admin/newsletter', data={'betreff': 'B', 'inhalt': 'Hallo {name}'}).get_data(as_text=True)
+    assert 'Der Platzhalter {name} fehlt' in seite

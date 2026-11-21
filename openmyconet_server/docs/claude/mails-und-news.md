@@ -3,6 +3,19 @@
 > Ausgelagert aus `openmyconet_server/CLAUDE.md` am 14.10.2026 (wörtlich übernommen).
 > Vor Änderungen in diesem Bereich lesen; neue Erkenntnisse hier eintragen, nicht in CLAUDE.md.
 
+## Newsletter vs. News (Robby, 21.11.2026)
+- **News mit Rund-Mail:** Eintrag in der Newsanzeige, die Mail ist nur ein Teaser (Auszug + „Beitrag
+  lesen“), voller Text auf der Website.
+- **Newsletter** (`/admin/newsletter`): kein Eintrag in der Newsanzeige, voller Text in der Mail.
+  Geschrieben wird auf Deutsch; die Vorschau erzeugt für jede Sprache, die Empfänger eingestellt
+  haben, eine KI-Übersetzung (`uebersetzungsentwurf_erzeugen`, wie bei den News) zum Prüfen/Bearbeiten.
+  Jede Empfängerin bekommt ihre Sprache (leere Fassung → Deutsch), Fußzeile ebenfalls übersetzt.
+  `{name}` bleibt bis zum Senden stehen (vor dem 21.11. trug das Senden-Formular den Namen des ersten
+  Empfängers → alle hätten ihn bekommen); fehlt `{name}` in einer Übersetzung, gibt es einen Hinweis.
+  Vorschau je Sprache über `POST /admin/newsletter/vorschau/<lang>` mit eigener CSP (Inline-Styles der
+  Mail; ein srcdoc-iframe erbt die Admin-CSP und zeigte die Mail schwarz und ungestaltet), Zeilenumbrüche
+  werden zu `<br>` (white-space:pre-wrap ignorieren viele Mailprogramme).
+
 ## Rund-Mails an Nutzer
 Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
 (Checkbox + Sprach-Checkboxen beim Veröffentlichen unter `/admin/news`,
