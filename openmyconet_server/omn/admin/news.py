@@ -12,7 +12,7 @@ from types import SimpleNamespace
 
 import anthropic
 import bleach
-from flask import abort, current_app, flash, redirect, render_template, request, url_for
+from flask import Response, abort, current_app, flash, g, redirect, render_template, request, url_for
 from flask_mail import Message
 from PIL import Image, ImageOps, UnidentifiedImageError
 
@@ -288,6 +288,27 @@ def uebersetzungsentwurf_erzeugen(news, ziel_sprache):
 
 # --- Newsletter ---
 
+# Vorschau im iframe: Die Mail lebt von Inline-Styles, die die Admin-CSP (ohne 'unsafe-inline')
+# blockiert -- auch in einem srcdoc-iframe, das die CSP der Seite erbt. Deshalb eigene Route mit
+# eigener, engerer Policy (wie die Mail-Vorschau im Server-MCC): Inline-Styles ja, Skripte nein.
+NEWSLETTER_VORSCHAU_CSP = ("default-src 'none'; style-src 'unsafe-inline'; img-src https: data:; "
+                           "frame-ancestors 'self'; base-uri 'none'; form-action 'none'")
+
+
+def _newsletter_html(text):
+    """Zeilenumbrueche der Eingabe als <br>: white-space:pre-wrap kennen viele Mailprogramme nicht,
+    dort lief der Text sonst in einem Block durch."""
+    return text.replace('\r\n', '\n').replace('\n', '<br>\n')
+
+
+def _newsletter_empfaenger(gruppe, sprache):
+    query = Nutzer.query.filter_by(bestaetigt=True, keine_mails=False)
+    if gruppe:
+        query = query.filter_by(gruppe=gruppe)
+    if sprache:
+        query = query.filter_by(sprache=sprache)
+    return query.all()
+
 @admin_bp.route('/admin/newsletter', methods=['GET', 'POST'])
 @login_required
 def newsletter():
@@ -303,12 +324,7 @@ def newsletter():
         inhalt = request.form.get('inhalt', '').strip()
         bestaetigt_senden = request.form.get('bestaetigt_senden', '')
 
-        query = Nutzer.query.filter_by(bestaetigt=True, keine_mails=False)
-        if gruppe:
-            query = query.filter_by(gruppe=gruppe)
-        if sprache:
-            query = query.filter_by(sprache=sprache)
-        empfaenger = query.all()
+        empfaenger = _newsletter_empfaenger(gruppe, sprache)
         empfaenger_anzahl = len(empfaenger)
 
         if bestaetigt_senden:
@@ -318,7 +334,8 @@ def newsletter():
                 abmelde_url = url_for('abmelden', token=nutzer.token, _external=True)
                 msg = Message(subject=betreff, recipients=[nutzer.email],
                               extra_headers=_list_unsubscribe_header(abmelde_url))
-                msg.html = render_template('newsletter_email.html', inhalt=personalisiert, abmelde_url=abmelde_url)
+                msg.html = render_template('newsletter_email.html', inhalt=_newsletter_html(personalisiert),
+                                           abmelde_url=abmelde_url)
                 msg.body = re.sub(r'<[^>]+>', '', personalisiert) + \
                     f'\n\n---\nKeine E-Mails mehr: {abmelde_url}\nOpenMycoNet · https://www.openmyconet.de'
                 nachrichten.append(msg)
@@ -328,19 +345,26 @@ def newsletter():
                          f'Versand läuft im Hintergrund (jede Minute), Ergebnis im '
                          f'Journal (journalctl --user -u omn).')
         else:
-            beispiel_name = empfaenger[0].name if empfaenger else 'Beispielname'
-            vorschau_inhalt = inhalt.replace('{name}', beispiel_name)
-            vorschau = {
-                'betreff': betreff,
-                'inhalt': vorschau_inhalt,
-                'html': render_template('newsletter_email.html', inhalt=vorschau_inhalt),
-                'gruppe': gruppe, 'sprache': sprache
-            }
+            # 'inhalt' bleibt mit {name}: das Senden-Formular schickt ihn zurueck, ersetzt wird je
+            # Empfaenger. (Bis 21.11.2026 stand hier der Text mit dem Namen des ersten Empfaengers --
+            # alle hätten dessen Namen bekommen.)
+            vorschau = {'betreff': betreff, 'inhalt': inhalt, 'gruppe': gruppe, 'sprache': sprache}
 
     return render_template('newsletter.html',
         nachricht=nachricht, fehler=fehler,
         vorschau=vorschau, empfaenger_anzahl=empfaenger_anzahl
     )
+
+
+@admin_bp.route('/admin/newsletter/vorschau', methods=['POST'])
+@login_required
+def newsletter_vorschau():
+    """HTML der Mail fuer das Vorschau-iframe, so wie sie versendet wird ({name} = erster Empfaenger)."""
+    empfaenger = _newsletter_empfaenger(request.form.get('gruppe', ''), request.form.get('sprache', ''))
+    name = empfaenger[0].name if empfaenger else 'Beispielname'
+    inhalt = request.form.get('inhalt', '').strip().replace('{name}', name)
+    g.csp_override = NEWSLETTER_VORSCHAU_CSP
+    return Response(render_template('newsletter_email.html', inhalt=_newsletter_html(inhalt)), mimetype='text/html')
 
 
 # --- News / Blog ---

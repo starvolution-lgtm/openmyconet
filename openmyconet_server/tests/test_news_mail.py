@@ -175,3 +175,28 @@ def test_newsletter_respektiert_abmeldung(client, app, superadmin):
     empfaenger = {adr for m in ausgehend for adr in m.recipients}
     assert empfaenger == {'nl-ok@example.com'}
     assert '/abmelden/tok-nl-ok@example.com' in ausgehend[0].body
+
+
+def test_newsletter_vorschau_schickt_platzhalter_zurueck_nicht_ersten_namen(client, app, superadmin):
+    """Bis 21.11.2026 trug das Senden-Formular den Text mit dem Namen des ersten Empfaengers --
+    alle haetten diesen Namen bekommen. Jetzt bleibt {name} stehen und wird je Empfaenger ersetzt."""
+    _nutzer(app, 'anna@example.com')
+    _nutzer(app, 'bert@example.com')
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    seite = client.post('/admin/newsletter', data={'betreff': 'Test', 'inhalt': 'Hallo {name}\nZeile 2'}).get_data(as_text=True)
+    assert 'value="Hallo {name}' in seite and 'nl-vorschau' in seite
+    with mail.record_messages() as ausgehend:
+        client.post('/admin/newsletter', data={
+            'betreff': 'Test', 'inhalt': 'Hallo {name}\nZeile 2', 'bestaetigt_senden': '1'}, follow_redirects=True)
+    anreden = {m.recipients[0]: m.html for m in ausgehend}
+    assert 'Hallo anna<br>' in anreden['anna@example.com'] and 'Hallo bert<br>' in anreden['bert@example.com']
+
+
+def test_newsletter_vorschau_mit_eigener_csp(client, app, superadmin):
+    _nutzer(app, 'anna@example.com')
+    eingeloggt(client, 'superadmin_test', 'sehr-geheim-123')
+    r = client.post('/admin/newsletter/vorschau', data={'inhalt': 'Hallo {name}\n\nAbsatz'})
+    html = r.get_data(as_text=True)
+    assert r.status_code == 200 and 'Hallo anna<br>' in html and 'background:#012a1e' in html
+    csp = r.headers['Content-Security-Policy']
+    assert "style-src 'unsafe-inline'" in csp and 'script-src' not in csp and "default-src 'none'" in csp

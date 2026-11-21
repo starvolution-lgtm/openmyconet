@@ -47,7 +47,17 @@
 <hr>
 <h2>Vorschau ({{ empfaenger_anzahl }} Empfänger)</h2>
 <p class="info">Betreff: <strong>{{ vorschau.betreff }}</strong></p>
-<iframe srcdoc="{{ vorschau.html | e }}" class="nl-1"></iframe>
+{# Vorschau ueber eigene Route mit eigener CSP (Inline-Styles der Mail); das Formular laedt sie ins iframe #}
+<iframe name="nl-vorschau" class="nl-1" title="Vorschau der Mail"></iframe>
+<form method="POST" action="{{ url_for('admin.newsletter_vorschau') }}" target="nl-vorschau" id="nl-vorschau-form">
+    <input type="hidden" name="gruppe" value="{{ vorschau.gruppe }}">
+    <input type="hidden" name="sprache" value="{{ vorschau.sprache }}">
+    <input type="hidden" name="inhalt" value="{{ vorschau.inhalt }}">
+    <button type="submit">Vorschau neu laden</button>
+</form>
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function () { document.getElementById('nl-vorschau-form').requestSubmit(); });
+</script>
 <form method="POST">
     <input type="hidden" name="gruppe" value="{{ vorschau.gruppe }}">
     <input type="hidden" name="sprache" value="{{ vorschau.sprache }}">
