@@ -87,8 +87,9 @@ eine eigene Diskussion anlegen.
 > zeigen können. Beiträge werden automatisch in die Sprachen der Website übersetzt, ihr könnt also in
 > eurer Sprache schreiben.
 >
-> Zu den Themenräumen geht es nach dem Login über den Nutzerbereich. Noch kein Konto? Die Registrierung
-> ist kostenlos.
+> Zu den Themenräumen geht es nach dem Login über den Nutzerbereich. Eine Einladung ist nicht nötig: Wer
+> registriert ist und seine E-Mail-Adresse bestätigt hat, gibt beim Anmelden seine E-Mail-Adresse ein und
+> bekommt einen Login-Link per Mail. Noch kein Konto? Die Registrierung ist kostenlos.
 
 ---
 
