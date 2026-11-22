@@ -18,7 +18,8 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 | 15.11.2026 | Nachrechnung R0 (Technik, V0 übereinstimmend) | 79e49e3 |
 | 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | e4c32fa |
 | 17.11.2026 | Nachrechnung R3 (100 Nullläufe) + V4: Schwellen-Rangfolge wie A4; Bericht R0–R3 | 49f4b61 |
-| 17.11.2026 | Nachrechnung R4 (unsere Karte, Endradius 1,0, 20 Läufe): Endradius erklärt die Abweichung **teilweise**, unter Vorbehalt; Bericht R0–R4 | (dieser Commit) |
+| 17.11.2026 | Nachrechnung R4 (unsere Karte, Endradius 1,0, 20 Läufe): Endradius erklärt die Abweichung **teilweise**, unter Vorbehalt; Bericht R0–R4 | 4f5a0a3 |
+| 22.11.2026 | Nachrechnung R5 (neue pydbt-Fassung `e6a483e`, gleicher σ-Verlauf wie unsere Karte, 20 Läufe): Nachbarschaft erklärt die Abweichung **nicht** (4 von 11), unter Vorbehalt; Bericht R0–R5 | (dieser Commit) |
 
 ## Abweichungen vom Plan und ihre Gründe
 
@@ -93,6 +94,10 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
    (Urteil „teilweise“, unter Vorbehalt, weil P K13 nur 7/10). Das Muster ist anders als
    bei pydbt (Reaktion und PL K28 bleiben, kaum Verschmelzungen); der Rest liegt vermutlich
    im Training, ungeprüft.
+   R5 (Regeln 7f): Die neue pydbt-Fassung mit genau unserem σ-Verlauf reproduziert wieder nur
+   4 der 11 stabilen Kandidaten (Urteil „nicht“, unter Vorbehalt, P K13 7/10). Die Reaktion
+   ist zurück (8/10), die Fragmente der PL-Fenstermitte verschmelzen weiter. Die Ursache liegt
+   im Training selbst (online statt Batch, Lernrate, Startwerte), nicht getrennt geprüft.
 
 ## Befunde außerhalb der Analyse (zur Weitergabe)
 

@@ -1,0 +1,324 @@
+{
+ "simuliert": true,
+ "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 7f",
+ "saetze": {
+  "P": {
+   "qe_median": 1.2045789420902406,
+   "te_median": 0.15522751895991332,
+   "gruppen_median": 3.0,
+   "inseln_median": 10.0,
+   "minuten_median": 35.115,
+   "kandidaten": [
+    {
+     "id": 2,
+     "bekannt": null,
+     "fenster_a4": 31,
+     "a4_wiedergefunden_von_10": 6,
+     "a4_stabil_8b1": false,
+     "r2": 1,
+     "r4": 7,
+     "r5": 5,
+     "urteil": "teilweise",
+     "r5_partner": {
+      "K17": 1,
+      "K3": 1
+     },
+     "r5_im_rest": 5
+    },
+    {
+     "id": 3,
+     "bekannt": null,
+     "fenster_a4": 584,
+     "a4_wiedergefunden_von_10": 10,
+     "a4_stabil_8b1": true,
+     "r2": 2,
+     "r4": 9,
+     "r5": 6,
+     "urteil": "teilweise",
+     "r5_partner": {
+      "K10": 5
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 10,
+     "bekannt": null,
+     "fenster_a4": 628,
+     "a4_wiedergefunden_von_10": 8,
+     "a4_stabil_8b1": true,
+     "r2": 2,
+     "r4": 1,
+     "r5": 5,
+     "urteil": "teilweise",
+     "r5_partner": {
+      "K3": 4
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 13,
+     "bekannt": null,
+     "fenster_a4": 12,
+     "a4_wiedergefunden_von_10": 9,
+     "a4_stabil_8b1": true,
+     "r2": 8,
+     "r4": 7,
+     "r5": 7,
+     "urteil": "teilweise",
+     "r5_partner": {
+      "K11": 10,
+      "K8": 1
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 16,
+     "bekannt": "Sättigung",
+     "fenster_a4": 23,
+     "a4_wiedergefunden_von_10": 10,
+     "a4_stabil_8b1": true,
+     "r2": 10,
+     "r4": 10,
+     "r5": 10,
+     "urteil": "reproduziert",
+     "r5_partner": {},
+     "r5_im_rest": 0
+    }
+   ],
+   "neue_komponenten": [
+    {
+     "fenster": 1299,
+     "wiedergefunden": 5,
+     "jaccard_bester_a4_kandidat": 0.479,
+     "jaccard_beste_a4_komponente": 0.479
+    }
+   ]
+  },
+  "PL": {
+   "qe_median": 1.6735455661168763,
+   "te_median": 0.16810296429373456,
+   "gruppen_median": 3.5,
+   "inseln_median": 30.0,
+   "minuten_median": 38.09666666666667,
+   "kandidaten": [
+    {
+     "id": 1,
+     "bekannt": null,
+     "fenster_a4": 10,
+     "a4_wiedergefunden_von_10": 8,
+     "a4_stabil_8b1": true,
+     "r2": 3,
+     "r4": 3,
+     "r5": 7,
+     "urteil": "teilweise",
+     "r5_partner": {
+      "K2": 6,
+      "K13": 1
+     },
+     "r5_im_rest": 1
+    },
+    {
+     "id": 2,
+     "bekannt": null,
+     "fenster_a4": 23,
+     "a4_wiedergefunden_von_10": 10,
+     "a4_stabil_8b1": true,
+     "r2": 10,
+     "r4": 10,
+     "r5": 10,
+     "urteil": "reproduziert",
+     "r5_partner": {},
+     "r5_im_rest": 0
+    },
+    {
+     "id": 3,
+     "bekannt": null,
+     "fenster_a4": 13,
+     "a4_wiedergefunden_von_10": 5,
+     "a4_stabil_8b1": false,
+     "r2": 0,
+     "r4": 3,
+     "r5": 4,
+     "urteil": "nicht reproduziert",
+     "r5_partner": {
+      "K9": 10,
+      "K6": 7,
+      "K11": 3,
+      "K14": 3,
+      "K10": 3,
+      "K24": 3,
+      "K7": 3,
+      "K8": 3,
+      "K16": 3,
+      "K30": 3,
+      "K18": 2,
+      "K20": 2,
+      "K17": 2,
+      "K25": 2,
+      "K22": 2,
+      "K31": 1,
+      "K12": 1,
+      "K26": 1,
+      "K33": 1,
+      "K21": 1
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 6,
+     "bekannt": null,
+     "fenster_a4": 243,
+     "a4_wiedergefunden_von_10": 7,
+     "a4_stabil_8b1": false,
+     "r2": 0,
+     "r4": 2,
+     "r5": 2,
+     "urteil": "nicht reproduziert",
+     "r5_partner": {
+      "K7": 10,
+      "K8": 10,
+      "K11": 6,
+      "K24": 3,
+      "K20": 3,
+      "K10": 2,
+      "K9": 1
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 13,
+     "bekannt": "Reaktion",
+     "fenster_a4": 229,
+     "a4_wiedergefunden_von_10": 10,
+     "a4_stabil_8b1": true,
+     "r2": 5,
+     "r4": 10,
+     "r5": 8,
+     "urteil": "reproduziert",
+     "r5_partner": {},
+     "r5_im_rest": 2
+    },
+    {
+     "id": 28,
+     "bekannt": null,
+     "fenster_a4": 68,
+     "a4_wiedergefunden_von_10": 9,
+     "a4_stabil_8b1": true,
+     "r2": 0,
+     "r4": 10,
+     "r5": 4,
+     "urteil": "nicht reproduziert",
+     "r5_partner": {
+      "K42": 9,
+      "K37": 8,
+      "K27": 7,
+      "K45": 5,
+      "K34": 5,
+      "K38": 4,
+      "K47": 2,
+      "K22": 1
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 37,
+     "bekannt": null,
+     "fenster_a4": 84,
+     "a4_wiedergefunden_von_10": 10,
+     "a4_stabil_8b1": true,
+     "r2": 0,
+     "r4": 6,
+     "r5": 3,
+     "urteil": "nicht reproduziert",
+     "r5_partner": {
+      "K28": 6,
+      "K42": 6,
+      "K45": 5,
+      "K38": 3,
+      "K27": 3,
+      "K47": 2,
+      "K34": 2
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 40,
+     "bekannt": null,
+     "fenster_a4": 71,
+     "a4_wiedergefunden_von_10": 6,
+     "a4_stabil_8b1": false,
+     "r2": 2,
+     "r4": 0,
+     "r5": 2,
+     "urteil": "nicht reproduziert",
+     "r5_partner": {
+      "K43": 5,
+      "K46": 4,
+      "K39": 3,
+      "K48": 3,
+      "K41": 2,
+      "K38": 2,
+      "K50": 2,
+      "K36": 1
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 46,
+     "bekannt": null,
+     "fenster_a4": 48,
+     "a4_wiedergefunden_von_10": 9,
+     "a4_stabil_8b1": true,
+     "r2": 2,
+     "r4": 7,
+     "r5": 5,
+     "urteil": "teilweise",
+     "r5_partner": {
+      "K38": 9,
+      "K43": 9,
+      "K40": 4,
+      "K48": 4,
+      "K41": 3,
+      "K39": 2,
+      "K35": 2,
+      "K36": 1,
+      "K50": 1
+     },
+     "r5_im_rest": 0
+    },
+    {
+     "id": 52,
+     "bekannt": "Sättigung",
+     "fenster_a4": 24,
+     "a4_wiedergefunden_von_10": 10,
+     "a4_stabil_8b1": true,
+     "r2": 10,
+     "r4": 10,
+     "r5": 10,
+     "urteil": "reproduziert",
+     "r5_partner": {},
+     "r5_im_rest": 0
+    }
+   ],
+   "neue_komponenten": []
+  }
+ },
+ "pydbt_commit": [
+  "e6a483eeffdaf06e849a0f04664e129833b277d9"
+ ],
+ "pydbt_pfad": [
+  "C:\\Users\\wechs\\Desktop\\openmyconet_extern\\pydbt_next\\pydbt"
+ ],
+ "urteil": {
+  "stabile_a4_kandidaten": 11,
+  "davon_reproduziert": 4,
+  "r2_reproduziert": 4,
+  "v2_reproduziert": true,
+  "nachbarschaft_erklaert_abweichung": "nicht",
+  "gegenprobe_nicht_reproduziert": [
+   "P K13"
+  ],
+  "unter_vorbehalt": true
+ }
+}

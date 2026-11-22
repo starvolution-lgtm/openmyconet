@@ -1,14 +1,16 @@
-# Nachrechnung von Phase A mit pydbt: Bericht R0–R4
+# Nachrechnung von Phase A mit pydbt: Bericht R0–R5
 
-Stand 17.11.2026 · Regeln `NACHRECHNUNG_PYDBT.md` (Abschnitte 6, 7a–7e, alle vor dem jeweiligen
+Stand 22.11.2026 · Regeln `NACHRECHNUNG_PYDBT.md` (Abschnitte 6, 7a–7f, alle vor dem jeweiligen
 Lauf festgelegt) · pydbt `4a4b33e` (0.0.125), Python 3.13.17, C-Bibliothek geladen · Merkmale
 `mv1` aus A3 (sha256 je Lauf in den Lauf-Metadaten) · 140 pydbt-Läufe (R1 + R2 je 20, R3 100)
-und 20 Läufe unserer Karte (R4), alle ohne Fehler. Zwischenfassung (R0–R2) vom 15.11. in der Git-Historie.
+und 20 Läufe unserer Karte (R4), alle ohne Fehler. R5: 20 Läufe mit der neuen pydbt-Fassung
+`e6a483e` (Zweig `features-next-release`), ebenfalls ohne Fehler. Zwischenfassung (R0–R2) vom 15.11. in der Git-Historie.
 
 > **SIMULATION.** Grundlage sind die Sandbox-Szenarien `sbx-gen-1.0`. Es sind keine Messwerte.
 > Die Ergebnisse sagen etwas über die Verfahren, nie über Biologie.
 
 Dateien: `r0.json`, `r1_r2.json` (V1–V3), `ursache_r2.json` (Ursachensuche), `v4.json` (V4), `r4.json` (R4),
+`r5_technik.json` + `r5.json` (R5),
 `nulldaten.json` (Prüfsummen der Nulldaten). Gewichte und Nulldaten (`laeufe/`, `nulldaten/`)
 bleiben lokal.
 
@@ -21,6 +23,10 @@ betrifft fast nur Spike-Gruppen, die schon in A4 als Lage-Fragmente eingestuft w
 fasst sie zu größeren Gruppen zusammen. Die Ursache ist nicht abschließend geklärt (Abschnitt 5).
 Nach R4 (Abschnitt 5b) erklärt der größere Endradius von pydbt die Abweichung **teilweise**, und
 das nur unter Vorbehalt. Das Muster der Verluste ist bei unserer Karte ein anderes.
+Nach R5 (Abschnitt 5c, neue pydbt-Fassung mit gleichem σ-Verlauf wie unsere Karte) erklärt die
+Nachbarschaft die Abweichung **nicht**: Wieder sind nur 4 der 11 stabilen Kandidaten reproduziert.
+Auch das gilt unter Vorbehalt (P K13 nur 7/10). Die Ursache liegt damit im Training selbst
+(online statt Batch, Lernrate, Startwerte); welcher dieser drei Punkte, bleibt offen.
 
 **V4** (Abschnitt 6) bestätigt dagegen das Bild aus A4: Die globale Schwelle bestehen unter pydbt
 nur die beiden Sättigungen und die Spike-Gruppe der Fenstermitte. Die Spike-Gruppe hat pydbt
@@ -188,6 +194,59 @@ Topologiefehler spricht das dafür, dass der größere Teil der Abweichung im Tr
 (online statt Batch, Initialisierung, Lernrate). Das ist eine Deutung und kein Ergebnis nach
 den Regeln.
 
+## 5c. R5: pydbt mit angeglichener Nachbarschaft (Regeln 7f, vor dem Lauf festgelegt)
+
+Anlass: Die Entwickler haben pydbt erweitert (Zweig `features-next-release`, Commit `e6a483e`).
+Mit ihrem Vorschlag `start_radius=29, end_radius=0.5, EXPONENTIAL_SIGMA, KERNEL_WIDTH, seed=s`
+läuft σ genau wie in `karte-v1` von 15 auf 0,75. Sonst wie R2: 40 × 60 Torus, 40 Epochen, Seeds
+0–9, Sätze P und PL, Auswertung mit unserem Code. Etwa 37 min je Lauf.
+
+**R5-0 Technik** (`r5_technik.json`): pydbt-eigene Trainingstests 28/28 bestanden; zweimal
+`seed=0` ergibt identische Gewichte und Gewinnerneuronen; unser Code findet dieselben
+Gewinnerneuronen (Anteil 1,0); σ-Verlauf gleich wie `karte-v1` (Abweichung 0, σ 15 → 0,75); V0
+auf Chainlink 10 × 15: ARI-Median 1,0. Alle Läufe haben pydbt nachweislich aus dem neuen
+Arbeitsordner geladen (Pfad und Commit je Lauf in den Metadaten).
+
+| Satz | Kandidat | A4 | R2 pydbt alt | R4 unsere, σ 1,0 | **R5 pydbt neu** | R5 verschmolzen mit |
+|---|---|---|---|---|---|---|
+| P | K3 | 10 | 2 | 9 | **6** | K10 (5/10) |
+| P | K10 | 8 | 2 | 1 | **5** | K3 (4/10) |
+| P | K13 Sprung | 9 | 8 | 7 | **7** | K11 (10/10) |
+| P | K16 Sättigung | 10 | 10 | 10 | **10** | – |
+| PL | K1 | 8 | 3 | 3 | **7** | K2 (6/10) |
+| PL | K2 Sprung | 10 | 10 | 10 | **10** | – |
+| PL | K13 Reaktion | 10 | 5 | 10 | **8** | 2× in der größten Komponente |
+| PL | K28 | 9 | 0 | 10 | **4** | K42 (9/10), K37 (8/10), K27 (7/10) |
+| PL | K37 | 10 | 0 | 6 | **3** | K28 (6/10), K42 (6/10), K45 (5/10) |
+| PL | K46 | 9 | 2 | 7 | **5** | K38 (9/10), K43 (9/10) |
+| PL | K52 Sättigung | 10 | 10 | 10 | **10** | – |
+
+(Die 11 in A4 stabilen Kandidaten. Wiedergefunden von 10 Läufen, Jaccard ≥ 0,5 mit der
+A4-Seed-0-Karte. Nicht stabil in A4 und nur berichtet: P K2 5/10, PL K3 4/10, PL K6 2/10,
+PL K40 2/10.)
+
+**Urteil nach 7f:** V2 ist reproduziert (beide Sättigungen 10/10, Reaktion 8/10), aber nur
+**4 der 11** stabilen Kandidaten (P K16, PL K2, PL K13, PL K52), genauso viele wie in R2. Nach
+7f erklärt die Nachbarschaft die Abweichung damit **nicht**; die Ursache liegt im Training selbst
+und bleibt in diesem Rahmen offen. **Gegenprobe:** P K13 wird nur in 7 von 10 Läufen
+wiedergefunden (R2: 8), das Urteil gilt deshalb **unter Vorbehalt**. Am Urteil ändert der
+Vorbehalt nichts: Selbst mit P K13 wären es 5 der 11 und damit weiter „nicht“.
+
+**Nur berichtet** (Mediane): QE P / PL 1,21 / 1,67, TE 0,155 / 0,168, Gruppen 3 / 4, Inseln
+10 / 30. Der Topologiefehler liegt zwischen A4 (0,115) und dem alten pydbt (0,22). Eine neue
+Komponente in ≥ 5 Läufen (P, 1 299 Fenster, 5/10) trifft den nächsten A4-Kandidaten mit Jaccard
+0,48, knapp unter der Grenze.
+
+**Beschreibend, ohne neue Regel:**
+- Die Reaktion ist wieder da (R2 5/10, R5 8/10). Der alte, auf 1 gerundete Endradius erklärt
+  vermutlich diesen einen Verlust (Deutung).
+- Die Lage-Fragmente der PL-Fenstermitte (K28, K37, K46) verschmelzen weiter, jetzt mit
+  wechselnden Nachbarn (K42, K45, K38, K43). Unsere Karte hält sie bei gleichem σ getrennt.
+- P K3 und P K10 gehen in etwa der Hälfte der Läufe zusammen, wie unter dem alten pydbt.
+- Mit gleichem σ-Verlauf und gleicher Kernform bleibt als Unterschied nur, wie trainiert wird:
+  pydbt rechnet online (Fenster für Fenster, Lernrate 0,5 → 0,1, gleichverteilte Startwerte),
+  `karte-v1` im Batch. R5 kann diese drei Punkte nicht trennen.
+
 ## 6. Was das für Phase A heißt
 
 - **Stabil über beide Umsetzungen:** Sättigung, Sprung am Reaktionsbeginn (PL K2) und Sprung in
@@ -213,7 +272,9 @@ den Regeln.
 ## 8. Offen
 
 - Ursache der Abweichung: Nach R4 erklärt der Endradius sie nur teilweise und unter Vorbehalt
-  (5b). Ob Online-Training, Initialisierung oder Lernrate den Rest ausmachen, ist nicht
-  geprüft. Weitere Läufe gibt es nur nach neuer Absprache.
+  (5b), nach R5 die Nachbarschaft insgesamt nicht (5c). Ob Online-Training, Lernrate oder
+  Startwerte den Unterschied ausmachen, ist nicht geprüft. Für die neue pydbt-Fassung gibt es
+  keine Nullläufe (kein V4, R6 nur nach neuer Absprache). Weitere Läufe gibt es nur nach neuer
+  Absprache.
 - Rückfrage an die Entwickler (16.11. gestellt): Lässt sich in pydbt ein Endradius unter 1
   einstellen, und wie grenzen sie Inseln ab?
