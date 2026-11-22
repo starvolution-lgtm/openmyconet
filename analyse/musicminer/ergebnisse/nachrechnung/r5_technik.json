@@ -1,0 +1,50 @@
+{
+ "schritt": "R5-0",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 7f",
+ "pydbt_commit": "e6a483eeffdaf06e849a0f04664e129833b277d9",
+ "pydbt_geladen_aus": "C:\\Users\\wechs\\Desktop\\openmyconet_extern\\pydbt_next\\pydbt",
+ "c_bibliothek_geladen": true,
+ "python": "3.13.17",
+ "numpy": "2.3.5",
+ "determinismus": {
+  "gewichte_gleich": true,
+  "bmu_gleich": true,
+  "bmu_wie_pydbt": 1.0
+ },
+ "sigma_verlauf": {
+  "40x60": {
+   "max_abweichung_exakt": 0.0,
+   "sigma_start_ende": [
+    15.0,
+    0.75
+   ]
+  },
+  "10x15": {
+   "max_abweichung_exakt": 0.0,
+   "sigma_start_ende": [
+    3.75,
+    0.75
+   ],
+   "max_abweichung_ausgabe_gerundet": 0.002496513900434927
+  }
+ },
+ "sigma_ok": true,
+ "v0_chainlink_10x15": {
+  "ari": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "median": 1.0,
+  "halt": false
+ },
+ "technik_ok": true,
+ "r5_freigegeben": true
+}

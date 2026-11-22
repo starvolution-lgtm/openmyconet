@@ -10,7 +10,9 @@ Läuft in der pydbt-Umgebung (Python 3.13):
     PYTHONPATH=. MPLBACKEND=Agg <openmyconet_extern>/venv_pydbt/Scripts/python.exe \
         -m werkzeuge.nachrechnung_laeufe <pfad zum pydbt-Klon> [arbeiter-name]
 
-MM_SCHRITTE=R3: Nullmodelle (N1/N2 je Seeds 0–24, R2-Parameter) statt R1/R2. Die Nulldaten
+MM_SCHRITTE=R3: Nullmodelle (N1/N2 je Seeds 0–24, R2-Parameter) statt R1/R2.
+MM_SCHRITTE=R5: angeglichene Nachbarschaft (7f), nur mit dem Zweig features-next-release
+(PYTHONPATH auf dessen Arbeitsordner; der geladene pydbt-Pfad muss im Klon liegen). Die Nulldaten
 erzeugt vorher `werkzeuge.nachrechnung_nulldaten` im Analyse-venv (gleicher Code wie A4).
 MM_PROBE=1: Kurzlauf (2 Epochen, 2 000 Fenster, 1 Seed) nach ergebnisse/nachrechnung/probe/.
 SIMULATION: Grundlage sind die Merkmale aus Phase A (Simulationsdaten, keine Messwerte).
@@ -43,6 +45,10 @@ SCHRITTE = {
     'R2': {'rows': 40, 'cols': 60, 'epochs': 40, 'toroid': True, 'start_radius': 29, 'end_radius': 1},
 }
 SCHRITTE['R3'] = dict(SCHRITTE['R2'])      # R3 = Nullmodelle mit R2-Parametern (Abschnitt 5)
+# R5 (7f): Vorschlag der Entwickler; Enum-Werte als Namen, Seed über den Parameter `seed`
+SCHRITTE['R5'] = {'rows': 40, 'cols': 60, 'epochs': 40, 'toroid': True, 'start_radius': 29, 'end_radius': 0.5,
+                  'neighborhood_cooling': 'EXPONENTIAL_SIGMA', 'neighborhood_cutoff': 'KERNEL_WIDTH'}
+MIT_SEED_PARAMETER = {'R5'}
 AKTIV = os.environ.get('MM_SCHRITTE', 'R1,R2').split(',')
 NULLDATEN = WURZEL / 'ergebnisse' / 'nachrechnung' / 'nulldaten'
 SAETZE = ('P', 'PL')
@@ -91,7 +97,23 @@ def main():
     klon = Path(sys.argv[1])
     name = sys.argv[2] if len(sys.argv) > 2 else f'a{os.getpid()}'
     niedrige_prioritaet_und_wach()
+    import pydbt
+    from pydbt.umatrix import training as T
     from pydbt.umatrix.training import EsomTrainingParams, esom_train, init_native_lib
+
+    geladen = Path(pydbt.__file__).resolve()
+    if klon.resolve() not in geladen.parents:
+        sys.exit(f'Falsches pydbt geladen: {geladen} (erwartet unter {klon})')
+
+    def parameter(schritt, seed):
+        param = dict(SCHRITTE[schritt])
+        if 'neighborhood_cooling' in param:
+            param['neighborhood_cooling'] = T.CoolingMethod[param['neighborhood_cooling']]
+        if 'neighborhood_cutoff' in param:
+            param['neighborhood_cutoff'] = T.NeighborhoodCutoff[param['neighborhood_cutoff']]
+        if schritt in MIT_SEED_PARAMETER:
+            param['seed'] = seed
+        return param
 
     with contextlib.redirect_stdout(io.StringIO()) as puffer:
         init_native_lib()
@@ -112,14 +134,15 @@ def main():
         with open(ZIEL / f'{name}.log', 'a', encoding='utf-8') as f:
             f.write(zeile + '\n')
 
-    log(f'Start: pydbt {commit[:7]}, C-Bibliothek {c_bib}, Python {platform.python_version()}')
+    log(f'Start: pydbt {commit[:7]} aus {geladen.parent}, C-Bibliothek {c_bib}, '
+        f'Python {platform.python_version()}')
     for schritt, satz, art, seed in auftraege():
         kennung = kennung_von(schritt, satz, art, seed)
         datei = ZIEL / f'{kennung}.npz'
         if datei.exists() or not sperren(ZIEL / f'{kennung}.lock'):
             continue
         try:
-            param = dict(SCHRITTE[schritt])
+            param = parameter(schritt, seed)
             if PROBE:
                 param['epochs'] = 2
             if art == 'echt':
@@ -138,7 +161,7 @@ def main():
             bmu = np.array([(b.bm_row_coord - 1) * p.cols + (b.bm_col_coord - 1) for b in bm.best_matches],
                            dtype=np.int32)
             meta = {'schritt': schritt, 'satz': satz, 'seed': seed, 'parameter': repr(p),
-                    'pydbt_commit': commit, 'c_bibliothek': c_bib, 'python': platform.python_version(),
+                    'pydbt_commit': commit, 'pydbt_pfad': str(geladen.parent), 'c_bibliothek': c_bib, 'python': platform.python_version(),
                     'numpy': np.__version__, 'merkmale_sha256': hashes[satz], 'daten': art,
                     'daten_sha256': daten_sha, 'fenster': len(x),
                     'sekunden': round(sek, 1), 'arbeiter': name, 'probe': PROBE,
