@@ -279,6 +279,78 @@ sie mit denselben Partnern verschmelzen wie in pydbt (`ursache_r2.json`).
 **Was R4 nicht entscheidet:** welcher Endradius „richtig“ ist, und auch nichts an Phase A.
 Abschnitt 8 gilt unverändert.
 
+## 7f. R5: pydbt mit angeglichener Nachbarschaft (freigegeben von Robby am 22.11.2026, vor jedem R5-Lauf)
+
+**Anlass:** Antwort der Entwickler (Boon Elschenbroich, erhalten 22.11.2026) auf den Bericht R0–R4. Sie
+haben pydbt erweitert: Radius als Gleitkommazahl (auch unter 1), exakter Radius statt abgerundet,
+Seed-Parameter, Nachbarschaftsgrenze an die Kernelbreite gekoppelt (3σ), exponentielle Abkühlung
+von σ. Mit ihrem Parametervorschlag stimmen σ-Verlauf und Kernform mit `karte-v1` überein. R5
+prüft, ob die Abweichung aus R2 dann verschwindet. Es bleiben Online- statt Batch-Training,
+Lernrate und Startwerte, und R5 kann diese drei **nicht** voneinander trennen.
+
+**Version (Abschnitt 2: neuer, gekennzeichneter Lauf):** Zweig `features-next-release`, Commit
+`e6a483eeffdaf06e849a0f04664e129833b277d9`, als eigener Arbeitsordner
+`openmyconet_extern/pydbt_next` (git worktree). Der Klon mit `4a4b33e` bleibt unverändert; R1–R4
+gelten nur für `4a4b33e`. Der Diff gegenüber `4a4b33e` betrifft nur `pydbt/umatrix/training.py`
+und die Tests; die C-Bibliothek ist unverändert und bekommt den Radius als Gleitkommazahl.
+Gleiche Umgebung `venv_pydbt` (Python 3.13.17). Weil dort `4a4b33e` als bearbeitbare Installation
+eingetragen ist, wird pydbt über `PYTHONPATH` aus `pydbt_next` geladen; jeder Lauf protokolliert
+den tatsächlich geladenen Pfad und den Commit, und ein Lauf mit falschem Pfad ist ungültig.
+
+**Gelesen vor der Festlegung (aus dem Code, nicht aus der Mail):**
+- `EXPONENTIAL_SIGMA`: σ_e = σ_start · (σ_ende/σ_start)^(e/(E−1)) mit σ = (Radius + 1)/2. Mit
+  Radius 29 → 0,5 ist das σ 15 → 0,75, also **genau** die Formel von `karte-v1`.
+- `KERNEL_WIDTH`: angepasst werden alle Neuronen bis 3σ; der Gauß-Kernel selbst nutzt den exakten
+  Radius. Bei σ ≥ 6,7 (3σ ≥ 20, halbe Kartenhöhe) ist das die ganze Karte. `karte-v1` schneidet
+  gar nicht ab; der Unterschied liegt unter 1,1 % des Kernels.
+- `seed`: eigener Zufallsgenerator (`default_rng(seed)`) für Startwerte und Reihenfolge; ersetzt
+  das bisherige `np.random.seed`.
+- Unverändert: Lernrate linear 0,5 → 0,1, Startwerte gleichverteilt zwischen Min. und Max.,
+  Rundung auf 4 Stellen.
+
+**R5-0 Technik (vor R5, auf Chainlink, Minuten):**
+1. pydbt-eigene Trainingstests des neuen Zweigs laufen durch.
+2. Zweimal `seed=0` ergibt identische Gewichte und Gewinnerneuronen; unser Code findet aus den
+   Gewichten dieselben Gewinnerneuronen (Anteil 1,0).
+3. Der protokollierte Radius je Epoche, umgerechnet in σ, stimmt mit dem σ-Verlauf von `karte-v1`
+   überein (größte Abweichung < 10⁻⁹).
+4. Nur berichtet: V0 auf Chainlink 10 × 15 mit der Zuordnung aus 7c und den neuen Optionen
+   (`start_radius=6.5, end_radius=0.5`, `EXPONENTIAL_SIGMA`, `KERNEL_WIDTH`). Trennt pydbt die
+   Ringe dann nicht mehr (ARI < 0,9), wird **vor R5 angehalten** und mit den Entwicklern geklärt.
+
+Scheitert 1–3, wird R5 nicht gerechnet und die Ursache zuerst geklärt.
+
+**Lauf R5:** genau der Vorschlag der Entwickler,
+`EsomTrainingParams.build(rows=40, cols=60, epochs=40, start_radius=29, end_radius=0.5,
+neighborhood_cooling=CoolingMethod.EXPONENTIAL_SIGMA, neighborhood_cutoff=NeighborhoodCutoff.KERNEL_WIDTH,
+seed=s)`, alle übrigen Werte Standard (toroidal, Lernrate, Startwerte, Rundung). Seeds s = 0–9,
+Sätze P und PL, dieselben Merkmale wie A4 (sha256 je Lauf). 20 Läufe, zu viert parallel,
+geschätzt 2–4 h. Auswertung genau wie R2 (Abschnitt 4, V1–V3): Gruppen nach Regel v2 mit unserem
+Code, Wiederfinden mit Jaccard ≥ 0,5 gegen die A4-Seed-0-Karte.
+
+**Entscheidung (vorab).** Gezählt werden die 11 in A4 stabilen Kandidaten (8b.1), wie in V3 für R2:
+- **Nachbarschaft erklärt die Abweichung weitgehend:** V2 reproduziert (beide Sättigungen und die
+  Reaktion in ≥ 8 von 10 Läufen) **und** mindestens 8 der 11 stabilen Kandidaten reproduziert
+  (zwei Drittel, wie im Gesamturteil).
+- **teilweise:** nicht der erste Fall, aber mindestens 6 der 11 reproduziert (R2: 4).
+- **nicht:** höchstens 5 der 11 reproduziert. Die Ursache liegt dann im Training selbst (online
+  statt Batch, Lernrate, Startwerte) und bleibt in diesem Rahmen offen.
+
+**Gegenprobe:** Die 4 in R2 reproduzierten Kandidaten (P K16, P K13, PL K52, PL K2) sollten
+reproduziert bleiben. Fehlt einer, wird das berichtet, und das Urteil gilt nur unter Vorbehalt.
+
+**Nur berichtet:** QE, TE, Zahl der Gruppen und Inseln (neben A4, R2, R4); neue Komponenten in
+≥ 5 Läufen; für nicht reproduzierte Kandidaten die Verschmelzungspartner wie in `ursache_r2.json`;
+Laufzeit.
+
+**Was R5 nicht entscheidet:**
+- Das Gesamturteil der Nachrechnung (Abschnitt 6) bleibt für `4a4b33e` „abweichend“. R5 ist eine
+  neue Version; für sie gibt es keine Nullläufe und damit kein V4, also auch kein „bestätigt“.
+  Nullläufe mit R5-Parametern (R6) nur nach neuer Absprache.
+- Nichts an Phase A (Abschnitt 6, letzter Punkt, und Abschnitt 8 gelten unverändert). Fällt R5
+  „besser“ aus, wird deshalb nicht diese Umsetzung gewählt.
+- Ergebnisse dürfen gezeigt werden (7b), der pydbt-Code bleibt außerhalb dieses Repositorys.
+
 ## 8. Was ausdrücklich nicht dazugehört
 
 - Keine Änderung an Phase A, an den Kriterien v2/E1/E2 oder an Phase B.
