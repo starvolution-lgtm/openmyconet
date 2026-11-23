@@ -1,0 +1,1474 @@
+{
+ "hinweis": "MESSWERTE VON BUFFI ET AL. (Mendeley Data, doi 10.17632/srkxbkh6sp.1, CC BY 4.0), nicht von OpenMycoNet",
+ "regeln": "FREMDDATEN_BUFFI.md, Abschnitt 6a",
+ "stand": "Vorhersage vor Kenntnis der wahren Zuordnung; danach unverändert",
+ "kanalzuordnung_annahme": {
+  "pilz": [
+   1,
+   3,
+   5,
+   9,
+   11,
+   13
+  ],
+  "leer": [
+   7,
+   15
+  ]
+ },
+ "dateien": {
+  "calcimycin": {
+   "zaehlt": true,
+   "info": {
+    "datei": "calcimycin",
+    "sha256": "cdd3a6706dbb6bc75ccd865527757e24ca06e378c62ec8635cfde787c8383ea3",
+    "zugabe": [
+     10145882,
+     10146338
+    ],
+    "zugabe_h": 169.09803333333332,
+    "vorher": [
+     5825882,
+     10145882
+    ],
+    "nachher": [
+     10206338,
+     14526338
+    ],
+    "nachher_h": 71.99999999999999,
+    "fenster_vorher": 69112,
+    "fenster_nachher": 69112,
+    "verworfen_nan": {
+     "vorher": 0,
+     "nachher": 0
+    },
+    "merkmale_behalten": [
+     "streuung",
+     "kurtosis",
+     "ausschlaege",
+     "max_ausschlag",
+     "band_0_0.1",
+     "band_0.1_0.5",
+     "band_0.5_1.5",
+     "band_1.5_4",
+     "band_4_8.3",
+     "flachheit",
+     "ak_1",
+     "ak_1s",
+     "gleich_folge"
+    ]
+   },
+   "esom": {
+    "vorhersage": {
+     "stoff": [
+      3,
+      9,
+      11,
+      15
+     ],
+     "loesungsmittel": [
+      1,
+      5,
+      13,
+      7
+     ]
+    },
+    "seeds_mit_dieser_vorhersage": 5,
+    "unsicher": false,
+    "gleichstand_bei_mehrheit": false,
+    "je_seed": [
+     {
+      "seed": 0,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.9255980213168213,
+      "abstand_zum_zweiten": 0.03773809650696425,
+      "n_komponenten": 35
+     },
+     {
+      "seed": 1,
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "wert": 0.9439595742895179,
+      "abstand_zum_zweiten": 0.013411517066287848,
+      "n_komponenten": 36
+     },
+     {
+      "seed": 2,
+      "stoff": [
+       1,
+       3,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       11,
+       13,
+       7
+      ],
+      "wert": 0.9287914291671587,
+      "abstand_zum_zweiten": 0.0025944976983020007,
+      "n_komponenten": 31
+     },
+     {
+      "seed": 3,
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "wert": 0.9327129316495804,
+      "abstand_zum_zweiten": 0.007088448599741337,
+      "n_komponenten": 37
+     },
+     {
+      "seed": 4,
+      "stoff": [
+       1,
+       5,
+       11,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       13,
+       15
+      ],
+      "wert": 0.908136769196596,
+      "abstand_zum_zweiten": 0.001186724488253521,
+      "n_komponenten": 35
+     },
+     {
+      "seed": 5,
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "wert": 0.9649366245273996,
+      "abstand_zum_zweiten": 0.016897799746784514,
+      "n_komponenten": 24
+     },
+     {
+      "seed": 6,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.9376105539195625,
+      "abstand_zum_zweiten": 0.001840995538493706,
+      "n_komponenten": 40
+     },
+     {
+      "seed": 7,
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "wert": 0.9358426381581293,
+      "abstand_zum_zweiten": 0.024339362146798216,
+      "n_komponenten": 29
+     },
+     {
+      "seed": 8,
+      "stoff": [
+       1,
+       3,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       11,
+       13,
+       7
+      ],
+      "wert": 0.9197379138567411,
+      "abstand_zum_zweiten": 0.012038260936166556,
+      "n_komponenten": 32
+     },
+     {
+      "seed": 9,
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "wert": 0.9124939320619935,
+      "abstand_zum_zweiten": 0.016243718573106247,
+      "n_komponenten": 29
+     }
+    ],
+    "minuten_median": 2.6832431137561796,
+    "gleichauf_mit_mehrheit": [
+     {
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "seeds": 5
+     }
+    ],
+    "alle_stimmen": [
+     {
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "seeds": 5
+     },
+     {
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "seeds": 2
+     },
+     {
+      "stoff": [
+       1,
+       3,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       11,
+       13,
+       7
+      ],
+      "seeds": 2
+     },
+     {
+      "stoff": [
+       1,
+       5,
+       11,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       13,
+       15
+      ],
+      "seeds": 1
+     }
+    ]
+   },
+   "merkmalsaenderung": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      9,
+      11,
+      15
+     ],
+     "loesungsmittel": [
+      3,
+      5,
+      13,
+      7
+     ]
+    },
+    "wert": 0.1400166886132423,
+    "abstand_zum_zweiten": 0.055781498841951827
+   },
+   "lautstaerke": {
+    "vorhersage": {
+     "stoff": [
+      3,
+      5,
+      9,
+      7
+     ],
+     "loesungsmittel": [
+      1,
+      11,
+      13,
+      15
+     ]
+    },
+    "delta_log_streuung": {
+     "1": -0.8660355132433821,
+     "3": -1.227052454769723,
+     "5": -0.9423030202298941,
+     "9": -1.2920885585927855,
+     "11": -0.4391563335372579,
+     "13": -0.2510246071960345,
+     "7": -0.3242121136570115,
+     "15": 0.12001572289769546
+    }
+   }
+  },
+  "sodiumazide": {
+   "zaehlt": true,
+   "info": {
+    "datei": "sodiumazide",
+    "sha256": "502fe0dba4d065bfa848c5edc4e18b75a1938abd6ff59d4b99c46f9c3f67472a",
+    "zugabe": [
+     10363520,
+     10364677
+    ],
+    "zugabe_h": 172.7253333333333,
+    "vorher": [
+     6043520,
+     10363520
+    ],
+    "nachher": [
+     10424677,
+     14744677
+    ],
+    "nachher_h": 71.99999999999999,
+    "fenster_vorher": 69112,
+    "fenster_nachher": 69112,
+    "verworfen_nan": {
+     "vorher": 0,
+     "nachher": 0
+    },
+    "merkmale_behalten": [
+     "streuung",
+     "kurtosis",
+     "ausschlaege",
+     "max_ausschlag",
+     "band_0_0.1",
+     "band_0.1_0.5",
+     "band_0.5_1.5",
+     "band_1.5_4",
+     "band_4_8.3",
+     "flachheit",
+     "ak_1",
+     "ak_1s",
+     "gleich_folge"
+    ]
+   },
+   "esom": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      5,
+      9,
+      15
+     ],
+     "loesungsmittel": [
+      3,
+      11,
+      13,
+      7
+     ]
+    },
+    "seeds_mit_dieser_vorhersage": 3,
+    "unsicher": true,
+    "gleichstand_bei_mehrheit": true,
+    "je_seed": [
+     {
+      "seed": 0,
+      "stoff": [
+       1,
+       5,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       3,
+       11,
+       13,
+       7
+      ],
+      "wert": 0.007126916073707745,
+      "abstand_zum_zweiten": 0.00139494813872576,
+      "n_komponenten": 49
+     },
+     {
+      "seed": 1,
+      "stoff": [
+       1,
+       3,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       9,
+       11,
+       7
+      ],
+      "wert": 4.2870920756166164e-05,
+      "abstand_zum_zweiten": 0.00010891197410167752,
+      "n_komponenten": 50
+     },
+     {
+      "seed": 2,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.014939096874569846,
+      "abstand_zum_zweiten": 0.003833804627478621,
+      "n_komponenten": 47
+     },
+     {
+      "seed": 3,
+      "stoff": [
+       1,
+       5,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       3,
+       11,
+       13,
+       7
+      ],
+      "wert": 0.011547505215048326,
+      "abstand_zum_zweiten": 0.0042883187380716725,
+      "n_komponenten": 44
+     },
+     {
+      "seed": 4,
+      "stoff": [
+       1,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       5,
+       9,
+       15
+      ],
+      "wert": 0.010072690046841304,
+      "abstand_zum_zweiten": 0.0026461493014114934,
+      "n_komponenten": 46
+     },
+     {
+      "seed": 5,
+      "stoff": [
+       1,
+       5,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       3,
+       11,
+       13,
+       7
+      ],
+      "wert": 0.008751818971484582,
+      "abstand_zum_zweiten": 0.0012711809708094712,
+      "n_komponenten": 46
+     },
+     {
+      "seed": 6,
+      "stoff": [
+       1,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       5,
+       9,
+       15
+      ],
+      "wert": 0.031532508262278935,
+      "abstand_zum_zweiten": 0.004586347236425037,
+      "n_komponenten": 52
+     },
+     {
+      "seed": 7,
+      "stoff": [
+       1,
+       3,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       9,
+       11,
+       7
+      ],
+      "wert": 0.007873244963942705,
+      "abstand_zum_zweiten": 0.0009407281397963985,
+      "n_komponenten": 53
+     },
+     {
+      "seed": 8,
+      "stoff": [
+       1,
+       3,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       11,
+       13,
+       7
+      ],
+      "wert": 0.01253115049100062,
+      "abstand_zum_zweiten": 0.005119188808229369,
+      "n_komponenten": 48
+     },
+     {
+      "seed": 9,
+      "stoff": [
+       1,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       5,
+       9,
+       15
+      ],
+      "wert": 0.026790174793292043,
+      "abstand_zum_zweiten": 0.013859866474870253,
+      "n_komponenten": 50
+     }
+    ],
+    "minuten_median": 2.4721266090869904,
+    "gleichauf_mit_mehrheit": [
+     {
+      "stoff": [
+       1,
+       5,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       3,
+       11,
+       13,
+       7
+      ],
+      "seeds": 3
+     },
+     {
+      "stoff": [
+       1,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       5,
+       9,
+       15
+      ],
+      "seeds": 3
+     }
+    ],
+    "alle_stimmen": [
+     {
+      "stoff": [
+       1,
+       5,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       3,
+       11,
+       13,
+       7
+      ],
+      "seeds": 3
+     },
+     {
+      "stoff": [
+       1,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       5,
+       9,
+       15
+      ],
+      "seeds": 3
+     },
+     {
+      "stoff": [
+       1,
+       3,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       9,
+       11,
+       7
+      ],
+      "seeds": 2
+     },
+     {
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "seeds": 1
+     },
+     {
+      "stoff": [
+       1,
+       3,
+       9,
+       15
+      ],
+      "loesungsmittel": [
+       5,
+       11,
+       13,
+       7
+      ],
+      "seeds": 1
+     }
+    ]
+   },
+   "merkmalsaenderung": {
+    "vorhersage": {
+     "stoff": [
+      3,
+      5,
+      9,
+      15
+     ],
+     "loesungsmittel": [
+      1,
+      11,
+      13,
+      7
+     ]
+    },
+    "wert": 0.15658583091109923,
+    "abstand_zum_zweiten": 0.032368260147964956
+   },
+   "lautstaerke": {
+    "vorhersage": {
+     "stoff": [
+      9,
+      11,
+      13,
+      7
+     ],
+     "loesungsmittel": [
+      1,
+      3,
+      5,
+      15
+     ]
+    },
+    "delta_log_streuung": {
+     "1": -0.1683785270223357,
+     "3": -0.18265264971349993,
+     "5": -0.17425531447054388,
+     "9": -0.4594298745394578,
+     "11": -0.33686965152314086,
+     "13": -0.242196949243064,
+     "7": -0.046233067669187555,
+     "15": 0.015394521253530469
+    }
+   }
+  },
+  "voriconazole": {
+   "zaehlt": true,
+   "info": {
+    "datei": "voriconazole",
+    "sha256": "0e60a6de4a14b84772dbe527af58fbc136322c0df4af3d5c8c68006f7cbbe83c",
+    "zugabe": [
+     7372740,
+     7373539
+    ],
+    "zugabe_h": 122.87899999999999,
+    "vorher": [
+     3052740,
+     7372740
+    ],
+    "nachher": [
+     7433539,
+     10174922
+    ],
+    "nachher_h": 45.68971666666666,
+    "fenster_vorher": 69112,
+    "fenster_nachher": 43848,
+    "verworfen_nan": {
+     "vorher": 0,
+     "nachher": 0
+    },
+    "merkmale_behalten": [
+     "streuung",
+     "kurtosis",
+     "ausschlaege",
+     "max_ausschlag",
+     "band_0_0.1",
+     "band_0.1_0.5",
+     "band_0.5_1.5",
+     "band_1.5_4",
+     "band_4_8.3",
+     "flachheit",
+     "ak_1",
+     "ak_1s",
+     "gleich_folge"
+    ]
+   },
+   "esom": {
+    "vorhersage": {
+     "stoff": [
+      9,
+      11,
+      13,
+      15
+     ],
+     "loesungsmittel": [
+      1,
+      3,
+      5,
+      7
+     ]
+    },
+    "seeds_mit_dieser_vorhersage": 5,
+    "unsicher": false,
+    "gleichstand_bei_mehrheit": true,
+    "je_seed": [
+     {
+      "seed": 0,
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "wert": 0.8005573737816019,
+      "abstand_zum_zweiten": 0.0005672195816697201,
+      "n_komponenten": 45
+     },
+     {
+      "seed": 1,
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "wert": 0.8176825706597197,
+      "abstand_zum_zweiten": 0.0005463681528709019,
+      "n_komponenten": 53
+     },
+     {
+      "seed": 2,
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "wert": 0.8598103627437437,
+      "abstand_zum_zweiten": 0.0013541724418577594,
+      "n_komponenten": 46
+     },
+     {
+      "seed": 3,
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "wert": 0.8382948822032932,
+      "abstand_zum_zweiten": 0.0010701613727377435,
+      "n_komponenten": 53
+     },
+     {
+      "seed": 4,
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "wert": 0.8614112026222982,
+      "abstand_zum_zweiten": 0.0010148181848166349,
+      "n_komponenten": 48
+     },
+     {
+      "seed": 5,
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "wert": 0.8224787647510037,
+      "abstand_zum_zweiten": 0.0013692814169379286,
+      "n_komponenten": 45
+     },
+     {
+      "seed": 6,
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "wert": 0.6258141528721971,
+      "abstand_zum_zweiten": 0.000899359779415243,
+      "n_komponenten": 42
+     },
+     {
+      "seed": 7,
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "wert": 0.720598185090308,
+      "abstand_zum_zweiten": 0.001937900952257765,
+      "n_komponenten": 50
+     },
+     {
+      "seed": 8,
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "wert": 0.8131860798830362,
+      "abstand_zum_zweiten": 0.004041761592057602,
+      "n_komponenten": 49
+     },
+     {
+      "seed": 9,
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "wert": 0.7995763280148068,
+      "abstand_zum_zweiten": 0.0006938532135399855,
+      "n_komponenten": 49
+     }
+    ],
+    "minuten_median": 2.1640479385852815,
+    "gleichauf_mit_mehrheit": [
+     {
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "seeds": 5
+     },
+     {
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "seeds": 5
+     }
+    ],
+    "alle_stimmen": [
+     {
+      "stoff": [
+       9,
+       11,
+       13,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       7
+      ],
+      "seeds": 5
+     },
+     {
+      "stoff": [
+       9,
+       11,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       1,
+       3,
+       5,
+       15
+      ],
+      "seeds": 5
+     }
+    ]
+   },
+   "merkmalsaenderung": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      3,
+      11,
+      7
+     ],
+     "loesungsmittel": [
+      5,
+      9,
+      13,
+      15
+     ]
+    },
+    "wert": -0.15780520701173267,
+    "abstand_zum_zweiten": 0.007586234940903991
+   },
+   "lautstaerke": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      3,
+      9,
+      7
+     ],
+     "loesungsmittel": [
+      5,
+      11,
+      13,
+      15
+     ]
+    },
+    "delta_log_streuung": {
+     "1": 0.4182392694887547,
+     "3": 0.420490321708999,
+     "5": 0.18145999311844196,
+     "9": 0.250273666318547,
+     "11": 0.1812888399546133,
+     "13": 0.05105520262181562,
+     "7": -0.02878370567950328,
+     "15": 0.0015908832148736618
+    }
+   }
+  },
+  "cycloheximide": {
+   "zaehlt": false,
+   "info": {
+    "datei": "cycloheximide",
+    "sha256": "2e8caed5d867f27681b32970752bcd0bd48d66b7d0e362400ed535de81ea1964",
+    "zugabe": [
+     10105266,
+     10105690
+    ],
+    "zugabe_h": 168.4211,
+    "vorher": [
+     5785266,
+     10105266
+    ],
+    "nachher": [
+     10165690,
+     14485690
+    ],
+    "nachher_h": 71.99999999999999,
+    "fenster_vorher": 69112,
+    "fenster_nachher": 69112,
+    "verworfen_nan": {
+     "vorher": 0,
+     "nachher": 0
+    },
+    "merkmale_behalten": [
+     "streuung",
+     "kurtosis",
+     "ausschlaege",
+     "max_ausschlag",
+     "band_0_0.1",
+     "band_0.1_0.5",
+     "band_0.5_1.5",
+     "band_1.5_4",
+     "band_4_8.3",
+     "flachheit",
+     "ak_1",
+     "ak_1s",
+     "gleich_folge"
+    ]
+   },
+   "esom": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      5,
+      13,
+      7
+     ],
+     "loesungsmittel": [
+      3,
+      9,
+      11,
+      15
+     ]
+    },
+    "seeds_mit_dieser_vorhersage": 9,
+    "unsicher": false,
+    "gleichstand_bei_mehrheit": false,
+    "je_seed": [
+     {
+      "seed": 0,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.03865420053387786,
+      "abstand_zum_zweiten": 0.012566514147434149,
+      "n_komponenten": 33
+     },
+     {
+      "seed": 1,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.034965153872922816,
+      "abstand_zum_zweiten": 0.0295290732052641,
+      "n_komponenten": 32
+     },
+     {
+      "seed": 2,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.13682078007206178,
+      "abstand_zum_zweiten": 0.0230475388180843,
+      "n_komponenten": 37
+     },
+     {
+      "seed": 3,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.12228296357740742,
+      "abstand_zum_zweiten": 0.04207326619342766,
+      "n_komponenten": 32
+     },
+     {
+      "seed": 4,
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "wert": -0.007245402776663745,
+      "abstand_zum_zweiten": 0.006859692860141264,
+      "n_komponenten": 34
+     },
+     {
+      "seed": 5,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.08785373478143083,
+      "abstand_zum_zweiten": 0.027860260948304738,
+      "n_komponenten": 31
+     },
+     {
+      "seed": 6,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.04077510261149864,
+      "abstand_zum_zweiten": 0.009825960432890024,
+      "n_komponenten": 37
+     },
+     {
+      "seed": 7,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.17784148813545803,
+      "abstand_zum_zweiten": 0.042145910886208005,
+      "n_komponenten": 32
+     },
+     {
+      "seed": 8,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.07893668396012077,
+      "abstand_zum_zweiten": 0.02091787713646781,
+      "n_komponenten": 40
+     },
+     {
+      "seed": 9,
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "wert": 0.014958636686501325,
+      "abstand_zum_zweiten": 0.017065185915691727,
+      "n_komponenten": 32
+     }
+    ],
+    "minuten_median": 2.779863578081131,
+    "gleichauf_mit_mehrheit": [
+     {
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "seeds": 9
+     }
+    ],
+    "alle_stimmen": [
+     {
+      "stoff": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "loesungsmittel": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "seeds": 9
+     },
+     {
+      "stoff": [
+       3,
+       9,
+       11,
+       15
+      ],
+      "loesungsmittel": [
+       1,
+       5,
+       13,
+       7
+      ],
+      "seeds": 1
+     }
+    ]
+   },
+   "merkmalsaenderung": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      5,
+      13,
+      7
+     ],
+     "loesungsmittel": [
+      3,
+      9,
+      11,
+      15
+     ]
+    },
+    "wert": 0.5300442644689571,
+    "abstand_zum_zweiten": 0.2954562645629642
+   },
+   "lautstaerke": {
+    "vorhersage": {
+     "stoff": [
+      1,
+      5,
+      13,
+      15
+     ],
+     "loesungsmittel": [
+      3,
+      9,
+      11,
+      7
+     ]
+    },
+    "delta_log_streuung": {
+     "1": -1.2933953375785612,
+     "3": -0.5612371846305519,
+     "5": -1.359914018417369,
+     "9": -0.08224826182919975,
+     "11": -0.38914857247164525,
+     "13": -0.8658417966185314,
+     "7": -0.05211122688831943,
+     "15": -0.7087450135852534
+    }
+   }
+  }
+ }
+}

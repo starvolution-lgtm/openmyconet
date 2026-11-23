@@ -197,6 +197,13 @@ gepusht, bevor die wahre Zuordnung bekannt ist. Danach wird an der Vorhersage ni
 - Gibt es die wahre Zuordnung nicht (keine Antwort, nicht mehr bekannt), bleibt F2 **offen**; die
   Vorhersage bleibt veröffentlicht und wird nicht nachträglich gedeutet.
 
+### 6b. Nachtrag Gleichstand (ENTWURF 23.11.2026, nach der Vorhersage, vor Kenntnis der Wahrheit)
+
+Abschnitt 6a regelt nicht, was gilt, wenn bei der ESOM zwei Vorhersagen gleich viele Seeds
+haben (eingetreten bei Natriumazid 3/3 und Voriconazol 5/5). Vorschlag: **Bei Gleichstand zählt
+die ESOM-Vorhersage dieser Datei als nicht richtig** (die strengere Lesart). Alle gleichauf
+liegenden Vorhersagen sind in `f2_vorhersage.json` festgeschrieben.
+
 **Nur berichtet (nach Eingang der Zuordnung):** ob der Leerkanal mit Stoff in Δ den Pilzkanälen
 mit Stoff ähnlicher ist als denen mit Lösungsmittel. Das wäre ein Hinweis auf einen
 Elektroden- oder Lösungseffekt statt einer Wirkung auf den Pilz, nie ein Beweis.

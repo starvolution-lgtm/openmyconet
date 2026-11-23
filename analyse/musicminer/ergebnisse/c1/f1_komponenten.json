@@ -1,0 +1,747 @@
+{
+ "hinweis": "MESSWERTE VON BUFFI ET AL. (Mendeley Data, doi 10.17632/srkxbkh6sp.1, CC BY 4.0), nicht von OpenMycoNet",
+ "regeln": "FREMDDATEN_BUFFI.md, Abschnitt 7 (nur berichtet)",
+ "dateien": {
+  "calcimycin": {
+   "groesste_komponente_anteil": 0.9924,
+   "stabile_komponenten": [
+    {
+     "fenster": 12,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.083,
+      "5": 0.167,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.25,
+      "15": 0.5
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      8.2,
+      11.7,
+      14.6
+     ]
+    },
+    {
+     "fenster": 40,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.025,
+      "5": 0.075,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.05,
+      "7": 0.45,
+      "15": 0.4
+     },
+     "hauptkanal": 7,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      9.3,
+      12.6,
+      17.5
+     ]
+    },
+    {
+     "fenster": 13,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.077,
+      "3": 0.0,
+      "5": 0.0,
+      "9": 0.154,
+      "11": 0.077,
+      "13": 0.154,
+      "7": 0.231,
+      "15": 0.308
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      9.9,
+      12.2,
+      19.5
+     ]
+    },
+    {
+     "fenster": 28,
+     "wiedergefunden_von_10": 9,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.0,
+      "5": 0.0,
+      "9": 0.071,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.429,
+      "15": 0.5
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      8.4,
+      12.6,
+      14.9
+     ]
+    },
+    {
+     "fenster": 82,
+     "wiedergefunden_von_10": 10,
+     "kanalanteile": {
+      "1": 0.012,
+      "3": 0.012,
+      "5": 0.012,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.012,
+      "7": 0.61,
+      "15": 0.341
+     },
+     "hauptkanal": 7,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      4.4,
+      8.2,
+      12.4
+     ]
+    },
+    {
+     "fenster": 17,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.0,
+      "5": 0.0,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.647,
+      "15": 0.353
+     },
+     "hauptkanal": 7,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.8,
+      9.9,
+      14.9
+     ]
+    },
+    {
+     "fenster": 22,
+     "wiedergefunden_von_10": 10,
+     "kanalanteile": {
+      "1": 0.091,
+      "3": 0.0,
+      "5": 0.0,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.409,
+      "15": 0.5
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      6.1,
+      8.8,
+      12.6
+     ]
+    },
+    {
+     "fenster": 13,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.077,
+      "5": 0.231,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.385,
+      "15": 0.308
+     },
+     "hauptkanal": 7,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      8.9,
+      13.8,
+      16.0
+     ]
+    }
+   ]
+  },
+  "sodiumazide": {
+   "groesste_komponente_anteil": 0.9816,
+   "stabile_komponenten": [
+    {
+     "fenster": 31,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.323,
+      "3": 0.032,
+      "5": 0.065,
+      "9": 0.032,
+      "11": 0.032,
+      "13": 0.0,
+      "7": 0.032,
+      "15": 0.484
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      7.0,
+      13.7,
+      17.6
+     ]
+    },
+    {
+     "fenster": 20,
+     "wiedergefunden_von_10": 9,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 1.0,
+      "5": 0.0,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.0,
+      "15": 0.0
+     },
+     "hauptkanal": 3,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": true,
+     "stunden_utc_quartile": [
+      2.2,
+      2.8,
+      3.1
+     ]
+    },
+    {
+     "fenster": 24,
+     "wiedergefunden_von_10": 10,
+     "kanalanteile": {
+      "1": 0.042,
+      "3": 0.958,
+      "5": 0.0,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.0,
+      "15": 0.0
+     },
+     "hauptkanal": 3,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": true,
+     "stunden_utc_quartile": [
+      2.7,
+      3.1,
+      3.2
+     ]
+    },
+    {
+     "fenster": 22,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.273,
+      "3": 0.227,
+      "5": 0.091,
+      "9": 0.182,
+      "11": 0.045,
+      "13": 0.045,
+      "7": 0.0,
+      "15": 0.136
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      11.9,
+      18.3,
+      19.6
+     ]
+    },
+    {
+     "fenster": 31,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.548,
+      "3": 0.129,
+      "5": 0.0,
+      "9": 0.032,
+      "11": 0.032,
+      "13": 0.065,
+      "7": 0.0,
+      "15": 0.194
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      2.6,
+      8.9,
+      13.0
+     ]
+    },
+    {
+     "fenster": 29,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.552,
+      "3": 0.0,
+      "5": 0.207,
+      "9": 0.034,
+      "11": 0.0,
+      "13": 0.034,
+      "7": 0.0,
+      "15": 0.172
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      7.9,
+      15.4,
+      22.9
+     ]
+    },
+    {
+     "fenster": 29,
+     "wiedergefunden_von_10": 7,
+     "kanalanteile": {
+      "1": 0.621,
+      "3": 0.034,
+      "5": 0.069,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.138,
+      "7": 0.0,
+      "15": 0.138
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.0,
+      9.3,
+      15.4
+     ]
+    },
+    {
+     "fenster": 19,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.579,
+      "3": 0.158,
+      "5": 0.053,
+      "9": 0.0,
+      "11": 0.053,
+      "13": 0.053,
+      "7": 0.0,
+      "15": 0.105
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      3.2,
+      10.7,
+      14.3
+     ]
+    },
+    {
+     "fenster": 17,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.294,
+      "3": 0.176,
+      "5": 0.294,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.0,
+      "7": 0.0,
+      "15": 0.235
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.1,
+      11.3,
+      14.7
+     ]
+    },
+    {
+     "fenster": 107,
+     "wiedergefunden_von_10": 10,
+     "kanalanteile": {
+      "1": 0.355,
+      "3": 0.028,
+      "5": 0.075,
+      "9": 0.0,
+      "11": 0.009,
+      "13": 0.028,
+      "7": 0.047,
+      "15": 0.458
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.5,
+      9.0,
+      14.3
+     ]
+    },
+    {
+     "fenster": 16,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.25,
+      "3": 0.125,
+      "5": 0.062,
+      "9": 0.0,
+      "11": 0.062,
+      "13": 0.438,
+      "7": 0.0,
+      "15": 0.062
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      4.2,
+      11.1,
+      17.4
+     ]
+    }
+   ]
+  },
+  "voriconazole": {
+   "groesste_komponente_anteil": 0.9731,
+   "stabile_komponenten": [
+    {
+     "fenster": 41,
+     "wiedergefunden_von_10": 7,
+     "kanalanteile": {
+      "1": 0.268,
+      "3": 0.146,
+      "5": 0.049,
+      "9": 0.073,
+      "11": 0.049,
+      "13": 0.146,
+      "7": 0.0,
+      "15": 0.268
+     },
+     "hauptkanal": 1,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      8.5,
+      14.2,
+      17.7
+     ]
+    },
+    {
+     "fenster": 252,
+     "wiedergefunden_von_10": 9,
+     "kanalanteile": {
+      "1": 0.234,
+      "3": 0.067,
+      "5": 0.012,
+      "9": 0.032,
+      "11": 0.004,
+      "13": 0.008,
+      "7": 0.048,
+      "15": 0.595
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      7.3,
+      14.9,
+      18.0
+     ]
+    },
+    {
+     "fenster": 16,
+     "wiedergefunden_von_10": 7,
+     "kanalanteile": {
+      "1": 0.188,
+      "3": 0.125,
+      "5": 0.0,
+      "9": 0.062,
+      "11": 0.062,
+      "13": 0.0,
+      "7": 0.062,
+      "15": 0.5
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      8.0,
+      12.1,
+      17.5
+     ]
+    },
+    {
+     "fenster": 28,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.143,
+      "3": 0.071,
+      "5": 0.071,
+      "9": 0.036,
+      "11": 0.179,
+      "13": 0.464,
+      "7": 0.0,
+      "15": 0.036
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      3.0,
+      9.7,
+      15.7
+     ]
+    },
+    {
+     "fenster": 25,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.0,
+      "5": 0.24,
+      "9": 0.04,
+      "11": 0.0,
+      "13": 0.4,
+      "7": 0.0,
+      "15": 0.32
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      4.7,
+      6.3,
+      15.8
+     ]
+    },
+    {
+     "fenster": 57,
+     "wiedergefunden_von_10": 7,
+     "kanalanteile": {
+      "1": 0.158,
+      "3": 0.0,
+      "5": 0.018,
+      "9": 0.018,
+      "11": 0.0,
+      "13": 0.07,
+      "7": 0.018,
+      "15": 0.719
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      4.7,
+      15.4,
+      18.2
+     ]
+    },
+    {
+     "fenster": 12,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.083,
+      "3": 0.0,
+      "5": 0.167,
+      "9": 0.167,
+      "11": 0.083,
+      "13": 0.25,
+      "7": 0.0,
+      "15": 0.25
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.5,
+      10.8,
+      14.7
+     ]
+    },
+    {
+     "fenster": 241,
+     "wiedergefunden_von_10": 10,
+     "kanalanteile": {
+      "1": 0.0,
+      "3": 0.004,
+      "5": 0.32,
+      "9": 0.004,
+      "11": 0.004,
+      "13": 0.602,
+      "7": 0.004,
+      "15": 0.062
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      1.6,
+      3.4,
+      6.5
+     ]
+    },
+    {
+     "fenster": 36,
+     "wiedergefunden_von_10": 9,
+     "kanalanteile": {
+      "1": 0.028,
+      "3": 0.0,
+      "5": 0.056,
+      "9": 0.0,
+      "11": 0.0,
+      "13": 0.889,
+      "7": 0.0,
+      "15": 0.028
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": true,
+     "stunden_utc_quartile": [
+      3.6,
+      4.5,
+      5.6
+     ]
+    },
+    {
+     "fenster": 43,
+     "wiedergefunden_von_10": 10,
+     "kanalanteile": {
+      "1": 0.093,
+      "3": 0.093,
+      "5": 0.023,
+      "9": 0.233,
+      "11": 0.093,
+      "13": 0.186,
+      "7": 0.047,
+      "15": 0.233
+     },
+     "hauptkanal": 9,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      3.9,
+      8.7,
+      14.8
+     ]
+    },
+    {
+     "fenster": 35,
+     "wiedergefunden_von_10": 8,
+     "kanalanteile": {
+      "1": 0.029,
+      "3": 0.029,
+      "5": 0.0,
+      "9": 0.029,
+      "11": 0.2,
+      "13": 0.371,
+      "7": 0.0,
+      "15": 0.343
+     },
+     "hauptkanal": 13,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      3.8,
+      8.0,
+      16.3
+     ]
+    },
+    {
+     "fenster": 25,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.12,
+      "3": 0.28,
+      "5": 0.04,
+      "9": 0.08,
+      "11": 0.2,
+      "13": 0.08,
+      "7": 0.0,
+      "15": 0.2
+     },
+     "hauptkanal": 3,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.2,
+      9.2,
+      11.5
+     ]
+    },
+    {
+     "fenster": 25,
+     "wiedergefunden_von_10": 6,
+     "kanalanteile": {
+      "1": 0.12,
+      "3": 0.04,
+      "5": 0.2,
+      "9": 0.12,
+      "11": 0.08,
+      "13": 0.16,
+      "7": 0.0,
+      "15": 0.28
+     },
+     "hauptkanal": 15,
+     "hauptkanal_ist_leer": true,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.8,
+      12.4,
+      15.9
+     ]
+    },
+    {
+     "fenster": 35,
+     "wiedergefunden_von_10": 5,
+     "kanalanteile": {
+      "1": 0.143,
+      "3": 0.029,
+      "5": 0.114,
+      "9": 0.2,
+      "11": 0.114,
+      "13": 0.2,
+      "7": 0.057,
+      "15": 0.143
+     },
+     "hauptkanal": 9,
+     "hauptkanal_ist_leer": false,
+     "kanaltypisch_80": false,
+     "stunden_utc_quartile": [
+      5.6,
+      11.1,
+      14.3
+     ]
+    }
+   ]
+  }
+ }
+}

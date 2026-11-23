@@ -2,7 +2,8 @@
 
 Dieses Protokoll fließt in den Gesamtbericht ein (auch zur fachlichen Beurteilung durch
 Prof. Ultsch). Es wird fortlaufend ergänzt und nachträglich nicht geschönt. Alle Ergebnisse
-beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (Phase B).
+beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (Phase B),
+Schritt C1 auf **veröffentlichte Messwerte von Buffi et al. 2025** (nicht von OpenMycoNet).
 
 ## Zeitleiste
 
@@ -19,7 +20,9 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
 | 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | e4c32fa |
 | 17.11.2026 | Nachrechnung R3 (100 Nullläufe) + V4: Schwellen-Rangfolge wie A4; Bericht R0–R3 | 49f4b61 |
 | 17.11.2026 | Nachrechnung R4 (unsere Karte, Endradius 1,0, 20 Läufe): Endradius erklärt die Abweichung **teilweise**, unter Vorbehalt; Bericht R0–R4 | 4f5a0a3 |
-| 22.11.2026 | Nachrechnung R5 (neue pydbt-Fassung `e6a483e`, gleicher σ-Verlauf wie unsere Karte, 20 Läufe): Nachbarschaft erklärt die Abweichung **nicht** (4 von 11), unter Vorbehalt; Bericht R0–R5 | (dieser Commit) |
+| 22.11.2026 | Nachrechnung R5 (neue pydbt-Fassung `e6a483e`, gleicher σ-Verlauf wie unsere Karte, 20 Läufe): Nachbarschaft erklärt die Abweichung **nicht** (4 von 11), unter Vorbehalt; Bericht R0–R5 | d97e8b7 |
+| 23.11.2026 | C1: Prüfregeln für veröffentlichte Pilzmessungen (Buffi et al. 2025, Mendeley, CC BY 4.0), vor jedem Lauf; Nachtrag 3a Zugabelücke | a28832f, f296d28 |
+| 23.11.2026 | C1 F1: ESOM findet die Kanäle ohne Pilz **nicht** (0 von 3), Lautstärke findet sie (2 von 3); F2-Vorhersage festgeschrieben vor Kenntnis der Zuordnung; Bericht `ergebnisse/c1/BERICHT.md` | (dieser Commit) |
 
 ## Abweichungen vom Plan und ihre Gründe
 
@@ -98,6 +101,11 @@ beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (
    4 der 11 stabilen Kandidaten (Urteil „nicht“, unter Vorbehalt, P K13 7/10). Die Reaktion
    ist zurück (8/10), die Fragmente der PL-Fenstermitte verschmelzen weiter. Die Ursache liegt
    im Training selbst (online statt Batch, Lernrate, Startwerte), nicht getrennt geprüft.
+10. **C1 F1 (Messwerte Buffi et al. 2025):** Auf drei Platinen trennt die ESOM mit Gruppenregel v2
+   die zwei Kanäle ohne Pilz nicht (je Datei eine große Gruppe mit 97–99 % der Fenster). Ein
+   einfaches Lautstärkemaß findet sie in 2 von 3 Dateien. Nur berichtet: Auf der Karte liegen die
+   Leerkanal-Fenster in zusammenhängenden Gebieten; die Abgrenzung der Gruppen ist die
+   wahrscheinliche Schwachstelle (offene Frage an die Entwickler).
 
 ## Befunde außerhalb der Analyse (zur Weitergabe)
 

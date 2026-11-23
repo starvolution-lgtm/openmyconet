@@ -47,6 +47,7 @@ Abhängigkeiten ändern: `requirements.in` anpassen, dann
 | `PHASE_B_VORBEREITUNG.md` | Phase B (synthetische Signale), Fassung 2, noch nicht gerechnet |
 | `PRUEFUNG_QUELLEN_HARDWARE.md` | Literatur zu Zeitskalen von Pilzsignalen, Eingangsschaltung Rev. 3.6 (Finalfassung 25.10.) + Datenblätter |
 | `NACHRECHNUNG_PYDBT.md` | Vergleichsregeln für die Nachrechnung von Phase A mit der Referenz-ESOM pydbt (vor jedem Lauf festgelegt); R0–R5 gerechnet, Bericht `ergebnisse/nachrechnung/BERICHT.md`; Endradius erklärt die Abweichung nur teilweise, die angeglichene Nachbarschaft (R5) nicht |
+| `FREMDDATEN_BUFFI.md` | Prüfregeln C1: ESOM an veröffentlichten Pilzmessungen (Buffi et al. 2025, CC BY 4.0, Rohdaten nicht im Repo); F1 gerechnet (ESOM findet die Leerkanäle nicht, Lautstärke schon), F2 blinde Vorhersage festgeschrieben; Bericht `ergebnisse/c1/BERICHT.md` |
 | `VERLAUF.md` | Versuchsverlauf: Abweichungen, verworfene Ansätze, negative Ergebnisse |
 | `mm/schnappschuss.py` | Schnappschuss lesen + vollständig prüfen (Datei-Hashes, Block-Hashes, Prüfsummenkette, Kontrollwert), Rohsignale als lückenlose Segmente in µV |
 | `werkzeuge/` | Schnappschuss holen (läuft auf dem Server) und prüfen |
