@@ -7,3 +7,6 @@ venv/
 ergebnisse/nachrechnung/**/*.lock
 ergebnisse/nachrechnung_*.err
 ergebnisse/nachrechnung_*.out
+ergebnisse/c1/merkmale/
+ergebnisse/c1/laeufe/
+ergebnisse/c1_*.out

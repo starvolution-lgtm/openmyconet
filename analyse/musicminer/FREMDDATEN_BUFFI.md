@@ -65,6 +65,31 @@ mitgezählt. Geprüft wird auf den drei noch nicht geladenen Dateien `calcimycin
   Lücke (Einschwingen nach dem Öffnen von Käfig und Inkubator) bis zum Ende, höchstens 72 h.
   F1 nutzt nur „vorher“. Die Zeit „nachher“ wird erst für F2 gelesen, nach Abschluss von F1.
 
+### 3a. Nachtrag Zugabelücke (freigegeben von Robby am 23.11.2026, nach Laden der Prüfdateien, vor jedem Ergebnis)
+
+**Anlass:** Die Regel oben findet in **keiner** der drei Prüfdateien eine Zugabelücke, weil die
+Aufnahmen nach der Lücke nicht 3 Tage dauern, wie das Paper schreibt. Angesehen wurde dafür nur
+die Lage der gemeinsamen NaN-Lücken (Werkzeug-Abbruch vor jeder Merkmalsberechnung), keine
+Messwerte und kein Ergebnis:
+
+| Datei | Dauer | gemeinsame NaN-Lücken (ohne Anfang/Ende) | danach |
+|---|---|---|---|
+| Calcimycin | 282,4 h | 169,1 h (456 Werte) | 113,3 h |
+| Natriumazid | 289,3 h | 72,3 h (8 Werte), 172,7 h (1 157 Werte) | 216,9 h / 116,5 h |
+| Voriconazol | 169,6 h | 122,9 h (799 Werte) | 46,7 h |
+| Cycloheximid (Vorlauf) | 243,0 h | 93,6 h (1 357 Werte), 168,4 h (424 Werte) | 149,4 h / 74,6 h |
+
+**Neue Regel (ersetzt den Punkt „Zugabezeitpunkt“):** Zugabelücke = die **letzte** gemeinsame
+NaN-Lücke mit **≥ 100 Werten** (≈ 6 s; Käfig und Inkubator öffnen, Stoff auftragen dauert
+länger), nach der noch **≥ 24 h** Aufnahme folgen. Das ergibt je Datei genau eine Lücke:
+Calcimycin 169,1 h, Natriumazid 172,7 h, Voriconazol 122,9 h, Cycloheximid 168,4 h (wie im
+Vorlauf). „Nachher“ bleibt ab 1 h nach der Lücke, höchstens 72 h; bei Voriconazol sind es nur
+45,7 h.
+
+**Vorbehalt, der berichtet wird:** Bei Voriconazol liegt die Lücke nach 5,1 statt nach etwa
+7 Tagen. Ob das die Zugabe war, lässt sich aus den Daten nicht sicher sagen. Die Datei wird
+trotzdem nach der Regel ausgewertet; ihr Ergebnis wird mit diesem Vorbehalt gekennzeichnet.
+
 ## 4. Fenster, Merkmale, Karte
 
 - **Fenster:** 60 s (1 000 Werte), Schritt 30 s, je Kanal; Fenster mit NaN fallen heraus (gezählt).
