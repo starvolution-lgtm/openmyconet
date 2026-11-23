@@ -99,7 +99,7 @@ vorhergesagte Hälfte mit Stoff, die andere bekam nur das Lösungsmittel.
 - Die Vorhersagen sind **schwach**. Bei der ESOM trennt die gewählte Aufteilung sich von der
   zweitbesten meist nur um 0,001–0,04 (Kosinus-Wert), und die Seeds sind sich nur bei
   Cycloheximid einig (9/10). Bei Natriumazid und Voriconazol gibt es Gleichstände; dafür
-  enthielten die Regeln keine Bestimmung (Abschnitt 6, Vorschlag Nachtrag 6b).
+  enthielten die Regeln keine Bestimmung (Abschnitt 6, Nachtrag 6b: Gleichstand zählt als nicht richtig).
 - Die drei Verfahren stimmen in den Prüfdateien nirgends überein.
 - Nur bei **Cycloheximid** (Vorlauf) zeigen alle drei dasselbe Bild: Die Kanäle 1, 5 und 13
   werden nach der Zugabe deutlich leiser (log-Streuung −1,29 / −1,36 / −0,87, die übrigen
@@ -119,8 +119,8 @@ Alle Stimmen je Seed stehen in `f2_vorhersage.json`.
   Das Ergebnis ändert sich nicht (in keiner Datei gefunden); die Tabelle oben zählt richtig.
 - **Gleichstand in F2** (Natriumazid, Voriconazol): Die Regeln sagen nicht, was dann gilt. Das
   Werkzeug hat die zuerst gezählte Vorhersage als „Mehrheit“ eingetragen; alle gleichauf liegenden
-  stehen zusätzlich in `f2_vorhersage.json`. Vorschlag Nachtrag 6b (noch nicht freigegeben,
-  festzulegen **vor** Kenntnis der Wahrheit): Bei Gleichstand zählt die ESOM-Vorhersage dieser
+  stehen zusätzlich in `f2_vorhersage.json`. Nachtrag 6b (freigegeben 23.11.,
+  **vor** Kenntnis der Wahrheit): Bei Gleichstand zählt die ESOM-Vorhersage dieser
   Datei als **nicht richtig**.
 
 ## 7. Was das heißt
