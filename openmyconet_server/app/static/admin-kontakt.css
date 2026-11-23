@@ -1,0 +1,28 @@
+/* /admin/kontakt: Antwort-Formular und Verlauf unter jeder Anfrage (seit 23.11.2026) */
+tr.ka-anfrage td { border-bottom: 0; }
+tr.ka-antwortzeile td { padding-top: 0; }
+tr.ka-antwortzeile:hover td, tr.ka-anfrage:hover td { background: transparent; }
+
+.ka-verlauf { margin: 0 0 0.6rem; padding: 0.5rem 0.7rem; border-left: 3px solid var(--good); background: var(--good-bg); border-radius: 0 6px 6px 0; }
+.ka-verlauf-titel { margin: 0 0 0.3rem; font-family: var(--mono); font-size: 0.75rem; color: var(--good); text-transform: uppercase; letter-spacing: 0.04em; }
+.ka-antwort summary { cursor: pointer; font-size: 0.85rem; color: var(--ink-soft); padding: 0.15rem 0; }
+.ka-antwort[open] summary { color: var(--ink); }
+
+.ka-text { white-space: pre-wrap; font-size: 0.88rem; margin: 0.3rem 0 0.5rem; padding: 0.5rem 0.7rem; background: var(--ground); border-radius: 6px; max-width: 70ch; }
+
+.ka-formular > summary {
+  display: inline-block; cursor: pointer; list-style: none; padding: 0.35rem 0.8rem;
+  border: 1px solid var(--accent); border-radius: 6px; color: var(--accent);
+  font-family: var(--mono); font-size: 0.78rem; font-weight: 600;
+}
+.ka-formular > summary::-webkit-details-marker { display: none; }
+.ka-formular > summary:hover { background: var(--accent-soft); }
+.ka-formular[open] > summary { background: var(--accent); color: #fff; }
+.ka-formular[open] { margin-bottom: 0.6rem; }
+.ka-formular form { max-width: 70ch; }
+
+.ka-original { margin-top: 0.8rem; }
+.ka-label { margin: 0.8rem 0 0; color: var(--ink-soft); font-size: 0.85rem; font-family: var(--mono); }
+.ka-original .ka-label { margin-top: 0; }
+.ka-an { margin: 0.3rem 0 0; font-size: 0.95rem; }
+.ka-hinweis { font-size: 0.8rem; color: var(--ink-soft); margin: 0.6rem 0; }

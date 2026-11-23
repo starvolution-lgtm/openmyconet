@@ -16,6 +16,17 @@
   Mail; ein srcdoc-iframe erbt die Admin-CSP und zeigte die Mail schwarz und ungestaltet), Zeilenumbrüche
   werden zu `<br>` (white-space:pre-wrap ignorieren viele Mailprogramme).
 
+## Kontaktanfragen beantworten (seit 23.11.2026)
+`/admin/kontakt`: je Anfrage „✉️ Antworten“ (aufklappbares Formular, Betreff vorbelegt, Sprache frei).
+`POST /admin/kontakt/<id>/antworten` (`omn/admin/kontakt.py`) schickt **direkt** per `mail.send()`
+(Einzelmail, nicht die Queue), reiner Text, Reply-To = Projektadresse (`RECHTSTEXTE['fakten']['mail']`),
+BCC an `ADMIN_NOTIFY_EMAIL`/`MAIL_USERNAME`. Erst nach erfolgreichem Versand: Zeile in `kontakt_antwort`
+(timestamptz), Status → „bearbeitet“, `protokollieren('kontakt_antwort', …)`. Mailfehler → nichts
+gespeichert, Text bleibt im Formular. Antworten werden mit der Anfrage gelöscht (Admin-Löschen per
+ORM-Cascade; Löschfrist 6 Monate ab Eingang der **Anfrage**, eigener Eintrag „Kontakt-Antworten“ in
+`omn/aufbewahrung.py` vor den Anfragen). Datenschutzerklärung Abschnitt `kontaktformular` nennt das.
+Tests `tests/test_kontakt_antwort.py`.
+
 ## Rund-Mails an Nutzer
 Newsletter (`/admin/newsletter`) und die optionale News-Benachrichtigung
 (Checkbox + Sprach-Checkboxen beim Veröffentlichen unter `/admin/news`,

@@ -108,6 +108,31 @@ class Kontaktanfrage(db.Model):
     status = db.Column(db.String(20), default='neu', index=True)  # neu | bearbeitet | erledigt
     ip = db.Column(db.String(45), nullable=True)
     erstellt_am = db.Column(db.DateTime, default=utcnow)
+    # Antworten aus /admin/kontakt; werden mit der Anfrage geloescht (ORM-Cascade
+    # beim Loeschen im Admin, DB-FK ON DELETE CASCADE, Loeschfrist in omn/aufbewahrung.py)
+    antworten = db.relationship('KontaktAntwort', backref='anfrage', lazy=True,
+                                cascade='all, delete-orphan', order_by='KontaktAntwort.gesendet_am')
+
+
+def _jetzt_utc():
+    return datetime.now(timezone.utc)
+
+
+class KontaktAntwort(db.Model):
+    """Antwort auf eine Kontaktanfrage, verschickt aus /admin/kontakt (seit 23.11.2026).
+    Neue Tabelle -> gesendet_am als timestamptz, tz-aware (Regel 23.09.2026); nie mit
+    Kontaktanfrage.erstellt_am (naiv-UTC) direkt vergleichen. Loeschfrist: zusammen
+    mit der Anfrage 6 Monate nach deren Eingang (Datenschutzerklaerung 'kontaktformular')."""
+    __tablename__ = 'kontakt_antwort'
+    id = db.Column(db.Integer, primary_key=True)
+    anfrage_id = db.Column(db.Integer, db.ForeignKey('kontaktanfrage.id', ondelete='CASCADE'),
+                           nullable=False, index=True)
+    gesendet_am = db.Column(db.DateTime(timezone=True), nullable=False, default=_jetzt_utc)
+    an = db.Column(db.String(150), nullable=False)
+    betreff = db.Column(db.String(200), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    gesendet_von = db.Column(db.String(80), nullable=False, default='')
+
 
 class Messung(db.Model):
     id = db.Column(db.Integer, primary_key=True)

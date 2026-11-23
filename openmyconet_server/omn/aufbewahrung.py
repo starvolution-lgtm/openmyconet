@@ -29,12 +29,13 @@ Themenraeume (Phase 2a): vom Admin ausgeblendete Beitraege 6 Monate nach dem Aus
 """
 from datetime import timedelta, timezone
 
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, select
 
 from omn import kollaboration
 from omn.extensions import db
 from omn.models import (
-    AdminAudit, Austausch, Beitrag, Bewerbung, ChatLog, Fehlerprotokoll, Kontaktanfrage, KontaktVersand, Nutzer,
+    AdminAudit, Austausch, Beitrag, Bewerbung, ChatLog, Fehlerprotokoll, KontaktAntwort, Kontaktanfrage,
+    KontaktVersand, Nutzer,
 )
 from omn.zeit import utcnow
 
@@ -42,11 +43,20 @@ from omn.zeit import utcnow
 def _ohne_loeschsperre(heute):
     return or_(Austausch.loeschsperre_bis.is_(None), Austausch.loeschsperre_bis < heute)
 
+# Eingang der zugehoerigen Anfrage (naiv-UTC) -- korrelierte Unterabfrage, weil ein
+# Massen-DELETE keinen Join auf eine zweite Tabelle kann.
+_EINGANG_DER_ANFRAGE = (select(Kontaktanfrage.erstellt_am)
+                        .where(Kontaktanfrage.id == KontaktAntwort.anfrage_id).scalar_subquery())
+
 # (Bezeichnung, Modell, Zeitpunkt, ab dem die Frist laeuft, Frist in Tagen, Zusatzbedingung)
 FRISTEN = [
     ('Chat-Verläufe', ChatLog, ChatLog.erstellt_am, 90, None),
     ('Fehlerprotokoll', Fehlerprotokoll, Fehlerprotokoll.zeitpunkt, 90, None),
-    # 6 Monate ab Eingang, unabhaengig vom Bearbeitungsstatus (Robby, 28.09.2026)
+    # 6 Monate ab Eingang, unabhaengig vom Bearbeitungsstatus (Robby, 28.09.2026).
+    # Antworten aus /admin/kontakt (seit 23.11.2026) gehen mit ihrer Anfrage -- VOR der
+    # Anfrage loeschen: das Massen-DELETE umgeht den ORM-Cascade, und SQLite prueft
+    # den FK (ON DELETE CASCADE) ohne PRAGMA foreign_keys nicht.
+    ('Kontakt-Antworten', KontaktAntwort, _EINGANG_DER_ANFRAGE, 182, None),
     ('Kontaktanfragen', Kontaktanfrage, Kontaktanfrage.erstellt_am, 182, None),
     # nur Absagen, 6 Monate nach der Entscheidung; Alt-Zeilen ohne Zeitpunkt: ab Eingang
     ('abgelehnte Bewerbungen', Bewerbung,

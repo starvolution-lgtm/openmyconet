@@ -1,6 +1,7 @@
 {% extends "admin_base.html" %}
 {% block title %}OpenMycoNet — Kontaktanfragen verwalten{% endblock %}
 {% block heading %}✉️ Kontaktanfragen verwalten{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ asset('admin-kontakt.css') }}">{% endblock %}
 
 {% block content %}
 
@@ -22,7 +23,7 @@
         <th>Eingegangen</th>
     </tr>
     {% for a in anfragen_liste %}
-    <tr>
+    <tr id="anfrage-{{ a.id }}" class="ka-anfrage">
         <td>{{ a.id }}</td>
         <td>{{ a.name or '—' }}<br><small>{{ a.email }}</small>{% if a.telefon %}<br><small>{{ a.telefon }}</small>{% endif %}</td>
         <td>{{ a.anliegen }}</td>
@@ -38,13 +39,49 @@
                 </select>
                 <button type="submit">Setzen</button>
             </form>
-            <form class="u-mt-6 js-confirm-submit" method="POST" data-confirm="Kontaktanfrage #{{ a.id }} ({{ a.name or a.email }}) endgültig löschen?">
+            <form class="u-mt-6 js-confirm-submit" method="POST" data-confirm="Kontaktanfrage #{{ a.id }} ({{ a.name or a.email }}) endgültig löschen?{% if a.antworten %} Die {{ a.antworten|length }} gespeicherte(n) Antwort(en) werden mitgelöscht.{% endif %}">
                 <input type="hidden" name="anfrage_id" value="{{ a.id }}">
                 <input type="hidden" name="action" value="delete">
                 <button type="submit" class="loeschen">Löschen</button>
             </form>
         </td>
         <td>{{ a.erstellt_am.strftime('%d.%m.%Y') }}</td>
+    </tr>
+    {% set offen = entwurf.get('anfrage_id') == a.id %}
+    <tr class="ka-antwortzeile">
+        <td></td>
+        <td colspan="5">
+            {% if a.antworten %}
+            <div class="ka-verlauf">
+                <p class="ka-verlauf-titel">Verlauf — {{ a.antworten|length }} Antwort{{ 'en' if a.antworten|length != 1 }}</p>
+                {% for antw in a.antworten %}
+                <details class="ka-antwort">
+                    <summary>↩ {{ ortszeit(antw.gesendet_am) }} · an {{ antw.an }} · „{{ antw.betreff }}“{% if antw.gesendet_von %} · {{ antw.gesendet_von }}{% endif %}</summary>
+                    <div class="ka-text">{{ antw.text }}</div>
+                </details>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <details class="ka-formular"{% if offen %} open{% endif %}>
+                <summary>✉️ Antworten</summary>
+                <div class="ka-original">
+                    <p class="ka-label">Nachricht von {{ a.name or a.email }} ({{ a.erstellt_am.strftime('%d.%m.%Y') }})</p>
+                    <div class="ka-text">{{ a.nachricht }}</div>
+                </div>
+                <form method="POST" action="{{ url_for('admin.kontakt_antworten', anfrage_id=a.id) }}"
+                      class="js-confirm-submit" data-confirm="Antwort jetzt an {{ a.email }} senden?">
+                    <p class="ka-label">An</p>
+                    <p class="ka-an">{{ a.email }}</p>
+                    <label for="ka-betreff-{{ a.id }}">Betreff</label>
+                    <input id="ka-betreff-{{ a.id }}" name="betreff" maxlength="200" required
+                           value="{{ entwurf.betreff if offen else betreff_vorschlag }}">
+                    <label for="ka-text-{{ a.id }}">Text</label>
+                    <textarea id="ka-text-{{ a.id }}" name="text" rows="10" required>{{ entwurf.text if offen }}</textarea>
+                    <p class="ka-hinweis">Antworten der Empfängerin oder des Empfängers gehen an die Projektadresse, eine Kopie (BCC) landet in deinem Postfach. Die Antwort wird mit der Anfrage gespeichert und mit ihr gelöscht (6 Monate nach Eingang). Status danach: „bearbeitet“.</p>
+                    <button type="submit">Antwort senden</button>
+                </form>
+            </details>
+        </td>
     </tr>
     {% endfor %}
 </table>

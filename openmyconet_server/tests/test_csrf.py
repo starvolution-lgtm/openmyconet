@@ -78,6 +78,7 @@ AENDERNDE_ADMIN_ROUTEN = [
     '/admin/news/1/verschieben/hoch',
     '/admin/inhalte/delete/1',
     '/admin/presse/delete/1',
+    '/admin/kontakt/1/antworten',
     '/admin/presse-kandidaten/uebernehmen/1',
     '/admin/presse-kandidaten/suchbegriff/loeschen/1',
     '/admin/austausch/1/einladen',
