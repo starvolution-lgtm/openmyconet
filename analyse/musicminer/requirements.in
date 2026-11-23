@@ -4,3 +4,4 @@ minisom
 scikit-learn
 matplotlib
 pytest
+h5py
