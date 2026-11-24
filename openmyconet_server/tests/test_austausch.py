@@ -332,6 +332,16 @@ def test_admin_arbeitsbereich_aufgabe_und_kommentar(client, app, superadmin):
     assert 'Förderer-/Kooperationsverwaltung' not in seite
 
 
+def test_admin_zeigt_namen_statt_fachkontakt(client, app, superadmin):
+    # Admin sieht bei Beiträgen der eingeladenen Person deren Namen, nicht „Fachkontakt“
+    _, a = _fachkontakt()
+    kollaboration.kommentar_anlegen(a, 'Hallo, wie geht es dir?', 'partner')
+    _admin(client)
+    seite = client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+    assert '<strong>Dr. Test</strong>' in seite
+    assert '<strong>Fachkontakt</strong>' not in seite
+
+
 def test_admin_status_sperren_beenden_entsperren(client, app, superadmin):
     n, a = _fachkontakt()
     _admin(client)

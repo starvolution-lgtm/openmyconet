@@ -1,7 +1,9 @@
 {% extends "admin_base.html" %}
 {% set techn = modus == 'technisch' %}
 {% set fach = modus == 'austausch' %}
-{% set partner_label = 'Fachkontakt' if fach else 'Partner' %}
+{# Austausch: Name der eingeladenen Person statt „Fachkontakt“ (nur Admin-Seite; Autor ist bisher
+   nur 'team'/'partner' – bei mehreren Teilnehmenden (Phase 4) braucht es einen Autor je Beitrag). #}
+{% set partner_label = ((austausch.name if austausch and austausch.name else 'Fachkontakt') if fach else 'Partner') %}
 {% block title %}OpenMycoNet — Kollaboration: {{ titel_kontext }}{% endblock %}
 {% block heading %}💬 Kollaboration — {{ titel_kontext }}{% endblock %}
 {% block extra_css %}
