@@ -187,7 +187,7 @@ def _zu_gross(_e):
     """Werkzeugs nackte 'Request Entity Too Large'-Seite durch eine
     verstaendliche ersetzen (MAX_CONTENT_LENGTH ueberschritten). Kein Inline-JS
     -- die CSP der Seite verbietet 'unsafe-inline'/javascript:-Links."""
-    mb = current_app.config['MAX_CONTENT_LENGTH'] // (1024 * 1024)
+    mb = (request.max_content_length or current_app.config['MAX_CONTENT_LENGTH']) // (1024 * 1024)
     zurueck = request.path if request.path.startswith('/admin') else '/'
     return (
         f'<!doctype html><html lang=de><meta charset=utf-8>'

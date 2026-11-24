@@ -17,7 +17,7 @@ import os
 import uuid
 from datetime import datetime, timezone
 
-from flask import current_app, render_template
+from flask import current_app, render_template, request
 from flask_mail import Message
 from PIL import Image, ImageOps
 from werkzeug.utils import secure_filename
@@ -35,7 +35,13 @@ ERLAUBTE_ANHANG_EXT = {
     'png', 'jpg', 'jpeg', 'webp', 'gif',
     'pdf', 'txt', 'log', 'csv', 'json', 'zip',
 }
-MAX_ANHANG_BYTES = 5 * 1024 * 1024  # 5 MB pro Datei
+MAX_ANHANG_BYTES = 5 * 1024 * 1024  # 5 MB pro Datei (Kooperation, Knoten, Themenraeume)
+# Fachlicher Austausch: Messdaten/Auswertungen sind groesser (Robby, 24.11.2026).
+MAX_ANHANG_BYTES_AUSTAUSCH = 20 * 1024 * 1024  # 20 MB pro Datei
+# Gesamt-Request fuer die beiden Austausch-Seiten (eine 20-MB-Datei + Formular); sonst gilt
+# MAX_CONTENT_LENGTH (12 MB). Gesetzt in upload_grenze_setzen(); nginx muss mitziehen.
+MAX_REQUEST_BYTES_AUSTAUSCH = 25 * 1024 * 1024
+AUSTAUSCH_UPLOAD_ENDPUNKTE = {'austausch.bereich', 'admin.austausch_detail'}
 # Fotos, aus denen beim Hochladen die Metadaten entfernt werden (Oe4, 14.11.2026). GIF hat kein EXIF.
 FOTO_EXT = {'png', 'jpg', 'jpeg', 'webp'}
 
@@ -267,7 +273,14 @@ def _anhang_verzeichnis(unterordner='kollaboration'):
     return d
 
 
-def datei_ablegen(datei, unterordner='kollaboration'):
+def upload_grenze_setzen():
+    """before_request auf App-Ebene (laeuft vor der CSRF-Pruefung der Blueprints, die das
+    Formular schon liest): hebt die Request-Grenze nur fuer die Austausch-Seiten an."""
+    if request.method == 'POST' and request.endpoint in AUSTAUSCH_UPLOAD_ENDPUNKTE:
+        request.max_content_length = MAX_REQUEST_BYTES_AUSTAUSCH
+
+
+def datei_ablegen(datei, unterordner='kollaboration', max_bytes=MAX_ANHANG_BYTES):
     """Prueft Format + Groesse und legt die Datei unter einem Zufallsnamen in
     instance/uploads/<unterordner>/ ab. Gibt (dateiname, originalname, groesse)
     zurueck oder None bei Ablehnung. Auch fuer die Themenraeume (unterordner 'themen')."""
@@ -280,7 +293,7 @@ def datei_ablegen(datei, unterordner='kollaboration'):
     datei.seek(0, os.SEEK_END)
     groesse = datei.tell()
     datei.seek(0)
-    if groesse > MAX_ANHANG_BYTES or groesse == 0:
+    if groesse > max_bytes or groesse == 0:
         return None
 
     dateiname = f'{uuid.uuid4().hex}.{ext}'
@@ -332,7 +345,8 @@ def metadaten_entfernen(pfad):
 
 def _anhang_speichern(kommentar, datei):
     """Gibt den KollaborationAnhang zurueck oder None bei Ablehnung."""
-    abgelegt = datei_ablegen(datei)
+    grenze = MAX_ANHANG_BYTES_AUSTAUSCH if kommentar.austausch_id else MAX_ANHANG_BYTES
+    abgelegt = datei_ablegen(datei, max_bytes=grenze)
     if abgelegt is None:
         return None
     dateiname, originalname, groesse = abgelegt

@@ -94,7 +94,7 @@
         <input type="hidden" name="action" value="kommentar_neu">
         <textarea class="ka-6" name="text" rows="3" placeholder="Kommentar schreiben…" required></textarea>
         <input type="file" name="dateien" multiple>
-        <p><small>Erlaubt: Bilder, PDF, TXT/LOG/CSV/JSON, ZIP — max. 5 MB pro Datei.</small></p>
+        <p><small>Erlaubt: Bilder, PDF, TXT/LOG/CSV/JSON, ZIP — {% if fach %}max. 20 MB pro Datei, zusammen höchstens 25 MB pro Nachricht{% else %}max. 5 MB pro Datei{% endif %}.</small></p>
         <button type="submit">Kommentar senden</button>
     </form>
 </div>

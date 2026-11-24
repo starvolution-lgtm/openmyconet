@@ -25,6 +25,14 @@ Feld an `Nutzer`, nirgends für Nutzer sichtbar.
   Detail mit Arbeitsbereich, Einladen, Sperren/Beenden/Wieder öffnen, Geprüft,
   Löschsperre, Sofort löschen). Alles POST + `protokollieren`, in
   `test_csrf.AENDERNDE_ADMIN_ROUTEN`.
+- **Anhänge bis 20 MB pro Datei** (seit 24.11.2026, `MAX_ANHANG_BYTES_AUSTAUSCH`; Kooperation,
+  Knoten und Themenräume bleiben bei 5 MB). Request-Grenze 25 MB nur für `/austausch` und
+  `/admin/austausch/<id>` (`kollaboration.upload_grenze_setzen`, App-`before_request` vor der
+  CSRF-Prüfung), sonst `MAX_CONTENT_LENGTH` 12 MB. nginx lässt 26M durch
+  (`deploy/root_nginx_upload_grenze.sh`, als root). Hinweistext: `austausch_anhang_hinweis_bereich`
+  (Themenräume weiter `austausch_anhang_hinweis`).
+- Admin-Ansicht zeigt bei Beiträgen der eingeladenen Person `austausch.name` statt „Fachkontakt“
+  (Autor ist nur `team`/`partner` — bei mehreren Teilnehmenden braucht es einen Autor je Beitrag).
 
 ## Einladung (Sicherheit)
 Token nur als SHA-256 (`einladung_token_hash`), 14 Tage, neuer Versand macht den alten

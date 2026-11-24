@@ -44,7 +44,7 @@ from omn.csrf import init_csrf
 from omn.errors import init_errors
 from omn.cli import register_cli
 from omn import bildgroessen
-from omn import llms, public
+from omn import kollaboration, llms, public
 
 # omn/ liegt im Repo-Root; Templates/Static bleiben unter <root>/app/.
 _ROOT = Path(__file__).resolve().parent.parent
@@ -111,6 +111,8 @@ def create_app(config=None, instance_path=None):
     app.register_blueprint(mcc_bp)
 
     init_i18n(app)
+    # vor den Blueprint-Hooks (CSRF liest das Formular): groessere Uploads im Austausch
+    app.before_request(kollaboration.upload_grenze_setzen)
     init_csrf(app)
     init_errors(app)
     register_cli(app)

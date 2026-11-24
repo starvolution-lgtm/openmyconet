@@ -1053,3 +1053,53 @@ def test_admin_detail_zeigt_start_und_nachrichten(client, app, superadmin):
     d.sichtbar = False
     db.session.commit()
     assert 'ausgeblendet – die Person landet' in client.get(f'/admin/austausch/{a.id}').get_data(as_text=True)
+
+
+# --- Upload-Grenze im Austausch: 20 MB pro Datei (24.11.2026) ---------------------
+
+def _csv(mb):
+    return (io.BytesIO(b'1,2,3\n' * (mb * 1024 * 1024 // 6)), 'messung.csv')
+
+
+def test_austausch_nimmt_15mb_anhang_an(client, app):
+    n, a = _fachkontakt()
+    _als(client, n.id)
+    resp = client.post('/austausch', data={'austausch_id': a.id, 'action': 'kommentar_neu',
+                                          'text': 'Messreihe', 'dateien': _csv(15)},
+                       content_type='multipart/form-data')
+    assert resp.status_code == 200
+    assert KollaborationAnhang.query.count() == 1
+
+
+def test_admin_austausch_nimmt_15mb_anhang_an(client, app, superadmin):
+    _, a = _fachkontakt()
+    _admin(client)
+    resp = client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Daten',
+                                                        'dateien': _csv(15)},
+                       content_type='multipart/form-data')
+    assert resp.status_code == 200
+    assert KollaborationAnhang.query.count() == 1
+
+
+def test_austausch_grenzen_je_datei_und_kontext(app):
+    _, a = _fachkontakt()
+    zu_gross = FileStorage(stream=io.BytesIO(b'x' * (kollaboration.MAX_ANHANG_BYTES_AUSTAUSCH + 1)),
+                           filename='gross.csv')
+    _, fehler = kollaboration.kommentar_anlegen(a, 'zu gross', 'partner', dateien=[zu_gross])
+    assert len(fehler) == 1
+    # Kooperation bleibt bei 5 MB
+    koop = Foerderer(token='tok-k9', status='active', typ='kooperation', firma='Koop GmbH',
+                     beschreibung='Beschreibung der Kooperation.', email='k@example.com', betrag=0)
+    db.session.add(koop)
+    db.session.commit()
+    sechs = FileStorage(stream=io.BytesIO(b'x' * (6 * 1024 * 1024)), filename='sechs.csv')
+    _, fehler = kollaboration.kommentar_anlegen(koop, 'sechs MB', 'partner', dateien=[sechs])
+    assert len(fehler) == 1
+
+
+def test_hoehere_request_grenze_nur_auf_austausch_seiten(client, app, superadmin):
+    # andere Seiten behalten MAX_CONTENT_LENGTH (12 MB)
+    _admin(client)
+    resp = client.post('/admin/austausch/neu', data={'dateien': _csv(15)},
+                       content_type='multipart/form-data')
+    assert resp.status_code == 413

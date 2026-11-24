@@ -33,7 +33,7 @@ if [ "$ZIEL" = staging ]; then
     SITE=/etc/nginx/sites-available/staging.openmyconet.de
     SNIPPET_QUELLE="$HIER/nginx_admin_mtls_staging.conf"
     SNIPPET=/etc/nginx/snippets/omn_admin_mtls_staging.conf
-    ANKER="client_max_body_size 15m;"
+    ANKER="client_max_body_size 26M;"
     HOST=staging.openmyconet.de
 else
     SITE=/etc/nginx/sites-enabled/api.openmyconet.de
