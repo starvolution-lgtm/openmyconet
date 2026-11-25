@@ -36,17 +36,53 @@ GROUPS = [
     ]),
     ("kritische-einordnung", "myk_s3_h2", [
         "myk_s3_", "q_sk_", "q_ref11_", "q_ref12_",
+        # Debatte um Netzwerke: Kritik, Erwiderung, Perspective (25.11.2026)
+        "q_ref39_", "q_ref40_", "q_ref41_",
+    ]),
+    # Studien zu Netzwerken zwischen Pflanzen (Quellenseite, 25.11.2026); eigener
+    # Abschnitt, weil "mykorrhiza-grundlagen" schon bei MAX_CHARS liegt
+    ("netzwerk-studien", {
+        "de": "Netzwerke zwischen Pflanzen: Studien",
+        "en": "Networks between plants: studies",
+        "nl": "Netwerken tussen planten: studies",
+        "fr": "Reseaux entre plantes : etudes",
+        "es": "Redes entre plantas: estudios",
+    }, [
+        "q_ref33_", "q_ref34_", "q_ref35_", "q_ref36_", "q_ref37_", "q_ref38_",
     ]),
     ("elektrische-aktivitaet", "myk2_h1", [
         "myk2_s1_", "myk2_s2_",
         "q_s2_", "q_s3_", "q_ref3_", "q_ref4_", "q_ref5_", "q_ref6_",
-        "q_ref7_", "q_ref08_", "q_ref15_", "q_ref22_",
+        "q_ref7_",
     ]),
     # eigener Abschnitt: der Abschnitt oben ist schon laenger als MAX_CHARS,
     # angehaengte Quellen fielen sonst beim Kuerzen weg (26.09.2026)
     ("reize-und-reaktionen", "q_s6_title", [
         "q_s6_", "q_ref24_", "q_ref25_", "q_ref26_", "q_ref27_",
-        "q_ref28_", "q_ref29_", "q_ref30_", "q_ref31_",
+        "q_ref28_",
+    ]),
+    # Elektrische Aktivitaet: fruehe Messung und Kommentare (Quellenseite, 25.11.2026)
+    ("elektrische-aktivitaet-debatte", {
+        "de": "Elektrische Aktivitaet: fruehe Messungen und Kritik",
+        "en": "Electrical activity: early measurements and critique",
+        "nl": "Elektrische activiteit: vroege metingen en kritiek",
+        "fr": "Activite electrique : premieres mesures et critiques",
+        "es": "Actividad electrica: primeras mediciones y criticas",
+    }, [
+        # q_ref08/15/22 standen vorher in "elektrische-aktivitaet" und fielen dort
+        # beim Kuerzen auf MAX_CHARS weg (bemerkt 25.11.2026)
+        "q_ref42_", "q_ref08_", "q_ref15_", "q_ref43_", "q_ref22_", "q_ref44_", "q_ref45_",
+    ]),
+    # Langzeit- und Freilandmessungen (Fukasawa), aus "reize-und-reaktionen" ausgelagert,
+    # weil der Abschnitt sonst auf MAX_CHARS gekuerzt wuerde (25.11.2026)
+    ("langzeit-und-freiland", {
+        "de": "Elektrische Aktivitaet: Langzeit- und Freilandmessungen",
+        "en": "Electrical activity: long-term and field measurements",
+        "nl": "Elektrische activiteit: langetermijn- en veldmetingen",
+        "fr": "Activite electrique : mesures de longue duree et de terrain",
+        "es": "Actividad electrica: mediciones de larga duracion y de campo",
+    }, [
+        "q_ref29_", "q_ref30_", "q_ref31_",
     ]),
     ("biocomm-plattform", "biocomm_teaser_h2", [
         "biocomm_teaser_", "bc_s1_", "bc_s2_", "bc_s3_", "bc_s4_", "bc_quote",
