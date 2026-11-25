@@ -106,3 +106,6 @@ def init_i18n(app):
     app.jinja_env.globals['translations'] = TRANSLATIONS
     app.jinja_env.globals['FLAGGEN'] = FLAGGEN
     app.jinja_env.globals['SPRACHNAMEN'] = SPRACHNAMEN
+    # Gemeinsames Quellenverzeichnis (omn/daten/quellen.json) fuer die Quellenseite
+    from omn import quellen
+    app.jinja_env.globals['Q'] = quellen

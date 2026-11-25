@@ -31,58 +31,19 @@ GROUPS = [
     ]),
     ("mykorrhiza-grundlagen", "myk_h1", [
         "desc_warum", "myk_s1_", "myk_s2_", "myk_s4_",
-        "q_s1_", "q_ref1_", "q_ref2_", "q_ref14_", "q_ref16_",
-        "q_ref19_", "q_ref20_", "q_ref21_", "q_ref32_",
+        "q_s1_",
     ]),
     ("kritische-einordnung", "myk_s3_h2", [
-        "myk_s3_", "q_sk_", "q_ref11_", "q_ref12_",
-        # Debatte um Netzwerke: Kritik, Erwiderung, Perspective (25.11.2026)
-        "q_ref39_", "q_ref40_", "q_ref41_",
-    ]),
-    # Studien zu Netzwerken zwischen Pflanzen (Quellenseite, 25.11.2026); eigener
-    # Abschnitt, weil "mykorrhiza-grundlagen" schon bei MAX_CHARS liegt
-    ("netzwerk-studien", {
-        "de": "Netzwerke zwischen Pflanzen: Studien",
-        "en": "Networks between plants: studies",
-        "nl": "Netwerken tussen planten: studies",
-        "fr": "Reseaux entre plantes : etudes",
-        "es": "Redes entre plantas: estudios",
-    }, [
-        "q_ref33_", "q_ref34_", "q_ref35_", "q_ref36_", "q_ref37_", "q_ref38_",
+        "myk_s3_", "q_sk_",
     ]),
     ("elektrische-aktivitaet", "myk2_h1", [
         "myk2_s1_", "myk2_s2_",
-        "q_s2_", "q_s3_", "q_ref3_", "q_ref4_", "q_ref5_", "q_ref6_",
-        "q_ref7_",
+        "q_s2_", "q_s3_",
     ]),
     # eigener Abschnitt: der Abschnitt oben ist schon laenger als MAX_CHARS,
     # angehaengte Quellen fielen sonst beim Kuerzen weg (26.09.2026)
     ("reize-und-reaktionen", "q_s6_title", [
-        "q_s6_", "q_ref24_", "q_ref25_", "q_ref26_", "q_ref27_",
-        "q_ref28_",
-    ]),
-    # Elektrische Aktivitaet: fruehe Messung und Kommentare (Quellenseite, 25.11.2026)
-    ("elektrische-aktivitaet-debatte", {
-        "de": "Elektrische Aktivitaet: fruehe Messungen und Kritik",
-        "en": "Electrical activity: early measurements and critique",
-        "nl": "Elektrische activiteit: vroege metingen en kritiek",
-        "fr": "Activite electrique : premieres mesures et critiques",
-        "es": "Actividad electrica: primeras mediciones y criticas",
-    }, [
-        # q_ref08/15/22 standen vorher in "elektrische-aktivitaet" und fielen dort
-        # beim Kuerzen auf MAX_CHARS weg (bemerkt 25.11.2026)
-        "q_ref42_", "q_ref08_", "q_ref15_", "q_ref43_", "q_ref22_", "q_ref44_", "q_ref45_",
-    ]),
-    # Langzeit- und Freilandmessungen (Fukasawa), aus "reize-und-reaktionen" ausgelagert,
-    # weil der Abschnitt sonst auf MAX_CHARS gekuerzt wuerde (25.11.2026)
-    ("langzeit-und-freiland", {
-        "de": "Elektrische Aktivitaet: Langzeit- und Freilandmessungen",
-        "en": "Electrical activity: long-term and field measurements",
-        "nl": "Elektrische activiteit: langetermijn- en veldmetingen",
-        "fr": "Activite electrique : mesures de longue duree et de terrain",
-        "es": "Actividad electrica: mediciones de larga duracion y de campo",
-    }, [
-        "q_ref29_", "q_ref30_", "q_ref31_",
+        "q_s6_",
     ]),
     ("biocomm-plattform", "biocomm_teaser_h2", [
         "biocomm_teaser_", "bc_s1_", "bc_s2_", "bc_s3_", "bc_s4_", "bc_quote",
@@ -134,8 +95,7 @@ GROUPS = [
     ]),
     ("citizen-science", "myk3_h1", [
         "myk3_s2_", "myk3_s3_",
-        "q_s5_", "q_ref9_", "q_ref10_", "q_ref17_", "q_ref18_",
-        "cards",
+        "q_s5_", "cards",
     ]),
     ("datenschutz", "label_daten", [
         "desc_daten", "desc_daten_note", "a_privacy_notice", "a_privacy_label",
@@ -165,7 +125,7 @@ GROUPS = [
         "nl": "Feiten & Cijfers", "fr": "Faits & Chiffres",
         "es": "Hechos & Cifras",
     }, [
-        "facts", "q_ref16_",
+        "facts",
     ]),
     ("medien-musik-buch", "h1_medien", [
         "desc_medien", "musik_p1", "musik_p2", "musik_p3", "musik_ki_hinweis",
@@ -254,6 +214,50 @@ def abschnitte(tr, lang):
                  if match(key, prefixes) and (t := clean(value))]
         if texts:
             ergebnis.append((slug, resolve_title(title_spec, lang, block, de_block), texts))
+    ergebnis += quellen_abschnitte(tr, lang)
+    return ergebnis
+
+
+QUELLEN_TITEL = {
+    "leben-im-boden": {"de": "Quellen: Leben im Boden", "en": "Sources: life in the soil", "nl": "Bronnen: leven in de bodem",
+                       "fr": "Sources : la vie dans le sol", "es": "Fuentes: vida en el suelo"},
+    "netzwerke": {"de": "Quellen: Netzwerke zwischen Pflanzen", "en": "Sources: networks between plants", "nl": "Bronnen: netwerken tussen planten",
+                  "fr": "Sources : réseaux entre plantes", "es": "Fuentes: redes entre plantas"},
+    "elektrische-aktivitaet": {"de": "Quellen: elektrische Aktivität von Pilzen", "en": "Sources: electrical activity of fungi",
+                               "nl": "Bronnen: elektrische activiteit van schimmels", "fr": "Sources : activité électrique des champignons",
+                               "es": "Fuentes: actividad eléctrica de los hongos"},
+    "wie-wir-forschen": {"de": "Quellen: wie wir forschen", "en": "Sources: how we do research", "nl": "Bronnen: hoe wij onderzoek doen",
+                         "fr": "Sources : notre façon de faire de la recherche", "es": "Fuentes: cómo investigamos"},
+    "weiterlesen": {"de": "Quellen: zum Weiterlesen", "en": "Sources: further reading", "nl": "Bronnen: verder lezen",
+                    "fr": "Sources : pour aller plus loin", "es": "Fuentes: lecturas complementarias"},
+}
+QUELLEN_TEIL_MAX = 3800  # unter MAX_CHARS, damit kein Abschnitt beim Kürzen Quellen verliert
+
+
+def quellen_abschnitte(tr, lang):
+    """Wissensabschnitte aus dem gemeinsamen Quellenverzeichnis (omn/daten/quellen.json): je Thema,
+    bei Bedarf in Teile geteilt. Slugs: quellen-<thema>[-<n>]. Interne Prüfdaten gibt es dort nicht."""
+    from omn import quellen
+    block, de_block = tr.get(lang) or {}, tr["de"]
+
+    def bezeichnung(key):
+        return clean(block.get(key) or de_block.get(key) or "")
+
+    ergebnis = []
+    for thema, absaetze in quellen.chatbot_abschnitte(lang, bezeichnung).items():
+        teile, aktuell, laenge = [], [], 0
+        for a in absaetze:
+            if aktuell and laenge + len(a) + 1 > QUELLEN_TEIL_MAX:
+                teile.append(aktuell)
+                aktuell, laenge = [], 0
+            aktuell.append(a)
+            laenge += len(a) + 1
+        if aktuell:
+            teile.append(aktuell)
+        titel = QUELLEN_TITEL[thema].get(lang) or QUELLEN_TITEL[thema]["de"]
+        for i, teil in enumerate(teile, 1):
+            slug = f"quellen-{thema}" + (f"-{i}" if len(teile) > 1 else "")
+            ergebnis.append((slug, titel + (f" ({i}/{len(teile)})" if len(teile) > 1 else ""), teil))
     return ergebnis
 
 

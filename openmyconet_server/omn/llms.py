@@ -99,9 +99,6 @@ GRUPPEN_SEITE = {
     'kritische-einordnung': '/mykorrhiza-netzwerke.html',
     'elektrische-aktivitaet': '/bioelektrizitaet-biocomm.html',
     'reize-und-reaktionen': '/quellennachweise.html',
-    'netzwerk-studien': '/quellennachweise.html',
-    'elektrische-aktivitaet-debatte': '/quellennachweise.html',
-    'langzeit-und-freiland': '/quellennachweise.html',
     'biocomm-plattform': '/biocomm',
     'biocomm-hardware': '/biocomm/hardware',
     'biocomm-software': '/biocomm/software',
@@ -114,6 +111,13 @@ GRUPPEN_SEITE = {
     'medien-musik-buch': '/medien.html',
     'quellen-erkenntnispfad': '/quellennachweise.html',
 }
+
+
+def seite_von(slug):
+    """Seite zu einem Wissensabschnitt; Quellen-Abschnitte (quellen-<thema>[-n]) aus dem Verzeichnis -> Quellenseite."""
+    if slug in GRUPPEN_SEITE:
+        return GRUPPEN_SEITE[slug]
+    return '/quellennachweise.html' if slug.startswith('quellen-') else '/'
 # Nur Zusammenfassung anderer Gruppen (fuer den Chatbot praktisch), in der
 # Volltextfassung waere es eine Dublette.
 NICHT_IM_VOLLTEXT = {'entwicklungsstand'}
@@ -253,7 +257,7 @@ def llms_full(lang):
     for slug, titel, absaetze in abschnitte(TRANSLATIONS, lang):
         if slug in NICHT_IM_VOLLTEXT:
             continue
-        teile += [f'## {titel}', '', f"{tx['seite']}: {_url(GRUPPEN_SEITE.get(slug, '/'), lang)}", '']
+        teile += [f'## {titel}', '', f"{tx['seite']}: {_url(seite_von(slug), lang)}", '']
         for absatz in absaetze:
             teile += [absatz, '']
     imp = impressum(lang)

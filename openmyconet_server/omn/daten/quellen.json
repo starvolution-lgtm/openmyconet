@@ -1,0 +1,3197 @@
+{
+ "_hinweis": "Öffentliches Quellenverzeichnis von OpenMycoNet. Erzeugt aus dem internen Arbeitsbestand; nur freigegebene Inhalte.",
+ "stand": "2026-11-25",
+ "quellen": [
+  {
+   "id": "Q0001",
+   "kennung": "simard-ted-2016",
+   "art": "vortrag-gespraech",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Simard",
+     "vorname": "Suzanne"
+    }
+   ],
+   "jahr": 2016,
+   "titel": "Suzanne Simard – How Trees Talk to Each Other",
+   "erschienen_in": {
+    "sendung": "TED Talk"
+   },
+   "url": "https://www.ted.com/talks/suzanne_simard_how_trees_talk_to_each_other",
+   "zugang": "frei_abrufbar",
+   "zugang_link": "https://www.ted.com/talks/suzanne_simard_how_trees_talk_to_each_other",
+   "themen": [
+    "netzwerke",
+    "weiterlesen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Vortrag, in dem Suzanne Simard ihre Forschung zum Austausch von Ressourcen über Mykorrhiza-Netzwerke allgemeinverständlich vorstellt.",
+     "en": "Talk in which Suzanne Simard presents her research on resource exchange via mycorrhizal networks for a general audience.",
+     "nl": "Lezing waarin Suzanne Simard haar onderzoek naar de uitwisseling van hulpbronnen via mycorrhizanetwerken voor een breed publiek toelicht.",
+     "fr": "Conférence dans laquelle Suzanne Simard présente au grand public ses recherches sur les échanges de ressources via les réseaux mycorhiziens.",
+     "es": "Charla en la que Suzanne Simard presenta al gran público su investigación sobre el intercambio de recursos a través de redes micorrícicas."
+    },
+    "heranziehen": {
+     "de": "Einer der Anstöße für die Fragen, mit denen OpenMycoNet begann.",
+     "en": "One of the impulses behind the questions with which OpenMycoNet began.",
+     "nl": "Een van de aanleidingen voor de vragen waarmee OpenMycoNet begon.",
+     "fr": "L’une des impulsions à l’origine des questions par lesquelles OpenMycoNet a commencé.",
+     "es": "Uno de los impulsos de las preguntas con las que comenzó OpenMycoNet."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0002",
+   "kennung": "gorzelak-2015",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Gorzelak",
+     "vorname": "Monika A."
+    },
+    {
+     "nachname": "Asay",
+     "vorname": "Amanda K."
+    },
+    {
+     "nachname": "Pickles",
+     "vorname": "Brian J."
+    },
+    {
+     "nachname": "Simard",
+     "vorname": "Suzanne W."
+    }
+   ],
+   "jahr": 2015,
+   "jahr_druck": 2015,
+   "jahr_online": 2015,
+   "titel": "Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities",
+   "erschienen_in": {
+    "zeitschrift": "AoB Plants",
+    "band": "7",
+    "seiten": "plv050"
+   },
+   "doi": "10.1093/aobpla/plv050",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4497361/",
+   "pmid": "25979966",
+   "pmcid": "PMC4497361",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4497361/",
+   "themen": [
+    "netzwerke"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Fasst experimentelle Hinweise darauf zusammen, dass Mykorrhiza-Netzwerke physiologische und adaptive Reaktionen zwischen verbundenen Pflanzen beeinflussen können.",
+     "en": "Summarises experimental evidence that mycorrhizal networks can influence physiological and adaptive responses between connected plants.",
+     "nl": "Vat experimentele aanwijzingen samen dat mycorrhizanetwerken fysiologische en adaptieve reacties tussen verbonden planten kunnen beïnvloeden.",
+     "fr": "Résume des indices expérimentaux montrant que les réseaux mycorhiziens peuvent influencer les réactions physiologiques et adaptatives entre plantes connectées.",
+     "es": "Resume indicios experimentales de que las redes micorrícicas pueden influir en las respuestas fisiológicas y adaptativas entre plantas conectadas."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0003",
+   "kennung": "simard-1997",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Simard",
+     "vorname": "Suzanne W."
+    },
+    {
+     "nachname": "Perry",
+     "vorname": "David A."
+    },
+    {
+     "nachname": "Jones",
+     "vorname": "Melanie D."
+    },
+    {
+     "nachname": "Myrold",
+     "vorname": "David D."
+    },
+    {
+     "nachname": "Durall",
+     "vorname": "Daniel M."
+    },
+    {
+     "nachname": "Molina",
+     "vorname": "Randy"
+    }
+   ],
+   "jahr": 1997,
+   "jahr_druck": 1997,
+   "jahr_online": 1997,
+   "titel": "Net transfer of carbon between ectomycorrhizal tree species in the field",
+   "erschienen_in": {
+    "zeitschrift": "Nature",
+    "band": "388",
+    "heft": "6642",
+    "seiten": "579-582"
+   },
+   "doi": "10.1038/41557",
+   "url": "https://doi.org/10.1038/41557",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Freilandversuch in British Columbia mit markiertem Kohlenstoff: Kohlenstoff wanderte zwischen Sämlingen von Papierbirke und Douglasie in beide Richtungen, mit Nettogewinn für die Douglasie. Den Weg über den Boden schätzten die Autoren mit einer Vergleichsart (Thuja plicata) ab. Ausgangspunkt der Forschung zum Ressourcentransfer über gemeinsame Mykorrhiza-Netzwerke.",
+     "en": "Field experiment in British Columbia with labelled carbon: carbon moved in both directions between paper birch and Douglas-fir seedlings, with a net gain for Douglas-fir. The authors estimated the soil pathway using a comparison species (Thuja plicata). Starting point of research on resource transfer via common mycorrhizal networks.",
+     "nl": "Veldproef in British Columbia met gemerkte koolstof: koolstof bewoog in beide richtingen tussen zaailingen van papierberk en douglasspar, met netto winst voor de douglasspar. De weg via de bodem schatten de auteurs met een vergelijkingssoort (Thuja plicata). Vertrekpunt van het onderzoek naar uitwisseling via gemeenschappelijke mycorrhizanetwerken.",
+     "fr": "Expérience de terrain en Colombie-Britannique avec du carbone marqué : le carbone a circulé dans les deux sens entre des semis de bouleau à papier et de douglas, avec un gain net pour le douglas. Les auteurs ont estimé la voie par le sol à l’aide d’une espèce témoin (Thuja plicata). Point de départ des recherches sur les transferts de ressources via les réseaux mycorhiziens communs.",
+     "es": "Experimento de campo en Columbia Británica con carbono marcado: el carbono se movió en ambas direcciones entre plántulas de abedul de papel y abeto de Douglas, con ganancia neta para el abeto de Douglas. Los autores estimaron la vía a través del suelo con una especie de comparación (Thuja plicata). Punto de partida de la investigación sobre la transferencia de recursos a través de redes micorrícicas comunes."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0004",
+   "kennung": "beiler-2010",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Beiler",
+     "vorname": "Kevin J."
+    },
+    {
+     "nachname": "Durall",
+     "vorname": "Daniel M."
+    },
+    {
+     "nachname": "Simard",
+     "vorname": "Suzanne W."
+    },
+    {
+     "nachname": "Maxwell",
+     "vorname": "Sheri A."
+    },
+    {
+     "nachname": "Kretzer",
+     "vorname": "Annette M."
+    }
+   ],
+   "jahr": 2010,
+   "jahr_druck": 2010,
+   "jahr_online": 2009,
+   "titel": "Architecture of the wood‐wide web: Rhizopogon spp. genets link multiple Douglas‐fir cohorts",
+   "erschienen_in": {
+    "zeitschrift": "New Phytologist",
+    "band": "185",
+    "heft": "2",
+    "seiten": "543-553"
+   },
+   "doi": "10.1111/j.1469-8137.2009.03069.x",
+   "url": "https://doi.org/10.1111/j.1469-8137.2009.03069.x",
+   "pmid": "19878460",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Kartierte mit Erbgutanalysen (Mikrosatelliten) auf 30 × 30 m in einem alten Douglasienwald, welche Bäume dieselben Pilzindividuen (Rhizopogon) teilen: Einzelne Pilzindividuen besiedelten bis zu 19 Bäume.",
+     "en": "Used genetic analysis (microsatellites) on a 30 × 30 m plot in an old-growth Douglas-fir forest to map which trees share the same fungal individuals (Rhizopogon): single fungal individuals colonised up to 19 trees.",
+     "nl": "Bracht met genetische analyse (microsatellieten) op 30 × 30 m in een oud douglassparrenbos in kaart welke bomen dezelfde schimmelindividuen (Rhizopogon) delen: afzonderlijke schimmelindividuen koloniseerden tot 19 bomen.",
+     "fr": "A cartographié par analyse génétique (microsatellites), sur 30 × 30 m dans une vieille forêt de douglas, quels arbres partagent les mêmes individus fongiques (Rhizopogon) : certains individus fongiques colonisaient jusqu’à 19 arbres.",
+     "es": "Cartografió mediante análisis genético (microsatélites), en 30 × 30 m de un bosque maduro de abeto de Douglas, qué árboles comparten los mismos individuos fúngicos (Rhizopogon): algunos individuos fúngicos colonizaban hasta 19 árboles."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0005",
+   "kennung": "song-2010",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Song",
+     "vorname": "Yuan Yuan"
+    },
+    {
+     "nachname": "Zeng",
+     "vorname": "Ren Sen"
+    },
+    {
+     "nachname": "Xu",
+     "vorname": "Jian Feng"
+    },
+    {
+     "nachname": "Li",
+     "vorname": "Jun"
+    },
+    {
+     "nachname": "Shen",
+     "vorname": "Xiang"
+    },
+    {
+     "nachname": "Yihdego",
+     "vorname": "Woldemariam Gebrehiwot"
+    }
+   ],
+   "jahr": 2010,
+   "jahr_online": 2010,
+   "titel": "Interplant Communication of Tomato Plants through Underground Common Mycorrhizal Networks",
+   "erschienen_in": {
+    "zeitschrift": "PLoS ONE",
+    "band": "5",
+    "heft": "10",
+    "seiten": "e13324"
+   },
+   "doi": "10.1371/journal.pone.0013324",
+   "url": "https://doi.org/10.1371/journal.pone.0013324",
+   "pmid": "20967206",
+   "pmcid": "PMC2954164",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Versuch unter kontrollierten Bedingungen mit Tomaten: Gesunde Pflanzen, die über ein gemeinsames Mykorrhiza-Netzwerk mit von einem Krankheitserreger befallenen Pflanzen verbunden waren, verstärkten Abwehrenzyme und Abwehrgene.",
+     "en": "Experiment under controlled conditions with tomatoes: healthy plants connected via a common mycorrhizal network to pathogen-infected plants increased defence enzymes and defence genes.",
+     "nl": "Proef onder gecontroleerde omstandigheden met tomaten: gezonde planten die via een gemeenschappelijk mycorrhizanetwerk verbonden waren met door een ziekteverwekker aangetaste planten, versterkten afweerenzymen en afweergenen.",
+     "fr": "Expérience en conditions contrôlées sur des tomates : des plantes saines reliées par un réseau mycorhizien commun à des plantes infectées par un pathogène ont renforcé leurs enzymes et gènes de défense.",
+     "es": "Experimento en condiciones controladas con tomates: plantas sanas conectadas mediante una red micorrícica común a plantas infectadas por un patógeno reforzaron enzimas y genes de defensa."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0006",
+   "kennung": "babikova-2013",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Babikova",
+     "vorname": "Zdenka"
+    },
+    {
+     "nachname": "Gilbert",
+     "vorname": "Lucy"
+    },
+    {
+     "nachname": "Bruce",
+     "vorname": "Toby J. A."
+    },
+    {
+     "nachname": "Birkett",
+     "vorname": "Michael"
+    },
+    {
+     "nachname": "Caulfield",
+     "vorname": "John C."
+    },
+    {
+     "nachname": "Woodcock",
+     "vorname": "Christine"
+    },
+    {
+     "nachname": "Pickett",
+     "vorname": "John A."
+    },
+    {
+     "nachname": "Johnson",
+     "vorname": "David"
+    }
+   ],
+   "jahr": 2013,
+   "jahr_druck": 2013,
+   "jahr_online": 2013,
+   "titel": "Underground signals carried through common mycelial networks warn neighbouring plants of aphid attack",
+   "erschienen_in": {
+    "zeitschrift": "Ecology Letters",
+    "band": "16",
+    "heft": "7",
+    "seiten": "835-843"
+   },
+   "doi": "10.1111/ele.12115",
+   "url": "https://doi.org/10.1111/ele.12115",
+   "pmid": "23656527",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Bohnenpflanzen in Mesokosmen im Gewächshaus: Pflanzen ohne Blattläuse veränderten ihre Duftstoffabgabe nur dann, wenn sie über ein Pilzgeflecht mit befallenen Pflanzen verbunden waren.",
+     "en": "Bean plants in greenhouse mesocosms: aphid-free plants changed their volatile emissions only when connected to infested plants via a fungal network.",
+     "nl": "Bonenplanten in mesokosmen in de kas: planten zonder bladluizen veranderden hun afgifte van geurstoffen alleen wanneer ze via een schimmelnetwerk met aangetaste planten verbonden waren.",
+     "fr": "Plants de fève en mésocosmes sous serre : les plantes sans pucerons ne modifiaient leurs émissions de composés volatils que lorsqu’elles étaient reliées à des plantes infestées par un réseau fongique.",
+     "es": "Plantas de haba en mesocosmos de invernadero: las plantas sin pulgones solo modificaron su emisión de compuestos volátiles cuando estaban conectadas a plantas infestadas mediante una red fúngica."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0007",
+   "kennung": "lee-2026",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Lee",
+     "vorname": "Soon-Jae"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Li"
+    },
+    {
+     "nachname": "Orlovskis",
+     "vorname": "Zigmunds"
+    }
+   ],
+   "jahr": 2026,
+   "jahr_druck": 2026,
+   "jahr_online": 2026,
+   "titel": "Harnessing plant-to-plant signalling via common mycorrhizal networks for enhanced community-level resistance in crops",
+   "erschienen_in": {
+    "zeitschrift": "Journal of Experimental Botany",
+    "band": "77",
+    "heft": "15",
+    "seiten": "4812-4828"
+   },
+   "doi": "10.1093/jxb/erag159",
+   "url": "https://doi.org/10.1093/jxb/erag159",
+   "pmid": "41913497",
+   "pmcid": "PMC13462799",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Übersicht zu möglichen Mechanismen, über die Pflanzen sich über gemeinsame Mykorrhiza-Netzwerke vor Schädlingen und Krankheitserregern warnen könnten (u. a. kleine RNA-Moleküle). Beschreibt das Gebiet als aufstrebendes Forschungsfeld.",
+     "en": "Review of possible mechanisms by which plants might warn each other of pests and pathogens via common mycorrhizal networks (including small RNA molecules). Describes the area as an emerging field of research.",
+     "nl": "Overzicht van mogelijke mechanismen waarmee planten elkaar via gemeenschappelijke mycorrhizanetwerken voor plagen en ziekteverwekkers zouden kunnen waarschuwen (o.a. kleine RNA-moleculen). Beschrijft het gebied als opkomend onderzoeksveld.",
+     "fr": "Synthèse des mécanismes possibles par lesquels des plantes pourraient s’avertir de ravageurs et de pathogènes via des réseaux mycorhiziens communs (notamment de petites molécules d’ARN). Décrit le domaine comme un champ de recherche émergent.",
+     "es": "Revisión de posibles mecanismos mediante los cuales las plantas podrían advertirse de plagas y patógenos a través de redes micorrícicas comunes (entre ellos pequeñas moléculas de ARN). Describe el área como un campo de investigación emergente."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0008",
+   "kennung": "nature-plants-2024",
+   "art": "editorial",
+   "status": "veroeffentlicht",
+   "jahr": 2024,
+   "jahr_online": 2024,
+   "titel": "Selfish genes and mother trees",
+   "erschienen_in": {
+    "zeitschrift": "Nature Plants",
+    "band": "10",
+    "heft": "5",
+    "seiten": "691-691"
+   },
+   "doi": "10.1038/s41477-024-01721-z",
+   "url": "https://doi.org/10.1038/s41477-024-01721-z",
+   "pmid": "38783123",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://www.nature.com/articles/s41477-024-01721-z",
+   "themen": [
+    "netzwerke"
+   ],
+   "beziehungen": [
+    {
+     "typ": "nimmt_bezug_auf",
+     "ziel": "Q0003"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Leitartikel über Metaphern in der Wissenschaft. Hält fest, dass der Begriff „wood-wide web“ im August 1997 auf dem Titelblatt von Nature stand, als dort die Arbeit von Simard et al. erschien; wer ihn prägte, ist nicht bekannt.",
+     "en": "Editorial on metaphors in science. Notes that the term “wood-wide web” appeared on the cover of Nature in August 1997, when the paper by Simard et al. was published; who coined it is not known.",
+     "nl": "Redactioneel stuk over metaforen in de wetenschap. Stelt vast dat de term „wood-wide web” in augustus 1997 op de cover van Nature stond, toen daar het artikel van Simard et al. verscheen; wie hem bedacht, is niet bekend.",
+     "fr": "Éditorial sur les métaphores en science. Rappelle que l’expression « wood-wide web » figurait en août 1997 en couverture de Nature, lors de la publication de l’article de Simard et al. ; on ignore qui l’a forgée.",
+     "es": "Editorial sobre las metáforas en la ciencia. Señala que el término «wood-wide web» apareció en agosto de 1997 en la portada de Nature, cuando se publicó el artículo de Simard et al.; no se sabe quién lo acuñó."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0009",
+   "kennung": "cavagnaro-2005",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Cavagnaro",
+     "vorname": "T. R."
+    },
+    {
+     "nachname": "Smith",
+     "vorname": "F. A."
+    },
+    {
+     "nachname": "Smith",
+     "vorname": "S. E."
+    },
+    {
+     "nachname": "Jakobsen",
+     "vorname": "I."
+    }
+   ],
+   "jahr": 2005,
+   "jahr_druck": 2005,
+   "jahr_online": 2005,
+   "titel": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
+   "erschienen_in": {
+    "zeitschrift": "Plant, Cell & Environment",
+    "band": "28",
+    "heft": "5",
+    "seiten": "642-650"
+   },
+   "doi": "10.1111/j.1365-3040.2005.01310.x",
+   "url": "https://onlinelibrary.wiley.com/doi/epdf/10.1111/j.1365-3040.2005.01310.x",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Zeigt, dass das untersuchte arbuskuläre Mykorrhizamyzel seine Hyphenentwicklung und Phosphataufnahme räumlich an lokale Phosphatverfügbarkeit anpassen kann. Welcher Mechanismus diese räumliche Koordination vermittelt, untersucht die Studie nicht.",
+     "en": "Shows that the arbuscular mycorrhizal mycelium studied can spatially adjust its hyphal development and phosphate uptake to local phosphate availability. The study does not investigate which mechanism mediates this spatial coordination.",
+     "nl": "Toont aan dat het onderzochte arbusculaire mycorrhizamycelium zijn hyfenontwikkeling en fosfaatopname ruimtelijk kan aanpassen aan lokale fosfaatbeschikbaarheid. Welk mechanisme deze ruimtelijke coördinatie bewerkstelligt, onderzoekt de studie niet.",
+     "fr": "Montre que le mycélium mycorhizien arbusculaire étudié peut adapter spatialement son développement hyphal et son absorption de phosphate à la disponibilité locale en phosphate. L'étude n'examine pas quel mécanisme assure cette coordination spatiale.",
+     "es": "Muestra que el micelio micorrícico arbuscular estudiado puede adaptar espacialmente su desarrollo hifal y su absorción de fosfato a la disponibilidad local de fosfato. El estudio no investiga qué mecanismo media esta coordinación espacial."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0010",
+   "kennung": "stewart-2026",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Stewart",
+     "vorname": "Justin D."
+    },
+    {
+     "nachname": "Bisot",
+     "vorname": "Corentin"
+    },
+    {
+     "nachname": "Cargill",
+     "vorname": "Rachael I. M."
+    },
+    {
+     "nachname": "Van Nuland",
+     "vorname": "Michael E."
+    },
+    {
+     "nachname": "Hawkins",
+     "vorname": "Heidi-Jayne"
+    },
+    {
+     "nachname": "Oyarte Galvez",
+     "vorname": "Loreto"
+    },
+    {
+     "nachname": "Klein",
+     "vorname": "Malin"
+    },
+    {
+     "nachname": "van Son",
+     "vorname": "Marije"
+    },
+    {
+     "nachname": "Terry",
+     "vorname": "Victoria"
+    },
+    {
+     "nachname": "Paré",
+     "vorname": "Louis"
+    },
+    {
+     "nachname": "Banchini",
+     "vorname": "Claudia"
+    },
+    {
+     "nachname": "Stefani",
+     "vorname": "Franck"
+    },
+    {
+     "nachname": "Kahane",
+     "vorname": "Felix"
+    },
+    {
+     "nachname": "Lin",
+     "vorname": "Kai-Kai"
+    },
+    {
+     "nachname": "Braghiere",
+     "vorname": "Renato K."
+    },
+    {
+     "nachname": "Field",
+     "vorname": "Katie J."
+    },
+    {
+     "nachname": "Soudzilovskaia",
+     "vorname": "Nadejda A."
+    },
+    {
+     "nachname": "Elhance",
+     "vorname": "Jinsu"
+    },
+    {
+     "nachname": "Kokkoris",
+     "vorname": "Vasilis"
+    },
+    {
+     "nachname": "Sheldrake",
+     "vorname": "Merlin"
+    },
+    {
+     "nachname": "Weedon",
+     "vorname": "James T."
+    },
+    {
+     "nachname": "Shimizu",
+     "vorname": "Thomas S."
+    },
+    {
+     "nachname": "West",
+     "vorname": "Stuart"
+    },
+    {
+     "nachname": "Kiers",
+     "vorname": "E. Toby"
+    }
+   ],
+   "jahr": 2026,
+   "jahr_druck": 2026,
+   "titel": "Global density and biomass of arbuscular mycorrhizal fungal networks",
+   "erschienen_in": {
+    "zeitschrift": "Science",
+    "band": "392",
+    "heft": "6803",
+    "seiten": "1171-1176"
+   },
+   "doi": "10.1126/science.adu4373",
+   "url": "https://doi.org/10.1126/science.adu4373",
+   "pmid": "42275513",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Schätzt mit Daten aus 322 Studien (über 16.000 Bodenproben) und Modellen, wie viele lebende Pilzfäden arbuskulärer Mykorrhizapilze im Oberboden weltweit vorkommen: rund 1,1 × 10¹⁷ Kilometer mit etwa 300 Megatonnen Biomasse. Die Arbeit beschreibt Menge und Verteilung der Pilzfäden, nicht ein zusammenhängendes Netz.",
+     "en": "Uses data from 322 studies (more than 16,000 soil cores) and models to estimate how many living hyphae of arbuscular mycorrhizal fungi occur in topsoils worldwide: about 1.1 × 10¹⁷ kilometres with some 300 megatonnes of biomass. The study describes the amount and distribution of hyphae, not a connected network.",
+     "nl": "Schat op basis van gegevens uit 322 studies (meer dan 16.000 bodemmonsters) en modellen hoeveel levende schimmeldraden van arbusculaire mycorrhizaschimmels wereldwijd in de bovengrond voorkomen: ongeveer 1,1 × 10¹⁷ kilometer met circa 300 megaton biomassa. Het onderzoek beschrijft hoeveelheid en verspreiding van de schimmeldraden, niet een samenhangend netwerk.",
+     "fr": "Estime, à partir des données de 322 études (plus de 16 000 carottes de sol) et de modèles, la quantité d’hyphes vivantes de champignons mycorhiziens à arbuscules présentes dans les sols superficiels du monde entier : environ 1,1 × 10¹⁷ kilomètres pour quelque 300 mégatonnes de biomasse. L’étude décrit la quantité et la répartition des hyphes, et non un réseau continu.",
+     "es": "Estima, con datos de 322 estudios (más de 16 000 muestras de suelo) y modelos, cuántas hifas vivas de hongos micorrícicos arbusculares hay en los suelos superficiales de todo el mundo: unos 1,1 × 10¹⁷ kilómetros con unas 300 megatoneladas de biomasa. El estudio describe la cantidad y la distribución de las hifas, no una red continua."
+    },
+    "heranziehen": {
+     "de": "Ordnet ein, dass wir lokale elektrische Aktivität an einzelnen Messorten untersuchen.",
+     "en": "Places our work in context: we study local electrical activity at individual measurement sites.",
+     "nl": "Plaatst in perspectief dat wij lokale elektrische activiteit op afzonderlijke meetlocaties onderzoeken.",
+     "fr": "Situe notre travail : nous étudions l’activité électrique locale sur des sites de mesure individuels.",
+     "es": "Sitúa nuestro trabajo: estudiamos la actividad eléctrica local en puntos de medición individuales."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0011",
+   "kennung": "soudzilovskaia-2019",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Soudzilovskaia",
+     "vorname": "Nadejda A."
+    },
+    {
+     "nachname": "van Bodegom",
+     "vorname": "Peter M."
+    },
+    {
+     "nachname": "Terrer",
+     "vorname": "César"
+    },
+    {
+     "nachname": "Zelfde",
+     "vorname": "Maarten van’t"
+    },
+    {
+     "nachname": "McCallum",
+     "vorname": "Ian"
+    },
+    {
+     "nachname": "Luke McCormack",
+     "vorname": "M."
+    },
+    {
+     "nachname": "Fisher",
+     "vorname": "Joshua B."
+    },
+    {
+     "nachname": "Brundrett",
+     "vorname": "Mark C."
+    },
+    {
+     "nachname": "de Sá",
+     "vorname": "Nuno César"
+    },
+    {
+     "nachname": "Tedersoo",
+     "vorname": "Leho"
+    }
+   ],
+   "jahr": 2019,
+   "jahr_online": 2019,
+   "titel": "Global mycorrhizal plant distribution linked to terrestrial carbon stocks",
+   "erschienen_in": {
+    "zeitschrift": "Nature Communications",
+    "band": "10",
+    "heft": "1",
+    "seiten": "5077"
+   },
+   "doi": "10.1038/s41467-019-13019-2",
+   "url": "https://doi.org/10.1038/s41467-019-13019-2",
+   "pmid": "31700000",
+   "pmcid": "PMC6838125",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Zeigt, dass unterschiedliche Mykorrhizatypen (arbuskulär, ektomykorrhiza, ericoid) unterschiedlich stark mit langfristiger Kohlenstoffspeicherung im Boden korrelieren – ein Baustein für die Frage, was zwischen zwei Bodenproben eigentlich passiert.",
+     "en": "Shows that different mycorrhizal types (arbuscular, ectomycorrhizal, ericoid) correlate differently with long-term soil carbon storage – one building block for the question of what actually happens between two soil samples.",
+     "nl": "Toont aan dat verschillende mycorrhizatypen (arbusculair, ectomycorrhiza, ericoïd) verschillend correleren met langdurige koolstofopslag in de bodem – een bouwsteen voor de vraag wat er eigenlijk gebeurt tussen twee bodemmonsters.",
+     "fr": "Montre que différents types de mycorhizes (arbusculaire, ectomycorhizienne, éricoïde) sont corrélés différemment au stockage à long terme du carbone dans le sol – un élément de réponse à la question de ce qui se passe réellement entre deux échantillons de sol.",
+     "es": "Muestra que los distintos tipos de micorrizas (arbuscular, ectomicorrícica, ericoide) se correlacionan de forma diferente con el almacenamiento a largo plazo de carbono en el suelo – una pieza para entender qué ocurre realmente entre dos muestras de suelo."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0012",
+   "kennung": "qiu-2026",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Qiu",
+     "vorname": "Yunpeng"
+    },
+    {
+     "nachname": "Zhao",
+     "vorname": "Yunfeng"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Bianbian"
+    },
+    {
+     "nachname": "Xu",
+     "vorname": "Xinyu"
+    },
+    {
+     "nachname": "He",
+     "vorname": "Tangqing"
+    },
+    {
+     "nachname": "Zhang",
+     "vorname": "Kangcheng"
+    },
+    {
+     "nachname": "Bai",
+     "vorname": "Tongshuo"
+    },
+    {
+     "nachname": "Li",
+     "vorname": "Zhen"
+    },
+    {
+     "nachname": "Ye",
+     "vorname": "Chenglong"
+    },
+    {
+     "nachname": "Gillespie",
+     "vorname": "Christopher"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Xiaodong"
+    },
+    {
+     "nachname": "Zhao",
+     "vorname": "Yexin"
+    },
+    {
+     "nachname": "Guo",
+     "vorname": "Lijin"
+    },
+    {
+     "nachname": "Qian",
+     "vorname": "Kaiyun"
+    },
+    {
+     "nachname": "Chen",
+     "vorname": "Huaihai"
+    },
+    {
+     "nachname": "Cao",
+     "vorname": "Xinxin"
+    },
+    {
+     "nachname": "Wu",
+     "vorname": "Shuqi"
+    },
+    {
+     "nachname": "Guo",
+     "vorname": "Liang"
+    },
+    {
+     "nachname": "Tisdale",
+     "vorname": "Ripley"
+    },
+    {
+     "nachname": "Woodley",
+     "vorname": "Alex"
+    },
+    {
+     "nachname": "Garcia",
+     "vorname": "Kevin"
+    },
+    {
+     "nachname": "Zhu",
+     "vorname": "Weixing"
+    },
+    {
+     "nachname": "Liu",
+     "vorname": "Lingli"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Yi"
+    },
+    {
+     "nachname": "Zhang",
+     "vorname": "Yi"
+    },
+    {
+     "nachname": "Hu",
+     "vorname": "Shuijin"
+    }
+   ],
+   "jahr": 2026,
+   "jahr_online": 2026,
+   "titel": "Root traits and mycorrhizal fungi mediate reactive N and warming impacts on soil organic carbon",
+   "erschienen_in": {
+    "zeitschrift": "Nature Communications",
+    "band": "17",
+    "heft": "1",
+    "seiten": "3184"
+   },
+   "doi": "10.1038/s41467-026-69301-7",
+   "url": "https://doi.org/10.1038/s41467-026-69301-7",
+   "pmid": "41741418",
+   "pmcid": "PMC13046925",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Belegt experimentell, wie Umweltfaktoren (Stickstoffeintrag, Erwärmung) die Kohlenstoffdynamik zwischen Wurzeln, Mykorrhizapilzen und Boden verschieben können.",
+     "en": "Provides experimental evidence for how environmental factors (nitrogen input, warming) can shift carbon dynamics between roots, mycorrhizal fungi and soil.",
+     "nl": "Levert experimenteel bewijs voor hoe omgevingsfactoren (stikstofinbreng, opwarming) de koolstofdynamiek tussen wortels, mycorrhizaschimmels en bodem kunnen verschuiven.",
+     "fr": "Apporte des preuves expérimentales de la manière dont des facteurs environnementaux (apport d'azote, réchauffement) peuvent modifier la dynamique du carbone entre racines, champignons mycorhiziens et sol.",
+     "es": "Aporta evidencia experimental de cómo factores ambientales (aporte de nitrógeno, calentamiento) pueden alterar la dinámica del carbono entre raíces, hongos micorrícicos y suelo."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0013",
+   "kennung": "mason-2025",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Mason",
+     "vorname": "Alexander R. G."
+    },
+    {
+     "nachname": "Bicharanloo",
+     "vorname": "Bahareh"
+    },
+    {
+     "nachname": "Salomon",
+     "vorname": "Matthias"
+    },
+    {
+     "nachname": "Lowe",
+     "vorname": "Andrew"
+    },
+    {
+     "nachname": "Dijkstra",
+     "vorname": "Feike A."
+    },
+    {
+     "nachname": "Cavagnaro",
+     "vorname": "Timothy"
+    }
+   ],
+   "jahr": 2025,
+   "jahr_online": 2025,
+   "titel": "Enhanced stabilisation of soil carbon via arbuscular mycorrhizal fungi and biochar",
+   "erschienen_in": {
+    "zeitschrift": "Scientific Reports",
+    "band": "15",
+    "heft": "1",
+    "seiten": "39631"
+   },
+   "doi": "10.1038/s41598-025-23219-0",
+   "url": "https://doi.org/10.1038/s41598-025-23219-0",
+   "pmid": "41224802",
+   "pmcid": "PMC12612129",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Untersucht experimentell, wie Mykorrhizapilze pflanzlichen Kohlenstoff in stabilere Bodenfraktionen transferieren.",
+     "en": "Experimentally investigates how mycorrhizal fungi transfer plant-derived carbon into more stable soil fractions.",
+     "nl": "Onderzoekt experimenteel hoe mycorrhizaschimmels plantaardige koolstof overdragen naar stabielere bodemfracties.",
+     "fr": "Étudie expérimentalement comment les champignons mycorhiziens transfèrent le carbone d'origine végétale vers des fractions du sol plus stables.",
+     "es": "Investiga experimentalmente cómo los hongos micorrícicos transfieren el carbono de origen vegetal a fracciones del suelo más estables."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0014",
+   "kennung": "hawkins-2023",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Hawkins",
+     "vorname": "Heidi-Jayne"
+    },
+    {
+     "nachname": "Cargill",
+     "vorname": "Rachael I.M."
+    },
+    {
+     "nachname": "Van Nuland",
+     "vorname": "Michael E."
+    },
+    {
+     "nachname": "Hagen",
+     "vorname": "Stephen C."
+    },
+    {
+     "nachname": "Field",
+     "vorname": "Katie J."
+    },
+    {
+     "nachname": "Sheldrake",
+     "vorname": "Merlin"
+    },
+    {
+     "nachname": "Soudzilovskaia",
+     "vorname": "Nadejda A."
+    },
+    {
+     "nachname": "Kiers",
+     "vorname": "E. Toby"
+    }
+   ],
+   "jahr": 2023,
+   "jahr_druck": 2023,
+   "titel": "Mycorrhizal mycelium as a global carbon pool",
+   "erschienen_in": {
+    "zeitschrift": "Current Biology",
+    "band": "33",
+    "heft": "11",
+    "seiten": "R560-R573"
+   },
+   "doi": "10.1016/j.cub.2023.02.027",
+   "url": "https://doi.org/10.1016/j.cub.2023.02.027",
+   "pmid": "37279689",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Datensynthese aus 194 Datensätzen (61 Studien) und erste globale quantitative Schätzung des Kohlenstoffflusses von Pflanzen ins Mykorrhizamyzel: rund 13 Gt CO₂e pro Jahr, rechnerisch ~36 % der jährlichen fossilen CO₂-Emissionen. Die Zahl beschreibt eine jährliche Kohlenstoffzuteilung, keine dauerhafte Speicherung – wie lange dieser Kohlenstoff im Boden verbleibt, ist offen. Die Autoren benennen selbst deutliche methodische Unsicherheiten (Einzelzeitpunktmessungen, fehlende Daten aus Südostasien, Ozeanien und Afrika, große Streuung je Studientyp). Eigenständige, quantitative Arbeit zur Stofffluss-Frage – keine Aussage über Kommunikation zwischen Pflanzen im Sinne der populären „Wood Wide Web“-Erzählung.",
+     "en": "Data synthesis of 194 datasets (61 studies) and the first global quantitative estimate of carbon flow from plants into mycorrhizal mycelium: around 13 Gt CO₂e per year, equivalent to ~36% of annual fossil CO₂ emissions. The figure describes an annual carbon allocation, not permanent storage — how long this carbon remains in the soil is an open question. The authors themselves name substantial methodological uncertainties (single-time-point measurements, missing data from Southeast Asia, Oceania and Africa, wide spread between study types). A stand-alone quantitative work on the question of material flows — not a claim about communication between plants in the sense of the popular “Wood Wide Web” narrative.",
+     "nl": "Datasynthese van 194 datasets (61 studies) en de eerste wereldwijde kwantitatieve schatting van de koolstofstroom van planten naar het mycorrhizamycelium: ongeveer 13 Gt CO₂e per jaar, overeenkomend met ~36% van de jaarlijkse fossiele CO₂-uitstoot. Het getal beschrijft een jaarlijkse koolstoftoewijzing, geen permanente opslag — hoe lang deze koolstof in de bodem blijft, is onbekend. De auteurs noemen zelf aanzienlijke methodologische onzekerheden (metingen op één tijdstip, ontbrekende gegevens uit Zuidoost-Azië, Oceanië en Afrika, grote spreiding per studietype). Een zelfstandig, kwantitatief werk over de vraag naar stofstromen — geen uitspraak over communicatie tussen planten in de zin van het populaire “Wood Wide Web”-verhaal.",
+     "fr": "Synthèse de 194 jeux de données (61 études) et première estimation quantitative mondiale du flux de carbone des plantes vers le mycélium mycorhizien : environ 13 Gt CO₂e par an, soit ~36 % des émissions annuelles de CO₂ fossile. Ce chiffre décrit une allocation annuelle de carbone, pas un stockage durable — la durée pendant laquelle ce carbone reste dans le sol est une question ouverte. Les auteurs signalent eux-mêmes d'importantes incertitudes méthodologiques (mesures ponctuelles, absence de données pour l'Asie du Sud-Est, l'Océanie et l'Afrique, forte dispersion selon le type d'étude). Un travail quantitatif autonome sur la question des flux de matière — et non une affirmation sur la communication entre plantes au sens du récit populaire du « Wood Wide Web ».",
+     "es": "Síntesis de 194 conjuntos de datos (61 estudios) y primera estimación cuantitativa global del flujo de carbono de las plantas al micelio micorrícico: unas 13 Gt CO₂e al año, equivalentes a ~36 % de las emisiones anuales de CO₂ fósil. La cifra describe una asignación anual de carbono, no un almacenamiento permanente — cuánto tiempo permanece ese carbono en el suelo es una pregunta abierta. Los propios autores señalan incertidumbres metodológicas importantes (mediciones en un único momento, falta de datos del Sudeste Asiático, Oceanía y África, gran dispersión según el tipo de estudio). Un trabajo cuantitativo independiente sobre la cuestión de los flujos de materia — no una afirmación sobre comunicación entre plantas en el sentido del relato popular del «Wood Wide Web»."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0015",
+   "kennung": "karst-2023",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Karst",
+     "vorname": "Justine"
+    },
+    {
+     "nachname": "Jones",
+     "vorname": "Melanie D."
+    },
+    {
+     "nachname": "Hoeksema",
+     "vorname": "Jason D."
+    }
+   ],
+   "jahr": 2023,
+   "jahr_online": 2023,
+   "titel": "Positive citation bias and overinterpreted results lead to misinformation on common mycorrhizal networks in forests",
+   "korrekturen": [
+    {
+     "doi": "10.1038/s41559-023-02035-7",
+     "art": "correction"
+    }
+   ],
+   "erschienen_in": {
+    "zeitschrift": "Nature Ecology & Evolution",
+    "band": "7",
+    "heft": "4",
+    "seiten": "501-511"
+   },
+   "doi": "10.1038/s41559-023-01986-1",
+   "url": "https://www.nature.com/articles/s41559-023-01986-1",
+   "pmid": "36782032",
+   "zugang": "nur_abstract",
+   "themen": [
+    "netzwerke"
+   ],
+   "beziehungen": [
+    {
+     "typ": "nimmt_bezug_auf",
+     "ziel": "Q0003"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Kritischer Review zur Evidenz für Common Mycorrhizal Networks in Wäldern. Die Autoren unterscheiden zwischen der Existenz solcher Netzwerke und weitergehenden Aussagen über häufigen Ressourcen- oder Signaltransfer sowie daraus abgeleitete „Mother Tree\"-Narrative.",
+     "en": "Critical review of the evidence for common mycorrhizal networks in forests. The authors distinguish between the existence of such networks and further-reaching claims about frequent resource or signal transfer, and the \"Mother Tree\" narratives derived from them.",
+     "nl": "Kritische review van het bewijs voor common mycorrhizal networks in bossen. De auteurs onderscheiden tussen het bestaan van dergelijke netwerken en verdergaande uitspraken over veelvuldige hulpbronnen- of signaaloverdracht, en de daaruit afgeleide „Mother Tree”-narratieven.",
+     "fr": "Revue critique des preuves relatives aux réseaux mycorhiziens communs en forêt. Les auteurs distinguent l'existence de tels réseaux des affirmations plus larges sur un transfert fréquent de ressources ou de signaux, et des récits de « Mother Tree » qui en sont issus.",
+     "es": "Revisión crítica de la evidencia sobre las redes micorrícicas comunes en los bosques. Los autores distinguen entre la existencia de dichas redes y afirmaciones más amplias sobre transferencia frecuente de recursos o señales, así como las narrativas de «Mother Tree» derivadas de ellas."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0016",
+   "kennung": "henriksson-2023",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Henriksson",
+     "vorname": "Nils"
+    },
+    {
+     "nachname": "Marshall",
+     "vorname": "John"
+    },
+    {
+     "nachname": "Högberg",
+     "vorname": "Mona N."
+    },
+    {
+     "nachname": "Högberg",
+     "vorname": "Peter"
+    },
+    {
+     "nachname": "Polle",
+     "vorname": "Andrea"
+    },
+    {
+     "nachname": "Franklin",
+     "vorname": "Oskar"
+    },
+    {
+     "nachname": "Näsholm",
+     "vorname": "Torgny"
+    }
+   ],
+   "jahr": 2023,
+   "jahr_druck": 2023,
+   "jahr_online": 2023,
+   "titel": "Re‐examining the evidence for the mother tree hypothesis – resource sharing among trees via ectomycorrhizal networks",
+   "erschienen_in": {
+    "zeitschrift": "New Phytologist",
+    "band": "239",
+    "heft": "1",
+    "seiten": "19-28"
+   },
+   "doi": "10.1111/nph.18935",
+   "url": "https://doi.org/10.1111/nph.18935",
+   "pmid": "37149889",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke"
+   ],
+   "beziehungen": [
+    {
+     "typ": "thematisch_verwandt",
+     "ziel": "Q0015"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Prüft die Belege für die Mutterbaum-Hypothese: Ein nennenswerter Netto-Transport von Kohlenstoff über Ektomykorrhiza-Netzwerke, von dem die Empfänger profitieren, sei bisher nicht nachgewiesen.",
+     "en": "Re-examines the evidence for the mother tree hypothesis: a significant net carbon transfer via ectomycorrhizal networks that benefits the recipients has not yet been demonstrated.",
+     "nl": "Toetst het bewijs voor de moederboomhypothese: een noemenswaardig netto transport van koolstof via ectomycorrhizanetwerken waar de ontvangers baat bij hebben, is tot nu toe niet aangetoond.",
+     "fr": "Réexamine les preuves de l’hypothèse de l’arbre-mère : un transfert net significatif de carbone via les réseaux ectomycorhiziens, profitable aux receveurs, n’a pas encore été démontré.",
+     "es": "Reexamina las pruebas de la hipótesis del árbol madre: hasta ahora no se ha demostrado una transferencia neta significativa de carbono a través de redes ectomicorrícicas que beneficie a los receptores."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0017",
+   "kennung": "simard-2025",
+   "art": "meinungsbeitrag",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Simard",
+     "vorname": "Suzanne W."
+    },
+    {
+     "nachname": "Ryan",
+     "vorname": "Teresa (Sm'hayetsk) L."
+    },
+    {
+     "nachname": "Perry",
+     "vorname": "David A."
+    }
+   ],
+   "jahr": 2025,
+   "jahr_online": 2025,
+   "titel": "Opinion: Response to questions about common mycorrhizal networks",
+   "erschienen_in": {
+    "zeitschrift": "Frontiers in Forests and Global Change",
+    "band": "7",
+    "seiten": "1512518"
+   },
+   "doi": "10.3389/ffgc.2024.1512518",
+   "url": "https://doi.org/10.3389/ffgc.2024.1512518",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://www.frontiersin.org/journals/forests-and-global-change/articles/10.3389/ffgc.2024.1512518/full",
+   "themen": [
+    "netzwerke"
+   ],
+   "beziehungen": [
+    {
+     "typ": "erwidert_auf",
+     "ziel": "Q0015"
+    },
+    {
+     "typ": "erwidert_auf",
+     "ziel": "Q0016"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Erwiderung auf Karst et al. 2023 und Henriksson et al. 2023: Aus Sicht der Autoren belegen Untersuchungen mit vielen Methoden, dass gemeinsame Netzwerke vorkommen und Stoffe über mehrere Wege zugleich wandern (Pilze, Wurzeln, Boden). Die Kritik berücksichtige Labor- und Gewächshausversuche zu wenig.",
+     "en": "Response to Karst et al. 2023 and Henriksson et al. 2023: in the authors’ view, studies using many methods show that common networks occur and that resources move via several pathways at once (fungi, roots, soil). The critique gives too little weight to laboratory and greenhouse experiments.",
+     "nl": "Reactie op Karst et al. 2023 en Henriksson et al. 2023: volgens de auteurs tonen onderzoeken met veel methoden aan dat gemeenschappelijke netwerken voorkomen en dat stoffen via meerdere wegen tegelijk bewegen (schimmels, wortels, bodem). De kritiek houdt te weinig rekening met laboratorium- en kasproeven.",
+     "fr": "Réponse à Karst et al. 2023 et Henriksson et al. 2023 : selon les auteurs, des études recourant à de nombreuses méthodes montrent que les réseaux communs existent et que les ressources circulent par plusieurs voies à la fois (champignons, racines, sol). La critique tiendrait trop peu compte des expériences en laboratoire et sous serre.",
+     "es": "Respuesta a Karst et al. 2023 y Henriksson et al. 2023: en opinión de los autores, estudios con muchos métodos muestran que las redes comunes existen y que los recursos circulan por varias vías a la vez (hongos, raíces, suelo). La crítica tendría poco en cuenta los experimentos de laboratorio e invernadero."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0018",
+   "kennung": "merckx-2024",
+   "art": "perspective",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Merckx",
+     "vorname": "Vincent S. F. T."
+    },
+    {
+     "nachname": "Gomes",
+     "vorname": "Sofia I. F."
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Deyi"
+    },
+    {
+     "nachname": "Verbeek",
+     "vorname": "Cas"
+    },
+    {
+     "nachname": "Jacquemyn",
+     "vorname": "Hans"
+    },
+    {
+     "nachname": "Zahn",
+     "vorname": "Franziska E."
+    },
+    {
+     "nachname": "Gebauer",
+     "vorname": "Gerhard"
+    },
+    {
+     "nachname": "Bidartondo",
+     "vorname": "Martin I."
+    }
+   ],
+   "jahr": 2024,
+   "jahr_online": 2024,
+   "titel": "Mycoheterotrophy in the wood-wide web",
+   "erschienen_in": {
+    "zeitschrift": "Nature Plants",
+    "band": "10",
+    "heft": "5",
+    "seiten": "710-718"
+   },
+   "doi": "10.1038/s41477-024-01677-0",
+   "url": "https://doi.org/10.1038/s41477-024-01677-0",
+   "pmid": "38641664",
+   "zugang": "autorenfassung_frei",
+   "zugang_link": "https://repository.naturalis.nl/pub/800528/Merckx-2024-Mycoheterotrophy-in-the-wood-wide-web-A.pdf",
+   "themen": [
+    "netzwerke"
+   ],
+   "beziehungen": [
+    {
+     "typ": "nimmt_bezug_auf",
+     "ziel": "Q0015"
+    },
+    {
+     "typ": "nimmt_bezug_auf",
+     "ziel": "Q0016"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Sieht mykoheterotrophe Pflanzen als natürlichen Beleg dafür, dass Kohlenstoff über gemeinsame Pilzpartner von Pflanze zu Pflanze gelangt. Wie häufig das zwischen grünen Pflanzen geschieht und ob es ihnen nützt, ist nach den Autoren offen.",
+     "en": "Regards mycoheterotrophic plants as natural evidence that carbon passes from plant to plant via shared fungal partners. According to the authors, how often this happens between green plants, and whether it benefits them, remains open.",
+     "nl": "Ziet mycoheterotrofe planten als natuurlijk bewijs dat koolstof via gedeelde schimmelpartners van plant naar plant gaat. Hoe vaak dat tussen groene planten gebeurt en of het hen voordeel oplevert, is volgens de auteurs nog open.",
+     "fr": "Considère les plantes mycohétérotrophes comme une preuve naturelle que le carbone passe d’une plante à l’autre par des partenaires fongiques communs. Selon les auteurs, la fréquence de ce phénomène entre plantes vertes et son bénéfice pour elles restent à établir.",
+     "es": "Considera las plantas micoheterótrofas una prueba natural de que el carbono pasa de una planta a otra a través de socios fúngicos compartidos. Según los autores, sigue abierto con qué frecuencia ocurre esto entre plantas verdes y si les beneficia."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0019",
+   "kennung": "karst-many-minds-2024",
+   "art": "vortrag-gespraech",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Karst",
+     "vorname": "Justine"
+    }
+   ],
+   "jahr": 2024,
+   "titel": "Rethinking the \"Wood Wide Web\" – Gespräch mit Dr. Justine Karst",
+   "erschienen_in": {
+    "sendung": "Many Minds (Podcast, DISI)"
+   },
+   "url": "https://disi.org/rethinking-the-wood-wide-web/",
+   "zugang": "frei_abrufbar",
+   "zugang_link": "https://disi.org/rethinking-the-wood-wide-web/",
+   "themen": [
+    "netzwerke",
+    "weiterlesen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Zugängliche Einordnung der wissenschaftlichen Debatte für Nicht-Fachpublikum.",
+     "en": "Accessible framing of the scientific debate for a non-specialist audience.",
+     "nl": "Toegankelijke duiding van het wetenschappelijke debat voor een niet-vakpubliek.",
+     "fr": "Éclairage accessible du débat scientifique pour un public non spécialiste.",
+     "es": "Explicación accesible del debate científico para un público no especializado."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0020",
+   "kennung": "lehmann-rillig-2025",
+   "art": "systematische-uebersicht",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Lehmann",
+     "vorname": "Anika"
+    },
+    {
+     "nachname": "Rillig",
+     "vorname": "Matthias C."
+    }
+   ],
+   "jahr": 2025,
+   "jahr_druck": 2025,
+   "jahr_online": 2024,
+   "titel": "Systematic mapping of experimental approaches to studying common mycorrhizal networks in arbuscular mycorrhiza",
+   "erschienen_in": {
+    "zeitschrift": "PLANTS, PEOPLE, PLANET",
+    "band": "7",
+    "heft": "4",
+    "seiten": "920-933"
+   },
+   "doi": "10.1002/ppp3.10618",
+   "url": "https://nph.onlinelibrary.wiley.com/doi/full/10.1002/ppp3.10618",
+   "zugang": "ungeprueft",
+   "themen": [
+    "netzwerke",
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Systematische Kartierung der Versuchsansätze zu gemeinsamen Netzwerken arbuskulärer Mykorrhiza: Nur sehr wenige Studien erfüllen die strengsten Kriterien für einen Nachweis, und vor allem Freilanddaten fehlen.",
+     "en": "Systematic map of experimental approaches to common networks of arbuscular mycorrhiza: very few studies meet the strictest criteria for evidence, and field data in particular are lacking.",
+     "nl": "Systematisch overzicht van proefopzetten rond gemeenschappelijke netwerken van arbusculaire mycorrhiza: slechts zeer weinig studies voldoen aan de strengste criteria voor bewijs, en vooral velddata ontbreken.",
+     "fr": "Cartographie systématique des approches expérimentales sur les réseaux communs de mycorhizes arbusculaires : très peu d’études remplissent les critères de preuve les plus stricts, et ce sont surtout les données de terrain qui manquent.",
+     "es": "Mapeo sistemático de los enfoques experimentales sobre redes comunes de micorrizas arbusculares: muy pocos estudios cumplen los criterios de prueba más estrictos y faltan sobre todo datos de campo."
+    },
+    "heranziehen": {
+     "de": "Zeigt, wie selten Freilanduntersuchungen bei dieser Frage sind. Die Arbeit betrifft gemeinsame Mykorrhiza-Netzwerke, nicht die elektrische Aktivität von Pilzen.",
+     "en": "Shows how rare field studies are on this question. The study concerns common mycorrhizal networks, not the electrical activity of fungi.",
+     "nl": "Laat zien hoe zeldzaam veldonderzoek naar deze vraag is. Het onderzoek gaat over gemeenschappelijke mycorrhizanetwerken, niet over de elektrische activiteit van schimmels.",
+     "fr": "Montre combien les études de terrain sur cette question sont rares. L’étude porte sur les réseaux mycorhiziens communs, et non sur l’activité électrique des champignons.",
+     "es": "Muestra lo escasos que son los estudios de campo sobre esta cuestión. El estudio trata de las redes micorrícicas comunes, no de la actividad eléctrica de los hongos."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0021",
+   "kennung": "lutz-2023",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Lutz",
+     "vorname": "Stefanie"
+    },
+    {
+     "nachname": "Bodenhausen",
+     "vorname": "Natacha"
+    },
+    {
+     "nachname": "Hess",
+     "vorname": "Julia"
+    },
+    {
+     "nachname": "Valzano-Held",
+     "vorname": "Alain"
+    },
+    {
+     "nachname": "Waelchli",
+     "vorname": "Jan"
+    },
+    {
+     "nachname": "Deslandes-Hérold",
+     "vorname": "Gabriel"
+    },
+    {
+     "nachname": "Schlaeppi",
+     "vorname": "Klaus"
+    },
+    {
+     "nachname": "van der Heijden",
+     "vorname": "Marcel G. A."
+    }
+   ],
+   "jahr": 2023,
+   "jahr_online": 2023,
+   "titel": "Soil microbiome indicators can predict crop growth response to large-scale inoculation with arbuscular mycorrhizal fungi",
+   "korrekturen": [
+    {
+     "doi": "10.1038/s41564-023-01577-7",
+     "art": "correction"
+    }
+   ],
+   "erschienen_in": {
+    "zeitschrift": "Nature Microbiology",
+    "band": "8",
+    "heft": "12",
+    "seiten": "2277-2289"
+   },
+   "doi": "10.1038/s41564-023-01520-w",
+   "url": "https://doi.org/10.1038/s41564-023-01520-w",
+   "pmid": "38030903",
+   "pmcid": "PMC10730404",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://www.nature.com/articles/s41564-023-01520-w",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Feldversuch auf 54 Maisfeldern in der Schweiz zeigt: Wie stark Mais auf eine AMF-Inokulation mit Wachstum reagiert, ist im Feld hochvariabel (−12 % bis +40 %) und vor allem durch den Zustand des Boden-Mikrobioms vorhersagbar — nicht durch die Nährstoffverfügbarkeit. Unterstreicht, warum Laborergebnisse nicht direkt auf Feldbedingungen übertragbar sind.",
+     "en": "On-farm trial in 54 maize fields in Switzerland: the growth response of maize to AMF inoculation is highly variable in the field (−12% to +40%) and mainly predictable from soil microbiome status — not from nutrient availability. Underscores why lab results don't directly transfer to field conditions.",
+     "nl": "Praktijkproef op 54 maïsvelden in Zwitserland toont aan: hoe sterk maïs met groei reageert op AMF-inoculatie, is in het veld sterk variabel (−12% tot +40%) en vooral voorspelbaar op basis van de bodemmicrobioomstatus — niet op basis van de beschikbaarheid van voedingsstoffen. Onderstreept waarom laboratoriumresultaten niet direct naar veldomstandigheden zijn te vertalen.",
+     "fr": "Essai mené dans 54 champs de maïs en Suisse : la réponse de croissance du maïs à l'inoculation par des CMA est très variable sur le terrain (de −12 % à +40 %) et principalement prévisible par l'état du microbiome du sol — et non par la disponibilité des nutriments. Souligne pourquoi les résultats de laboratoire ne sont pas directement transposables aux conditions de terrain.",
+     "es": "Ensayo en 54 campos de maíz en Suiza: la respuesta de crecimiento del maíz a la inoculación con HMA es muy variable en campo (de −12 % a +40 %) y se predice principalmente por el estado del microbioma del suelo — no por la disponibilidad de nutrientes. Subraya por qué los resultados de laboratorio no son directamente trasladables a condiciones de campo."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0022",
+   "kennung": "slayman-1976",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Slayman",
+     "vorname": "Clifford L."
+    },
+    {
+     "nachname": "Scott Long",
+     "vorname": "W."
+    },
+    {
+     "nachname": "Gradmann",
+     "vorname": "Dietrich"
+    }
+   ],
+   "jahr": 1976,
+   "jahr_druck": 1976,
+   "titel": "“Action potentials” in NEUROSPORA CRASSA, a mycelial fungus",
+   "erschienen_in": {
+    "zeitschrift": "Biochimica et Biophysica Acta (BBA) - Biomembranes",
+    "band": "426",
+    "heft": "4",
+    "seiten": "732-744"
+   },
+   "doi": "10.1016/0005-2736(76)90138-3",
+   "url": "https://doi.org/10.1016/0005-2736(76)90138-3",
+   "pmid": "130926",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Frühe Beschreibung gelegentlicher spontaner „Aktionspotenziale“ in reifen Hyphen von Neurospora crassa, gemessen als Änderung des Membranpotenzials. Eine Funktion war nach Angaben der Autoren nicht erkennbar.",
+     "en": "Early description of occasional spontaneous “action potentials” in mature hyphae of Neurospora crassa, measured as changes in membrane potential. According to the authors, no function was apparent.",
+     "nl": "Vroege beschrijving van incidentele spontane „actiepotentialen” in volwassen hyfen van Neurospora crassa, gemeten als verandering van de membraanpotentiaal. Volgens de auteurs was geen functie herkenbaar.",
+     "fr": "Description précoce de « potentiels d’action » spontanés occasionnels dans les hyphes matures de Neurospora crassa, mesurés comme variations du potentiel de membrane. Selon les auteurs, aucune fonction n’était apparente.",
+     "es": "Descripción temprana de «potenciales de acción» espontáneos ocasionales en hifas maduras de Neurospora crassa, medidos como cambios del potencial de membrana. Según los autores, no se apreciaba ninguna función."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0023",
+   "kennung": "buffi-2025b",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Buffi",
+     "vorname": "Matteo"
+    },
+    {
+     "nachname": "Kelliher",
+     "vorname": "Julia M"
+    },
+    {
+     "nachname": "Robinson",
+     "vorname": "Aaron J"
+    },
+    {
+     "nachname": "Gonzalez",
+     "vorname": "Diego"
+    },
+    {
+     "nachname": "Cailleau",
+     "vorname": "Guillaume"
+    },
+    {
+     "nachname": "Macalindong",
+     "vorname": "Justine A"
+    },
+    {
+     "nachname": "Frau",
+     "vorname": "Eleonora"
+    },
+    {
+     "nachname": "Schintke",
+     "vorname": "Silvia"
+    },
+    {
+     "nachname": "Chain",
+     "vorname": "Patrick S G"
+    },
+    {
+     "nachname": "Stanley",
+     "vorname": "Claire E"
+    },
+    {
+     "nachname": "Künzler",
+     "vorname": "Markus"
+    },
+    {
+     "nachname": "Bindschedler",
+     "vorname": "Saskia"
+    },
+    {
+     "nachname": "Junier",
+     "vorname": "Pilar"
+    }
+   ],
+   "jahr": 2025,
+   "jahr_druck": 2025,
+   "jahr_online": 2025,
+   "titel": "Electrical signaling in fungi: past and present challenges",
+   "erschienen_in": {
+    "zeitschrift": "FEMS Microbiology Reviews",
+    "band": "49",
+    "seiten": "fuaf009"
+   },
+   "doi": "10.1093/femsre/fuaf009",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11995700/",
+   "pmid": "40118505",
+   "pmcid": "PMC11995700",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11995700/",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Fasst den aktuellen Forschungsstand zu elektrischer Aktivität in filamentösen Pilzen zusammen und diskutiert Evidenz, Messmethoden, mögliche Artefakte und offene Fragen.",
+     "en": "Summarises the current state of research on electrical activity in filamentous fungi and discusses evidence, measurement methods, possible artefacts, and open questions.",
+     "nl": "Vat de actuele onderzoeksstand over elektrische activiteit in filamenteuze schimmels samen en bespreekt bewijs, meetmethoden, mogelijke artefacten en open vragen.",
+     "fr": "Résume l'état actuel de la recherche sur l'activité électrique des champignons filamenteux et discute des preuves, des méthodes de mesure, des artefacts possibles et des questions ouvertes.",
+     "es": "Resume el estado actual de la investigación sobre la actividad eléctrica en hongos filamentosos y analiza la evidencia, los métodos de medición, los posibles artefactos y las preguntas abiertas."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0024",
+   "kennung": "hunter-fungal-grid",
+   "art": "journalismus",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Hunter",
+     "vorname": "Philip"
+    }
+   ],
+   "jahr": 2023,
+   "jahr_druck": 2023,
+   "jahr_online": 2023,
+   "titel": "The fungal grid",
+   "erschienen_in": {
+    "zeitschrift": "EMBO Reports",
+    "band": "24",
+    "heft": "5",
+    "seiten": "EMBR202357255"
+   },
+   "doi": "10.15252/embr.202357255",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10157304/",
+   "pmid": "37017146",
+   "pmcid": "PMC10157304",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet",
+    "weiterlesen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Wissenschaftsjournalistische Einordnung der Forschung und Debatte um Pilz- und Mykorrhiza-Netzwerke – nützlich zur Orientierung, aber keine Primärstudie.",
+     "en": "Science-journalistic framing of the research and debate around fungal and mycorrhizal networks — useful for orientation, but not a primary study.",
+     "nl": "Wetenschapsjournalistieke duiding van het onderzoek en het debat rond schimmel- en mycorrhizanetwerken – nuttig ter oriëntatie, maar geen primaire studie.",
+     "fr": "Éclairage journalistique scientifique de la recherche et du débat autour des réseaux fongiques et mycorhiziens – utile pour s'orienter, mais pas une étude primaire.",
+     "es": "Enfoque periodístico-científico de la investigación y el debate en torno a las redes fúngicas y micorrícicas – útil como orientación, pero no un estudio primario."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0025",
+   "kennung": "buffi-2025a",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Buffi",
+     "vorname": "Matteo"
+    },
+    {
+     "nachname": "Giangaspero",
+     "vorname": "Silvia"
+    },
+    {
+     "nachname": "Foiada",
+     "vorname": "Valerio"
+    },
+    {
+     "nachname": "Puthod",
+     "vorname": "Loïc"
+    },
+    {
+     "nachname": "Cailleau",
+     "vorname": "Guillaume"
+    },
+    {
+     "nachname": "Robinson",
+     "vorname": "Aaron J."
+    },
+    {
+     "nachname": "Kelliher",
+     "vorname": "Julia M."
+    },
+    {
+     "nachname": "Chain",
+     "vorname": "Patrick S.G."
+    },
+    {
+     "nachname": "Oberson",
+     "vorname": "Daniel"
+    },
+    {
+     "nachname": "Künzler",
+     "vorname": "Markus"
+    },
+    {
+     "nachname": "Bindschedler",
+     "vorname": "Saskia"
+    },
+    {
+     "nachname": "Pirrami",
+     "vorname": "Lorenzo"
+    },
+    {
+     "nachname": "Junier",
+     "vorname": "Pilar"
+    }
+   ],
+   "jahr": 2025,
+   "jahr_druck": 2025,
+   "titel": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+   "erschienen_in": {
+    "zeitschrift": "iScience",
+    "band": "28",
+    "heft": "10",
+    "seiten": "113484"
+   },
+   "doi": "10.1016/j.isci.2025.113484",
+   "url": "https://doi.org/10.1016/j.isci.2025.113484",
+   "pmid": "41035690",
+   "pmcid": "PMC12483595",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12483595/",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Eine methodisch besonders relevante Validierungsstudie zur elektrophysiologischen Messung an Pilzen. Sie nutzt unter anderem PCB-basierte Differenzelektroden, Abschirmung und Kontrollverfahren zur Verringerung möglicher Messartefakte – methodisch relevant für den BioComm-Ansatz.",
+     "en": "A methodologically particularly relevant validation study on electrophysiological measurement in fungi. It uses, among other things, PCB-based differential electrodes, shielding, and control procedures to reduce possible measurement artefacts — methodologically relevant for the BioComm approach.",
+     "nl": "Een methodologisch bijzonder relevante validatiestudie naar elektrofysiologische metingen bij schimmels. Ze gebruikt onder andere PCB-gebaseerde differentiaalelektroden, afscherming en controleprocedures om mogelijke meetartefacten te verminderen — methodologisch relevant voor de BioComm-aanpak.",
+     "fr": "Une étude de validation particulièrement pertinente sur le plan méthodologique concernant la mesure électrophysiologique chez les champignons. Elle utilise notamment des électrodes différentielles sur PCB, un blindage et des procédures de contrôle pour réduire les artefacts de mesure possibles — pertinente sur le plan méthodologique pour l'approche BioComm.",
+     "es": "Un estudio de validación especialmente relevante desde el punto de vista metodológico sobre la medición electrofisiológica en hongos. Utiliza, entre otras cosas, electrodos diferenciales basados en PCB, blindaje y procedimientos de control para reducir posibles artefactos de medición — metodológicamente relevante para el enfoque de BioComm."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0026",
+   "kennung": "adamatzky-2022a",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Adamatzky",
+     "vorname": "Andrew"
+    }
+   ],
+   "jahr": 2022,
+   "jahr_druck": 2022,
+   "jahr_online": 2022,
+   "titel": "Language of fungi derived from their electrical spiking activity",
+   "erschienen_in": {
+    "zeitschrift": "Royal Society Open Science",
+    "band": "9",
+    "heft": "4",
+    "seiten": "211926"
+   },
+   "doi": "10.1098/rsos.211926",
+   "url": "https://doi.org/10.1098/rsos.211926",
+   "pmid": "35425630",
+   "pmcid": "PMC8984380",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8984380/",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Analysiert gemessene elektrische Spike-Trains verschiedener Pilzarten auf wiederkehrende zeitliche Muster und untersucht unter einer Kommunikationshypothese, ob sich daraus sprachähnliche Strukturen beschreiben lassen. Die gemessene elektrische Aktivität ist ein Befund, die Deutung als „Pilzsprache“ eine analytische Interpretation, kein Nachweis.",
+     "en": "Analyses measured electrical spike trains from various fungal species for recurring temporal patterns and examines, under a communication hypothesis, whether language-like structures can be described from them. The measured electrical activity is a finding; the interpretation as \"fungal language\" is an analytical interpretation, not proof.",
+     "nl": "Analyseert gemeten elektrische spike-trains van verschillende schimmelsoorten op terugkerende tijdspatronen en onderzoekt onder een communicatiehypothese of zich daaruit taalachtige structuren laten beschrijven. De gemeten elektrische activiteit is een bevinding, de duiding als „schimmeltaal” een analytische interpretatie, geen bewijs.",
+     "fr": "Analyse les trains de spikes électriques mesurés chez différentes espèces fongiques à la recherche de motifs temporels récurrents et examine, sous une hypothèse de communication, si des structures proches du langage peuvent en être décrites. L'activité électrique mesurée est un constat ; l'interprétation comme « langage fongique » est une interprétation analytique, non une preuve.",
+     "es": "Analiza trenes de impulsos eléctricos medidos en distintas especies fúngicas en busca de patrones temporales recurrentes y examina, bajo una hipótesis de comunicación, si de ellos pueden describirse estructuras similares al lenguaje. La actividad eléctrica medida es un hallazgo; la interpretación como «lenguaje fúngico» es una interpretación analítica, no una prueba."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0027",
+   "kennung": "blatt-2024",
+   "art": "kommentar",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Blatt",
+     "vorname": "Michael R."
+    },
+    {
+     "nachname": "Pullum",
+     "vorname": "Geoffrey K."
+    },
+    {
+     "nachname": "Draguhn",
+     "vorname": "Andreas"
+    },
+    {
+     "nachname": "Bowman",
+     "vorname": "Barry"
+    },
+    {
+     "nachname": "Robinson",
+     "vorname": "David G."
+    },
+    {
+     "nachname": "Taiz",
+     "vorname": "Lincoln"
+    }
+   ],
+   "jahr": 2024,
+   "jahr_druck": 2024,
+   "titel": "Does electrical activity in fungi function as a language?",
+   "erschienen_in": {
+    "zeitschrift": "Fungal Ecology",
+    "band": "68",
+    "seiten": "101326"
+   },
+   "doi": "10.1016/j.funeco.2023.101326",
+   "url": "https://doi.org/10.1016/j.funeco.2023.101326",
+   "zugang": "nur_abstract",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "beziehungen": [
+    {
+     "typ": "kommentiert",
+     "ziel": "Q0026"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Kommentar zu Adamatzky 2022: Die Annahme einer Pilzsprache sei verfrüht und nicht belegt; ein erheblicher Teil der gemessenen Spannungsschwankungen stamme wahrscheinlich aus Störungen und Messartefakten, und die Muster zeigten keine Ähnlichkeit mit Eigenschaften menschlicher Sprache.",
+     "en": "Commentary on Adamatzky 2022: the assumption of a fungal language is premature and unsupported; a considerable part of the measured voltage fluctuations probably stems from noise and measurement artefacts, and the patterns show no similarity to properties of human language.",
+     "nl": "Commentaar op Adamatzky 2022: de aanname van een schimmeltaal zou voorbarig en onvoldoende onderbouwd zijn; een aanzienlijk deel van de gemeten spanningsschommelingen komt waarschijnlijk voort uit storingen en meetartefacten, en de patronen vertonen geen gelijkenis met eigenschappen van menselijke taal.",
+     "fr": "Commentaire sur Adamatzky 2022 : l’hypothèse d’un langage fongique serait prématurée et non étayée ; une part importante des fluctuations de tension mesurées proviendrait probablement de bruits et d’artefacts de mesure, et les motifs ne présenteraient aucune ressemblance avec les propriétés du langage humain.",
+     "es": "Comentario sobre Adamatzky 2022: la suposición de un lenguaje fúngico sería prematura y carecería de respaldo; una parte considerable de las fluctuaciones de tensión medidas procedería probablemente de ruido y artefactos de medición, y los patrones no mostrarían semejanza con propiedades del lenguaje humano."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0028",
+   "kennung": "mishra-2024",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Mishra",
+     "vorname": "Anand Kumar"
+    },
+    {
+     "nachname": "Kim",
+     "vorname": "Jaeseok"
+    },
+    {
+     "nachname": "Baghdadi",
+     "vorname": "Hannah"
+    },
+    {
+     "nachname": "Johnson",
+     "vorname": "Bruce R."
+    },
+    {
+     "nachname": "Hodge",
+     "vorname": "Kathie T."
+    },
+    {
+     "nachname": "Shepherd",
+     "vorname": "Robert F."
+    }
+   ],
+   "jahr": 2024,
+   "jahr_druck": 2024,
+   "titel": "Sensorimotor control of robots mediated by electrophysiological measurements of fungal mycelia",
+   "erschienen_in": {
+    "zeitschrift": "Science Robotics",
+    "band": "9",
+    "heft": "93",
+    "seiten": "eadk8019"
+   },
+   "doi": "10.1126/scirobotics.adk8019",
+   "url": "https://doi.org/10.1126/scirobotics.adk8019",
+   "pmid": "39196952",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Zwei Roboter wurden über die elektrische Aktivität von lebendem Myzel gesteuert; eine abgeschirmte Schnittstelle erlaubte nach Angaben der Autoren stabile Langzeitaufzeichnungen. Zeigt, dass sich solche Signale unter den Versuchsbedingungen technisch nutzen lassen – über ihre Bedeutung für den Pilz sagt das nichts.",
+     "en": "Two robots were controlled via the electrical activity of living mycelium; according to the authors, a shielded interface allowed stable long-term recordings. Shows that such signals can be used technically under the experimental conditions – it says nothing about their significance for the fungus.",
+     "nl": "Twee robots werden aangestuurd via de elektrische activiteit van levend mycelium; volgens de auteurs maakte een afgeschermde interface stabiele langetermijnregistraties mogelijk. Laat zien dat zulke signalen onder de proefomstandigheden technisch bruikbaar zijn – over hun betekenis voor de schimmel zegt dat niets.",
+     "fr": "Deux robots ont été pilotés par l’activité électrique de mycélium vivant ; selon les auteurs, une interface blindée a permis des enregistrements stables de longue durée. Montre que de tels signaux peuvent être exploités techniquement dans les conditions de l’expérience – cela ne dit rien de leur signification pour le champignon.",
+     "es": "Dos robots se controlaron mediante la actividad eléctrica de micelio vivo; según los autores, una interfaz apantallada permitió registros estables de larga duración. Muestra que tales señales pueden aprovecharse técnicamente en las condiciones del experimento; no dice nada sobre su significado para el hongo."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0029",
+   "kennung": "thomas-cooper-2022",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Thomas",
+     "vorname": "Matthew Adam"
+    },
+    {
+     "nachname": "Cooper",
+     "vorname": "Robin Lewis"
+    }
+   ],
+   "jahr": 2022,
+   "jahr_druck": 2022,
+   "jahr_online": 2022,
+   "titel": "Building bridges: mycelium–mediated plant–plant electrophysiological communication",
+   "erschienen_in": {
+    "zeitschrift": "Plant Signaling & Behavior",
+    "band": "17",
+    "heft": "1",
+    "seiten": "2129291"
+   },
+   "doi": "10.1080/15592324.2022.2129291",
+   "url": "https://doi.org/10.1080/15592324.2022.2129291",
+   "pmid": "36384396",
+   "pmcid": "PMC9673936",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9673936/",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Laborversuch: zwei Pflanzen auf getrennten Nährbodenstücken, verbunden nur über Pilzfäden über einem Luftspalt. Nach einer Blattverletzung wurde in der zweiten Pflanze eine Spannungsänderung gemessen, nach Durchtrennen der Brücke nicht mehr. Die Pilze wurden nicht bestimmt; ein feuchter Faden leitete die Signale ebenfalls.",
+     "en": "Laboratory experiment: two plants on separate agar blocks, connected only by fungal threads across an air gap. After a leaf was wounded, a voltage change was measured in the second plant, but no longer after the bridge was cut. The fungi were not identified; a moist thread also conducted the signals.",
+     "nl": "Laboratoriumproef: twee planten op gescheiden stukken voedingsbodem, alleen verbonden door schimmeldraden over een luchtspleet. Na verwonding van een blad werd in de tweede plant een spanningsverandering gemeten, na het doorsnijden van de brug niet meer. De schimmels werden niet gedetermineerd; een vochtige draad geleidde de signalen ook.",
+     "fr": "Expérience en laboratoire : deux plantes sur des blocs de gélose séparés, reliées uniquement par des filaments fongiques au-dessus d’un espace d’air. Après la blessure d’une feuille, une variation de tension a été mesurée dans la seconde plante, mais plus après la section du pont. Les champignons n’ont pas été identifiés ; un fil humide conduisait également les signaux.",
+     "es": "Experimento de laboratorio: dos plantas sobre bloques de agar separados, unidas solo por filamentos fúngicos sobre un espacio de aire. Tras herir una hoja se midió un cambio de tensión en la segunda planta, pero ya no al cortar el puente. Los hongos no se identificaron; un hilo húmedo también conducía las señales."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0030",
+   "kennung": "blatt-2023",
+   "art": "kommentar",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Blatt",
+     "vorname": "Michael R."
+    },
+    {
+     "nachname": "Draguhn",
+     "vorname": "Andreas"
+    },
+    {
+     "nachname": "Taiz",
+     "vorname": "Lincoln"
+    },
+    {
+     "nachname": "Robinson",
+     "vorname": "David G."
+    }
+   ],
+   "jahr": 2023,
+   "jahr_druck": 2023,
+   "jahr_online": 2023,
+   "titel": "A challenge to claims for mycorrhizal-transmitted wound signaling",
+   "erschienen_in": {
+    "zeitschrift": "Plant Signaling & Behavior",
+    "band": "18",
+    "heft": "1",
+    "seiten": "2222957"
+   },
+   "doi": "10.1080/15592324.2023.2222957",
+   "url": "https://doi.org/10.1080/15592324.2023.2222957",
+   "pmid": "37291867",
+   "pmcid": "PMC10259323",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10259323/",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "beziehungen": [
+    {
+     "typ": "kommentiert",
+     "ziel": "Q0029"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Kommentar zu Thomas & Cooper 2022: würdigt den Versuchsaufbau, hält einen biologischen Ursprung der Signale aber für nicht belegt – Spannungen könnten an den Grenzflächen zwischen Nährboden und Elektrode entstehen und über jede leitfähige Verbindung weitergeleitet werden.",
+     "en": "Commentary on Thomas & Cooper 2022: commends the experimental design but considers a biological origin of the signals unproven – voltages could arise at the interfaces between agar and electrode and be conducted through any conductive connection.",
+     "nl": "Commentaar op Thomas & Cooper 2022: waardeert de proefopzet, maar acht een biologische oorsprong van de signalen niet aangetoond – spanningen zouden kunnen ontstaan op de grensvlakken tussen voedingsbodem en elektrode en via elke geleidende verbinding worden doorgegeven.",
+     "fr": "Commentaire sur Thomas & Cooper 2022 : salue le dispositif expérimental mais juge non démontrée l’origine biologique des signaux – des tensions pourraient naître aux interfaces entre gélose et électrode et être transmises par toute connexion conductrice.",
+     "es": "Comentario sobre Thomas & Cooper 2022: elogia el diseño experimental, pero considera no demostrado el origen biológico de las señales: podrían generarse tensiones en las interfaces entre agar y electrodo y transmitirse por cualquier conexión conductora."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0031",
+   "kennung": "adamatzky-2022b",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Adamatzky",
+     "vorname": "Andrew"
+    },
+    {
+     "nachname": "Ayres",
+     "vorname": "Phil"
+    },
+    {
+     "nachname": "Beasley",
+     "vorname": "Alexander E."
+    },
+    {
+     "nachname": "Roberts",
+     "vorname": "Nic"
+    },
+    {
+     "nachname": "Wösten",
+     "vorname": "Han A. B."
+    }
+   ],
+   "jahr": 2022,
+   "jahr_druck": 2022,
+   "jahr_online": 2022,
+   "titel": "Logics in Fungal Mycelium Networks",
+   "erschienen_in": {
+    "zeitschrift": "Logica Universalis",
+    "band": "16",
+    "heft": "4",
+    "seiten": "655-669"
+   },
+   "doi": "10.1007/s11787-022-00318-4",
+   "url": "https://doi.org/10.1007/s11787-022-00318-4",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Untersucht, wie sich elektrische Aktivität in Pilzmyzel unter experimentellen Bedingungen für logikartige Zustände und Verarbeitungskonzepte nutzen lässt – ein möglicher methodischer Bezugspunkt für spätere Musteranalyse.",
+     "en": "Examines how electrical activity in fungal mycelium can be used under experimental conditions for logic-like states and processing concepts — a possible methodological reference point for later pattern analysis.",
+     "nl": "Onderzoekt hoe elektrische activiteit in schimmelmycelium onder experimentele omstandigheden benut kan worden voor logica-achtige toestanden en verwerkingsconcepten – een mogelijk methodologisch aanknopingspunt voor latere patroonanalyse.",
+     "fr": "Examine comment l'activité électrique dans le mycélium fongique peut être utilisée, dans des conditions expérimentales, pour des états logiques et des concepts de traitement – un possible point de repère méthodologique pour une analyse ultérieure des motifs.",
+     "es": "Examina cómo puede utilizarse la actividad eléctrica en el micelio fúngico, bajo condiciones experimentales, para estados lógicos y conceptos de procesamiento – un posible punto de referencia metodológico para análisis de patrones posteriores."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0032",
+   "kennung": "mayne-2023",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Mayne",
+     "vorname": "Richard"
+    },
+    {
+     "nachname": "Roberts",
+     "vorname": "Nic"
+    },
+    {
+     "nachname": "Phillips",
+     "vorname": "Neil"
+    },
+    {
+     "nachname": "Weerasekera",
+     "vorname": "Roshan"
+    },
+    {
+     "nachname": "Adamatzky",
+     "vorname": "Andrew"
+    }
+   ],
+   "jahr": 2023,
+   "jahr_druck": 2023,
+   "titel": "Propagation of electrical signals by fungi",
+   "erschienen_in": {
+    "zeitschrift": "Biosystems",
+    "band": "229",
+    "seiten": "104933"
+   },
+   "doi": "10.1016/j.biosystems.2023.104933",
+   "url": "https://doi.org/10.1016/j.biosystems.2023.104933",
+   "pmid": "37257553",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "In myzelgebundenen Kompositen konnten eingespeiste Frequenzen zwischen 100 und 10.000 Hz am Ausgang wiedererkannt werden. Die Ausgangsamplituden waren zwischen Wiederholungen jedoch nicht reproduzierbar.",
+     "en": "In mycelium-bound composites, frequencies fed in between 100 and 10,000 Hz could be recognised again at the output. However, the output amplitudes were not reproducible between repetitions.",
+     "nl": "In myceliumgebonden composieten konden ingevoede frequenties tussen 100 en 10.000 Hz aan de uitgang worden herkend. De uitgangsamplitudes waren echter niet reproduceerbaar tussen herhalingen.",
+     "fr": "Dans des composites liés au mycélium, des fréquences injectées entre 100 et 10 000 Hz ont pu être retrouvées en sortie. Les amplitudes de sortie n'étaient toutefois pas reproductibles d'une répétition à l'autre.",
+     "es": "En compuestos ligados al micelio, se pudieron reconocer a la salida frecuencias introducidas entre 100 y 10.000 Hz. Sin embargo, las amplitudes de salida no fueron reproducibles entre repeticiones."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0033",
+   "kennung": "zeng-2026",
+   "art": "preprint",
+   "status": "preprint",
+   "version": "Fassung 3, 23.05.2026",
+   "autoren": [
+    {
+     "nachname": "Zeng",
+     "vorname": "Zihan Oliver"
+    },
+    {
+     "nachname": "Porterfield",
+     "vorname": "David Marshall"
+    },
+    {
+     "nachname": "Kaur",
+     "vorname": "Upinder"
+    }
+   ],
+   "jahr": 2026,
+   "titel": "Mycoponically Integrated Network Device for Multimodal Sensing with Living Mycelial Networks",
+   "url": "https://arxiv.org/abs/2604.22947",
+   "arxiv": "2604.22947",
+   "zugang": "autorenfassung_frei",
+   "zugang_link": "https://arxiv.org/abs/2604.22947",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Lebende Myzelnetzwerke werden als multimodale Biosensoren untersucht. Bioelektrische Antworten werden ausgewertet, um verschiedene Umweltreize bzw. räumliche Informationen zu unterscheiden. Konzeptionell mit Teilen des BioComm-Ansatzes verwandt, aber noch nicht peer-reviewed.",
+     "en": "Living mycelium networks are investigated as multimodal biosensors. Bioelectrical responses are evaluated to distinguish various environmental stimuli or spatial information. Conceptually related to parts of the BioComm approach, but not yet peer-reviewed.",
+     "nl": "Levende myceliumnetwerken worden onderzocht als multimodale biosensoren. Bio-elektrische reacties worden geëvalueerd om verschillende omgevingsprikkels of ruimtelijke informatie te onderscheiden. Conceptueel verwant aan delen van de BioComm-aanpak, maar nog niet collegiaal getoetst.",
+     "fr": "Des réseaux de mycélium vivants sont étudiés comme biocapteurs multimodaux. Les réponses bioélectriques sont analysées pour distinguer différents stimuli environnementaux ou informations spatiales. Conceptuellement lié à certains aspects de l'approche BioComm, mais pas encore évalué par les pairs.",
+     "es": "Se investigan redes de micelio vivas como biosensores multimodales. Las respuestas bioeléctricas se evalúan para distinguir diferentes estímulos ambientales o información espacial. Conceptualmente relacionado con partes del enfoque BioComm, pero aún no revisado por pares."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0034",
+   "kennung": "olsson-hansson-1995",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Olsson",
+     "vorname": "S."
+    },
+    {
+     "nachname": "Hansson",
+     "vorname": "B. S."
+    }
+   ],
+   "jahr": 1995,
+   "jahr_druck": 1995,
+   "titel": "Action potential-like activity found in fungal mycelia is sensitive to stimulation",
+   "erschienen_in": {
+    "zeitschrift": "Naturwissenschaften",
+    "band": "82",
+    "heft": "1",
+    "seiten": "30-31"
+   },
+   "doi": "10.1007/bf01167867",
+   "url": "https://doi.org/10.1007/BF01167867",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Frühe Messung aktionspotential-ähnlicher Signale in Pilzmyzel (Armillaria, Pleurotus); die Aktivität veränderte sich bei Reizen. Die oft zitierte Ausbreitungsgeschwindigkeit von etwa 0,5 mm/s ist eine Schätzung aus der Reaktionsverzögerung (etwa 30 s bei 1–2 cm Abstand zwischen Reiz und Elektrode), keine direkte Messung.",
+     "en": "Early measurement of action-potential-like signals in fungal mycelium (Armillaria, Pleurotus); the activity changed in response to stimuli. The often-cited propagation speed of about 0.5 mm/s is an estimate from the response delay (about 30 s at 1–2 cm between stimulus and electrode), not a direct measurement.",
+     "nl": "Vroege meting van actiepotentiaal-achtige signalen in schimmelmycelium (Armillaria, Pleurotus); de activiteit veranderde bij prikkels. De vaak geciteerde voortplantingssnelheid van ongeveer 0,5 mm/s is een schatting op basis van de reactievertraging (ongeveer 30 s bij 1–2 cm afstand tussen prikkel en elektrode), geen directe meting.",
+     "fr": "Première mesure de signaux semblables à des potentiels d’action dans le mycélium (Armillaria, Pleurotus) ; l’activité changeait en réponse à des stimuli. La vitesse de propagation souvent citée d’environ 0,5 mm/s est une estimation tirée du délai de réponse (environ 30 s pour 1 à 2 cm entre stimulus et électrode), et non une mesure directe.",
+     "es": "Primera medición de señales similares a potenciales de acción en micelio fúngico (Armillaria, Pleurotus); la actividad cambiaba ante estímulos. La velocidad de propagación de unos 0,5 mm/s citada a menudo es una estimación a partir del retardo de respuesta (unos 30 s a 1–2 cm entre estímulo y electrodo), no una medición directa."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0035",
+   "kennung": "browner-2023",
+   "art": "preprint",
+   "status": "preprint",
+   "autoren": [
+    {
+     "nachname": "Browner",
+     "vorname": "Davin"
+    },
+    {
+     "nachname": "Adamatzky",
+     "vorname": "Andrew"
+    },
+    {
+     "nachname": "Schunselaar",
+     "vorname": "Ella"
+    },
+    {
+     "nachname": "Wösten",
+     "vorname": "Han A. B."
+    },
+    {
+     "nachname": "Ayres",
+     "vorname": "Phil"
+    }
+   ],
+   "jahr": 2023,
+   "titel": "Tuning electrical spiking of Schizophyllum commune with light",
+   "erschienen_in": {
+    "angabe": "bioRxiv"
+   },
+   "doi": "10.1101/2023.09.26.559269",
+   "url": "https://doi.org/10.1101/2023.09.26.559269",
+   "zugang": "autorenfassung_frei",
+   "zugang_link": "https://doi.org/10.1101/2023.09.26.559269",
+   "themen": [
+    "elektrische-aktivitaet",
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Vorabveröffentlichung: Im Labor veränderte sich die Spike-Aktivität des Spaltblättlings (Schizophyllum commune) bei Beleuchtung mit weißem, blauem, rotem und grünem Licht; die Autoren vermuten eine Beteiligung von Photorezeptoren.",
+     "en": "Preprint: in the laboratory, the spiking activity of the split-gill fungus (Schizophyllum commune) changed under illumination with white, blue, red and green light; the authors suspect that photoreceptors are involved.",
+     "nl": "Preprint: in het laboratorium veranderde de spike-activiteit van het waaiertje (Schizophyllum commune) bij belichting met wit, blauw, rood en groen licht; de auteurs vermoeden dat fotoreceptoren een rol spelen.",
+     "fr": "Prépublication : en laboratoire, l’activité de pics du schizophylle (Schizophyllum commune) s’est modifiée sous un éclairage blanc, bleu, rouge et vert ; les auteurs supposent une implication de photorécepteurs.",
+     "es": "Preprint: en laboratorio, la actividad de picos del hongo Schizophyllum commune cambió al iluminarlo con luz blanca, azul, roja y verde; los autores sospechan la participación de fotorreceptores."
+    },
+    "heranziehen": {
+     "de": "Anhaltspunkt für die Lichtstufen in unserer Versuchsplanung.",
+     "en": "A reference point for the light levels in our experimental planning.",
+     "nl": "Aanknopingspunt voor de lichtniveaus in onze proefplanning.",
+     "fr": "Point de repère pour les niveaux lumineux de notre planification expérimentale.",
+     "es": "Referencia para los niveles de luz de nuestra planificación experimental."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0036",
+   "kennung": "schwerdtfeger-linden-2001",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Schwerdtfeger",
+     "vorname": "Carsten"
+    },
+    {
+     "nachname": "Linden",
+     "vorname": "Hartmut"
+    }
+   ],
+   "jahr": 2001,
+   "jahr_druck": 2001,
+   "jahr_online": 2001,
+   "titel": "Blue light adaptation and desensitization of light signal transduction in Neurospora crassa",
+   "erschienen_in": {
+    "zeitschrift": "Molecular Microbiology",
+    "band": "39",
+    "heft": "4",
+    "seiten": "1080-1087"
+   },
+   "doi": "10.1046/j.1365-2958.2001.02306.x",
+   "url": "https://doi.org/10.1046/j.1365-2958.2001.02306.x",
+   "pmid": "11251826",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet",
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Der Schimmelpilz Neurospora crassa passt sich an eine gegebene Lichtmenge an (Photoadaptation): Nach einem Lichtpuls ist die Blaulicht-Signalkette mit den Proteinen WC1 und WC2 vorübergehend unempfindlich.",
+     "en": "The mould Neurospora crassa adapts to a given amount of light (photoadaptation): after a light pulse, the blue-light signalling chain involving the proteins WC1 and WC2 is temporarily insensitive.",
+     "nl": "De schimmel Neurospora crassa past zich aan een gegeven hoeveelheid licht aan (fotoadaptatie): na een lichtpuls is de blauwlicht-signaalketen met de eiwitten WC1 en WC2 tijdelijk ongevoelig.",
+     "fr": "La moisissure Neurospora crassa s’adapte à une quantité de lumière donnée (photoadaptation) : après une impulsion lumineuse, la chaîne de signalisation de la lumière bleue impliquant les protéines WC1 et WC2 est temporairement insensible.",
+     "es": "El moho Neurospora crassa se adapta a una cantidad de luz dada (fotoadaptación): tras un pulso de luz, la cadena de señalización de luz azul con las proteínas WC1 y WC2 queda temporalmente insensible."
+    },
+    "heranziehen": {
+     "de": "Anhaltspunkt dafür, bei Folgen optischer Reize Erholungszeiten einzuplanen. Ob sich das auf andere Pilzarten und unsere Messbedingungen übertragen lässt, ist offen.",
+     "en": "A reference point for allowing recovery times between sequences of optical stimuli. Whether this applies to other fungal species and to our measurement conditions remains open.",
+     "nl": "Aanknopingspunt om bij reeksen optische prikkels hersteltijden in te plannen. Of dit opgaat voor andere schimmelsoorten en onze meetomstandigheden, is nog open.",
+     "fr": "Point de repère pour prévoir des temps de récupération entre des séries de stimuli optiques. La transposition à d’autres espèces fongiques et à nos conditions de mesure reste ouverte.",
+     "es": "Referencia para prever tiempos de recuperación entre secuencias de estímulos ópticos. Queda abierto si esto se aplica a otras especies de hongos y a nuestras condiciones de medición."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0037",
+   "kennung": "przyczyna-2022",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Przyczyna",
+     "vorname": "Dawid"
+    },
+    {
+     "nachname": "Szacilowski",
+     "vorname": "Konrad"
+    },
+    {
+     "nachname": "Chiolerio",
+     "vorname": "Alessandro"
+    },
+    {
+     "nachname": "Adamatzky",
+     "vorname": "Andrew"
+    }
+   ],
+   "jahr": 2022,
+   "jahr_druck": 2022,
+   "titel": "Electrical frequency discrimination by fungi Pleurotus ostreatus",
+   "erschienen_in": {
+    "zeitschrift": "Biosystems",
+    "band": "222",
+    "seiten": "104797"
+   },
+   "doi": "10.1016/j.biosystems.2022.104797",
+   "url": "https://doi.org/10.1016/j.biosystems.2022.104797",
+   "pmid": "36334806",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Myzel von Pleurotus ostreatus wurde mit langsamen Sinusspannungen (mHz-Bereich, Volt statt Millivolt) gereizt; das Netz formt die Signale nichtlinear um und kann Frequenzen unterscheiden. Zeigt die Größenordnung elektrischer Reize.",
+     "en": "Mycelium of Pleurotus ostreatus was stimulated with slow sinusoidal voltages (mHz range, volts rather than millivolts); the network transforms the signals non-linearly and can distinguish frequencies. Shows the order of magnitude of electrical stimuli.",
+     "nl": "Mycelium van Pleurotus ostreatus werd geprikkeld met langzame sinusvormige spanningen (mHz-bereik, volt in plaats van millivolt); het netwerk vormt de signalen niet-lineair om en kan frequenties onderscheiden. Toont de orde van grootte van elektrische prikkels.",
+     "fr": "Le mycélium de Pleurotus ostreatus a été stimulé par des tensions sinusoïdales lentes (gamme des mHz, en volts plutôt qu’en millivolts) ; le réseau transforme les signaux de façon non linéaire et peut distinguer des fréquences. Montre l’ordre de grandeur des stimuli électriques.",
+     "es": "El micelio de Pleurotus ostreatus se estimuló con tensiones sinusoidales lentas (rango de mHz, voltios en lugar de milivoltios); la red transforma las señales de forma no lineal y puede distinguir frecuencias. Muestra el orden de magnitud de los estímulos eléctricos."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0038",
+   "kennung": "adamatzky-2026",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Adamatzky",
+     "vorname": "Andrew"
+    }
+   ],
+   "jahr": 2026,
+   "jahr_online": 2026,
+   "titel": "Propagation of electrical spike trains in substrates colonised by oyster fungi",
+   "erschienen_in": {
+    "zeitschrift": "Scientific Reports",
+    "band": "16",
+    "heft": "1",
+    "seiten": "16332"
+   },
+   "doi": "10.1038/s41598-026-47035-2",
+   "url": "https://doi.org/10.1038/s41598-026-47035-2",
+   "pmid": "41935231",
+   "pmcid": "PMC13212958",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://www.nature.com/articles/s41598-026-47035-2",
+   "themen": [
+    "elektrische-aktivitaet",
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Laborversuch: In einem vom Austernseitling (Pleurotus ostreatus) besiedelten Holzspan-Substrat traten Spike-Folgen an benachbarten Messkanälen zeitlich versetzt auf. Aus dem Median dieser Verzögerungen leitet der Autor eine Ausbreitungsgeschwindigkeit von etwa 0,7 cm pro Minute ab.",
+     "en": "Laboratory experiment: in a wood-shavings substrate colonised by the oyster mushroom (Pleurotus ostreatus), spike trains appeared with a time delay at neighbouring measurement channels. From the median of these delays, the author derives a propagation speed of about 0.7 cm per minute.",
+     "nl": "Laboratoriumproef: in een door de oesterzwam (Pleurotus ostreatus) gekoloniseerd substraat van houtkrullen traden spikereeksen op naburige meetkanalen met tijdsverschil op. Uit de mediaan van deze vertragingen leidt de auteur een voortplantingssnelheid van ongeveer 0,7 cm per minuut af.",
+     "fr": "Expérience en laboratoire : dans un substrat de copeaux de bois colonisé par le pleurote en huître (Pleurotus ostreatus), des trains de pics apparaissaient avec un décalage temporel sur des canaux de mesure voisins. À partir de la médiane de ces délais, l’auteur déduit une vitesse de propagation d’environ 0,7 cm par minute.",
+     "es": "Experimento de laboratorio: en un sustrato de virutas de madera colonizado por la seta de ostra (Pleurotus ostreatus), aparecieron trenes de picos con desfase temporal en canales de medición vecinos. A partir de la mediana de estos retardos, el autor deduce una velocidad de propagación de unos 0,7 cm por minuto."
+    },
+    "heranziehen": {
+     "de": "Anhaltspunkt für die räumliche Anordnung unserer Messstellen. Ob sich der Wert auf natürliche Bodenbedingungen übertragen lässt, ist offen.",
+     "en": "A reference point for the spatial arrangement of our measurement sites. Whether the value transfers to natural soil conditions remains open.",
+     "nl": "Aanknopingspunt voor de ruimtelijke opstelling van onze meetpunten. Of de waarde overdraagbaar is naar natuurlijke bodemomstandigheden, is nog open.",
+     "fr": "Point de repère pour la disposition spatiale de nos points de mesure. La transposition de cette valeur aux conditions naturelles du sol reste ouverte.",
+     "es": "Referencia para la disposición espacial de nuestros puntos de medición. Queda abierto si el valor se puede trasladar a condiciones naturales del suelo."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0039",
+   "kennung": "fukasawa-2023",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Fukasawa",
+     "vorname": "Yu"
+    },
+    {
+     "nachname": "Akai",
+     "vorname": "Daisuke"
+    },
+    {
+     "nachname": "Ushio",
+     "vorname": "Masayuki"
+    },
+    {
+     "nachname": "Takehi",
+     "vorname": "Takayuki"
+    }
+   ],
+   "jahr": 2023,
+   "jahr_druck": 2023,
+   "titel": "Electrical potentials in the ectomycorrhizal fungus Laccaria bicolor after a rainfall event",
+   "erschienen_in": {
+    "zeitschrift": "Fungal Ecology",
+    "band": "63",
+    "seiten": "101229"
+   },
+   "doi": "10.1016/j.funeco.2023.101229",
+   "url": "https://doi.org/10.1016/j.funeco.2023.101229",
+   "zugang": "autorenfassung_frei",
+   "zugang_link": "https://ssrn.com/abstract=4091460",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Feldmessung an sechs Fruchtkörpern von Laccaria bicolor: Nach Regen schwankte das elektrische Potential um bis über 100 mV; eine statistische Auswertung ergab Informationsfluss vor allem zwischen nahe beieinander stehenden Fruchtkörpern. Regen kann die Messung selbst beeinflussen.",
+     "en": "Field measurement on six fruiting bodies of Laccaria bicolor: after rain, the electrical potential fluctuated by up to more than 100 mV; a statistical analysis indicated information flow mainly between fruiting bodies standing close together. Rain itself can influence the measurement.",
+     "nl": "Veldmeting aan zes vruchtlichamen van Laccaria bicolor: na regen schommelde de elektrische potentiaal met tot meer dan 100 mV; een statistische analyse wees op informatiestroom vooral tussen dicht bij elkaar staande vruchtlichamen. Regen kan de meting zelf beïnvloeden.",
+     "fr": "Mesure sur le terrain sur six fructifications de Laccaria bicolor : après la pluie, le potentiel électrique a varié jusqu’à plus de 100 mV ; une analyse statistique a mis en évidence un flux d’information surtout entre fructifications proches. La pluie peut elle-même influencer la mesure.",
+     "es": "Medición de campo en seis cuerpos fructíferos de Laccaria bicolor: tras la lluvia, el potencial eléctrico osciló hasta más de 100 mV; un análisis estadístico indicó flujo de información sobre todo entre cuerpos fructíferos cercanos. La lluvia puede influir por sí misma en la medición."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0040",
+   "kennung": "fukasawa-2024",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Fukasawa",
+     "vorname": "Yu"
+    },
+    {
+     "nachname": "Akai",
+     "vorname": "Daisuke"
+    },
+    {
+     "nachname": "Takehi",
+     "vorname": "Takayuki"
+    },
+    {
+     "nachname": "Osada",
+     "vorname": "Yutaka"
+    }
+   ],
+   "jahr": 2024,
+   "jahr_online": 2024,
+   "titel": "Electrical integrity and week-long oscillation in fungal mycelia",
+   "erschienen_in": {
+    "zeitschrift": "Scientific Reports",
+    "band": "14",
+    "heft": "1",
+    "seiten": "15601"
+   },
+   "doi": "10.1038/s41598-024-66223-6",
+   "url": "https://doi.org/10.1038/s41598-024-66223-6",
+   "pmid": "38971913",
+   "pmcid": "PMC11227530",
+   "zugang": "ungeprueft",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Laborversuch (Nährbodenplatte, holzzersetzender Pilz Pholiota brunnescens), über mehr als 100 Tage gemessen: Signale flossen anfangs gerichtet vom besiedelten Holzstück weg, später traten Schwingungen mit etwa einer Woche Periode auf – nach Angaben der Autoren die längste bis dahin bei Pilzen beschriebene.",
+     "en": "Laboratory experiment (agar plate, wood-decay fungus Pholiota brunnescens), measured over more than 100 days: signals initially flowed directionally away from the colonised wood bait; later, oscillations with a period of about one week appeared – according to the authors, the longest described in fungi at the time.",
+     "nl": "Laboratoriumproef (voedingsbodemplaat, houtafbrekende schimmel Pholiota brunnescens), meer dan 100 dagen gemeten: signalen stroomden aanvankelijk gericht weg van het gekoloniseerde stukje hout; later traden schommelingen op met een periode van ongeveer een week – volgens de auteurs de langste die tot dan toe bij schimmels was beschreven.",
+     "fr": "Expérience en laboratoire (boîte de gélose, champignon lignivore Pholiota brunnescens), mesurée pendant plus de 100 jours : les signaux s’éloignaient d’abord de façon orientée du morceau de bois colonisé ; plus tard sont apparues des oscillations d’une période d’environ une semaine – selon les auteurs, la plus longue décrite jusqu’alors chez les champignons.",
+     "es": "Experimento de laboratorio (placa de agar, hongo de pudrición de la madera Pholiota brunnescens), medido durante más de 100 días: al principio las señales fluían de forma dirigida alejándose del trozo de madera colonizado; más tarde aparecieron oscilaciones con un periodo de aproximadamente una semana, según los autores la más larga descrita hasta entonces en hongos."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0041",
+   "kennung": "fukasawa-2026",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Fukasawa",
+     "vorname": "Yu"
+    },
+    {
+     "nachname": "Akai",
+     "vorname": "Daisuke"
+    },
+    {
+     "nachname": "Takehi",
+     "vorname": "Takayuki"
+    },
+    {
+     "nachname": "Takahashi",
+     "vorname": "Daiki"
+    },
+    {
+     "nachname": "Osada",
+     "vorname": "Yutaka"
+    }
+   ],
+   "jahr": 2026,
+   "jahr_online": 2026,
+   "titel": "Electrical information flows across the sporocarps of two ectomycorrhizal fungi in the field",
+   "erschienen_in": {
+    "zeitschrift": "Scientific Reports",
+    "band": "16",
+    "heft": "1",
+    "seiten": "12397"
+   },
+   "doi": "10.1038/s41598-026-42673-y",
+   "url": "https://doi.org/10.1038/s41598-026-42673-y",
+   "pmid": "41792215",
+   "pmcid": "PMC13083946",
+   "zugang": "verlag_frei",
+   "zugang_link": "https://www.nature.com/articles/s41598-026-42673-y",
+   "themen": [
+    "elektrische-aktivitaet"
+   ],
+   "beziehungen": [
+    {
+     "typ": "nimmt_bezug_auf",
+     "ziel": "Q0039"
+    }
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Feldversuch in einem japanischen Eichenwald: Die Fruchtkörperbildung wurde zuvor mit Harnstoff angeregt; gemessen wurde 3,5 Tage lang an 37 Fruchtkörpern zweier Hebeloma-Arten, mit Leitungswasser und Urin als Reiz. Untersucht elektrische Informationsflüsse zwischen den Fruchtkörpern.",
+     "en": "Field experiment in a Japanese oak forest: fruiting was first stimulated with urea; measurements ran for 3.5 days on 37 fruiting bodies of two Hebeloma species, with tap water and urine as stimuli. Investigates electrical information flows between the fruiting bodies.",
+     "nl": "Veldproef in een Japans eikenbos: de vorming van vruchtlichamen werd vooraf met ureum gestimuleerd; gedurende 3,5 dagen werd gemeten aan 37 vruchtlichamen van twee Hebeloma-soorten, met leidingwater en urine als prikkel. Onderzoekt elektrische informatiestromen tussen de vruchtlichamen.",
+     "fr": "Expérience de terrain dans une chênaie japonaise : la fructification avait d’abord été stimulée à l’urée ; les mesures ont duré 3,5 jours sur 37 fructifications de deux espèces d’Hebeloma, avec de l’eau du robinet et de l’urine comme stimuli. Étudie les flux d’information électriques entre les fructifications.",
+     "es": "Experimento de campo en un robledal japonés: la fructificación se estimuló previamente con urea; se midió durante 3,5 días en 37 cuerpos fructíferos de dos especies de Hebeloma, con agua del grifo y orina como estímulos. Estudia los flujos de información eléctrica entre los cuerpos fructíferos."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0042",
+   "kennung": "sheldrake-2020",
+   "art": "buch",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Sheldrake",
+     "vorname": "Merlin"
+    }
+   ],
+   "jahr": 2020,
+   "titel": "Entangled Life – Merlin Sheldrake",
+   "erschienen_in": {
+    "verlag": "Random House"
+   },
+   "url": "https://www.merlinsheldrake.com/entangled-life",
+   "isbn": "978-0525510314",
+   "zugang": "im_handel",
+   "themen": [
+    "weiterlesen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Allgemeinverständliches Sachbuch über Pilze, ihre Lebensweise und ihre Verbindungen mit Pflanzen (deutsch: „Verwobenes Leben“, 2021).",
+     "en": "Popular-science book about fungi, their way of life and their connections with plants.",
+     "nl": "Populairwetenschappelijk boek over schimmels, hun leefwijze en hun verbindingen met planten.",
+     "fr": "Ouvrage de vulgarisation sur les champignons, leur mode de vie et leurs liens avec les plantes.",
+     "es": "Libro de divulgación sobre los hongos, su forma de vida y sus vínculos con las plantas."
+    },
+    "heranziehen": {
+     "de": "Unsere Leseempfehlung zum Einstieg für alle ohne Fachhintergrund.",
+     "en": "Our recommended introduction for readers without a scientific background.",
+     "nl": "Onze leestip als instap voor iedereen zonder vakachtergrond.",
+     "fr": "Notre lecture recommandée pour débuter, sans bagage scientifique.",
+     "es": "Nuestra lectura recomendada para iniciarse sin formación especializada."
+    }
+   },
+   "im_chatbot": false,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0043",
+   "kennung": "prylutskyi-kapets-2024",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Prylutskyi",
+     "vorname": "Oleh"
+    },
+    {
+     "nachname": "Kapets",
+     "vorname": "Nadiia"
+    }
+   ],
+   "jahr": 2024,
+   "jahr_druck": 2024,
+   "titel": "State-of-the-Art of iNaturalist as a Source of Data on Ukrainian Fungi",
+   "erschienen_in": {
+    "zeitschrift": "Citizen Science: Theory and Practice",
+    "band": "9",
+    "heft": "1",
+    "seiten": "25"
+   },
+   "doi": "10.5334/cstp.717",
+   "url": "https://theoryandpractice.citizenscienceassociation.org/articles/10.5334/cstp.717",
+   "zugang": "ungeprueft",
+   "themen": [
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Zeigt das große Potenzial von iNaturalist für Pilzdaten, diskutiert aber zugleich Identifikationsunsicherheit, räumliche und taxonomische Verzerrungen sowie die Bedeutung fachlicher Beteiligung.",
+     "en": "Shows the great potential of iNaturalist for fungal data, while also discussing identification uncertainty, spatial and taxonomic biases, and the importance of expert involvement.",
+     "nl": "Toont het grote potentieel van iNaturalist voor schimmeldata, maar bespreekt tegelijk identificatieonzekerheid, ruimtelijke en taxonomische vertekeningen en het belang van vakkundige betrokkenheid.",
+     "fr": "Montre le grand potentiel d'iNaturalist pour les données fongiques, tout en discutant l'incertitude d'identification, les biais spatiaux et taxonomiques, et l'importance de l'implication d'experts.",
+     "es": "Muestra el gran potencial de iNaturalist para datos fúngicos, a la vez que analiza la incertidumbre de identificación, los sesgos espaciales y taxonómicos, y la importancia de la participación experta."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0044",
+   "kennung": "fundive",
+   "art": "projekt",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "organisation": "FunDive"
+    }
+   ],
+   "titel": "FunDive – Citizen Science für Pilzbiodiversität",
+   "erschienen_in": {
+    "verlag": "citizenscience.eu"
+   },
+   "url": "https://citizenscience.eu/project/621",
+   "zugang": "frei_abrufbar",
+   "themen": [
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Praxisbeispiel dafür, wie großräumige Pilz-Citizen-Science mit standardisierten Protokollen sowie fachlicher und molekularer Validierung kombiniert werden kann – ein methodisches Vorbild, aber kein allgemeiner Beweis, dass jede Citizen-Science-Datenerhebung automatisch wissenschaftlich valide ist.",
+     "en": "A practical example of how large-scale fungal citizen science can be combined with standardised protocols and expert and molecular validation — a methodological model, but not general proof that any citizen-science data collection is automatically scientifically valid.",
+     "nl": "Praktijkvoorbeeld van hoe grootschalige schimmel-citizen-science gecombineerd kan worden met gestandaardiseerde protocollen en vakkundige en moleculaire validatie – een methodologisch voorbeeld, maar geen algemeen bewijs dat elke citizen-science-dataverzameling automatisch wetenschappelijk valide is.",
+     "fr": "Exemple pratique de la façon dont la science citoyenne fongique à grande échelle peut être combinée à des protocoles standardisés ainsi qu'à une validation experte et moléculaire – un modèle méthodologique, mais pas une preuve générale que toute collecte de données de science citoyenne est automatiquement scientifiquement valide.",
+     "es": "Ejemplo práctico de cómo la ciencia ciudadana fúngica a gran escala puede combinarse con protocolos estandarizados y validación experta y molecular – un modelo metodológico, pero no una prueba general de que toda recopilación de datos de ciencia ciudadana sea automáticamente válida científicamente."
+    }
+   },
+   "im_chatbot": false,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0045",
+   "kennung": "kosmala-2016",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Kosmala",
+     "vorname": "Margaret"
+    },
+    {
+     "nachname": "Wiggins",
+     "vorname": "Andrea"
+    },
+    {
+     "nachname": "Swanson",
+     "vorname": "Alexandra"
+    },
+    {
+     "nachname": "Simmons",
+     "vorname": "Brooke"
+    }
+   ],
+   "jahr": 2016,
+   "jahr_druck": 2016,
+   "jahr_online": 2016,
+   "titel": "Assessing data quality in citizen science",
+   "erschienen_in": {
+    "zeitschrift": "Frontiers in Ecology and the Environment",
+    "band": "14",
+    "heft": "10",
+    "seiten": "551-560"
+   },
+   "doi": "10.1002/fee.1436",
+   "url": "https://doi.org/10.1002/fee.1436",
+   "zugang": "ungeprueft",
+   "themen": [
+    "wie-wir-forschen"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Übersicht über zahlreiche Bürgerwissenschafts-Projekte: Hohe Datenqualität ist erreichbar, wenn Projekte geeignete Qualitätssicherung einsetzen, etwa Schulung, Prüfung durch Fachleute, Mehrfachbeobachtung und statistische Fehlermodelle.",
+     "en": "Review of numerous citizen-science projects: high data quality is achievable when projects use suitable quality assurance, such as training, expert validation, replicated observations and statistical error models.",
+     "nl": "Overzicht van talrijke citizen-scienceprojecten: hoge datakwaliteit is haalbaar wanneer projecten passende kwaliteitsborging toepassen, zoals training, controle door deskundigen, herhaalde waarnemingen en statistische foutmodellen.",
+     "fr": "Synthèse de nombreux projets de science citoyenne : une haute qualité des données est atteignable lorsque les projets appliquent une assurance qualité adaptée, comme la formation, la validation par des experts, les observations répétées et des modèles statistiques d’erreur.",
+     "es": "Revisión de numerosos proyectos de ciencia ciudadana: es posible lograr una alta calidad de datos cuando los proyectos aplican un control de calidad adecuado, como formación, validación por expertos, observaciones repetidas y modelos estadísticos de error."
+    },
+    "heranziehen": {
+     "de": "Grundlage dafür, wie wir breite Beteiligung mit fachlicher Prüfung verbinden.",
+     "en": "Basis for how we combine broad participation with expert review.",
+     "nl": "Basis voor de manier waarop wij brede deelname combineren met deskundige controle.",
+     "fr": "Base de la manière dont nous associons large participation et vérification par des spécialistes.",
+     "es": "Base de cómo combinamos una amplia participación con la revisión por especialistas."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0046",
+   "kennung": "remy-1994",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Remy",
+     "vorname": "W"
+    },
+    {
+     "nachname": "Taylor",
+     "vorname": "T N"
+    },
+    {
+     "nachname": "Hass",
+     "vorname": "H"
+    },
+    {
+     "nachname": "Kerp",
+     "vorname": "H"
+    }
+   ],
+   "jahr": 1994,
+   "jahr_druck": 1994,
+   "jahr_online": 1994,
+   "titel": "Four hundred-million-year-old vesicular arbuscular mycorrhizae.",
+   "erschienen_in": {
+    "zeitschrift": "Proceedings of the National Academy of Sciences",
+    "band": "91",
+    "heft": "25",
+    "seiten": "11841-11843"
+   },
+   "doi": "10.1073/pnas.91.25.11841",
+   "url": "https://doi.org/10.1073/pnas.91.25.11841",
+   "pmid": "11607500",
+   "pmcid": "PMC45331",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Fund von Arbuskeln in der frühdevonischen Landpflanze Aglaophyton major: Beleg, dass Mykorrhiza vor mehr als 400 Millionen Jahren bestand.",
+     "en": "Discovery of arbuscules in the Early Devonian land plant Aglaophyton major: evidence that mycorrhiza existed more than 400 million years ago.",
+     "nl": "Vondst van arbuscules in de vroeg-devonische landplant Aglaophyton major: bewijs dat mycorrhiza al meer dan 400 miljoen jaar geleden bestond.",
+     "fr": "Découverte d’arbuscules chez la plante terrestre du Dévonien inférieur Aglaophyton major : preuve que la mycorhize existait il y a plus de 400 millions d’années.",
+     "es": "Hallazgo de arbúsculos en la planta terrestre del Devónico inferior Aglaophyton major: prueba de que la micorriza existía hace más de 400 millones de años."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0047",
+   "kennung": "brundrett-tedersoo-2018",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Brundrett",
+     "vorname": "Mark C."
+    },
+    {
+     "nachname": "Tedersoo",
+     "vorname": "Leho"
+    }
+   ],
+   "jahr": 2018,
+   "jahr_druck": 2018,
+   "jahr_online": 2018,
+   "titel": "Evolutionary history of mycorrhizal symbioses and global host plant diversity",
+   "erschienen_in": {
+    "zeitschrift": "New Phytologist",
+    "band": "220",
+    "heft": "4",
+    "seiten": "1108-1115"
+   },
+   "doi": "10.1111/nph.14976",
+   "url": "https://doi.org/10.1111/nph.14976",
+   "pmid": "29355963",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Übersicht zur Entwicklungsgeschichte der Mykorrhiza und ihrer Verbreitung: 72 % der Gefäßpflanzen bilden eine arbuskuläre Mykorrhiza, 2 % eine Ektomykorrhiza, nur 8 % sind ganz ohne Mykorrhiza.",
+     "en": "Review of the evolutionary history of mycorrhiza and its distribution: 72% of vascular plants form arbuscular mycorrhiza, 2% ectomycorrhiza, and only 8% have no mycorrhiza at all.",
+     "nl": "Overzicht van de evolutiegeschiedenis van mycorrhiza en de verspreiding ervan: 72 % van de vaatplanten vormt arbusculaire mycorrhiza, 2 % ectomycorrhiza, en slechts 8 % heeft helemaal geen mycorrhiza.",
+     "fr": "Synthèse sur l’histoire évolutive des mycorhizes et leur répartition : 72 % des plantes vasculaires forment des mycorhizes à arbuscules, 2 % des ectomycorhizes, et seules 8 % n’en ont aucune.",
+     "es": "Revisión de la historia evolutiva de la micorriza y su distribución: el 72 % de las plantas vasculares forma micorriza arbuscular, el 2 % ectomicorriza y solo el 8 % carece por completo de micorriza."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0048",
+   "kennung": "luginbuehl-2017",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Luginbuehl",
+     "vorname": "Leonie H."
+    },
+    {
+     "nachname": "Menard",
+     "vorname": "Guillaume N."
+    },
+    {
+     "nachname": "Kurup",
+     "vorname": "Smita"
+    },
+    {
+     "nachname": "Van Erp",
+     "vorname": "Harrie"
+    },
+    {
+     "nachname": "Radhakrishnan",
+     "vorname": "Guru V."
+    },
+    {
+     "nachname": "Breakspear",
+     "vorname": "Andrew"
+    },
+    {
+     "nachname": "Oldroyd",
+     "vorname": "Giles E. D."
+    },
+    {
+     "nachname": "Eastmond",
+     "vorname": "Peter J."
+    }
+   ],
+   "jahr": 2017,
+   "jahr_druck": 2017,
+   "titel": "Fatty acids in arbuscular mycorrhizal fungi are synthesized by the host plant",
+   "erschienen_in": {
+    "zeitschrift": "Science",
+    "band": "356",
+    "heft": "6343",
+    "seiten": "1175-1178"
+   },
+   "doi": "10.1126/science.aan0081",
+   "url": "https://doi.org/10.1126/science.aan0081",
+   "pmid": "28596311",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Arbuskuläre Mykorrhizapilze können Fettsäuren nicht selbst bilden; die Wirtspflanze stellt sie her und gibt Lipide an den Pilz ab – neben Zucker eine wichtige Kohlenstoffquelle für den Pilz.",
+     "en": "Arbuscular mycorrhizal fungi cannot synthesise fatty acids themselves; the host plant produces them and transfers lipids to the fungus – alongside sugars, an important source of carbon for the fungus.",
+     "nl": "Arbusculaire mycorrhizaschimmels kunnen zelf geen vetzuren aanmaken; de waardplant maakt ze aan en geeft lipiden af aan de schimmel – naast suikers een belangrijke koolstofbron voor de schimmel.",
+     "fr": "Les champignons mycorhiziens à arbuscules ne peuvent pas synthétiser eux-mêmes d’acides gras ; la plante hôte les produit et transfère des lipides au champignon – une source importante de carbone pour lui, en plus des sucres.",
+     "es": "Los hongos micorrícicos arbusculares no pueden sintetizar ácidos grasos por sí mismos; la planta huésped los produce y transfiere lípidos al hongo, una fuente importante de carbono para él junto con los azúcares."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0049",
+   "kennung": "jiang-2017",
+   "art": "primaerstudie",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Jiang",
+     "vorname": "Yina"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Wanxiao"
+    },
+    {
+     "nachname": "Xie",
+     "vorname": "Qiujin"
+    },
+    {
+     "nachname": "Liu",
+     "vorname": "Na"
+    },
+    {
+     "nachname": "Liu",
+     "vorname": "Lixia"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Dapeng"
+    },
+    {
+     "nachname": "Zhang",
+     "vorname": "Xiaowei"
+    },
+    {
+     "nachname": "Yang",
+     "vorname": "Chen"
+    },
+    {
+     "nachname": "Chen",
+     "vorname": "Xiaoya"
+    },
+    {
+     "nachname": "Tang",
+     "vorname": "Dingzhong"
+    },
+    {
+     "nachname": "Wang",
+     "vorname": "Ertao"
+    }
+   ],
+   "jahr": 2017,
+   "jahr_druck": 2017,
+   "titel": "Plants transfer lipids to sustain colonization by mutualistic mycorrhizal and parasitic fungi",
+   "erschienen_in": {
+    "zeitschrift": "Science",
+    "band": "356",
+    "heft": "6343",
+    "seiten": "1172-1175"
+   },
+   "doi": "10.1126/science.aam9970",
+   "url": "https://doi.org/10.1126/science.aam9970",
+   "pmid": "28596307",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Pflanzen geben Fettsäuren an den arbuskulären Mykorrhizapilz Rhizophagus irregularis ab, der sie selbst nicht bilden kann; auch ein krankheitserregender Mehltaupilz nutzt diesen Weg.",
+     "en": "Plants supply fatty acids to the arbuscular mycorrhizal fungus Rhizophagus irregularis, which cannot produce them itself; a pathogenic powdery mildew fungus also uses this route.",
+     "nl": "Planten geven vetzuren af aan de arbusculaire mycorrhizaschimmel Rhizophagus irregularis, die ze zelf niet kan aanmaken; ook een ziekteverwekkende meeldauwschimmel gebruikt deze weg.",
+     "fr": "Les plantes fournissent des acides gras au champignon mycorhizien à arbuscules Rhizophagus irregularis, qui ne peut pas les produire lui-même ; un champignon pathogène responsable de l’oïdium emprunte aussi cette voie.",
+     "es": "Las plantas suministran ácidos grasos al hongo micorrícico arbuscular Rhizophagus irregularis, que no puede producirlos por sí mismo; un hongo patógeno causante del oídio también utiliza esta vía."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0050",
+   "kennung": "rillig-mummey-2006",
+   "art": "review",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Rillig",
+     "vorname": "Matthias C."
+    },
+    {
+     "nachname": "Mummey",
+     "vorname": "Daniel L."
+    }
+   ],
+   "jahr": 2006,
+   "jahr_druck": 2006,
+   "jahr_online": 2006,
+   "titel": "Mycorrhizas and soil structure",
+   "erschienen_in": {
+    "zeitschrift": "New Phytologist",
+    "band": "171",
+    "heft": "1",
+    "seiten": "41-53"
+   },
+   "doi": "10.1111/j.1469-8137.2006.01750.x",
+   "url": "https://doi.org/10.1111/j.1469-8137.2006.01750.x",
+   "pmid": "16771981",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Übersicht, wie Mykorrhizapilze die Bodenstruktur beeinflussen, vor allem die Bildung von Bodenkrümeln, auf Ebene der Pflanzengemeinschaft, der einzelnen Wurzel und des Myzels.",
+     "en": "Review of how mycorrhizal fungi influence soil structure, above all the formation of soil aggregates, at the level of the plant community, the individual root and the mycelium.",
+     "nl": "Overzicht van hoe mycorrhizaschimmels de bodemstructuur beïnvloeden, vooral de vorming van bodemaggregaten, op het niveau van de plantengemeenschap, de afzonderlijke wortel en het mycelium.",
+     "fr": "Synthèse sur la façon dont les champignons mycorhiziens influencent la structure du sol, en particulier la formation d’agrégats, à l’échelle de la communauté végétale, de la racine et du mycélium.",
+     "es": "Revisión de cómo los hongos micorrícicos influyen en la estructura del suelo, sobre todo en la formación de agregados, a nivel de la comunidad vegetal, de la raíz individual y del micelio."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0051",
+   "kennung": "treseder-2004",
+   "art": "metaanalyse",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Treseder",
+     "vorname": "Kathleen K."
+    }
+   ],
+   "jahr": 2004,
+   "jahr_druck": 2004,
+   "jahr_online": 2004,
+   "titel": "A meta‐analysis of mycorrhizal responses to nitrogen, phosphorus, and atmospheric CO₂ in field studies",
+   "erschienen_in": {
+    "zeitschrift": "New Phytologist",
+    "band": "164",
+    "heft": "2",
+    "seiten": "347-355"
+   },
+   "doi": "10.1111/j.1469-8137.2004.01159.x",
+   "url": "https://doi.org/10.1111/j.1469-8137.2004.01159.x",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Metaanalyse von Feldstudien: Unter Stickstoffdüngung nahm die Abundanz von Mykorrhizapilzen im Mittel um 15 %, unter Phosphordüngung um 32 % ab; erhöhtes CO₂ ging mit einer Zunahme um 47 % einher.",
+     "en": "Meta-analysis of field studies: mycorrhizal abundance decreased on average by 15% under nitrogen fertilisation and by 32% under phosphorus fertilisation; elevated CO₂ was associated with an increase of 47%.",
+     "nl": "Meta-analyse van veldstudies: onder stikstofbemesting nam de abundantie van mycorrhizaschimmels gemiddeld met 15 % af, onder fosforbemesting met 32 %; verhoogd CO₂ ging gepaard met een toename van 47 %.",
+     "fr": "Méta-analyse d’études de terrain : sous fertilisation azotée, l’abondance des champignons mycorhiziens a diminué en moyenne de 15 %, sous fertilisation phosphatée de 32 % ; un CO₂ élevé s’est accompagné d’une augmentation de 47 %.",
+     "es": "Metaanálisis de estudios de campo: con fertilización nitrogenada, la abundancia de hongos micorrícicos disminuyó en promedio un 15 %, y con fertilización fosfatada un 32 %; el CO₂ elevado se asoció a un aumento del 47 %."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  },
+  {
+   "id": "Q0052",
+   "kennung": "bowles-2017",
+   "art": "metaanalyse",
+   "status": "veroeffentlicht",
+   "autoren": [
+    {
+     "nachname": "Bowles",
+     "vorname": "Timothy M."
+    },
+    {
+     "nachname": "Jackson",
+     "vorname": "Louise E."
+    },
+    {
+     "nachname": "Loeher",
+     "vorname": "Malina"
+    },
+    {
+     "nachname": "Cavagnaro",
+     "vorname": "Timothy R."
+    }
+   ],
+   "jahr": 2017,
+   "jahr_druck": 2017,
+   "jahr_online": 2016,
+   "titel": "Ecological intensification and arbuscular mycorrhizas: a meta‐analysis of tillage and cover crop effects",
+   "erschienen_in": {
+    "zeitschrift": "Journal of Applied Ecology",
+    "band": "54",
+    "heft": "6",
+    "seiten": "1785-1793"
+   },
+   "doi": "10.1111/1365-2664.12815",
+   "url": "https://doi.org/10.1111/1365-2664.12815",
+   "zugang": "ungeprueft",
+   "themen": [
+    "leben-im-boden"
+   ],
+   "texte": {
+    "zeigt": {
+     "de": "Metaanalyse von 54 Feldstudien auf fünf Kontinenten: Weniger intensive Bodenbearbeitung und Zwischenfrüchte im Winter gingen jeweils mit einer um rund 30 % stärkeren Wurzelbesiedlung der folgenden Hauptkultur durch Mykorrhizapilze einher.",
+     "en": "Meta-analysis of 54 field studies on five continents: less intensive tillage and winter cover crops were each associated with about 30% greater root colonisation of the following cash crop by mycorrhizal fungi.",
+     "nl": "Meta-analyse van 54 veldstudies op vijf continenten: minder intensieve grondbewerking en wintervanggewassen gingen elk gepaard met een ongeveer 30 % sterkere wortelkolonisatie van het volgende hoofdgewas door mycorrhizaschimmels.",
+     "fr": "Méta-analyse de 54 études de terrain sur cinq continents : un travail du sol moins intensif et des cultures intermédiaires d’hiver étaient chacun associés à une colonisation racinaire de la culture principale suivante par les champignons mycorhiziens supérieure d’environ 30 %.",
+     "es": "Metaanálisis de 54 estudios de campo en cinco continentes: una labranza menos intensiva y los cultivos de cobertura invernales se asociaron cada uno a una colonización radical por hongos micorrícicos de la siguiente cosecha principal alrededor de un 30 % mayor."
+    }
+   },
+   "im_chatbot": true,
+   "aufgenommen": "2026-11-25",
+   "freigegeben": "2026-11-25"
+  }
+ ],
+ "seiten": {
+  "was-wir-wissen": [
+   "Q0003",
+   "Q0008",
+   "Q0004",
+   "Q0005",
+   "Q0006",
+   "Q0002",
+   "Q0007",
+   "Q0015",
+   "Q0016",
+   "Q0017",
+   "Q0018",
+   "Q0020",
+   "Q0023",
+   "Q0022",
+   "Q0034",
+   "Q0025",
+   "Q0040",
+   "Q0039",
+   "Q0041",
+   "Q0038",
+   "Q0037",
+   "Q0031",
+   "Q0026",
+   "Q0027",
+   "Q0032",
+   "Q0035",
+   "Q0028",
+   "Q0033",
+   "Q0029",
+   "Q0030"
+  ],
+  "leben-im-boden": [
+   "Q0048",
+   "Q0049",
+   "Q0046",
+   "Q0047",
+   "Q0050",
+   "Q0014",
+   "Q0021",
+   "Q0051",
+   "Q0012",
+   "Q0052",
+   "Q0039",
+   "Q0041"
+  ]
+ },
+ "aenderungen": [],
+ "alte_anker": {
+  "ref-1": "simard-ted-2016",
+  "ref-2": "gorzelak-2015",
+  "ref-33": "simard-1997",
+  "ref-34": "beiler-2010",
+  "ref-35": "song-2010",
+  "ref-36": "babikova-2013",
+  "ref-37": "lee-2026",
+  "ref-38": "nature-plants-2024",
+  "ref-14": "cavagnaro-2005",
+  "ref-16": "stewart-2026",
+  "ref-19": "soudzilovskaia-2019",
+  "ref-20": "qiu-2026",
+  "ref-21": "mason-2025",
+  "ref-32": "hawkins-2023",
+  "ref-11": "karst-2023",
+  "ref-39": "henriksson-2023",
+  "ref-40": "simard-2025",
+  "ref-41": "merckx-2024",
+  "ref-12": "karst-many-minds-2024",
+  "ref-18": "lehmann-rillig-2025",
+  "ref-23": "lutz-2023",
+  "ref-42": "slayman-1976",
+  "ref-3": "buffi-2025b",
+  "ref-4": "hunter-fungal-grid",
+  "ref-13": "buffi-2025a",
+  "ref-15": "adamatzky-2022a",
+  "ref-43": "blatt-2024",
+  "ref-22": "mishra-2024",
+  "ref-44": "thomas-cooper-2022",
+  "ref-45": "blatt-2023",
+  "ref-5": "adamatzky-2022b",
+  "ref-6": "mayne-2023",
+  "ref-7": "zeng-2026",
+  "ref-24": "olsson-hansson-1995",
+  "ref-25": "browner-2023",
+  "ref-26": "schwerdtfeger-linden-2001",
+  "ref-27": "przyczyna-2022",
+  "ref-28": "adamatzky-2026",
+  "ref-29": "fukasawa-2023",
+  "ref-30": "fukasawa-2024",
+  "ref-31": "fukasawa-2026",
+  "ref-8": "sheldrake-2020",
+  "ref-9": "prylutskyi-kapets-2024",
+  "ref-10": "fundive",
+  "ref-17": "kosmala-2016",
+  "station-1": "thema-netzwerke",
+  "station-kritik": "thema-netzwerke",
+  "station-2": "thema-elektrische-aktivitaet",
+  "station-3": "thema-elektrische-aktivitaet",
+  "station-reize": "thema-elektrische-aktivitaet",
+  "station-buch": "thema-weiterlesen",
+  "station-cs": "thema-wie-wir-forschen"
+ }
+}

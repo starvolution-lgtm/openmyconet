@@ -56,7 +56,9 @@ def test_mycorrhiza_lateinische_schreibweise_matcht_mykorrhiza_chunk():
 
 def test_co2_abkuerzung_wird_zu_kohlenstoff_normalisiert():
     ergebnis = find_chunks('wo finde ich Studien zu Mycorrhiza und CO2', 'de', top_k=5)
-    assert any(c['slug'] == 'mykorrhiza-grundlagen' for c in ergebnis)
+    # Die Kohlenstoff-Studien stehen seit der Umstellung auf das Quellenverzeichnis
+    # (omn/daten/quellen.json) in den Abschnitten quellen-<thema>, nicht mehr in mykorrhiza-grundlagen.
+    assert any('Soudzilovskaia' in c['text'] for c in ergebnis)
 
 
 class _FakeAntwort:

@@ -136,6 +136,8 @@
 .ref-relevanz::before { content: '→ OMN: '; color: var(--accent2); font-weight: 500; font-family: 'JetBrains Mono',monospace; font-size: 0.72rem; }
 .ref-relevanz.amber { color: var(--amber); border-top-color: rgba(212,160,48,0.25); }
 .ref-relevanz.amber::before { color: var(--amber2); }
+.ref-heranziehen { font-size: 0.8rem; color: var(--text2); margin-top: 4px; line-height: 1.6; }
+.ref-heranziehen > span:first-child { color: var(--accent2); font-weight: 500; }
 .ref-hypothesis { font-size: 0.82rem; color: var(--amber); margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(212,160,48,0.25); line-height: 1.6; font-style: italic; }
 .ref-hypothesis::before { content: '→ OMN-Forschungsfrage: '; color: var(--amber2); font-weight: 500; font-style: normal; font-family: 'JetBrains Mono',monospace; font-size: 0.72rem; }
 .ref-ext { font-family: 'JetBrains Mono',monospace; font-size: 0.9rem; color: var(--text3); align-self: center; flex-shrink: 0; }
