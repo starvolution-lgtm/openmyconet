@@ -156,9 +156,15 @@ def austausch_bearbeiten(austausch_id):
 @role_required('superadmin')
 def austausch_detail(austausch_id):
     a = _austausch_oder_404(austausch_id)
-    nachricht = fehler = None
     if request.method == 'POST':
+        # Post/Redirect/Get: nach dem Absenden neu laden, sonst schickt F5 den Beitrag nochmal
         nachricht, fehler = kollaboration.post_verarbeiten(a, 'team', request.form, request.files)
+        if nachricht:
+            flash(nachricht)
+        if fehler:
+            flash(fehler, 'error')
+        return redirect(url_for('admin.austausch_detail', austausch_id=a.id))
+    nachricht = fehler = None
     return render_template(
         'austausch_admin_detail.html',
         modus='austausch', kontext=a, titel_kontext=a.titel, austausch=a,

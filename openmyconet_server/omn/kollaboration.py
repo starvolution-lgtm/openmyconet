@@ -15,7 +15,7 @@ Kontakt) und eine eigene Zugriffspruefung ohne E-Mail-Fallback.
 import logging
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from flask import current_app, render_template, request
 from flask_mail import Message
@@ -202,6 +202,11 @@ def post_verarbeiten(kontext, wer, form, files, meldungen=None):
         aufgabe_id = form.get('aufgabe_id', type=int) or None
         if aufgabe_id:
             _aufgabe_dieses_kontexts(aufgabe_id)
+        dateien = [d for d in files.getlist('dateien') if d and d.filename]
+        if not dateien and _ist_wiederholung(kontext, wer, text, aufgabe_id):
+            # Neu laden / Zurueck im Browser schickt dasselbe Formular nochmal -> nicht doppelt speichern
+            logger.info('Kommentar-Wiederholung ignoriert (%s, %s)', filt, wer)
+            return m['kommentar_ok'], None
         _, anhang_fehler = kommentar_anlegen(
             kontext, text, wer, aufgabe_id=aufgabe_id, dateien=files.getlist('dateien'),
             anhang_fehler=m['anhang_abgelehnt'],
@@ -209,6 +214,19 @@ def post_verarbeiten(kontext, wer, form, files, meldungen=None):
         return m['kommentar_ok'], (' '.join(anhang_fehler) or None)
 
     return None, m['unbekannt']
+
+
+WIEDERHOLUNG_FENSTER = timedelta(hours=24)
+
+
+def _ist_wiederholung(kontext, wer, text, aufgabe_id):
+    """True, wenn der letzte Kommentar dieser Seite in diesem Kontext denselben Text hat
+    (und juenger als 24 h ist). Absichtlich zweimal hintereinander exakt dasselbe zu
+    schreiben kommt praktisch nicht vor; ein erneut abgeschicktes Formular schon."""
+    letzter = (Kommentar.query.filter_by(autor=wer, **kontext_filter(kontext))
+               .order_by(Kommentar.id.desc()).first())
+    return bool(letzter and letzter.text == text.strip() and letzter.aufgabe_id == aufgabe_id
+                and letzter.erstellt_am and letzter.erstellt_am > utcnow() - WIEDERHOLUNG_FENSTER)
 
 
 # --- Zugriffs-Helfer (Nutzer-Seite) ---------------------------------------

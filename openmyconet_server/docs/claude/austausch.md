@@ -31,6 +31,10 @@ Feld an `Nutzer`, nirgends für Nutzer sichtbar.
   CSRF-Prüfung), sonst `MAX_CONTENT_LENGTH` 12 MB. nginx lässt 26M durch
   (`deploy/root_nginx_upload_grenze.sh`, als root). Hinweistext: `austausch_anhang_hinweis_bereich`
   (Themenräume weiter `austausch_anhang_hinweis`).
+- **Kein Doppelt-Senden** (seit 25.11.2026): `/austausch` und `/admin/austausch/<id>` leiten nach
+  jedem POST um (Post/Redirect/Get, Meldung per `flash`), Neu laden schickt also nichts erneut.
+  Zusätzlich verwirft `kollaboration._ist_wiederholung` einen Kommentar ohne Anhang, dessen Text
+  gleich dem letzten Kommentar derselben Seite im selben Kontext ist (< 24 h) — gilt für alle Kontexte.
 - Admin-Ansicht zeigt bei Beiträgen der eingeladenen Person `austausch.name` statt „Fachkontakt“
   (Autor ist nur `team`/`partner` — bei mehreren Teilnehmenden braucht es einen Autor je Beitrag).
 

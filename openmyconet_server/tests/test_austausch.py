@@ -321,7 +321,8 @@ def test_admin_arbeitsbereich_aufgabe_und_kommentar(client, app, superadmin):
     db.session.commit()
     _admin(client)
     with mail.record_messages() as ausgehend:
-        resp = client.post(f'/admin/austausch/{a.id}', data={'action': 'aufgabe_neu', 'titel': 'Daten teilen'})
+        resp = client.post(f'/admin/austausch/{a.id}', data={'action': 'aufgabe_neu', 'titel': 'Daten teilen'},
+                           follow_redirects=True)
         client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Hallo'})
     assert resp.status_code == 200
     assert Aufgabe.query.filter_by(austausch_id=a.id).count() == 1
@@ -726,15 +727,17 @@ def test_arbeitsbereich_schreiben_mit_uebersetzten_meldungen(client, app):
     _als(client, n.id)
     with mail.record_messages() as ausgehend:
         seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'kommentar_neu',
-                                                'text': 'Hola equipo'}).get_data(as_text=True)
+                                                'text': 'Hola equipo'}, follow_redirects=True).get_data(as_text=True)
     assert 'Mensaje enviado.' in seite
     assert Kommentar.query.filter_by(austausch_id=a.id, autor='partner').count() == 1
     assert ausgehend[0].recipients == ['admin@openmyconet.test']
-    seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': 'x'}).get_data(as_text=True)
+    seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': 'x'},
+                        follow_redirects=True).get_data(as_text=True)
     assert 'En este intercambio no hay tareas.' in seite      # Aufgaben ausgeschaltet
     a.aufgaben_aktiv = True
     db.session.commit()
-    seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': ''}).get_data(as_text=True)
+    seite = client.post('/austausch', data={'austausch_id': a.id, 'action': 'aufgabe_neu', 'titel': ''},
+                        follow_redirects=True).get_data(as_text=True)
     assert 'La tarea necesita un título.' in seite
     assert 'Solo visible para ti' in seite
 
@@ -1066,7 +1069,7 @@ def test_austausch_nimmt_15mb_anhang_an(client, app):
     _als(client, n.id)
     resp = client.post('/austausch', data={'austausch_id': a.id, 'action': 'kommentar_neu',
                                           'text': 'Messreihe', 'dateien': _csv(15)},
-                       content_type='multipart/form-data')
+                       content_type='multipart/form-data', follow_redirects=True)
     assert resp.status_code == 200
     assert KollaborationAnhang.query.count() == 1
 
@@ -1076,7 +1079,7 @@ def test_admin_austausch_nimmt_15mb_anhang_an(client, app, superadmin):
     _admin(client)
     resp = client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Daten',
                                                         'dateien': _csv(15)},
-                       content_type='multipart/form-data')
+                       content_type='multipart/form-data', follow_redirects=True)
     assert resp.status_code == 200
     assert KollaborationAnhang.query.count() == 1
 
@@ -1103,3 +1106,36 @@ def test_hoehere_request_grenze_nur_auf_austausch_seiten(client, app, superadmin
     resp = client.post('/admin/austausch/neu', data={'dateien': _csv(15)},
                        content_type='multipart/form-data')
     assert resp.status_code == 413
+
+
+# --- Doppelte Beitraege durch Neu laden (25.11.2026) ------------------------------
+
+def test_austausch_post_leitet_um_und_neu_laden_doppelt_nichts(client, app):
+    n, a = _fachkontakt()
+    _als(client, n.id)
+    daten = {'austausch_id': a.id, 'action': 'kommentar_neu', 'text': 'Hallo Robby'}
+    resp = client.post('/austausch', data=daten)
+    assert resp.status_code == 302 and resp.headers['Location'].endswith('/austausch')
+    client.post('/austausch', data=daten)            # Formular nochmal abgeschickt (F5/Zurueck)
+    assert Kommentar.query.filter_by(austausch_id=a.id, autor='partner').count() == 1
+
+
+def test_admin_post_leitet_um_und_neu_laden_doppelt_nichts(client, app, superadmin):
+    _, a = _fachkontakt()
+    _admin(client)
+    daten = {'action': 'kommentar_neu', 'text': 'Hallo Richard'}
+    resp = client.post(f'/admin/austausch/{a.id}', data=daten)
+    assert resp.status_code == 302
+    seite = client.get(resp.headers['Location']).get_data(as_text=True)
+    assert 'Kommentar gespeichert.' in seite           # Meldung kommt nach der Umleitung an
+    client.post(f'/admin/austausch/{a.id}', data=daten)
+    assert Kommentar.query.filter_by(austausch_id=a.id, autor='team').count() == 1
+
+
+def test_gleicher_text_nach_anderem_beitrag_wird_gespeichert(client, app, superadmin):
+    _, a = _fachkontakt()
+    _admin(client)
+    client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Danke!'})
+    client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Noch etwas'})
+    client.post(f'/admin/austausch/{a.id}', data={'action': 'kommentar_neu', 'text': 'Danke!'})
+    assert Kommentar.query.filter_by(austausch_id=a.id, autor='team').count() == 3

@@ -486,6 +486,12 @@ def bereich():
             abort(403)
         nachricht, fehler = kollaboration.post_verarbeiten(kontext, 'partner', request.form, request.files,
                                                            meldungen=_meldungen(lang))
+        # Post/Redirect/Get: nach dem Absenden neu laden, sonst schickt F5 den Beitrag nochmal
+        if nachricht:
+            flash(nachricht)
+        if fehler:
+            flash(fehler, 'error')
+        return redirect(url_for('austausch.bereich'))
 
     ansicht = [{
         'a': x,
