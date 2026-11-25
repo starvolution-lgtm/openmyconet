@@ -39,23 +39,23 @@
       },
       {
         "label": "Funkverbindung",
-        "value": "LoRa zur Bridge (1–3 km im Wald) · Bridge verbindet sich per WLAN mit der Zentrale — in Entwicklung, noch nicht ausgeliefert"
+        "value": "LoRa zur Bridge · Bridge verbindet sich per WLAN mit der Zentrale · Reichweite hängt von Antenne, Gehäuse und Gelände ab — in Entwicklung, noch nicht ausgeliefert"
       },
       {
         "label": "ADC",
-        "value": "16-bit, 8 Kanäle"
+        "value": "16 Bit · ein bioelektrischer Messkanal je Knoten"
       },
       {
         "label": "Sensoren",
-        "value": "Bioelektrische Signale + Boden- & Umweltdaten (Temperatur, Feuchtigkeit, CO₂)"
+        "value": "Bioelektrisches Signal + Bodentemperatur, Bodenfeuchte, Leitfähigkeit, CO₂, Lufttemperatur und -feuchte"
       },
       {
         "label": "Stromversorgung",
-        "value": "USB-C oder LiPo-Akku"
+        "value": "Akku, Laden über USB-C"
       },
       {
         "label": "Gehäuse",
-        "value": "IP65, wetterfest"
+        "value": "Wetterfest (IP65) vorgesehen, Gehäuse in Entwicklung"
       }
     ],
     "leih_how_label": "In fünf Schritten zum Messknoten",
@@ -65,10 +65,10 @@
     "leih_how_h2": "In fünf Schritten zum <em>Messknoten</em>",
     "leih_bridge_h2": "Die <em>Zentrale</em>",
     "leih_bridge_warning": "⚠ Die Funkanbindung (LoRa/WLAN) ist Teil der aktuell in Entwicklung befindlichen Hardware-Generation und noch nicht ausgeliefert.",
-    "leih_bridge_desc": "Die BioComm Bridge verbindet bis zu 4 Messknoten gleichzeitig per LoRa-Funk (Punkt-zu-Punkt, realistisch 1–3 km Reichweite im Wald) und leitet alle Daten per WLAN an die Zentrale weiter. Node 1–4 LEDs zeigen den Verbindungsstatus in Echtzeit.",
+    "leih_bridge_desc": "Die BioComm Bridge empfängt die Daten der Messknoten per LoRa-Funk (Punkt-zu-Punkt) und leitet sie per WLAN an die Zentrale weiter. Vorgesehen ist in der Regel ein Knoten je Bridge; technisch sind mehrere möglich. Status-LEDs zeigen Betrieb, Suche, Verbindung und Lebenszeichen.",
     "leih_bridge_li1": "ESP32 mit LoRa-Funkmodul",
     "leih_bridge_li2": "WLAN-Verbindung zur Zentrale",
-    "leih_bridge_li3": "4 Node-Status-LEDs",
+    "leih_bridge_li3": "Status-LEDs (Betrieb, Suche, Verbindung, Lebenszeichen)",
     "leih_bridge_li4": "Kompaktes Desktop-Gehäuse",
     "leih_system_label": "Das Gesamtsystem",
     "leih_system_h2": "BioComm <em>im Einsatz</em>",
@@ -80,7 +80,7 @@
       },
       {
         "h": "Kaution hinterlegen",
-        "p": "Ca. 100 € Kaution (endgültiger Betrag noch zu bestätigen). Wird bei Rückgabe vollständig erstattet."
+        "p": "Gegen Pfand. Die Höhe legen wir fest, sobald die endgültigen Kosten für ein Set aus Knoten und Bridge feststehen. Wird bei Rückgabe vollständig erstattet."
       },
       {
         "h": "Gerät erhalten",
@@ -230,12 +230,12 @@
     "steps": [
       {
         "h": "Zugang zu einem BioComm-Knoten erhalten",
-        "p": "Nach erfolgreicher Bewerbung: BioComm-Messgerät als Leihgerät, Pfand ca. 100 € (finale Kosten folgen), Rückgabe jederzeit möglich.",
-        "cost": "Pfand ca. 100 €"
+        "p": "Nach erfolgreicher Bewerbung: BioComm-Messgerät (Knoten und Bridge) als Leihgerät gegen Pfand, Rückgabe jederzeit möglich. Die Höhe des Pfands legen wir fest, sobald die endgültigen Kosten für ein Set aus Knoten und Bridge feststehen.",
+        "cost": "Gegen Pfand"
       },
       {
         "h": "BioComm starten",
-        "p": "Die BioComm-Software kostenlos herunterladen — keine Installation nötig. <a href=\"https://www.openmyconet.de/biocomm/software\" class=\"u-green\">BioComm-Software ansehen →</a>",
+        "p": "Die Bridge mit deinem WLAN verbinden. Knoten und Bridge arbeiten mit ihrer eigenen Firmware; eine zusätzliche Software musst du nicht installieren.",
         "cost": "Kostenlos"
       },
       {
@@ -278,19 +278,19 @@
     "facts": [
       {
         "num": "400M",
-        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">Jahre alt — so lange existieren Mykorrhiza-Netzwerke auf der Erde</a>"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">Jahre — so lange gibt es die Mykorrhiza-Symbiose zwischen Pilzen und Landpflanzen (Fossilbelege)</a>"
       },
       {
         "num": "~70%",
         "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">der Gefäßpflanzenarten gehen Verbindungen mit arbuskulären Mykorrhizapilzen ein</a>"
       },
       {
-        "num": "8",
-        "text": "bioelektrische Messkanäle"
+        "num": "16 Bit",
+        "text": "Auflösung bei der Messung des bioelektrischen Signals"
       },
       {
-        "num": "bis zu 10 kHz",
-        "text": "programmierbare Stimulationsausgabe"
+        "num": "6",
+        "text": "Umweltwerte zusätzlich: Bodentemperatur, Bodenfeuchte, Leitfähigkeit, CO₂, Lufttemperatur, Luftfeuchte"
       }
     ],
     "form_options": {
@@ -302,7 +302,7 @@
     },
     "q_page_tag": "OpenMycoNet · Wissenschaftliche Grundlagen",
     "q_h1_html": "Quellennachweise &amp; <em>Erkenntnispfad</em>",
-    "q_subtitle": "OpenMycoNet steht auf einem nachvollziehbaren wissenschaftlichen Fundament. Jeder Schritt unseres Erkenntnispfades — von der Mykorrhiza-Grundlagenforschung bis zur angewandten Citizen Science — ist durch publizierte Forschung belegt.",
+    "q_subtitle": "OpenMycoNet baut auf publizierter Forschung auf. Für jeden Schritt unseres Erkenntnispfades — von der Mykorrhiza-Grundlagenforschung bis zur Citizen Science — findest du hier die Arbeiten, auf die wir uns stützen, und wie belastbar sie sind.",
     "q_intro_strong": "Transparenzhinweis:",
     "q_intro": "Nicht alle aufgeführten Arbeiten belegen die Ziele von OpenMycoNet direkt. Sie bilden das wissenschaftliche Fundament, auf dem unsere Fragen aufbauen — einschließlich kritischer Perspektiven. Wir messen, weil die Datenlage noch dünn ist, nicht weil alles bewiesen ist.",
     "q_path_label": "Wissenschaftlicher Erkenntnispfad",
@@ -321,7 +321,7 @@
     "q_ref1_relevanz": "Populärwissenschaftliche Einordnung der Forschung zu Ressourcenaustausch über Mykorrhiza-Netzwerke – der Ausgangspunkt, der die Frage hinter OpenMycoNet aufgeworfen hat.",
     "q_ref1_evbadge": "Populärwiss. Einordnung",
     "q_ref2_title": "Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities",
-    "q_ref2_meta": "Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
+    "q_ref2_meta": "Gorzelak, Asay, Pickles & Simard (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
     "q_ref2_relevanz": "Fasst experimentelle Hinweise darauf zusammen, dass Mykorrhiza-Netzwerke physiologische und adaptive Reaktionen zwischen verbundenen Pflanzen beeinflussen können.",
     "q_ref2_evbadge": "Review",
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
@@ -366,8 +366,8 @@
     "q_ref23_relevanz": "Feldstudie mit 54 On-Farm-Standorten zeigt: Der Erfolg von AMF-Inokulation ist im Feld hochvariabel (−12% bis +40% Ertragseffekt) und primär durch den Zustand des Boden-Mikrobioms vorhersagbar — nicht durch Nährstoffgabe. Unterstreicht, warum Laborergebnisse nicht direkt auf Feldbedingungen übertragbar sind.",
     "q_ref23_evbadge": "Primärstudie",
     "q_s2_step": "Schritt 02 — Elektrische Aktivität",
-    "q_s2_title": "Pilze senden messbare elektrische Signale",
-    "q_s2_desc": "Bioelektrische Impulse im Myzel zeigen neuronale Charakteristika: Spiking-Muster, Signalausbreitung, nicht-lineare Eigenschaften.",
+    "q_s2_title": "Pilzmyzel zeigt messbare elektrische Aktivität",
+    "q_s2_desc": "Myzel erzeugt kurze Spannungsspitzen (Spikes), die an Aktionspotenziale erinnern; Signale breiten sich im Geflecht aus. Was sie biologisch bedeuten, ist weitgehend offen.",
     "q_ref3_title": "Electrical signaling in fungi",
     "q_ref3_meta": "Buffi et al. (2025) · FEMS Microbiology Reviews · DOI 10.1093/femsre/fuaf009 · PMC11995700",
     "q_ref3_relevanz": "Fasst den aktuellen Forschungsstand zu elektrischer Aktivität in filamentösen Pilzen zusammen und diskutiert Evidenz, Messmethoden, mögliche Artefakte und offene Fragen.",
@@ -390,17 +390,17 @@
     "q_ref22_evbadge": "Primärstudie",
     "q_s3_step": "Schritt 03 — Messbarkeit, Sensorik & KI-Mustererkennung",
     "q_s3_title": "Von der Beobachtung zur Berechnung",
-    "q_s3_desc": "Andrew Adamatzkys Arbeiten untersuchen, ob Myzelsignale technisch nutzbar sind — als logische Gatter, als übertragbare Frequenzen und, in einem noch nicht peer-reviewten Ansatz, als Grundlage für eine KI-gestützte Schnittstelle.",
+    "q_s3_desc": "Arbeiten vor allem von Andrew Adamatzky untersuchen, ob sich Myzelsignale technisch nutzen lassen, etwa für logikartige Schaltzustände oder zur Übertragung von Frequenzen. Ein noch nicht begutachteter Ansatz einer anderen Arbeitsgruppe nutzt lebendes Myzel als Sensor für verschiedene Reize.",
     "q_ref5_title": "Logics in fungal mycelium networks (Adamatzky)",
-    "q_ref5_meta": "Adamatzky, A. (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
+    "q_ref5_meta": "Adamatzky, Ayres, Beasley, Roberts & Wösten (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
     "q_ref5_relevanz": "Untersucht, wie sich elektrische Aktivität in Pilzmyzel unter experimentellen Bedingungen für logikartige Zustände und Verarbeitungskonzepte nutzen lässt – ein möglicher methodischer Bezugspunkt für spätere Musteranalyse.",
     "q_ref5_evbadge": "Peer-reviewte Studie",
     "q_ref6_title": "Propagation of electrical signals by fungi",
-    "q_ref6_meta": "Adamatzky et al. · BioSystems 229 (2023), 104933 · DOI 10.1016/j.biosystems.2023.104933",
+    "q_ref6_meta": "Mayne, Roberts, Phillips, Weerasekera & Adamatzky (2023) · BioSystems 229, 104933 · DOI 10.1016/j.biosystems.2023.104933",
     "q_ref6_relevanz": "In myzelgebundenen Kompositen konnten eingespeiste Frequenzen zwischen 100 und 10.000 Hz am Ausgang wiedererkannt werden. Die Ausgangsamplituden waren zwischen Wiederholungen jedoch nicht reproduzierbar.",
     "q_ref6_evbadge": "Peer-reviewte Primärstudie",
-    "q_ref7_title": "MIND – Mycelial Interface for Naturalistic Detection",
-    "q_ref7_meta": "arXiv:2604.22947 · 24. April 2026",
+    "q_ref7_title": "MIND – Mycoponically Integrated Network Device for Multimodal Sensing with Living Mycelial Networks",
+    "q_ref7_meta": "Zeng, Porterfield & Kaur · arXiv:2604.22947 · 24. April 2026",
     "q_ref7_relevanz": "Lebende Myzelnetzwerke werden als multimodale Biosensoren untersucht. Bioelektrische Antworten werden ausgewertet, um verschiedene Umweltreize bzw. räumliche Informationen zu unterscheiden. Konzeptionell mit Teilen des BioComm-Ansatzes verwandt, aber noch nicht peer-reviewed.",
     "q_ref7_evbadge": "Preprint",
     "q_s4_step": "Kontext — Populärwissenschaft",
@@ -613,7 +613,7 @@
     "a_node_geocode_error": "Adresse nicht gefunden — bitte präziser formulieren oder Pin manuell ignorieren.",
     "a_node_lbl_motivation": "Bewerbungstext *",
     "a_node_ph_motivation": "Erzähl uns von dir und warum du mitmachen möchtest — auch wenn du nicht in jedes Kriterium passt. Mindestens 3-4 Sätze.",
-    "a_node_lbl_loan": "Ich akzeptiere die Leihbedingungen (Pfand ca. 100 €, Rückgabe bei Beendigung der Messung) *",
+    "a_node_lbl_loan": "Ich akzeptiere die Leihbedingungen (Pfand, dessen Höhe vor der Ausgabe festgelegt wird; Rückgabe bei Beendigung der Messung) *",
     "a_node_panel_label": "Bewerbung",
     "a_node_privacy_label": "Ich habe die [Datenschutzerklärung] gelesen und stimme der Verarbeitung meiner Bewerberdaten zu.",
     "a_node_submit": "Bewerbung absenden",
@@ -634,11 +634,11 @@
     "myk_page_tag": "OpenMycoNet · Wissen",
     "myk_h1": "Mykorrhiza-Netzwerke <em>verstehen</em>",
     "myk_subtitle": "Was unter dem Waldboden tatsächlich passiert — und was davon durch Forschung belegt ist, was offene Frage bleibt.",
-    "myk_s1_h2": "Das älteste Netzwerk der Erde",
-    "myk_s1_p1": "Unter unseren Füßen liegt das älteste und weitreichendste Kommunikationsnetzwerk der Erde. Mykorrhiza-Pilze verbinden seit <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 Millionen Jahren</a> <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">~70 % aller Pflanzenarten</a> miteinander — sie transportieren Nährstoffe, übermitteln Warnsignale und koordinieren das Leben im Boden auf eine Weise, die wir gerade erst zu verstehen beginnen. Sie senden elektrische Signale. Messbar. Reproduzierbar. Und bisher kaum entschlüsselt.",
-    "myk_s1_p2": "Dass es sich dabei nicht um eine Metapher handelt, sondern um einen <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">wissenschaftlich belegten</a> Informationskanal, geht maßgeblich auf die Waldökologin Suzanne Simard zurück: Ihre Feldforschung etablierte das Konzept des mykorrhizalen Netzwerks als messbaren Austauschweg zwischen Pflanzen, eine peer-reviewte Folgestudie von 2015 zeigte, dass Pflanzengemeinschaften darüber komplexes, adaptives Verhalten koordinieren können. Offen bleibt dabei die genaue Mechanik: Eine Studie zur Phosphat-Aufnahme aus dem Jahr 2005 beobachtet, wie eine Pilzart ihre Nährstoffaufnahme gezielt an lokale Angebote anpasst — kann die dafür nötigen Signalmoleküle im Hyphengeflecht aber nicht benennen. Ein plausibler Kandidat: elektrische Signalausbreitung im Myzel. Genau dort setzt BioComm an.",
+    "myk_s1_h2": "Eine uralte Partnerschaft unter unseren Füßen",
+    "myk_s1_p1": "Unter unseren Füßen leben Pilze und Pflanzen in einer der ältesten Partnerschaften an Land: Fossilfunde belegen die Mykorrhiza-Symbiose seit rund <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 Millionen Jahren</a>. Heute gehen etwa <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">70 % der Gefäßpflanzenarten</a> eine Symbiose mit arbuskulären Mykorrhizapilzen ein. Die Pilzfäden erschließen Wasser und Nährstoffe für die Pflanze und erhalten dafür Kohlenstoffverbindungen aus der Photosynthese. Wie fein die Pilze dabei auf ihre Umgebung reagieren, zeigt eine Studie von 2005: Arbuskuläre Mykorrhizapilze passten Hyphenwachstum und Phosphataufnahme räumlich an örtlich unterschiedliche Phosphatangebote an, je nach Pilzart verschieden. Welcher Mechanismus das steuert, hat die Studie nicht untersucht. Auch in Mykorrhizapilzen wurde bereits elektrische Aktivität gemessen; was sie bedeutet, ist noch weitgehend offen.",
+    "myk_s1_p2": "Ob Pflanzen über gemeinsame Pilzgeflechte auch untereinander verbunden sind und darüber Stoffe oder Signale austauschen, wird dagegen intensiv erforscht und kontrovers diskutiert. Bekannt gemacht hat diese Idee vor allem die Waldökologin Suzanne Simard; ein <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">Übersichtsartikel ihrer Arbeitsgruppe von 2015</a> fasst Hinweise zusammen, dass solche Netzwerke Reaktionen verbundener Pflanzen beeinflussen können. Wie häufig und wie bedeutsam das unter natürlichen Bedingungen im Wald ist, ist offen. Viele populäre Aussagen gehen über die Datenlage hinaus, wie die kritische Einordnung weiter unten zeigt.",
     "myk_s2_h2": "Die Frage, die OpenMycoNet stellt",
-    "myk_s2_p1": "OpenMycoNet stellt die einfache aber weitreichende Frage: Was passiert, wenn wir aufhören, Böden nur von außen zu analysieren — und stattdessen anfangen zuzuhören, was das Netzwerk selbst sendet? Was, wenn die Pflanze uns längst sagt, dass sie Durst hat, bevor wir es sehen? Was, wenn der Boden selbst meldet, dass ein Schädling naht, bevor der erste Schaden entsteht?",
+    "myk_s2_p1": "OpenMycoNet stellt eine einfache, aber weitreichende Frage: Was können wir lernen, wenn wir Böden nicht nur von außen analysieren, sondern auch die elektrische Aktivität im Pilzgeflecht über lange Zeit messen? Verändert sich diese Aktivität, wenn der Boden austrocknet oder Schädlinge Pflanzen befallen, und lässt sich das vielleicht erkennen, bevor wir an den Pflanzen etwas sehen? Wir vermuten außerdem, dass elektrische Signale im Myzel an der räumlichen Abstimmung beteiligt sein könnten, die Mykorrhizapilze zeigen. Genau hier setzt BioComm an.",
     "myk_s2_p2": "Diese Fragen sind — Stand heute — unbeantwortet. Sie bauen auf dem oben beschriebenen Forschungsstand auf, gehen aber bewusst darüber hinaus: Es handelt sich um OpenMycoNets eigene, noch offene Fragestellung, nicht um ein bereits erzieltes Ergebnis.",
     "myk_s3_h2": "Kritische Einordnung: Was wirklich belegt ist",
     "myk_s3_p1": "Nicht alle populären Behauptungen über das sogenannte „Wood Wide Web\" sind durch Feldstudien ausreichend belegt — und OpenMycoNet bezieht diese Kritik <a href=\"https://www.openmyconet.de/quellennachweise.html#station-kritik\" class=\"u-green\">ausdrücklich mit ein</a>, statt sie zu verschweigen.",
@@ -658,22 +658,22 @@
     "myk2_h1": "Bioelektrizität bei Pilzen & <em>wie BioComm misst</em>",
     "myk2_subtitle": "Was Forschung über elektrische Signale im Pilzmyzel zeigt — und was OpenMycoNet mit eigener Technik daraus macht.",
     "myk2_s1_label": "Wissenschaftlicher Hintergrund",
-    "myk2_s1_h2": "Pilze senden messbare elektrische Signale",
-    "myk2_s1_p1": "Pilzmyzel erzeugt bioelektrische Impulse mit neuronalen Charakteristika: Spiking-Muster, Signalausbreitung, nicht-lineare Eigenschaften. Aktuelle Reviews zeigen, dass Pilznetzwerke <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">wissenschaftlich belegt</a> reproduzierbare elektrische Aktivität erzeugen — nicht bloß behauptet. Eine methodisch besonders sorgfältige Studie aus dem Jahr 2025 bestätigte den biologischen Ursprung dieser Signale mit PCB-Elektroden, Faraday-Käfig und Biozid-Kontrollen und schloss damit häufige Fehlerquellen wie elektromagnetische Störungen oder Messartefakte aus.",
-    "myk2_s1_p2": "Wie strukturiert diese elektrische Aktivität tatsächlich ist, zeigt eine <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">vielzitierte Analyse</a> von 2022: Die Verteilung der Spike-Train-Längen im Pilzmyzel ähnelt statistisch der Verteilung von Wortlängen in menschlichen Sprachen. Das belegt nicht, dass Pilze „sprechen\" — aber es zeigt, dass die Signale eine erkennbare innere Struktur haben, die weit über Rauschen hinausgeht.",
-    "myk2_s2_label": "Wissenschaftlicher Hintergrund",
+    "myk2_s1_h2": "Pilzmyzel zeigt messbare elektrische Aktivität",
+    "myk2_s1_p1": "Pilzmyzel zeigt messbare elektrische Aktivität: kurze Spannungsspitzen (Spikes), die an Aktionspotenziale erinnern, und Signale, die sich im Geflecht ausbreiten. Das ist in zahlreichen Studien an verschiedenen Pilzarten gemessen worden. Ein <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">Übersichtsartikel von 2025</a> fasst den Stand zusammen und benennt zugleich mögliche Messartefakte und offene Fragen. Eine methodisch sorgfältige Studie aus dem Jahr 2025 nutzte Leiterplatten-Elektroden, einen Faraday-Käfig und Biozid-Behandlungen; ihre Ergebnisse stützen einen biologischen Ursprung der Signale und verringern das Risiko von Fehlerquellen wie elektromagnetischen Störungen.",
+    "myk2_s1_p2": "Wie diese Aktivität zu deuten ist, wird diskutiert. Eine <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">Analyse von 2022</a> fand, dass die Längen von Spike-Folgen im Pilzmyzel statistisch ähnlich verteilt sind wie Wortlängen in menschlichen Sprachen. Der Autor untersucht das unter einer Kommunikationshypothese. Das ist eine Deutung, kein Nachweis, dass Pilze „sprechen“, und sie stammt bisher aus einer einzelnen Arbeitsgruppe.",
+    "myk2_s2_label": "In der Diskussion",
     "myk2_s2_h2": "Von der Beobachtung zur Berechnung",
-    "myk2_s2_p1": "Dass diese Signale nicht nur existieren, sondern <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">technisch nutzbar sind</a>, zeigt eine Reihe von Arbeiten Andrew Adamatzkys: Myzel weist neuronales Spiking, logische Gatter-artige Eigenschaften und nicht-lineare Verarbeitung auf — Grundvoraussetzungen für jede Art von Mustererkennung. Eine weitere Studie belegt, dass Myzel frequenzmodulierte Signale im Bereich von 100 bis 10.000 Hertz zuverlässig überträgt.",
-    "myk2_s2_p2": "Der aktuellste Stand der Forschung — eine 2025 veröffentlichte Arbeit zu bioelektrischer Sensorik mit KI-Schnittstelle für lebende Pilznetzwerke — ist konzeptionell direkt mit dem verwandt, was OpenMycoNet mit BioComm umsetzt: Hardware, die lebende Myzelsignale erfasst und für maschinelles Lernen nutzbar macht.",
+    "myk2_s2_p1": "Ob sich diese Signale technisch nutzen lassen, untersucht vor allem die Arbeitsgruppe um Andrew Adamatzky. In <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">Laborversuchen</a> zeigte Myzel Spike-Muster, logikartige Schaltzustände und nicht-lineare Signalverarbeitung. In einer weiteren Studie wurden Frequenzen zwischen 100 und 10.000 Hertz, die in myzelgebundene Verbundwerkstoffe eingespeist wurden, am Ausgang wiedererkannt; die Stärke der Ausgangssignale war zwischen Wiederholungen jedoch nicht reproduzierbar. Viele dieser Ergebnisse stammen aus wenigen Arbeitsgruppen und werden in der Fachwelt diskutiert.",
+    "myk2_s2_p2": "Eine 2026 erschienene, noch nicht begutachtete Vorabveröffentlichung (Preprint) beschreibt eine Messplattform, die lebendes Myzel über Monate versorgt und aus seinen elektrischen Antworten 14 verschiedene Reizarten unterscheiden kann. Sie ist methodisch mit Teilen des BioComm-Ansatzes verwandt: Hardware, die Myzelsignale über lange Zeit erfasst und auswertbar macht.",
     "myk2_s3_label": "OpenMycoNets eigene Entwicklung",
     "myk2_s3_h2": "Was BioComm konkret misst",
     "myk2_s3_p1": "Die oben beschriebene Forschung ist die wissenschaftliche Grundlage. Was jetzt folgt, ist OpenMycoNets eigene technische Umsetzung — dafür gibt es keinen externen Beleg und braucht es auch keinen, weil es sich um eigene Hardware-Entwicklung handelt, nicht um ein zitierfähiges Forschungsergebnis.",
-    "myk2_s3_p2": "Der BioComm-Messknoten basiert auf einem ESP32-Mikrocontroller mit LoRa-Funkmodul und misst über einen 16-Bit-Analog-Digital-Wandler auf acht Kanälen gleichzeitig — bioelektrische Signale ebenso wie Boden- und Umweltdaten wie Temperatur, Feuchtigkeit und CO₂. Das wetterfeste IP65-Gehäuse ist für den Dauereinsatz im Feld ausgelegt, versorgt über USB-C oder LiPo-Akku.",
-    "myk2_s3_p3": "Bis zu vier Knoten funken ihre Daten per LoRa (realistisch 1–3 km Reichweite im Wald) an eine zentrale BioComm Bridge, die alle Datenströme aggregiert und per WLAN an den Server weiterleitet. Im praktischen Einsatz entsteht so ein System aus mehreren unabhängig messenden Knoten mit gemeinsamer Datenanbindung — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">mehr zur Hardware im Detail</a>.",
+    "myk2_s3_p2": "Der BioComm-Messknoten basiert auf einem ESP32-S3-Mikrocontroller mit LoRa-Funkchip. Das bioelektrische Signal erfasst er über einen rauscharmen Instrumentenverstärker und einen 16-Bit-Analog-Digital-Wandler. Dazu misst er Bodentemperatur, Bodenfeuchte und elektrische Leitfähigkeit sowie CO₂, Lufttemperatur und Luftfeuchte. Die Rohdaten speichert der Knoten auf einer Speicherkarte. Versorgt wird er über einen Akku, der per USB-C geladen wird; ein wetterfestes Gehäuse (IP65) ist vorgesehen.",
+    "myk2_s3_p3": "Die Knoten funken ihre Daten per LoRa an eine BioComm Bridge, die sie per WLAN an den Server weiterleitet. Vorgesehen ist in der Regel eine Bridge je Knoten; technisch kann eine Bridge auch mehrere Knoten bedienen. Wie weit die Funkverbindung im Wald reicht, hängt von Antenne, Gehäuse und Gelände ab und wird sich erst im Feldeinsatz zeigen — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">mehr zur Hardware im Detail</a>.",
     "myk2_s4_label": "OpenMycoNets eigene Entwicklung",
     "myk2_s4_h2": "Mehr als Messen: gezielte elektrische Stimulation",
     "myk2_s4_p1": "BioComm ist nicht nur auf passives Messen ausgelegt. Die Hardware kann elektrische Signale auch gezielt in das Substrat einspeisen — bidirektional also: senden und empfangen über dieselbe Elektrodenschnittstelle. Ziel ist nicht, das Netzwerk zu beeinflussen, sondern etwas methodisch Grundlegenderes zu prüfen: Reagiert das Myzel reproduzierbar auf einen definierten elektrischen Reiz? Das ist der Unterschied zwischen reiner Beobachtung und Perturbation — zwischen Korrelation und der Möglichkeit, Kausalität zu prüfen.",
-    "myk2_s4_p2": "Diese bidirektionale elektrische Stimulationsmethode ist OpenMycoNets eigene technische Entwicklung, geschützt durch ein erteiltes Gebrauchsmuster. Wichtig für die Einordnung: Die oben zitierte Forschung belegt, dass elektrische Aktivität in Pilzmyzel existiert, messbar und reproduzierbar ist — sie belegt nicht, dass OpenMycoNets spezifische Stimulationsmethode wissenschaftlich validiert ist. Das ist auch nicht der Anspruch: Die Stimulation ist ein Werkzeug, um Hypothesen zu testen, kein bereits bewiesenes Ergebnis.",
+    "myk2_s4_p2": "Diese bidirektionale elektrische Stimulationsmethode ist OpenMycoNets eigene technische Entwicklung, geschützt durch ein erteiltes Gebrauchsmuster. Wichtig für die Einordnung: Die oben zitierte Forschung belegt, dass elektrische Aktivität in Pilzmyzel existiert und messbar ist — sie belegt nicht, dass OpenMycoNets spezifische Stimulationsmethode wissenschaftlich validiert ist. Das ist auch nicht der Anspruch: Die Stimulation ist ein Werkzeug, um Hypothesen zu testen, kein bereits bewiesenes Ergebnis.",
     "myk2_s4_p3": "Ob und wie das Myzel auf elektrische Reize reagiert, wie reproduzierbar solche Reaktionen sind und was sie über die zugrunde liegenden Signalwege verraten — das sind offene Fragen, die BioComm zu beantworten helfen soll, nicht Antworten, die bereits feststehen.",
     "myk2_cta_h2": "Weiterlesen",
     "myk2_cta_p": "Diese Seite baut auf den <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" class=\"u-green\">Mykorrhiza-Grundlagen</a> auf. Die vollständige Literaturliste findest du auf der Quellennachweise-Seite, technische Details zum Leihgerät auf der Hardware-Seite.",
@@ -685,7 +685,7 @@
     "myk3_h1": "Citizen Science bei <em>OpenMycoNet</em>",
     "myk3_subtitle": "Warum breite Beteiligung und gezielte Fachexpertise zusammengehören — nicht als Gegensatz, sondern als Ergänzung.",
     "myk3_s1_h2": "Wie man mitmacht",
-    "myk3_s1_p1": "Die Ergebnisse und Daten des Netzwerks stehen allen offen — auch ohne eigenen Messknoten. Wer selbst einen BioComm-Knoten betreiben möchte, kann sich für einen der kuratierten Plätze bewerben: Hardware leihen, die BioComm-Software kostenlos herunterladen, Elektroden im Substrat platzieren. Analyse und Anonymisierung laufen lokal auf dem eigenen Gerät, bevor die Daten ans Netzwerk gehen.",
+    "myk3_s1_p1": "Die Ergebnisse und Daten des Netzwerks stehen allen offen — auch ohne eigenen Messknoten. Wer selbst einen BioComm-Knoten betreiben möchte, kann sich für einen der kuratierten Plätze bewerben: Hardware leihen, Elektroden im Substrat platzieren, die Bridge mit dem WLAN verbinden. Der Knoten speichert seine Messwerte zunächst auf einer eigenen Speicherkarte und schickt sie per Funk über die Bridge an den OpenMycoNet-Server; ausgewertet werden sie dort. Den Standort zeigen wir öffentlich nur als grobes Rasterfeld von etwa 10 km.",
     "myk3_s1_p2": "Der Wert entsteht aus der Fläche: eine Messung in Maintal, eine in Osaka, eine in São Paulo — zusammen ein Datensatz, den kein einzelnes Labor erzeugen könnte. Klimazonen, Substrate, Jahreszeiten unterscheiden sich weltweit; genau diese Streuung braucht es, um offene Fragen überhaupt beantworten zu können.",
     "myk3_s2_label": "Wissenschaftlicher Beleg",
     "myk3_s2_h2": "Funktioniert Wissenschaft durch Laien wirklich?",
@@ -1315,23 +1315,23 @@
       },
       {
         "label": "Radio link",
-        "value": "LoRa to bridge (1–3 km in forest terrain) · Bridge connects to the central server via WiFi — in development, not yet shipped"
+        "value": "LoRa to bridge · Bridge connects to the central server via WiFi · range depends on antenna, housing and terrain — in development, not yet shipped"
       },
       {
         "label": "ADC",
-        "value": "16-bit, 8 channels"
+        "value": "16-bit · one bioelectrical measurement channel per node"
       },
       {
         "label": "Sensors",
-        "value": "Bioelectrical signals + soil & environmental data (temperature, humidity, CO₂)"
+        "value": "Bioelectrical signal + soil temperature, soil moisture, conductivity, CO₂, air temperature and humidity"
       },
       {
         "label": "Power",
-        "value": "USB-C or LiPo battery"
+        "value": "Rechargeable battery, charged via USB-C"
       },
       {
         "label": "Housing",
-        "value": "IP65, weatherproof"
+        "value": "Weatherproof (IP65) planned, housing in development"
       }
     ],
     "leih_how_label": "Five steps to your own measurement node",
@@ -1341,10 +1341,10 @@
     "leih_how_h2": "Five Steps to Your Own <em>Measurement Node</em>",
     "leih_bridge_h2": "The <em>Hub</em>",
     "leih_bridge_warning": "⚠ The radio link (LoRa/WiFi) is part of the hardware generation currently in development and has not yet shipped.",
-    "leih_bridge_desc": "The BioComm Bridge connects up to 4 measurement nodes simultaneously via LoRa radio (point-to-point, realistically 1–3 km range in forest terrain) and forwards all data to the central server via WiFi. Node 1–4 LEDs show the connection status in real time.",
+    "leih_bridge_desc": "The BioComm Bridge receives the data of the measurement nodes via LoRa radio (point-to-point) and forwards them to the central server via WiFi. As a rule, one node per bridge is planned; technically, several are possible. Status LEDs show power, scanning, connection and heartbeat.",
     "leih_bridge_li1": "ESP32 with LoRa radio module",
     "leih_bridge_li2": "WiFi connection to the central server",
-    "leih_bridge_li3": "4 node status LEDs",
+    "leih_bridge_li3": "Status LEDs (power, scanning, connection, heartbeat)",
     "leih_bridge_li4": "Compact desktop enclosure",
     "leih_system_label": "The Complete System",
     "leih_system_h2": "BioComm <em>in Action</em>",
@@ -1356,7 +1356,7 @@
       },
       {
         "h": "Pay deposit",
-        "p": "Approx. €100 deposit (final amount to be confirmed). Fully refunded on return."
+        "p": "Against a deposit. We will set the amount once the final costs of a set of node and bridge are known. Fully refunded on return."
       },
       {
         "h": "Receive device",
@@ -1506,12 +1506,12 @@
     "steps": [
       {
         "h": "Get access to a BioComm node",
-        "p": "After a successful application: a BioComm measuring device on loan, deposit approx. €100 (final costs to follow), return possible at any time.",
-        "cost": "Deposit approx. €100"
+        "p": "After a successful application: a BioComm measuring device (node and bridge) on loan against a deposit, return possible at any time. We will set the amount of the deposit once the final costs of a set of node and bridge are known.",
+        "cost": "Against a deposit"
       },
       {
         "h": "Run BioComm",
-        "p": "Download the BioComm software for free — no installation required. <a href=\"https://www.openmyconet.de/biocomm/software\" class=\"u-green\">See the BioComm software →</a>",
+        "p": "Connect the bridge to your WiFi. Node and bridge run on their own firmware; you do not need to install any additional software.",
         "cost": "Free"
       },
       {
@@ -1554,19 +1554,19 @@
     "facts": [
       {
         "num": "400M",
-        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">years old — how long mycorrhizal networks have existed on Earth</a>"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">years — how long the mycorrhizal symbiosis between fungi and land plants has existed (fossil evidence)</a>"
       },
       {
         "num": "~70%",
         "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">of vascular plant species form associations with arbuscular mycorrhizal fungi</a>"
       },
       {
-        "num": "8",
-        "text": "bioelectrical measurement channels"
+        "num": "16-bit",
+        "text": "resolution when measuring the bioelectrical signal"
       },
       {
-        "num": "up to 10 kHz",
-        "text": "programmable stimulation output"
+        "num": "6",
+        "text": "additional environmental values: soil temperature, soil moisture, conductivity, CO₂, air temperature, humidity"
       }
     ],
     "form_options": {
@@ -1578,7 +1578,7 @@
     },
     "q_page_tag": "OpenMycoNet · Scientific Foundations",
     "q_h1_html": "References &amp; <em>Knowledge Path</em>",
-    "q_subtitle": "OpenMycoNet rests on a transparent scientific foundation. Every step of our knowledge path — from mycorrhizal basics to applied citizen science — is backed by published research.",
+    "q_subtitle": "OpenMycoNet builds on published research. For every step of our knowledge path — from basic mycorrhizal research to citizen science — you will find here the work we rely on and how robust it is.",
     "q_intro_strong": "Transparency note:",
     "q_intro": "Not all listed works directly support the goals of OpenMycoNet. They form the scientific foundation on which our questions are built — including critical perspectives. We measure because the data is still sparse, not because everything is proven.",
     "q_path_label": "Scientific Knowledge Path",
@@ -1597,7 +1597,7 @@
     "q_ref1_relevanz": "Popular-science account of research on resource exchange via mycorrhizal networks — the starting point that raised the question behind OpenMycoNet.",
     "q_ref1_evbadge": "Popular-science account",
     "q_ref2_title": "Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities",
-    "q_ref2_meta": "Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
+    "q_ref2_meta": "Gorzelak, Asay, Pickles & Simard (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
     "q_ref2_relevanz": "Summarises experimental evidence that mycorrhizal networks can influence physiological and adaptive responses between connected plants.",
     "q_ref2_evbadge": "Review",
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
@@ -1642,8 +1642,8 @@
     "q_ref23_relevanz": "On-farm field study across 54 sites: the success of AMF inoculation is highly variable in the field (−12% to +40% yield effect) and primarily predictable from soil microbiome status — not from nutrient supply. Underscores why lab results don't directly transfer to field conditions.",
     "q_ref23_evbadge": "Primary study",
     "q_s2_step": "Step 02 — Electrical Activity",
-    "q_s2_title": "Fungi emit measurable electrical signals",
-    "q_s2_desc": "Bioelectrical impulses in mycelium show neuronal characteristics: spiking patterns, signal propagation, non-linear properties.",
+    "q_s2_title": "Fungal mycelium shows measurable electrical activity",
+    "q_s2_desc": "Mycelium produces short voltage spikes reminiscent of action potentials; signals propagate through the network. What they mean biologically is largely open.",
     "q_ref3_title": "Electrical signaling in fungi",
     "q_ref3_meta": "Buffi et al. (2025) · FEMS Microbiology Reviews · DOI 10.1093/femsre/fuaf009 · PMC11995700",
     "q_ref3_relevanz": "Summarises the current state of research on electrical activity in filamentous fungi and discusses evidence, measurement methods, possible artefacts, and open questions.",
@@ -1666,17 +1666,17 @@
     "q_ref22_evbadge": "Primary study",
     "q_s3_step": "Step 03 — Measurability, Sensing & AI Pattern Recognition",
     "q_s3_title": "From observation to computation",
-    "q_s3_desc": "Andrew Adamatzky's work examines whether mycelium signals are technically usable — as logic gates, as transmittable frequencies, and, in an approach not yet peer-reviewed, as a basis for an AI-assisted interface.",
+    "q_s3_desc": "Work mainly by Andrew Adamatzky examines whether mycelial signals can be used technically, for example for logic-like switching states or to transmit frequencies. A not yet peer-reviewed approach by another research group uses living mycelium as a sensor for different stimuli.",
     "q_ref5_title": "Logics in fungal mycelium networks (Adamatzky)",
-    "q_ref5_meta": "Adamatzky, A. (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
+    "q_ref5_meta": "Adamatzky, Ayres, Beasley, Roberts & Wösten (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
     "q_ref5_relevanz": "Examines how electrical activity in fungal mycelium can be used under experimental conditions for logic-like states and processing concepts — a possible methodological reference point for later pattern analysis.",
     "q_ref5_evbadge": "Peer-reviewed study",
     "q_ref6_title": "Propagation of electrical signals by fungi",
-    "q_ref6_meta": "Adamatzky et al. · BioSystems 229 (2023), 104933 · DOI 10.1016/j.biosystems.2023.104933",
+    "q_ref6_meta": "Mayne, Roberts, Phillips, Weerasekera & Adamatzky (2023) · BioSystems 229, 104933 · DOI 10.1016/j.biosystems.2023.104933",
     "q_ref6_relevanz": "In mycelium-bound composites, frequencies fed in between 100 and 10,000 Hz could be recognised again at the output. However, the output amplitudes were not reproducible between repetitions.",
     "q_ref6_evbadge": "Peer-reviewed primary study",
-    "q_ref7_title": "MIND – Mycelial Interface for Naturalistic Detection",
-    "q_ref7_meta": "arXiv:2604.22947 · 24 April 2026",
+    "q_ref7_title": "MIND – Mycoponically Integrated Network Device for Multimodal Sensing with Living Mycelial Networks",
+    "q_ref7_meta": "Zeng, Porterfield & Kaur · arXiv:2604.22947 · 24 April 2026",
     "q_ref7_relevanz": "Living mycelium networks are investigated as multimodal biosensors. Bioelectrical responses are evaluated to distinguish various environmental stimuli or spatial information. Conceptually related to parts of the BioComm approach, but not yet peer-reviewed.",
     "q_ref7_evbadge": "Preprint",
     "q_s4_step": "Context — Popular Science",
@@ -1889,7 +1889,7 @@
     "a_node_geocode_error": "Address not found — please be more specific, or just leave the pin out.",
     "a_node_lbl_motivation": "Application text *",
     "a_node_ph_motivation": "Tell us about yourself and why you want to participate — even if you don't fit every criterion. At least 3-4 sentences.",
-    "a_node_lbl_loan": "I accept the loan conditions (deposit approx. €100, return upon end of measurement) *",
+    "a_node_lbl_loan": "I accept the loan conditions (deposit, the amount of which will be set before handover; return upon end of measurement) *",
     "a_node_panel_label": "Application",
     "a_node_privacy_label": "I have read the [Privacy Policy] and agree to the processing of my application data.",
     "a_node_submit": "Submit application",
@@ -1910,11 +1910,11 @@
     "myk_page_tag": "OpenMycoNet · Knowledge",
     "myk_h1": "Understanding <em>Mycorrhizal Networks</em>",
     "myk_subtitle": "What's actually happening beneath the forest floor — what's backed by research, and what remains an open question.",
-    "myk_s1_h2": "Earth's Oldest Network",
-    "myk_s1_p1": "Beneath our feet lies the oldest and most extensive communication network on Earth. Mycorrhizal fungi have connected <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">~70% of all plant species</a> for <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 million years</a> — transporting nutrients, transmitting warning signals, and coordinating life in the soil in ways we are only beginning to understand. They send electrical signals. Measurable. Reproducible. And barely deciphered so far.",
-    "myk_s1_p2": "That this is not a loose metaphor but a genuine, <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">scientifically established</a> information channel is largely thanks to the pioneering fieldwork of forest ecologist Suzanne Simard, who established the mycorrhizal network as a measurable exchange pathway between plants; a peer-reviewed follow-up study from 2015 showed that plant communities can coordinate complex, adaptive behaviour through it. The exact mechanism, though, remains open: a 2005 study on phosphate uptake observed a single fungal species deliberately adjusting its nutrient uptake to local supply — without being able to identify the signalling molecules responsible within the hyphal network. One plausible candidate: electrical signal propagation in the mycelium. That is precisely where BioComm comes in.",
+    "myk_s1_h2": "An Ancient Partnership Beneath Our Feet",
+    "myk_s1_p1": "Beneath our feet, fungi and plants live in one of the oldest partnerships on land: fossils document the mycorrhizal symbiosis for around <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 million years</a>. Today, about <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">70% of vascular plant species</a> form a symbiosis with arbuscular mycorrhizal fungi. The fungal threads open up water and nutrients for the plant and receive carbon compounds from photosynthesis in return. A 2005 study shows how finely the fungi respond to their surroundings: arbuscular mycorrhizal fungi adjusted their hyphal growth and phosphate uptake spatially to local differences in phosphate supply, and differently depending on the fungal species. The study did not examine which mechanism controls this. Electrical activity has also been measured in mycorrhizal fungi; what it means is still largely open.",
+    "myk_s1_p2": "Whether plants are also connected to each other through shared fungal networks and exchange substances or signals through them is, by contrast, the subject of intensive research and controversial debate. The idea was popularised above all by forest ecologist Suzanne Simard; a <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">2015 review by her research group</a> summarises evidence that such networks can influence the responses of connected plants. How often and how significantly this happens under natural forest conditions is open. Many popular claims go beyond the evidence, as the critical assessment further down shows.",
     "myk_s2_h2": "The Question OpenMycoNet Asks",
-    "myk_s2_p1": "OpenMycoNet asks a simple yet profound question: what happens when we stop analysing soil only from the outside — and start listening to what the network itself is sending? What if the plant has long been telling us it's thirsty, before we can even see it? What if the soil itself signals the approach of a pest, before the first damage appears?",
+    "myk_s2_p1": "OpenMycoNet asks a simple yet far-reaching question: what can we learn if we do not only analyse soil from the outside, but also measure the electrical activity in the fungal network over long periods? Does this activity change when the soil dries out or pests attack plants, and can this perhaps be detected before we see anything on the plants? We also suspect that electrical signals in the mycelium could be involved in the spatial coordination that mycorrhizal fungi show. This is exactly where BioComm comes in.",
     "myk_s2_p2": "As of today, these questions remain unanswered. They build on the research described above, but deliberately go beyond it: this is OpenMycoNet's own, still-open question — not an already-achieved result.",
     "myk_s3_h2": "Critical Context: What's Actually Proven",
     "myk_s3_p1": "Not all popular claims about the so-called \"Wood Wide Web\" are adequately supported by field studies — and OpenMycoNet <a href=\"https://www.openmyconet.de/quellennachweise.html#station-kritik\" class=\"u-green\">explicitly incorporates this critique</a>, rather than staying silent about it.",
@@ -1934,22 +1934,22 @@
     "myk2_h1": "Bioelectricity in Fungi & <em>How BioComm Measures It</em>",
     "myk2_subtitle": "What research shows about electrical signals in fungal mycelium — and what OpenMycoNet builds from it with its own technology.",
     "myk2_s1_label": "Scientific Background",
-    "myk2_s1_h2": "Fungi Send Measurable Electrical Signals",
-    "myk2_s1_p1": "Fungal mycelium generates bioelectrical impulses with neuron-like characteristics: spiking patterns, signal propagation, non-linear properties. Recent reviews show that fungal networks generate reproducible electrical activity — <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">scientifically established</a>, not merely claimed. A particularly rigorous 2025 study confirmed the biological origin of these signals using PCB electrodes, a Faraday cage, and biocide controls, ruling out common sources of error such as electromagnetic interference or measurement artefacts.",
-    "myk2_s1_p2": "Just how structured this electrical activity actually is was shown by a <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">widely cited 2022 analysis</a>: the distribution of spike-train lengths in fungal mycelium statistically resembles the distribution of word lengths in human languages. That doesn't prove fungi \"speak\" — but it shows the signals have a recognisable internal structure that goes well beyond noise.",
-    "myk2_s2_label": "Scientific Background",
+    "myk2_s1_h2": "Fungal mycelium shows measurable electrical activity",
+    "myk2_s1_p1": "Fungal mycelium shows measurable electrical activity: short voltage spikes reminiscent of action potentials, and signals that propagate through the network. This has been measured in numerous studies on different fungal species. A <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">2025 review</a> summarises the state of research and at the same time names possible measurement artefacts and open questions. A methodologically careful 2025 study used circuit-board electrodes, a Faraday cage and biocide treatments; its results support a biological origin of the signals and reduce the risk of error sources such as electromagnetic interference.",
+    "myk2_s1_p2": "How this activity should be interpreted is under discussion. A <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">2022 analysis</a> found that the lengths of spike trains in fungal mycelium are statistically distributed similarly to word lengths in human languages. The author examines this under a communication hypothesis. This is an interpretation, not evidence that fungi “speak”, and so far it comes from a single research group.",
+    "myk2_s2_label": "Under discussion",
     "myk2_s2_h2": "From Observation to Computation",
-    "myk2_s2_p1": "That these signals are not just present but <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">technically usable</a> is shown by a series of studies by Andrew Adamatzky: mycelium exhibits neuronal spiking, logic-gate-like properties, and non-linear processing — basic requirements for any kind of pattern recognition. A further study shows that mycelium reliably transmits frequency-modulated signals in the range of 100 to 10,000 hertz.",
-    "myk2_s2_p2": "The latest research to date — a 2025 paper on bioelectrical sensing with an AI interface for living fungal networks — is conceptually closely related to what OpenMycoNet implements with BioComm: hardware that captures living mycelial signals and makes them usable for machine learning.",
+    "myk2_s2_p1": "Whether these signals can be used technically is being investigated above all by the research group around Andrew Adamatzky. In <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">laboratory experiments</a>, mycelium showed spiking patterns, logic-like switching states and non-linear signal processing. In a further study, frequencies between 100 and 10,000 hertz fed into mycelium-bound composites were recognised at the output; the strength of the output signals, however, was not reproducible between repetitions. Many of these results come from a small number of research groups and are debated among experts.",
+    "myk2_s2_p2": "A preprint published in 2026 and not yet peer-reviewed describes a measurement platform that keeps living mycelium supplied for months and can distinguish 14 different types of stimuli from its electrical responses. It is methodologically related to parts of the BioComm approach: hardware that records mycelial signals over long periods and makes them analysable.",
     "myk2_s3_label": "OpenMycoNet's Own Development",
     "myk2_s3_h2": "What BioComm Actually Measures",
     "myk2_s3_p1": "The research described above is the scientific foundation. What follows now is OpenMycoNet's own technical implementation — for which there is no external source, nor does one need to exist, since this is our own hardware development, not a citable research result.",
-    "myk2_s3_p2": "The BioComm sensor node is built around an ESP32 microcontroller with a LoRa radio module, measuring on eight channels simultaneously via a 16-bit analogue-to-digital converter — bioelectrical signals as well as soil and environmental data such as temperature, humidity and CO₂. The weatherproof IP65 housing is designed for continuous field use, powered via USB-C or LiPo battery.",
-    "myk2_s3_p3": "Up to four nodes transmit their data via LoRa (a realistic range of 1–3 km in forest terrain) to a central BioComm Bridge, which aggregates all data streams and forwards them to the server via WiFi. In practical use, this creates a system of multiple independently measuring nodes with a shared data connection — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">more on the hardware in detail</a>.",
+    "myk2_s3_p2": "The BioComm sensor node is built around an ESP32-S3 microcontroller with a LoRa radio chip. It records the bioelectrical signal via a low-noise instrumentation amplifier and a 16-bit analogue-to-digital converter. In addition, it measures soil temperature, soil moisture and electrical conductivity as well as CO₂, air temperature and humidity. The node stores the raw data on a memory card. It is powered by a rechargeable battery charged via USB-C; a weatherproof housing (IP65) is planned.",
+    "myk2_s3_p3": "The nodes transmit their data via LoRa to a BioComm Bridge, which forwards them to the server via WiFi. As a rule, one bridge per node is planned; technically, one bridge can also serve several nodes. How far the radio link reaches in the forest depends on the antenna, housing and terrain and will only become clear in field use — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">more on the hardware in detail</a>.",
     "myk2_s4_label": "OpenMycoNet's Own Development",
     "myk2_s4_h2": "Beyond Measuring: Targeted Electrical Stimulation",
     "myk2_s4_p1": "BioComm isn't designed for passive measurement alone. The hardware can also feed electrical signals into the substrate in a targeted way — bidirectionally, in other words: sending and receiving over the same electrode interface. The aim isn't to influence the network, but to test something more methodologically fundamental: does the mycelium respond reproducibly to a defined electrical stimulus? That's the difference between pure observation and perturbation — between correlation and the ability to test causality.",
-    "myk2_s4_p2": "This bidirectional electrical stimulation method is OpenMycoNet's own technical development, protected by a granted utility model. Important for context: the research cited above establishes that electrical activity in fungal mycelium exists, is measurable and reproducible — it does not establish that OpenMycoNet's specific stimulation method is scientifically validated. Nor is that the claim being made: the stimulation is a tool for testing hypotheses, not an already-proven result.",
+    "myk2_s4_p2": "This bidirectional electrical stimulation method is OpenMycoNet's own technical development, protected by a granted utility model. Important for context: the research cited above establishes that electrical activity in fungal mycelium exists and is measurable — it does not establish that OpenMycoNet's specific stimulation method is scientifically validated. Nor is that the claim being made: the stimulation is a tool for testing hypotheses, not an already-proven result.",
     "myk2_s4_p3": "Whether and how the mycelium responds to electrical stimuli, how reproducible such responses are, and what they reveal about the underlying signalling pathways — these are open questions that BioComm is meant to help answer, not answers that are already settled.",
     "myk2_cta_h2": "Read More",
     "myk2_cta_p": "This page builds on the <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" class=\"u-green\">mycorrhizal fundamentals</a> covered elsewhere. The full list of studies is on the Sources page, technical details on the loan device are on the Hardware page.",
@@ -1961,7 +1961,7 @@
     "myk3_h1": "Citizen Science at <em>OpenMycoNet</em>",
     "myk3_subtitle": "Why broad participation and targeted expertise belong together — not as opposites, but as complements.",
     "myk3_s1_h2": "How to Get Involved",
-    "myk3_s1_p1": "The network's results and data are open to everyone — even without running your own measurement node. Anyone who wants to operate a BioComm node can apply for one of the curated spots: borrow the hardware, download the BioComm software for free, place electrodes in the substrate. Analysis and anonymisation run locally on your own device before the data reaches the network.",
+    "myk3_s1_p1": "The network's results and data are open to everyone — even without running your own measurement node. Anyone who wants to operate a BioComm node can apply for one of the curated spots: borrow the hardware, place electrodes in the substrate, connect the bridge to WiFi. The node first stores its measurements on its own memory card and sends them by radio via the bridge to the OpenMycoNet server, where they are analysed. We only show the location publicly as a coarse grid square of about 10 km.",
     "myk3_s1_p2": "The value comes from breadth: one measurement in Maintal, one in Osaka, one in São Paulo — together forming a dataset no single laboratory could produce. Climate zones, substrates and seasons differ worldwide; that spread is exactly what's needed to answer the open questions in the first place.",
     "myk3_s2_label": "Scientific Evidence",
     "myk3_s2_h2": "Does Science by Amateurs Actually Work?",
@@ -2591,23 +2591,23 @@
       },
       {
         "label": "Radioverbinding",
-        "value": "LoRa naar de bridge (1–3 km in bosgebied) · Bridge verbindt via wifi met de centrale server — in ontwikkeling, nog niet uitgeleverd"
+        "value": "LoRa naar de bridge · Bridge verbindt via wifi met de centrale server · bereik hangt af van antenne, behuizing en terrein — in ontwikkeling, nog niet uitgeleverd"
       },
       {
         "label": "ADC",
-        "value": "16-bit, 8 kanalen"
+        "value": "16 bit · één bio-elektrisch meetkanaal per knooppunt"
       },
       {
         "label": "Sensoren",
-        "value": "Bio-elektrische signalen + bodem- & omgevingsdata (temperatuur, vochtigheid, CO₂)"
+        "value": "Bio-elektrisch signaal + bodemtemperatuur, bodemvocht, geleidbaarheid, CO₂, luchttemperatuur en -vochtigheid"
       },
       {
         "label": "Voeding",
-        "value": "USB-C of LiPo-accu"
+        "value": "Accu, opladen via USB-C"
       },
       {
         "label": "Behuizing",
-        "value": "IP65, weerbestendig"
+        "value": "Weerbestendig (IP65) gepland, behuizing in ontwikkeling"
       }
     ],
     "leih_how_label": "In vijf stappen naar uw eigen meetknoop",
@@ -2617,10 +2617,10 @@
     "leih_how_h2": "In vijf stappen naar je eigen <em>meetknoop</em>",
     "leih_bridge_h2": "De <em>Hub</em>",
     "leih_bridge_warning": "⚠ De radioverbinding (LoRa/wifi) maakt deel uit van de hardwaregeneratie die momenteel in ontwikkeling is en nog niet is uitgeleverd.",
-    "leih_bridge_desc": "De BioComm Bridge verbindt tot 4 meetknopen tegelijk via LoRa-radio (punt-tot-punt, realistisch 1–3 km bereik in bosgebied) en stuurt alle gegevens via wifi door naar de centrale server. Node 1–4 LED's tonen de verbindingsstatus in realtime.",
+    "leih_bridge_desc": "De BioComm Bridge ontvangt de data van de meetknooppunten via LoRa-radio (punt-tot-punt) en stuurt ze via wifi door naar de centrale server. In de regel is één knooppunt per bridge voorzien; technisch zijn er meerdere mogelijk. Status-leds tonen werking, zoeken, verbinding en levensteken.",
     "leih_bridge_li1": "ESP32 met LoRa-radiomodule",
     "leih_bridge_li2": "Wifi-verbinding met de centrale server",
-    "leih_bridge_li3": "4 node-status-leds",
+    "leih_bridge_li3": "Status-leds (werking, zoeken, verbinding, levensteken)",
     "leih_bridge_li4": "Compacte desktopbehuizing",
     "leih_system_label": "Het Volledige Systeem",
     "leih_system_h2": "BioComm <em>in actie</em>",
@@ -2632,7 +2632,7 @@
       },
       {
         "h": "Borg storten",
-        "p": "Ca. €100 borg (definitief bedrag nog te bevestigen). Volledig terugbetaald bij retour."
+        "p": "Tegen borg. De hoogte leggen we vast zodra de definitieve kosten van een set van knooppunt en bridge bekend zijn. Volledig terugbetaald bij retour."
       },
       {
         "h": "Apparaat ontvangen",
@@ -2782,12 +2782,12 @@
     "steps": [
       {
         "h": "Toegang krijgen tot een BioComm-node",
-        "p": "Na een succesvolle aanmelding: een BioComm-meetapparaat als leentoestel, borg ca. €100 (definitieve kosten volgen), op elk moment terug te geven.",
-        "cost": "Borg ca. €100"
+        "p": "Na een succesvolle aanmelding: een BioComm-meetapparaat (knooppunt en bridge) als leentoestel tegen borg, op elk moment terug te geven. De hoogte van de borg leggen we vast zodra de definitieve kosten van een set van knooppunt en bridge bekend zijn.",
+        "cost": "Tegen borg"
       },
       {
         "h": "BioComm starten",
-        "p": "De BioComm-software gratis downloaden — geen installatie nodig. <a href=\"https://www.openmyconet.de/biocomm/software\" class=\"u-green\">BioComm-software bekijken →</a>",
+        "p": "De bridge met je wifi verbinden. Knooppunt en bridge werken met hun eigen firmware; je hoeft geen extra software te installeren.",
         "cost": "Gratis"
       },
       {
@@ -2830,19 +2830,19 @@
     "facts": [
       {
         "num": "400M",
-        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">jaar oud — zo lang bestaan mycorrhizanetwerken al op aarde</a>"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">jaar — zo lang bestaat de mycorrhiza-symbiose tussen schimmels en landplanten al (fossiele bewijzen)</a>"
       },
       {
         "num": "~70%",
         "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">van de vaatplantensoorten gaat associaties aan met arbusculaire mycorrhizaschimmels</a>"
       },
       {
-        "num": "8",
-        "text": "bio-elektrische meetkanalen"
+        "num": "16 bit",
+        "text": "resolutie bij het meten van het bio-elektrische signaal"
       },
       {
-        "num": "tot 10 kHz",
-        "text": "programmeerbare stimulatie-output"
+        "num": "6",
+        "text": "extra omgevingswaarden: bodemtemperatuur, bodemvocht, geleidbaarheid, CO₂, luchttemperatuur, luchtvochtigheid"
       }
     ],
     "form_options": {
@@ -2854,7 +2854,7 @@
     },
     "q_page_tag": "OpenMycoNet · Wetenschappelijke Grondslagen",
     "q_h1_html": "Bronverwijzingen &amp; <em>Kennispad</em>",
-    "q_subtitle": "OpenMycoNet staat op een transparante wetenschappelijke basis. Elke stap van ons kennispad — van mycorrhiza-basisonderzoek tot toegepaste citizen science — wordt ondersteund door gepubliceerd onderzoek.",
+    "q_subtitle": "OpenMycoNet bouwt voort op gepubliceerd onderzoek. Voor elke stap van ons kennispad — van fundamenteel mycorrhiza-onderzoek tot citizen science — vind je hier het werk waarop we ons baseren, en hoe sterk het onderbouwd is.",
     "q_intro_strong": "Transparantienota:",
     "q_intro": "Niet alle vermelde werken ondersteunen de doelen van OpenMycoNet direct. Ze vormen het wetenschappelijke fundament waarop onze vragen zijn gebouwd — inclusief kritische perspectieven. We meten omdat de gegevens nog schaars zijn, niet omdat alles bewezen is.",
     "q_path_label": "Wetenschappelijk Kennispad",
@@ -2873,7 +2873,7 @@
     "q_ref1_relevanz": "Populairwetenschappelijke duiding van onderzoek naar hulpbronnenuitwisseling via mycorrhizanetwerken — het startpunt dat de vraag achter OpenMycoNet opriep.",
     "q_ref1_evbadge": "Populairwetenschappelijke duiding",
     "q_ref2_title": "Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities",
-    "q_ref2_meta": "Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
+    "q_ref2_meta": "Gorzelak, Asay, Pickles & Simard (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
     "q_ref2_relevanz": "Vat experimentele aanwijzingen samen dat mycorrhizanetwerken fysiologische en adaptieve reacties tussen verbonden planten kunnen beïnvloeden.",
     "q_ref2_evbadge": "Review",
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
@@ -2918,8 +2918,8 @@
     "q_ref23_relevanz": "Praktijkstudie op 54 boerderijlocaties toont aan: het succes van AMF-inoculatie is in het veld sterk variabel (−12% tot +40% opbrengsteffect) en vooral voorspelbaar op basis van de bodemmicrobioomstatus — niet door bemesting. Onderstreept waarom laboratoriumresultaten niet direct naar veldomstandigheden zijn te vertalen.",
     "q_ref23_evbadge": "Primaire studie",
     "q_s2_step": "Stap 02 — Elektrische Activiteit",
-    "q_s2_title": "Schimmels zenden meetbare elektrische signalen",
-    "q_s2_desc": "Bio-elektrische impulsen in mycelium tonen neuronale kenmerken: spiking-patronen, signaalvoortplanting, niet-lineaire eigenschappen.",
+    "q_s2_title": "Schimmelmycelium vertoont meetbare elektrische activiteit",
+    "q_s2_desc": "Mycelium produceert korte spanningspieken (spikes) die aan actiepotentialen doen denken; signalen verspreiden zich door het netwerk. Wat ze biologisch betekenen, is grotendeels open.",
     "q_ref3_title": "Electrical signaling in fungi",
     "q_ref3_meta": "Buffi et al. (2025) · FEMS Microbiology Reviews · DOI 10.1093/femsre/fuaf009 · PMC11995700",
     "q_ref3_relevanz": "Vat de actuele onderzoeksstand over elektrische activiteit in filamenteuze schimmels samen en bespreekt bewijs, meetmethoden, mogelijke artefacten en open vragen.",
@@ -2942,17 +2942,17 @@
     "q_ref22_evbadge": "Primaire studie",
     "q_s3_step": "Stap 03 — Meetbaarheid, Sensoriek & AI-patroonherkenning",
     "q_s3_title": "Van observatie naar berekening",
-    "q_s3_desc": "Het werk van Andrew Adamatzky onderzoekt of myceliumsignalen technisch bruikbaar zijn — als logische poorten, als overdraagbare frequenties en, in een nog niet collegiaal getoetste aanpak, als basis voor een AI-ondersteunde interface.",
+    "q_s3_desc": "Werk vooral van Andrew Adamatzky onderzoekt of myceliumsignalen technisch bruikbaar zijn, bijvoorbeeld voor logica-achtige schakeltoestanden of om frequenties over te dragen. Een nog niet beoordeelde aanpak van een andere onderzoeksgroep gebruikt levend mycelium als sensor voor verschillende prikkels.",
     "q_ref5_title": "Logics in fungal mycelium networks (Adamatzky)",
-    "q_ref5_meta": "Adamatzky, A. (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
+    "q_ref5_meta": "Adamatzky, Ayres, Beasley, Roberts & Wösten (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
     "q_ref5_relevanz": "Onderzoekt hoe elektrische activiteit in schimmelmycelium onder experimentele omstandigheden benut kan worden voor logica-achtige toestanden en verwerkingsconcepten – een mogelijk methodologisch aanknopingspunt voor latere patroonanalyse.",
     "q_ref5_evbadge": "Peer-reviewed studie",
     "q_ref6_title": "Propagation of electrical signals by fungi",
-    "q_ref6_meta": "Adamatzky et al. · BioSystems 229 (2023), 104933 · DOI 10.1016/j.biosystems.2023.104933",
+    "q_ref6_meta": "Mayne, Roberts, Phillips, Weerasekera & Adamatzky (2023) · BioSystems 229, 104933 · DOI 10.1016/j.biosystems.2023.104933",
     "q_ref6_relevanz": "In myceliumgebonden composieten konden ingevoede frequenties tussen 100 en 10.000 Hz aan de uitgang worden herkend. De uitgangsamplitudes waren echter niet reproduceerbaar tussen herhalingen.",
     "q_ref6_evbadge": "Peer-reviewed primaire studie",
-    "q_ref7_title": "MIND – Mycelial Interface for Naturalistic Detection",
-    "q_ref7_meta": "arXiv:2604.22947 · 24 april 2026",
+    "q_ref7_title": "MIND – Mycoponically Integrated Network Device for Multimodal Sensing with Living Mycelial Networks",
+    "q_ref7_meta": "Zeng, Porterfield & Kaur · arXiv:2604.22947 · 24 april 2026",
     "q_ref7_relevanz": "Levende myceliumnetwerken worden onderzocht als multimodale biosensoren. Bio-elektrische reacties worden geëvalueerd om verschillende omgevingsprikkels of ruimtelijke informatie te onderscheiden. Conceptueel verwant aan delen van de BioComm-aanpak, maar nog niet collegiaal getoetst.",
     "q_ref7_evbadge": "Preprint",
     "q_s4_step": "Context — Populaire Wetenschap",
@@ -3165,7 +3165,7 @@
     "a_node_geocode_error": "Adres niet gevonden — probeer preciezer, of laat de pin gewoon weg.",
     "a_node_lbl_motivation": "Aanmeldingstekst *",
     "a_node_ph_motivation": "Vertel ons over jezelf en waarom je wilt meedoen — ook als je niet aan elk criterium voldoet. Minimaal 3-4 zinnen.",
-    "a_node_lbl_loan": "Ik accepteer de leenvoorwaarden (borg ca. €100, terugave bij beëindiging van de meting) *",
+    "a_node_lbl_loan": "Ik accepteer de leenvoorwaarden (borg, waarvan de hoogte vóór de uitgifte wordt vastgelegd; teruggave bij beëindiging van de meting) *",
     "a_node_panel_label": "Aanmelding",
     "a_node_privacy_label": "Ik heb het [privacybeleid] gelezen en ga akkoord met de verwerking van mijn aanmeldgegevens.",
     "a_node_submit": "Aanmelding versturen",
@@ -3186,11 +3186,11 @@
     "myk_page_tag": "OpenMycoNet · Kennis",
     "myk_h1": "Mycorrhizanetwerken <em>begrijpen</em>",
     "myk_subtitle": "Wat er werkelijk gebeurt onder de bosbodem — wat daarvan door onderzoek is aangetoond, en wat een open vraag blijft.",
-    "myk_s1_h2": "Het oudste netwerk van de aarde",
-    "myk_s1_p1": "Onder onze voeten ligt het oudste en meest uitgebreide communicatienetwerk van de aarde. Mycorrhizaschimmels verbinden al <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 miljoen jaar</a> <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">~70% van alle plantensoorten</a> met elkaar — ze transporteren voedingsstoffen, sturen waarschuwingssignalen en coördineren het leven in de bodem op een manier die we nog maar nauwelijks beginnen te begrijpen. Ze zenden elektrische signalen. Meetbaar. Reproduceerbaar. En tot nu toe nauwelijks ontcijferd.",
-    "myk_s1_p2": "Dat het hierbij niet om een losse metafoor gaat, maar om een <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">wetenschappelijk aangetoond</a> informatiekanaal, is grotendeels te danken aan het baanbrekende veldwerk van bosecologe Suzanne Simard: haar onderzoek vestigde het concept van het mycorrhizanetwerk als meetbaar uitwisselingskanaal tussen planten; een peer-reviewed vervolgstudie uit 2015 toonde aan dat plantengemeenschappen daarmee complex, adaptief gedrag kunnen coördineren. Het precieze mechanisme blijft echter onduidelijk: een studie naar fosfaatopname uit 2005 laat zien hoe één schimmelsoort haar voedingsopname gericht aanpast aan lokaal aanbod — maar kan de daarvoor benodigde signaalmoleculen in het hyfennetwerk niet benoemen. Een plausibele kandidaat: elektrische signaaloverdracht in het mycelium. Precies daar zet BioComm op in.",
+    "myk_s1_h2": "Een eeuwenoud partnerschap onder onze voeten",
+    "myk_s1_p1": "Onder onze voeten leven schimmels en planten in een van de oudste partnerschappen op het land: fossielen tonen de mycorrhiza-symbiose aan sinds zo’n <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 miljoen jaar</a>. Tegenwoordig gaat ongeveer <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">70% van de vaatplantensoorten</a> een symbiose aan met arbusculaire mycorrhizaschimmels. De schimmeldraden ontsluiten water en voedingsstoffen voor de plant en krijgen daarvoor koolstofverbindingen uit de fotosynthese terug. Hoe fijn de schimmels daarbij op hun omgeving reageren, laat een studie uit 2005 zien: arbusculaire mycorrhizaschimmels pasten hun hyfengroei en fosfaatopname ruimtelijk aan plaatselijk verschillend fosfaataanbod aan, per schimmelsoort verschillend. Welk mechanisme dat stuurt, heeft de studie niet onderzocht. Ook in mycorrhizaschimmels is al elektrische activiteit gemeten; wat die betekent, is nog grotendeels open.",
+    "myk_s1_p2": "Of planten via gemeenschappelijke schimmelnetwerken ook onderling verbonden zijn en daarlangs stoffen of signalen uitwisselen, wordt daarentegen intensief onderzocht en is omstreden. Bekend gemaakt is dit idee vooral door bosecologe Suzanne Simard; een <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">overzichtsartikel van haar onderzoeksgroep uit 2015</a> vat aanwijzingen samen dat zulke netwerken reacties van verbonden planten kunnen beïnvloeden. Hoe vaak en hoe betekenisvol dat onder natuurlijke omstandigheden in het bos is, is open. Veel populaire uitspraken gaan verder dan de gegevens, zoals de kritische plaatsing verderop laat zien.",
     "myk_s2_h2": "De vraag die OpenMycoNet stelt",
-    "myk_s2_p1": "OpenMycoNet stelt een eenvoudige maar verstrekkende vraag: wat gebeurt er als we ophouden bodems alleen van buitenaf te analyseren — en in plaats daarvan beginnen te luisteren naar wat het netwerk zelf uitzendt? Wat als de plant ons al lang vertelt dat ze dorst heeft, voordat we het kunnen zien? Wat als de bodem zelf aangeeft dat er een plaag nadert, voordat de eerste schade ontstaat?",
+    "myk_s2_p1": "OpenMycoNet stelt een eenvoudige maar verstrekkende vraag: wat kunnen we leren als we bodems niet alleen van buitenaf analyseren, maar ook de elektrische activiteit in het schimmelnetwerk gedurende lange tijd meten? Verandert deze activiteit als de bodem uitdroogt of plagen planten aantasten, en is dat misschien te herkennen voordat we iets aan de planten zien? We vermoeden bovendien dat elektrische signalen in het mycelium betrokken kunnen zijn bij de ruimtelijke afstemming die mycorrhizaschimmels laten zien. Precies hier begint BioComm.",
     "myk_s2_p2": "Deze vragen zijn tot op heden onbeantwoord. Ze bouwen voort op het hierboven beschreven onderzoek, maar gaan er bewust voorbij: het gaat om OpenMycoNets eigen, nog open vraagstelling — geen reeds behaald resultaat.",
     "myk_s3_h2": "Kritische duiding: wat werkelijk bewezen is",
     "myk_s3_p1": "Niet alle populaire beweringen over het zogenaamde \"Wood Wide Web\" worden voldoende ondersteund door veldstudies — en OpenMycoNet <a href=\"https://www.openmyconet.de/quellennachweise.html#station-kritik\" class=\"u-green\">neemt deze kritiek uitdrukkelijk mee</a>, in plaats van erover te zwijgen.",
@@ -3210,22 +3210,22 @@
     "myk2_h1": "Bio-elektriciteit bij schimmels & <em>hoe BioComm meet</em>",
     "myk2_subtitle": "Wat onderzoek laat zien over elektrische signalen in schimmelmycelium — en wat OpenMycoNet daarmee doet met eigen technologie.",
     "myk2_s1_label": "Wetenschappelijke achtergrond",
-    "myk2_s1_h2": "Schimmels zenden meetbare elektrische signalen",
-    "myk2_s1_p1": "Schimmelmycelium genereert bio-elektrische impulsen met neuronale kenmerken: spikingpatronen, signaaloverdracht, niet-lineaire eigenschappen. Recente reviews tonen aan dat schimmelnetwerken <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">wetenschappelijk aangetoond</a> reproduceerbare elektrische activiteit genereren — niet slechts beweerd. Een bijzonder zorgvuldige studie uit 2025 bevestigde de biologische oorsprong van deze signalen met PCB-elektroden, een kooi van Faraday en biocide-controles, en sloot daarmee veelvoorkomende foutbronnen zoals elektromagnetische storing of meetartefacten uit.",
-    "myk2_s1_p2": "Hoe gestructureerd deze elektrische activiteit werkelijk is, blijkt uit een <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">veelgeciteerde analyse</a> uit 2022: de verdeling van spike-train-lengtes in schimmelmycelium lijkt statistisch op de verdeling van woordlengtes in menselijke talen. Dat bewijst niet dat schimmels \"spreken\" — maar het toont aan dat de signalen een herkenbare interne structuur hebben die ver boven ruis uitstijgt.",
-    "myk2_s2_label": "Wetenschappelijke achtergrond",
+    "myk2_s1_h2": "Schimmelmycelium vertoont meetbare elektrische activiteit",
+    "myk2_s1_p1": "Schimmelmycelium vertoont meetbare elektrische activiteit: korte spanningspieken (spikes) die aan actiepotentialen doen denken, en signalen die zich door het netwerk verspreiden. Dat is in talrijke studies bij verschillende schimmelsoorten gemeten. Een <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">overzichtsartikel uit 2025</a> vat de stand samen en noemt tegelijk mogelijke meetartefacten en open vragen. Een methodisch zorgvuldige studie uit 2025 gebruikte printplaatelektroden, een kooi van Faraday en biocidebehandelingen; de resultaten ondersteunen een biologische oorsprong van de signalen en verkleinen het risico op foutbronnen zoals elektromagnetische storingen.",
+    "myk2_s1_p2": "Hoe deze activiteit te duiden is, staat ter discussie. Een <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">analyse uit 2022</a> vond dat de lengtes van spikereeksen in schimmelmycelium statistisch vergelijkbaar verdeeld zijn als woordlengtes in menselijke talen. De auteur onderzoekt dat vanuit een communicatiehypothese. Dat is een interpretatie, geen bewijs dat schimmels „spreken”, en ze komt tot nu toe van één enkele onderzoeksgroep.",
+    "myk2_s2_label": "In discussie",
     "myk2_s2_h2": "Van observatie naar berekening",
-    "myk2_s2_p1": "Dat deze signalen niet alleen bestaan, maar ook <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">technisch bruikbaar zijn</a>, blijkt uit een reeks werken van Andrew Adamatzky: mycelium vertoont neuronale spiking, logische-poort-achtige eigenschappen en niet-lineaire verwerking — basisvoorwaarden voor elke vorm van patroonherkenning. Een andere studie toont aan dat mycelium frequentiegemoduleerde signalen in het bereik van 100 tot 10.000 hertz betrouwbaar overdraagt.",
-    "myk2_s2_p2": "De meest recente stand van het onderzoek — een in 2025 gepubliceerd werk over bio-elektrische sensoriek met AI-interface voor levende schimmelnetwerken — is conceptueel nauw verwant aan wat OpenMycoNet met BioComm realiseert: hardware die levende myceliumsignalen registreert en bruikbaar maakt voor machine learning.",
+    "myk2_s2_p1": "Of deze signalen technisch bruikbaar zijn, onderzoekt vooral de onderzoeksgroep rond Andrew Adamatzky. In <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">laboratoriumproeven</a> vertoonde mycelium spikepatronen, logica-achtige schakeltoestanden en niet-lineaire signaalverwerking. In een andere studie werden frequenties tussen 100 en 10.000 hertz die in met mycelium gebonden composieten werden ingevoerd, aan de uitgang herkend; de sterkte van de uitgangssignalen was tussen herhalingen echter niet reproduceerbaar. Veel van deze resultaten komen van een klein aantal onderzoeksgroepen en worden in vakkringen besproken.",
+    "myk2_s2_p2": "Een in 2026 verschenen, nog niet beoordeelde voorpublicatie (preprint) beschrijft een meetplatform dat levend mycelium maandenlang van voeding voorziet en uit de elektrische reacties 14 verschillende soorten prikkels kan onderscheiden. Het is methodisch verwant aan delen van de BioComm-aanpak: hardware die myceliumsignalen gedurende lange tijd vastlegt en analyseerbaar maakt.",
     "myk2_s3_label": "OpenMycoNets eigen ontwikkeling",
     "myk2_s3_h2": "Wat BioComm concreet meet",
     "myk2_s3_p1": "Het hierboven beschreven onderzoek is de wetenschappelijke basis. Wat nu volgt, is OpenMycoNets eigen technische uitvoering — daarvoor bestaat geen externe bron en die is ook niet nodig, omdat het om eigen hardware-ontwikkeling gaat, geen citeerbaar onderzoeksresultaat.",
-    "myk2_s3_p2": "De BioComm-meetknoop is gebouwd rond een ESP32-microcontroller met LoRa-radiomodule en meet via een 16-bit analoog-digitaalomzetter op acht kanalen tegelijk — bio-elektrische signalen net zo goed als bodem- en omgevingsgegevens zoals temperatuur, vochtigheid en CO₂. De weerbestendige IP65-behuizing is ontworpen voor continu gebruik in het veld, gevoed via USB-C of LiPo-accu.",
-    "myk2_s3_p3": "Tot vier knooppunten sturen hun gegevens via LoRa (realistisch 1–3 km bereik in bosgebied) naar een centrale BioComm Bridge, die alle datastromen bundelt en via wifi doorstuurt naar de server. In de praktijk ontstaat zo een systeem van meerdere onafhankelijk metende knooppunten met een gedeelde dataverbinding — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">meer over de hardware in detail</a>.",
+    "myk2_s3_p2": "Het BioComm-meetknooppunt is gebaseerd op een ESP32-S3-microcontroller met LoRa-radiochip. Het bio-elektrische signaal wordt vastgelegd via een ruisarme instrumentatieversterker en een 16-bit analoog-digitaalomzetter. Daarnaast meet het bodemtemperatuur, bodemvochtigheid en elektrische geleidbaarheid, en ook CO₂, luchttemperatuur en luchtvochtigheid. De ruwe data slaat het knooppunt op een geheugenkaart op. Het wordt gevoed door een accu die via USB-C wordt opgeladen; een weerbestendige behuizing (IP65) is gepland.",
+    "myk2_s3_p3": "De knooppunten sturen hun data via LoRa naar een BioComm Bridge, die ze via wifi naar de server doorstuurt. In de regel is één bridge per knooppunt voorzien; technisch kan een bridge ook meerdere knooppunten bedienen. Hoe ver de radioverbinding in het bos reikt, hangt af van antenne, behuizing en terrein en zal pas bij gebruik in het veld blijken — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">meer over de hardware in detail</a>.",
     "myk2_s4_label": "OpenMycoNets eigen ontwikkeling",
     "myk2_s4_h2": "Meer dan meten: gerichte elektrische stimulatie",
     "myk2_s4_p1": "BioComm is niet alleen bedoeld voor passief meten. De hardware kan ook gericht elektrische signalen in het substraat inbrengen — bidirectioneel dus: zenden en ontvangen via dezelfde elektrode-interface. Het doel is niet om het netwerk te beïnvloeden, maar om iets methodisch fundamentelers te toetsen: reageert het mycelium reproduceerbaar op een gedefinieerde elektrische prikkel? Dat is het verschil tussen pure observatie en perturbatie — tussen correlatie en de mogelijkheid om causaliteit te toetsen.",
-    "myk2_s4_p2": "Deze bidirectionele elektrische stimulatiemethode is OpenMycoNets eigen technische ontwikkeling, beschermd door een verleend gebruiksmodel. Belangrijk voor de duiding: het hierboven aangehaalde onderzoek toont aan dat elektrische activiteit in schimmelmycelium bestaat, meetbaar en reproduceerbaar is — het toont niet aan dat OpenMycoNets specifieke stimulatiemethode wetenschappelijk gevalideerd is. Dat is ook niet de claim: de stimulatie is een instrument om hypothesen te toetsen, geen reeds bewezen resultaat.",
+    "myk2_s4_p2": "Deze bidirectionele elektrische stimulatiemethode is OpenMycoNets eigen technische ontwikkeling, beschermd door een verleend gebruiksmodel. Belangrijk voor de duiding: het hierboven aangehaalde onderzoek toont aan dat elektrische activiteit in schimmelmycelium bestaat en meetbaar is — het toont niet aan dat OpenMycoNets specifieke stimulatiemethode wetenschappelijk gevalideerd is. Dat is ook niet de claim: de stimulatie is een instrument om hypothesen te toetsen, geen reeds bewezen resultaat.",
     "myk2_s4_p3": "Of en hoe het mycelium reageert op elektrische prikkels, hoe reproduceerbaar zulke reacties zijn en wat ze onthullen over de onderliggende signaalroutes — dat zijn open vragen die BioComm mee moet helpen beantwoorden, geen antwoorden die al vaststaan.",
     "myk2_cta_h2": "Meer lezen",
     "myk2_cta_p": "Deze pagina bouwt voort op de <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" class=\"u-green\">mycorrhiza-grondslagen</a> die elders zijn beschreven. De volledige literatuurlijst vind je op de Bronvermeldingen-pagina, technische details over het leentoestel op de Hardware-pagina.",
@@ -3237,7 +3237,7 @@
     "myk3_h1": "Citizen Science bij <em>OpenMycoNet</em>",
     "myk3_subtitle": "Waarom brede deelname en gerichte expertise samengaan — niet als tegenstelling, maar als aanvulling.",
     "myk3_s1_h2": "Hoe je meedoet",
-    "myk3_s1_p1": "De resultaten en gegevens van het netwerk zijn voor iedereen toegankelijk — ook zonder eigen meetknooppunt. Wie zelf een BioComm-knooppunt wil beheren, kan solliciteren naar een van de gecureerde plekken: hardware lenen, de BioComm-software gratis downloaden, elektroden in het substraat plaatsen. Analyse en anonimisering verlopen lokaal op het eigen apparaat, voordat de gegevens het netwerk bereiken.",
+    "myk3_s1_p1": "De resultaten en gegevens van het netwerk zijn voor iedereen toegankelijk — ook zonder eigen meetknooppunt. Wie zelf een BioComm-knooppunt wil beheren, kan solliciteren naar een van de gecureerde plekken: hardware lenen, elektroden in het substraat plaatsen, de bridge met de wifi verbinden. Het knooppunt slaat zijn meetwaarden eerst op een eigen geheugenkaart op en stuurt ze via de bridge draadloos naar de OpenMycoNet-server, waar ze worden geanalyseerd. De locatie tonen we publiekelijk alleen als grof rastervak van ongeveer 10 km.",
     "myk3_s1_p2": "De waarde ontstaat uit de spreiding: één meting in Maintal, één in Osaka, één in São Paulo — samen een dataset die geen enkel laboratorium alleen zou kunnen genereren. Klimaatzones, substraten en seizoenen verschillen wereldwijd; precies die spreiding is nodig om de open vragen überhaupt te kunnen beantwoorden.",
     "myk3_s2_label": "Wetenschappelijk bewijs",
     "myk3_s2_h2": "Werkt wetenschap door leken echt?",
@@ -3867,23 +3867,23 @@
       },
       {
         "label": "Liaison radio",
-        "value": "LoRa vers le pont (1–3 km en forêt) · Le pont se connecte au serveur central via WiFi — en développement, pas encore livré"
+        "value": "LoRa vers le pont · Le pont se connecte au serveur central via WiFi · portée selon antenne, boîtier et terrain — en développement, pas encore livré"
       },
       {
         "label": "ADC",
-        "value": "16 bits, 8 canaux"
+        "value": "16 bits · un canal de mesure bioélectrique par nœud"
       },
       {
         "label": "Capteurs",
-        "value": "Signaux bioélectriques + données de sol & environnementales (température, humidité, CO₂)"
+        "value": "Signal bioélectrique + température et humidité du sol, conductivité, CO₂, température et humidité de l’air"
       },
       {
         "label": "Alimentation",
-        "value": "USB-C ou batterie LiPo"
+        "value": "Batterie rechargeable via USB-C"
       },
       {
         "label": "Boîtier",
-        "value": "IP65, résistant aux intempéries"
+        "value": "Étanche (IP65) prévu, boîtier en développement"
       }
     ],
     "leih_how_label": "Cinq étapes pour votre nœud de mesure",
@@ -3893,10 +3893,10 @@
     "leih_how_h2": "Cinq étapes vers votre <em>nœud de mesure</em>",
     "leih_bridge_h2": "Le <em>Hub</em>",
     "leih_bridge_warning": "⚠ La liaison radio (LoRa/WiFi) fait partie de la génération de matériel actuellement en développement et n'a pas encore été livrée.",
-    "leih_bridge_desc": "Le BioComm Bridge connecte jusqu'à 4 nœuds de mesure simultanément par radio LoRa (point à point, portée réaliste de 1 à 3 km en forêt) et transmet toutes les données au serveur central via WiFi. Les LED Node 1 à 4 indiquent l'état de la connexion en temps réel.",
+    "leih_bridge_desc": "Le BioComm Bridge reçoit les données des nœuds de mesure par radio LoRa (point à point) et les transfère au serveur central via WiFi. En règle générale, un nœud par bridge est prévu ; techniquement, plusieurs sont possibles. Des LED d’état indiquent le fonctionnement, la recherche, la connexion et le signal de vie.",
     "leih_bridge_li1": "ESP32 avec module radio LoRa",
     "leih_bridge_li2": "Connexion WiFi au serveur central",
-    "leih_bridge_li3": "4 LED d'état des nœuds",
+    "leih_bridge_li3": "LED d’état (fonctionnement, recherche, connexion, signal de vie)",
     "leih_bridge_li4": "Boîtier de bureau compact",
     "leih_system_label": "Le Système Complet",
     "leih_system_h2": "BioComm <em>en action</em>",
@@ -3908,7 +3908,7 @@
       },
       {
         "h": "Verser la caution",
-        "p": "Environ 100 € de caution (montant définitif à confirmer). Intégralement remboursé au retour."
+        "p": "Contre caution. Nous en fixerons le montant dès que le coût définitif d’un ensemble nœud et bridge sera connu. Intégralement remboursée au retour."
       },
       {
         "h": "Recevoir l'appareil",
@@ -4058,12 +4058,12 @@
     "steps": [
       {
         "h": "Obtenir l'accès à un nœud BioComm",
-        "p": "Après une candidature acceptée : un appareil de mesure BioComm en prêt, caution env. 100 € (coût final à confirmer), retour possible à tout moment.",
-        "cost": "Caution env. 100 €"
+        "p": "Après une candidature acceptée : un appareil de mesure BioComm (nœud et bridge) en prêt contre caution, retour possible à tout moment. Nous fixerons le montant de la caution dès que le coût définitif d’un ensemble nœud et bridge sera connu.",
+        "cost": "Contre caution"
       },
       {
         "h": "Démarrer BioComm",
-        "p": "Télécharger gratuitement le logiciel BioComm — aucune installation requise. <a href=\"https://www.openmyconet.de/biocomm/software\" class=\"u-green\">Voir le logiciel BioComm →</a>",
+        "p": "Connecter le bridge à ton WiFi. Le nœud et le bridge fonctionnent avec leur propre firmware ; tu n’as aucun logiciel supplémentaire à installer.",
         "cost": "Gratuit"
       },
       {
@@ -4106,19 +4106,19 @@
     "facts": [
       {
         "num": "400M",
-        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">années d'existence des réseaux mycorhiziens sur Terre</a>"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">années — depuis lors existe la symbiose mycorhizienne entre champignons et plantes terrestres (preuves fossiles)</a>"
       },
       {
         "num": "~70 %",
         "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">des espèces de plantes vasculaires forment des associations avec des champignons mycorhiziens à arbuscules</a>"
       },
       {
-        "num": "8",
-        "text": "canaux de mesure bioélectrique"
+        "num": "16 bits",
+        "text": "de résolution pour la mesure du signal bioélectrique"
       },
       {
-        "num": "jusqu'à 10 kHz",
-        "text": "sortie de stimulation programmable"
+        "num": "6",
+        "text": "valeurs environnementales en plus : température et humidité du sol, conductivité, CO₂, température et humidité de l’air"
       }
     ],
     "form_options": {
@@ -4130,7 +4130,7 @@
     },
     "q_page_tag": "OpenMycoNet · Fondements Scientifiques",
     "q_h1_html": "Références &amp; <em>Parcours de connaissance</em>",
-    "q_subtitle": "OpenMycoNet repose sur une base scientifique transparente. Chaque étape de notre parcours de connaissance — de la recherche fondamentale sur les mycorhizes à la science citoyenne appliquée — est étayée par des recherches publiées.",
+    "q_subtitle": "OpenMycoNet s’appuie sur des recherches publiées. Pour chaque étape de notre parcours de connaissance — de la recherche fondamentale sur les mycorhizes à la science participative — tu trouveras ici les travaux sur lesquels nous nous fondons et leur degré de solidité.",
     "q_intro_strong": "Note de transparence :",
     "q_intro": "Tous les travaux répertoriés ne soutiennent pas directement les objectifs d'OpenMycoNet. Ils forment le fondement scientifique sur lequel nos questions sont construites — y compris les perspectives critiques. Nous mesurons parce que les données sont encore rares, pas parce que tout est prouvé.",
     "q_path_label": "Parcours Scientifique de Connaissance",
@@ -4149,7 +4149,7 @@
     "q_ref1_relevanz": "Éclairage vulgarisé sur la recherche relative aux échanges de ressources via les réseaux mycorhiziens – le point de départ qui a soulevé la question à l'origine d'OpenMycoNet.",
     "q_ref1_evbadge": "Éclairage vulgarisé",
     "q_ref2_title": "Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities",
-    "q_ref2_meta": "Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
+    "q_ref2_meta": "Gorzelak, Asay, Pickles & Simard (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
     "q_ref2_relevanz": "Résume des indices expérimentaux montrant que les réseaux mycorhiziens peuvent influencer les réactions physiologiques et adaptatives entre plantes connectées.",
     "q_ref2_evbadge": "Review",
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
@@ -4194,8 +4194,8 @@
     "q_ref23_relevanz": "Étude de terrain menée sur 54 sites agricoles : le succès de l'inoculation par des CMA est très variable sur le terrain (effet sur le rendement de −12% à +40%) et principalement prévisible par l'état du microbiome du sol — et non par l'apport de nutriments. Souligne pourquoi les résultats de laboratoire ne sont pas directement transposables aux conditions de terrain.",
     "q_ref23_evbadge": "Étude primaire",
     "q_s2_step": "Étape 02 — Activité Électrique",
-    "q_s2_title": "Les champignons émettent des signaux électriques mesurables",
-    "q_s2_desc": "Les impulsions bioélectriques dans le mycélium présentent des caractéristiques neuronales : motifs de décharge, propagation du signal, propriétés non linéaires.",
+    "q_s2_title": "Le mycélium fongique présente une activité électrique mesurable",
+    "q_s2_desc": "Le mycélium produit de brefs pics de tension (spikes) qui rappellent des potentiels d’action ; des signaux se propagent dans le réseau. Leur signification biologique reste en grande partie ouverte.",
     "q_ref3_title": "Electrical signaling in fungi",
     "q_ref3_meta": "Buffi et al. (2025) · FEMS Microbiology Reviews · DOI 10.1093/femsre/fuaf009 · PMC11995700",
     "q_ref3_relevanz": "Résume l'état actuel de la recherche sur l'activité électrique des champignons filamenteux et discute des preuves, des méthodes de mesure, des artefacts possibles et des questions ouvertes.",
@@ -4218,17 +4218,17 @@
     "q_ref22_evbadge": "Étude primaire",
     "q_s3_step": "Étape 03 — Mesurabilité, Capteurs & Reconnaissance de motifs IA",
     "q_s3_title": "De l'observation au calcul",
-    "q_s3_desc": "Les travaux d'Andrew Adamatzky examinent si les signaux du mycélium sont techniquement utilisables — comme portes logiques, comme fréquences transmissibles et, dans une approche pas encore évaluée par les pairs, comme base d'une interface assistée par IA.",
+    "q_s3_desc": "Des travaux, principalement d’Andrew Adamatzky, examinent si les signaux du mycélium sont exploitables techniquement, par exemple pour des états de commutation de type logique ou pour transmettre des fréquences. Une approche d’un autre groupe de recherche, pas encore évaluée par les pairs, utilise du mycélium vivant comme capteur de différents stimuli.",
     "q_ref5_title": "Logics in fungal mycelium networks (Adamatzky)",
-    "q_ref5_meta": "Adamatzky, A. (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
+    "q_ref5_meta": "Adamatzky, Ayres, Beasley, Roberts & Wösten (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
     "q_ref5_relevanz": "Examine comment l'activité électrique dans le mycélium fongique peut être utilisée, dans des conditions expérimentales, pour des états logiques et des concepts de traitement – un possible point de repère méthodologique pour une analyse ultérieure des motifs.",
     "q_ref5_evbadge": "Étude évaluée par les pairs",
     "q_ref6_title": "Propagation of electrical signals by fungi",
-    "q_ref6_meta": "Adamatzky et al. · BioSystems 229 (2023), 104933 · DOI 10.1016/j.biosystems.2023.104933",
+    "q_ref6_meta": "Mayne, Roberts, Phillips, Weerasekera & Adamatzky (2023) · BioSystems 229, 104933 · DOI 10.1016/j.biosystems.2023.104933",
     "q_ref6_relevanz": "Dans des composites liés au mycélium, des fréquences injectées entre 100 et 10 000 Hz ont pu être retrouvées en sortie. Les amplitudes de sortie n'étaient toutefois pas reproductibles d'une répétition à l'autre.",
     "q_ref6_evbadge": "Étude primaire évaluée par les pairs",
-    "q_ref7_title": "MIND – Mycelial Interface for Naturalistic Detection",
-    "q_ref7_meta": "arXiv:2604.22947 · 24 avril 2026",
+    "q_ref7_title": "MIND – Mycoponically Integrated Network Device for Multimodal Sensing with Living Mycelial Networks",
+    "q_ref7_meta": "Zeng, Porterfield & Kaur · arXiv:2604.22947 · 24 avril 2026",
     "q_ref7_relevanz": "Des réseaux de mycélium vivants sont étudiés comme biocapteurs multimodaux. Les réponses bioélectriques sont analysées pour distinguer différents stimuli environnementaux ou informations spatiales. Conceptuellement lié à certains aspects de l'approche BioComm, mais pas encore évalué par les pairs.",
     "q_ref7_evbadge": "Preprint",
     "q_s4_step": "Contexte — Science populaire",
@@ -4441,7 +4441,7 @@
     "a_node_geocode_error": "Adresse introuvable — précisez-la ou laissez simplement le repère de côté.",
     "a_node_lbl_motivation": "Texte de candidature *",
     "a_node_ph_motivation": "Parlez-nous de vous et expliquez pourquoi vous souhaitez participer — même si vous ne correspondez pas à tous les critères. Au moins 3-4 phrases.",
-    "a_node_lbl_loan": "J'accepte les conditions de prêt (caution env. 100 €, retour à la fin de la mesure) *",
+    "a_node_lbl_loan": "J’accepte les conditions de prêt (caution, dont le montant sera fixé avant la remise ; retour à la fin de la mesure) *",
     "a_node_panel_label": "Candidature",
     "a_node_privacy_label": "J’ai lu la [politique de confidentialité] et j’accepte le traitement des données de ma candidature.",
     "a_node_submit": "Envoyer la candidature",
@@ -4462,11 +4462,11 @@
     "myk_page_tag": "OpenMycoNet · Savoir",
     "myk_h1": "Comprendre les <em>réseaux mycorhiziens</em>",
     "myk_subtitle": "Ce qui se passe réellement sous le sol forestier — ce qui est étayé par la recherche, et ce qui reste une question ouverte.",
-    "myk_s1_h2": "Le plus ancien réseau de la Terre",
-    "myk_s1_p1": "Sous nos pieds se trouve le réseau de communication le plus ancien et le plus étendu de la Terre. Les champignons mycorhiziens relient <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">~70 % de toutes les espèces végétales</a> depuis <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 millions d'années</a> — ils transportent des nutriments, transmettent des signaux d'alerte et coordonnent la vie dans le sol d'une manière que nous commençons à peine à comprendre. Ils émettent des signaux électriques. Mesurables. Reproductibles. Et à peine déchiffrés jusqu'ici.",
-    "myk_s1_p2": "Le fait qu'il ne s'agisse pas d'une simple métaphore, mais d'un canal d'information <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">scientifiquement établi</a>, est largement dû aux travaux de terrain pionniers de l'écologue forestière Suzanne Simard : ses recherches ont établi le concept du réseau mycorhizien comme voie d'échange mesurable entre les plantes ; une étude de suivi évaluée par les pairs, publiée en 2015, a montré que les communautés végétales peuvent ainsi coordonner un comportement adaptatif complexe. Le mécanisme exact reste toutefois flou : une étude de 2005 sur l'absorption du phosphate observe qu'une espèce fongique adapte délibérément son absorption de nutriments à l'offre locale — sans pouvoir identifier les molécules de signalisation responsables au sein du réseau hyphal. Un candidat plausible : la propagation de signaux électriques dans le mycélium. C'est précisément là qu'intervient BioComm.",
+    "myk_s1_h2": "Un partenariat très ancien sous nos pieds",
+    "myk_s1_p1": "Sous nos pieds, champignons et plantes vivent l’un des plus anciens partenariats de la terre ferme : les fossiles attestent la symbiose mycorhizienne depuis environ <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 millions d’années</a>. Aujourd’hui, environ <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">70 % des espèces de plantes vasculaires</a> forment une symbiose avec des champignons mycorhiziens à arbuscules. Les filaments fongiques donnent à la plante accès à l’eau et aux nutriments et reçoivent en échange des composés carbonés issus de la photosynthèse. Une étude de 2005 montre avec quelle finesse les champignons réagissent à leur environnement : des champignons mycorhiziens à arbuscules ont adapté spatialement la croissance de leurs hyphes et leur absorption de phosphate à des apports locaux différents, et ce différemment selon l’espèce. L’étude n’a pas examiné quel mécanisme pilote ce comportement. Une activité électrique a également été mesurée chez des champignons mycorhiziens ; sa signification reste en grande partie ouverte.",
+    "myk_s1_p2": "En revanche, la question de savoir si les plantes sont aussi reliées entre elles par des réseaux fongiques communs et y échangent des substances ou des signaux fait l’objet de recherches intenses et de débats. L’idée a surtout été popularisée par l’écologue forestière Suzanne Simard ; un <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">article de synthèse de son groupe de recherche (2015)</a> rassemble des indices selon lesquels de tels réseaux peuvent influencer les réactions de plantes connectées. La fréquence et l’importance de ce phénomène en conditions naturelles en forêt restent ouvertes. Beaucoup d’affirmations populaires vont au-delà des données, comme le montre la mise en perspective critique plus bas.",
     "myk_s2_h2": "La question que pose OpenMycoNet",
-    "myk_s2_p1": "OpenMycoNet pose une question simple mais fondamentale : que se passe-t-il si nous cessons d'analyser les sols uniquement de l'extérieur — et commençons à écouter ce que le réseau lui-même émet ? Et si la plante nous disait depuis longtemps qu'elle a soif, avant même que nous le voyions ? Et si le sol signalait lui-même l'approche d'un ravageur, avant que les premiers dégâts n'apparaissent ?",
+    "myk_s2_p1": "OpenMycoNet pose une question simple mais de grande portée : que pouvons-nous apprendre si nous n’analysons pas seulement les sols de l’extérieur, mais mesurons aussi l’activité électrique du réseau fongique sur de longues périodes ? Cette activité change-t-elle lorsque le sol s’assèche ou que des ravageurs attaquent les plantes, et peut-on peut-être le détecter avant de voir quoi que ce soit sur les plantes ? Nous supposons en outre que des signaux électriques dans le mycélium pourraient participer à la coordination spatiale dont font preuve les champignons mycorhiziens. C’est précisément là qu’intervient BioComm.",
     "myk_s2_p2": "À ce jour, ces questions restent sans réponse. Elles s'appuient sur les recherches décrites ci-dessus, mais vont délibérément au-delà : il s'agit de la propre question, encore ouverte, d'OpenMycoNet — et non d'un résultat déjà obtenu.",
     "myk_s3_h2": "Mise en perspective critique : ce qui est réellement prouvé",
     "myk_s3_p1": "Toutes les affirmations populaires sur le « Wood Wide Web » ne sont pas suffisamment étayées par des études de terrain — et OpenMycoNet <a href=\"https://www.openmyconet.de/quellennachweise.html#station-kritik\" class=\"u-green\">intègre explicitement cette critique</a>, plutôt que de la passer sous silence.",
@@ -4486,22 +4486,22 @@
     "myk2_h1": "Bioélectricité chez les champignons & <em>comment BioComm mesure</em>",
     "myk2_subtitle": "Ce que la recherche montre sur les signaux électriques dans le mycélium fongique — et ce qu'OpenMycoNet en fait avec sa propre technologie.",
     "myk2_s1_label": "Contexte scientifique",
-    "myk2_s1_h2": "Les champignons émettent des signaux électriques mesurables",
-    "myk2_s1_p1": "Le mycélium fongique génère des impulsions bioélectriques aux caractéristiques neuronales : motifs de spiking, propagation de signaux, propriétés non linéaires. Des revues récentes montrent que les réseaux fongiques génèrent une activité électrique reproductible — <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">scientifiquement établi</a>, et non simplement affirmé. Une étude particulièrement rigoureuse de 2025 a confirmé l'origine biologique de ces signaux à l'aide d'électrodes sur PCB, d'une cage de Faraday et de contrôles biocides, écartant ainsi des sources d'erreur courantes comme les interférences électromagnétiques ou les artefacts de mesure.",
-    "myk2_s1_p2": "Le degré de structuration réel de cette activité électrique est révélé par une <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">analyse largement citée</a> de 2022 : la distribution des longueurs des trains de spikes dans le mycélium fongique ressemble statistiquement à la distribution des longueurs de mots dans les langues humaines. Cela ne prouve pas que les champignons « parlent » — mais cela montre que les signaux possèdent une structure interne reconnaissable, bien au-delà du simple bruit.",
-    "myk2_s2_label": "Contexte scientifique",
+    "myk2_s1_h2": "Le mycélium fongique présente une activité électrique mesurable",
+    "myk2_s1_p1": "Le mycélium fongique présente une activité électrique mesurable : de brefs pics de tension (spikes) qui rappellent des potentiels d’action, et des signaux qui se propagent dans le réseau. Cela a été mesuré dans de nombreuses études sur différentes espèces de champignons. Un <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">article de synthèse de 2025</a> résume l’état des connaissances et nomme en même temps les artefacts de mesure possibles et les questions ouvertes. Une étude méthodologiquement rigoureuse de 2025 a utilisé des électrodes sur circuit imprimé, une cage de Faraday et des traitements biocides ; ses résultats appuient une origine biologique des signaux et réduisent le risque de sources d’erreur comme les perturbations électromagnétiques.",
+    "myk2_s1_p2": "L’interprétation de cette activité est débattue. Une <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">analyse de 2022</a> a constaté que la longueur des trains de spikes dans le mycélium suit statistiquement une distribution semblable à celle de la longueur des mots dans les langues humaines. L’auteur l’examine sous une hypothèse de communication. C’est une interprétation, pas une preuve que les champignons « parlent », et elle provient jusqu’ici d’un seul groupe de recherche.",
+    "myk2_s2_label": "En discussion",
     "myk2_s2_h2": "De l'observation au calcul",
-    "myk2_s2_p1": "Le fait que ces signaux existent, mais soient aussi <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">techniquement exploitables</a>, est démontré par une série de travaux d'Andrew Adamatzky : le mycélium présente un spiking neuronal, des propriétés proches des portes logiques et un traitement non linéaire — des conditions de base pour toute forme de reconnaissance de motifs. Une autre étude montre que le mycélium transmet de manière fiable des signaux modulés en fréquence dans la plage de 100 à 10 000 hertz.",
-    "myk2_s2_p2": "L'état le plus récent de la recherche — un article de 2025 sur la détection bioélectrique avec interface IA pour les réseaux fongiques vivants — est conceptuellement très proche de ce qu'OpenMycoNet met en œuvre avec BioComm : un matériel qui capte les signaux mycéliens vivants et les rend exploitables pour l'apprentissage automatique.",
+    "myk2_s2_p1": "La possibilité d’exploiter techniquement ces signaux est étudiée surtout par le groupe de recherche d’Andrew Adamatzky. Lors d’<a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">expériences en laboratoire</a>, le mycélium a montré des motifs de spikes, des états de commutation de type logique et un traitement non linéaire des signaux. Dans une autre étude, des fréquences de 100 à 10 000 hertz injectées dans des composites liés par du mycélium ont été reconnues en sortie ; l’intensité des signaux de sortie n’était toutefois pas reproductible d’une répétition à l’autre. Beaucoup de ces résultats proviennent d’un petit nombre de groupes de recherche et sont débattus par les spécialistes.",
+    "myk2_s2_p2": "Une prépublication (preprint) parue en 2026, pas encore évaluée par les pairs, décrit une plateforme de mesure qui maintient du mycélium vivant pendant des mois et peut distinguer 14 types de stimuli à partir de ses réponses électriques. Elle est méthodologiquement apparentée à certaines parties de l’approche BioComm : du matériel qui enregistre les signaux du mycélium sur de longues périodes et les rend exploitables.",
     "myk2_s3_label": "Le développement propre d'OpenMycoNet",
     "myk2_s3_h2": "Ce que BioComm mesure concrètement",
     "myk2_s3_p1": "La recherche décrite ci-dessus constitue le fondement scientifique. Ce qui suit est la mise en œuvre technique propre d'OpenMycoNet — pour laquelle il n'existe aucune source externe, et cela n'est pas nécessaire, puisqu'il s'agit de notre propre développement matériel, et non d'un résultat de recherche citable.",
-    "myk2_s3_p2": "Le nœud de mesure BioComm repose sur un microcontrôleur ESP32 doté d'un module radio LoRa et mesure simultanément sur huit canaux via un convertisseur analogique-numérique 16 bits — aussi bien les signaux bioélectriques que les données du sol et de l'environnement telles que la température, l'humidité et le CO₂. Le boîtier étanche IP65 est conçu pour un usage continu sur le terrain, alimenté par USB-C ou batterie LiPo.",
-    "myk2_s3_p3": "Jusqu'à quatre nœuds transmettent leurs données par LoRa (portée réaliste de 1 à 3 km en forêt) à un BioComm Bridge central, qui agrège tous les flux de données et les transmet au serveur via WiFi. En pratique, cela crée un système de plusieurs nœuds mesurant de manière indépendante, avec une connexion de données commune — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">plus de détails sur le matériel</a>.",
+    "myk2_s3_p2": "Le nœud de mesure BioComm repose sur un microcontrôleur ESP32-S3 avec une puce radio LoRa. Il enregistre le signal bioélectrique au moyen d’un amplificateur d’instrumentation à faible bruit et d’un convertisseur analogique-numérique 16 bits. Il mesure en outre la température et l’humidité du sol, la conductivité électrique ainsi que le CO₂, la température et l’humidité de l’air. Le nœud enregistre les données brutes sur une carte mémoire. Il est alimenté par une batterie rechargeable via USB-C ; un boîtier résistant aux intempéries (IP65) est prévu.",
+    "myk2_s3_p3": "Les nœuds transmettent leurs données par LoRa à un BioComm Bridge, qui les transfère au serveur via WiFi. En règle générale, un bridge par nœud est prévu ; techniquement, un bridge peut aussi desservir plusieurs nœuds. La portée de la liaison radio en forêt dépend de l’antenne, du boîtier et du terrain et ne se révélera qu’en conditions réelles — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">plus de détails sur le matériel</a>.",
     "myk2_s4_label": "Le développement propre d'OpenMycoNet",
     "myk2_s4_h2": "Au-delà de la mesure : stimulation électrique ciblée",
     "myk2_s4_p1": "BioComm n'est pas conçu uniquement pour la mesure passive. Le matériel peut aussi injecter des signaux électriques dans le substrat de manière ciblée — de façon bidirectionnelle, donc : émettre et recevoir via la même interface d'électrodes. L'objectif n'est pas d'influencer le réseau, mais de tester quelque chose de plus fondamental sur le plan méthodologique : le mycélium réagit-il de manière reproductible à un stimulus électrique défini ? C'est la différence entre pure observation et perturbation — entre corrélation et la possibilité de tester la causalité.",
-    "myk2_s4_p2": "Cette méthode de stimulation électrique bidirectionnelle est un développement technique propre à OpenMycoNet, protégé par un modèle d'utilité accordé. Élément important pour la mise en perspective : la recherche citée ci-dessus établit que l'activité électrique dans le mycélium fongique existe, est mesurable et reproductible — elle n'établit pas que la méthode de stimulation spécifique d'OpenMycoNet est scientifiquement validée. Ce n'est d'ailleurs pas ce qui est affirmé : la stimulation est un outil pour tester des hypothèses, pas un résultat déjà prouvé.",
+    "myk2_s4_p2": "Cette méthode de stimulation électrique bidirectionnelle est un développement technique propre à OpenMycoNet, protégé par un modèle d'utilité accordé. Élément important pour la mise en perspective : la recherche citée ci-dessus établit que l'activité électrique dans le mycélium fongique existe et est mesurable — elle n'établit pas que la méthode de stimulation spécifique d'OpenMycoNet est scientifiquement validée. Ce n'est d'ailleurs pas ce qui est affirmé : la stimulation est un outil pour tester des hypothèses, pas un résultat déjà prouvé.",
     "myk2_s4_p3": "Si et comment le mycélium réagit à des stimuli électriques, à quel point ces réactions sont reproductibles et ce qu'elles révèlent sur les voies de signalisation sous-jacentes — ce sont des questions ouvertes que BioComm doit aider à éclaircir, pas des réponses déjà établies.",
     "myk2_cta_h2": "Pour aller plus loin",
     "myk2_cta_p": "Cette page s'appuie sur les <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" class=\"u-green\">fondements mycorhiziens</a> présentés ailleurs. La liste complète des études se trouve sur la page Sources, les détails techniques sur l'appareil en prêt sur la page Matériel.",
@@ -4513,7 +4513,7 @@
     "myk3_h1": "La science citoyenne chez <em>OpenMycoNet</em>",
     "myk3_subtitle": "Pourquoi une large participation et une expertise ciblée vont de pair — non pas en opposition, mais en complément.",
     "myk3_s1_h2": "Comment participer",
-    "myk3_s1_p1": "Les résultats et les données du réseau sont accessibles à tous — même sans nœud de mesure personnel. Quiconque souhaite exploiter un nœud BioComm peut postuler pour l'une des places sélectionnées : emprunter le matériel, télécharger gratuitement le logiciel BioComm, placer des électrodes dans le substrat. L'analyse et l'anonymisation s'effectuent localement sur l'appareil de l'utilisateur, avant que les données ne rejoignent le réseau.",
+    "myk3_s1_p1": "Les résultats et les données du réseau sont accessibles à tous — même sans nœud de mesure personnel. Quiconque souhaite exploiter un nœud BioComm peut postuler pour l'une des places sélectionnées : emprunter le matériel, placer des électrodes dans le substrat, connecter le bridge au WiFi. Le nœud enregistre d’abord ses mesures sur sa propre carte mémoire et les envoie par radio, via le bridge, au serveur OpenMycoNet, où elles sont analysées. Publiquement, nous n’indiquons l’emplacement que sous forme de maille grossière d’environ 10 km.",
     "myk3_s1_p2": "La valeur naît de l'étendue : une mesure à Maintal, une à Osaka, une à São Paulo — ensemble, un jeu de données qu'aucun laboratoire seul ne pourrait produire. Les zones climatiques, les substrats et les saisons diffèrent à travers le monde ; c'est précisément cette diversité qui permet de répondre aux questions ouvertes.",
     "myk3_s2_label": "Preuves scientifiques",
     "myk3_s2_h2": "La science par des amateurs fonctionne-t-elle vraiment ?",
@@ -5143,23 +5143,23 @@
       },
       {
         "label": "Conexión de radio",
-        "value": "LoRa hacia el puente (1–3 km en bosque) · El puente se conecta al servidor central por WiFi — en desarrollo, aún no distribuido"
+        "value": "LoRa hacia el puente · El puente se conecta al servidor central por WiFi · alcance según antena, carcasa y terreno — en desarrollo, aún no distribuido"
       },
       {
         "label": "ADC",
-        "value": "16 bits, 8 canales"
+        "value": "16 bits · un canal de medición bioeléctrica por nodo"
       },
       {
         "label": "Sensores",
-        "value": "Señales bioeléctricas + datos de suelo & ambientales (temperatura, humedad, CO₂)"
+        "value": "Señal bioeléctrica + temperatura y humedad del suelo, conductividad, CO₂, temperatura y humedad del aire"
       },
       {
         "label": "Alimentación",
-        "value": "USB-C o batería LiPo"
+        "value": "Batería recargable por USB-C"
       },
       {
         "label": "Carcasa",
-        "value": "IP65, resistente a la intemperie"
+        "value": "Resistente a la intemperie (IP65) prevista, carcasa en desarrollo"
       }
     ],
     "leih_how_label": "Cinco pasos para su nodo de medición",
@@ -5169,10 +5169,10 @@
     "leih_how_h2": "Cinco pasos hacia tu <em>nodo de medición</em>",
     "leih_bridge_h2": "El <em>Hub</em>",
     "leih_bridge_warning": "⚠ El enlace de radio (LoRa/WiFi) forma parte de la generación de hardware actualmente en desarrollo y aún no se ha distribuido.",
-    "leih_bridge_desc": "El BioComm Bridge conecta hasta 4 nodos de medición simultáneamente por radio LoRa (punto a punto, con un alcance realista de 1 a 3 km en bosque) y reenvía todos los datos al servidor central por WiFi. Los LED Node 1–4 muestran el estado de la conexión en tiempo real.",
+    "leih_bridge_desc": "El BioComm Bridge recibe los datos de los nodos de medición por radio LoRa (punto a punto) y los reenvía al servidor central por WiFi. Por regla general se prevé un nodo por bridge; técnicamente son posibles varios. Los LED de estado muestran funcionamiento, búsqueda, conexión y señal de vida.",
     "leih_bridge_li1": "ESP32 con módulo de radio LoRa",
     "leih_bridge_li2": "Conexión WiFi al servidor central",
-    "leih_bridge_li3": "4 LED de estado de nodo",
+    "leih_bridge_li3": "LED de estado (funcionamiento, búsqueda, conexión, señal de vida)",
     "leih_bridge_li4": "Carcasa de sobremesa compacta",
     "leih_system_label": "El Sistema Completo",
     "leih_system_h2": "BioComm <em>en acción</em>",
@@ -5184,7 +5184,7 @@
       },
       {
         "h": "Depositar fianza",
-        "p": "Aprox. 100 € de depósito (importe definitivo por confirmar). Se reembolsa íntegramente al devolver."
+        "p": "Con depósito. Fijaremos el importe en cuanto se conozcan los costes definitivos de un conjunto de nodo y bridge. Se reembolsa íntegramente al devolver."
       },
       {
         "h": "Recibir el dispositivo",
@@ -5334,12 +5334,12 @@
     "steps": [
       {
         "h": "Obtener acceso a un nodo BioComm",
-        "p": "Tras una solicitud aceptada: un dispositivo de medición BioComm en préstamo, depósito aprox. 100 € (costes finales por confirmar), devolución posible en cualquier momento.",
-        "cost": "Depósito aprox. 100 €"
+        "p": "Tras una solicitud aceptada: un dispositivo de medición BioComm (nodo y bridge) en préstamo con depósito, devolución posible en cualquier momento. Fijaremos el importe del depósito en cuanto se conozcan los costes definitivos de un conjunto de nodo y bridge.",
+        "cost": "Con depósito"
       },
       {
         "h": "Iniciar BioComm",
-        "p": "Descargar el software BioComm de forma gratuita — no requiere instalación. <a href=\"https://www.openmyconet.de/biocomm/software\" class=\"u-green\">Ver el software BioComm →</a>",
+        "p": "Conectar el bridge a tu WiFi. El nodo y el bridge funcionan con su propio firmware; no necesitas instalar ningún software adicional.",
         "cost": "Gratis"
       },
       {
@@ -5382,19 +5382,19 @@
     "facts": [
       {
         "num": "400M",
-        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">años de antigüedad — así de antiguas son las redes micorrícicas en la Tierra</a>"
+        "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">años — desde entonces existe la simbiosis micorrícica entre hongos y plantas terrestres (pruebas fósiles)</a>"
       },
       {
         "num": "~70%",
         "text": "<a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green-u\">de las especies de plantas vasculares forman asociaciones con hongos micorrícicos arbusculares</a>"
       },
       {
-        "num": "8",
-        "text": "canales de medición bioeléctrica"
+        "num": "16 bits",
+        "text": "de resolución en la medición de la señal bioeléctrica"
       },
       {
-        "num": "hasta 10 kHz",
-        "text": "salida de estimulación programable"
+        "num": "6",
+        "text": "valores ambientales adicionales: temperatura y humedad del suelo, conductividad, CO₂, temperatura y humedad del aire"
       }
     ],
     "form_options": {
@@ -5406,7 +5406,7 @@
     },
     "q_page_tag": "OpenMycoNet · Fundamentos Científicos",
     "q_h1_html": "Referencias &amp; <em>Ruta del conocimiento</em>",
-    "q_subtitle": "OpenMycoNet se basa en un fundamento científico transparente. Cada paso de nuestra ruta del conocimiento — desde la investigación básica sobre micorrizas hasta la ciencia ciudadana aplicada — está respaldado por investigaciones publicadas.",
+    "q_subtitle": "OpenMycoNet se basa en investigación publicada. Para cada paso de nuestro camino del conocimiento —desde la investigación básica sobre micorrizas hasta la ciencia ciudadana— encontrarás aquí los trabajos en los que nos apoyamos y lo sólidos que son.",
     "q_intro_strong": "Nota de transparencia:",
     "q_intro": "No todos los trabajos enumerados apoyan directamente los objetivos de OpenMycoNet. Forman el fundamento científico sobre el que se construyen nuestras preguntas — incluidas las perspectivas críticas. Medimos porque los datos aún son escasos, no porque todo esté probado.",
     "q_path_label": "Ruta Científica del Conocimiento",
@@ -5425,7 +5425,7 @@
     "q_ref1_relevanz": "Divulgación científica de la investigación sobre el intercambio de recursos a través de redes micorrícicas — el punto de partida que planteó la pregunta detrás de OpenMycoNet.",
     "q_ref1_evbadge": "Divulgación científica",
     "q_ref2_title": "Inter-plant communication through mycorrhizal networks mediates complex adaptive behaviour in plant communities",
-    "q_ref2_meta": "Simard et al. (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
+    "q_ref2_meta": "Gorzelak, Asay, Pickles & Simard (2015) · AoB Plants · DOI 10.1093/aobpla/plv050 · Open Access",
     "q_ref2_relevanz": "Resume indicios experimentales de que las redes micorrícicas pueden influir en las respuestas fisiológicas y adaptativas entre plantas conectadas.",
     "q_ref2_evbadge": "Review",
     "q_ref14_title": "Functional diversity in arbuscular mycorrhizas: exploitation of soil patches with different phosphate enrichment differs among fungal species",
@@ -5470,8 +5470,8 @@
     "q_ref23_relevanz": "Estudio de campo con 54 explotaciones agrícolas: el éxito de la inoculación con HMA es muy variable en campo (efecto en el rendimiento de −12% a +40%) y se predice principalmente por el estado del microbioma del suelo — no por el aporte de nutrientes. Subraya por qué los resultados de laboratorio no son directamente trasladables a condiciones de campo.",
     "q_ref23_evbadge": "Estudio primario",
     "q_s2_step": "Paso 02 — Actividad Eléctrica",
-    "q_s2_title": "Los hongos emiten señales eléctricas medibles",
-    "q_s2_desc": "Los impulsos bioeléctricos en el micelio muestran características neuronales: patrones de disparo, propagación de señales, propiedades no lineales.",
+    "q_s2_title": "El micelio fúngico muestra actividad eléctrica medible",
+    "q_s2_desc": "El micelio produce breves picos de tensión (spikes) que recuerdan a potenciales de acción; las señales se propagan por la red. Qué significan biológicamente está en gran parte abierto.",
     "q_ref3_title": "Electrical signaling in fungi",
     "q_ref3_meta": "Buffi et al. (2025) · FEMS Microbiology Reviews · DOI 10.1093/femsre/fuaf009 · PMC11995700",
     "q_ref3_relevanz": "Resume el estado actual de la investigación sobre la actividad eléctrica en hongos filamentosos y analiza la evidencia, los métodos de medición, los posibles artefactos y las preguntas abiertas.",
@@ -5494,17 +5494,17 @@
     "q_ref22_evbadge": "Estudio primario",
     "q_s3_step": "Paso 03 — Medibilidad, Sensores & Reconocimiento de patrones IA",
     "q_s3_title": "De la observación al cálculo",
-    "q_s3_desc": "El trabajo de Andrew Adamatzky examina si las señales del micelio son técnicamente utilizables — como puertas lógicas, como frecuencias transmisibles y, en un enfoque aún no revisado por pares, como base para una interfaz asistida por IA.",
+    "q_s3_desc": "Trabajos, sobre todo de Andrew Adamatzky, investigan si las señales del micelio pueden aprovecharse técnicamente, por ejemplo para estados de conmutación de tipo lógico o para transmitir frecuencias. Un enfoque de otro grupo de investigación, aún no revisado por pares, utiliza micelio vivo como sensor de distintos estímulos.",
     "q_ref5_title": "Logics in fungal mycelium networks (Adamatzky)",
-    "q_ref5_meta": "Adamatzky, A. (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
+    "q_ref5_meta": "Adamatzky, Ayres, Beasley, Roberts & Wösten (2022) · Logica Universalis 16, 655–669 · DOI 10.1007/s11787-022-00318-4",
     "q_ref5_relevanz": "Examina cómo puede utilizarse la actividad eléctrica en el micelio fúngico, bajo condiciones experimentales, para estados lógicos y conceptos de procesamiento – un posible punto de referencia metodológico para análisis de patrones posteriores.",
     "q_ref5_evbadge": "Estudio revisado por pares",
     "q_ref6_title": "Propagation of electrical signals by fungi",
-    "q_ref6_meta": "Adamatzky et al. · BioSystems 229 (2023), 104933 · DOI 10.1016/j.biosystems.2023.104933",
+    "q_ref6_meta": "Mayne, Roberts, Phillips, Weerasekera & Adamatzky (2023) · BioSystems 229, 104933 · DOI 10.1016/j.biosystems.2023.104933",
     "q_ref6_relevanz": "En compuestos ligados al micelio, se pudieron reconocer a la salida frecuencias introducidas entre 100 y 10.000 Hz. Sin embargo, las amplitudes de salida no fueron reproducibles entre repeticiones.",
     "q_ref6_evbadge": "Estudio primario revisado por pares",
-    "q_ref7_title": "MIND – Mycelial Interface for Naturalistic Detection",
-    "q_ref7_meta": "arXiv:2604.22947 · 24 de abril de 2026",
+    "q_ref7_title": "MIND – Mycoponically Integrated Network Device for Multimodal Sensing with Living Mycelial Networks",
+    "q_ref7_meta": "Zeng, Porterfield & Kaur · arXiv:2604.22947 · 24 de abril de 2026",
     "q_ref7_relevanz": "Se investigan redes de micelio vivas como biosensores multimodales. Las respuestas bioeléctricas se evalúan para distinguir diferentes estímulos ambientales o información espacial. Conceptualmente relacionado con partes del enfoque BioComm, pero aún no revisado por pares.",
     "q_ref7_evbadge": "Preprint",
     "q_s4_step": "Contexto — Ciencia popular",
@@ -5717,7 +5717,7 @@
     "a_node_geocode_error": "Dirección no encontrada — sé más preciso, o simplemente omite el pin.",
     "a_node_lbl_motivation": "Texto de solicitud *",
     "a_node_ph_motivation": "Cuéntanos sobre ti y por qué quieres participar — aunque no cumplas todos los criterios. Al menos 3-4 frases.",
-    "a_node_lbl_loan": "Acepto las condiciones de préstamo (depósito aprox. 100 €, devolución al finalizar la medición) *",
+    "a_node_lbl_loan": "Acepto las condiciones de préstamo (depósito, cuyo importe se fijará antes de la entrega; devolución al finalizar la medición) *",
     "a_node_panel_label": "Solicitud",
     "a_node_privacy_label": "He leído la [política de privacidad] y acepto el tratamiento de los datos de mi solicitud.",
     "a_node_submit": "Enviar solicitud",
@@ -5738,11 +5738,11 @@
     "myk_page_tag": "OpenMycoNet · Conocimiento",
     "myk_h1": "Entender las <em>redes micorrícicas</em>",
     "myk_subtitle": "Lo que realmente ocurre bajo el suelo forestal — lo que está respaldado por la investigación, y lo que sigue siendo una pregunta abierta.",
-    "myk_s1_h2": "La red más antigua de la Tierra",
-    "myk_s1_p1": "Bajo nuestros pies se encuentra la red de comunicación más antigua y extensa de la Tierra. Los hongos micorrícicos llevan <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 millones de años</a> conectando <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">~70% de todas las especies vegetales</a> — transportan nutrientes, transmiten señales de advertencia y coordinan la vida en el suelo de maneras que apenas comenzamos a comprender. Emiten señales eléctricas. Medibles. Reproducibles. Y apenas descifradas hasta ahora.",
-    "myk_s1_p2": "Que no se trate de una simple metáfora, sino de un canal de información <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">científicamente demostrado</a>, se debe en gran parte al trabajo de campo pionero de la ecóloga forestal Suzanne Simard: su investigación estableció el concepto de la red micorrícica como una vía de intercambio medible entre plantas; un estudio de seguimiento revisado por pares de 2015 mostró que las comunidades vegetales pueden coordinar así un comportamiento adaptativo complejo. El mecanismo exacto, sin embargo, sigue sin estar claro: un estudio de 2005 sobre la absorción de fosfato observa que una especie de hongo ajusta deliberadamente su absorción de nutrientes a la oferta local — pero no logra identificar las moléculas de señalización responsables dentro de la red de hifas. Un candidato plausible: la propagación de señales eléctricas en el micelio. Justo ahí es donde entra BioComm.",
+    "myk_s1_h2": "Una alianza antiquísima bajo nuestros pies",
+    "myk_s1_p1": "Bajo nuestros pies, hongos y plantas viven una de las alianzas más antiguas de la tierra firme: los fósiles documentan la simbiosis micorrícica desde hace unos <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">400 millones de años</a>. Hoy, alrededor del <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">70 % de las especies de plantas vasculares</a> forma una simbiosis con hongos micorrícicos arbusculares. Los filamentos del hongo dan a la planta acceso a agua y nutrientes y reciben a cambio compuestos de carbono de la fotosíntesis. Un estudio de 2005 muestra con qué finura responden los hongos a su entorno: hongos micorrícicos arbusculares adaptaron espacialmente el crecimiento de sus hifas y la absorción de fosfato a ofertas locales distintas de fosfato, de forma diferente según la especie. El estudio no investigó qué mecanismo lo controla. También se ha medido actividad eléctrica en hongos micorrícicos; qué significa sigue en gran parte abierto.",
+    "myk_s1_p2": "En cambio, si las plantas también están conectadas entre sí a través de redes fúngicas comunes e intercambian por ellas sustancias o señales es objeto de investigación intensa y de debate. La idea la dio a conocer sobre todo la ecóloga forestal Suzanne Simard; un <a href=\"https://www.openmyconet.de/quellennachweise.html#station-1\" class=\"u-green\">artículo de revisión de su grupo de investigación de 2015</a> resume indicios de que esas redes pueden influir en las respuestas de plantas conectadas. Con qué frecuencia y con qué relevancia ocurre esto en condiciones naturales en el bosque está abierto. Muchas afirmaciones populares van más allá de los datos, como muestra la valoración crítica más abajo.",
     "myk_s2_h2": "La pregunta que plantea OpenMycoNet",
-    "myk_s2_p1": "¿Qué ocurre cuando dejamos de analizar los suelos solo desde el exterior — y empezamos a escuchar lo que la red misma está enviando? ¿Y si la planta lleva tiempo diciéndonos que tiene sed, antes de que podamos verlo? ¿Y si el propio suelo nos avisa de la llegada de una plaga, antes de que aparezca el primer daño?",
+    "myk_s2_p1": "OpenMycoNet plantea una pregunta sencilla pero de gran alcance: ¿qué podemos aprender si no solo analizamos los suelos desde fuera, sino que también medimos durante largo tiempo la actividad eléctrica en la red de hongos? ¿Cambia esta actividad cuando el suelo se seca o las plagas atacan a las plantas, y se puede detectar quizá antes de que veamos algo en ellas? Además suponemos que las señales eléctricas en el micelio podrían intervenir en la coordinación espacial que muestran los hongos micorrícicos. Justo ahí entra BioComm.",
     "myk_s2_p2": "Hasta la fecha, estas preguntas siguen sin respuesta. Se basan en la investigación descrita arriba, pero van deliberadamente más allá: se trata de la propia pregunta, todavía abierta, de OpenMycoNet — no de un resultado ya alcanzado.",
     "myk_s3_h2": "Contextualización crítica: lo que realmente está probado",
     "myk_s3_p1": "No todas las afirmaciones populares sobre el llamado \"Wood Wide Web\" están suficientemente respaldadas por estudios de campo — y OpenMycoNet <a href=\"https://www.openmyconet.de/quellennachweise.html#station-kritik\" class=\"u-green\">incorpora explícitamente esta crítica</a>, en lugar de guardar silencio sobre ella.",
@@ -5762,22 +5762,22 @@
     "myk2_h1": "Bioelectricidad en hongos y <em>cómo mide BioComm</em>",
     "myk2_subtitle": "Lo que la investigación muestra sobre las señales eléctricas en el micelio fúngico — y qué hace OpenMycoNet con ello mediante su propia tecnología.",
     "myk2_s1_label": "Contexto científico",
-    "myk2_s1_h2": "Los hongos emiten señales eléctricas medibles",
-    "myk2_s1_p1": "El micelio fúngico genera impulsos bioeléctricos con características neuronales: patrones de disparo (spiking), propagación de señales, propiedades no lineales. Revisiones recientes muestran que las redes fúngicas generan actividad eléctrica reproducible — <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">científicamente demostrado</a>, no simplemente afirmado. Un estudio especialmente riguroso de 2025 confirmó el origen biológico de estas señales mediante electrodos en PCB, una jaula de Faraday y controles con biocidas, descartando así fuentes de error habituales como interferencias electromagnéticas o artefactos de medición.",
-    "myk2_s1_p2": "Cuán estructurada es realmente esta actividad eléctrica lo muestra un <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">análisis muy citado</a> de 2022: la distribución de las longitudes de los trenes de disparo en el micelio fúngico se asemeja estadísticamente a la distribución de la longitud de las palabras en los idiomas humanos. Eso no demuestra que los hongos «hablen» — pero muestra que las señales tienen una estructura interna reconocible que va mucho más allá del ruido.",
-    "myk2_s2_label": "Contexto científico",
+    "myk2_s1_h2": "El micelio fúngico muestra actividad eléctrica medible",
+    "myk2_s1_p1": "El micelio fúngico muestra actividad eléctrica medible: breves picos de tensión (spikes) que recuerdan a potenciales de acción, y señales que se propagan por la red. Esto se ha medido en numerosos estudios con distintas especies de hongos. Un <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">artículo de revisión de 2025</a> resume el estado de la cuestión y señala a la vez posibles artefactos de medición y preguntas abiertas. Un estudio metodológicamente cuidadoso de 2025 utilizó electrodos en placa de circuito, una jaula de Faraday y tratamientos con biocidas; sus resultados respaldan un origen biológico de las señales y reducen el riesgo de fuentes de error como las interferencias electromagnéticas.",
+    "myk2_s1_p2": "Cómo interpretar esta actividad es objeto de debate. Un <a href=\"https://www.openmyconet.de/quellennachweise.html#station-2\" class=\"u-green\">análisis de 2022</a> encontró que las longitudes de los trenes de spikes en el micelio se distribuyen estadísticamente de forma parecida a las longitudes de las palabras en las lenguas humanas. El autor lo examina bajo una hipótesis de comunicación. Es una interpretación, no una prueba de que los hongos «hablen», y por ahora procede de un solo grupo de investigación.",
+    "myk2_s2_label": "En debate",
     "myk2_s2_h2": "De la observación al cálculo",
-    "myk2_s2_p1": "Que estas señales no solo existen, sino que son <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">técnicamente utilizables</a>, lo demuestra una serie de trabajos de Andrew Adamatzky: el micelio presenta disparos de tipo neuronal, propiedades similares a puertas lógicas y procesamiento no lineal — requisitos básicos para cualquier tipo de reconocimiento de patrones. Otro estudio demuestra que el micelio transmite de forma fiable señales moduladas en frecuencia en el rango de 100 a 10.000 hercios.",
-    "myk2_s2_p2": "El estado más reciente de la investigación — un artículo de 2025 sobre detección bioeléctrica con interfaz de IA para redes fúngicas vivas — está conceptualmente muy relacionado con lo que OpenMycoNet implementa con BioComm: hardware que capta señales miceliales vivas y las hace utilizables para el aprendizaje automático.",
+    "myk2_s2_p1": "Si estas señales pueden aprovecharse técnicamente lo investiga sobre todo el grupo de Andrew Adamatzky. En <a href=\"https://www.openmyconet.de/quellennachweise.html#station-3\" class=\"u-green\">experimentos de laboratorio</a>, el micelio mostró patrones de spikes, estados de conmutación de tipo lógico y procesamiento no lineal de señales. En otro estudio, frecuencias de entre 100 y 10.000 hercios introducidas en compuestos ligados con micelio se reconocieron a la salida; sin embargo, la intensidad de las señales de salida no fue reproducible entre repeticiones. Muchos de estos resultados proceden de pocos grupos de investigación y se debaten entre especialistas.",
+    "myk2_s2_p2": "Una prepublicación (preprint) aparecida en 2026 y aún no revisada por pares describe una plataforma de medición que mantiene micelio vivo durante meses y puede distinguir 14 tipos distintos de estímulos a partir de sus respuestas eléctricas. Está metodológicamente emparentada con partes del enfoque de BioComm: hardware que registra señales del micelio durante largo tiempo y las hace analizables.",
     "myk2_s3_label": "Desarrollo propio de OpenMycoNet",
     "myk2_s3_h2": "Qué mide BioComm en concreto",
     "myk2_s3_p1": "La investigación descrita arriba es el fundamento científico. Lo que sigue ahora es la implementación técnica propia de OpenMycoNet — para la cual no existe una fuente externa, ni hace falta que exista, ya que se trata de nuestro propio desarrollo de hardware, no de un resultado de investigación citable.",
-    "myk2_s3_p2": "El nodo de medición BioComm se basa en un microcontrolador ESP32 con módulo de radio LoRa y mide simultáneamente en ocho canales mediante un convertidor analógico-digital de 16 bits — señales bioeléctricas así como datos del suelo y ambientales como temperatura, humedad y CO₂. La carcasa IP65 resistente a la intemperie está diseñada para uso continuo en campo, alimentada por USB-C o batería LiPo.",
-    "myk2_s3_p3": "Hasta cuatro nodos transmiten sus datos por LoRa (con un alcance realista de 1 a 3 km en bosque) a un BioComm Bridge central, que agrega todos los flujos de datos y los reenvía al servidor por WiFi. En la práctica, esto crea un sistema de varios nodos que miden de forma independiente con una conexión de datos compartida — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">más detalles sobre el hardware</a>.",
+    "myk2_s3_p2": "El nodo de medición BioComm se basa en un microcontrolador ESP32-S3 con un chip de radio LoRa. Registra la señal bioeléctrica mediante un amplificador de instrumentación de bajo ruido y un convertidor analógico-digital de 16 bits. Además mide la temperatura y la humedad del suelo, la conductividad eléctrica, así como el CO₂, la temperatura y la humedad del aire. El nodo guarda los datos brutos en una tarjeta de memoria. Se alimenta con una batería recargable por USB-C; está prevista una carcasa resistente a la intemperie (IP65).",
+    "myk2_s3_p3": "Los nodos transmiten sus datos por LoRa a un BioComm Bridge, que los reenvía al servidor por WiFi. Por regla general se prevé un bridge por nodo; técnicamente, un bridge también puede atender a varios nodos. Hasta dónde llega la conexión de radio en el bosque depende de la antena, la carcasa y el terreno, y solo se verá en el uso en campo — <a href=\"https://www.openmyconet.de/leihgeraete.html\" class=\"u-green\">más sobre el hardware en detalle</a>.",
     "myk2_s4_label": "Desarrollo propio de OpenMycoNet",
     "myk2_s4_h2": "Más que medir: estimulación eléctrica dirigida",
     "myk2_s4_p1": "BioComm no está diseñado únicamente para la medición pasiva. El hardware también puede introducir señales eléctricas de forma dirigida en el sustrato — es decir, de forma bidireccional: enviar y recibir a través de la misma interfaz de electrodos. El objetivo no es influir en la red, sino comprobar algo metodológicamente más fundamental: ¿responde el micelio de forma reproducible a un estímulo eléctrico definido? Esa es la diferencia entre la mera observación y la perturbación — entre la correlación y la posibilidad de comprobar la causalidad.",
-    "myk2_s4_p2": "Este método de estimulación eléctrica bidireccional es un desarrollo técnico propio de OpenMycoNet, protegido por un modelo de utilidad concedido. Importante para la interpretación: la investigación citada arriba demuestra que la actividad eléctrica en el micelio fúngico existe, es medible y reproducible — no demuestra que el método de estimulación específico de OpenMycoNet esté científicamente validado. Tampoco es esa la pretensión: la estimulación es una herramienta para poner a prueba hipótesis, no un resultado ya demostrado.",
+    "myk2_s4_p2": "Este método de estimulación eléctrica bidireccional es un desarrollo técnico propio de OpenMycoNet, protegido por un modelo de utilidad concedido. Importante para la interpretación: la investigación citada arriba demuestra que la actividad eléctrica en el micelio fúngico existe y es medible — no demuestra que el método de estimulación específico de OpenMycoNet esté científicamente validado. Tampoco es esa la pretensión: la estimulación es una herramienta para poner a prueba hipótesis, no un resultado ya demostrado.",
     "myk2_s4_p3": "Si el micelio responde a estímulos eléctricos y cómo lo hace, cuán reproducibles son esas respuestas y qué revelan sobre las vías de señalización subyacentes — son preguntas abiertas que BioComm debe ayudar a responder, no respuestas que ya estén establecidas.",
     "myk2_cta_h2": "Seguir leyendo",
     "myk2_cta_p": "Esta página se basa en los <a href=\"https://www.openmyconet.de/mykorrhiza-netzwerke.html\" class=\"u-green\">fundamentos de la micorriza</a> explicados en otra sección. La lista completa de estudios está en la página de Fuentes, los detalles técnicos del dispositivo en préstamo están en la página de Hardware.",
@@ -5789,7 +5789,7 @@
     "myk3_h1": "Ciencia ciudadana en <em>OpenMycoNet</em>",
     "myk3_subtitle": "Por qué la amplia participación y la experiencia dirigida van de la mano — no como opuestos, sino como complementos.",
     "myk3_s1_h2": "Cómo participar",
-    "myk3_s1_p1": "Los resultados y datos de la red están abiertos a todo el mundo — incluso sin tener un nodo de medición propio. Quien quiera operar un nodo BioComm puede solicitar una de las plazas seleccionadas: pedir prestado el hardware, descargar gratis el software BioComm, colocar electrodos en el sustrato. El análisis y la anonimización se realizan localmente en el propio dispositivo antes de que los datos lleguen a la red.",
+    "myk3_s1_p1": "Los resultados y datos de la red están abiertos a todo el mundo — incluso sin tener un nodo de medición propio. Quien quiera operar un nodo BioComm puede solicitar una de las plazas seleccionadas: pedir prestado el hardware, colocar electrodos en el sustrato, conectar el bridge al WiFi. El nodo guarda primero sus mediciones en su propia tarjeta de memoria y las envía por radio, a través del bridge, al servidor de OpenMycoNet, donde se analizan. Públicamente solo mostramos la ubicación como una cuadrícula aproximada de unos 10 km.",
     "myk3_s1_p2": "El valor surge de la amplitud: una medición en Maintal, otra en Osaka, otra en São Paulo — juntas forman un conjunto de datos que ningún laboratorio por sí solo podría generar. Las zonas climáticas, los sustratos y las estaciones difieren en todo el mundo; precisamente esa dispersión es la que se necesita para poder responder a las preguntas abiertas.",
     "myk3_s2_label": "Evidencia científica",
     "myk3_s2_h2": "¿Funciona realmente la ciencia hecha por aficionados?",

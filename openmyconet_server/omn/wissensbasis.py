@@ -219,3 +219,26 @@ def abschnitte(tr, lang):
         if texts:
             ergebnis.append((slug, resolve_title(title_spec, lang, block, de_block), texts))
     return ergebnis
+
+
+SPRACHEN = ["de", "en", "nl", "fr", "es"]
+MAX_CHARS = 4000  # pro Chunk -- haelt den zusammengesetzten Kontext handhabbar
+
+
+def chunks(tr):
+    """RAG-Chunks aus translations.json: ein Chunk je Thema und Sprache.
+    Gemeinsam genutzt von build_rag_index.py und dem Notfall-Weg in rag_chatbot.py."""
+    ergebnis = []
+    for lang in SPRACHEN:
+        for slug, titel, texts in abschnitte(tr, lang):
+            body = " ".join(texts)
+            if len(body) > MAX_CHARS:
+                body = body[:MAX_CHARS].rsplit(" ", 1)[0] + " …"
+            ergebnis.append({
+                "id": len(ergebnis) + 1,
+                "lang": lang,
+                "slug": slug,
+                "title": titel,
+                "text": body,
+            })
+    return ergebnis
