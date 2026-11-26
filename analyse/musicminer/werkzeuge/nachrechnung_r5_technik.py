@@ -1,13 +1,13 @@
-"""Nachrechnung mit refesom, R5-0 Technik-Check (NACHRECHNUNG_REFESOM.md, Abschnitt 7f).
+"""Nachrechnung mit pydbt, R5-0 Technik-Check (NACHRECHNUNG_PYDBT.md, Abschnitt 7f).
 
-Läuft in der refesom-Umgebung, mit refesom aus dem Arbeitsordner des neuen Zweigs:
+Läuft in der pydbt-Umgebung, mit pydbt aus dem Arbeitsordner des neuen Zweigs:
 
-    PYTHONPATH="<refesom_next>;." MPLBACKEND=Agg <openmyconet_extern>/venv_refesom/Scripts/python.exe \
-        -m werkzeuge.nachrechnung_r5_technik <refesom_next>
+    PYTHONPATH="<pydbt_next>;." MPLBACKEND=Agg <openmyconet_extern>/venv_pydbt/Scripts/python.exe \
+        -m werkzeuge.nachrechnung_r5_technik <pydbt_next>
 
-Prüft: geladener refesom-Pfad + Commit, Determinismus mit `seed`, Übergabe der Gewinnerneuronen,
+Prüft: geladener pydbt-Pfad + Commit, Determinismus mit `seed`, Übergabe der Gewinnerneuronen,
 σ-Verlauf gegen `karte-v1`, V0 auf Chainlink 10 × 15 mit den neuen Optionen (nur berichtet, aber
-Haltepunkt bei ARI < 0,9). Schreibt ergebnisse/nachrechnung/r5_technik.json. Kein refesom-Code
+Haltepunkt bei ARI < 0,9). Schreibt ergebnisse/nachrechnung/r5_technik.json. Kein pydbt-Code
 wird hierher kopiert, nur importiert.
 """
 import contextlib
@@ -37,15 +37,14 @@ def sigma_karte_v1(z, s, epochen, sigma_ende):
 
 def main():
     klon = Path(sys.argv[1]).resolve()
-    from werkzeuge.refesom_laden import modul
-    refesom = modul()
-    read_cls_file = modul('data_io.cls_file_reader').read_cls_file
-    read_lrn_file = modul('data_io.lrn_file_reader').read_lrn_file
-    T = modul('umatrix.training')
+    import pydbt
+    from pydbt.data_io.cls_file_reader import read_cls_file
+    from pydbt.data_io.lrn_file_reader import read_lrn_file
+    from pydbt.umatrix import training as T
 
-    geladen = Path(refesom.__file__).resolve()
+    geladen = Path(pydbt.__file__).resolve()
     if klon not in geladen.parents:
-        sys.exit(f'Falsches refesom geladen: {geladen} (erwartet unter {klon})')
+        sys.exit(f'Falsches pydbt geladen: {geladen} (erwartet unter {klon})')
     with contextlib.redirect_stdout(io.StringIO()) as puffer:
         T.init_native_lib()
     c_bib = 'Using C library' in puffer.getvalue()
@@ -75,9 +74,9 @@ def main():
     k = BatchSOM(10, 15, toroidal=True, seed=0)
     k.w = w1
     det = {'gewichte_gleich': bool(np.array_equal(w1, w2)), 'bmu_gleich': bool(np.array_equal(b1, b2)),
-           'bmu_wie_refesom': float(np.mean(k.bmu(x) == b1))}
+           'bmu_wie_pydbt': float(np.mean(k.bmu(x) == b1))}
 
-    # 3. σ-Verlauf: exakt über refesoms Funktion, zusätzlich gegen die (auf 2 Stellen gerundete) Ausgabe
+    # 3. σ-Verlauf: exakt über pydbts Funktion, zusätzlich gegen die (auf 2 Stellen gerundete) Ausgabe
     sig = {}
     for name, (z, s, start, ende) in {'40x60': (40, 60, 29, 0.5), '10x15': (10, 15, 6.5, 0.5)}.items():
         eigen = sigma_karte_v1(z, s, 40, 0.75)
@@ -99,9 +98,9 @@ def main():
         ari.append(float(adjusted_rand_score(cls, g[b])))
     v0_median = float(np.median(ari))
 
-    technik_ok = det['gewichte_gleich'] and det['bmu_gleich'] and det['bmu_wie_refesom'] == 1.0 and sigma_ok
-    erg = {'schritt': 'R5-0', 'regeln': 'NACHRECHNUNG_REFESOM.md, Abschnitt 7f', 'refesom_commit': commit,
-           'refesom_geladen_aus': str(geladen.parent), 'c_bibliothek_geladen': c_bib,
+    technik_ok = det['gewichte_gleich'] and det['bmu_gleich'] and det['bmu_wie_pydbt'] == 1.0 and sigma_ok
+    erg = {'schritt': 'R5-0', 'regeln': 'NACHRECHNUNG_PYDBT.md, Abschnitt 7f', 'pydbt_commit': commit,
+           'pydbt_geladen_aus': str(geladen.parent), 'c_bibliothek_geladen': c_bib,
            'python': platform.python_version(), 'numpy': np.__version__,
            'determinismus': det, 'sigma_verlauf': sig, 'sigma_ok': sigma_ok,
            'v0_chainlink_10x15': {'ari': ari, 'median': v0_median, 'halt': v0_median < 0.9},

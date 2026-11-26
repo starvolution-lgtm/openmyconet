@@ -1,7 +1,7 @@
 {
  "simuliert": true,
  "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
- "regeln": "NACHRECHNUNG_REFESOM.md, Abschnitt 7f",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 7f",
  "saetze": {
   "P": {
    "qe_median": 1.2045789420902406,
@@ -304,11 +304,11 @@
    "neue_komponenten": []
   }
  },
- "refesom_commit": [
+ "pydbt_commit": [
   "e6a483eeffdaf06e849a0f04664e129833b277d9"
  ],
- "refesom_pfad": [
-  "C:\\Users\\wechs\\Desktop\\openmyconet_extern\\refesom_next\\refesom"
+ "pydbt_pfad": [
+  "C:\\Users\\wechs\\Desktop\\openmyconet_extern\\pydbt_next\\pydbt"
  ],
  "urteil": {
   "stabile_a4_kandidaten": 11,

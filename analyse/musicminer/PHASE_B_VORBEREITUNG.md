@@ -134,7 +134,7 @@ Beiträge von Robby oder Dritten.
 1. **Richard:** Befunde zur Eingangsschaltung Rev. 3.6 bestätigen oder korrigieren
    (`PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 2.3), vor allem den ADC-Messbereich und die
    Versorgungsdrift (differenzielle Messung gegen VMID). Davon hängt ab, wie H-Rev3.6 aussieht.
-2. **Robby:** Formen beisteuern (oder Dritte fragen), Auswahl für B2
+2. **Robby:** Formen beisteuern (oder Dritte fragen, z. B. Prof. Ultsch), Auswahl für B2
    verblindet treffen, Beurteilende für B8 suchen (≥ 3).
 3. R in der Analyse-Umgebung einrichten und prüfen, ob die R-Pakete wie beschrieben laufen.
 4. Später, mit Hardware: Referenzmessungen nach `PRUEFUNG_QUELLEN_HARDWARE.md`, Abschnitt 4,

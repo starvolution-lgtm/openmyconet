@@ -1,15 +1,15 @@
 {
  "schritt": "R5-0",
- "regeln": "NACHRECHNUNG_REFESOM.md, Abschnitt 7f",
- "refesom_commit": "e6a483eeffdaf06e849a0f04664e129833b277d9",
- "refesom_geladen_aus": "C:\\Users\\wechs\\Desktop\\openmyconet_extern\\refesom_next\\refesom",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 7f",
+ "pydbt_commit": "e6a483eeffdaf06e849a0f04664e129833b277d9",
+ "pydbt_geladen_aus": "C:\\Users\\wechs\\Desktop\\openmyconet_extern\\pydbt_next\\pydbt",
  "c_bibliothek_geladen": true,
  "python": "3.13.17",
  "numpy": "2.3.5",
  "determinismus": {
   "gewichte_gleich": true,
   "bmu_gleich": true,
-  "bmu_wie_refesom": 1.0
+  "bmu_wie_pydbt": 1.0
  },
  "sigma_verlauf": {
   "40x60": {

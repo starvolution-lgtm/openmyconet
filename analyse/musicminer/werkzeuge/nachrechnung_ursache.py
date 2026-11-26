@@ -1,7 +1,7 @@
-"""Nachrechnung mit refesom: Ursachensuche für Abweichungen in R2 (NACHRECHNUNG_REFESOM.md, Abschnitt 6).
+"""Nachrechnung mit pydbt: Ursachensuche für Abweichungen in R2 (NACHRECHNUNG_PYDBT.md, Abschnitt 6).
 
 Beschreibend, keine neue Entscheidungsregel. Für jeden A4-Kandidaten und jeden R2-Lauf:
-- in welcher refesom-Komponente die meisten Kandidatenfenster liegen (Anteil),
+- in welcher pydbt-Komponente die meisten Kandidatenfenster liegen (Anteil),
 - wie groß diese Komponente im Verhältnis zum Kandidaten ist,
 - ob sie die größte Komponente ist („Rest“),
 - welche anderen A4-Komponenten der Seed-0-Karte darin mit ≥ 10 % der Kandidatengröße stecken.

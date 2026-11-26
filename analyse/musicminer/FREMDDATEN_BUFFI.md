@@ -14,7 +14,7 @@ dokumentierte, begründete Ergänzungen, nie Änderungen nach Ansicht der Ergebn
 Phase A und die Nachrechnung liefen nur auf Simulationsdaten. C1 prüft die ESOM/U-Matrix zum
 ersten Mal an **echten, veröffentlichten Messwerten** mit bekannter Antwort: Auf jeder Platine
 liegen 6 Elektrodenpaare mit Pilz (*Fusarium oxysporum*) und 2 Paare nur mit Nährlösung. Die Frage
-ist ein Widerlegungsversuch: **Findet die ESOM die beiden Kanäle ohne
+ist ein Widerlegungsversuch im Sinn von Prof. Ultsch: **Findet die ESOM die beiden Kanäle ohne
 Pilz, ohne dass man sie ihr nennt, und kann das ein einfacheres Verfahren genauso?** (F1,
 Abschnitt 6)
 
@@ -31,7 +31,7 @@ Nicht Teil von C1:
   Artefakt-Kritik (Blatt et al. 2024) gilt auch hier.
 - Keine Änderung an Phase A, an KRITERIEN v2/E1/E2, an der Nachrechnung oder an Phase B.
 - Keine Änderung an Server, Datenbank, Pipeline, Schema oder Firmware.
-- RefESOM wird nicht verwendet. Eine Nachrechnung mit RefESOM wäre ein eigener, späterer Schritt nach
+- pydbt wird nicht verwendet. Eine Nachrechnung mit pydbt wäre ein eigener, späterer Schritt nach
   Absprache mit den Entwicklern.
 
 ## 2. Was vor der Festlegung schon angesehen wurde (Offenlegung)
@@ -226,7 +226,7 @@ Elektroden- oder Lösungseffekt statt einer Wirkung auf den Pilz, nie ein Beweis
   die behandelten Kanäle anders verändern. Ob das am Pilz, an der Elektrode oder an der Lösung
   liegt, entscheidet C1 nicht (je Stoff eine Platine, ein Leerkanal je Bedingung).
 - **Kontakt zu Buffi et al.** nur durch Robby, und für F2 erst nach dem Push der Vorhersage.
-- Keine Desktop-Anwendung der Entwickler, keine interaktive Erkundung als Entscheidungsgrundlage.
+- Kein UmatrixLab, keine interaktive Erkundung als Entscheidungsgrundlage.
 - Keine eigenen Messwerte; Simulationsdaten aus Phase A werden nicht mit diesen Daten gemischt.
 
 ## 9. Ergebnis und Bericht

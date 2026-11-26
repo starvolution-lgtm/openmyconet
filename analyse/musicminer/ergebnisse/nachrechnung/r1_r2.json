@@ -1,7 +1,7 @@
 {
  "simuliert": true,
  "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
- "regeln": "NACHRECHNUNG_REFESOM.md, Abschnitt 6 und 7d",
+ "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 6 und 7d",
  "schritte": {
   "R1": {
    "P": {
@@ -23,7 +23,7 @@
     "gruppen_median": 2.0,
     "inseln_median": 4.0,
     "sekunden_median": 1585.1,
-    "refesom_commit": [
+    "pydbt_commit": [
      "4a4b33e4334e4d19f75640d1687034466a0f1b44"
     ],
     "kandidaten": [
@@ -137,7 +137,7 @@
     "gruppen_median": 2.5,
     "inseln_median": 11.0,
     "sekunden_median": 1757.9,
-    "refesom_commit": [
+    "pydbt_commit": [
      "4a4b33e4334e4d19f75640d1687034466a0f1b44"
     ],
     "kandidaten": [
@@ -328,7 +328,7 @@
     "gruppen_median": 2.0,
     "inseln_median": 6.5,
     "sekunden_median": 1664.7,
-    "refesom_commit": [
+    "pydbt_commit": [
      "4a4b33e4334e4d19f75640d1687034466a0f1b44"
     ],
     "kandidaten": [
@@ -448,7 +448,7 @@
     "gruppen_median": 4.0,
     "inseln_median": 19.0,
     "sekunden_median": 2047.35,
-    "refesom_commit": [
+    "pydbt_commit": [
      "4a4b33e4334e4d19f75640d1687034466a0f1b44"
     ],
     "kandidaten": [

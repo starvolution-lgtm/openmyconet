@@ -129,5 +129,5 @@ Alle Stimmen je Seed stehen in `f2_vorhersage.json`.
   ohne Pilz nicht. Ein einfaches Lautstärkemaß tut es in 2 von 3 Fällen. Das passt zu A4 (kein
   ESOM-Mehrwert auf Simulationsdaten).
 - Die Karte zeigt die Leerkanäle aber als zusammenhängende Gebiete. Ob eine andere Abgrenzung
-  der Gruppen, etwa die der Entwickler, sie trennt, ist eine offene, gezielte Frage an die
-  Entwickler (Inselabgrenzung). Eine Prüfung dazu wäre ein neuer Schritt mit eigenen Regeln.
+  der Gruppen, etwa die der Entwickler, sie trennt, ist eine offene, gezielte Frage an Boon
+  Elschenbroich (Inselabgrenzung). Eine Prüfung dazu wäre ein neuer Schritt mit eigenen Regeln.

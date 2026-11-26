@@ -1,18 +1,18 @@
-"""Nachrechnung mit refesom, Läufe R1 und R2 als Warteschlange (NACHRECHNUNG_REFESOM.md, 5, 7a, 7d).
+"""Nachrechnung mit pydbt, Läufe R1 und R2 als Warteschlange (NACHRECHNUNG_PYDBT.md, 5, 7a, 7d).
 
 Jeder Lauf (Schritt, Satz, Seed) ist ein eigener Auftrag mit eigener Ergebnisdatei. Beliebig viele
 Arbeiter können gleichzeitig laufen und jederzeit dazukommen; jeder nimmt sich den nächsten
 offenen Auftrag (Sperrdatei, atomar angelegt). Fertige Läufe werden übersprungen, ein Abbruch
 verliert nur den gerade laufenden Auftrag. Jeder Lauf ist allein durch seinen Seed festgelegt.
 
-Läuft in der refesom-Umgebung (Python 3.13):
+Läuft in der pydbt-Umgebung (Python 3.13):
 
-    PYTHONPATH=. MPLBACKEND=Agg <openmyconet_extern>/venv_refesom/Scripts/python.exe \
-        -m werkzeuge.nachrechnung_laeufe <pfad zum refesom-Klon> [arbeiter-name]
+    PYTHONPATH=. MPLBACKEND=Agg <openmyconet_extern>/venv_pydbt/Scripts/python.exe \
+        -m werkzeuge.nachrechnung_laeufe <pfad zum pydbt-Klon> [arbeiter-name]
 
 MM_SCHRITTE=R3: Nullmodelle (N1/N2 je Seeds 0–24, R2-Parameter) statt R1/R2.
 MM_SCHRITTE=R5: angeglichene Nachbarschaft (7f), nur mit dem Zweig features-next-release
-(PYTHONPATH auf dessen Arbeitsordner; der geladene refesom-Pfad muss im Klon liegen). Die Nulldaten
+(PYTHONPATH auf dessen Arbeitsordner; der geladene pydbt-Pfad muss im Klon liegen). Die Nulldaten
 erzeugt vorher `werkzeuge.nachrechnung_nulldaten` im Analyse-venv (gleicher Code wie A4).
 MM_PROBE=1: Kurzlauf (2 Epochen, 2 000 Fenster, 1 Seed) nach ergebnisse/nachrechnung/probe/.
 SIMULATION: Grundlage sind die Merkmale aus Phase A (Simulationsdaten, keine Messwerte).
@@ -97,14 +97,13 @@ def main():
     klon = Path(sys.argv[1])
     name = sys.argv[2] if len(sys.argv) > 2 else f'a{os.getpid()}'
     niedrige_prioritaet_und_wach()
-    from werkzeuge.refesom_laden import modul
-    refesom = modul()
-    T = modul('umatrix.training')
-    EsomTrainingParams, esom_train, init_native_lib = T.EsomTrainingParams, T.esom_train, T.init_native_lib
+    import pydbt
+    from pydbt.umatrix import training as T
+    from pydbt.umatrix.training import EsomTrainingParams, esom_train, init_native_lib
 
-    geladen = Path(refesom.__file__).resolve()
+    geladen = Path(pydbt.__file__).resolve()
     if klon.resolve() not in geladen.parents:
-        sys.exit(f'Falsches refesom geladen: {geladen} (erwartet unter {klon})')
+        sys.exit(f'Falsches pydbt geladen: {geladen} (erwartet unter {klon})')
 
     def parameter(schritt, seed):
         param = dict(SCHRITTE[schritt])
@@ -135,7 +134,7 @@ def main():
         with open(ZIEL / f'{name}.log', 'a', encoding='utf-8') as f:
             f.write(zeile + '\n')
 
-    log(f'Start: refesom {commit[:7]} aus {geladen.parent}, C-Bibliothek {c_bib}, '
+    log(f'Start: pydbt {commit[:7]} aus {geladen.parent}, C-Bibliothek {c_bib}, '
         f'Python {platform.python_version()}')
     for schritt, satz, art, seed in auftraege():
         kennung = kennung_von(schritt, satz, art, seed)
@@ -162,7 +161,7 @@ def main():
             bmu = np.array([(b.bm_row_coord - 1) * p.cols + (b.bm_col_coord - 1) for b in bm.best_matches],
                            dtype=np.int32)
             meta = {'schritt': schritt, 'satz': satz, 'seed': seed, 'parameter': repr(p),
-                    'refesom_commit': commit, 'refesom_pfad': str(geladen.parent), 'c_bibliothek': c_bib, 'python': platform.python_version(),
+                    'pydbt_commit': commit, 'pydbt_pfad': str(geladen.parent), 'c_bibliothek': c_bib, 'python': platform.python_version(),
                     'numpy': np.__version__, 'merkmale_sha256': hashes[satz], 'daten': art,
                     'daten_sha256': daten_sha, 'fenster': len(x),
                     'sekunden': round(sek, 1), 'arbeiter': name, 'probe': PROBE,
