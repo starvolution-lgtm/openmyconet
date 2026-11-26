@@ -1,6 +1,6 @@
-"""Nachrechnung mit pydbt, R5: Auswertung nach Abschnitt 7f (NACHRECHNUNG_PYDBT.md).
+"""Nachrechnung mit refesom, R5: Auswertung nach Abschnitt 7f (NACHRECHNUNG_REFESOM.md).
 
-Läuft im Analyse-venv (braucht pydbt NICHT). Wie R2 (V1–V3): pydbt-Gewichte und Gewinnerneuronen
+Läuft im Analyse-venv (braucht refesom NICHT). Wie R2 (V1–V3): refesom-Gewichte und Gewinnerneuronen
 aus ergebnisse/nachrechnung/laeufe/R5_*.npz in unsere Kartenklasse, Gruppen nach Regel v2,
 Wiederfinden mit Jaccard ≥ 0,5 gegen die A4-Seed-0-Karte. Danach die vorab festgelegte
 Entscheidung aus 7f. Verschmelzungspartner wie in `nachrechnung_ursache`.
@@ -16,6 +16,7 @@ from collections import Counter
 import numpy as np
 
 from mm.karte import BatchSOM
+from werkzeuge.refesom_laden import meta_wert
 from werkzeuge.nachrechnung_auswerten import (
     BEKANNT,
     LAEUFE,
@@ -65,7 +66,7 @@ def main():
     r1r2 = json.loads((LAEUFE.parent / 'r1_r2.json').read_text(encoding='utf-8'))
     r4 = json.loads((LAEUFE.parent / 'r4.json').read_text(encoding='utf-8'))
     erg = {'simuliert': True, 'hinweis': 'SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten',
-           'regeln': 'NACHRECHNUNG_PYDBT.md, Abschnitt 7f', 'saetze': {}}
+           'regeln': 'NACHRECHNUNG_REFESOM.md, Abschnitt 7f', 'saetze': {}}
     alle, gegen_fehlt, commits, pfade = [], [], set(), set()
     for satz in SAETZE:
         x = np.load(WURZEL / 'ergebnisse' / 'a3' / f'merkmale_{satz}.npz')['x']
@@ -73,8 +74,8 @@ def main():
         a4_mengen = {int(i): set(np.where(g0 == i)[0].tolist()) for i in np.unique(g0)}
         groesste_a4 = max(a4_mengen, key=lambda i: len(a4_mengen[i]))
         laeufe = [lauf(satz, s, x) for s in SEEDS]
-        commits |= {lf['meta']['pydbt_commit'] for lf in laeufe}
-        pfade |= {lf['meta'].get('pydbt_pfad') for lf in laeufe}
+        commits |= {meta_wert(lf['meta'], 'refesom_commit') for lf in laeufe}
+        pfade |= {meta_wert(lf['meta'], 'refesom_pfad') for lf in laeufe}
         r2 = {z['id']: z for z in r1r2['schritte']['R2'][satz]['kandidaten']}
         r4k = {z['id']: z for z in r4['saetze'][satz]['kandidaten']}
         zeilen = []
@@ -128,14 +129,14 @@ def main():
         urteil = 'teilweise'
     else:
         urteil = 'nicht'
-    erg['pydbt_commit'] = sorted(commits)
-    erg['pydbt_pfad'] = sorted(p for p in pfade if p)
+    erg['refesom_commit'] = sorted(commits)
+    erg['refesom_pfad'] = sorted(p for p in pfade if p)
     erg['urteil'] = {'stabile_a4_kandidaten': len(stabil), 'davon_reproduziert': n_rep,
                      'r2_reproduziert': sum(z['r2'] >= 8 for z in stabil), 'v2_reproduziert': v2,
                      'nachbarschaft_erklaert_abweichung': urteil,
                      'gegenprobe_nicht_reproduziert': gegen_fehlt, 'unter_vorbehalt': bool(gegen_fehlt)}
     ZIEL.write_text(json.dumps(erg, ensure_ascii=False, indent=1), encoding='utf-8')
-    print('Urteil 7f:', erg['urteil'], '| Commit', erg['pydbt_commit'])
+    print('Urteil 7f:', erg['urteil'], '| Commit', erg['refesom_commit'])
 
 
 if __name__ == '__main__':

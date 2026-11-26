@@ -1,6 +1,6 @@
-"""Nachrechnung mit pydbt: Auswertung R1/R2 nach V1–V3 (NACHRECHNUNG_PYDBT.md, Abschnitt 6, 7d).
+"""Nachrechnung mit refesom: Auswertung R1/R2 nach V1–V3 (NACHRECHNUNG_REFESOM.md, Abschnitt 6, 7d).
 
-Läuft im Analyse-venv (braucht pydbt NICHT): Die pydbt-Gewichte und Gewinnerneuronen aus
+Läuft im Analyse-venv (braucht refesom NICHT): Die refesom-Gewichte und Gewinnerneuronen aus
 ergebnisse/nachrechnung/laeufe/ werden in unsere Kartenklasse gesetzt; Gruppen (Regel v2),
 Abgrenzung, Quantisierungs- und Topologiefehler rechnet UNSER Code, genau wie in Phase A.
 
@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from mm.karte import BatchSOM
+from werkzeuge.refesom_laden import meta_wert
 
 WURZEL = Path(__file__).resolve().parents[1]
 LAEUFE = WURZEL / 'ergebnisse' / 'nachrechnung' / 'laeufe'
@@ -77,7 +78,7 @@ def main():
     a4 = json.loads((WURZEL / 'ergebnisse' / 'a4' / 'metriken.json').read_text(encoding='utf-8'))
     basis = np.load(WURZEL / 'ergebnisse' / 'a4' / 'laeufe_basis.npz')
     erg = {'simuliert': True, 'hinweis': 'SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten',
-           'regeln': 'NACHRECHNUNG_PYDBT.md, Abschnitt 6 und 7d', 'schritte': {}}
+           'regeln': 'NACHRECHNUNG_REFESOM.md, Abschnitt 6 und 7d', 'schritte': {}}
     vollstaendig = True
     for satz in SAETZE:
         x = np.load(WURZEL / 'ergebnisse' / 'a3' / f'merkmale_{satz}.npz')['x']
@@ -131,7 +132,7 @@ def main():
                 'gruppen_median': float(np.median([lf['n_gruppen'] for lf in laeufe.values()])),
                 'inseln_median': float(np.median([lf['n_inseln'] for lf in laeufe.values()])),
                 'sekunden_median': float(np.median([lf['meta']['sekunden'] for lf in laeufe.values()])),
-                'pydbt_commit': sorted({lf['meta']['pydbt_commit'] for lf in laeufe.values()}),
+                'refesom_commit': sorted({meta_wert(lf['meta'], 'refesom_commit') for lf in laeufe.values()}),
                 'kandidaten': zeilen, 'neue_komponenten': neu}
     erg['vollstaendig'] = vollstaendig
     # Teilurteil aus R2 (V2, V3); V4 folgt mit R3

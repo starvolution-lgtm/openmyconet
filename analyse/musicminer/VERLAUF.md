@@ -1,7 +1,7 @@
 # Versuchsverlauf: Entscheidungen, Abweichungen, verworfene Ansätze, negative Ergebnisse
 
 Dieses Protokoll fließt in den Gesamtbericht ein (auch zur fachlichen Beurteilung durch
-Prof. Ultsch). Es wird fortlaufend ergänzt und nachträglich nicht geschönt. Alle Ergebnisse
+externe Fachleute). Es wird fortlaufend ergänzt und nachträglich nicht geschönt. Alle Ergebnisse
 beziehen sich auf **Simulationsdaten** (Phase A) bzw. **synthetische Signale** (Phase B),
 Schritt C1 auf **veröffentlichte Messwerte von Buffi et al. 2025** (nicht von OpenMycoNet).
 
@@ -15,12 +15,12 @@ Schritt C1 auf **veröffentlichte Messwerte von Buffi et al. 2025** (nicht von O
 | 05.11.2026 | Ergänzung E1 (größenabhängige Nullmodelle, drei Stufen), **vor A4** | 0301a87 |
 | 05.11.2026 | A4: Methodenvergleich, E1, Robustheit Endradius; Phase-B-Entwurf Fassung 1 | be3804c |
 | 05.11.2026 | Prüfung Literatur + Eingangsschaltung, Ergänzung E2, Phase-B-Vorbereitung Fassung 2 | bb6ecd1 |
-| 14.11.2026 | Vergleichsregeln für die Nachrechnung mit pydbt (`NACHRECHNUNG_PYDBT.md`), vor jedem Lauf | 6e92179 |
+| 14.11.2026 | Vergleichsregeln für die Nachrechnung mit RefESOM (`NACHRECHNUNG_REFESOM.md`), vor jedem Lauf | 6e92179 |
 | 15.11.2026 | Nachrechnung R0 (Technik, V0 übereinstimmend) | 79e49e3 |
 | 15.11.2026 | Nachrechnung R1 + R2 (40 Läufe): Gesamturteil **abweichend**, Zwischenbericht `ergebnisse/nachrechnung/BERICHT.md` | e4c32fa |
 | 17.11.2026 | Nachrechnung R3 (100 Nullläufe) + V4: Schwellen-Rangfolge wie A4; Bericht R0–R3 | 49f4b61 |
 | 17.11.2026 | Nachrechnung R4 (unsere Karte, Endradius 1,0, 20 Läufe): Endradius erklärt die Abweichung **teilweise**, unter Vorbehalt; Bericht R0–R4 | 4f5a0a3 |
-| 22.11.2026 | Nachrechnung R5 (neue pydbt-Fassung `e6a483e`, gleicher σ-Verlauf wie unsere Karte, 20 Läufe): Nachbarschaft erklärt die Abweichung **nicht** (4 von 11), unter Vorbehalt; Bericht R0–R5 | d97e8b7 |
+| 22.11.2026 | Nachrechnung R5 (neue RefESOM-Fassung `e6a483e`, gleicher σ-Verlauf wie unsere Karte, 20 Läufe): Nachbarschaft erklärt die Abweichung **nicht** (4 von 11), unter Vorbehalt; Bericht R0–R5 | d97e8b7 |
 | 23.11.2026 | C1: Prüfregeln für veröffentlichte Pilzmessungen (Buffi et al. 2025, Mendeley, CC BY 4.0), vor jedem Lauf; Nachtrag 3a Zugabelücke | a28832f, f296d28 |
 | 23.11.2026 | C1 F1: ESOM findet die Kanäle ohne Pilz **nicht** (0 von 3), Lautstärke findet sie (2 von 3); F2-Vorhersage festgeschrieben vor Kenntnis der Zuordnung; Bericht `ergebnisse/c1/BERICHT.md` | (dieser Commit) |
 
@@ -85,19 +85,19 @@ Schritt C1 auf **veröffentlichte Messwerte von Buffi et al. 2025** (nicht von O
 7. **A4: Nullmodelle liefern für große Gruppen keine Vergleichsgrundlage** (0 Komponenten ≥ 160
    Fenster), deshalb dort keine größenabhängige Signifikanz.
 8. **Größenabhängige Schwelle nicht durchweg milder:** In G2 lag sie über der globalen Schwelle.
-9. **Nachrechnung mit pydbt (R2): abweichend.** Sättigung und die Sprung-Gruppen übertragen sich,
-   die Reaktion nur in 5/10 Läufen, von 11 stabilen A4-Kandidaten nur 4. pydbt fasst die
+9. **Nachrechnung mit RefESOM (R2): abweichend.** Sättigung und die Sprung-Gruppen übertragen sich,
+   die Reaktion nur in 5/10 Läufen, von 11 stabilen A4-Kandidaten nur 4. RefESOM fasst die
    Spike-Lage-Fragmente zu größeren Gruppen zusammen; die feine Aufteilung aus A4 hängt also
    auch von der ESOM-Umsetzung ab. Ursache offen (Endradius σ 0,75 nicht einstellbar,
    Online- statt Batch-Training). Details `ergebnisse/nachrechnung/BERICHT.md`.
-   V4 (R3): Die globale Schwelle bestehen unter pydbt wie in A4 nur Sättigung und die
+   V4 (R3): Die globale Schwelle bestehen unter RefESOM wie in A4 nur Sättigung und die
    Spike-Gruppe der Fenstermitte. Diese ist mit einer Nachbargruppe verschmolzen und gilt nach der
    Zuordnung (Jaccard ≥ 0,5, nicht vorab festgelegt) als „neu bestanden“.
    R4 (Regeln 7e): Unsere Karte mit Endradius 1,0 verliert 4 der 7 betroffenen Kandidaten
    (Urteil „teilweise“, unter Vorbehalt, weil P K13 nur 7/10). Das Muster ist anders als
-   bei pydbt (Reaktion und PL K28 bleiben, kaum Verschmelzungen); der Rest liegt vermutlich
+   bei RefESOM (Reaktion und PL K28 bleiben, kaum Verschmelzungen); der Rest liegt vermutlich
    im Training, ungeprüft.
-   R5 (Regeln 7f): Die neue pydbt-Fassung mit genau unserem σ-Verlauf reproduziert wieder nur
+   R5 (Regeln 7f): Die neue RefESOM-Fassung mit genau unserem σ-Verlauf reproduziert wieder nur
    4 der 11 stabilen Kandidaten (Urteil „nicht“, unter Vorbehalt, P K13 7/10). Die Reaktion
    ist zurück (8/10), die Fragmente der PL-Fenstermitte verschmelzen weiter. Die Ursache liegt
    im Training selbst (online statt Batch, Lernrate, Startwerte), nicht getrennt geprüft.

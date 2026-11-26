@@ -1,6 +1,6 @@
 {
  "schritt": "R0",
- "pydbt_commit": "4a4b33e4334e4d19f75640d1687034466a0f1b44",
+ "refesom_commit": "4a4b33e4334e4d19f75640d1687034466a0f1b44",
  "python": "3.13.17",
  "c_bibliothek_geladen": true,
  "numpy": "2.3.5",
@@ -25,7 +25,7 @@
     "komponenten": 2,
     "qe": 0.07584437191686351,
     "te": 0.075,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -33,7 +33,7 @@
     "komponenten": 2,
     "qe": 0.07558592392958961,
     "te": 0.09,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -41,7 +41,7 @@
     "komponenten": 2,
     "qe": 0.0758504056694729,
     "te": 0.077,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -49,7 +49,7 @@
     "komponenten": 2,
     "qe": 0.07531466701268158,
     "te": 0.062,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -57,7 +57,7 @@
     "komponenten": 2,
     "qe": 0.07529788790464614,
     "te": 0.1,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -65,7 +65,7 @@
     "komponenten": 2,
     "qe": 0.0748857940954802,
     "te": 0.086,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -73,7 +73,7 @@
     "komponenten": 2,
     "qe": 0.07596550439857222,
     "te": 0.089,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -81,7 +81,7 @@
     "komponenten": 2,
     "qe": 0.07336567773916346,
     "te": 0.083,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -89,7 +89,7 @@
     "komponenten": 2,
     "qe": 0.07504324670937862,
     "te": 0.074,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -97,17 +97,17 @@
     "komponenten": 2,
     "qe": 0.07475966963893166,
     "te": 0.18,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    }
   ],
-  "pydbt": [
+  "refesom": [
    {
     "ari": 1.0,
     "komponenten": 2,
     "qe": 0.06447058000593774,
     "te": 0.116,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -115,7 +115,7 @@
     "komponenten": 2,
     "qe": 0.067028383624839,
     "te": 0.144,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -123,7 +123,7 @@
     "komponenten": 2,
     "qe": 0.06494386412959119,
     "te": 0.042,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -131,7 +131,7 @@
     "komponenten": 2,
     "qe": 0.06543047546218889,
     "te": 0.034,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -139,7 +139,7 @@
     "komponenten": 2,
     "qe": 0.06577895178263941,
     "te": 0.048,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -147,7 +147,7 @@
     "komponenten": 2,
     "qe": 0.06653501797910745,
     "te": 0.038,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -155,7 +155,7 @@
     "komponenten": 2,
     "qe": 0.06578614127675785,
     "te": 0.12,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -163,7 +163,7 @@
     "komponenten": 2,
     "qe": 0.06532327197138633,
     "te": 0.069,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -171,7 +171,7 @@
     "komponenten": 2,
     "qe": 0.06484891051933574,
     "te": 0.015,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    },
    {
@@ -179,14 +179,14 @@
     "komponenten": 2,
     "qe": 0.06633571294600793,
     "te": 0.058,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0
    }
   ],
   "median_ari_karte_v1": 1.0,
-  "median_ari_pydbt": 1.0,
+  "median_ari_refesom": 1.0,
   "v0": "übereinstimmend",
-  "pydbt_sekunden_median": 2.24676015
+  "refesom_sekunden_median": 2.24676015
  },
  "nur_berichtet_50x80": {
   "laeufe": [
@@ -195,7 +195,7 @@
     "komponenten": 60,
     "qe": 0.021049663851949858,
     "te": 0.076,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.471234800000275
    },
@@ -204,7 +204,7 @@
     "komponenten": 59,
     "qe": 0.021416584652615037,
     "te": 0.071,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.44095010000001
    },
@@ -213,7 +213,7 @@
     "komponenten": 57,
     "qe": 0.021545573688049074,
     "te": 0.081,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.429165099999864
    },
@@ -222,7 +222,7 @@
     "komponenten": 59,
     "qe": 0.02156775087492037,
     "te": 0.064,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.475856600000043
    },
@@ -231,7 +231,7 @@
     "komponenten": 60,
     "qe": 0.021323860328742485,
     "te": 0.079,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.430826199999956
    },
@@ -240,7 +240,7 @@
     "komponenten": 56,
     "qe": 0.021300512705010162,
     "te": 0.06,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.434349000000111
    },
@@ -249,7 +249,7 @@
     "komponenten": 59,
     "qe": 0.020986923261899982,
     "te": 0.067,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.407630799999879
    },
@@ -258,7 +258,7 @@
     "komponenten": 59,
     "qe": 0.02126900467132086,
     "te": 0.09,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.425124400000186
    },
@@ -267,7 +267,7 @@
     "komponenten": 51,
     "qe": 0.021514423350733815,
     "te": 0.051,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.45675889999984
    },
@@ -276,7 +276,7 @@
     "komponenten": 59,
     "qe": 0.021435368062960272,
     "te": 0.076,
-    "bmu_wie_pydbt": 1.0,
+    "bmu_wie_refesom": 1.0,
     "reinheit_neuron": 1.0,
     "sekunden": 9.552653300000202
    }

@@ -2,7 +2,7 @@
  "simuliert": true,
  "hinweis": "SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten",
  "kriterien": "v2+E1",
- "regeln": "NACHRECHNUNG_PYDBT.md, Abschnitt 6 (V4)",
+ "regeln": "NACHRECHNUNG_REFESOM.md, Abschnitt 6 (V4)",
  "saetze": {
   "P": {
    "nulllaeufe": 50,

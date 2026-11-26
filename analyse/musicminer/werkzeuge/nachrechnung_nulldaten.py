@@ -1,8 +1,8 @@
-"""Nachrechnung mit pydbt, R3: Nulldaten vorab erzeugen (NACHRECHNUNG_PYDBT.md, Abschnitte 3, 5, 7d).
+"""Nachrechnung mit refesom, R3: Nulldaten vorab erzeugen (NACHRECHNUNG_REFESOM.md, Abschnitte 3, 5, 7d).
 
 Läuft im Analyse-venv, damit N1/N2 mit genau dem Code und der numpy-Version aus A3/A4 entstehen
 (`werkzeuge.a3_laufen._nulldaten`, gleiche Seeds), also dieselben Matrizen wie dort. Die
-pydbt-Umgebung hat eine andere numpy-Version und liest deshalb nur diese Dateien.
+refesom-Umgebung hat eine andere numpy-Version und liest deshalb nur diese Dateien.
 
     venv/Scripts/python.exe -m werkzeuge.nachrechnung_nulldaten
 

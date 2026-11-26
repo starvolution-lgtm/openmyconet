@@ -1,6 +1,6 @@
-"""Nachrechnung mit pydbt, R4: Ursachentest Endradius (NACHRECHNUNG_PYDBT.md, Abschnitt 7e).
+"""Nachrechnung mit refesom, R4: Ursachentest Endradius (NACHRECHNUNG_REFESOM.md, Abschnitt 7e).
 
-Läuft im Analyse-venv, ohne pydbt: unsere Karte `karte-v1` genau wie in A4 (40 × 60 Torus,
+Läuft im Analyse-venv, ohne refesom: unsere Karte `karte-v1` genau wie in A4 (40 × 60 Torus,
 40 Epochen, Initialisierung aus Datenpunkten), nur mit `sigma_ende = 1,0` statt 0,75. Seeds 0–9,
 Sätze P und PL. Wiederfinden der A4-Kandidaten wie in V3 (Jaccard ≥ 0,5 mit der Seed-0-Karte
 aus A4). Entscheidungsregel vorab in 7e; dieses Skript wendet sie nur an.
@@ -88,7 +88,7 @@ def main():
     with ProcessPoolExecutor(4) as ex:
         ergebnisse = list(ex.map(job, auftraege))
     erg = {'simuliert': True, 'hinweis': 'SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten',
-           'regeln': 'NACHRECHNUNG_PYDBT.md, Abschnitt 7e', 'karte': 'karte-v1 (mm.karte.BatchSOM)',
+           'regeln': 'NACHRECHNUNG_REFESOM.md, Abschnitt 7e', 'karte': 'karte-v1 (mm.karte.BatchSOM)',
            'sigma_ende': SIGMA_ENDE, 'groesse': GROESSE, 'epochen': EPOCHEN, 'saetze': {}}
     verloren, gegen_fehlt = [], []
     for satz in SAETZE:
@@ -105,7 +105,7 @@ def main():
             rolle = 'geprueft' if kid in GEPRUEFT[satz] else 'gegenprobe' if kid in GEGENPROBE[satz] else None
             p, im_rest = partner(idx, kid, g0, laeufe)
             z = {'id': kid, 'rolle': rolle, 'fenster_a4': len(idx), 'a4_wiedergefunden_von_10':
-                 kd['wiedergefunden_von_10'], 'r2_pydbt_wiedergefunden': r2[kid]['wiedergefunden'],
+                 kd['wiedergefunden_von_10'], 'r2_refesom_wiedergefunden': r2[kid]['wiedergefunden'],
                  'r4_wiedergefunden': int(n), 'r4_urteil': einstufen(n),
                  'r4_partner': p, 'r4_im_rest': im_rest,
                  'r2_partner': urs[kid]['mitgezogen_laeufe'], 'r2_im_rest': urs[kid]['laeufe_im_rest']}

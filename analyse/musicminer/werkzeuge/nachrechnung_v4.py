@@ -1,7 +1,7 @@
-"""Nachrechnung mit pydbt: V4 aus R2 + R3 (NACHRECHNUNG_PYDBT.md, Abschnitt 6, V4 und Gesamturteil).
+"""Nachrechnung mit refesom: V4 aus R2 + R3 (NACHRECHNUNG_REFESOM.md, Abschnitt 6, V4 und Gesamturteil).
 
 Läuft im Analyse-venv. Rechnet genau wie A4 (`werkzeuge.a4_laufen`, `mm.kriterien`), nur mit den
-pydbt-Läufen: Schwellen nach E1 (9.2 größenabhängig, 9.3 global) aus den R3-Nullläufen, Kandidaten
+refesom-Läufen: Schwellen nach E1 (9.2 größenabhängig, 9.3 global) aus den R3-Nullläufen, Kandidaten
 aus R2 (9.1: Komponenten der Seed-0-Karte außer der größten, in ≥ 5 von 10 Läufen), dazu 8b.1
 (stabil) und 8b.3a (Baum Tiefe 2). 8b.4b und 8b.5 werden nicht wiederholt; ein Kandidat kann hier
 höchstens „würde Schwellen bestehen“ heißen.
@@ -33,7 +33,7 @@ NULL_SEEDS = range(25)
 
 
 def lauf(datei, x, seed):
-    """pydbt-Gewichte in unsere Karte, Gruppen + Abgrenzung mit unserem Code (wie A4, job_karte)."""
+    """refesom-Gewichte in unsere Karte, Gruppen + Abgrenzung mit unserem Code (wie A4, job_karte)."""
     z = np.load(datei)
     k = BatchSOM(40, 60, toroidal=True, seed=seed)
     k.w = z['w']
@@ -50,7 +50,7 @@ def main():
     basis = np.load(WURZEL / 'ergebnisse' / 'a4' / 'laeufe_basis.npz')
     v = dict(np.load(WURZEL / VORBEREITUNG, allow_pickle=False))
     erg = {'simuliert': True, 'hinweis': 'SIMULATION (Sandbox-Szenarien sbx-gen-1.0), keine Messdaten',
-           'kriterien': KR.VERSION, 'regeln': 'NACHRECHNUNG_PYDBT.md, Abschnitt 6 (V4)', 'saetze': {}}
+           'kriterien': KR.VERSION, 'regeln': 'NACHRECHNUNG_REFESOM.md, Abschnitt 6 (V4)', 'saetze': {}}
     neu_global = []
     for satz in SAETZE:
         x, zeilen, _ = merkmalssatz(v, satz)
@@ -108,7 +108,7 @@ def main():
             'klassen_geprueft': [KR.klassenname(c) for c in klassen],
             'kandidaten_r2': zeilen_k,
             'nicht_berichtet_unter_5_seeds': len(kandidaten(echt[0], echt)) - len(kand)}
-        print(f"{satz}: globale Schwelle pydbt {glob['schwelle']:.2f} ({glob['nullkomponenten']} Nullkomponenten), "
+        print(f"{satz}: globale Schwelle refesom {glob['schwelle']:.2f} ({glob['nullkomponenten']} Nullkomponenten), "
               f"A4 {a4s['globale_schwelle']['schwelle']:.2f}")
     erg['v4'] = {'kandidaten_global_neu_bestanden': neu_global, 'v4_erfuellt': not neu_global}
     ZIEL.write_text(json.dumps(erg, ensure_ascii=False, indent=1), encoding='utf-8')
